@@ -31,43 +31,37 @@ void Network::addEdge(int from, int to , Edgetype type){
    (*nodes)[to].neighbors->push_back(index);
 }
 
-void Network::upto(int _size, Nodetype _type){
-   int n=nodes->size();
-   for(int i=n;i<_size;i++)nodes->push_back(Node(_type));
+void Network::addNode(int index, Nodetype type){
+   if(index>=nodes->size())nodes->resize(index+1);
+   (*nodes)[index]=Node(type);
 }
 
 void Network::addReaction(int index, const VI* substrates,const VI* products, const VI* catalysts, const VI* activators, const VI* inhibitors){
    int i,n;
-   if(index>=nodes->size())upto(index,none);
-   upto(index+1,reaction);
+   addNode(index, reaction);
    n=substrates->size();
    for(i=0;i<n;i++){
-      if((*substrates)[i]>=nodes->size())upto((*substrates)[i],none);
-      upto((*substrates)[i]+1,compound);
+      addNode((*substrates)[i],compound);
       addEdge(index,(*substrates)[i],substrate);
    }
    n=products->size();
    for(i=0;i<n;i++){
-      if((*products)[i]>=nodes->size())upto((*products)[i],none);
-      upto((*products)[i]+1,compound);
+      addNode((*products)[i],compound);
       addEdge(index, (*products)[i],product);
    }
    n=catalysts->size();
    for(i=0;i<n;i++){
-      if((*catalysts)[i]>=nodes->size())upto((*catalysts)[i],none);
-      upto((*catalysts)[i]+1,compound);
+      addNode((*catalysts)[i],compound);
       addEdge(index, (*catalysts)[i], catalyst);
    }
    n=activators->size();
    for(i=0;i<n;i++){
-      if((*activators)[i]>=nodes->size())upto((*activators)[i],none);
-      upto((*activators)[i]+1,compound);
+      addNode((*activators)[i],compound);
       addEdge(index, (*activators)[i], activator);
    }
    n=inhibitors->size();
    for(i=0;i<n;i++){
-      if((*inhibitors)[i]>=nodes->size())upto((*inhibitors)[i],none);
-      upto((*inhibitors)[i]+1,compound);
+      addNode((*inhibitors)[i],compound);
       addEdge(index, (*inhibitors)[i], inhibitor);
    }
 }
