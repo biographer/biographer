@@ -11,7 +11,10 @@ if (errors !== undefined) {
     for (var i = 0; i < errors.length; i++) {
         var error = errors[i];
 
-        print(['Problem at ', error.line, ':', error.character, ' -- ',
-           error.reason, '\n', 'Evidence: ', error.evidence, '\n\n'].join(''));
+        if (error) {
+            print(['Problem at ', error.line, ':', error.character, ' -- ',
+                   error.reason, '\n', 'Evidence: ', error.evidence, '\n\n']
+                    .join(''));
+        }
     }
 }

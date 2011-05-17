@@ -25,10 +25,8 @@ target_dir = 'target'
 
 
 # relative to main_src_dir
-intro_file = 'intro'
-outro_file = 'outro'
-core_file = 'core.js'
-modules_dir = 'modules'
+modules = ['intro', 'util.js', 'core.js', 'graph.js', 'outro']
+
 
 # relative to target_dir
 combined_file = 'biographer-ui.js'
@@ -36,10 +34,8 @@ jsdoc_dir = 'jsdoc'
 test_dir = 'test'
 
 # combining all dirs
-intro_file = os.path.join(main_src_dir, intro_file)
-outro_file = os.path.join(main_src_dir, outro_file)
-core_file = os.path.join(main_src_dir, core_file)
-modules_dir = os.path.join(main_src_dir, modules_dir)
+for i, module in enumerate(modules):
+    modules[i] = os.path.join(main_src_dir, module)
 
 combined_file = os.path.join(target_dir, combined_file)
 jsdoc_dir = os.path.join(target_dir, jsdoc_dir)

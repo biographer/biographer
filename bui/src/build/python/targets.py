@@ -95,14 +95,8 @@ def build():
 
     add_file = lambda path: combined.append(get_file_contents(path))
 
-    add_file(settings.intro_file)
-    add_file(settings.core_file)
-
-    for root, dirs, files in os.walk(settings.modules_dir):
-        for file in files:
-            add_file(os.path.join(root, file))
-
-    add_file(settings.outro_file)
+    for module in settings.modules:
+        add_file(module)
 
     write_to_file(settings.combined_file, '\n'.join(combined))
 
