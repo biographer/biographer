@@ -26,20 +26,6 @@
         };
     };
 
-
-    /**
-     * @description
-     * <p>Call a method with an array of arguments.</p>
-     *
-     * @param {params[]} params The arguments that you want to supply to the
-     *                          function.
-     */
-    Function.prototype.callWithParams = function(params) {
-        params.unshift(null);
-        this.apply(this, Array.prototype.slice.call(params, 1));
-    };
-
-
     /**
      * @description
      * This function strips everything from a string that is not a number,

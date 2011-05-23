@@ -25,7 +25,7 @@ target_dir = 'target'
 
 
 # relative to main_src_dir
-modules = ['intro', 'util.js', 'core.js', 'graph.js', 'outro']
+modules = ['intro', 'core.js', 'util.js', 'observable.js', 'graph.js', 'outro']
 
 
 # relative to target_dir
