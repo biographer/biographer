@@ -7,23 +7,24 @@
      * @param {HTMLElement} container where the graph should go
      */
     bui.Graph = function(container, width, height) {
+        bui.Observable.call(this);
+        this.addType(bui.Graph.ListenerType);
+        
         this._container = container;
-
         var paper = Raphael(container, width, height);
     };
 
-    bui.Graph.prototype = {
-        _container : null,
-        _offset : null,
-        _scale : 1,
-        _idCounter : 0,
+    bui.Graph.prototype = Object.create(bui.Observable.prototype, {
+        _container : bui.createPrototypeValue(null),
+        _scale : bui.createPrototypeValue(1),
+        _idCounter : bui.createPrototypeValue(0),
 
         /**
          * @return {HTMLElement} The container of this graph
          */
-        container : function() {
+        container : bui.createPrototypeValue(function() {
             return this._container;
-        },
+        }),
 
         /**
          * @description
@@ -38,12 +39,12 @@
          * @return {bui.Graph|Number} Fluent interface if you pass a parameter,
          *   otherwise the current scale is returned
          */
-        scale : function(scale) {
-        },
+        scale : bui.createPrototypeValue(function(scale) {
+        }),
 
-        add : function(drawable, params) {
-        }
-    };
+        add : bui.createPrototypeValue(function(drawable, params) {
+        })
+    });
 
     bui.Graph.ListenerType = {
         'add' : 'Graph.add',

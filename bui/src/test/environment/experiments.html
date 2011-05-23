@@ -13,6 +13,9 @@
         bui.ready(function() {
             var graph = new bui.Graph(document.getElementsByTagName('body')[0],
                     300, 300);
+            for (var i in graph._listener) {
+                console.log(i)
+            }
         });
     </script>
 </head>

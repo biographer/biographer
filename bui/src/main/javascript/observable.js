@@ -18,11 +18,22 @@
          * type allows to register listeners and fire events specific to
          * this type.
          *
-         * @param {String} type The new type - a string which describes it.
+         * @param {String|Object} type The new type - a string which describes
+         *   it or an object (map) for which all values
+         *   (please note - not keys) are used and added as types.
          * @return {bui.Observable} Fluent interface
          */
         addType : function(type) {
-            this._listener[type] = {};
+            if (typeof(type) === 'string') {
+                this._listener[type] = {};
+            } else {
+                for (var i in type) {
+                    if (type.hasOwnProperty(i)) {
+                        this._listener[type[i]] = {};
+                    }
+                }
+            }
+
             return this;
         },
 

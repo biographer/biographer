@@ -1,5 +1,14 @@
 (function(bui) {
 
+    bui.createPrototypeValue = function(value) {
+        return {
+            value : value,
+            enumerable : true,
+            configurable : true,
+            writable : true
+        };
+    };
+
     /**
      * @description
      * <p>We extend the prototype of all functions with the function
@@ -7,7 +16,7 @@
      * function.</p>
      *
      * <p>This is useful when attaching listeners to jQuery events like click
-     * or mousemove as jQuery normally uses $(this) to reference the source
+     * or mousemove as jQuery normally uses this to reference the source
      * of the event. When using the createDelegate method, this will point to
      * the object that you want to reference with this.</p>
      *
@@ -17,6 +26,7 @@
      * </a></p>
      *
      * @param {Object} scope The scope which you want to apply.
+     * @return {Function} function with maintained scope
      */
     Function.prototype.createDelegate = function(scope) {
         var fn = this;
