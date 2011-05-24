@@ -3,7 +3,7 @@
 #define zero 1e-12
 #define err 1e-5
 
-double Network::get_dij(int i, int j){ //ideal distance between 
+double Network::get_dij(int i, int j){ 
    double x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    double y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
    return (x+y)*4;
