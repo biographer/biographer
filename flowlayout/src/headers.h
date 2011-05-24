@@ -16,6 +16,7 @@
 #define VI vector<int>
 #define VN vector<Node>
 #define VE vector<Edge>
+#define VP vector<Point>
 
 using namespace std;
 
@@ -38,6 +39,10 @@ struct Nodeproperties{
    float x,y;  //coordinates of the node.
    float width, height;  //size of the node.
    float dir; // default direction of node (in particular for reactions) - direction in which substrates should point to
+};
+
+struct Point{
+   double x,y;
 };
 
 #endif
