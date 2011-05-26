@@ -11,6 +11,7 @@
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
             var drawable = graph.add(bui.Drawable, ['foobar']);
+            console.log(new bui.Node(1, "foo"));
         });
     </script>
 </head>
