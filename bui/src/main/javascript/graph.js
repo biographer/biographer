@@ -173,7 +173,18 @@
             return this._scale;
         }),
 
-        // TODO document
+        /**
+         * @description
+         * Add a drawable to this graph by calling this function with the
+         * constructor of a drawable type. The object will be completely
+         * instantiated and associated to the graph, thus ready to be used.
+         *
+         * @param {Function} constructor The constructor function for the
+         *   drawable.
+         * @param {Object} [params] Parameters which should be supplied to the
+         *   constructor.
+         * @return {bui.Drawable} The constructed drawable object.
+         */
         add : bui.util.createPrototypeValue(function(constructor, params) {
             var drawable = null;
             var id = this._idCounter++;
@@ -181,7 +192,7 @@
             if (params === undefined) {
                 drawable = new constructor(id, this);
             } else {
-                params.unshift(this._idCounter++, graph);
+                params.unshift(id, graph);
                 drawable = getGenerator(constructor)(params);
             }
 

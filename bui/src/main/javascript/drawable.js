@@ -37,10 +37,16 @@
             return this._id;
         }),
 
-        // TODO document
+        /**
+         * @description
+         * Remove this drawable from the graph.
+         *
+         * First all remove listeners will be informed about the event and then
+         * all listeners will be unbound.
+         */
         remove : bui.util.createPrototypeValue(function() {
             this.fire(bui.Drawable.ListenerType.remove, [this]);
-            // TODO remove all listener
+            this.unbind();
         }),
 
         /**

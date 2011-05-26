@@ -20,11 +20,29 @@ test('graph.scale', function() {
 test('graph.add', function() {
     var graph = new bui.Graph(document.getElementById('dummy'));
 
-    var drawable = graph.add(bui.Drawable);
+    expect(6);
 
-    console.log(graph._drawables[0]);
+    var drawableThroughListener = null;
+
+    graph.bind(bui.Graph.ListenerType.add, function(newDrawable) {
+        ok(true, 'Add listener called.');
+        drawableThroughListener = newDrawable;
+    });
+
+    var drawable = graph.add(bui.Drawable);
+    drawable.bind(bui.Drawable.ListenerType.remove, function(drawable) {
+        ok(true, 'Remove listener called.');
+        equal(drawable, drawable, 'Correct drawable provided ' +
+                'through listener.')
+        
+    });
+
+    ok(drawable === drawableThroughListener, 'Same drawables.');
+
+    ok(graph._drawables[drawable.id()] === drawable,
+            'There is at least one drawable.');
 
     drawable.remove();
 
-    console.log(graph._drawables[0]);
+    equal(graph._drawables[0], undefined, 'Drawable removed');
 });

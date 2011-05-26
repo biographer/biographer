@@ -62,15 +62,30 @@
 
         /**
          * @description
-         * Unbind a listener from a specific event
+         * Unbind a listener from a specific event.
          *
-         * @param {String} type listener type identification
-         * @param {String} identification identifies the listener which should
-         *   be unbound
+         * To unbind all listener, call this function without any parameter.
+         * To unbind all listener just for a specific type call this method
+         * with the type and omit the identification.
+         *
+         * @param {String} [type] listener type identification
+         * @param {String} [identification] identifies the listener which
+         *   should be unbound
          * @return {bui.Observable} Fluent interface
          */
         unbind : function(type, identification) {
-            delete this._listener[type][identification];
+            if (type === undefined) {
+                for(var registeredType in this._listener) {
+                    if (this._listener.hasOwnProperty(registeredType)) {
+                        this._listener[registeredType] = {};
+                    }
+                }
+            } else if (identification === undefined) {
+                this._listener[type] = {};
+            } else {
+                delete this._listener[type][identification];
+            }
+
             return this;
         },
 
