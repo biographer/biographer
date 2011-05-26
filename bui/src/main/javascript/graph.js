@@ -2,6 +2,38 @@
     // used to identify and compare the graph instances
     var graphCounter = 0;
 
+    // will hold generator function to create drawable objects with a variable
+    // amount of arguments. These arguments can be passed as an array.
+    var drawableGenerator = {};
+
+    /**
+     * @private
+     * Retrieve the generator function for a drawable.
+     *
+     * @param {Function} constructor The constructor of a drawable
+     * @return {Function} A function which can be called to generate the
+     *   object
+     */
+    var getGenerator = function(constructor) {
+        var existingGenerator = drawableGenerator[constructor];
+        if (existingGenerator !== undefined) {
+            return existingGenerator;
+        } else {
+            var F = function(args) {
+                return constructor.apply(this, args);
+            };
+
+            F.prototype = constructor.prototype;
+
+            var generator = function(args) {
+                return new F(args);
+            };
+
+            drawableGenerator[constructor] = generator;
+            return generator;
+        }
+    };
+
     /**
      * @class
      * This class controls the whole graph and is responsible for the
@@ -19,6 +51,7 @@
         this._id = bui.settings.idPrefix.graph + graphCounter++;
         this._container = container;
         this._initialPaint();
+        this._drawables = {};
     };
 
     bui.Graph.prototype = Object.create(bui.Observable.prototype, {
@@ -28,6 +61,7 @@
         _scale : bui.util.createPrototypeValue(1),
         _id : bui.util.createPrototypeValue(null),
         _idCounter : bui.util.createPrototypeValue(0),
+        _drawables : bui.util.createPrototypeValue(null),
 
         /**
          * @private
@@ -53,6 +87,16 @@
             var value = ['scale(', this._scale.toString(), ')'].join('');
 
             this._rootGroup.setAttributeNS(bui.svgns, 'transform', value);
+        }),
+
+        /**
+         * @description
+         * Retrieve the graph's id.
+         *
+         * @return {String} graph id.
+         */
+        id : bui.util.createPrototypeValue(function() {
+            return this._id;
         }),
 
         /**
@@ -120,7 +164,7 @@
 
                     this._setTransformString();
 
-                    this.fire(bui.Graph.ListenerType.scale, [this, this._scale]);
+                    this.fire(bui.Graph.ListenerType.scale, [this, scale]);
                 }
 
                 return this;
@@ -129,7 +173,34 @@
             return this._scale;
         }),
 
-        add : bui.util.createPrototypeValue(function(drawable, params) {
+        // TODO document
+        add : bui.util.createPrototypeValue(function(constructor, params) {
+            var drawable = null;
+            var id = this._idCounter++;
+
+            if (params === undefined) {
+                drawable = new constructor(id, this);
+            } else {
+                params.unshift(this._idCounter++, graph);
+                drawable = getGenerator(constructor)(params);
+            }
+
+            this._drawables[drawable.id()] = drawable;
+
+            drawable.bind(bui.Drawable.ListenerType.remove,
+                    this._removed.createDelegate(this), this._id);
+
+            this.fire(bui.Graph.ListenerType.add, [drawable]);
+
+            return drawable;
+        }),
+
+        /**
+         * @private
+         * Generic drawable remove listener.
+         */
+        _removed : bui.util.createPrototypeValue(function(drawable) {
+            delete this._drawables[drawable.id()];
         })
     });
 
@@ -139,8 +210,8 @@
      */
     bui.Graph.ListenerType = {
         /** @field */
-        add : 'Graph.add',
+        add : 'bui.Graph.add',
         /** @field */
-        scale : 'Graph.scale'
+        scale : 'bui.Graph.scale'
     };
 })(bui);
