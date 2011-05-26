@@ -192,7 +192,7 @@
             if (params === undefined) {
                 drawable = new constructor(id, this);
             } else {
-                params.unshift(id, graph);
+                params.unshift(id, this);
                 drawable = getGenerator(constructor)(params);
             }
 
