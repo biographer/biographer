@@ -1,6 +1,19 @@
 (function(bui) {
 
-    bui.createPrototypeValue = function(value) {
+    /**
+     * @namespace Namespace of utility functionality
+     */
+    bui.util = {};
+
+    /**
+     * @description
+     * Utility function for the usage of Object.create as it requires some
+     * meta data about the properties like configurable or writable.
+     *
+     * @param {Object} value The value to be included in a prototype value.
+     * @return {Object} The property value
+     */
+    bui.util.createPrototypeValue = function(value) {
         return {
             value : value,
             enumerable : true,

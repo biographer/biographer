@@ -2,8 +2,8 @@
     /**
      * @class
      * By inheriting from this class you can allow observers. Please note
-     * that you have to add types using the addType(...) function before
-     * listener can be added.
+     * that you have to add types using the {@link bui.Observable#addType}
+     * function before listener can be added.
      */
     bui.Observable = function() {
         this._listener = {};
@@ -20,7 +20,7 @@
          *
          * @param {String|Object} type The new type - a string which describes
          *   it or an object (map) for which all values
-         *   (please note - not keys) are used and added as types.
+         *   (please note it's values - not keys) are used and added as types.
          * @return {bui.Observable} Fluent interface
          */
         addType : function(type) {

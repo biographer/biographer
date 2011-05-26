@@ -63,5 +63,5 @@ test('observable.addTypeObject', function() {
 });
 
 test('inheritance', function() {
-    testObservable(new bui.Graph())
+    testObservable(new bui.Graph(document.getElementById('dummy')))
 });

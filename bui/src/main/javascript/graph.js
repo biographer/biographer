@@ -1,29 +1,103 @@
 (function(bui) {
+    // used to identify and compare the graph instances
+    var graphCounter = 0;
+
     /**
      * @class
      * This class controls the whole graph and is responsible for the
      * management of nodes and edges, i.e. drawables.
      *
+     * @extends bui.Observable
+     * @constructor
+     *
      * @param {HTMLElement} container where the graph should go
      */
-    bui.Graph = function(container, width, height) {
+    bui.Graph = function(container) {
         bui.Observable.call(this);
+
         this.addType(bui.Graph.ListenerType);
-        
+        this._id = bui.settings.idPrefix.graph + graphCounter++;
         this._container = container;
-        var paper = Raphael(container, width, height);
+        this._initialPaint();
     };
 
     bui.Graph.prototype = Object.create(bui.Observable.prototype, {
-        _container : bui.createPrototypeValue(null),
-        _scale : bui.createPrototypeValue(1),
-        _idCounter : bui.createPrototypeValue(0),
+        _container : bui.util.createPrototypeValue(null),
+        _root : bui.util.createPrototypeValue(null),
+        _rootGroup : bui.util.createPrototypeValue(null),
+        _scale : bui.util.createPrototypeValue(1),
+        _id : bui.util.createPrototypeValue(null),
+        _idCounter : bui.util.createPrototypeValue(0),
 
         /**
+         * @private
+         * Extracted from the constructor to improve readability
+         */
+        _initialPaint : bui.util.createPrototypeValue(function() {
+            this._root = document.createElementNS(bui.svgns, 'svg');
+            this._root.setAttributeNS(bui.svgns, 'id', this._id);
+            this._container.appendChild(this._root);
+
+            this._rootGroup = document.createElementNS(bui.svgns, 'g');
+            this._setTransformString();
+            this._root.appendChild(this._rootGroup);
+        }),
+
+        /**
+         * @private
+         * Used to generate the transform attribute value of the _rootGroup
+         * element. Extracted to a function as this may be required several
+         * times.
+         */
+        _setTransformString : bui.util.createPrototypeValue(function() {
+            var value = ['scale(', this._scale.toString(), ')'].join('');
+
+            this._rootGroup.setAttributeNS(bui.svgns, 'transform', value);
+        }),
+
+        /**
+         * @description
+         * Retrieve the container which was provided to this object during
+         * the creation.
+         * 
          * @return {HTMLElement} The container of this graph
          */
-        container : bui.createPrototypeValue(function() {
+        container : bui.util.createPrototypeValue(function() {
             return this._container;
+        }),
+
+        /**
+         * @description
+         * Use this method to deactivate (suspend) redrawing of the SVG. This
+         * function is most useful when multiple changes are made to the SVG
+         * to improve performance significantly.
+         *
+         * @param {Integer} duration how long you wish to suspend redrawing
+         * @return {Object} A suspend handle which can be passed to
+         *   {@link bui.Graph#unsuspendRedraw} to enable redrawing.
+         */
+        suspendRedraw : bui.util.createPrototypeValue(function(duration) {
+            return this._root.suspendRedraw(duration);
+        }),
+
+        /**
+         * @description
+         * Used to enable redrawing. You can either unsuspend a specific
+         * suspension by passing the suspend handle to this function or
+         * unsuspend all by passing no parameter.
+         *
+         * @param {Object} [handle] the suspend handle. Can be omitted to
+         *   unsuspend all.
+         * @return {bui.Graph} Fluent interface
+         */
+        unsuspendRedraw : bui.util.createPrototypeValue(function(handle) {
+            if (handle !== undefined) {
+                this._root.unsuspendRedraw(handle);
+            } else {
+                this._root.unsuspendRedrawAll();
+            }
+
+            return this;
         }),
 
         /**
@@ -33,21 +107,40 @@
          * size pass two (2).
          *
          * You can also retrieve the current scale by calling this function
-         * without parameter.
+         * without parameters.
          *
          * @param {Number} [scale] The new scale, one (1) means 100%.
          * @return {bui.Graph|Number} Fluent interface if you pass a parameter,
          *   otherwise the current scale is returned
          */
-        scale : bui.createPrototypeValue(function(scale) {
+        scale : bui.util.createPrototypeValue(function(scale) {
+            if (scale !== undefined) {
+                if (scale !== this._scale) {
+                    this._scale = scale;
+
+                    this._setTransformString();
+
+                    this.fire(bui.Graph.ListenerType.scale, [this, this._scale]);
+                }
+
+                return this;
+            }
+
+            return this._scale;
         }),
 
-        add : bui.createPrototypeValue(function(drawable, params) {
+        add : bui.util.createPrototypeValue(function(drawable, params) {
         })
     });
 
+    /**
+     * @namespace
+     * Observable properties of the Graph class
+     */
     bui.Graph.ListenerType = {
-        'add' : 'Graph.add',
-        'scale' : 'Graph.scale'
+        /** @field */
+        add : 'Graph.add',
+        /** @field */
+        scale : 'Graph.scale'
     };
 })(bui);
