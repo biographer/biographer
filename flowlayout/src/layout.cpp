@@ -2,7 +2,7 @@
 #include "functions.h"
 #define inf 1e50
 #define zero 1e-12
-#define err 1e-3
+#define err 1e-4
 
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
@@ -99,8 +99,8 @@ float Network::calc_force_nadj(){
             vec.x/=d;
             vec.y/=d;
          }
-         mov[n1].x+=(vec.x/n/n);mov[n1].y+=(vec.y/n/n);
-         mov[n2].x-=(vec.x/n/n);mov[n2].y-=(vec.y/n/n);
+         mov[n1].x+=(vec.x/n);mov[n1].y+=(vec.y/n);
+         mov[n2].x-=(vec.x/n);mov[n2].y-=(vec.y/n);
       }
       
    return force;
