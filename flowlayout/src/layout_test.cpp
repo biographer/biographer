@@ -25,13 +25,16 @@ int main(){
     }
     scanf("%s\n",s);
     scanf("%d\n",&m);
+
     while(m--){
        scanf("%s %d %d\n",s,&i,&j);
        for(k=0;k<7;k++)
          if(strcmp(edgetypes[k],s)==0)break;
        nw.addEdge(i,j,(Edgetype)k);
     }
+     
     double _force=nw.layout();
+   
     printf("%0.3f\n",_force);
     n=nw.nodes->size();
     Node tem=Node();

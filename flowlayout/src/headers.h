@@ -17,6 +17,7 @@
 #define VN vector<Node>
 #define VE vector<Edge>
 #define VP vector<Point>
+#define VCP vector<Compartment>
 #define PI 3.14159265
 
 using namespace std;
@@ -33,6 +34,9 @@ struct Edgeproperties{
    Edgetype type;
 };
 
+struct Compartment{
+   float xmin, xmax, ymin, ymax;
+};
 
 struct Nodeproperties{ 
    Nodetype type; 
@@ -40,6 +44,7 @@ struct Nodeproperties{
    float x,y;  //coordinates of the node.
    float width, height;  //size of the node.
    float dir; // default direction of node (in particular for reactions) - direction in which substrates should point to
+   int compartment;
 };
 
 struct Point{

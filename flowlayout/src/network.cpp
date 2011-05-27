@@ -3,6 +3,7 @@
 Network::Network(){
    nodes = new VN();
    edges = new VE();
+   compartments = new VC();
 }
 
 Network::~Network(){
@@ -10,6 +11,7 @@ Network::~Network(){
    for(i=0;i<n;i++)(*nodes)[i].neighbors->clear();
    nodes->clear();
    edges->clear();
+   compartments->clear();
    delete nodes;
    delete edges;
 }

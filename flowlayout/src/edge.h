@@ -9,7 +9,7 @@ public:
        to=_to;
        pts.type=_type;
    }       
-
+   
    int from,to;
    Edgeproperties pts;
    

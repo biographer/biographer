@@ -12,6 +12,7 @@ public:
    
    VN * nodes;
    VE * edges;
+   VCP * compartments;
      
    void addEdge(int from, int to, Edgetype type); //add in an edge "from"-->"to" of type "type".
    void addNode(int index, Nodetype type); //add in a Node with specified index and type.   
