@@ -2,7 +2,7 @@
 #include "functions.h"
 #define inf 1e50
 #define zero 1e-12
-#define err 1e-5
+#define err 1e-3
 
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
@@ -50,8 +50,7 @@ float Network::calc_force_adj(){
          mov[n2].x+=(vec.x/d*(i_d-d)/n);
          mov[n2].y+=(vec.y/d*(i_d-d)/n);
       }
-    //  if(n2==2)printf("%7.3f %7.3f\n%7.3f %7.3f\n%7.3f %7.3f\n",d,i_d,pos[n1].x,pos[n1].y,mov[n1].x,mov[n1].y);
-    //  if(n2==2)cout<<endl;
+      
       //angular force;
       alpha=angle(vec);
       if(_type==substrate){
@@ -110,7 +109,7 @@ float Network::calc_force_nadj(){
 void Network::move_nodes(){
    int n=nodes->size();
    for(int i=0;i<n;i++){
-      printf("%7.3f %7.3f     %7.3f %7.3f\n",pos[i].x,pos[i].y,mov[i].x,mov[i].y);
+     // printf("%7.3f %7.3f     %7.3f %7.3f\n",pos[i].x,pos[i].y,mov[i].x,mov[i].y);
       pos[i]=pos[i]+mov[i];
       mov[i].x=mov[i].y=0.0;
    }

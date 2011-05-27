@@ -1,7 +1,7 @@
 #include "network.h"
 
 int main(){
-    freopen("data.txt","r",stdin);
+    freopen("data1.txt","r",stdin);
     freopen("summary.txt","w",stdout);
     char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"};
     char nodetypes[][20]={"None", "Reaction", "Compound","Other"};

@@ -19,6 +19,7 @@ Point to_left(const Point p0, const float beta){
    Point p;
    p.x=d*cos(alpha+beta);
    p.y=d*sin(alpha+beta);
+   return p;
 }
 
 float norm(const Point p){
