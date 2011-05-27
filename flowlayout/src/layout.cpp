@@ -7,13 +7,13 @@
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
-   return (x+y)*2;
+   return (sqrt(x)+sqrt(y))*2;
 }
 
 float Network::get_dij2(int i, int j){ //minimum distance between non-adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
-   return 0.2*(x+y);
+   return 0.2*(sqrt(x)+sqrt(y));
 }
 
 float Network::calc_force_adj(){
@@ -35,10 +35,9 @@ float Network::calc_force_adj(){
       i_d=get_dij1(n1,n2);
       d=dist(pos[n1],pos[n2]);
       force+=((d-i_d)*(d-i_d)); //distantal force;
-   //   printf("%10.3f %10.3f\n",i_d,d);
       
       //distantal movements;
-      if(norm(vec)<zero){
+      if(fabs(d)<zero){
          if(_type==substrate)mov[n2].y+=(i_d/n); //substrates at top;
          else if(_type==product)mov[n2].y-=(i_d/n);  //products at bottom;
          else{
@@ -48,10 +47,11 @@ float Network::calc_force_adj(){
          }
       }
       else{
-         mov[n2].x+=(vec.x*(i_d-d)/n);
-         mov[n2].y+=(vec.y*(i_d-d)/n);
+         mov[n2].x+=(vec.x/d*(i_d-d)/n);
+         mov[n2].y+=(vec.y/d*(i_d-d)/n);
       }
-      
+    //  if(n2==2)printf("%7.3f %7.3f\n%7.3f %7.3f\n%7.3f %7.3f\n",d,i_d,pos[n1].x,pos[n1].y,mov[n1].x,mov[n1].y);
+    //  if(n2==2)cout<<endl;
       //angular force;
       alpha=angle(vec);
       if(_type==substrate){
@@ -92,6 +92,14 @@ float Network::calc_force_nadj(){
          force+=((i_d-d)*(i_d-d)); //distantal force;
          
          vec=pos[n1]-pos[n2];
+         if(fabs(d)<zero){
+            vec.x=1.0;
+            vec.y=0.0;
+         }
+         else{
+            vec.x/=d;
+            vec.y/=d;
+         }
          mov[n1].x+=(vec.x/n/n);mov[n1].y+=(vec.y/n/n);
          mov[n2].x-=(vec.x/n/n);mov[n2].y-=(vec.y/n/n);
       }
@@ -102,6 +110,7 @@ float Network::calc_force_nadj(){
 void Network::move_nodes(){
    int n=nodes->size();
    for(int i=0;i<n;i++){
+      printf("%7.3f %7.3f     %7.3f %7.3f\n",pos[i].x,pos[i].y,mov[i].x,mov[i].y);
       pos[i]=pos[i]+mov[i];
       mov[i].x=mov[i].y=0.0;
    }
@@ -128,11 +137,11 @@ float Network::layout(){
      cur_force+=calc_force_nadj();
      move_nodes();
      printf("%0.3f\n",cur_force);
-     if((pre_force-cur_force)<pre_force*err)break;
+     if(fabs(pre_force-cur_force)<pre_force*err)break;
      pre_force=cur_force;    
    }
    
-   //copying coordinations from a[] to nodes[];
+   //copying coordinations from pos[] to nodes[];
    for(i=0;i<n;i++){
       (*nodes)[i].pts.x=pos[i].x;
       (*nodes)[i].pts.y=pos[i].y;

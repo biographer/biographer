@@ -4,7 +4,7 @@ int main(){
     freopen("data.txt","r",stdin);
     freopen("summary.txt","w",stdout);
     char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"};
-    char nodetypes[][20]={"None", "Compounds", "Products", "Other"};
+    char nodetypes[][20]={"None", "Reaction", "Compound","Other"};
     Network nw=Network();
     int n,m,i,j,k,_index;
     Nodetype _type;
@@ -39,7 +39,7 @@ int main(){
       printf("%d\n",i);
       tem = (*(nw.nodes))[i];
       printf("%s\n",nodetypes[(int)(tem.pts.type)]);
-      cout<<tem.pts.id<<endl;
+      cout<<tem.pts.name<<endl;
       printf("%0.3f %0.3f\n%0.3f %0.3f\n%0.3f\n",tem.pts.x, tem.pts.y, tem.pts.width, tem.pts.height, tem.pts.dir);
     } 
     return 0;
