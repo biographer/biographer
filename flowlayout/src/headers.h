@@ -17,6 +17,7 @@
 #define VN vector<Node>
 #define VE vector<Edge>
 #define VP vector<Point>
+#define PI 3.14159265
 
 using namespace std;
 
@@ -42,7 +43,7 @@ struct Nodeproperties{
 };
 
 struct Point{
-   double x,y;
+   float x,y;
 };
 
 #endif
