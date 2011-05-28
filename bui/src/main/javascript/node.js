@@ -17,7 +17,8 @@
      * @param {Number} [height] Height of the node. Default is 0.
      */
     bui.Node = function(id, graph, x, y, width, height) {
-        bui.Drawable.apply(this, arguments);
+        id = bui.settings.idPrefix.node + id;
+        bui.Drawable.call(this, id, graph);
         this.addType(bui.Node.ListenerType);
 
         this._x = x !== undefined ? x : 0;

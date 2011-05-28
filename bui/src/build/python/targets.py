@@ -99,6 +99,8 @@ def build():
         add_file(module)
 
     write_to_file(settings.combined_file, '\n'.join(combined))
+    write_to_file(settings.css_target_file,
+                  get_file_contents(settings.css_src_file))
 
 @target
 def jsdoc():
@@ -139,6 +141,8 @@ def test():
 
     write_to_file(os.path.join(js_target, 'biographer-tests.js'),
                   '\n'.join(combined))
+    write_to_file(os.path.join('target', 'test', 'common.css'),
+                  get_file_contents(settings.css_src_file))
 
 @target
 def compress():

@@ -10,8 +10,7 @@
     <script type="text/javascript">
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
-            var drawable = graph.add(bui.Drawable, ['foobar']);
-            console.log(new bui.Node(1, "foo"));
+            var drawable = graph.add(bui.UnspecifiedEntity, [30, 40, 300, 300]);
         });
     </script>
 </head>

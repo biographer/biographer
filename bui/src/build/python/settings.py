@@ -20,13 +20,26 @@ __authors__ = [
 import os
 
 # relative to the root directory
-main_src_dir = 'src/main/javascript'
+main_src_dir = os.path.join('src', 'main', 'javascript')
 target_dir = 'target'
+css_src_file = os.path.join('src', 'main', 'css', 'common.css')
+css_target_file = os.path.join(target_dir, 'common.css')
 
 
 # relative to main_src_dir
-modules = ['intro', 'settings.js', 'core.js', 'util.js', 'observable.js',
-           'graph.js', 'drawable.js', 'node.js', 'outro']
+nodes_sub_dir = 'nodes'
+modules = ['intro',
+           'settings.js',
+           'core.js',
+           'util.js',
+           'observable.js',
+           'graph.js',
+           'drawable.js',
+           'node.js',
+           'labelable.js',
+           os.path.join(nodes_sub_dir,'sbgnnode.js'),
+           os.path.join(nodes_sub_dir,'unspecifiedEntity.js'),
+           'outro']
 
 
 # relative to target_dir

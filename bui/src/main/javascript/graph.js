@@ -57,7 +57,10 @@
     bui.Graph.prototype = Object.create(bui.Observable.prototype, {
         _container : bui.util.createPrototypeValue(null),
         _root : bui.util.createPrototypeValue(null),
+        _css : bui.util.createPrototypeValue(null),
         _rootGroup : bui.util.createPrototypeValue(null),
+        _nodeGroup : bui.util.createPrototypeValue(null),
+
         _scale : bui.util.createPrototypeValue(1),
         _id : bui.util.createPrototypeValue(null),
         _idCounter : bui.util.createPrototypeValue(0),
@@ -69,12 +72,21 @@
          */
         _initialPaint : bui.util.createPrototypeValue(function() {
             this._root = document.createElementNS(bui.svgns, 'svg');
-            this._root.setAttributeNS(bui.svgns, 'id', this._id);
+            this._root.setAttributeNS(null, 'id', this._id);
             this._container.appendChild(this._root);
+
+            this._css = document.createElementNS(bui.svgns, 'style');
+            this._css.setAttributeNS(null, 'type', 'text/css');
+            this._css.textContent = '@import url(\'' +
+                    bui.settings.cssUrl + '\');';
+            this._root.appendChild(this._css);
 
             this._rootGroup = document.createElementNS(bui.svgns, 'g');
             this._setTransformString();
             this._root.appendChild(this._rootGroup);
+
+            this._nodeGroup = document.createElementNS(bui.svgns, 'g');
+            this._rootGroup.appendChild(this._nodeGroup);
         }),
 
         /**
@@ -108,6 +120,16 @@
          */
         container : bui.util.createPrototypeValue(function() {
             return this._container;
+        }),
+
+        /**
+         * @description
+         * Retrieve the SVG group element in which all nodes are placed.
+         *
+         * @return {SVGGElement} Node container
+         */
+        nodeGroup : bui.util.createPrototypeValue(function() {
+            return this._nodeGroup;
         }),
 
         /**

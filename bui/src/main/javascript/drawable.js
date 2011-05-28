@@ -39,6 +39,16 @@
 
         /**
          * @description
+         * Retrieve the graph instance to which this drawable belongs.
+         *
+         * @return {bui.Graph} this node's graph
+         */
+        graph : bui.util.createPrototypeValue(function() {
+            return this._graph;
+        }),
+
+        /**
+         * @description
          * Remove this drawable from the graph.
          *
          * First all remove listeners will be informed about the event and then

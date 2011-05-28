@@ -62,6 +62,6 @@ test('observable.addTypeObject', function() {
     ok(observable.fire(type2));
 });
 
-test('inheritance', function() {
+test('inheritance.basic', function() {
     testObservable(new bui.Graph(document.getElementById('dummy')))
 });
