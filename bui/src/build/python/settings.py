@@ -22,9 +22,6 @@ import os
 # relative to the root directory
 main_src_dir = os.path.join('src', 'main', 'javascript')
 target_dir = 'target'
-css_src_file = os.path.join('src', 'main', 'css', 'common.css')
-css_target_file = os.path.join(target_dir, 'common.css')
-
 
 # relative to main_src_dir
 nodes_sub_dir = 'nodes'

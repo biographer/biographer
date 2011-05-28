@@ -50,16 +50,19 @@
         this.addType(bui.Graph.ListenerType);
         this._id = bui.settings.idPrefix.graph + graphCounter++;
         this._container = container;
-        this._initialPaint();
+        this._initialPaintGraph();
         this._drawables = {};
     };
 
     bui.Graph.prototype = Object.create(bui.Observable.prototype, {
         _container : bui.util.createPrototypeValue(null),
         _root : bui.util.createPrototypeValue(null),
+        _rootOffset : bui.util.createPrototypeValue(null),
+        _rootDimensions : bui.util.createPrototypeValue(null),
         _css : bui.util.createPrototypeValue(null),
         _rootGroup : bui.util.createPrototypeValue(null),
         _nodeGroup : bui.util.createPrototypeValue(null),
+        _placeholderContainer : bui.util.createPrototypeValue(null),
 
         _scale : bui.util.createPrototypeValue(1),
         _id : bui.util.createPrototypeValue(null),
@@ -70,10 +73,21 @@
          * @private
          * Extracted from the constructor to improve readability
          */
-        _initialPaint : bui.util.createPrototypeValue(function() {
+        _initialPaintGraph : bui.util.createPrototypeValue(function() {
             this._root = document.createElementNS(bui.svgns, 'svg');
             this._root.setAttributeNS(null, 'id', this._id);
             this._container.appendChild(this._root);
+
+            var offset = jQuery(this._root).offset();
+            this._rootOffset = {
+                x : offset.left,
+                y : offset.top
+            };
+
+            this._rootDimensions = {
+                width : jQuery(this._root).width(),
+                height : jQuery(this._root).height()
+            };
 
             this._css = document.createElementNS(bui.svgns, 'style');
             this._css.setAttributeNS(null, 'type', 'text/css');
@@ -87,6 +101,10 @@
 
             this._nodeGroup = document.createElementNS(bui.svgns, 'g');
             this._rootGroup.appendChild(this._nodeGroup);
+
+            this._placeholderContainer = document.createElement('div');
+            document.getElementsByTagName('body')[0]
+                    .appendChild(this._placeholderContainer);
         }),
 
         /**
@@ -112,6 +130,15 @@
         }),
 
         /**
+         * Retrieve the SVG element's offset relative to the document
+         *
+         * @return {Object} an object with x and y properties
+         */
+        rootOffset : bui.util.createPrototypeValue(function() {
+            return this._rootOffset;
+        }),
+
+        /**
          * @description
          * Retrieve the container which was provided to this object during
          * the creation.
@@ -120,6 +147,17 @@
          */
         container : bui.util.createPrototypeValue(function() {
             return this._container;
+        }),
+
+        /**
+         * @description
+         * Retrieve the container for placeholder elements. Placeholder
+         * elements are used while dragging or resizing to improve performance.
+         *
+         * @return {HTMLDIVElement} The container for placeholder elements
+         */
+        placeholderContainer : bui.util.createPrototypeValue(function() {
+            return this._placeholderContainer;
         }),
 
         /**
@@ -221,7 +259,18 @@
             this._drawables[drawable.id()] = drawable;
 
             drawable.bind(bui.Drawable.ListenerType.remove,
-                    this._removed.createDelegate(this), this._id);
+                    this._removed.createDelegate(this), this);
+
+            // every node type has a bottomRight property. We use this to
+            // identify them.
+            if (drawable.bottomRight !== undefined) {
+                drawable.bind(bui.Node.ListenerType.position,
+                        this._assertCanvasSize.createDelegate(this),
+                        'assertCanvasSize');
+                drawable.bind(bui.Node.ListenerType.size,
+                        this._assertCanvasSize.createDelegate(this),
+                        'assertCanvasSize');
+            }
 
             this.fire(bui.Graph.ListenerType.add, [drawable]);
 
@@ -234,6 +283,54 @@
          */
         _removed : bui.util.createPrototypeValue(function(drawable) {
             delete this._drawables[drawable.id()];
+        }),
+
+        /**
+         * @private
+         * This function makes sure that each nodes fits onto the SVG canvas.
+         * In order to do so it's a observer of the nodes' position and size
+         * events.
+         */
+        _assertCanvasSize : bui.util.createPrototypeValue(function(node) {
+            var bottomRight = node.bottomRight();
+
+            if (bottomRight.x > this._rootDimensions.width) {
+                this._rootDimensions.width = bottomRight.x;
+                this._root.setAttribute('width', bottomRight.x);
+            }
+
+             if (bottomRight.y > this._rootDimensions.height) {
+                this._rootDimensions.height = bottomRight.y;
+                this._root.setAttribute('height', bottomRight.y);
+            }
+        }),
+
+        /**
+         * Reduce the Canvas size to the minimum requirement
+         *
+         * @return {bui.Graph} Fluent interface
+         */
+        reduceCanvasSize : bui.util.createPrototypeValue(function() {
+            var x = Integer.MIN_VALUE, y = Integer.MIN_VALUE;
+
+            for(var i in this._drawables) {
+                if (this._drawables.hasOwnProperty(i)) {
+                    var drawable = this._drawables[i];
+
+                    if (drawable.bottomRight !== undefined) {
+                        var bottomRight = drawable.bottomRight();
+
+                        x = Math.max(x, bottomRight.x);
+                        y = Math.max(y, bottomRight.y);
+                    }
+                }
+            }
+
+            this._rootDimensions.width = x;
+            this._root.setAttribute('width', x);
+
+            this._rootDimensions.height = y;
+            this._root.setAttribute('height', y);
         })
     });
 

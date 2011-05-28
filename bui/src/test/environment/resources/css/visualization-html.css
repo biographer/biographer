@@ -1,0 +1,10 @@
+.placeholder {
+    position: absolute;
+    background: #eee;
+    border: 2px dashed #ff8c00;
+    opacity: 0.5;
+}
+
+.invisible {
+    display: none;
+}

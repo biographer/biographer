@@ -1,5 +1,15 @@
 (function(bui) {
 
+    var placeholderClass = function(visible) {
+        var klass = bui.settings.css.classes.placeholder;
+
+        if (visible === false) {
+            klass += ' ' + bui.settings.css.classes.invisible;
+        }
+
+        return klass;
+    };
+
     /**
      * @class
      * Base class for every drawable node. Please note that nodes shouldn't be
@@ -25,6 +35,8 @@
         this._y = y !== undefined ? y : 0;
         this._width = width !== undefined ? width : 0;
         this._height = height !== undefined ? height : 0;
+
+        this._initialPaintNode();
     };
 
     bui.Node.prototype = Object.create(bui.Drawable.prototype, {
@@ -32,6 +44,78 @@
         _y : bui.util.createPrototypeValue(null),
         _width : bui.util.createPrototypeValue(null),
         _height : bui.util.createPrototypeValue(null),
+        _placeholder : bui.util.createPrototypeValue(null),
+
+        /**
+         * @private
+         * Initial paint of the placeholder node
+         */
+        _initialPaintNode : bui.util.createPrototypeValue(function() {
+            var placeholderContainer = this.graph().placeholderContainer();
+
+            this._placeholder = document.createElement('div');
+            this._placeholder.setAttribute('class', placeholderClass(false));
+            placeholderContainer.appendChild(this._placeholder);
+            this._nodeSizeChanged();
+            this._nodePositionChanged();
+
+            this.bind(bui.Node.ListenerType.position,
+                    this._nodePositionChanged.createDelegate(this),
+                    'placeholder');
+            this.bind(bui.Node.ListenerType.size,
+                    this._nodeSizeChanged.createDelegate(this),
+                    'placeholder');
+
+            jQuery(this._placeholder).draggable({
+                stop : this._placeholderDragStop.createDelegate(this)
+            });
+
+            jQuery(this._placeholder).resizable({
+                stop : this._placeholderResizeStop.createDelegate(this)
+            });
+        }),
+
+        /**
+         * @private size change listener
+         */
+        _nodeSizeChanged : bui.util.createPrototypeValue(function() {
+            var rootOffset = this.graph().rootOffset();
+            this._placeholder.style.width = (this._width +
+                    rootOffset.x) +'px';
+            this._placeholder.style.height = (this._height +
+                    rootOffset.y) + 'px';
+        }),
+
+        /**
+         * @private position change listener
+         */
+        _nodePositionChanged : bui.util.createPrototypeValue(function() {
+            this._placeholder.style.left = this._x + 'px';
+            this._placeholder.style.top = this._y + 'px';
+        }),
+
+        /**
+         * @private placeholder drag stop listener
+         */
+        _placeholderDragStop : bui.util.createPrototypeValue(function() {
+            var placeholderOffset = jQuery(this._placeholder).offset();
+            var rootOffset = this.graph().rootOffset();
+
+            var x = Math.max(placeholderOffset.left - rootOffset.x, 0);
+            var y = Math.max(placeholderOffset.top - rootOffset.y, 0);
+
+            this.position(x, y);
+        }),
+
+        /**
+         * @private placeholder resize stop listener
+         */
+        _placeholderResizeStop : bui.util.createPrototypeValue(function() {
+            var width = jQuery(this._placeholder).width();
+            var height = jQuery(this._placeholder).height();
+
+            this.size(width, height);
+        }),
 
         /**
          * @description

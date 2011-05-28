@@ -4,10 +4,10 @@
         this.addType(bui.UnspecifiedEntity.ListenerType);
 
         this.bind(bui.Node.ListenerType.position,
-                this._positionChanged.createDelegate(this),
+                this._positionOrSizeChanged.createDelegate(this),
                 this);
         this.bind(bui.Node.ListenerType.size,
-                this._sizeChanged.createDelegate(this),
+                this._positionOrSizeChanged.createDelegate(this),
                 this);
         this.bind(bui.Drawable.ListenerType.visible,
                 this._visibilityChanged.createDelegate(this),
@@ -25,35 +25,40 @@
                 this._labelChanged.createDelegate(this),
                 this);
 
-        this._initialPaint();
+        this._initialPaintUnspecifiedEntity();
     };
 
     bui.UnspecifiedEntity.prototype = Object.create(bui.SBGNNode.prototype, {
         _ellipse : bui.util.createPrototypeValue(null),
 
-        _initialPaint : bui.util.createPrototypeValue(function() {
+        /**
+         * @private used from the constructor to improve readability
+         */
+        _initialPaintUnspecifiedEntity : bui.util.createPrototypeValue(
+                function() {
             var container = this.graph().nodeGroup();
-
             this._ellipse = document.createElementNS(bui.svgns, 'ellipse');
             this._ellipse.setAttributeNS(null, 'id', this.id());
-            this._positionChanged();
-            this._sizeChanged(this, this.width(), this.height());
+            this._positionOrSizeChanged();
             this._visibilityChanged(this, this.visible());
             container.appendChild(this._ellipse);
         }),
 
-        _positionChanged : bui.util.createPrototypeValue(function(node, x, y) {
+        /**
+         * @private position / size listener
+         */
+        _positionOrSizeChanged : bui.util.createPrototypeValue(function() {
             var center = this.center();
             this._ellipse.setAttributeNS(null, 'cx', center.x);
             this._ellipse.setAttributeNS(null, 'cy', center.y);
+            
+            this._ellipse.setAttributeNS(null, 'rx', this.width() / 2);
+            this._ellipse.setAttributeNS(null, 'ry', this.height() / 2);
         }),
 
-        _sizeChanged : bui.util.createPrototypeValue(function(node, width,
-                                                              height) {
-            this._ellipse.setAttributeNS(null, 'rx', width / 2);
-            this._ellipse.setAttributeNS(null, 'ry', height / 2);
-        }),
-
+        /**
+         * @private visibility listener
+         */
         _visibilityChanged : bui.util.createPrototypeValue(function(node,
                                                             visible) {
             if (visible) {
@@ -63,15 +68,24 @@
             }
         }),
 
+        /**
+         * @private classes listener
+         */
         _classesChanged : bui.util.createPrototypeValue(function(node,
                                                                  classString) {
             this._ellipse.setAttributeNS(null, 'class', classString);
         }),
 
+        /**
+         * @private remove listener
+         */
         _removedListener : bui.util.createPrototypeValue(function() {
             this._ellipse.parentNode.removeChild(this._ellipse);
         }),
 
+        /**
+         * @private select listener
+         */
         _selectedChanged : bui.util.createPrototypeValue(function(node,
                                                                   selected) {
             if (selected) {
@@ -81,6 +95,9 @@
             }
         }),
 
+        /**
+         * @private label listener
+         */
         _labelChanged : bui.util.createPrototypeValue(function(node, label) {
             // TODO implement
         })

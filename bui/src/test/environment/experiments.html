@@ -3,6 +3,9 @@
 <head>
 	<title>Biographer-ui Test Suite</title>
 
+    <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.8.13.css" />
+
 	<script type="text/javascript" src="resources/js/jquery-1.6.min.js"></script>
 	<script type="text/javascript" src="resources/js/jquery-ui-1.8.12.custom.min.js"></script>
     <script type="text/javascript" src="resources/js/biographer-ui.js"></script>
@@ -17,21 +20,21 @@
                 drawable.visible(true)
             }, 2000)
 
-            setTimeout(function() {
-                drawable.select(true)
-            }, 4000)
-
-            setTimeout(function() {
-                var position = drawable.position();
-
-                var move = function(i) {
-                    drawable.position(position.x + i * 2, position.y + i);
-                };
-
-                for(var i = 0; i < 200; i++) {
-                    setTimeout(move, i * 30, i);
-                }
-            }, 5000)
+//            setTimeout(function() {
+//                drawable.select(true)
+//            }, 4000)
+//
+//            setTimeout(function() {
+//                var position = drawable.position();
+//
+//                var move = function(i) {
+//                    drawable.position(position.x + i * 2, position.y + i);
+//                };
+//
+//                for(var i = 0; i < 200; i++) {
+//                    setTimeout(move, i * 50, i);
+//                }
+//            }, 5000)
 
 //            setTimeout(function() {
 //                drawable.remove()

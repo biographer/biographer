@@ -27,10 +27,11 @@ bui.settings = {
      * The url from which the CSS file should be imported
      */
     css : {
-        stylesheetUrl : 'common.css',
+        stylesheetUrl : 'resources/css/visualization-svg.css',
         classes : {
             invisible : 'hidden',
-            selected : 'selected'
+            selected : 'selected',
+            placeholder : 'placeholder'
         }
     }
 };
