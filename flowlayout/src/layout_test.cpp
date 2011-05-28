@@ -35,7 +35,7 @@ int main(){
      
     double _force=nw.layout();
    
-    printf("%0.3f\n",_force);
+    printf("Total force = %0.3f\n",_force);
     n=nw.nodes->size();
     Node tem=Node();
     for(i=0;i<n;i++){

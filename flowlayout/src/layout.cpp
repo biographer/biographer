@@ -24,7 +24,7 @@ float Network::calc_force_adj(){
    Edgetype _type;
    m=edges->size();
    n=nodes->size();
-
+   bool _left=true;
    for(i=0;i<m;i++){
                     
       n1=(*edges)[i].from; //reaction
@@ -42,8 +42,11 @@ float Network::calc_force_adj(){
          else if(_type==product)mov[n2].y-=(i_d/n);  //products at bottom;
          else{
             //other compounds on either side;
-            if(rand()%2)mov[n2].x+=(i_d/n);
-            else mov[n2].x-=(i_d)/n; 
+            //if(rand()%2)mov[n2].x+=(i_d/n);
+            //else mov[n2].x-=(i_d)/n; 
+            if(_left)mov[n2].x-=(i_d/n);
+            else mov[n2].x+=(i_d/n);
+            _left=!_left;
          }
       }
       else{
@@ -130,16 +133,17 @@ float Network::layout(){
    float cur_force,pre_force=inf;  
    int k=0;
    
-   srand(time(0));
+  // srand(time(0));
    while(true){     
+     k++;
      cur_force=calc_force_adj();
      cur_force+=calc_force_nadj();
      move_nodes();
-     printf("%0.3f\n",cur_force);
+     //printf("%0.3f\n",cur_force);
      if(fabs(pre_force-cur_force)<pre_force*err)break;
      pre_force=cur_force;    
    }
-   
+   cout<<"number of iteration: "<<k<<endl;
    //copying coordinations from pos[] to nodes[];
    for(i=0;i<n;i++){
       (*nodes)[i].pts.x=pos[i].x;
