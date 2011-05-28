@@ -11,6 +11,31 @@
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
             var drawable = graph.add(bui.UnspecifiedEntity, [30, 40, 300, 300]);
+            console.log(drawable);
+
+            setTimeout(function() {
+                drawable.visible(true)
+            }, 2000)
+
+            setTimeout(function() {
+                drawable.select(true)
+            }, 4000)
+
+            setTimeout(function() {
+                var position = drawable.position();
+
+                var move = function(i) {
+                    drawable.position(position.x + i * 2, position.y + i);
+                };
+
+                for(var i = 0; i < 200; i++) {
+                    setTimeout(move, i * 30, i);
+                }
+            }, 5000)
+
+//            setTimeout(function() {
+//                drawable.remove()
+//            }, 6000)
         });
     </script>
 </head>

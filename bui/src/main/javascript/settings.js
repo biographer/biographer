@@ -26,5 +26,11 @@ bui.settings = {
      * @field
      * The url from which the CSS file should be imported
      */
-    cssUrl : 'common.css'
+    css : {
+        stylesheetUrl : 'common.css',
+        classes : {
+            invisible : 'hidden',
+            selected : 'selected'
+        }
+    }
 };

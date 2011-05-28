@@ -19,13 +19,15 @@
 
         this._id = id;
         this._graph = graph;
+        this._classes = [];
     };
 
     bui.Drawable.prototype = Object.create(bui.Observable.prototype, {
         _id : bui.util.createPrototypeValue(null),
         _graph : bui.util.createPrototypeValue(null),
         _select : bui.util.createPrototypeValue(false),
-        _visible : bui.util.createPrototypeValue(true),
+        _visible : bui.util.createPrototypeValue(false),
+        _classes : bui.util.createPrototypeValue(null),
 
         /**
          * @description
@@ -128,6 +130,53 @@
          */
         isSameGraph : bui.util.createPrototypeValue(function(drawable) {
             return this._graph.id() == node._graph.id();
+        }),
+
+       /**
+        * @description
+        * Add a class to this drawable
+        *
+        * @param {String} klass the class which you want to add
+        * @return {bui.Drawable} Fluent interface
+        */
+        addClass : bui.util.createPrototypeValue(function(klass) {
+            if (this._classes.indexOf(klass) == -1) {
+                this._classes.push(klass);
+                this.fire(bui.Drawable.ListenerType.classes, [this,
+                    this.classString()]);
+            }
+
+            return this;
+        }),
+
+        /**
+        * @description
+        * Remove a class from this drawable
+        *
+        * @param {String} klass the class which you want to remove
+        * @return {bui.Drawable} Fluent interface
+        */
+        removeClass : bui.util.createPrototypeValue(function(klass) {
+            var index = this._classes.indexOf(klass);
+
+            if (index != -1) {
+                this._classes.splice(index, 1);
+                this.fire(bui.Drawable.ListenerType.classes, [this,
+                    this.classString()]);
+            }
+
+            return this;
+        }),
+
+        /**
+         * @description
+         * Generate a class string, i.e. a string which can be used for the
+         * HTML / SVG class attribute.
+         *
+         * @return {String} the string for the class attribute 
+         */
+        classString : bui.util.createPrototypeValue(function() {
+            return this._classes.join(' ');
         })
     });
 
@@ -136,8 +185,13 @@
      * Observable properties which all drawables share
      */
     bui.Drawable.ListenerType = {
+        /** @field */
         visible : 'bui.Drawable.visible',
+        /** @field */
         remove : 'bui.Drawable.remove',
-        select : 'bui.Drawable.select'
+        /** @field */
+        select : 'bui.Drawable.select',
+        /** @field */
+        classes : 'bui.Drawable.classes'
     };
 })(bui);

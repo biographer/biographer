@@ -78,7 +78,7 @@
             this._css = document.createElementNS(bui.svgns, 'style');
             this._css.setAttributeNS(null, 'type', 'text/css');
             this._css.textContent = '@import url(\'' +
-                    bui.settings.cssUrl + '\');';
+                    bui.settings.css.stylesheetUrl + '\');';
             this._root.appendChild(this._css);
 
             this._rootGroup = document.createElementNS(bui.svgns, 'g');

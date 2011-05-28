@@ -8,16 +8,9 @@
      *
      * @param {String} [label] Text which should be shown.
      */
-    bui.Labelable = function(id, graph, x, y, width, height, label) {
+    bui.Labelable = function() {
         bui.Node.apply(this, arguments);
         this.addType(bui.Labelable.ListenerType);
-        
-        if (label !== undefined) {
-            this._label = label;
-        } else {
-            this._label = '';
-        }
-
     };
 
     bui.Labelable.prototype = Object.create(bui.Node.prototype, {

@@ -1,0 +1,12 @@
+ellipse {
+    fill: none;
+    stroke-width: 1px;
+    stroke: black
+}
+ellipse.selected {
+    fill: #eee;
+}
+
+.hidden {
+    visibility: hidden;
+}
