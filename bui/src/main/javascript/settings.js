@@ -31,7 +31,8 @@ bui.settings = {
         classes : {
             invisible : 'hidden',
             selected : 'selected',
-            placeholder : 'placeholder'
+            placeholder : 'placeholder',
+            textDimensionCalculation : 'textDimensionCalculation'
         }
     }
 };
