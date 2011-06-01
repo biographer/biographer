@@ -72,6 +72,7 @@
             var container = this.graph().nodeGroup();
             this._nodeGroup = document.createElementNS(bui.svgns, 'g');
             this._nodeGroup.setAttributeNS(null, 'id', this.id());
+            this._setTransformString();
             this._nodeVisibilityChanged(this, this.visible());
             container.appendChild(this._nodeGroup);
 
@@ -97,6 +98,19 @@
             jQuery(this._placeholder).resizable({
                 stop : this._placeholderResizeStop.createDelegate(this)
             });
+        }),
+
+        /**
+         * @private
+         * Initial paint of the placeholder node and group node
+         */
+        _setTransformString : bui.util.createPrototypeValue(function() {
+            var attrValue = ['translate(',
+                this._x.toString(),
+                ',',
+                this._y.toString(),
+                ')'].join('');
+            this._nodeGroup.setAttributeNS(null, 'transform', attrValue);
         }),
 
         /**
@@ -136,6 +150,7 @@
         _nodePositionChanged : bui.util.createPrototypeValue(function() {
             this._placeholder.style.left = this._x + 'px';
             this._placeholder.style.top = this._y + 'px';
+            this._setTransformString();
         }),
 
         /**

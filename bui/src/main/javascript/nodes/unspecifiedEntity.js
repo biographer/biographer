@@ -13,11 +13,8 @@
         bui.SBGNNode.apply(this, arguments);
         this.addType(bui.UnspecifiedEntity.ListenerType);
 
-        this.bind(bui.Node.ListenerType.position,
-                this._positionOrSizeChanged.createDelegate(this),
-                listenerIdentifier(this));
         this.bind(bui.Node.ListenerType.size,
-                this._positionOrSizeChanged.createDelegate(this),
+                this._sizeChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.classes,
                 this._classesChanged.createDelegate(this),
@@ -39,21 +36,23 @@
                 function() {
             var container = this.nodeGroup();
             this._ellipse = document.createElementNS(bui.svgns, 'ellipse');
-            this._ellipse.setAttributeNS(null, 'id', this.id());
-            this._positionOrSizeChanged();
+            this._sizeChanged();
             container.appendChild(this._ellipse);
         }),
 
         /**
          * @private position / size listener
          */
-        _positionOrSizeChanged : bui.util.createPrototypeValue(function() {
+        _sizeChanged : bui.util.createPrototypeValue(function() {
             var center = this.center();
-            this._ellipse.setAttributeNS(null, 'cx', center.x);
-            this._ellipse.setAttributeNS(null, 'cy', center.y);
+
+            var x = this.width() / 2, y = this.height() / 2;
             
-            this._ellipse.setAttributeNS(null, 'rx', this.width() / 2);
-            this._ellipse.setAttributeNS(null, 'ry', this.height() / 2);
+            this._ellipse.setAttributeNS(null, 'cx', x);
+            this._ellipse.setAttributeNS(null, 'cy', y);
+            
+            this._ellipse.setAttributeNS(null, 'rx', x);
+            this._ellipse.setAttributeNS(null, 'ry', y);
         }),
 
         /**
