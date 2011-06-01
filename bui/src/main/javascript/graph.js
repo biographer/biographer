@@ -35,6 +35,16 @@
     };
 
     /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.Graph} graph
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(graph) {
+        return 'bui.Graph' + graph.id();
+    };
+
+    /**
      * @class
      * This class controls the whole graph and is responsible for the
      * management of nodes and edges, i.e. drawables.
@@ -259,17 +269,18 @@
             this._drawables[drawable.id()] = drawable;
 
             drawable.bind(bui.Drawable.ListenerType.remove,
-                    this._removed.createDelegate(this), this);
+                    this._removed.createDelegate(this),
+                    listenerIdentifier(this));
 
             // every node type has a bottomRight property. We use this to
             // identify them.
             if (drawable.bottomRight !== undefined) {
                 drawable.bind(bui.Node.ListenerType.position,
                         this._assertCanvasSize.createDelegate(this),
-                        'assertCanvasSize');
+                        listenerIdentifier(this));
                 drawable.bind(bui.Node.ListenerType.size,
                         this._assertCanvasSize.createDelegate(this),
-                        'assertCanvasSize');
+                        listenerIdentifier(this));
             }
 
             this.fire(bui.Graph.ListenerType.add, [drawable]);

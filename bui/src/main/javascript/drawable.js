@@ -1,4 +1,14 @@
 (function(bui){
+     /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.Drawable} drawable
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(drawable) {
+        return 'bui.Drawable' + drawable.id();
+    };
+
     /**
      * @class
      * The base class for every drawable items.

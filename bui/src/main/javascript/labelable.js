@@ -1,5 +1,15 @@
 (function(bui) {
     /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.Labelable} labelable
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(labelable) {
+        return 'bui.Labelable' + labelable.id();
+    };
+
+    /**
      * @class
      * A node which can contain a label.
      *
@@ -15,6 +25,13 @@
 
     bui.Labelable.prototype = Object.create(bui.Node.prototype, {
         _label : bui.util.createPrototypeValue(''),
+
+        /**
+         * @private initial paint method which is called by sub classes
+         */
+        _initialPaintLabel : bui.util.createPrototypeValue(function(parent) {
+
+        }),
 
         /**
          * Set or retrieve the current label

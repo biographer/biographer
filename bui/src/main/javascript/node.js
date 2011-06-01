@@ -11,6 +11,16 @@
     };
 
     /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.Node} node
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(node) {
+        return 'bui.Node' + node.id();
+    };
+
+    /**
      * @class
      * Base class for every drawable node. Please note that nodes shouldn't be
      * instantiated directly.
@@ -37,6 +47,13 @@
         this._height = height !== undefined ? height : 0;
 
         this._initialPaintNode();
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                this._nodeRemoved.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Drawable.ListenerType.visible,
+                this._nodeVisibilityChanged.createDelegate(this),
+                listenerIdentifier(this));
     };
 
     bui.Node.prototype = Object.create(bui.Drawable.prototype, {
@@ -44,13 +61,20 @@
         _y : bui.util.createPrototypeValue(null),
         _width : bui.util.createPrototypeValue(null),
         _height : bui.util.createPrototypeValue(null),
+        _nodeGroup : bui.util.createPrototypeValue(null),
         _placeholder : bui.util.createPrototypeValue(null),
 
         /**
          * @private
-         * Initial paint of the placeholder node
+         * Initial paint of the placeholder node and group node
          */
         _initialPaintNode : bui.util.createPrototypeValue(function() {
+            var container = this.graph().nodeGroup();
+            this._nodeGroup = document.createElementNS(bui.svgns, 'g');
+            this._nodeGroup.setAttributeNS(null, 'id', this.id());
+            this._nodeVisibilityChanged(this, this.visible());
+            container.appendChild(this._nodeGroup);
+
             var placeholderContainer = this.graph().placeholderContainer();
 
             this._placeholder = document.createElement('div');
@@ -61,10 +85,10 @@
 
             this.bind(bui.Node.ListenerType.position,
                     this._nodePositionChanged.createDelegate(this),
-                    'placeholder');
+                    listenerIdentifier(this));
             this.bind(bui.Node.ListenerType.size,
                     this._nodeSizeChanged.createDelegate(this),
-                    'placeholder');
+                    listenerIdentifier(this));
 
             jQuery(this._placeholder).draggable({
                 stop : this._placeholderDragStop.createDelegate(this)
@@ -73,6 +97,26 @@
             jQuery(this._placeholder).resizable({
                 stop : this._placeholderResizeStop.createDelegate(this)
             });
+        }),
+
+        /**
+         * @private remove listener
+         */
+        _nodeRemoved : bui.util.createPrototypeValue(function() {
+            this._nodeGroup.parentNode.removeChild(this._nodeGroup);
+        }),
+
+        /**
+         * @private visibility listener
+         */
+        _nodeVisibilityChanged : bui.util.createPrototypeValue(function(node,
+                                                            visible) {
+            if (visible) {
+                this._nodeGroup.setAttributeNS(null, 'class', '');
+            } else {
+                this._nodeGroup.setAttributeNS(null, 'class',
+                        bui.settings.css.classes.invisible);
+            }
         }),
 
         /**
@@ -115,6 +159,16 @@
             var height = jQuery(this._placeholder).height();
 
             this.size(width, height);
+        }),
+
+        /**
+         * Use this function to retrieve this node's group. This function
+         * is normally only required by sub classes.
+         * 
+         * @return {SVGGElement} node group
+         */
+        nodeGroup : bui.util.createPrototypeValue(function() {
+            return this._nodeGroup;
         }),
 
         /**
