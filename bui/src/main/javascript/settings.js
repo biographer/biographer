@@ -24,7 +24,7 @@ bui.settings = {
     },
     /**
      * @field
-     * The url from which the CSS file should be imported
+     * The url from which the CSS file should be imported and CSS classes
      */
     css : {
         stylesheetUrl : 'resources/css/visualization-svg.css',
@@ -32,11 +32,19 @@ bui.settings = {
             invisible : 'hidden',
             selected : 'selected',
             placeholder : 'placeholder',
+            rectangle : 'rect',
             textDimensionCalculation : {
                 generic : 'textDimensionCalculation',
                 standard : 'defaultText',
                 small : 'smallText'
             }
         }
+    },
+    /**
+     * @field
+     * Various styles that can not be realized using CSS
+     */
+    style : {
+        nodeCornerRadius : 35
     }
 };

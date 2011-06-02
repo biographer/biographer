@@ -281,6 +281,7 @@
                 drawable.bind(bui.Node.ListenerType.size,
                         this._assertCanvasSize.createDelegate(this),
                         listenerIdentifier(this));
+                this._assertCanvasSize(drawable);
             }
 
             this.fire(bui.Graph.ListenerType.add, [drawable]);

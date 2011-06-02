@@ -13,13 +13,18 @@
     <script type="text/javascript" src="resources/js/biographer-ui.js"></script>
 
     <script type="text/javascript">
+
+
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
             drawable = graph.add(bui.UnspecifiedEntity, [30, 40, 300, 300]);
             drawable.visible(true)
             drawable2 = graph.add(bui.SimpleChemical, [500, 40, 300, 300]);
             drawable2.visible(true)
-
+            drawable3 = graph.add(bui.Macromolecule, [51, 500, 300, 150]);
+            drawable3.visible(true)
+            drawable4 = graph.add(bui.NucleicAcidFeature, [600, 500, 300, 150]);
+            drawable4.visible(true)
         });
     </script>
 </head>

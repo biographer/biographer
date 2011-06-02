@@ -37,6 +37,9 @@ modules = ['intro',
            os.path.join(nodes_sub_dir,'sbgnnode.js'),
            os.path.join(nodes_sub_dir,'unspecifiedEntity.js'),
            os.path.join(nodes_sub_dir,'simpleChemical.js'),
+           os.path.join(nodes_sub_dir,'rectangularNode.js'),
+           os.path.join(nodes_sub_dir,'nucleicAcidFeature.js'),
+           os.path.join(nodes_sub_dir,'macromolecule.js'),
            'outro']
 
 
