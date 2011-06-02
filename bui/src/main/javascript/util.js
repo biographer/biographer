@@ -81,7 +81,8 @@
             escape = true;
         }
 
-        classes.push(bui.settings.css.classes.textDimensionCalculation);
+        classes.push(
+                bui.settings.css.classes.textDimensionCalculation.generic);
 
         var div = document.createElement('div');
         div.setAttribute('class', classes.join(' '));

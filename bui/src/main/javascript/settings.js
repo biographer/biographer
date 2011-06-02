@@ -32,7 +32,11 @@ bui.settings = {
             invisible : 'hidden',
             selected : 'selected',
             placeholder : 'placeholder',
-            textDimensionCalculation : 'textDimensionCalculation'
+            textDimensionCalculation : {
+                generic : 'textDimensionCalculation',
+                standard : 'defaultText',
+                small : 'smallText'
+            }
         }
     }
 };

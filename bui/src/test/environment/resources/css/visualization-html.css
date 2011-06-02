@@ -16,3 +16,13 @@
     width: auto;
     white-space: nowrap;
 }
+
+.defaultText {
+    font-family: Verdana;
+    font-size: 16px;
+}
+
+.smallText {
+    font-family: Verdana;
+    font-size: 12px;
+}

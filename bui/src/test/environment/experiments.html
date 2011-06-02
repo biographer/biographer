@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 	<title>Biographer-ui Test Suite</title>
 
     <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
@@ -16,9 +18,9 @@
             drawable = graph.add(bui.UnspecifiedEntity, [30, 40, 300, 300]);
             console.log(drawable);
 
-            setTimeout(function() {
+//            setTimeout(function() {
                 drawable.visible(true)
-            }, 2000)
+//            }, 2000)
 
             console.log(bui.util.calculateWordDimensions('&nbsp;', [], false));
 //            console.log(bui.util.calculateTextDimensions('blu bb'));

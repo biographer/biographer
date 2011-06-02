@@ -1,3 +1,25 @@
+.hidden {
+    visibility: hidden;
+}
+
+/*
+ * Please copy all changes to the .defaultText css class in the
+ * visualization-html.css file.
+ */
+text, tspan {
+    font-family: Verdana;
+    font-size: 16px;
+    fill: black;
+}
+
+/*
+ * Please copy all changes to the .smallText css class in the
+ * visualization-html.css file.
+ */
+text.small, tspan.small {
+    font-size: 12px;
+}
+
 ellipse {
     fill: none;
     stroke-width: 1px;
@@ -7,6 +29,3 @@ ellipse.selected {
     fill: #eee;
 }
 
-.hidden {
-    visibility: hidden;
-}
