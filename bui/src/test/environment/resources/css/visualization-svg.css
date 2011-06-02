@@ -20,12 +20,12 @@ text.small, tspan.small {
     font-size: 12px;
 }
 
-ellipse {
+ellipse, circle {
     fill: none;
     stroke-width: 1px;
     stroke: black
 }
-ellipse.selected {
+ellipse.selected, circle.selected {
     fill: #eee;
 }
 

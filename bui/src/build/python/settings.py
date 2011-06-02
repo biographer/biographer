@@ -36,6 +36,7 @@ modules = ['intro',
            'labelable.js',
            os.path.join(nodes_sub_dir,'sbgnnode.js'),
            os.path.join(nodes_sub_dir,'unspecifiedEntity.js'),
+           os.path.join(nodes_sub_dir,'simpleChemical.js'),
            'outro']
 
 

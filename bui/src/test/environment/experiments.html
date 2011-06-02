@@ -16,34 +16,10 @@
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
             drawable = graph.add(bui.UnspecifiedEntity, [30, 40, 300, 300]);
-            console.log(drawable);
+            drawable.visible(true)
+            drawable2 = graph.add(bui.SimpleChemical, [500, 40, 300, 300]);
+            drawable2.visible(true)
 
-//            setTimeout(function() {
-                drawable.visible(true)
-//            }, 2000)
-
-            console.log(bui.util.calculateWordDimensions('&nbsp;', [], false));
-//            console.log(bui.util.calculateTextDimensions('blu bb'));
-            console.log(bui.util.calculateLabelPositioning(100, 'Hello world foobar'));
-//            setTimeout(function() {
-//                drawable.select(true)
-//            }, 4000)
-//
-//            setTimeout(function() {
-//                var position = drawable.position();
-//
-//                var move = function(i) {
-//                    drawable.position(position.x + i * 2, position.y + i);
-//                };
-//
-//                for(var i = 0; i < 200; i++) {
-//                    setTimeout(move, i * 50, i);
-//                }
-//            }, 5000)
-
-//            setTimeout(function() {
-//                drawable.remove()
-//            }, 6000)
         });
     </script>
 </head>

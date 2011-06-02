@@ -63,6 +63,7 @@
         _height : bui.util.createPrototypeValue(null),
         _nodeGroup : bui.util.createPrototypeValue(null),
         _placeholder : bui.util.createPrototypeValue(null),
+        _preserveAspectRatio : bui.util.createPrototypeValue(false),
 
         /**
          * @private
@@ -96,7 +97,8 @@
             });
 
             jQuery(this._placeholder).resizable({
-                stop : this._placeholderResizeStop.createDelegate(this)
+                stop : this._placeholderResizeStop.createDelegate(this),
+                aspectRatio : this._preserveAspectRatio
             });
         }),
 

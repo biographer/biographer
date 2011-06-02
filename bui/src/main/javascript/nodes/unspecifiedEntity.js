@@ -9,9 +9,15 @@
         return 'bui.UnspecifiedEntity' + UnspecifiedEntity.id();
     };
 
+    /**
+     * @class
+     * A node with the shape of an ellipse and a label inside.
+     *
+     * @extends bui.SBGNNode
+     * @constructor
+     */
     bui.UnspecifiedEntity = function() {
         bui.SBGNNode.apply(this, arguments);
-        this.addType(bui.UnspecifiedEntity.ListenerType);
 
         this.bind(bui.Node.ListenerType.size,
                 this._sizeChanged.createDelegate(this),
@@ -36,17 +42,16 @@
                 function() {
             var container = this.nodeGroup();
             this._ellipse = document.createElementNS(bui.svgns, 'ellipse');
-            this._sizeChanged();
+            this._sizeChanged(this, this.width(), this.height());
             container.appendChild(this._ellipse);
         }),
 
         /**
          * @private position / size listener
          */
-        _sizeChanged : bui.util.createPrototypeValue(function() {
-            var center = this.center();
-
-            var x = this.width() / 2, y = this.height() / 2;
+        _sizeChanged : bui.util.createPrototypeValue(function(node, width,
+                                                              height) {
+            var x = width / 2, y = height / 2;
             
             this._ellipse.setAttributeNS(null, 'cx', x);
             this._ellipse.setAttributeNS(null, 'cy', y);
@@ -75,7 +80,4 @@
             }
         })
     });
-
-    bui.UnspecifiedEntity.ListenerType = {
-    };
 })(bui);
