@@ -4,6 +4,9 @@
 #define zero 1e-12
 #define err 1e-4
 
+VP pos, mov;
+Point baseNode; //for sorting the edges.
+   
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
@@ -14,6 +17,14 @@ float Network::get_dij2(int i, int j){ //minimum distance between non-adjacent n
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
    return 0.2*(sqrt(x)+sqrt(y));
+}
+
+int cmp_angle(const void *x, const void *y){
+   int i=*((int *)x),j=*((int *)y);
+   float w=angle(pos[i]-baseNode)-angle(pos[j]-baseNode);
+   if(w<0)return -1;
+   else if(w==0)return 0;
+   else return 1;
 }
 
 float Network::calc_force_adj(){
@@ -108,6 +119,37 @@ float Network::calc_force_nadj(){
       
    return force;
 }
+
+float Network::calc_force_compartments(){
+   float force=0.0;
+   int i,comp;
+   int n=nodes->size();
+   float w;
+   for(i=0;i<n;i++){
+      comp=(*nodes)[i].pts.compartment;
+      if(pos[i].x<(*compartments)[comp].xmin){
+         w=(*compartments)[comp].xmin-pos[i].x;
+         mov[i].x+=w;
+         force+=(w*w);
+      }
+      if(pos[i].x>(*compartments)[comp].xmax){
+         w=(*compartments)[comp].xmax-pos[i].x;
+         mov[i].x+=w;
+         force+=(w*w);
+      }
+      if(pos[i].y<(*compartments)[comp].ymin){
+         w=(*compartments)[comp].ymin-pos[i].y;
+         mov[i].y+=w;
+         force+=(w*w);
+      }
+      if(pos[i].y>(*compartments)[comp].ymax){
+         w=(*compartments)[comp].ymax-pos[i].y;
+         mov[i].y+=w;
+         force+=(w*w);
+      }
+   }
+   return force;
+}      
          
 void Network::move_nodes(){
    int n=nodes->size();
@@ -117,7 +159,30 @@ void Network::move_nodes(){
       mov[i].x=mov[i].y=0.0;
    }
 }
-
+float Network::firm_distribution(){
+   int i,j,k,m,n=nodes->size();
+   int* neighbors;
+   float average,beta,d,force=0.0;
+   for(k=0;k<n;k++){
+      if((*nodes)[k].pts.type!=compound)continue;
+      neighbors=getNeighbors_arr(k);
+      m=sizeof(neighbors)/sizeof(int);
+      if(m<2)continue;
+      baseNode=pos[k];
+      average=2.0*PI/m;
+      qsort(neighbors,m,sizeof(int),cmp_angle);
+      for(i=0;i<m-1;i++){
+         j=i+1;
+         beta=lim(angle(pos[j]-baseNode)-angle(pos[i]-baseNode)-average);
+         d=dist(pos[j],baseNode);
+         force+=(d*d*sin(beta/10));
+         mov[j]=mov[j]+(to_left(pos[j]-baseNode,beta/10)-pos[j]+baseNode);
+      }
+      free(neighbors);
+   }
+   return force;
+}
+ 
 float Network::layout(){
        
    //copying coordinates from nodes[] to pos[];   
@@ -133,22 +198,42 @@ float Network::layout(){
    float cur_force,pre_force=inf;  
    int k=0;
    
-  // srand(time(0));
+   //phase 1.
    while(true){     
-     k++;
-     cur_force=calc_force_adj();
-     cur_force+=calc_force_nadj();
-     move_nodes();
-     //printf("%0.3f\n",cur_force);
-     if(fabs(pre_force-cur_force)<pre_force*err)break;
-     pre_force=cur_force;    
+      k++;
+      if(50<k && k<=150)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
+      else cur_force=0.0;
+      cur_force+=calc_force_adj();
+      cur_force+=calc_force_nadj();
+      move_nodes();
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      pre_force=cur_force;    
    }
    cout<<"number of iteration: "<<k<<endl;
+   
+   find_compartments();
+   
+   //phase 2: bring in compartments;
+   while(true){
+      k++;
+      cur_force=calc_force_compartments();
+      cur_force+=calc_force_adj();
+      cur_force+=calc_force_nadj();
+      move_nodes();
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      pre_force=cur_force;    
+   }
+   
+   cout<<"number of iteration: "<<k<<endl;     
+   
    //copying coordinations from pos[] to nodes[];
    for(i=0;i<n;i++){
       (*nodes)[i].pts.x=pos[i].x;
       (*nodes)[i].pts.y=pos[i].y;
    }
+   
+   pos.clear();
+   mov.clear();
    
    return cur_force;
 }

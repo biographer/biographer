@@ -3,7 +3,7 @@
 Network::Network(){
    nodes = new VN();
    edges = new VE();
-   compartments = new VC();
+   compartments = new VCP();
 }
 
 Network::~Network(){
@@ -27,7 +27,19 @@ VI * Network::getNeighbors(int nodeIndex, Edgetype type){
 }
 
 VI * Network::getNeighbors(int nodeIndex){
-   VI *arr=new VI( *((*nodes)[nodeIndex].neighbors) );
+   VI *arr=new VI();
+   arr->clear();
+   int i,n=(*nodes)[nodeIndex].neighbors->size();
+   for(i=0;i<n;i++)
+      arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
+   return arr;
+}
+
+int * Network::getNeighbors_arr(int nodeIndex){
+   int i,n=(*nodes)[nodeIndex].neighbors->size();
+   int *arr=(int *)malloc(sizeof(int)*n);
+   for(i=0;i<n;i++)
+      arr[i]=((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
    return arr;
 }
 
