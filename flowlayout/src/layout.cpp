@@ -5,6 +5,8 @@
 #define err 1e-4
 
 VP pos, mov;
+VCP icompart; //initial compartments;
+VI ins_dif,plink,compartlink; // ins_dif: nodes inside a compartment-size of the compartment;
 Point baseNode; //for sorting the edges.
    
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
@@ -182,6 +184,80 @@ float Network::firm_distribution(){
    }
    return force;
 }
+
+void Network::find_compartments(){
+   float minix,maxix,miniy,maxiy,maxh,maxw;
+   int n=nodes->size();
+   int i,j,k,totcompart,nh;
+   float nowx,nowy;
+   
+   //finding maxh, maxw;
+   maxh=maxw=0.0;
+   for(i=0;i<n;i++){
+      if((*nodes)[i].pts.height>maxh)maxh=(*nodes)[i].pts.height;
+      if((*nodes)[i].pts.width>maxw)maxw=(*nodes)[i].pts.width;
+   }
+   maxh*=1.2; maxw*=1.2; //initial sizeof boxes, gap in between is of size (0.5maxh * 0.5maxw);
+   
+   //finding minix, maxix, miniy, maxiy;
+   minix=miniy=1e50; maxix=maxiy=-1e50;
+   for(i=0;i<n;i++){
+      if(pos[i].x<minix)minix=pos[i].x;
+      if(pos[i].y<miniy)miniy=pos[i].y;
+      if(pos[i].x>maxix)maxix=pos[i].x;
+      if(pos[i].y>maxiy)maxiy=pos[i].y;
+   }
+   
+   //the initial compartments;
+   icompart.clear();
+   ins_dif.clear();
+   totcompart=0;
+   nowx=minix; nowy=miniy;
+   while(nowy<=maxiy){
+      nh=0; //nh: number of compartments per row;
+      while(nowx<=maxix){
+         nh++;
+         totcompart++;
+         icompart.push_back(Compartment(nowx,nowx+maxw,nowy,nowy+maxh));
+         ins_dif.push_back(-1);
+         nowx+=(1.5*maxw);
+      }
+      nowy+=(1.5*maxh);
+   }
+   
+   //number of nodes inside each compartments;
+   compartlink.resize(n);
+   for(i=0;i<n;i++){
+      k=(int)(pos[i].x/(1.5*maxh));
+      j=(int)(pos[i].y/(1.5*maxw));
+      k=k*nh+j;
+      ins_dif[k]++;
+   }
+   
+   //extending the compartments with more nodes; some compartments may overlap
+   for(i=0;i<totcompart;i++)
+      if(ins_dif[i]>0){
+         icompart[i].xmin-=(maxw*0.5*ins_dif[i]);
+         icompart[i].xmax+=(maxw*0.5*ins_dif[i]);
+      }
+   
+   //copying the non-empty compartments from "icompart" to "compartments".
+   compartments->clear();
+   plink.resize(totcompart);
+   k=0;
+   for(i=0;i<totcompart;i++)
+      if(ins_dif[i]>=0){
+         plink[i]=k++;
+         compartments->push_back(icompart[i]);
+      }
+   for(i=0;i<n;i++)
+      (*nodes)[i].pts.compartment=plink[compartlink[i]];
+      
+   icompart.clear();
+   compartlink.clear();
+   ins_dif.clear();
+   plink.clear();
+}   
  
 float Network::layout(){
        

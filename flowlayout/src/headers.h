@@ -34,7 +34,14 @@ struct Edgeproperties{
    Edgetype type;
 };
 
-struct Compartment{
+class Compartment{
+public:
+   Compartment(float _xmin, float _xmax, float _ymin, float _ymax){
+      xmin=_xmin;
+      xmax=_xmax;
+      ymin=_ymin;
+      ymax=_ymax;
+   }
    float xmin, xmax, ymin, ymax;
 };
 
