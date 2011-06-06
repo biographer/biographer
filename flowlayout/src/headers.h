@@ -43,6 +43,7 @@ public:
       ymax=_ymax;
    }
    float xmin, xmax, ymin, ymax;
+   string name; //name of the node.
 };
 
 struct Nodeproperties{ 
