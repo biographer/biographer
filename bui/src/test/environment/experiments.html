@@ -25,6 +25,11 @@
             drawable3.visible(true)
             drawable4 = graph.add(bui.NucleicAcidFeature, [600, 500, 300, 150]);
             drawable4.visible(true)
+
+            var lines = bui.util.calculateLabelPositioning(400,
+                 'Hello world',
+                 [bui.settings.css.classes.textDimensionCalculation.standard]);
+            console.log(lines)
         });
     </script>
 </head>

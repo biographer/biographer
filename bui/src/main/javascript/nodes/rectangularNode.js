@@ -3,19 +3,19 @@
     // http://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
     var arcParameter = function(rx, ry, xAxisRotation, largeArcFlag, sweepFlag,
                               x, y) {
-        return [rx.toString(),
+        return [rx,
                 ',',
-                ry.toString(),
+                ry,
                 ' ',
                 xAxisRotation,
                 ' ',
-                largeArcFlag.toString(),
+                largeArcFlag,
                 ',',
-                sweepFlag.toString(),
+                sweepFlag,
                 ' ',
-                x.toString(),
+                x,
                 ',',
-                y.toString()].join('');
+                y].join('');
     };
 
     /*
@@ -25,7 +25,7 @@
      * @param {Number} height Height of the rectangular shape
      * @param {Number} tr Top border radius of the rectangular shape
      * @param {Number} br Bottom border radius of the rectangular shape
-     * @return {String} a path's data attribute
+     * @return {String} a path's data attribute value
      */
     var generatePathData = function(width, height, tr, br) {
         var data = [];

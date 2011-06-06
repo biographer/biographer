@@ -172,8 +172,6 @@
             maxHeight = Math.max(maxHeight, word.height);
         };
 
-
-
         for(var i = 0; i < analyzedWords.length; i++) {
             var word = analyzedWords[i];
 
@@ -196,6 +194,7 @@
             line.availableWidth += spaceWidth;
             line.horizontalIndention = line.availableWidth / 2;
             line.totalWidth = width - line.availableWidth;
+            line.spaceWidth = spaceWidth;
             delete line.availableWidth;
         }
 
