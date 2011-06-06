@@ -21,7 +21,7 @@ text.small, tspan.small {
 }
 
 ellipse, circle, rect, path.rect {
-    fill: none;
+    fill: white;
     stroke-width: 1px;
     stroke: black
 }

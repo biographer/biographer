@@ -1,23 +1,5 @@
 (function(bui) {
 
-    /*
-     * Make sure that the size of the body element is at least the size of the
-     * available viewport. This is mandatory for the lasso as otherwise the
-     * click event on the body won't be recognized.
-     */
-//    $(window).resize(function() {
-//        var documentWidth = $(document).width();
-//        var documentHeight = $(document).height();
-//
-//        var bodyWidth = $("body").width();
-//        var bodyHeight = $("body").height();
-//
-//        $("body").width(Math.max(documentWidth, bodyWidth));
-//        $("body").height(Math.max(documentHeight, bodyHeight));
-//    });
-
-
-    
     var readyFunctions = [];
 
     /**

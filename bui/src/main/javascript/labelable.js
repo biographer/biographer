@@ -74,7 +74,6 @@
             var label = this.label();
             if (this._labelElement !== null &&
                     this._labelElement.parentNode !== null) {
-                console.log(this._labelElement)
                 this._labelElement.parentNode.removeChild(this._labelElement);
             }
 
@@ -94,9 +93,6 @@
                 this._doPaintTextWithoutAdaptToSize(lines);
             }
 
-
-            this._labelElement.setAttributeNS(null, 'y', this.height() / 2);
-
             this.nodeGroup().appendChild(this._labelElement);
         }),
 
@@ -105,10 +101,13 @@
          */
         _doPaintTextWithoutAdaptToSize : bui.util.createPrototypeValue(
                 function(lines) {
-            var previousHight = 0;
+            var previousHeight = 0;
+            var firstHeight = lines[0].maxHeight;
+            var totalHeight = 0;
             for(var i = 0; i < lines.length; i++) {
                 var line = lines[i];
                 var aggregatedText = [];
+                totalHeight += line.maxHeight;
                 for(var j = 0; j < line.words.length; j++) {
                     aggregatedText.push(line.words[j].word);
                 }
@@ -117,11 +116,14 @@
                 tspan.appendChild(document.createTextNode(
                         aggregatedText.join(' ')));
                 tspan.setAttributeNS(null, 'x', line.horizontalIndention);
-                tspan.setAttributeNS(null, 'dy', previousHight);
+                tspan.setAttributeNS(null, 'dy', previousHeight);
                 this._labelElement.appendChild(tspan);
 
-                previousHight = line.maxHeight;
+                previousHeight = line.maxHeight;
             }
+
+            this._labelElement.setAttributeNS(null, 'y',
+                    this.height() / 2 + firstHeight - totalHeight / 2);
         }),
 
         /**
@@ -150,7 +152,13 @@
             this._labelElement.appendChild(document.createTextNode(
                         aggregatedText.join(' ')));
 
-            this.size(totalWidth, maxHeight);
+            var padding = bui.settings.style.adaptToLabelNodePadding;
+            totalWidth += padding.left + padding.right;
+            var nodeHeight = maxHeight + padding.top + padding.bottom;
+            this.size(totalWidth, nodeHeight);
+            this._labelElement.setAttributeNS(null, 'x', padding.left);
+            this._labelElement.setAttributeNS(null, 'y', maxHeight +
+                    maxHeight / 4);
         }),
 
         /**

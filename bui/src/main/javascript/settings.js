@@ -45,6 +45,12 @@ bui.settings = {
      * Various styles that can not be realized using CSS
      */
     style : {
-        nodeCornerRadius : 35
+        nodeCornerRadius : 35,
+        adaptToLabelNodePadding : {
+            top : 10,
+            right : 10,
+            bottom : 10,
+            left : 10
+        }
     }
 };

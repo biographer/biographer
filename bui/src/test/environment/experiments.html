@@ -18,7 +18,8 @@
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
             drawable = graph.add(bui.UnspecifiedEntity, [30, 40, 300, 300]);
-            drawable.visible(true)
+            drawable.visible(true).label(
+                    'A simple unspecified entity with a dummy label')
             drawable2 = graph.add(bui.SimpleChemical, [500, 40, 300, 300]);
             drawable2.visible(true)
             drawable3 = graph.add(bui.Macromolecule, [51, 500, 300, 150]);
@@ -26,10 +27,9 @@
             drawable4 = graph.add(bui.NucleicAcidFeature, [600, 500, 300, 150]);
             drawable4.visible(true)
 
-            var lines = bui.util.calculateLabelPositioning(400,
-                 'Hello world',
-                 [bui.settings.css.classes.textDimensionCalculation.standard]);
-            console.log(lines)
+            state = graph.add(bui.StateVariable, [0,0,0,0,drawable])
+            state.label('FOO@bar')
+            state.visible(true)
         });
     </script>
 </head>

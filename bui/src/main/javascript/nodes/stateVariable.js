@@ -2,60 +2,60 @@
     /**
      * @private
      * Function used for the generation of listener identifiers
-     * @param {bui.UnspecifiedEntity} UnspecifiedEntity
+     * @param {bui.StateVariable} StateVariable
      * @return {String} listener identifier
      */
-    var listenerIdentifier = function(UnspecifiedEntity) {
-        return 'bui.UnspecifiedEntity' + UnspecifiedEntity.id();
+    var listenerIdentifier = function(StateVariable) {
+        return 'bui.StateVariable' + StateVariable.id();
     };
 
     /**
      * @class
-     * A node with the shape of an ellipse and a label inside.
+     * State variable class which can be used in combination with other nodes
      *
-     * @extends bui.SBGNNode
+     * @extends bui.Labelable
      * @constructor
      */
-    bui.UnspecifiedEntity = function() {
-        bui.SBGNNode.apply(this, arguments);
+    bui.StateVariable = function() {
+        bui.Labelable.apply(this, arguments);
 
         this.bind(bui.Node.ListenerType.size,
-                this._unspecifiedEntitySizeChanged.createDelegate(this),
+                this._stateVariableSizeChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.classes,
-                this._unspecifiedEntityClassesChanged.createDelegate(this),
+                this._stateVariableClassesChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.select,
-                this._unspecifiedEntitySelectedChanged.createDelegate(this),
+                this._stateVariableSelectedChanged.createDelegate(this),
                 listenerIdentifier(this));
 
-        this._initialPaintUnspecifiedEntity();
+        this._initialPaintStateVariable();
+
+        this.adaptSizeToLabel(true);
     };
 
-    bui.UnspecifiedEntity.prototype = Object.create(bui.SBGNNode.prototype, {
+    bui.StateVariable.prototype = Object.create(bui.Labelable.prototype, {
         _ellipse : bui.util.createPrototypeValue(null),
 
         /**
          * @private used from the constructor to improve readability
          */
-        _initialPaintUnspecifiedEntity : bui.util.createPrototypeValue(
-                function() {
-            var container = this.nodeGroup();
+        _initialPaintStateVariable : bui.util.createPrototypeValue(function() {
             this._ellipse = document.createElementNS(bui.svgns, 'ellipse');
-            this._unspecifiedEntitySizeChanged(this, this.width(), this.height());
-            container.appendChild(this._ellipse);
+            this._stateVariableSizeChanged(this, this.width(), this.height());
+            this.nodeGroup().appendChild(this._ellipse);
         }),
 
         /**
-         * @private position / size listener
+         * @private size changed listener
          */
-        _unspecifiedEntitySizeChanged : bui.util.createPrototypeValue(function(
-                node, width, height) {
+        _stateVariableSizeChanged : bui.util.createPrototypeValue(
+                function(node, width, height) {
             var x = width / 2, y = height / 2;
-            
+
             this._ellipse.setAttributeNS(null, 'cx', x);
             this._ellipse.setAttributeNS(null, 'cy', y);
-            
+
             this._ellipse.setAttributeNS(null, 'rx', x);
             this._ellipse.setAttributeNS(null, 'ry', y);
         }),
@@ -63,7 +63,7 @@
         /**
          * @private classes listener
          */
-        _unspecifiedEntityClassesChanged : bui.util.createPrototypeValue(
+        _stateVariableClassesChanged : bui.util.createPrototypeValue(
                 function(node, classString) {
             this._ellipse.setAttributeNS(null, 'class', classString);
         }),
@@ -71,7 +71,7 @@
         /**
          * @private select listener
          */
-        _unspecifiedEntitySelectedChanged : bui.util.createPrototypeValue(
+        _stateVariableSelectedChanged : bui.util.createPrototypeValue(
                 function(node, selected) {
             if (selected) {
                 this.addClass(bui.settings.css.classes.selected);

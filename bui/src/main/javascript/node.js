@@ -35,11 +35,16 @@
      * @param {Number} [y] Position on the y-axis. Default is 0.
      * @param {Number} [width] Width of the node. Default is 0.
      * @param {Number} [height] Height of the node. Default is 0.
+     * @param {bui.Node} [container] SVG element which should be used as a
+     *   a container for this node. Defaults to the SVG root element if not
+     *   provided
      */
-    bui.Node = function(id, graph, x, y, width, height) {
+    bui.Node = function(id, graph, x, y, width, height, container) {
         id = bui.settings.idPrefix.node + id;
         bui.Drawable.call(this, id, graph);
         this.addType(bui.Node.ListenerType);
+
+        this._customNodeContainer = container;
 
         this._x = x !== undefined ? x : 0;
         this._y = y !== undefined ? y : 0;
@@ -54,9 +59,16 @@
         this.bind(bui.Drawable.ListenerType.visible,
                 this._nodeVisibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
+
+        if (this._customNodeContainer !== undefined) {
+            this._customNodeContainer.bind(bui.Node.ListenerType.position,
+                this._nodePositionChanged.createDelegate(this),
+                listenerIdentifier(this));
+        }
     };
 
     bui.Node.prototype = Object.create(bui.Drawable.prototype, {
+        _customNodeContainer : bui.util.createPrototypeValue(null),
         _x : bui.util.createPrototypeValue(null),
         _y : bui.util.createPrototypeValue(null),
         _width : bui.util.createPrototypeValue(null),
@@ -70,12 +82,16 @@
          * Initial paint of the placeholder node and group node
          */
         _initialPaintNode : bui.util.createPrototypeValue(function() {
-            var container = this.graph().nodeGroup();
             this._nodeGroup = document.createElementNS(bui.svgns, 'g');
             this._nodeGroup.setAttributeNS(null, 'id', this.id());
             this._setTransformString();
             this._nodeVisibilityChanged(this, this.visible());
-            container.appendChild(this._nodeGroup);
+            if (this._customNodeContainer !== undefined) {
+                this._customNodeContainer.nodeGroup()
+                        .appendChild(this._nodeGroup);
+            } else {
+                this.graph().nodeGroup().appendChild(this._nodeGroup);
+            }
 
             var placeholderContainer = this.graph().placeholderContainer();
 
@@ -140,6 +156,7 @@
          */
         _nodeSizeChanged : bui.util.createPrototypeValue(function() {
             var rootOffset = this.graph().rootOffset();
+
             this._placeholder.style.width = (this._width +
                     rootOffset.x) +'px';
             this._placeholder.style.height = (this._height +
@@ -150,8 +167,17 @@
          * @private position change listener
          */
         _nodePositionChanged : bui.util.createPrototypeValue(function() {
-            this._placeholder.style.left = this._x + 'px';
-            this._placeholder.style.top = this._y + 'px';
+            var x = this._x;
+            var y = this._y;
+
+            if (this._customNodeContainer !== undefined) {
+                var position = this._customNodeContainer.position();
+                x += position.x;
+                y += position.y;
+            }
+
+            this._placeholder.style.left = x + 'px';
+            this._placeholder.style.top = y + 'px';
             this._setTransformString();
         }),
 
@@ -164,6 +190,12 @@
 
             var x = Math.max(placeholderOffset.left - rootOffset.x, 0);
             var y = Math.max(placeholderOffset.top - rootOffset.y, 0);
+
+            if (this._customNodeContainer !== undefined) {
+                var position = this._customNodeContainer.position();
+                x -= position.x;
+                y -= position.y;
+            }
 
             this.position(x, y);
         }),

@@ -40,6 +40,7 @@ modules = ['intro',
            os.path.join(nodes_sub_dir,'rectangularNode.js'),
            os.path.join(nodes_sub_dir,'nucleicAcidFeature.js'),
            os.path.join(nodes_sub_dir,'macromolecule.js'),
+           os.path.join(nodes_sub_dir,'stateVariable.js'),
            'outro']
 
 
