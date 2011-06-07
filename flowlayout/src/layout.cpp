@@ -278,11 +278,13 @@ float Network::layout(){
    //phase 1.
    while(true){     
       k++;
-      if(50<k && k<=150)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
-      else cur_force=0.0;
+/*      if(50<k && k<=150)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
+      else cur_force=0.0;*/
+      cur_force=0.0;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
+//      cout<<"force: "<<cur_force<<endl;
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       pre_force=cur_force;    
    }
