@@ -20,13 +20,14 @@ while (scalar(@lines)){
    my $id=shift(@lines);
    print "$id\n";
    my ($x,$y)=split(/\s/,shift(@lines));
+   $x*=72;
+   $y*=72;
    $g->set_attribute($id,"pos","$x,$y!");
-   
    shift(@lines); # w,h
    shift(@lines); # dir;
    shift(@lines) if scalar(@lines); # next index;
 }
 
-open($f,"| tee $fn.lyt.dot | neato -Gpad=0 -Gmargin=0 -Gbgcolor=transparent -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
+open($f,"| tee $fn.lyt.dot | neato -n -Gpad=0 -Gmargin=0 -Gbgcolor=transparent -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
 print $f $g->dot;
 close $f;
