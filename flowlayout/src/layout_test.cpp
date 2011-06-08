@@ -10,9 +10,10 @@ int main(){
     Nodetype _type;
     char s[100],t[100];
     float _x,_y, _width, _height,_dir;
-  /*  scanf("%d",&c); // num compartments
+    scanf("%d",&c); // num compartments
     for(i=0;i<c;i++){
        scanf("%d%s\n",&_index,t);
+       nw.addCompartment(_index,t);
     }
     scanf("%s\n",s); // "///" */
     scanf("%d",&n);
@@ -24,10 +25,10 @@ int main(){
        else if(strcmp(t,"Other")==0)_type=other;
        else _type=none;
        scanf("%s\n",s);
-      // scanf("%d\n",&ci); // compartment index  FIXME: this is not added to the node yet
+       scanf("%d\n",&ci); // compartment index  FIXME: this is not added to the node yet
        scanf("%f%f",& _x,& _y);
        scanf("%f%f%f",& _width,& _height,& _dir);      
-       nw.addNode(_index, _type, s, _width, _height, _x, _y, _dir);            
+       nw.addNode(_index, _type, s, _width, _height, _x, _y, _dir, ci);            
     }
     scanf("%s\n",s); // "///"
     scanf("%d\n",&m);
