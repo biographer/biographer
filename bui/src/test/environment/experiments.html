@@ -51,10 +51,14 @@
 
             graph.add(bui.StateVariable, [13,-14,0,0,macromolecule])
                 .label('P@Y701')
-                .visible(true)
+                .visible(true);
             graph.add(bui.StateVariable, [80,-14,0,0,macromolecule])
                 .label('P@Y727')
-                .visible(true)
+                .visible(true);
+
+            compartment = graph
+                .add(bui.Compartment, [300, 50, 150, 75])
+                .visible(true);
         });
     </script>
 </head>

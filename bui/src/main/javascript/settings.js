@@ -34,6 +34,7 @@ bui.settings = {
             placeholder : 'placeholder',
             rectangle : 'rect',
             complex : 'complex',
+            compartment : 'compartment',
             smallText : 'small',
             textDimensionCalculation : {
                 generic : 'textDimensionCalculation',
@@ -54,6 +55,10 @@ bui.settings = {
             bottom : 5,
             left : 5
         },
-        complexCornerRadius : 25
+        complexCornerRadius : 25,
+        compartmentCornerRadius : {
+            x : 25,
+            y : 15
+        }
     }
 };

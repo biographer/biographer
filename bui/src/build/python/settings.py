@@ -42,6 +42,7 @@ modules = ['intro',
            os.path.join(nodes_sub_dir,'macromolecule.js'),
            os.path.join(nodes_sub_dir,'stateVariable.js'),
            os.path.join(nodes_sub_dir,'complex.js'),
+           os.path.join(nodes_sub_dir,'compartment.js'),
            'outro']
 
 
