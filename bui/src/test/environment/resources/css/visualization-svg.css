@@ -22,7 +22,7 @@ text.small, tspan.small {
 
 ellipse, circle, path.rect, path.complex, rect.compartment {
     fill: white;
-    stroke-width: 1px;
+    stroke-width: 2px;
     stroke: black
 }
 ellipse.selected, circle.selected {

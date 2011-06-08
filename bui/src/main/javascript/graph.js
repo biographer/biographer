@@ -126,7 +126,7 @@
         _setTransformString : bui.util.createPrototypeValue(function() {
             var value = ['scale(', this._scale.toString(), ')'].join('');
 
-            this._rootGroup.setAttributeNS(bui.svgns, 'transform', value);
+            this._rootGroup.setAttributeNS(null, 'transform', value);
         }),
 
         /**

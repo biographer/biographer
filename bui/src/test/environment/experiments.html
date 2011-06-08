@@ -17,20 +17,7 @@
 
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
-//            drawable = graph.add(bui.UnspecifiedEntity, [30, 40, 300, 300]);
-//            drawable.visible(true).label(
-//                    'A simple unspecified entity with a dummy label')
-//            drawable2 = graph.add(bui.SimpleChemical, [500, 40, 300, 300]);
-//            drawable2.visible(true)
-//            drawable3 = graph.add(bui.Macromolecule, [51, 500, 300, 150]);
-//            drawable3.visible(true)
-//            drawable4 = graph.add(bui.NucleicAcidFeature, [600, 500, 300, 150]);
-//            drawable4.visible(true)
-
-//            state = graph.add(bui.StateVariable, [0,0,0,0,drawable])
-//            state.label('FOO@bar')
-//            state.visible(true)
-
+            
             outterComplex = graph
                 .add(bui.Complex, [100, 100, 215, 240])
                 .visible(true);
@@ -38,6 +25,9 @@
             nucleic = graph
                 .add(bui.NucleicAcidFeature,[30, 140, 150, 75,outterComplex])
                 .label('IRF1-GAS')
+                .visible(true);
+            graph.add(bui.UnitOfInformation, [40,-13,0,0,nucleic])
+                .label('ct:grr')
                 .visible(true);
 
             innerComplex = graph
@@ -55,10 +45,14 @@
             graph.add(bui.StateVariable, [80,-14,0,0,macromolecule])
                 .label('P@Y727')
                 .visible(true);
+            graph.add(bui.UnitOfInformation, [50,53,0,0,macromolecule])
+                .label('mt:prot')
+                .visible(true);
 
             compartment = graph
-                .add(bui.Compartment, [300, 50, 150, 75])
-                .visible(true);
+                .add(bui.Compartment, [400, 50, 150, 75])
+                .visible(true)
+                .label('cytosol');
         });
     </script>
 </head>
