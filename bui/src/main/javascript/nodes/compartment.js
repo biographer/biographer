@@ -96,6 +96,17 @@
          */
         label : bui.util.createPrototypeValue(function() {
             return this._label.label.apply(this._label, arguments);
+        }),
+
+        /**
+         * Set or retrieve this node's label position. The function call will
+         * be delegated to {@link bui.Node#position}. Therefore, please refer
+         * to the documentation of this method.
+         *
+         * @see bui.Node#position
+         */
+        labelPosition : bui.util.createPrototypeValue(function() {
+            return this._label.position.apply(this._label, arguments);
         })
     });
 })(bui);

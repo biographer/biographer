@@ -167,17 +167,10 @@
          * @private position change listener
          */
         _nodePositionChanged : bui.util.createPrototypeValue(function() {
-            var x = this._x;
-            var y = this._y;
+            var htmlPosition = this.absoluteHtmlPosition();
 
-            if (this._customNodeContainer !== undefined) {
-                var position = this._customNodeContainer.position();
-                x += position.x;
-                y += position.y;
-            }
-
-            this._placeholder.style.left = x + 'px';
-            this._placeholder.style.top = y + 'px';
+            this._placeholder.style.left = htmlPosition.x + 'px';
+            this._placeholder.style.top = htmlPosition.y + 'px';
             this._setTransformString();
         }),
 
@@ -186,15 +179,18 @@
          */
         _placeholderDragStop : bui.util.createPrototypeValue(function() {
             var placeholderOffset = jQuery(this._placeholder).offset();
-            var rootOffset = this.graph().rootOffset();
-
-            var x = Math.max(placeholderOffset.left - rootOffset.x, 0);
-            var y = Math.max(placeholderOffset.top - rootOffset.y, 0);
+            var x = placeholderOffset.left;
+            var y = placeholderOffset.top;
 
             if (this._customNodeContainer !== undefined) {
-                var position = this._customNodeContainer.position();
+                var position = this._customNodeContainer
+                        .absoluteHtmlPosition();
                 x -= position.x;
                 y -= position.y;
+            } else {
+                var rootOffset = this.graph().rootOffset();
+                x = Math.max(x - rootOffset.x, 0);
+                y = Math.max(y - rootOffset.y, 0);
             }
 
             this.position(x, y);
@@ -291,6 +287,26 @@
             return {
                 x : this._x,
                 y : this._y
+            };
+        }),
+
+        /**
+         * Retrieve the absolute position of this node in the HTML document.
+         *
+         * @return {Object} Object with x and y properties.
+         */
+        absoluteHtmlPosition : bui.util.createPrototypeValue(function() {
+            var offset = null;
+
+            if (this._customNodeContainer !== undefined) {
+                offset = this._customNodeContainer.absoluteHtmlPosition();
+            } else {
+                offset = this.graph().rootOffset();
+            }
+
+            return {
+                x : offset.x + this._x,
+                y : offset.y + this._y
             };
         }),
 
