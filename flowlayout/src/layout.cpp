@@ -5,9 +5,13 @@
 #define err 1e-4
 
 VP pos, mov;
-VCP icompart; //initial compartments;
-VI ins_dif,plink,compartlink; // ins_dif: nodes inside a compartment-size of the compartment;
 Point baseNode; //for sorting the edges.
+struct rect{
+   float xmin, xmax, ymin, ymax;
+};
+vector<rect>bcomp; //compartment boundaries;
+vector< vector<float> > xcomp, ycomp; //for initializing the compartments;
+
    
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
@@ -54,9 +58,6 @@ float Network::calc_force_adj(){
          if(_type==substrate)mov[n2].y+=(i_d/n); //substrates at top;
          else if(_type==product)mov[n2].y-=(i_d/n);  //products at bottom;
          else{
-            //other compounds on either side;
-            //if(rand()%2)mov[n2].x+=(i_d/n);
-            //else mov[n2].x-=(i_d)/n; 
             if(_left)mov[n2].x-=(i_d/n);
             else mov[n2].x+=(i_d/n);
             _left=!_left;
@@ -156,7 +157,6 @@ float Network::calc_force_compartments(){
 void Network::move_nodes(){
    int n=nodes->size();
    for(int i=0;i<n;i++){
-     // printf("%7.3f %7.3f     %7.3f %7.3f\n",pos[i].x,pos[i].y,mov[i].x,mov[i].y);
       pos[i]=pos[i]+mov[i];
       mov[i].x=mov[i].y=0.0;
    }
@@ -185,85 +185,71 @@ float Network::firm_distribution(){
    return force;
 }
 
-void Network::find_compartments(){
-   float minix,maxix,miniy,maxiy,maxh,maxw;
-   int n=nodes->size();
-   int i,j,k,totcompart,nh;
-   float nowx,nowy;
-   
-   //finding maxh, maxw;
-   maxh=maxw=0.0;
+void Network::init_compartments(){
+   int cn=compartments->size(), n=nodes->size();
+   int i,comp,k;
+   float delta;
+   xcomp.resize(cn); ycomp.resize(cn);
+   for(comp=0;comp<cn;comp++){
+      xcomp[comp].clear();
+      ycomp[comp].clear();
+   }
    for(i=0;i<n;i++){
-      if((*nodes)[i].pts.height>maxh)maxh=(*nodes)[i].pts.height;
-      if((*nodes)[i].pts.width>maxw)maxw=(*nodes)[i].pts.width;
+      comp=(*nodes)[i].pts.compartment;
+      if(comp==0)continue;
+      xcomp[comp].push_back(pos[i].x);
+      ycomp[comp].push_back(pos[i].y);
    }
-   maxh*=1.2; maxw*=1.2; //initial sizeof boxes, gap in between is of size (0.5maxh * 0.5maxw);
-   
-   //finding minix, maxix, miniy, maxiy;
-   minix=miniy=1e50; maxix=maxiy=-1e50;
-   for(i=0;i<n;i++){
-      if(pos[i].x<minix)minix=pos[i].x;
-      if(pos[i].y<miniy)miniy=pos[i].y;
-      if(pos[i].x>maxix)maxix=pos[i].x;
-      if(pos[i].y>maxiy)maxiy=pos[i].y;
+   for(comp=1;comp<cn;comp++){
+      k=xcomp[comp].size();
+      sort(xcomp[comp].begin(),xcomp[comp].end());
+      (*compartments)[comp].xmin=xcomp[comp][k/4];
+      (*compartments)[comp].xmax=xcomp[comp][k*3/4];
+      delta=((*compartments)[comp].xmax-(*compartments)[comp].xmin)/4;
+      (*compartments)[comp].xmin-=delta;
+      (*compartments)[comp].xmax+=delta;      
+      k=ycomp[comp].size();
+      sort(ycomp[comp].begin(),ycomp[comp].end());
+      (*compartments)[comp].ymin=ycomp[comp][k/4];
+      (*compartments)[comp].ymax=ycomp[comp][k*3/4];
+      delta=((*compartments)[comp].ymax-(*compartments)[comp].ymin)/4;
+      (*compartments)[comp].ymin-=delta;
+      (*compartments)[comp].ymax+=delta;
+      xcomp[comp].clear();
+      ycomp[comp].clear();
    }
-   
-   //the initial compartments;
-   icompart.clear();
-   ins_dif.clear();
-   totcompart=0;
-   nowy=miniy;
-   while(nowy<=maxiy){
-      nh=0; //nh: number of compartments per row;
-      nowx=minix;
-      while(nowx<=maxix){
-         nh++;
-         totcompart++;
-         icompart.push_back(Compartment(nowx,nowx+maxw,nowy,nowy+maxh));
-         ins_dif.push_back(-1);
-         nowx+=(1.5*maxw);
-      }
-      nowy+=(1.5*maxh);
-   }
-   
-   //number of nodes inside each compartments;
-   compartlink.resize(n);
-   for(i=0;i<n;i++){
-      k=(int)((pos[i].x-minix)/(1.5*maxh));
-      j=(int)((pos[i].y-miniy)/(1.5*maxw));
-      k=k*nh+j;
-      compartlink[i]=k;
-      ins_dif[k]++;
-   }
-   
-   //extending the compartments with more nodes; some compartments may overlap
-   for(i=0;i<totcompart;i++)
-      if(ins_dif[i]>0){
-         icompart[i].xmin-=(maxw*0.5*ins_dif[i]);
-         icompart[i].xmax+=(maxw*0.5*ins_dif[i]);
-      }
-   
-   //copying the non-empty compartments from "icompart" to "compartments".
-   plink.resize(totcompart);
-   k=0;
-   for(i=0;i<totcompart;i++)
-      if(ins_dif[i]>=0){
-         plink[i]=k++;
-         compartments->push_back(icompart[i]);
-      }
-   for(i=0;i<n;i++)
-      (*nodes)[i].pts.compartment=plink[compartlink[i]];
-      
-   icompart.clear();
-   compartlink.clear();
-   ins_dif.clear();
-   plink.clear();
+   xcomp.clear();
+   ycomp.clear();
 }   
- 
+   
+void Network::adjust_compartments(){
+   //adjust the boundaries of compartments, so that it tends the minimum rectangle contains all the nodes belongs to it.
+   int n=nodes->size(),cn=compartments->size();
+   int i,comp;   
+   for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane
+      bcomp[comp].xmin=bcomp[comp].ymin=1e50;
+      bcomp[comp].ymin=bcomp[comp].ymax=-1e50;
+   }
+   for(i=0;i<n;i++){
+      comp=(*nodes)[i].pts.compartment;
+      if(comp==0)continue;
+      if(pos[i].x<bcomp[comp].xmin)bcomp[comp].xmin=pos[i].x;
+      if(pos[i].x>bcomp[comp].xmax)bcomp[comp].xmax=pos[i].x;
+      if(pos[i].y<bcomp[comp].ymin)bcomp[comp].ymin=pos[i].y;
+      if(pos[i].y>bcomp[comp].ymax)bcomp[comp].ymax=pos[i].y;
+   }
+   for(comp=1;comp<cn;comp++){
+      (*compartments)[comp].xmin+=((bcomp[comp].xmin-(*compartments)[comp].xmin)/n);
+      (*compartments)[comp].xmax+=((bcomp[comp].xmax-(*compartments)[comp].xmax)/n);
+      (*compartments)[comp].ymin+=((bcomp[comp].ymin-(*compartments)[comp].ymin)/n);
+      (*compartments)[comp].ymax+=((bcomp[comp].ymax-(*compartments)[comp].ymax)/n);
+   }  
+}
+   
 float Network::layout(){
        
    //copying coordinates from nodes[] to pos[];   
-   int n=nodes->size(),i;   
+   int n=nodes->size(), i;   
    pos.resize(n);
    mov.resize(n);
    for(i=0;i<n;i++){
@@ -271,6 +257,7 @@ float Network::layout(){
       pos[i].y=(*nodes)[i].pts.y;
       mov[i].x=mov[i].y=0.0;
    }   
+   bcomp.resize(compartments->size());
    
    float cur_force,pre_force=inf;  
    int k=0;
@@ -278,24 +265,22 @@ float Network::layout(){
    //phase 1.
    while(true){     
       k++;
-/*      if(50<k && k<=150)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
+      /*if(50<k && k<=150)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
       else cur_force=0.0;*/
-      cur_force=0.0;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
-//      cout<<"force: "<<cur_force<<endl;
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       pre_force=cur_force;    
    }
    cout<<"number of iteration: "<<k<<endl;
-   cout<<cur_force<<endl;
    
-   find_compartments();
+   init_compartments();
    
    //phase 2: bring in compartments;
    while(true){
       k++;
+      adjust_compartments();
       cur_force=calc_force_compartments();
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
@@ -304,8 +289,8 @@ float Network::layout(){
       pre_force=cur_force;    
    }
    
-   cout<<"number of iteration: "<<k<<endl;    
-   cout<<cur_force<<endl;
+   cout<<"number of iteration: "<<k<<endl;     
+   
    //copying coordinations from pos[] to nodes[];
    for(i=0;i<n;i++){
       (*nodes)[i].pts.x=pos[i].x;

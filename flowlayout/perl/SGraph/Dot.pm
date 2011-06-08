@@ -114,7 +114,9 @@ sub SGraph::dot
 sub read_dot{
 	my $g=shift;
 	my $fn=shift;
-	my $dot=`cat $fn`;
+	my $fh;
+	open($fh,"<",$fn);
+	my $dot=join('',<$fh>);
 	$dot=~s/\\\s*\n//gsm; # line continuation "...\"
 	my $gett=sub{ # get token
 		my $q=shift;

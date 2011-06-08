@@ -39,11 +39,15 @@ public:
    Compartment(){
                  
    }
-   Compartment(float _xmin, float _xmax, float _ymin, float _ymax){
+   Compartment(string _name){
+      name=_name;
+   }
+   Compartment(float _xmin, float _xmax, float _ymin, float _ymax, string _name){
       xmin=_xmin;
       xmax=_xmax;
       ymin=_ymin;
       ymax=_ymax;
+      name=_name;
    }
    float xmin, xmax, ymin, ymax;
    string name; //name of the node.

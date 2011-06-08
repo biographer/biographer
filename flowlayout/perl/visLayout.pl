@@ -10,7 +10,9 @@ $g->dot($ARGV[0]);
 my $fn=$ARGV[0];
 $fn=~s/\.[^\.]*$//; # remove extension
 
-my @lines=split(/\n/,`cat $ARGV[1]`);
+my $fh;
+open($fh,"<",$ARGV[1]);
+my @lines=split(/\n/,join('',<$fh>));
 while ($lines[0] ne 'Reaction' && $lines[0] ne 'Compound'){
    shift(@lines);
 }
