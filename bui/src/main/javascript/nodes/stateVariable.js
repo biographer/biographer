@@ -31,6 +31,8 @@
 
         this._initialPaintStateVariable();
 
+        this.labelClass(bui.settings.css.classes.smallText,
+                [bui.settings.css.classes.textDimensionCalculation.small]);
         this.adaptSizeToLabel(true);
     };
 

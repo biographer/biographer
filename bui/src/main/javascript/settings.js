@@ -33,6 +33,8 @@ bui.settings = {
             selected : 'selected',
             placeholder : 'placeholder',
             rectangle : 'rect',
+            complex : 'complex',
+            smallText : 'small',
             textDimensionCalculation : {
                 generic : 'textDimensionCalculation',
                 standard : 'defaultText',
@@ -45,12 +47,13 @@ bui.settings = {
      * Various styles that can not be realized using CSS
      */
     style : {
-        nodeCornerRadius : 35,
+        nodeCornerRadius : 25,
         adaptToLabelNodePadding : {
-            top : 10,
-            right : 10,
-            bottom : 10,
-            left : 10
-        }
+            top : 5,
+            right : 5,
+            bottom : 5,
+            left : 5
+        },
+        complexCornerRadius : 25
     }
 };

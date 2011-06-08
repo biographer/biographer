@@ -17,19 +17,44 @@
 
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
-            drawable = graph.add(bui.UnspecifiedEntity, [30, 40, 300, 300]);
-            drawable.visible(true).label(
-                    'A simple unspecified entity with a dummy label')
-            drawable2 = graph.add(bui.SimpleChemical, [500, 40, 300, 300]);
-            drawable2.visible(true)
-            drawable3 = graph.add(bui.Macromolecule, [51, 500, 300, 150]);
-            drawable3.visible(true)
-            drawable4 = graph.add(bui.NucleicAcidFeature, [600, 500, 300, 150]);
-            drawable4.visible(true)
+//            drawable = graph.add(bui.UnspecifiedEntity, [30, 40, 300, 300]);
+//            drawable.visible(true).label(
+//                    'A simple unspecified entity with a dummy label')
+//            drawable2 = graph.add(bui.SimpleChemical, [500, 40, 300, 300]);
+//            drawable2.visible(true)
+//            drawable3 = graph.add(bui.Macromolecule, [51, 500, 300, 150]);
+//            drawable3.visible(true)
+//            drawable4 = graph.add(bui.NucleicAcidFeature, [600, 500, 300, 150]);
+//            drawable4.visible(true)
 
-            state = graph.add(bui.StateVariable, [0,0,0,0,drawable])
-            state.label('FOO@bar')
-            state.visible(true)
+//            state = graph.add(bui.StateVariable, [0,0,0,0,drawable])
+//            state.label('FOO@bar')
+//            state.visible(true)
+
+            outterComplex = graph
+                .add(bui.Complex, [100, 100, 215, 240])
+                .visible(true);
+
+            nucleic = graph
+                .add(bui.NucleicAcidFeature,[30, 140, 150, 75,outterComplex])
+                .label('IRF1-GAS')
+                .visible(true);
+
+            innerComplex = graph
+                .add(bui.Complex, [10, 10, 195, 110, outterComplex])
+                .visible(true);
+
+            macromolecule = graph
+                .add(bui.Macromolecule, [20, 20, 150, 70, innerComplex])
+                .label('STAT1a')
+                .visible(true);
+
+            graph.add(bui.StateVariable, [13,-14,0,0,macromolecule])
+                .label('P@Y701')
+                .visible(true)
+            graph.add(bui.StateVariable, [80,-14,0,0,macromolecule])
+                .label('P@Y727')
+                .visible(true)
         });
     </script>
 </head>

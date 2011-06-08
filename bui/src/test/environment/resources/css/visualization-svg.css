@@ -17,10 +17,10 @@ text, tspan {
  * visualization-html.css file.
  */
 text.small, tspan.small {
-    font-size: 12px;
+    font-size: 13px;
 }
 
-ellipse, circle, rect, path.rect {
+ellipse, circle, rect, path.rect, path.complex {
     fill: white;
     stroke-width: 1px;
     stroke: black

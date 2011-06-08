@@ -28,16 +28,21 @@
         bui.Node.apply(this, arguments);
         this.addType(bui.Labelable.ListenerType);
 
+        var listener = this._labelableLabelChanged.createDelegate(this);
         this.bind(bui.Labelable.ListenerType.label,
-                this._labelableLabelChanged.createDelegate(this),
+                listener,
                 listenerIdentifier(this));
 
         this.bind(bui.Labelable.ListenerType.adaptSizeToLabel,
-                this._labelableLabelChanged.createDelegate(this),
+                listener,
+                listenerIdentifier(this));
+
+        this.bind(bui.Labelable.ListenerType.labelClass,
+                listener,
                 listenerIdentifier(this));
 
         this.bind(bui.Node.ListenerType.size,
-                this._labelableLabelChanged.createDelegate(this),
+                listener,
                 listenerIdentifier(this));
     };
 
@@ -45,6 +50,9 @@
         _label : bui.util.createPrototypeValue(''),
         _labelElement : bui.util.createPrototypeValue(null),
         _adaptSizeToLabel : bui.util.createPrototypeValue(false),
+        _svgClasses : bui.util.createPrototypeValue(''),
+        _calculationClasses : bui.util.createPrototypeValue(
+                [bui.settings.css.classes.textDimensionCalculation.standard]),
 
         /**
          * Set or retrieve the current label
@@ -84,14 +92,15 @@
             this._labelElement = document.createElementNS(bui.svgns, 'text');
 
             var lines = bui.util.calculateLabelPositioning(this.width(),
-                 label,
-                 [bui.settings.css.classes.textDimensionCalculation.standard]);
+                 label, this._calculationClasses);
 
             if (this._adaptSizeToLabel === true) {
                 this._doPaintTextWithAdaptToSize(lines);
             } else {
                 this._doPaintTextWithoutAdaptToSize(lines);
             }
+
+            this._labelElement.setAttributeNS(null, 'class', this._svgClasses);
 
             this.nodeGroup().appendChild(this._labelElement);
         }),
@@ -157,8 +166,7 @@
             var nodeHeight = maxHeight + padding.top + padding.bottom;
             this.size(totalWidth, nodeHeight);
             this._labelElement.setAttributeNS(null, 'x', padding.left);
-            this._labelElement.setAttributeNS(null, 'y', maxHeight +
-                    maxHeight / 4);
+            this._labelElement.setAttributeNS(null, 'y', maxHeight);
         }),
 
         /**
@@ -182,6 +190,25 @@
             }
 
             return this._adaptSizeToLabel;
+        }),
+
+        /**
+         * Modify the text size etc.
+         *
+         * @param {String} svgClasses classes to be added to the SVG
+         *   text element.
+         * @param {String[]} calcClasses classes used for the calculation of
+         *   the text dimensions.
+         * @return {bui.Labelable} Fluent interface
+         */
+        labelClass : bui.util.createPrototypeValue(function(svgClasses,
+                                                            calcClasses) {
+            this._svgClasses = svgClasses;
+            this._calculationClasses = calcClasses;
+
+            this.fire(bui.Labelable.ListenerType.labelClass, [this]);
+
+            return this;
         })
     });
 
@@ -193,6 +220,8 @@
         /** @field */
         label : 'bui.Labelable.label',
         /** @field */
-        adaptSizeToLabel : 'bui.Labelable.adaptSizeToLabel'
+        adaptSizeToLabel : 'bui.Labelable.adaptSizeToLabel',
+        /** @field */
+        labelClass : 'bui.Labelable.labelClass'
     };
 })(bui);
