@@ -73,6 +73,10 @@ bui.settings = {
         compartmentCornerRadius : {
             x : 25,
             y : 15
+        },
+        processNodeMinSize : {
+            width : 15,
+            height : 15
         }
     }
 };

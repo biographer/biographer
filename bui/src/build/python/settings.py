@@ -45,6 +45,7 @@ modules = ['intro',
            os.path.join(nodes_sub_dir,'compartment.js'),
            os.path.join(nodes_sub_dir,'unitOfInformation.js'),
            os.path.join(nodes_sub_dir,'dragHandle.js'),
+           os.path.join(nodes_sub_dir,'process.js'),
            'outro']
 
 

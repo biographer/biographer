@@ -11,7 +11,7 @@
 
     /**
      * @class
-     * State variable class which can be used in combination with other nodes
+     * Drag handle node type which is useful for manipulation of edge shapes
      *
      * @extends bui.Node
      * @constructor

@@ -48,8 +48,10 @@
 
         this._x = x !== undefined ? x : 0;
         this._y = y !== undefined ? y : 0;
-        this._width = width !== undefined ? width : 0;
-        this._height = height !== undefined ? height : 0;
+        this._width = width !== undefined ? width : this._minWidth;
+        this._height = height !== undefined ? height : this._minHeight;
+        this._width = Math.max(this._minWidth, this._width);
+        this._height= Math.max(this._minHeight, this._height);
 
         this._initialPaintNode();
 
@@ -72,7 +74,9 @@
         _x : bui.util.createPrototypeValue(null),
         _y : bui.util.createPrototypeValue(null),
         _width : bui.util.createPrototypeValue(null),
+        _minWidth : bui.util.createPrototypeValue(0),
         _height : bui.util.createPrototypeValue(null),
+        _minHeight : bui.util.createPrototypeValue(0),
         _nodeGroup : bui.util.createPrototypeValue(null),
         _placeholder : bui.util.createPrototypeValue(null),
         _preserveAspectRatio : bui.util.createPrototypeValue(false),
@@ -338,6 +342,7 @@
          */
         width : bui.util.createPrototypeValue(function(width) {
             if (width !== undefined) {
+                width = Math.max(this._minWidth, width);
                 if (width !== this._width) {
                     this._width = width;
                     this.fire(bui.Node.ListenerType.size,
@@ -358,6 +363,7 @@
          */
         height : bui.util.createPrototypeValue(function(height) {
             if (height !== undefined) {
+                height= Math.max(this._minHeight, height);
                 if (height !== this._height) {
                     this._height = height;
                     this.fire(bui.Node.ListenerType.size,
@@ -385,6 +391,8 @@
          */
         size : bui.util.createPrototypeValue(function(width, height) {
             if (width !== undefined && height !== undefined) {
+                width = Math.max(this._minWidth, width);
+                height= Math.max(this._minHeight, height);
                 var changed = this._width !== width || this._height !== height;
                 this._width = width;
                 this._height = height;

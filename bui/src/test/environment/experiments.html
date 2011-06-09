@@ -17,7 +17,7 @@
 
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
-            
+
             outterComplex = graph
                 .add(bui.Complex, [100, 100, 215, 240])
                 .visible(true);
@@ -57,6 +57,10 @@
             dragHandle = graph
                 .add(bui.DragHandle, [423, 253])
                 .visible(true);
+
+            process = graph
+                    .add(bui.Process, [440, 250])
+                    .visible(true);
         });
     </script>
 </head>
