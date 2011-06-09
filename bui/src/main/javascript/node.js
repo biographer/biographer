@@ -76,6 +76,7 @@
         _nodeGroup : bui.util.createPrototypeValue(null),
         _placeholder : bui.util.createPrototypeValue(null),
         _preserveAspectRatio : bui.util.createPrototypeValue(false),
+        _allowResizing : bui.util.createPrototypeValue(true),
 
         /**
          * @private
@@ -112,10 +113,12 @@
                 stop : this._placeholderDragStop.createDelegate(this)
             });
 
-            jQuery(this._placeholder).resizable({
-                stop : this._placeholderResizeStop.createDelegate(this),
-                aspectRatio : this._preserveAspectRatio
-            });
+            if (this._allowResizing === true) {
+                jQuery(this._placeholder).resizable({
+                    stop : this._placeholderResizeStop.createDelegate(this),
+                    aspectRatio : this._preserveAspectRatio
+                });
+            }
         }),
 
         /**
@@ -157,10 +160,12 @@
         _nodeSizeChanged : bui.util.createPrototypeValue(function() {
             var rootOffset = this.graph().rootOffset();
 
+            var correction = bui.settings.style.placeholderCorrection.size;
+
             this._placeholder.style.width = (this._width +
-                    rootOffset.x) +'px';
+                    rootOffset.x + correction.width) +'px';
             this._placeholder.style.height = (this._height +
-                    rootOffset.y) + 'px';
+                    rootOffset.y + correction.height) + 'px';
         }),
 
         /**
@@ -169,8 +174,12 @@
         _nodePositionChanged : bui.util.createPrototypeValue(function() {
             var htmlPosition = this.absoluteHtmlPosition();
 
-            this._placeholder.style.left = htmlPosition.x + 'px';
-            this._placeholder.style.top = htmlPosition.y + 'px';
+            var correction = bui.settings.style.placeholderCorrection.position;
+
+            this._placeholder.style.left = (htmlPosition.x +
+                    correction.x) + 'px';
+            this._placeholder.style.top = (htmlPosition.y +
+                    correction.y) + 'px';
             this._setTransformString();
         }),
 
@@ -193,6 +202,10 @@
                 y = Math.max(y - rootOffset.y, 0);
             }
 
+            var correction = bui.settings.style.placeholderCorrection.position;
+            x += correction.x * -1;
+            y += correction.y * -1;
+
             this.position(x, y);
         }),
 
@@ -202,6 +215,11 @@
         _placeholderResizeStop : bui.util.createPrototypeValue(function() {
             var width = jQuery(this._placeholder).width();
             var height = jQuery(this._placeholder).height();
+
+            var correction = bui.settings.style.placeholderCorrection.size;
+
+            width += correction.width * -1;
+            height += correction.height * -1;
 
             this.size(width, height);
         }),
