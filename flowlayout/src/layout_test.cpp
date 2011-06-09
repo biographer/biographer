@@ -1,7 +1,9 @@
 #include "network.h"
 
 int main(){
-    freopen("data1.txt","r",stdin);
+    clock_t start_time, end_time;
+    start_time=clock();
+    freopen("data.txt","r",stdin);
     freopen("summary.txt","w",stdout);
     char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"};
     char nodetypes[][20]={"None", "Reaction", "Compound","Other"};
@@ -10,11 +12,11 @@ int main(){
     Nodetype _type;
     char s[100],t[100];
     float _x,_y, _width, _height,_dir;
-    scanf("%d",&c); // num compartments
+    scanf("%d\n",&c); // num compartments
     for(i=0;i<c;i++){
-       scanf("%d%s\n",&_index,t);
+       scanf("%d %s\n",&_index,t);
        nw.addCompartment(_index,t);
-    }
+    }  
     scanf("%s\n",s); // "///" 
     scanf("%d",&n);
     for(i=0;i<n;i++){
@@ -32,17 +34,16 @@ int main(){
     }
     scanf("%s\n",s); // "///"
     scanf("%d\n",&m);
-    
     while(m--){
        scanf("%s %d %d\n",s,&i,&j);
        for(k=0;k<7;k++)
          if(strcmp(edgetypes[k],s)==0)break;
        nw.addEdge(i,j,(Edgetype)k);
     }
-    
     double _force=nw.layout();
-   
-    printf("Total force = %0.3f\n",_force);
+    end_time=clock();
+    double dif=difftime(end_time,start_time);
+    printf("time used: %0.3lf seconds\n\n",dif/1000);
     n=nw.nodes->size();
     Node tem=Node();
     for(i=0;i<n;i++){

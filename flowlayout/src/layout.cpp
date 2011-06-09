@@ -11,6 +11,8 @@ struct rect{
 };
 vector<rect>bcomp; //compartment boundaries;
 vector< vector<float> > xcomp, ycomp; //for initializing the compartments;
+vector<float>dij1; //adjacent nodes;
+vector< vector<float> >dij2; //non-adjacent nodes;
 
    
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
@@ -22,7 +24,7 @@ float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
 float Network::get_dij2(int i, int j){ //minimum distance between non-adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
-   return 0.2*(sqrt(x)+sqrt(y));
+   return 0.8*(sqrt(x)+sqrt(y));
 }
 
 int cmp_angle(const void *x, const void *y){
@@ -49,7 +51,7 @@ float Network::calc_force_adj(){
       _type=(*edges)[i].pts.type;
       
       vec=pos[n2]-pos[n1];
-      i_d=get_dij1(n1,n2);
+      i_d=dij1[i];
       d=dist(pos[n1],pos[n2]);
       force+=((d-i_d)*(d-i_d)); //distantal force;
       
@@ -86,7 +88,7 @@ float Network::calc_force_adj(){
             i_alpha=i_alpha1;
          }
       }
-      force+=(i_d*i_d*sin(beta/2)); //angular force;
+      force+=(i_d*i_d*sin(0.5*beta)*0.1); //angular force;
       mov[n2]=mov[n2]+(to_left(vec,beta/n)-vec); //angular movement; 
    }
    
@@ -99,9 +101,9 @@ float Network::calc_force_nadj(){
    Point vec;
    
    for(n1=0;n1<n;n1++)
-      for(n2=0;n2<n;n2++){
+      for(n2=n1+1;n2<n;n2++){
                           
-         i_d=get_dij2(n1,n2);
+         i_d=dij2[n1][n2];
          d=dist(pos[n1],pos[n2]);
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
          
@@ -245,11 +247,25 @@ void Network::adjust_compartments(){
       (*compartments)[comp].ymax+=((bcomp[comp].ymax-(*compartments)[comp].ymax)/n);
    }  
 }
+void Network::get_ideal_distance(){
+   int n=nodes->size(), m=edges->size(), i,n1,n2;
+   dij1.resize(m);
+   dij2.resize(n);
+   for(i=0;i<m;i++){
+      n1=(*edges)[i].from;
+      n2=(*edges)[i].to;
+      dij1[i]=get_dij1(n1,n2);
+   }
+   for(n1=0;n1<n;n1++){
+      dij2[n1].resize(n);
+      for(n2=n1+1;n2<n;n2++)dij2[n1][n2]=get_dij2(n1,n2);
+   }
+}
    
 float Network::layout(){
        
    //copying coordinates from nodes[] to pos[];   
-   int n=nodes->size(), i;   
+   int n=nodes->size(),i;   
    pos.resize(n);
    mov.resize(n);
    for(i=0;i<n;i++){
@@ -259,21 +275,26 @@ float Network::layout(){
    }   
    bcomp.resize(compartments->size());
    
+   get_ideal_distance();
+   
    float cur_force,pre_force=inf;  
    int k=0;
    
    //phase 1.
    while(true){     
       k++;
-      /*if(50<k && k<=150)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
-      else cur_force=0.0;*/
+      if(30<k && k<=100)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
+      else cur_force=0.0;
+      cur_force=0.0;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
+     // printf("%0.3f\n",cur_force);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
-      pre_force=cur_force;    
+      pre_force=cur_force;
    }
-   cout<<"number of iteration: "<<k<<endl;
+   printf("number of iteration: %d\n",k);    
+   printf("Total force = %0.3f\n",cur_force);
    
    init_compartments();
    
@@ -289,16 +310,19 @@ float Network::layout(){
       pre_force=cur_force;    
    }
    
-   cout<<"number of iteration: "<<k<<endl;     
-   
+   printf("number of iteration: %d\n",k);    
+   printf("Total force = %0.3f\n",cur_force); 
    //copying coordinations from pos[] to nodes[];
    for(i=0;i<n;i++){
       (*nodes)[i].pts.x=pos[i].x;
       (*nodes)[i].pts.y=pos[i].y;
    }
-   
+    
    pos.clear();
    mov.clear();
+   dij1.clear();
+   for(i=0;i<n;i++)dij2[i].clear();
+   dij2.clear();
    
    return cur_force;
 }

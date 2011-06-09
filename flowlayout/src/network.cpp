@@ -3,8 +3,7 @@
 Network::Network(){
    nodes = new VN(); nodes->clear();
    edges = new VE(); edges->clear();
-   compartments = new VCP(); 
-   compartments->clear(); compartments->push_back(Compartment());
+   compartments = new VCP(); compartments->clear();
 }
 
 Network::~Network(){
