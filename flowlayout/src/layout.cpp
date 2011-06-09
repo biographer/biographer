@@ -13,18 +13,18 @@ vector<rect>bcomp; //compartment boundaries;
 vector< vector<float> > xcomp, ycomp; //for initializing the compartments;
 vector<float>dij1; //adjacent nodes;
 vector< vector<float> >dij2; //non-adjacent nodes;
-
+VI cnt;
    
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
-   return (sqrt(x)+sqrt(y))*2;
+   return (sqrt(x)+sqrt(y))*3;
 }
 
 float Network::get_dij2(int i, int j){ //minimum distance between non-adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
-   return 0.8*(sqrt(x)+sqrt(y));
+   return 3*(sqrt(x)+sqrt(y));
 }
 
 int cmp_angle(const void *x, const void *y){
@@ -132,6 +132,7 @@ float Network::calc_force_compartments(){
    float w;
    for(i=0;i<n;i++){
       comp=(*nodes)[i].pts.compartment;
+      if(comp==0)continue;
       if(pos[i].x<(*compartments)[comp].xmin){
          w=(*compartments)[comp].xmin-pos[i].x;
          mov[i].x+=w;
@@ -261,7 +262,42 @@ void Network::get_ideal_distance(){
       for(n2=n1+1;n2<n;n2++)dij2[n1][n2]=get_dij2(n1,n2);
    }
 }
-   
+
+float Network::init_layout(){
+   float force=0.0,d;
+   int n=nodes->size(), m=edges->size();
+   int i, n1, n2;
+   Edgetype _type;   
+   for(i=0;i<n;i++)cnt[i]=0;
+   for(i=0;i<m;i++){
+      _type=(*edges)[i].pts.type;
+      if(_type!=product && _type!=substrate)continue;
+      n1=(*edges)[i].from; //reaction.
+      n2=(*edges)[i].to; //compound.
+      mov[n1].x+=pos[n2].x;
+      mov[n2].x+=pos[n1].x;
+      cnt[n1]++; cnt[n2]++;
+      if(_type==product){
+         mov[n1].y+=(pos[n2].y+dij1[i]);
+         mov[n2].y+=(pos[n1].y-dij1[i]);
+      }
+      else{
+         mov[n1].y+=(pos[n2].y-dij1[i]);
+         mov[n2].y+=(pos[n1].y+dij1[i]);
+      }
+   }
+   for(i=0;i<n;i++){
+      if(cnt[i]==0)continue;
+      mov[i].x/=cnt[i]; mov[i].y/=cnt[i];
+      d=dist(mov[i],pos[i]);
+      force+=(d*d);
+      pos[i].x=mov[i].x;
+      pos[i].y=mov[i].y;
+      mov[i].x=mov[i].y=0.0;
+   }
+   return force;
+}
+      
 float Network::layout(){
        
    //copying coordinates from nodes[] to pos[];   
@@ -278,9 +314,20 @@ float Network::layout(){
    get_ideal_distance();
    
    float cur_force,pre_force=inf;  
-   int k=0;
+   int k=0, inc=0;
    
    //phase 1.
+   cnt.resize(n);
+   while(true){
+      k++;
+      cur_force=init_layout();
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      pre_force=cur_force;
+   }
+   cout<<k<<endl; 
+    
+   //phase 2: adj and nadj.
+   pre_force=inf;
    while(true){     
       k++;
       if(30<k && k<=100)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
@@ -289,8 +336,10 @@ float Network::layout(){
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
-     // printf("%0.3f\n",cur_force);
+      //printf("%0.3f\n",cur_force);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>log(1.0*n))break;
       pre_force=cur_force;
    }
    printf("number of iteration: %d\n",k);    
@@ -298,7 +347,9 @@ float Network::layout(){
    
    init_compartments();
    
-   //phase 2: bring in compartments;
+   //phase 3: bring in compartments;
+   pre_force=inf;
+   inc=0;
    while(true){
       k++;
       adjust_compartments();
@@ -306,7 +357,10 @@ float Network::layout(){
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
+      //printf("%0.3f\n",cur_force);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>log(1.0*n))break;
       pre_force=cur_force;    
    }
    

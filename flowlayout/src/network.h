@@ -33,6 +33,7 @@ protected:
    float get_dij1(int i, int j); //the ideal distance between adjacent nodes;
    float get_dij2(int i, int j); //the minimum distance between non-adjacent nodes;
    void get_ideal_distance();
+   float init_layout();
    float calc_force_adj(); //calculating the force resulted from edges;
    float calc_force_nadj(); //calculating the force resulted from non-adjacent nodes;
    float calc_force_compartments(); //calculating force obeying compartments;
