@@ -68,6 +68,8 @@ float Network::calc_force_adj(){
       else{
          mov[n2].x+=(vec.x/d*(i_d-d)/n);
          mov[n2].y+=(vec.y/d*(i_d-d)/n);
+         mov[n1].x-=(vec.x/d*(i_d-d)/n);
+         mov[n1].y-=(vec.y/d*(i_d-d)/n);
       }
       
       //angular force;
@@ -325,12 +327,13 @@ float Network::layout(){
       pre_force=cur_force;
    }
    cout<<k<<endl; 
-    
+   
+   k=0;
    //phase 2: adj and nadj.
    pre_force=inf;
    while(true){     
       k++;
-      if(30<k && k<=100)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
+      if(50<k && k<=100)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
       else cur_force=0.0;
       cur_force=0.0;
       cur_force+=calc_force_adj();
