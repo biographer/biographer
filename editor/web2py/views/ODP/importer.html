@@ -1,0 +1,17 @@
+{{extend 'layout.html'}}
+
+{{if request.vars.JSON:}}
+<h1>This is your JSON code</h1>
+
+<table border=0 width="100%" style="border:1pt solid #000">
+	<tr>
+		<td>
+		{{=BEAUTIFY(request.vars)}}
+		</td>
+	</tr>
+</table>
+{{else:}}
+<h1>Hey Dude, you were supposed to provide some JSON code!</h1>
+
+<a href="/biographer/upload/input">Try it again</a>
+{{pass}}
