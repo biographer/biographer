@@ -16,11 +16,13 @@ EdgeKeys		= MandatoryEdgeKeys + OptionalEdgeKeys
 DefaultEdge		= { "sbo":10, "source":0, "target":1, "arrow":"target", "type":"straight", "style":"solid", "thickness":1, "label":"Orphan Edge", "label_x":10, "label_y":10, "handles":[] }
 
 class Node:
-	def __init__(self, jason):				# input parameter may be string or dictionary
-		if type(jason) == type(""):
-			jason = json.loads(jason)
-		self.__dict__.update( DefaultNode )
-		self.__dict__.update( jason )			# map all input key/value pairs to the python object
+	def __init__(self, jason=None, initialize_default=False):				# input parameter may be string or dictionary
+		if initialize_default:
+			self.__dict__.update( DefaultNode )
+		if jason is not None:
+			if type(jason) == type(""):
+				jason = json.loads(jason)
+			self.__dict__.update( jason )			# map all input key/value pairs to the python object
 	def JSON(self):
 		return json.dumps( self.__dict__, indent=DefaultIndent )
 	def DICT(self):
@@ -60,11 +62,13 @@ class Node:
 EdgeKeys = ['id', 'sbo', 'source', 'target', 'arrow', 'type', 'style', 'thickness', 'label_x', 'label_y', 'label', 'handles']
 
 class Edge:
-	def __init__(self, jason):				# input parameter may be string or dictionary
-		if type(jason) == type(""):
-			jason = json.loads(jason)
-		self.__dict__.update( DefaultEdge )
-		self.__dict__.update( jason )			# map all input key/value pairs to the python object
+	def __init__(self, jason=None, initialize_default=False):				# input parameter may be string or dictionary
+		if initialize_default:
+			self.__dict__.update( DefaultEdge )
+		if jason is not None:
+			if type(jason) == type(""):
+				jason = json.loads(jason)
+			self.__dict__.update( jason )			# map all input key/value pairs to the python object
 	def JSON(self):
 		return json.dumps( self.__dict__, indent=DefaultIndent )
 	def DICT(self):
@@ -107,8 +111,8 @@ class Graph:
 		except:
 			self.DEBUG += "Error: Could not parse JSON"
 			return
-		self.Nodes = [Node(n) for n in jason["nodes"]]
-		self.Edges = [Edge(e) for e in jason["edges"]]
+		self.Nodes = [Node(jason=n, initialize_default=True) for n in jason["nodes"]]
+		self.Edges = [Edge(jason=e, initialize_default=True) for e in jason["edges"]]
 		self.Indent = DefaultIndent
 		self.selfcheck()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" nodes and "+str(len(self.Edges))+" edges.\n"
@@ -125,6 +129,12 @@ class Graph:
 		return len(self.Nodes)
 	def EdgeCount(self):
 		return len(self.Edges)
+	def splitNode(self, nodeId):
+		"""Splits the network at a certain Node."""
+		raise NotImplementedError
+	def splitNodeOfDegree(self, degree):
+		"""Finds all nodes with a degree higher than degree and splits the network at them."""
+		raise NotImplementedError
 	def selfcheck(self):
 		# perform selfchecks on each subcomponent
 		# check for colliding IDs
