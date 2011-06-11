@@ -18,7 +18,7 @@ VI cnt;
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
-   return (sqrt(x)+sqrt(y))*3;
+   return (sqrt(x)+sqrt(y))*1;
 }
 
 float Network::get_dij2(int i, int j){ //minimum distance between non-adjacent nodes;
@@ -316,9 +316,10 @@ float Network::layout(){
    get_ideal_distance();
    
    float cur_force,pre_force=inf;  
-   int k=0, inc=0;
+   int k, inc;
    
    //phase 1.
+   k=inc=0;
    cnt.resize(n);
    while(true){
       k++;
@@ -328,8 +329,20 @@ float Network::layout(){
    }
    cout<<k<<endl; 
    
-   k=0;
+   k=inc=0;
+   pre_force=inf;
+   while(true){
+     k++;
+     cur_force=calc_force_adj();
+     move_nodes();
+     if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>log(1.0*n))break;
+      pre_force=cur_force;
+   }
+  
    //phase 2: adj and nadj.
+   k=inc=0;
    pre_force=inf;
    while(true){     
       k++;
@@ -352,7 +365,7 @@ float Network::layout(){
    
    //phase 3: bring in compartments;
    pre_force=inf;
-   inc=0;
+   k=inc=0;
    while(true){
       k++;
       adjust_compartments();
