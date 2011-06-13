@@ -75,8 +75,8 @@ bui.settings = {
             y : 15
         },
         processNodeMinSize : {
-            width : 15,
-            height : 15
+            width : 26,
+            height : 26
         }
     }
 };

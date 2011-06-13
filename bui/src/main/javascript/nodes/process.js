@@ -12,7 +12,6 @@
 
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
-        this.adaptSizeToLabel(true);
     };
 
     bui.Process.prototype = Object.create(bui.RectangularNode.prototype, {

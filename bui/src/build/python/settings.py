@@ -25,6 +25,7 @@ target_dir = 'target'
 
 # relative to main_src_dir
 nodes_sub_dir = 'nodes'
+edges_sub_dir = 'edges'
 modules = ['intro',
            'settings.js',
            'core.js',
@@ -46,6 +47,8 @@ modules = ['intro',
            os.path.join(nodes_sub_dir,'unitOfInformation.js'),
            os.path.join(nodes_sub_dir,'dragHandle.js'),
            os.path.join(nodes_sub_dir,'process.js'),
+           os.path.join(edges_sub_dir,'attachedDrawable.js'),
+           os.path.join(edges_sub_dir,'straightLine.js'),
            'outro']
 
 

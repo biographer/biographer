@@ -90,7 +90,6 @@
             }
 
             this._labelElement = document.createElementNS(bui.svgns, 'text');
-
             var lines = bui.util.calculateLabelPositioning(this.width(),
                  label, this._calculationClasses);
 

@@ -60,6 +60,17 @@
     };
 
     /**
+     * Check whether a string has a specific suffix
+     *
+     * @param {String} suffix The suffix for which the string should be tested.
+     * @return {Boolean} True when the string has the provided suffix,
+     *   false otherwise.
+     */
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+
+    /**
      * Calculate word dimensions for given text using HTML elements.
      * Optionally classes can be added to calculate with
      * a specific style / layout.

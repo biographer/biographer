@@ -90,6 +90,22 @@
         },
 
         /**
+         * Unbind all listeners with the provided identification.
+         *
+         * @param {String} identification Listener identification
+         * @return {bui.Observable} Fluent interface
+         */
+        unbindAll : function(identification) {
+            for(var type in this._listener) {
+                if (this._listener.hasOwnProperty(type)) {
+                    delete this._listener[type][identification];
+                }
+            }
+
+            return this;
+        },
+
+        /**
          * @description
          * Fire an event
          *
