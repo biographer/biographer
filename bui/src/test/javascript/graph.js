@@ -1,3 +1,5 @@
+module('Graph');
+
 test('graph.scale', function() {
     var graph = new bui.Graph(document.getElementById('dummy'));
 

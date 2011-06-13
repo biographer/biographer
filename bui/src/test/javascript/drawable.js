@@ -1,3 +1,5 @@
+module('Drawable');
+
 test('drawable.classes', function() {
     expect(12);
     var graph = new bui.Graph(document.getElementById('dummy'));
