@@ -72,6 +72,7 @@
         _css : bui.util.createPrototypeValue(null),
         _rootGroup : bui.util.createPrototypeValue(null),
         _nodeGroup : bui.util.createPrototypeValue(null),
+        _edgeGroup : bui.util.createPrototypeValue(null),
         _placeholderContainer : bui.util.createPrototypeValue(null),
 
         _scale : bui.util.createPrototypeValue(1),
@@ -111,6 +112,9 @@
 
             this._nodeGroup = document.createElementNS(bui.svgns, 'g');
             this._rootGroup.appendChild(this._nodeGroup);
+
+            this._edgeGroup = document.createElementNS(bui.svgns, 'g');
+            this._rootGroup.appendChild(this._edgeGroup);
 
             this._placeholderContainer = document.createElement('div');
             document.getElementsByTagName('body')[0]
@@ -168,6 +172,16 @@
          */
         placeholderContainer : bui.util.createPrototypeValue(function() {
             return this._placeholderContainer;
+        }),
+
+        /**
+         * @description
+         * Retrieve the SVG group element in which all egdes are placed.
+         *
+         * @return {SVGGElement} Edge container
+         */
+        edgeGroup : bui.util.createPrototypeValue(function() {
+            return this._edgeGroup;
         }),
 
         /**

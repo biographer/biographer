@@ -17,7 +17,7 @@
      * @constructor
      */
     bui.AttachedDrawable = function(){
-        bui.Node.apply(this, arguments);
+        bui.Drawable.apply(this, arguments);
         this.addType(bui.AttachedDrawable.ListenerType);
 
         this.bind(bui.AttachedDrawable.ListenerType.source,
