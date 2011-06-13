@@ -100,10 +100,15 @@
          */
         _attachedDrawableSourceBindListener : bui.util.createPrototypeValue(
                 function(attached, newX, oldX) {
-            newX.bind(bui.Drawable.ListenerType.remove,
+            if (newX !== null) {
+                newX.bind(bui.Drawable.ListenerType.remove,
                     this._attachedDrawableSourceRemoveListener.createDelegate(
-                            this), listenerIdentifier(this));
-            oldX.unbindAll(listenerIdentifier(this));
+                    this), listenerIdentifier(this));
+            }
+
+            if (oldX !== null) {
+                oldX.unbindAll(listenerIdentifier(this));
+            }
         }),
 
         /**
@@ -112,10 +117,15 @@
          */
         _attachedDrawableTargetBindListener : bui.util.createPrototypeValue(
                 function(attached, newX, oldX) {
-            newX.bind(bui.Drawable.ListenerType.remove,
+            if (newX !== null) {
+                newX.bind(bui.Drawable.ListenerType.remove,
                     this._attachedDrawableTargetRemoveListener.createDelegate(
-                            this), listenerIdentifier(this));
-            oldX.unbindAll(listenerIdentifier(this));
+                    this), listenerIdentifier(this));
+            }
+
+            if (oldX !== null) {
+                oldX.unbindAll(listenerIdentifier(this));
+            }
         })
     });
 

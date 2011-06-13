@@ -29,3 +29,6 @@ ellipse.selected, circle.selected {
     fill: #eee;
 }
 
+line {
+    stroke: #000;
+}

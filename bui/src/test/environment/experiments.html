@@ -51,8 +51,8 @@
 
             compartment = graph
                 .add(bui.Compartment, [400, 50, 150, 75])
-                .visible(true)
-                .label('cytosol');
+                .visible(true);
+            compartment.label('cytosol');
 
             dragHandle = graph
                 .add(bui.DragHandle, [423, 253])
@@ -61,6 +61,11 @@
             process = graph
                     .add(bui.Process, [440, 250])
                     .visible(true);
+
+            edge = graph
+                    .add(bui.StraightLine)
+                    .source(process)
+                    .target(compartment);
         });
     </script>
 </head>
