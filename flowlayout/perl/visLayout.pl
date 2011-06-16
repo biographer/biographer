@@ -30,7 +30,7 @@ while (scalar(@lines)){
    shift(@lines) if scalar(@lines); # next index;
 }
 
-#open($f,"| tee $fn.lyt.dot | neato -n -Gpad=0 -Gmargin=0 -Gbgcolor=transparent -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
-open($f,"| neato -n -Gpad=0 -Gmargin=0 -Gbgcolor=transparent -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
+#open($f,"| tee $fn.lyt.dot | neato -n -Gpad=0 -Gmargin=0 -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
+open($f,"| neato -n -Gpad=0 -Gmargin=0 -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
 print $f $g->dot;
 close $f;
