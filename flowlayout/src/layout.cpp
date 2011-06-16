@@ -13,6 +13,8 @@ vector<rect>bcomp; //compartment boundaries;
 vector< vector<float> > xcomp, ycomp; //for initializing the compartments;
 vector<float>dij1; //adjacent nodes;
 vector< vector<float> >dij2; //non-adjacent nodes;
+vector<float>pts_dir;
+vector<float>mov_dir;
 VI cnt;
    
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
@@ -75,16 +77,16 @@ float Network::calc_force_adj(){
       //angular force;
       alpha=angle(vec);
       if(_type==substrate){
-         i_alpha=0.5*PI;
+         i_alpha=0.5*PI+pts_dir[n1];
          beta=lim(i_alpha-alpha);
       }         
       else if(_type==product){
-         i_alpha=1.5*PI;
+         i_alpha=1.5*PI+pts_dir[n1];
          beta=lim(i_alpha-alpha);
       }
       else{ //other compounds, rotating to the nearer side.
-         i_alpha=0.0; beta=lim(0.0-alpha);
-         float i_alpha1=PI, beta1=lim(PI-alpha);
+         i_alpha=pts_dir[n1]; beta=lim(i_alpha-alpha);
+         float i_alpha1=PI+pts_dir[n1], beta1=lim(i_alpha-alpha);
          if(fabs(beta)>fabs(beta1)){
             beta=beta1;
             i_alpha=i_alpha1;
@@ -92,6 +94,7 @@ float Network::calc_force_adj(){
       }
       force+=(i_d*i_d*sin(0.5*beta)*0.1); //angular force;
       mov[n2]=mov[n2]+(to_left(vec,beta/n)-vec); //angular movement; 
+      mov_dir[n1]+=beta;
    }
    
    return force;
@@ -164,6 +167,7 @@ void Network::move_nodes(){
    for(int i=0;i<n;i++){
       pos[i]=pos[i]+mov[i];
       mov[i].x=mov[i].y=0.0;
+      pts_dir[i]=lim(pts_dir[i]+mov_dir[i]/n);
    }
 }
 float Network::firm_distribution(){
@@ -306,10 +310,14 @@ float Network::layout(){
    int n=nodes->size(),i;   
    pos.resize(n);
    mov.resize(n);
+   pts_dir.resize(n);
+   mov_dir.resize(n);
    for(i=0;i<n;i++){
       pos[i].x=(*nodes)[i].pts.x;
       pos[i].y=(*nodes)[i].pts.y;
       mov[i].x=mov[i].y=0.0;
+      pts_dir[i]=(*nodes)[i].pts.dir;
+      mov_dir[i]=0.0;
    }   
    bcomp.resize(compartments->size());
    
@@ -327,7 +335,8 @@ float Network::layout(){
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       pre_force=cur_force;
    }
-   cout<<k<<endl; 
+   printf("number of iteration: %d\n",k);    
+   printf("Total force = %0.3f\n",cur_force);
    
    k=inc=0;
    pre_force=inf;
@@ -340,7 +349,9 @@ float Network::layout(){
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
    }
-  
+   printf("number of iteration: %d\n",k);    
+   printf("Total force = %0.3f\n",cur_force);
+   
    //phase 2: adj and nadj.
    k=inc=0;
    pre_force=inf;
