@@ -94,7 +94,7 @@ float Network::calc_force_adj(){
       }
       force+=(i_d*i_d*sin(0.5*beta)*0.1); //angular force;
       mov[n2]=mov[n2]+(to_left(vec,beta/n)-vec); //angular movement; 
-      mov_dir[n1]+=beta;
+      mov_dir[n1]-=beta;
    }
    
    return force;
