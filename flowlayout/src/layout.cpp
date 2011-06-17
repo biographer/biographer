@@ -174,7 +174,7 @@ float Network::firm_distribution(){
          beta=lim(angle(pos[neighbors[i]]-baseNode)+average-angle(pos[neighbors[j]]-baseNode));
          d=dist(pos[neighbors[i]],baseNode);
          force+=(d*d*sin(beta/10));
-         mov[j]=mov[j]+(to_left(pos[j]-baseNode,beta/10)-pos[j]+baseNode);
+         mov[j]=mov[j]+(to_left(pos[neighbors[j]]-baseNode,beta/10)-pos[neighbors[j]]+baseNode);
       }
       neighbors.clear();
    }
@@ -276,7 +276,7 @@ void Network::get_ideal_distance(){
 }
 
 float Network::init_layout(){
-   float force=0.0,d;
+   float force=0.0,d,cost1,cost2;
    int n=nodes->size(), m=edges->size();
    int i, n1, n2;
    Edgetype _type;   
@@ -284,20 +284,29 @@ float Network::init_layout(){
    for(i=0;i<n;i++)cnt[i]=0;
    for(i=0;i<m;i++){
       _type=(*edges)[i].pts.type;
-      if(_type!=product && _type!=substrate)continue;
+      //if(_type!=product && _type!=substrate)continue;
       n1=(*edges)[i].from; //reaction.
       n2=(*edges)[i].to; //compound.
-      mov[n1].x+=pos[n2].x;
-      mov[n2].x+=pos[n1].x;
       cnt[n1]++; cnt[n2]++;
       if(_type==product){
          mov[n1].y+=(pos[n2].y+dij1[i]);
          mov[n2].y+=(pos[n1].y-dij1[i]);
+         mov[n1].x+=pos[n2].x;
+         mov[n2].x+=pos[n1].x;
       }
-      else{
+      else if(_type==product){
          mov[n1].y+=(pos[n2].y-dij1[i]);
          mov[n2].y+=(pos[n1].y+dij1[i]);
+         mov[n1].x+=pos[n2].x;
+         mov[n2].x+=pos[n1].x;
       }
+      else{
+         cost1=fabs((pos[n1].x-dij1[i])-mov[n2].x/cnt[n2]);
+         cost2=fabs((pos[n1].x+dij1[i])-mov[n2].x/cnt[n2]);
+         if(cost1<cost2)mov[n2].x+=(pos[n1].x-dij1[i]);
+         else mov[n2].x+=(pos[n1].x+dij1[i]);
+         mov[n2].y+=pos[n1].y;
+      }         
    }
    for(i=0;i<n;i++){
       if(cnt[i]==0)continue;
@@ -363,8 +372,8 @@ float Network::layout(){
    pre_force=inf;
    while(true){     
       k++;
-      //if(50<k && k<=100)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
-      //else cur_force=0.0;
+      if(100<k)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
+      else cur_force=0.0;
       cur_force=0.0;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
