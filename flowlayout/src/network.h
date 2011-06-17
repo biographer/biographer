@@ -24,10 +24,21 @@ public:
    void addReaction(int index, const VI* substrates, const VI* products, const VI* catalysts, const VI* activators, const VI* inhibitors);   
    VI* getNeighbors(int nodeIndex, Edgetype type); //get the compounds of a specified type of a reaction
    VI* getNeighbors(int nodeIndex);  //get the reactions associated with a compound.
-   int *getNeighbors_arr(int nodeIndex); //similar to the preivious one, but returning a array instead of a vector;
    
    float layout();
    
+   
+   VP pos, mov;
+   struct rect{
+      float xmin, xmax, ymin, ymax;
+   };
+   vector<rect>bcomp; //compartment boundaries;
+   vector<float>dij1; //adjacent nodes;
+   vector< vector<float> >dij2; //non-adjacent nodes;
+   vector<float>pts_dir;
+   vector<float>mov_dir;
+   VI cnt, above_comp;
+      
 protected:
      
    float get_dij1(int i, int j); //the ideal distance between adjacent nodes;
@@ -41,7 +52,6 @@ protected:
    void move_nodes(); //move the nodes to a new position.
    void init_compartments(); //initialize the compartment boundaries;
    void adjust_compartments(); //adjusting the boundaries of compartments.
-         
 };
    
 #endif

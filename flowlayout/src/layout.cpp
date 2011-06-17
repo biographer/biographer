@@ -3,20 +3,11 @@
 #define inf 1e50
 #define zero 1e-12
 #define err 1e-4
-
-VP pos, mov;
-Point baseNode; //for sorting the edges.
-struct rect{
-   float xmin, xmax, ymin, ymax;
-};
-vector<rect>bcomp; //compartment boundaries;
-vector< vector<float> > xcomp, ycomp; //for initializing the compartments;
-vector<float>dij1; //adjacent nodes;
-vector< vector<float> >dij2; //non-adjacent nodes;
-vector<float>pts_dir;
-vector<float>mov_dir;
-VI cnt;
-   
+struct comp_y{
+  int id;
+  int cnt;
+  float mid;
+}; 
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
@@ -27,14 +18,6 @@ float Network::get_dij2(int i, int j){ //minimum distance between non-adjacent n
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
    return 3*(sqrt(x)+sqrt(y));
-}
-
-int cmp_angle(const void *x, const void *y){
-   int i=*((int *)x),j=*((int *)y);
-   float w=angle(pos[i]-baseNode)-angle(pos[j]-baseNode);
-   if(w<0)return -1;
-   else if(w==0)return 0;
-   else return 1;
 }
 
 float Network::calc_force_adj(){
@@ -126,7 +109,6 @@ float Network::calc_force_nadj(){
          mov[n1].x+=(vec.x/n);mov[n1].y+=(vec.y/n);
          mov[n2].x-=(vec.x/n);mov[n2].y-=(vec.y/n);
       }
-      
    return force;
 }
 
@@ -171,70 +153,85 @@ void Network::move_nodes(){
    }
 }
 float Network::firm_distribution(){
-   int i,j,k,m,n=nodes->size();
-   int* neighbors;
+   int i,j,k,m,n=nodes->size(),tem;
+   VI neighbors;
    float average,beta,d,force=0.0;
+   Point baseNode;
    for(k=0;k<n;k++){
       if((*nodes)[k].pts.type!=compound)continue;
-      neighbors=getNeighbors_arr(k);
-      m=sizeof(neighbors)/sizeof(int);
+      neighbors= *getNeighbors(k);
+      m=neighbors.size();
       if(m<2)continue;
       baseNode=pos[k];
+      for(i=0;i<m-1;i++)
+         for(j=i+1;j<m;j++)
+            if(lim(angle(pos[neighbors[j]]-baseNode))<lim(angle(pos[neighbors[i]]-baseNode))){
+               tem=neighbors[i];neighbors[i]=neighbors[j];neighbors[j]=tem;
+            }               
       average=2.0*PI/m;
-      qsort(neighbors,m,sizeof(int),cmp_angle);
       for(i=0;i<m-1;i++){
          j=i+1;
-         beta=lim(angle(pos[j]-baseNode)-angle(pos[i]-baseNode)-average);
-         d=dist(pos[j],baseNode);
+         beta=lim(angle(pos[neighbors[i]]-baseNode)+average-angle(pos[neighbors[j]]-baseNode));
+         d=dist(pos[neighbors[i]],baseNode);
          force+=(d*d*sin(beta/10));
          mov[j]=mov[j]+(to_left(pos[j]-baseNode,beta/10)-pos[j]+baseNode);
       }
-      free(neighbors);
+      neighbors.clear();
    }
    return force;
 }
 
 void Network::init_compartments(){
    int cn=compartments->size(), n=nodes->size();
-   int i,comp,k;
-   float delta;
-   xcomp.resize(cn); ycomp.resize(cn);
+   int i,j,comp,k;
+   float tem;
+   vector<comp_y>ymid;
+   ymid.resize(cn);
+   above_comp.resize(cn);
    for(comp=0;comp<cn;comp++){
-      xcomp[comp].clear();
-      ycomp[comp].clear();
+      ymid[comp].id=comp;
+      ymid[comp].cnt=0;
+      ymid[comp].mid=0.0;
    }
    for(i=0;i<n;i++){
       comp=(*nodes)[i].pts.compartment;
       if(comp==0)continue;
-      xcomp[comp].push_back(pos[i].x);
-      ycomp[comp].push_back(pos[i].y);
+      ymid[comp].cnt++;
+      ymid[comp].mid+=pos[i].y;
    }
-   for(comp=1;comp<cn;comp++){
-      k=xcomp[comp].size();
-      sort(xcomp[comp].begin(),xcomp[comp].end());
-      (*compartments)[comp].xmin=xcomp[comp][k/4];
-      (*compartments)[comp].xmax=xcomp[comp][k*3/4];
-      delta=((*compartments)[comp].xmax-(*compartments)[comp].xmin)/4;
-      (*compartments)[comp].xmin-=delta;
-      (*compartments)[comp].xmax+=delta;      
-      k=ycomp[comp].size();
-      sort(ycomp[comp].begin(),ycomp[comp].end());
-      (*compartments)[comp].ymin=ycomp[comp][k/4];
-      (*compartments)[comp].ymax=ycomp[comp][k*3/4];
-      delta=((*compartments)[comp].ymax-(*compartments)[comp].ymin)/4;
-      (*compartments)[comp].ymin-=delta;
-      (*compartments)[comp].ymax+=delta;
-      xcomp[comp].clear();
-      ycomp[comp].clear();
+   for(comp=0;comp<cn;comp++)ymid[comp].mid/=ymid[comp].cnt;
+   //sort the compartments by y.
+   for(i=1;i<cn;i++)
+       for(j=i+1;j<cn;j++)
+          if(ymid[i].mid>ymid[j].mid){
+             k=ymid[i].id;ymid[i].id=ymid[j].id;ymid[j].id=k;
+             k=ymid[i].cnt;ymid[i].cnt=ymid[j].cnt;ymid[j].cnt=k;
+             tem=ymid[i].mid;ymid[i].mid=ymid[j].mid;ymid[j].mid=tem;
+          }
+   //initializing the compartments (ymin and ymax);
+   (*compartments)[ymid[1].id].ymin=-inf;
+   for(i=1;i<cn-1;i++){
+      (*compartments)[ymid[i].id].ymax
+      =(*compartments)[ymid[i+1].id].ymin
+      =(ymid[i].mid+ymid[i+1].mid)/2;
+      above_comp[ymid[i].id]=ymid[i+1].id;
    }
-   xcomp.clear();
-   ycomp.clear();
+   (*compartments)[ymid[cn-1].id].ymax=inf;
+   above_comp[ymid[cn-1].id]=0;
+   //xmin,xmax;
+   for(i=1;i<cn;i++){
+      (*compartments)[i].xmin=-inf;
+      (*compartments)[i].xmax=inf;
+   }
+  // for(i=1;i<cn;i++)
+  // printf("%0.3f  %0.3f  %0.3f  %0.3f\n",(*compartments)[i].xmin,(*compartments)[i].xmax,(*compartments)[i].ymin,(*compartments)[i].ymax);
 }   
    
 void Network::adjust_compartments(){
    //adjust the boundaries of compartments, so that it tends the minimum rectangle contains all the nodes belongs to it.
    int n=nodes->size(),cn=compartments->size();
-   int i,comp;   
+   int i,j,comp;  
+   float delta; 
    for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane
       bcomp[comp].xmin=bcomp[comp].ymin=1e50;
       bcomp[comp].ymin=bcomp[comp].ymax=-1e50;
@@ -253,6 +250,15 @@ void Network::adjust_compartments(){
       (*compartments)[comp].ymin+=((bcomp[comp].ymin-(*compartments)[comp].ymin)/n);
       (*compartments)[comp].ymax+=((bcomp[comp].ymax-(*compartments)[comp].ymax)/n);
    }  
+   for(i=1;i<cn;i++){
+     j=above_comp[i];
+     if(j==0)continue;
+     delta=(*compartments)[i].ymax-(*compartments)[j].ymin;
+     if(delta<=0)continue;
+     delta/=2;
+     (*compartments)[i].ymax-=delta;
+     (*compartments)[j].ymin+=delta;
+   }
 }
 void Network::get_ideal_distance(){
    int n=nodes->size(), m=edges->size(), i,n1,n2;
@@ -274,6 +280,7 @@ float Network::init_layout(){
    int n=nodes->size(), m=edges->size();
    int i, n1, n2;
    Edgetype _type;   
+   cnt.resize(n);
    for(i=0;i<n;i++)cnt[i]=0;
    for(i=0;i<m;i++){
       _type=(*edges)[i].pts.type;
@@ -328,7 +335,6 @@ float Network::layout(){
    
    //phase 1.
    k=inc=0;
-   cnt.resize(n);
    while(true){
       k++;
       cur_force=init_layout();
@@ -337,7 +343,7 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
-   
+
    k=inc=0;
    pre_force=inf;
    while(true){
@@ -351,14 +357,14 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
-   
+
    //phase 2: adj and nadj.
    k=inc=0;
    pre_force=inf;
    while(true){     
       k++;
-      if(50<k && k<=100)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
-      else cur_force=0.0;
+      //if(50<k && k<=100)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
+      //else cur_force=0.0;
       cur_force=0.0;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
@@ -371,23 +377,24 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
-   
+
    init_compartments();
+   //adjust_compartments();
    
    //phase 3: bring in compartments;
    pre_force=inf;
    k=inc=0;
    while(true){
       k++;
-      adjust_compartments();
-      cur_force=calc_force_compartments();
+      cur_force=0.0;
+      cur_force+=calc_force_compartments();
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
-      //printf("%0.3f\n",cur_force);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
+     // printf("%0.3f\n",cur_force);
       pre_force=cur_force;    
    }
    
