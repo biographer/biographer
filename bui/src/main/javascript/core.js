@@ -20,4 +20,43 @@
             readyFunctions[i]();
         }
     });
+
+    /**
+     * @class
+     * Base class for all the biographer-ui classes
+     */
+    bui.Object = function() {
+        this.__private = {};
+    };
+
+    /**
+     * Retrieve the private members for a given class
+     *
+     * @param {Object} identifier This identifies for which class the private
+     *   members shall be retrieved.
+     * @return {Object} An object from which the private members could be
+     *   retrieved
+     */
+    bui.Object.prototype._getPrivateMembers = function(identifier) {
+        var privates = this.__private[identifier];
+
+        if (privates === undefined) {
+            privates = {};
+            this.__private[identifier] = privates;
+        }
+
+        return privates;
+    };
+
+    /**
+     * Retrieve the private members for a given class
+     *
+     * @param {Object} identifier This identifies for which class the private
+     *   members shall be retrieved.
+     * @return {Object} An object from which the private members could be
+     *   retrieved
+     */
+    bui.Object.prototype._privates = function(identifier) {
+        return this._getPrivateMembers(identifier);
+    };
 })(bui);

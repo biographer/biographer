@@ -2,37 +2,7 @@
     // used to identify and compare the graph instances
     var graphCounter = 0;
 
-    // will hold generator function to create drawable objects with a variable
-    // amount of arguments. These arguments can be passed as an array.
-    var drawableGenerator = {};
-
-    /**
-     * @private
-     * Retrieve the generator function for a drawable.
-     *
-     * @param {Function} constructor The constructor of a drawable
-     * @return {Function} A function which can be called to generate the
-     *   object
-     */
-    var getGenerator = function(constructor) {
-        var existingGenerator = drawableGenerator[constructor];
-        if (existingGenerator !== undefined) {
-            return existingGenerator;
-        } else {
-            var F = function(args) {
-                return constructor.apply(this, args);
-            };
-
-            F.prototype = constructor.prototype;
-
-            var generator = function(args) {
-                return new F(args);
-            };
-
-            drawableGenerator[constructor] = generator;
-            return generator;
-        }
-    };
+    var identifier = 'bui.Graph';
 
     /**
      * @private
@@ -41,7 +11,93 @@
      * @return {String} listener identifier
      */
     var listenerIdentifier = function(graph) {
-        return 'bui.Graph' + graph.id();
+        return identifier + graph.id();
+    };
+
+    /**
+     * @private
+     * Used to generate the transform attribute value of the _rootGroup
+     * element. Extracted to a function as this may be required several
+     * times.
+     */
+    var __setTransformString = function() {
+        var privates = this._privates(identifier);
+        var value = ['scale(', privates.scale.toString(), ')'].join('');
+
+        privates.rootGroup.setAttributeNS(null, 'transform', value);
+    };
+
+    /**
+     * @private
+     * Extracted from the constructor to improve readability
+     */
+    var __initialPaintGraph = function() {
+        var privates = this._privates(identifier);
+
+        privates.root = document.createElementNS(bui.svgns, 'svg');
+        privates.root.setAttributeNS(null, 'id', privates.id);
+        privates.container.appendChild(privates.root);
+
+        var offset = jQuery(privates.root).offset();
+        privates.rootOffset = {
+            x : offset.left,
+            y : offset.top
+        };
+
+        privates.rootDimensions = {
+            width : jQuery(privates.root).width(),
+            height : jQuery(privates.root).height()
+        };
+
+        privates.css = document.createElementNS(bui.svgns, 'style');
+        privates.css.setAttributeNS(null, 'type', 'text/css');
+        privates.css.textContent = '@import url(\'' +
+                bui.settings.css.stylesheetUrl + '\');';
+        privates.root.appendChild(privates.css);
+
+        privates.rootGroup = document.createElementNS(bui.svgns, 'g');
+        __setTransformString.call(this);
+        privates.root.appendChild(privates.rootGroup);
+
+        privates.nodeGroup = document.createElementNS(bui.svgns, 'g');
+        privates.rootGroup.appendChild(privates.nodeGroup);
+
+        privates.edgeGroup = document.createElementNS(bui.svgns, 'g');
+        privates.rootGroup.appendChild(privates.edgeGroup);
+
+        privates.placeholderContainer = document.createElement('div');
+        document.getElementsByTagName('body')[0]
+                .appendChild(privates.placeholderContainer);
+    };
+
+    /**
+     * @private
+     * This function makes sure that each nodes fits onto the SVG canvas.
+     * In order to do so it's a observer of the nodes' position and size
+     * events.
+     */
+    var __assertCanvasSize = function(node) {
+        var privates = this._privates(identifier);
+
+        var bottomRight = node.bottomRight();
+
+        if (bottomRight.x > privates.rootDimensions.width) {
+            privates.rootDimensions.width = bottomRight.x;
+            privates.root.setAttribute('width', bottomRight.x);
+        }
+
+         if (bottomRight.y > privates.rootDimensions.height) {
+            privates.rootDimensions.height = bottomRight.y;
+            privates.root.setAttribute('height', bottomRight.y);
+        }
+    };
+
+    /**
+     * @private
+     * Generic drawable remove listener.
+     */
+    var __removed = function(drawable) {
+        delete this._privates(identifier).drawables[drawable.id()];
     };
 
     /**
@@ -55,102 +111,67 @@
      * @param {HTMLElement} container where the graph should go
      */
     bui.Graph = function(container) {
-        bui.Observable.call(this);
+        bui.Graph.superClazz.call(this);
 
-        this.addType(bui.Graph.ListenerType);
-        this._id = bui.settings.idPrefix.graph + graphCounter++;
-        this._container = container;
-        this._initialPaintGraph();
-        this._drawables = {};
+        this._addType(bui.Graph.ListenerType);
+
+        var privates = this._privates(identifier);
+        privates.id = bui.settings.idPrefix.graph + graphCounter++;
+        privates.container = container;
+        privates.drawables = {};
+        privates.idCounter = 0;
+        privates.scale = 1;
+
+        __initialPaintGraph.call(this);
     };
 
-    bui.Graph.prototype = Object.create(bui.Observable.prototype, {
-        _container : bui.util.createPrototypeValue(null),
-        _root : bui.util.createPrototypeValue(null),
-        _rootOffset : bui.util.createPrototypeValue(null),
-        _rootDimensions : bui.util.createPrototypeValue(null),
-        _css : bui.util.createPrototypeValue(null),
-        _rootGroup : bui.util.createPrototypeValue(null),
-        _nodeGroup : bui.util.createPrototypeValue(null),
-        _edgeGroup : bui.util.createPrototypeValue(null),
-        _placeholderContainer : bui.util.createPrototypeValue(null),
-
-        _scale : bui.util.createPrototypeValue(1),
-        _id : bui.util.createPrototypeValue(null),
-        _idCounter : bui.util.createPrototypeValue(0),
-        _drawables : bui.util.createPrototypeValue(null),
-
-        /**
-         * @private
-         * Extracted from the constructor to improve readability
-         */
-        _initialPaintGraph : bui.util.createPrototypeValue(function() {
-            this._root = document.createElementNS(bui.svgns, 'svg');
-            this._root.setAttributeNS(null, 'id', this._id);
-            this._container.appendChild(this._root);
-
-            var offset = jQuery(this._root).offset();
-            this._rootOffset = {
-                x : offset.left,
-                y : offset.top
-            };
-
-            this._rootDimensions = {
-                width : jQuery(this._root).width(),
-                height : jQuery(this._root).height()
-            };
-
-            this._css = document.createElementNS(bui.svgns, 'style');
-            this._css.setAttributeNS(null, 'type', 'text/css');
-            this._css.textContent = '@import url(\'' +
-                    bui.settings.css.stylesheetUrl + '\');';
-            this._root.appendChild(this._css);
-
-            this._rootGroup = document.createElementNS(bui.svgns, 'g');
-            this._setTransformString();
-            this._root.appendChild(this._rootGroup);
-
-            this._nodeGroup = document.createElementNS(bui.svgns, 'g');
-            this._rootGroup.appendChild(this._nodeGroup);
-
-            this._edgeGroup = document.createElementNS(bui.svgns, 'g');
-            this._rootGroup.appendChild(this._edgeGroup);
-
-            this._placeholderContainer = document.createElement('div');
-            document.getElementsByTagName('body')[0]
-                    .appendChild(this._placeholderContainer);
-        }),
-
-        /**
-         * @private
-         * Used to generate the transform attribute value of the _rootGroup
-         * element. Extracted to a function as this may be required several
-         * times.
-         */
-        _setTransformString : bui.util.createPrototypeValue(function() {
-            var value = ['scale(', this._scale.toString(), ')'].join('');
-
-            this._rootGroup.setAttributeNS(null, 'transform', value);
-        }),
-
+    bui.Graph.prototype = {
         /**
          * @description
          * Retrieve the graph's id.
          *
          * @return {String} graph id.
          */
-        id : bui.util.createPrototypeValue(function() {
-            return this._id;
-        }),
+        id : function() {
+            return this._privates(identifier).id;
+        },
 
         /**
          * Retrieve the SVG element's offset relative to the document
          *
          * @return {Object} an object with x and y properties
          */
-        rootOffset : bui.util.createPrototypeValue(function() {
-            return this._rootOffset;
-        }),
+        htmlTopLeft : function() {
+            return this._privates(identifier).rootOffset;
+        },
+
+        /**
+         * A function which always returns position 0/0. This follows the
+         * special case pattern.
+         *
+         * @return {Object} An object with x and y properties which are both
+         *   zero.
+         */
+        topLeft : function() {
+            return {
+                x : 0,
+                y : 0
+            };
+        },
+
+        /**
+         * A function which always returns position 0/0. This follows the
+         * special case pattern.
+         *
+         * @return {Object} An object with x and y properties which are both
+         *   zero.
+         */
+        absolutePosition : function() {
+            return {
+                x : 0,
+                y : 0
+            };
+        },
 
         /**
          * @description
@@ -159,9 +180,9 @@
          * 
          * @return {HTMLElement} The container of this graph
          */
-        container : bui.util.createPrototypeValue(function() {
-            return this._container;
-        }),
+        container : function() {
+            return this._privates(identifier).container;
+        },
 
         /**
          * @description
@@ -170,9 +191,9 @@
          *
          * @return {HTMLDIVElement} The container for placeholder elements
          */
-        placeholderContainer : bui.util.createPrototypeValue(function() {
-            return this._placeholderContainer;
-        }),
+        placeholderContainer : function() {
+            return this._privates(identifier).placeholderContainer;
+        },
 
         /**
          * @description
@@ -180,9 +201,9 @@
          *
          * @return {SVGGElement} Edge container
          */
-        edgeGroup : bui.util.createPrototypeValue(function() {
-            return this._edgeGroup;
-        }),
+        edgeGroup : function() {
+            return this._privates(identifier).edgeGroup;
+        },
 
         /**
          * @description
@@ -190,9 +211,9 @@
          *
          * @return {SVGGElement} Node container
          */
-        nodeGroup : bui.util.createPrototypeValue(function() {
-            return this._nodeGroup;
-        }),
+        nodeGroup : function() {
+            return this._privates(identifier).nodeGroup;
+        },
 
         /**
          * @description
@@ -204,9 +225,9 @@
          * @return {Object} A suspend handle which can be passed to
          *   {@link bui.Graph#unsuspendRedraw} to enable redrawing.
          */
-        suspendRedraw : bui.util.createPrototypeValue(function(duration) {
-            return this._root.suspendRedraw(duration);
-        }),
+        suspendRedraw : function(duration) {
+            return this._privates(identifier).root.suspendRedraw(duration);
+        },
 
         /**
          * @description
@@ -218,15 +239,15 @@
          *   unsuspend all.
          * @return {bui.Graph} Fluent interface
          */
-        unsuspendRedraw : bui.util.createPrototypeValue(function(handle) {
+        unsuspendRedraw : function(handle) {
             if (handle !== undefined) {
-                this._root.unsuspendRedraw(handle);
+                this._privates(identifier).root.unsuspendRedraw(handle);
             } else {
-                this._root.unsuspendRedrawAll();
+                this._privates(identifier).root.unsuspendRedrawAll();
             }
 
             return this;
-        }),
+        },
 
         /**
          * @description
@@ -241,12 +262,14 @@
          * @return {bui.Graph|Number} Fluent interface if you pass a parameter,
          *   otherwise the current scale is returned
          */
-        scale : bui.util.createPrototypeValue(function(scale) {
-            if (scale !== undefined) {
-                if (scale !== this._scale) {
-                    this._scale = scale;
+        scale : function(scale) {
+            var privates = this._privates(identifier);
 
-                    this._setTransformString();
+            if (scale !== undefined) {
+                if (scale !== privates.scale) {
+                    privates.scale = scale;
+
+                    __setTransformString.call(this);
 
                     this.fire(bui.Graph.ListenerType.scale, [this, scale]);
                 }
@@ -254,8 +277,8 @@
                 return this;
             }
 
-            return this._scale;
-        }),
+            return privates.scale;
+        },
 
         /**
          * @description
@@ -269,79 +292,56 @@
          *   constructor.
          * @return {bui.Drawable} The constructed drawable object.
          */
-        add : bui.util.createPrototypeValue(function(constructor, params) {
+        add : function(constructor, params) {
+            var privates = this._privates(identifier);
             var drawable = null;
-            var id = this._idCounter++;
+            var id = privates.idCounter++;
 
             if (params === undefined) {
-                drawable = new constructor(id, this);
-            } else {
-                params.unshift(id, this);
-                drawable = getGenerator(constructor)(params);
+                params = {};
             }
 
-            this._drawables[drawable.id()] = drawable;
+            params.id = id;
+            params.graph = this;
+
+            drawable = new constructor(params);
+
+            privates.drawables[drawable.id()] = drawable;
 
             drawable.bind(bui.Drawable.ListenerType.remove,
-                    this._removed.createDelegate(this),
+                    __removed.createDelegate(this),
                     listenerIdentifier(this));
 
             // every node type has a bottomRight property. We use this to
             // identify them.
             if (drawable.bottomRight !== undefined) {
                 drawable.bind(bui.Node.ListenerType.position,
-                        this._assertCanvasSize.createDelegate(this),
+                        __assertCanvasSize.createDelegate(this),
                         listenerIdentifier(this));
                 drawable.bind(bui.Node.ListenerType.size,
-                        this._assertCanvasSize.createDelegate(this),
+                        __assertCanvasSize.createDelegate(this),
                         listenerIdentifier(this));
-                this._assertCanvasSize(drawable);
+                __assertCanvasSize.call(this, drawable);
             }
 
             this.fire(bui.Graph.ListenerType.add, [drawable]);
 
             return drawable;
-        }),
-
-        /**
-         * @private
-         * Generic drawable remove listener.
-         */
-        _removed : bui.util.createPrototypeValue(function(drawable) {
-            delete this._drawables[drawable.id()];
-        }),
-
-        /**
-         * @private
-         * This function makes sure that each nodes fits onto the SVG canvas.
-         * In order to do so it's a observer of the nodes' position and size
-         * events.
-         */
-        _assertCanvasSize : bui.util.createPrototypeValue(function(node) {
-            var bottomRight = node.bottomRight();
-
-            if (bottomRight.x > this._rootDimensions.width) {
-                this._rootDimensions.width = bottomRight.x;
-                this._root.setAttribute('width', bottomRight.x);
-            }
-
-             if (bottomRight.y > this._rootDimensions.height) {
-                this._rootDimensions.height = bottomRight.y;
-                this._root.setAttribute('height', bottomRight.y);
-            }
-        }),
+        },
 
         /**
          * Reduce the Canvas size to the minimum requirement
          *
          * @return {bui.Graph} Fluent interface
          */
-        reduceCanvasSize : bui.util.createPrototypeValue(function() {
+        reduceCanvasSize : function() {
+            var privates = this._privates(identifier);
+
             var x = Integer.MIN_VALUE, y = Integer.MIN_VALUE;
 
-            for(var i in this._drawables) {
-                if (this._drawables.hasOwnProperty(i)) {
-                    var drawable = this._drawables[i];
+            for(var i in privates.drawables) {
+                if (privates.drawables.hasOwnProperty(i)) {
+                    var drawable = privates.drawables[i];
 
                     if (drawable.bottomRight !== undefined) {
                         var bottomRight = drawable.bottomRight();
@@ -352,13 +352,15 @@
                 }
             }
 
-            this._rootDimensions.width = x;
-            this._root.setAttribute('width', x);
+            privates.rootDimensions.width = x;
+            privates.root.setAttribute('width', x);
 
-            this._rootDimensions.height = y;
-            this._root.setAttribute('height', y);
-        })
-    });
+            privates.rootDimensions.height = y;
+            privates.root.setAttribute('height', y);
+        }
+    };
+
+    bui.util.setSuperClass(bui.Graph, bui.Observable);
 
     /**
      * @namespace
@@ -366,8 +368,8 @@
      */
     bui.Graph.ListenerType = {
         /** @field */
-        add : 'bui.Graph.add',
+        add : bui.util.createListenerTypeId(),
         /** @field */
-        scale : 'bui.Graph.scale'
+        scale : bui.util.createListenerTypeId()
     };
 })(bui);

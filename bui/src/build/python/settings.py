@@ -24,7 +24,7 @@ main_src_dir = os.path.join('src', 'main', 'javascript')
 target_dir = 'target'
 
 # relative to main_src_dir
-nodes_sub_dir = 'nodes'
+nodes_sub_dir = 'node'
 edges_sub_dir = 'edges'
 modules = ['intro',
            'settings.js',
@@ -33,22 +33,21 @@ modules = ['intro',
            'observable.js',
            'graph.js',
            'drawable.js',
-           'node.js',
-           'labelable.js',
-           os.path.join(nodes_sub_dir,'sbgnnode.js'),
-           os.path.join(nodes_sub_dir,'unspecifiedEntity.js'),
-           os.path.join(nodes_sub_dir,'simpleChemical.js'),
-           os.path.join(nodes_sub_dir,'rectangularNode.js'),
-           os.path.join(nodes_sub_dir,'nucleicAcidFeature.js'),
-           os.path.join(nodes_sub_dir,'macromolecule.js'),
-           os.path.join(nodes_sub_dir,'stateVariable.js'),
-           os.path.join(nodes_sub_dir,'complex.js'),
-           os.path.join(nodes_sub_dir,'compartment.js'),
-           os.path.join(nodes_sub_dir,'unitOfInformation.js'),
-           os.path.join(nodes_sub_dir,'dragHandle.js'),
-           os.path.join(nodes_sub_dir,'process.js'),
-           os.path.join(edges_sub_dir,'attachedDrawable.js'),
-           os.path.join(edges_sub_dir,'straightLine.js'),
+           os.path.join(nodes_sub_dir, 'node.js'),
+           os.path.join(nodes_sub_dir, 'labelable.js'),
+           os.path.join(nodes_sub_dir, 'dragHandle.js'),
+           os.path.join(nodes_sub_dir, 'rectangularNode.js'),
+           os.path.join(nodes_sub_dir, 'unitOfInformation.js'),
+           os.path.join(nodes_sub_dir, 'macromolecule.js'),
+           os.path.join(nodes_sub_dir, 'complex.js'),
+           os.path.join(nodes_sub_dir, 'compartment.js'),
+           os.path.join(nodes_sub_dir, 'nucleicAcidFeature.js'),
+           os.path.join(nodes_sub_dir, 'stateVariable.js'),
+           os.path.join(nodes_sub_dir, 'simpleChemical.js'),
+           os.path.join(nodes_sub_dir, 'unspecifiedEntity.js'),
+           os.path.join(nodes_sub_dir, 'process.js'),
+           os.path.join(edges_sub_dir, 'attachedDrawable.js'),
+           os.path.join(edges_sub_dir, 'straightLine.js'),
            'outro']
 
 

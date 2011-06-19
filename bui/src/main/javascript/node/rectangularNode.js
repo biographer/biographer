@@ -1,4 +1,6 @@
 (function(bui) {
+    var identifier = 'bui.RectangularNode';
+
     // generate a path's arc data parameter
     // http://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
     var arcParameter = function(rx, ry, xAxisRotation, largeArcFlag, sweepFlag,
@@ -79,85 +81,64 @@
      * @return {String} listener identifier
      */
     var listenerIdentifier = function(RectangularNode) {
-        return 'bui.RectangularNode' + RectangularNode.id();
+        return identifier + RectangularNode.id();
+    };
+
+    /**
+     * @private position / size listener
+     */
+    var formChanged = function() {
+        var privates = this._privates(identifier);
+        var size = this.size();
+        privates.rect.setAttributeNS(null, 'd', generatePathData(size.width,
+                size.height, privates.topRadius, privates.bottomRadius));
+    };
+
+    /**
+     * @private used from the constructor to improve readability
+     */
+    var initialPaint = function() {
+        var container = this.nodeGroup();
+        var privates = this._privates(identifier);
+        privates.rect = document.createElementNS(bui.svgns, 'path');
+        var size = this.size();
+        formChanged.call(this, this, size.width, size.height);
+        container.appendChild(privates.rect);
     };
 
     /**
      * @class
      * A node with the shape of an rectangle and a label inside.
      *
-     * @extends bui.SBGNNode
+     * @extends bui.Labelable
      * @constructor
      */
     bui.RectangularNode = function() {
-        bui.SBGNNode.apply(this, arguments);
-        this.addType(bui.RectangularNode.ListenerType);
+        bui.RectangularNode.superClazz.apply(this, arguments);
+        this._addType(bui.RectangularNode.ListenerType);
 
+        var listener = formChanged.createDelegate(this);
         this.bind(bui.Node.ListenerType.size,
-                this._formChanged.createDelegate(this),
-                listenerIdentifier(this));
-        this.bind(bui.Drawable.ListenerType.classes,
-                this._classesChanged.createDelegate(this),
-                listenerIdentifier(this));
-        this.bind(bui.Drawable.ListenerType.select,
-                this._selectedChanged.createDelegate(this),
+                listener,
                 listenerIdentifier(this));
         this.bind(bui.RectangularNode.ListenerType.topRadius,
-                this._formChanged.createDelegate(this),
+                listener,
                 listenerIdentifier(this));
         this.bind(bui.RectangularNode.ListenerType.bottomRadius,
-                this._formChanged.createDelegate(this),
+                listener,
                 listenerIdentifier(this));
 
-        this._initialPaintRectangularNode();
+        var privates = this._privates(identifier);
+        privates.topRadius = 0;
+        privates.bottomRadius = 0;
+
+        initialPaint.call(this);
 
         this.addClass(bui.settings.css.classes.rectangle);
     };
 
-    bui.RectangularNode.prototype = Object.create(bui.SBGNNode.prototype, {
-        _rect : bui.util.createPrototypeValue(null),
-        _topRadius : bui.util.createPrototypeValue(0),
-        _bottomRadius : bui.util.createPrototypeValue(0),
-
-        /**
-         * @private used from the constructor to improve readability
-         */
-        _initialPaintRectangularNode : bui.util.createPrototypeValue(
-                function() {
-            var container = this.nodeGroup();
-            this._rect = document.createElementNS(bui.svgns, 'path');
-            this._formChanged(this, this.width(), this.height());
-            container.appendChild(this._rect);
-        }),
-
-        /**
-         * @private position / size listener
-         */
-        _formChanged : bui.util.createPrototypeValue(function() {
-            this._rect.setAttributeNS(null, 'd', generatePathData(this.width(),
-                    this.height(), this._topRadius, this._bottomRadius));
-        }),
-
-        /**
-         * @private classes listener
-         */
-        _classesChanged : bui.util.createPrototypeValue(function(node,
-                                                                 classString) {
-            this._rect.setAttributeNS(null, 'class', classString);
-        }),
-
-        /**
-         * @private select listener
-         */
-        _selectedChanged : bui.util.createPrototypeValue(function(node,
-                                                                  selected) {
-            if (selected) {
-                this.addClass(bui.settings.css.classes.selected);
-            } else {
-                this.removeClass(bui.settings.css.classes.selected);
-            }
-        }),
-
+    bui.RectangularNode.prototype = {
+        
         /**
          * Set this node's radius for both upper corners in pixel.
          *
@@ -166,10 +147,12 @@
          * @return {bui.RectangularNode|Number} Fluent interface if you pass
          *   a parameter, the current radius otherwise.
          */
-        topRadius : bui.util.createPrototypeValue(function(radius) {
+        topRadius : function(radius) {
+            var privates = this._privates(identifier);
+
             if (radius !== undefined) {
-                if (this._topRadius !== radius) {
-                    this._topRadius = radius;
+                if (privates.topRadius !== radius) {
+                    privates.topRadius = radius;
                     this.fire(bui.RectangularNode.ListenerType.topRadius,
                             [this, radius]);
                 }
@@ -177,8 +160,8 @@
                 return this;
             }
 
-            return this._topRadius;
-        }),
+            return privates.topRadius;
+        },
 
         /**
          * Set this node's radius for both lower corners in pixel.
@@ -188,10 +171,12 @@
          * @return {bui.RectangularNode|Number} Fluent interface if you pass
          *   a parameter, the current radius otherwise.
          */
-        bottomRadius : bui.util.createPrototypeValue(function(radius) {
+        bottomRadius : function(radius) {
+            var privates = this._privates(identifier);
+
             if (radius !== undefined) {
-                if (this._bottomRadius !== radius) {
-                    this._bottomRadius = radius;
+                if (privates.bottomRadius !== radius) {
+                    privates.bottomRadius = radius;
                     this.fire(bui.RectangularNode.ListenerType.bottomRadius,
                             [this, radius]);
                 }
@@ -199,9 +184,11 @@
                 return this;
             }
 
-            return this._bottomRadius;
-        })
-    });
+            return privates.bottomRadius;
+        }
+    };
+
+    bui.util.setSuperClass(bui.RectangularNode, bui.Labelable);
 
     /**
      * @namespace
@@ -209,8 +196,8 @@
      */
     bui.RectangularNode.ListenerType = {
         /** @field */
-        topRadius : 'bui.RectangularNode.topRadius',
+        topRadius : bui.util.createListenerTypeId(),
         /** @field */
-        bottomRadius : 'bui.RectangularNode.bottomRadius'
+        bottomRadius : bui.util.createListenerTypeId()
     };
 })(bui);

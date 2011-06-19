@@ -1,4 +1,6 @@
 (function(bui){
+    var identifier = 'bui.Drawable';
+
      /**
      * @private
      * Function used for the generation of listener identifiers
@@ -6,48 +8,49 @@
      * @return {String} listener identifier
      */
     var listenerIdentifier = function(drawable) {
-        return 'bui.Drawable' + drawable.id();
+        return identifier + drawable.id();
     };
 
     /**
      * @class
-     * The base class for every drawable items.
+     * The base class for every drawable item.
      *
      * As a general rule, the constructors of drawables should never be
      * called directly but through the {@link bui.Graph#add} function.
      *
+     *
      * @extends bui.Observable
      * @constructor
+     *
+     * Please note that the arguments should be passed in the form of one
+     * object literal.
      *
      * @param {String} id complete id
      * @param {bui.Graph} graph The graph which this drawable shall be
      *   part of.
      */
-    bui.Drawable = function(id, graph) {
-        bui.Observable.call(this);
-        this.addType(bui.Drawable.ListenerType);
+    bui.Drawable = function(args) {
+        bui.Drawable.superClazz.call(this);
+        this._addType(bui.Drawable.ListenerType);
 
-        this._id = id;
-        this._graph = graph;
-        this._classes = [];
+        var privates = this._privates(identifier);
+        privates.id = args.id;
+        privates.graph = args.graph;
+        privates.classes = [];
+        privates.visible = false;
+        privates.select = false;
     };
 
-    bui.Drawable.prototype = Object.create(bui.Observable.prototype, {
-        _id : bui.util.createPrototypeValue(null),
-        _graph : bui.util.createPrototypeValue(null),
-        _select : bui.util.createPrototypeValue(false),
-        _visible : bui.util.createPrototypeValue(false),
-        _classes : bui.util.createPrototypeValue(null),
-
+    bui.Drawable.prototype = {
         /**
          * @description
          * Retrieve the drawable's id.
          *
          * @return {String} drawable id.
          */
-        id : bui.util.createPrototypeValue(function() {
-            return this._id;
-        }),
+        id : function() {
+            return this._privates(identifier).id;
+        },
 
         /**
          * @description
@@ -55,9 +58,9 @@
          *
          * @return {bui.Graph} this node's graph
          */
-        graph : bui.util.createPrototypeValue(function() {
-            return this._graph;
-        }),
+        graph : function() {
+            return this._privates(identifier).graph;
+        },
 
         /**
          * @description
@@ -66,10 +69,10 @@
          * First all remove listeners will be informed about the event and then
          * all listeners will be unbound.
          */
-        remove : bui.util.createPrototypeValue(function() {
+        remove : function() {
             this.fire(bui.Drawable.ListenerType.remove, [this]);
             this.unbind();
-        }),
+        },
 
         /**
          * @description
@@ -87,10 +90,12 @@
          *   parameter to this function. If not, the current selection state
          *   will be returned.
          */
-        select : bui.util.createPrototypeValue(function(select) {
+        select : function(select) {
+            var privates = this._privates(identifier);
+
             if (select !== undefined) {
-                if (this._select !== select) {
-                    this._select = select;
+                if (privates.select !== select) {
+                    privates.select = select;
 
                     this.fire(bui.Drawable.ListenerType.select,
                             [this, select]);
@@ -99,8 +104,8 @@
                 return this;
             }
 
-            return this._select;
-        }),
+            return privates.select;
+        },
 
         /**
          * @description
@@ -115,10 +120,12 @@
          *   parameter to this function. If not, the current visibility state
          *   will be returned.
          */
-        visible : bui.util.createPrototypeValue(function(visible) {
+        visible : function(visible) {
+            var privates = this._privates(identifier);
+
             if (visible !== undefined) {
-                if (this._visible !== visible) {
-                    this._visible = visible;
+                if (privates.visible !== visible) {
+                    privates.visible = visible;
 
                     this.fire(bui.Drawable.ListenerType.visible,
                             [this, visible]);
@@ -127,8 +134,8 @@
                 return this;
             }
 
-            return this._visible;
-        }),
+            return privates.visible;
+        },
 
         /**
          * @description
@@ -138,9 +145,10 @@
          *   same graph.
          * @return {Boolean} true when both belong to the same graph.
          */
-        isSameGraph : bui.util.createPrototypeValue(function(drawable) {
-            return this._graph.id() == node._graph.id();
-        }),
+        isSameGraph : function(drawable) {
+            return this._privates(identifier).graph.id() ==
+                    node._privates(identifier).graph.id();
+        },
 
        /**
         * @description
@@ -149,15 +157,16 @@
         * @param {String} klass the class which you want to add
         * @return {bui.Drawable} Fluent interface
         */
-        addClass : bui.util.createPrototypeValue(function(klass) {
-            if (this._classes.indexOf(klass) == -1) {
-                this._classes.push(klass);
+        addClass : function(klass) {
+            var classes = this._privates(identifier).classes;
+            if (classes.indexOf(klass) == -1) {
+                classes.push(klass);
                 this.fire(bui.Drawable.ListenerType.classes, [this,
                     this.classString()]);
             }
 
             return this;
-        }),
+        },
 
         /**
         * @description
@@ -166,29 +175,33 @@
         * @param {String} klass the class which you want to remove
         * @return {bui.Drawable} Fluent interface
         */
-        removeClass : bui.util.createPrototypeValue(function(klass) {
-            var index = this._classes.indexOf(klass);
+        removeClass : function(klass) {
+            var classes = this._privates(identifier).classes;
+
+            var index = classes.indexOf(klass);
 
             if (index != -1) {
-                this._classes.splice(index, 1);
+                classes.splice(index, 1);
                 this.fire(bui.Drawable.ListenerType.classes, [this,
                     this.classString()]);
             }
 
             return this;
-        }),
+        },
 
         /**
          * @description
          * Generate a class string, i.e. a string which can be used for the
          * HTML / SVG class attribute.
          *
-         * @return {String} the string for the class attribute 
+         * @return {String} the string for the class attribute
          */
-        classString : bui.util.createPrototypeValue(function() {
-            return this._classes.join(' ');
-        })
-    });
+        classString : function() {
+            return this._privates(identifier).classes.join(' ');
+        }
+    };
+
+    bui.util.setSuperClass(bui.Drawable, bui.Observable);
 
     /**
      * @namespace
@@ -196,12 +209,12 @@
      */
     bui.Drawable.ListenerType = {
         /** @field */
-        visible : 'bui.Drawable.visible',
+        visible :  bui.util.createListenerTypeId(),
         /** @field */
-        remove : 'bui.Drawable.remove',
+        remove :  bui.util.createListenerTypeId(),
         /** @field */
-        select : 'bui.Drawable.select',
+        select :  bui.util.createListenerTypeId(),
         /** @field */
-        classes : 'bui.Drawable.classes'
+        classes :  bui.util.createListenerTypeId()
     };
 })(bui);

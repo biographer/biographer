@@ -7,11 +7,10 @@
      * @extends bui.RectangularNode
      * @constructor
      */
-    bui.Macromolecule = function() {
-        bui.RectangularNode.apply(this, arguments);
-        this.topRadius(bui.settings.style.nodeCornerRadius);
+    bui.NucleicAcidFeature = function() {
+        bui.NucleicAcidFeature.superClazz.apply(this, arguments);
         this.bottomRadius(bui.settings.style.nodeCornerRadius);
     };
 
-    bui.Macromolecule.prototype = bui.RectangularNode.prototype;
+    bui.util.setSuperClass(bui.NucleicAcidFeature, bui.RectangularNode);
 })(bui);

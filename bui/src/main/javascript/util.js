@@ -211,4 +211,37 @@
 
         return lines;
     };
+
+    /**
+     * Set the super class for a given class. The provided class (first
+     * parameter will have a superClazz property which can be used to
+     * directly call the super class, e.g. the constructor.
+     *
+     * @param {Object} clazz The class which should inherit from the superClazz
+     * @param {Object} superClazz The super class
+     */
+    bui.util.setSuperClass = function(clazz, superClazz) {
+        var prototype = clazz.prototype;
+
+        for(var i in prototype) {
+            if (prototype.hasOwnProperty(i)) {
+                var member = prototype[i];
+                prototype[i] = bui.util.createPrototypeValue(member);
+            }
+        }
+
+        clazz.prototype = Object.create(superClazz.prototype, clazz.prototype);
+        clazz.superClazz = superClazz;
+    };
+
+    var listenerTypeCounter = 0;
+    /**
+     * All listener types must have a unique identifier. In the previous
+     * version strings were used as an identifier with the drawback of
+     * bad performance due to a fair amount of lookups. This function
+     * just generates an integer which should be much faster for lookups.
+     */
+    bui.util.createListenerTypeId = function() {
+        return listenerTypeCounter++;
+    };
 })(bui);

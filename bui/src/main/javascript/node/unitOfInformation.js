@@ -1,4 +1,6 @@
 (function(bui) {
+    var identifier = 'bui.UnitOfInformation';
+
     /**
      * @private
      * Function used for the generation of listener identifiers
@@ -6,7 +8,7 @@
      * @return {String} listener identifier
      */
     var listenerIdentifier = function(UnitOfInformation) {
-        return 'bui.UnitOfInformation' + UnitOfInformation.id();
+        return identifier + UnitOfInformation.id();
     };
 
     /**
@@ -17,13 +19,12 @@
      * @constructor
      */
     bui.UnitOfInformation = function() {
-        bui.RectangularNode.apply(this, arguments);
+        bui.UnitOfInformation.superClazz.apply(this, arguments);
 
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.adaptSizeToLabel(true);
     };
 
-    bui.UnitOfInformation.prototype = Object.create(
-            bui.RectangularNode.prototype, {});
+    bui.util.setSuperClass(bui.UnitOfInformation, bui.RectangularNode);
 })(bui);

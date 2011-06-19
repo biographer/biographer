@@ -1,17 +1,20 @@
 (function(bui) {
+    var identifier = 'bui.Observable';
+
     /**
      * @class
      * By inheriting from this class you can allow observers. Please note
      * that you have to add types using the {@link bui.Observable#addType}
      * function before listener can be added.
+     *
+     * @extends bui.Object
      */
     bui.Observable = function() {
-        this._listener = {};
+        bui.Observable.superClazz.call(this);
+        this._getPrivateMembers(identifier).listener = {};
     };
 
     bui.Observable.prototype = {
-        _listener : null,
-
         /**
          * @description
          * Add a listener type to this observable object. An added listener
@@ -23,13 +26,15 @@
          *   (please note it's values - not keys) are used and added as types.
          * @return {bui.Observable} Fluent interface
          */
-        addType : function(type) {
+        _addType : function(type) {
+            var listener = this._getPrivateMembers(identifier).listener;
+
             if (typeof(type) === 'string') {
-                this._listener[type] = {};
+                listener[type] = {};
             } else {
                 for (var i in type) {
                     if (type.hasOwnProperty(i)) {
-                        this._listener[type[i]] = {};
+                        listener[type[i]] = {};
                     }
                 }
             }
@@ -50,13 +55,19 @@
          * @return {bui.Observable} Fluent interface
          */
         bind : function(type, callback, identification) {
-            var listener = this._listener[type];
+            var listener = this._getPrivateMembers(identifier).listener[type];
+
+            // type not registered, fail silently
+            if (listener === undefined) {
+                return this;
+            }
 
             if (identification === undefined || identification === null) {
                 identification = callback;
             }
 
             listener[identification] = callback;
+            
             return this;
         },
 
@@ -74,16 +85,18 @@
          * @return {bui.Observable} Fluent interface
          */
         unbind : function(type, identification) {
+            var listener = this._getPrivateMembers(identifier).listener;
+
             if (type === undefined) {
-                for(var registeredType in this._listener) {
-                    if (this._listener.hasOwnProperty(registeredType)) {
-                        this._listener[registeredType] = {};
+                for(var registeredType in listener) {
+                    if (listener.hasOwnProperty(registeredType)) {
+                        listener[registeredType] = {};
                     }
                 }
             } else if (identification === undefined) {
-                this._listener[type] = {};
+                listener[type] = {};
             } else {
-                delete this._listener[type][identification];
+                delete listener[type][identification];
             }
 
             return this;
@@ -96,9 +109,11 @@
          * @return {bui.Observable} Fluent interface
          */
         unbindAll : function(identification) {
-            for(var type in this._listener) {
-                if (this._listener.hasOwnProperty(type)) {
-                    delete this._listener[type][identification];
+            var listener = this._getPrivateMembers(identifier).listener;
+
+            for(var type in listener) {
+                if (listener.hasOwnProperty(type)) {
+                    delete listener[type][identification];
                 }
             }
 
@@ -119,7 +134,12 @@
                 params = [];
             }
 
-            var listener = this._listener[type];
+            var listener = this._getPrivateMembers(identifier).listener[type];
+
+            // fail silently when the listener type is not registered
+            if (listener === undefined) {
+                return true;
+            }
 
             for (var i in listener) {
                 if (listener.hasOwnProperty(i)) {
@@ -134,4 +154,6 @@
             return true;
         }
     };
+
+    bui.util.setSuperClass(bui.Observable, bui.Object);
 })(bui);

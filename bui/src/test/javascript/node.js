@@ -1,13 +1,14 @@
 module('Node');
 
 test('node', function() {
-    expect(84);
+    expect(36);
 
     var x = 10, y = 35, width = 45, height = 28;
 
     var graph = new bui.Graph(document.getElementById('dummy'));
-    var node = graph.add(bui.Node, [x, y, width, height]);
-    testWith(node, x, y, width, height);
+    var node = graph.add(bui.Node);
+
+    node.size(width, height);
 
     var positionCalled = false, sizeCalled = false;
     node.bind(bui.Node.ListenerType.position, function() {
@@ -19,20 +20,6 @@ test('node', function() {
                 'the case');
         sizeCalled = true;
     });
-
-    node.x(x = 5);
-    ok(positionCalled, 'Position changed and listener called.');
-    positionCalled = false;
-    node.y(y = 20);
-    ok(positionCalled, 'Position changed and listener called.');
-    positionCalled = false;
-    node.width(width = 30);
-    ok(sizeCalled, 'Size changed and listener called.');
-    sizeCalled = false;
-    node.height(height = 50);
-    ok(sizeCalled, 'Size changed and listener called.');
-    sizeCalled = false;
-    testWith(node, x, y, width, height);
 
     node.position(x = 300, y = 400);
     ok(positionCalled, 'Position changed and listener called.');
@@ -52,11 +39,6 @@ test('node', function() {
 });
 
 function testWith(node, x, y, width, height) {
-    equal(node.x(), x);
-    equal(node.y(), y);
-    equal(node.width(), width);
-    equal(node.height(), height);
-
     var position = node.position(), size = node.size();
     equal(position.x, x);
     equal(position.y, y);

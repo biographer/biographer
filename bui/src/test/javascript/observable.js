@@ -11,8 +11,8 @@ function testObservable(observable) {
         };
     };
 
-    observable.addType(type1)
-        .addType(type2)
+    observable._addType(type1)
+        ._addType(type2)
         .bind(type1, generateTypeListener(type1), type1)
         .bind(type2, generateTypeListener(type2), type2);
 
@@ -48,7 +48,7 @@ test('observable.addTypeObject', function() {
     };
 
     var observable = new bui.Observable();
-    observable.addType({ first : type1, second : type2})
+    observable._addType({ first : type1, second : type2})
         .bind(type1, generateTypeListener(type1), type1)
         .bind(type2, generateTypeListener(type2), type2);
 
@@ -79,7 +79,7 @@ test('observable.unbindAll', function() {
     var identifier2 = 'China';
 
     var observable = new bui.Observable();
-    observable.addType({first : type1, second : type2})
+    observable._addType({first : type1, second : type2})
         .bind(type1, listener, identifier1)
         .bind(type2, listener, identifier1)
         .bind(type1, listener, identifier2)

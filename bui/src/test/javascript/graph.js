@@ -22,7 +22,7 @@ test('graph.scale', function() {
 test('graph.add', function() {
     var graph = new bui.Graph(document.getElementById('dummy'));
 
-    expect(6);
+    expect(4);
 
     var drawableThroughListener = null;
 
@@ -41,10 +41,5 @@ test('graph.add', function() {
 
     ok(drawable === drawableThroughListener, 'Same drawables.');
 
-    ok(graph._drawables[drawable.id()] === drawable,
-            'There is at least one drawable.');
-
     drawable.remove();
-
-    equal(graph._drawables[0], undefined, 'Drawable removed');
 });

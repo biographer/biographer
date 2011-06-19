@@ -20,7 +20,7 @@ text.small, tspan.small {
     font-size: 13px;
 }
 
-ellipse, circle, path.rect, path.complex, rect.compartment {
+ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect {
     fill: white;
     stroke-width: 2px;
     stroke: black

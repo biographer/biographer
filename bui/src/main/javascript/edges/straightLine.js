@@ -1,14 +1,132 @@
 (function(bui) {
-      /**
+    var identifier = 'bui.StraightLine';
+
+    /**
      * @private
      * Function used for the generation of listener identifiers
      * @param {bui.StraightLine} straightLine
      * @return {String} listener identifier
      */
     var listenerIdentifier = function(straightLine) {
-        return 'bui.StraightLine' + straightLine.id();
+        return identifier + straightLine.id();
     };
 
+    /**
+     * @private initial paint
+     */
+    var initialPaint = function() {
+        var privates = this._privates(identifier);
+        privates.line = document.createElementNS(bui.svgns, 'line');
+        privates.container.edgeGroup().appendChild(privates.line);
+        this.addClass(bui.settings.css.classes.invisible);
+    };
+
+    /**
+     * @private visibility listener
+     */
+    var visibilityChanged = function(drawable, visible) {
+        if (visible === true) {
+            this.removeClass(bui.settings.css.classes.invisible);
+        } else {
+            this.addClass(bui.settings.css.classes.invisible);
+        }
+    };
+
+    /**
+     * @private classes listener
+     */
+    var classesChanged = function(drawable, classString) {
+        this._privates(identifier).line.setAttributeNS(
+                null, 'class', classString);
+    };
+
+    /**
+     * @private remove listener
+     */
+    var removeListener = function() {
+        this._privates(identifier).line.parentNode.removeChild(this._line);
+    };
+
+    /**
+     * @private Source position and size listener
+     */
+    var sourceDimensionChanged = function(source) {
+        var center = source.absoluteCenter();
+        var line = this._privates(identifier).line;
+        line.setAttributeNS(null, 'x1', center.x);
+        line.setAttributeNS(null, 'y1', center.y);
+    };
+
+    /**
+     * @private Source and target visibility listener
+     */
+    var endpointVisibilityChanged = function() {
+        var source = this.source(), target = this.target();
+
+        this.visible(source !== null && target !== null &&
+                source.visible() === true && target.visible() === true);
+    };
+
+    /**
+     * @private source changed listener
+     */
+    var sourceChanged = function(drawable, newSource, oldSource) {
+        if (oldSource !== null) {
+            oldSource.unbindAll(listenerIdentifier(this));
+        }
+
+        if (newSource !== null) {
+            var listener = sourceDimensionChanged.createDelegate(this);
+            newSource.bind(bui.Node.ListenerType.position, listener,
+                    listenerIdentifier(this));
+            newSource.bind(bui.Node.ListenerType.size, listener,
+                    listenerIdentifier(this));
+
+            newSource.bind(bui.Drawable.ListenerType.visible,
+                    endpointVisibilityChanged.createDelegate(this),
+                    listenerIdentifier(this));
+        }
+
+        sourceDimensionChanged.call(this, newSource);
+        endpointVisibilityChanged.call(this);
+    };
+
+    /**
+     * @private Target position and size listener
+     */
+    var targetDimensionChanged = function(target) {
+        var center = target.absoluteCenter();
+        var line = this._privates(identifier).line;
+        line.setAttributeNS(null, 'x2', center.x);
+        line.setAttributeNS(null, 'y2', center.y);
+    };
+
+    /**
+     * @private target changed listener
+     */
+    var targetChanged = function(drawable, newTarget, oldTarget) {
+        if (oldTarget !== null) {
+            oldTarget.unbindAll(listenerIdentifier(this));
+        }
+
+        if (newTarget !== null) {
+            var listener = targetDimensionChanged.createDelegate(this);
+            newTarget.bind(bui.Node.ListenerType.position, listener,
+                    listenerIdentifier(this));
+            newTarget.bind(bui.Node.ListenerType.size, listener,
+                    listenerIdentifier(this));
+
+            newTarget.bind(bui.Drawable.ListenerType.visible,
+                    endpointVisibilityChanged.createDelegate(this),
+                    listenerIdentifier(this));
+        }
+
+        targetDimensionChanged.call(this, newTarget);
+        endpointVisibilityChanged.call(this);
+    };
+
+
+    
     /**
      * @class
      * A drawable which has both, a source and a target
@@ -19,162 +137,31 @@
      * @param {String} id complete id
      * @param {bui.Graph} graph The graph which this drawable shall be
      *   part of.
-     * @param {SVGGElement} [customContainer] Can be used to group elements.
-     *   When omitted, the line will be added to the SVG's edge group.
      */
-    bui.StraightLine = function(id, graph, customContainer){
-        id = bui.settings.idPrefix.edge + id;
-        bui.AttachedDrawable.call(this, id, graph);
-        this.addType(bui.StraightLine.ListenerType);
+    bui.StraightLine = function(args){
+        args.id = bui.settings.idPrefix.edge + args.id;
+        bui.AttachedDrawable.call(this, args);
 
-        if (customContainer !== undefined) {
-            this._container = customContainer;
-        } else {
-            this._container = this.graph().edgeGroup();
-        }
-
-        this._initialPaintStraightLine();
+        this._privates(identifier).container = this.graph();
 
         this.bind(bui.Drawable.ListenerType.visible,
-                this._straightLineVisibilityChanged.createDelegate(this),
+                visibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.classes,
-                this._straightLineClassesChanged.createDelegate(this),
+                classesChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.remove,
-                this._straightLineRemoveListener.createDelegate(this),
+                removeListener.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.AttachedDrawable.ListenerType.source,
-                this._straightLineSourceChanged.createDelegate(this),
+                sourceChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.AttachedDrawable.ListenerType.target,
-                this._straightLineTargetChanged.createDelegate(this),
+                targetChanged.createDelegate(this),
                 listenerIdentifier(this));
+
+        initialPaint.call(this);
     };
 
-    bui.StraightLine.prototype = Object.create(bui.AttachedDrawable.prototype, {
-        _line : bui.util.createPrototypeValue(null),
-
-        /**
-         * @private initial paint
-         */
-        _initialPaintStraightLine : bui.util.createPrototypeValue(function() {
-            this._line = document.createElementNS(bui.svgns, 'line');
-            this._container.appendChild(this._line);
-            this.addClass(bui.settings.css.classes.invisible);
-        }),
-
-        /**
-         * @private visibility listener
-         */
-        _straightLineVisibilityChanged : bui.util.createPrototypeValue(
-                function(drawable, visible) {
-            if (visible === true) {
-                this.removeClass(bui.settings.css.classes.invisible);
-            } else {
-                this.addClass(bui.settings.css.classes.invisible);
-            }
-        }),
-
-        /**
-         * @private classes listener
-         */
-        _straightLineClassesChanged : bui.util.createPrototypeValue(
-                function(drawable, classString) {
-            this._line.setAttributeNS(null, 'class', classString);
-        }),
-
-        /**
-         * @private remove listener
-         */
-        _straightLineRemoveListener : bui.util.createPrototypeValue(
-                function() {
-            this._line.parentNode.removeChild(this._line);
-        }),
-
-        /**
-         * @private source changed listener
-         */
-        _straightLineSourceChanged : bui.util.createPrototypeValue(
-                function(drawable, newSource, oldSource) {
-            if (oldSource !== null) {
-                oldSource.unbindAll(listenerIdentifier(this));
-            }
-
-            if (newSource !== null) {
-                var listener = this._straightLineSourceDimensionChanged
-                        .createDelegate(this);
-                newSource.bind(bui.Node.ListenerType.position, listener,
-                        listenerIdentifier(this));
-                newSource.bind(bui.Node.ListenerType.size, listener,
-                        listenerIdentifier(this));
-
-                listener = this._straightLineEndpointVisibilityChanged
-                        .createDelegate(this);
-                newSource.bind(bui.Drawable.ListenerType.visible, listener,
-                        listenerIdentifier(this));
-            }
-                    
-            this._straightLineSourceDimensionChanged(newSource);
-            this._straightLineEndpointVisibilityChanged();
-        }),
-
-        /**
-         * @private Source position and size listener
-         */
-        _straightLineSourceDimensionChanged : bui.util.createPrototypeValue(
-                function(source) {
-            var center = source.center();
-            this._line.setAttributeNS(null, 'x1', center.x);
-            this._line.setAttributeNS(null, 'y1', center.y);
-        }),
-
-        /**
-         * @private Source and target visibility listener
-         */
-        _straightLineEndpointVisibilityChanged : bui.util.createPrototypeValue(
-                function() {
-            var source = this.source(), target = this.target();
-
-            this.visible(source !== null && target !== null &&
-                    source.visible() === true && target.visible() === true);
-        }),
-
-        /**
-         * @private target changed listener
-         */
-        _straightLineTargetChanged : bui.util.createPrototypeValue(
-                function(drawable, newTarget, oldTarget) {
-            if (oldTarget !== null) {
-                oldTarget.unbindAll(listenerIdentifier(this));
-            }
-
-            if (newTarget !== null) {
-                var listener = this._straightLineTargetDimensionChanged
-                        .createDelegate(this);
-                newTarget.bind(bui.Node.ListenerType.position, listener,
-                        listenerIdentifier(this));
-                newTarget.bind(bui.Node.ListenerType.size, listener,
-                        listenerIdentifier(this));
-
-                listener = this._straightLineEndpointVisibilityChanged
-                        .createDelegate(this);
-                newTarget.bind(bui.Drawable.ListenerType.visible, listener,
-                        listenerIdentifier(this));
-            }
-
-            this._straightLineTargetDimensionChanged(newTarget);
-            this._straightLineEndpointVisibilityChanged();
-        }),
-
-        /**
-         * @private Target position and size listener
-         */
-        _straightLineTargetDimensionChanged : bui.util.createPrototypeValue(
-                function(target) {
-            var center = target.center();
-            this._line.setAttributeNS(null, 'x2', center.x);
-            this._line.setAttributeNS(null, 'y2', center.y);
-        })
-    });
+    bui.util.setSuperClass(bui.StraightLine, bui.AttachedDrawable);
 })(bui);

@@ -18,48 +18,90 @@
         bui.ready(function() {
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
 
+            parent = graph.add(bui.Node).position(10, 10);
+
+            child = graph.add(bui.Node).position(50, 50).parent(parent);
+
+            label = graph.add(bui.Labelable).label('foobar')
+
             outterComplex = graph
-                .add(bui.Complex, [100, 100, 215, 240])
+                .add(bui.Complex)
+                .position(100, 100)
+                .size(215, 240)
+                .visible(true);
+
+            simpleChemical = graph
+                .add(bui.SimpleChemical)
+                .position(300, 300)
+                .size(150, 150)
+                .label('Simple Chemical')
                 .visible(true);
 
             nucleic = graph
-                .add(bui.NucleicAcidFeature,[30, 140, 150, 75,outterComplex])
+                .add(bui.NucleicAcidFeature)
+                .position(30, 140)
+                .size(150, 75)
+                .parent(outterComplex)
                 .label('IRF1-GAS')
                 .visible(true);
-            graph.add(bui.UnitOfInformation, [40,-13,0,0,nucleic])
+            graph.add(bui.UnitOfInformation)
+                .position(40, -13)
+                .parent(nucleic)
                 .label('ct:grr')
                 .visible(true);
 
             innerComplex = graph
-                .add(bui.Complex, [10, 10, 195, 110, outterComplex])
+                .add(bui.Complex)
+                .position(10, 10)
+                .size(195, 110)
+                .parent(outterComplex)
                 .visible(true);
 
             macromolecule = graph
-                .add(bui.Macromolecule, [20, 20, 150, 70, innerComplex])
+                .add(bui.Macromolecule)
+                .position(20, 20)
+                .size(150, 70)
+                .parent(innerComplex)
                 .label('STAT1a')
                 .visible(true);
-
-            graph.add(bui.StateVariable, [13,-14,0,0,macromolecule])
+//
+            graph.add(bui.StateVariable)
+                .position(13, -14)
+                .parent(macromolecule)
                 .label('P@Y701')
                 .visible(true);
-            graph.add(bui.StateVariable, [80,-14,0,0,macromolecule])
+            graph.add(bui.StateVariable)
+                .position(80, -14)
+                .parent(macromolecule)
                 .label('P@Y727')
                 .visible(true);
-            graph.add(bui.UnitOfInformation, [50,53,0,0,macromolecule])
+            graph.add(bui.UnitOfInformation)
+                .position(50, 53)
+                .parent(macromolecule)
                 .label('mt:prot')
                 .visible(true);
 
             compartment = graph
-                .add(bui.Compartment, [400, 50, 150, 75])
+                .add(bui.Compartment)
+                .position(400, 40)
+                .size(150, 75)
                 .visible(true);
             compartment.label('cytosol');
 
             dragHandle = graph
-                .add(bui.DragHandle, [423, 253])
+                .add(bui.DragHandle)
                 .visible(true);
-            
+
+            unspecifiedEntity = graph
+                .add(bui.UnspecifiedEntity)
+                .position(500, 500)
+                .size(200, 140)
+                .label('Unspecified')
+                .visible(true);
+
             process = graph
-                    .add(bui.Process, [440, 250])
+                    .add(bui.Process)
+                    .position(440, 250)
                     .visible(true);
 
             edge = graph
