@@ -35,14 +35,6 @@ VI * Network::getNeighbors(int nodeIndex){
    return arr;
 }
 
-int * Network::getNeighbors_arr(int nodeIndex){
-   int i,n=(*nodes)[nodeIndex].neighbors->size();
-   int *arr=(int *)malloc(sizeof(int)*n);
-   for(i=0;i<n;i++)
-      arr[i]=((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
-   return arr;
-}
-
 void Network::addEdge(int from, int to , Edgetype type){
    edges->push_back(Edge(from, to, type));
    int index=edges->size()-1;

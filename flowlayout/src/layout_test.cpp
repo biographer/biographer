@@ -3,7 +3,7 @@
 int main(){
     clock_t start_time, end_time;
     start_time=clock();
-    freopen("data2.txt","r",stdin);
+    freopen("newdata.txt","r",stdin);
     freopen("summary.txt","w",stdout);
     char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"};
     char nodetypes[][20]={"None", "Reaction", "Compound","Other"};
@@ -30,7 +30,7 @@ int main(){
        scanf("%d\n",&ci); // compartment index  FIXME: this is not added to the node yet
        scanf("%f%f",& _x,& _y);
        scanf("%f%f%f",& _width,& _height,& _dir);      
-       nw.addNode(_index, _type, s, _width, _height, _x, _y, _dir);            
+       nw.addNode(_index, _type, s, _width, _height, _x, _y, _dir,ci);            
     }
     scanf("%s\n",s); // "///"
     scanf("%d\n",&m);
