@@ -108,6 +108,11 @@
                     .add(bui.StraightLine)
                     .source(process)
                     .target(compartment);
+
+            process.bind(bui.Node.ListenerType.position, function() {
+                console.log('################')
+            });
+
         });
     </script>
 </head>

@@ -48,13 +48,24 @@
     };
 
     /**
-     * @private Source position and size listener
+     * @private Source / target position and size listener
      */
-    var sourceDimensionChanged = function(source) {
-        var center = source.absoluteCenter();
-        var line = this._privates(identifier).line;
-        line.setAttributeNS(null, 'x1', center.x);
-        line.setAttributeNS(null, 'y1', center.y);
+    var sourceOrTargetDimensionChanged = function() {
+        var target = this.target(),
+                source = this.source();
+
+        if (target !== null && source !== null) {
+            var line = this._privates(identifier).line;
+
+            var to = source.calculateLineEnd(target);
+            line.setAttributeNS(null, 'x1', to.x);
+            line.setAttributeNS(null, 'y1', to.y);
+
+            to = target.calculateLineEnd(source);
+            line.setAttributeNS(null, 'x2', to.x);
+            line.setAttributeNS(null, 'y2', to.y);
+        }
+        
     };
 
     /**
@@ -76,7 +87,7 @@
         }
 
         if (newSource !== null) {
-            var listener = sourceDimensionChanged.createDelegate(this);
+            var listener = sourceOrTargetDimensionChanged.createDelegate(this);
             newSource.bind(bui.Node.ListenerType.position, listener,
                     listenerIdentifier(this));
             newSource.bind(bui.Node.ListenerType.size, listener,
@@ -87,18 +98,8 @@
                     listenerIdentifier(this));
         }
 
-        sourceDimensionChanged.call(this, newSource);
+        sourceOrTargetDimensionChanged.call(this);
         endpointVisibilityChanged.call(this);
-    };
-
-    /**
-     * @private Target position and size listener
-     */
-    var targetDimensionChanged = function(target) {
-        var center = target.absoluteCenter();
-        var line = this._privates(identifier).line;
-        line.setAttributeNS(null, 'x2', center.x);
-        line.setAttributeNS(null, 'y2', center.y);
     };
 
     /**
@@ -110,7 +111,7 @@
         }
 
         if (newTarget !== null) {
-            var listener = targetDimensionChanged.createDelegate(this);
+            var listener = sourceOrTargetDimensionChanged.createDelegate(this);
             newTarget.bind(bui.Node.ListenerType.position, listener,
                     listenerIdentifier(this));
             newTarget.bind(bui.Node.ListenerType.size, listener,
@@ -121,7 +122,7 @@
                     listenerIdentifier(this));
         }
 
-        targetDimensionChanged.call(this, newTarget);
+        sourceOrTargetDimensionChanged.call(this);
         endpointVisibilityChanged.call(this);
     };
 

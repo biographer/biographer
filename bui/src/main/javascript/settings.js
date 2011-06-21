@@ -77,6 +77,10 @@ bui.settings = {
         processNodeMinSize : {
             width : 26,
             height : 26
+        },
+        edgeToNodePadding : {
+            topBottom : 5,
+            leftRight : 5
         }
     }
 };

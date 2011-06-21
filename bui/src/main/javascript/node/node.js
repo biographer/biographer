@@ -502,6 +502,63 @@
             }
 
             return privates.parent;
+        },
+
+        /**
+         * @private
+         * Used to calculate line endpoints. Generally spoken this method
+         * will only be used by the class {@link bui.StraightLine}.
+         * 
+         * @param {bui.Node} otherNode
+         * @return {Object} an object with x and y properties
+         */
+        calculateLineEnd : function(otherNode) {
+            var position = this.center(),
+                    size = this.size(),
+                    otherPosition = otherNode.center();
+
+            var padding = bui.settings.style.edgeToNodePadding;
+            var widthWithPadding = size.width + padding.leftRight * 2,
+                    heightWithPadding = size.height + padding.topBottom * 2;
+
+            var deltaX = otherPosition.x - position.x,
+                    deltaY = otherPosition.y - position.y;
+
+            var hitAngle = Math.abs(Math.atan(deltaY / deltaX));
+            var sideHitAngle = Math.atan(heightWithPadding / widthWithPadding);
+
+            var adjacent = 0;
+            var goesThroughLeftOrRightSide = hitAngle < sideHitAngle;
+
+            if (goesThroughLeftOrRightSide) {
+                adjacent = widthWithPadding / 2;
+            } else {
+                adjacent = heightWithPadding / 2;
+                // subtracting 90 degrees
+                hitAngle = Math.PI / 2 - hitAngle;
+            }
+
+            var opposite = Math.tan(hitAngle) * adjacent;
+
+            var xChange = 0, yChange = 0;
+            if (goesThroughLeftOrRightSide) {
+                xChange = adjacent;
+                yChange = opposite;
+            } else {
+                xChange = opposite;
+                yChange = adjacent;
+            }
+
+            var hitsTop = position.y > otherPosition.y,
+                    hitsLeft = position.x > otherPosition.x;
+
+            xChange *= (hitsLeft ? -1 : 1);
+            yChange *= (hitsTop ? -1 : 1);
+
+            return {
+                x : position.x + xChange,
+                y : position.y + yChange
+            };
         }
     };
 
