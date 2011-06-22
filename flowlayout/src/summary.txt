@@ -6,7 +6,7 @@ number of iteration: 1843
 Total force = 93263.047
 number of iteration: 695
 Total force = 122626.938
-time used: 4.554 seconds
+time used: 4.628 seconds
 
 0
 Reaction

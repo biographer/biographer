@@ -26,7 +26,21 @@ public:
    VI* getNeighbors(int nodeIndex);  //get the reactions associated with a compound.
    
    float layout();
-   
+      
+protected:
+     
+   float get_dij1(int i, int j); //the ideal distance between adjacent nodes;
+   float get_dij2(int i, int j); //the minimum distance between non-adjacent nodes;
+   void get_ideal_distance();
+   float init_layout();
+   float calc_force_adj(); //calculating the force resulted from edges;
+   float calc_force_nadj(); //calculating the force resulted from non-adjacent nodes;
+   float calc_force_compartments(); //calculating force obeying compartments;
+   float firm_distribution(); //firmly distribute the edges around a compound.
+   float post_pro();
+   void move_nodes(); //move the nodes to a new position.
+   void init_compartments(); //initialize the compartment boundaries;
+   void adjust_compartments(); //adjusting the boundaries of compartments.
    
    VP pos, mov;
    struct rect{
@@ -40,20 +54,6 @@ public:
    vector<float>mov_dir;
    VI cnt;
    int * above_comp;
-      
-protected:
-     
-   float get_dij1(int i, int j); //the ideal distance between adjacent nodes;
-   float get_dij2(int i, int j); //the minimum distance between non-adjacent nodes;
-   void get_ideal_distance();
-   float init_layout();
-   float calc_force_adj(); //calculating the force resulted from edges;
-   float calc_force_nadj(); //calculating the force resulted from non-adjacent nodes;
-   float calc_force_compartments(); //calculating force obeying compartments;
-   float firm_distribution(); //firmly distribute the edges around a compound.
-   void move_nodes(); //move the nodes to a new position.
-   void init_compartments(); //initialize the compartment boundaries;
-   void adjust_compartments(); //adjusting the boundaries of compartments.
 };
    
 #endif

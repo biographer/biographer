@@ -173,7 +173,7 @@ float Network::firm_distribution(){
          j=i+1;
          beta=lim(angle(pos[neighbors[i]]-baseNode)+average-angle(pos[neighbors[j]]-baseNode));
          d=dist(pos[neighbors[i]],baseNode);
-         force+=(d*d*sin(beta/10));
+         force+=(d*d*sin(0.1*beta));
          mov[j]=mov[j]+(to_left(pos[neighbors[j]]-baseNode,beta/10)-pos[neighbors[j]]+baseNode);
       }
       neighbors.clear();
@@ -325,7 +325,36 @@ float Network::init_layout(){
    }
    return force;
 }
-      
+   
+float Network::post_pro(){
+   int n1,n2,n=nodes->size();
+   float d,i_d,force=0.0;
+   Point vec;
+   
+   for(n1=0;n1<n;n1++)
+      for(n2=n1+1;n2<n;n2++){
+         if(isadj[n1][n2])continue;              
+         i_d=dij2[n1][n2];
+         d=dist(pos[n1],pos[n2]);
+         if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
+         
+         force+=((i_d-d)*(i_d-d)); //distantal force;
+         
+         vec=pos[n1]-pos[n2];
+         if(fabs(d)<zero){
+            vec.x=1.0;
+            vec.y=0.0;
+         }
+         else{
+            vec.x/=d;
+            vec.y/=d;
+         }
+         mov[n1].x+=(vec.x/10);mov[n1].y+=(vec.y/10);
+         mov[n2].x-=(vec.x/10);mov[n2].y-=(vec.y/10);
+      }
+   return force;
+}
+   
 float Network::layout(){
        
    //copying coordinates from nodes[] to pos[];   
@@ -378,9 +407,8 @@ float Network::layout(){
    pre_force=inf;
    while(true){     
       k++;
-      if(100<k)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
-      else cur_force=0.0;
       cur_force=0.0;
+      if(100<k)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
@@ -402,6 +430,7 @@ float Network::layout(){
    while(true){
       k++;
       cur_force=0.0;
+      //cur_force+=firm_distribution();
       cur_force+=calc_force_compartments();
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
@@ -414,6 +443,21 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force); 
+   
+   //phase4: post processing.
+   pre_force=inf;
+   k=inc=0;
+   while(true){
+      k++;
+      cur_force=0.0;
+      cur_force+=post_pro();
+      //cur_force+=calc_force_compartments();
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>log(1.0*n))break;
+     // printf("%0.3f\n",cur_force);
+      pre_force=cur_force;    
+   }   
    
    //copying coordinations from pos[] to nodes[];
    for(i=0;i<n;i++){
