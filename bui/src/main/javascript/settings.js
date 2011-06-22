@@ -20,7 +20,8 @@ bui.settings = {
     idPrefix : {
         graph : 'graph',
         node : 'node',
-        edge : 'edge'
+        edge : 'edge',
+        connectingArc : 'connectingArc'
     },
     /**
      * @field
