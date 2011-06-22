@@ -26,6 +26,21 @@ public:
    VI* getNeighbors(int nodeIndex);  //get the reactions associated with a compound.
    
    float layout();
+<<<<<<< local
+=======
+   
+   
+   VP pos, mov;
+   struct rect{
+      float xmin, xmax, ymin, ymax;
+   };
+   vector<rect>bcomp; //compartment boundaries;
+   vector<float>dij1; //adjacent nodes;
+   vector< vector<float> >dij2; //non-adjacent nodes;
+   vector<float>pts_dir;
+   vector<float>mov_dir;
+   VI cnt, above_comp;
+>>>>>>> other
       
 protected:
      
@@ -41,6 +56,7 @@ protected:
    void move_nodes(); //move the nodes to a new position.
    void init_compartments(); //initialize the compartment boundaries;
    void adjust_compartments(); //adjusting the boundaries of compartments.
+<<<<<<< local
    
    VP pos, mov;
    struct rect{
@@ -54,6 +70,8 @@ protected:
    vector<float>mov_dir;
    VI cnt;
    int * above_comp;
+=======
+>>>>>>> other
 };
    
 #endif

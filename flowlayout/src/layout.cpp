@@ -173,7 +173,11 @@ float Network::firm_distribution(){
          j=i+1;
          beta=lim(angle(pos[neighbors[i]]-baseNode)+average-angle(pos[neighbors[j]]-baseNode));
          d=dist(pos[neighbors[i]],baseNode);
+<<<<<<< local
          force+=(d*d*sin(0.1*beta));
+=======
+         force+=(d*d*sin(beta/10));
+>>>>>>> other
          mov[j]=mov[j]+(to_left(pos[neighbors[j]]-baseNode,beta/10)-pos[neighbors[j]]+baseNode);
       }
       neighbors.clear();
@@ -187,8 +191,12 @@ void Network::init_compartments(){
    float tem;
    vector<comp_y>ymid;
    ymid.resize(cn);
+<<<<<<< local
   // above_comp.resize(cn);
    above_comp=(int *)malloc(sizeof(int)*cn);
+=======
+   above_comp.resize(cn);
+>>>>>>> other
    for(comp=0;comp<cn;comp++){
       ymid[comp].id=comp;
       ymid[comp].cnt=0;
@@ -224,6 +232,11 @@ void Network::init_compartments(){
       (*compartments)[i].xmin=-inf;
       (*compartments)[i].xmax=inf;
    }
+<<<<<<< local
+=======
+  // for(i=1;i<cn;i++)
+  // printf("%0.3f  %0.3f  %0.3f  %0.3f\n",(*compartments)[i].xmin,(*compartments)[i].xmax,(*compartments)[i].ymin,(*compartments)[i].ymax);
+>>>>>>> other
 }   
    
 void Network::adjust_compartments(){
@@ -407,6 +420,11 @@ float Network::layout(){
    pre_force=inf;
    while(true){     
       k++;
+<<<<<<< local
+=======
+      if(100<k)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
+      else cur_force=0.0;
+>>>>>>> other
       cur_force=0.0;
       if(100<k)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
       cur_force+=calc_force_adj();
@@ -420,17 +438,24 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
-   
+
    init_compartments();
    //adjust_compartments();
+<<<<<<< local
   
+=======
+   
+>>>>>>> other
    //phase 3: bring in compartments;
    pre_force=inf;
    k=inc=0;
    while(true){
       k++;
       cur_force=0.0;
+<<<<<<< local
       //cur_force+=firm_distribution();
+=======
+>>>>>>> other
       cur_force+=calc_force_compartments();
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
