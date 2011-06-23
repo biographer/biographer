@@ -41,7 +41,7 @@
      * @class
      * A node with the shape of an ellipse and a label inside.
      *
-     * @extends bui.SBGNNode
+     * @extends bui.Labelable
      * @constructor
      */
     bui.UnspecifiedEntity = function() {

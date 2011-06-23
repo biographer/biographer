@@ -43,7 +43,10 @@ bui.settings = {
                 small : 'smallText'
             },
             connectingArcs : {
-                stimulation : 'stimulation'
+                stimulation : 'stimulation',
+                catalysis : 'catalysis',
+                modulation : 'modulation',
+                necessaryStimulation : 'necessaryStimulation'
             }
         }
     },

@@ -33,7 +33,7 @@ line {
     stroke: #000;
 }
 
-.stimulation {
+.stimulation, .catalysis, .modulation, .necessaryStimulation {
     fill: white;
     stroke: black;
 }
