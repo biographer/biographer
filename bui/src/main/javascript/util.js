@@ -244,4 +244,15 @@
     bui.util.createListenerTypeId = function() {
         return listenerTypeCounter++;
     };
+
+    /**
+     * Create a marker's marker-end attribute value. To do this the element
+     * id is required.
+     *
+     * @param {String} elementId The element's id which should be referenced
+     * @return {String} The complete attribute value as needed for marker-end.
+     */
+    bui.util.createMarkerAttributeValue = function(elementId) {
+        return ['url(#', elementId, ')'].join('');
+    };
 })(bui);

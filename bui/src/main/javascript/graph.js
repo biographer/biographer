@@ -77,7 +77,8 @@
         for(var i in bui.connectingArcs) {
             if (bui.connectingArcs.hasOwnProperty(i)) {
                 var ca = bui.connectingArcs[i]();
-                privates.connectingArcs[i] = ca;
+                var id = bui.connectingArcs[i].id;
+                privates.connectingArcs[id] = ca;
 
                 privates.defsGroup.appendChild(ca.element);
             }
@@ -379,7 +380,7 @@
          * @return {Object} You will retrieve the connecting arcs
          * in the following form:
          * {
-         *   stimulation : { // name of the connecting arc type
+         *   stimulation : { // id of the connecting arc type
          *     id : 'foo', // the id with which the marker can be referenced
          *     element : {} // instance of SVGMarkerElement
          *   },

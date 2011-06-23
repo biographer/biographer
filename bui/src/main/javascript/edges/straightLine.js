@@ -50,7 +50,6 @@
                 this._line.setAttributeNS(null, 'y2', to.y);
             }
         }
-
     };
 
     bui.util.setSuperClass(bui.StraightLine, bui.AbstractLine);

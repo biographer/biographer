@@ -12,9 +12,15 @@
      * Helper function for the generation of SVGPathElement elements.
      *
      * @param {String} data Used to fill the path element's data attribute.
+     * @param {Number} refX Value for the refX attribute
+     * @param {Number} refY Value for the refY attribute
+     * @param {Number} width Value for the markerWidth and viewBox attribute
+     * @param {Number} height Value for the markerHeight and viewBox attribute
+     * @param {String} [classes] CSS classes which should be applied to the
+     *   marker element.
      * @return {Object} An object with id and element properties. The id
-     *   property holds the id of the marker and the element property the
-     *   generated element.
+     *   property holds the marker's id and the element property the
+     *   SVGMarkerElement.
      */
     var createPathWithData = function(data, refX, refY, width, height, classes)
     {
@@ -58,6 +64,8 @@
         return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
                 bui.settings.css.classes.connectingArcs.stimulation);
     };
+    bui.connectingArcs.stimulation.id = 'stimulation';
+
 
     /**
      * @field Generator for a inhibition connecting arc.
@@ -71,4 +79,5 @@
     bui.connectingArcs.inhibition = function() {
         return createPathWithData('M0,0V20H1V0Z', 0, 10, 2, 20);
     };
+    bui.connectingArcs.inhibition.id = 'inhibition';
 })(bui);
