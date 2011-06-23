@@ -12,157 +12,46 @@
     };
 
     /**
-     * @private initial paint
-     */
-    var initialPaint = function() {
-        var privates = this._privates(identifier);
-        privates.line = document.createElementNS(bui.svgns, 'line');
-        privates.container.edgeGroup().appendChild(privates.line);
-        this.addClass(bui.settings.css.classes.invisible);
-    };
-
-    /**
-     * @private visibility listener
-     */
-    var visibilityChanged = function(drawable, visible) {
-        if (visible === true) {
-            this.removeClass(bui.settings.css.classes.invisible);
-        } else {
-            this.addClass(bui.settings.css.classes.invisible);
-        }
-    };
-
-    /**
-     * @private classes listener
-     */
-    var classesChanged = function(drawable, classString) {
-        this._privates(identifier).line.setAttributeNS(
-                null, 'class', classString);
-    };
-
-    /**
-     * @private remove listener
-     */
-    var removeListener = function() {
-        this._privates(identifier).line.parentNode.removeChild(this._line);
-    };
-
-    /**
-     * @private Source / target position and size listener
-     */
-    var sourceOrTargetDimensionChanged = function() {
-        var target = this.target(),
-                source = this.source();
-
-        if (target !== null && source !== null) {
-            var line = this._privates(identifier).line;
-
-            var to = source.calculateLineEnd(target);
-            line.setAttributeNS(null, 'x1', to.x);
-            line.setAttributeNS(null, 'y1', to.y);
-
-            to = target.calculateLineEnd(source);
-            line.setAttributeNS(null, 'x2', to.x);
-            line.setAttributeNS(null, 'y2', to.y);
-        }
-        
-    };
-
-    /**
-     * @private Source and target visibility listener
-     */
-    var endpointVisibilityChanged = function() {
-        var source = this.source(), target = this.target();
-
-        this.visible(source !== null && target !== null &&
-                source.visible() === true && target.visible() === true);
-    };
-
-    /**
-     * @private source changed listener
-     */
-    var sourceChanged = function(drawable, newSource, oldSource) {
-        if (oldSource !== null) {
-            oldSource.unbindAll(listenerIdentifier(this));
-        }
-
-        if (newSource !== null) {
-            var listener = sourceOrTargetDimensionChanged.createDelegate(this);
-            newSource.bind(bui.Node.ListenerType.position, listener,
-                    listenerIdentifier(this));
-            newSource.bind(bui.Node.ListenerType.size, listener,
-                    listenerIdentifier(this));
-
-            newSource.bind(bui.Drawable.ListenerType.visible,
-                    endpointVisibilityChanged.createDelegate(this),
-                    listenerIdentifier(this));
-        }
-
-        sourceOrTargetDimensionChanged.call(this);
-        endpointVisibilityChanged.call(this);
-    };
-
-    /**
-     * @private target changed listener
-     */
-    var targetChanged = function(drawable, newTarget, oldTarget) {
-        if (oldTarget !== null) {
-            oldTarget.unbindAll(listenerIdentifier(this));
-        }
-
-        if (newTarget !== null) {
-            var listener = sourceOrTargetDimensionChanged.createDelegate(this);
-            newTarget.bind(bui.Node.ListenerType.position, listener,
-                    listenerIdentifier(this));
-            newTarget.bind(bui.Node.ListenerType.size, listener,
-                    listenerIdentifier(this));
-
-            newTarget.bind(bui.Drawable.ListenerType.visible,
-                    endpointVisibilityChanged.createDelegate(this),
-                    listenerIdentifier(this));
-        }
-
-        sourceOrTargetDimensionChanged.call(this);
-        endpointVisibilityChanged.call(this);
-    };
-
-
-    
-    /**
      * @class
      * A drawable which has both, a source and a target
      *
-     * @extends bui.AttachedDrawable
+     * @extends bui.AbstractLine
      * @constructor
-     * 
-     * @param {String} id complete id
-     * @param {bui.Graph} graph The graph which this drawable shall be
-     *   part of.
      */
     bui.StraightLine = function(args){
-        args.id = bui.settings.idPrefix.edge + args.id;
-        bui.AttachedDrawable.call(this, args);
-
-        this._privates(identifier).container = this.graph();
-
-        this.bind(bui.Drawable.ListenerType.visible,
-                visibilityChanged.createDelegate(this),
-                listenerIdentifier(this));
-        this.bind(bui.Drawable.ListenerType.classes,
-                classesChanged.createDelegate(this),
-                listenerIdentifier(this));
-        this.bind(bui.Drawable.ListenerType.remove,
-                removeListener.createDelegate(this),
-                listenerIdentifier(this));
-        this.bind(bui.AttachedDrawable.ListenerType.source,
-                sourceChanged.createDelegate(this),
-                listenerIdentifier(this));
-        this.bind(bui.AttachedDrawable.ListenerType.target,
-                targetChanged.createDelegate(this),
-                listenerIdentifier(this));
-
-        initialPaint.call(this);
+        bui.StraightLine.superClazz.apply(this, arguments);
     };
 
-    bui.util.setSuperClass(bui.StraightLine, bui.AttachedDrawable);
+    bui.StraightLine.prototype = {
+        /**
+         * @private initial paint
+         */
+        _initialPaint : function() {
+            var privates = this._privates(identifier);
+            this._line = document.createElementNS(bui.svgns, 'line');
+            this.graph().edgeGroup().appendChild(this._line);
+            this.addClass(bui.settings.css.classes.invisible);
+        },
+
+        /**
+         * @private Source / target position and size listener
+         */
+        _sourceOrTargetDimensionChanged : function() {
+            var target = this.target(),
+                    source = this.source();
+
+            if (target !== null && source !== null) {
+                var to = source.calculateLineEnd(target);
+                this._line.setAttributeNS(null, 'x1', to.x);
+                this._line.setAttributeNS(null, 'y1', to.y);
+
+                to = target.calculateLineEnd(source);
+                this._line.setAttributeNS(null, 'x2', to.x);
+                this._line.setAttributeNS(null, 'y2', to.y);
+            }
+        }
+
+    };
+
+    bui.util.setSuperClass(bui.StraightLine, bui.AbstractLine);
 })(bui);

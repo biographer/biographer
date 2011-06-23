@@ -371,6 +371,23 @@
 
             privates.rootDimensions.height = y;
             privates.root.setAttribute('height', y);
+        },
+
+        /**
+         * Retrieve the connecting arcs.
+         *
+         * @return {Object} You will retrieve the connecting arcs
+         * in the following form:
+         * {
+         *   stimulation : { // name of the connecting arc type
+         *     id : 'foo', // the id with which the marker can be referenced
+         *     element : {} // instance of SVGMarkerElement
+         *   },
+         *   // more types may be here
+         * }
+         */
+        connectingArcs : function() {
+            return this._privates(identifier).connectingArcs;
         }
     };
 

@@ -48,6 +48,7 @@ modules = ['intro',
            os.path.join(nodes_sub_dir, 'unspecifiedEntity.js'),
            os.path.join(nodes_sub_dir, 'process.js'),
            os.path.join(edges_sub_dir, 'attachedDrawable.js'),
+           os.path.join(edges_sub_dir, 'abstractLine.js'),
            os.path.join(edges_sub_dir, 'straightLine.js'),
            'outro']
 
