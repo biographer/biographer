@@ -41,6 +41,9 @@ bui.settings = {
                 generic : 'textDimensionCalculation',
                 standard : 'defaultText',
                 small : 'smallText'
+            },
+            connectingArcs : {
+                stimulation : 'stimulation'
             }
         }
     },

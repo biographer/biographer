@@ -49,6 +49,9 @@
             height : jQuery(privates.root).height()
         };
 
+        privates.defsGroup = document.createElementNS(bui.svgns, 'defs');
+        privates.root.appendChild(privates.defsGroup);
+
         privates.css = document.createElementNS(bui.svgns, 'style');
         privates.css.setAttributeNS(null, 'type', 'text/css');
         privates.css.textContent = '@import url(\'' +
@@ -68,6 +71,17 @@
         privates.placeholderContainer = document.createElement('div');
         document.getElementsByTagName('body')[0]
                 .appendChild(privates.placeholderContainer);
+
+        privates.connectingArcs = {};
+
+        for(var i in bui.connectingArcs) {
+            if (bui.connectingArcs.hasOwnProperty(i)) {
+                var ca = bui.connectingArcs[i]();
+                privates.connectingArcs[i] = ca;
+
+                privates.defsGroup.appendChild(ca.element);
+            }
+        }
     };
 
     /**

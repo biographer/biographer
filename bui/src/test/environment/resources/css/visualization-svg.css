@@ -32,3 +32,8 @@ ellipse.selected, circle.selected {
 line {
     stroke: #000;
 }
+
+.stimulation {
+    fill: white;
+    stroke: black;
+}

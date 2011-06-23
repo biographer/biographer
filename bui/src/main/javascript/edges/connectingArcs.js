@@ -16,17 +16,32 @@
      *   property holds the id of the marker and the element property the
      *   generated element.
      */
-    var createPathWithData = function(data) {
-        var path = document.createElementNS(bui.svgns, 'path');
-
+    var createPathWithData = function(data, refX, refY, width, height, classes)
+    {
+        var marker = document.createElementNS(bui.svgns, 'marker');
         var id = (bui.settings.idPrefix.connectingArc +
                 connectingArcIdCounter++);
-        path.setAttributeNS(null, 'id', id);
+        marker.setAttributeNS(null, 'id', id);
+        marker.setAttributeNS(null, 'orient', 'auto');
+        marker.setAttributeNS(null, 'refX', refX);
+        marker.setAttributeNS(null, 'refY', refY);
+        marker.setAttributeNS(null, 'markerWidth', width);
+        marker.setAttributeNS(null, 'markerHeight', height);
+        marker.setAttributeNS(null, 'viewBox',
+                ['0 0', width, height].join(' '));
+
+        if (classes !== undefined) {
+            marker.setAttributeNS(null, 'class', classes);
+        }
+
+        var path = document.createElementNS(bui.svgns, 'path');
         path.setAttributeNS(null, 'd', data);
-        
+
+        marker.appendChild(path);
+
         return {
             id : id,
-            element : path
+            element : marker
         };
     };
 
@@ -40,7 +55,8 @@
      *   generated element.
      */
     bui.connectingArcs.stimulation = function() {
-        return createPathWithData('M0,0L10,5L0,10Z');
+        return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
+                bui.settings.css.classes.connectingArcs.stimulation);
     };
 
     /**
@@ -53,6 +69,6 @@
      *   generated element.
      */
     bui.connectingArcs.inhibition = function() {
-        return createPathWithData('M0,0L0,10');
+        return createPathWithData('M0,0V20H1V0Z', 0, 10, 2, 20);
     };
 })(bui);
