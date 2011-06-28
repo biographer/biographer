@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 
-bioJSON = local_import("bioJSON")
+biographer = local_import("biographer")
 
-def parser():
-	if session.JSON.find("{") == -1:
-		request.flash = "Please! This is not JSON ..."
-	session.bioGraph = bioJSON.Graph( session.JSON )
-	request.flash = session.bioGraph.DEBUG
+def importer():
 	return dict()
+
+def upload():
+	session.JSON = request.vars.JSON
+	session.bioGraph = biographer.Graph( JSONinput=session.JSON )
+	return redirect("/biographer/Workbench")
 
 def details():
-	return dict()
-
-def recompile():
 	return dict()
 

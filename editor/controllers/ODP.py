@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 
+biographer = local_import("biographer")
+
 def importer():
-	# ... not #1 priority now
 	return dict()
+
+def upload():
+	example = "/var/www/web2py/applications/biographer/doc/demograph/demograph.odp"	# hardcoded example
+	session.bioGraph = biographer.Graph( ODPfile=example )
+	return redirect("/biographer/Workbench")
 
