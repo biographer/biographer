@@ -1,0 +1,42 @@
+{{extend 'layout.html'}}
+
+<h1>EBI BioModels Importer</h1>
+
+<form name=main action=download method=POST>
+
+You decided to load a SBML model from <a href="http://www.ebi.ac.uk/biomodels-main/publmodels">http://biomodels.net/</a>.<br/>
+Please paste your BioModels-ID below:<br/>
+<br/>
+
+<script type="text/javascript">
+
+	function Check() {
+		edit = document.main.BioModelsID;
+		if (( edit.value.length > 5  ) && ( edit.value.substr(0, 5) == "BIOMD" )) {		// cut "BIOMD", if pasted
+			edit.value = edit.value.substr(5, edit.value.length-5)
+			}
+		if (( edit.value.length < 1 ) || ( isNaN( document.main.BioModelsID.value ) )) {	// check if input is an integer
+			document.main.Valid.value = "<< Integer expected";
+			document.main.Valid.style.color = "red";
+			document.main.Submit.style.visibility = "hidden";
+			}
+		else	{
+			document.main.Valid.value = "Okay";
+			document.main.Valid.style.color = "green";
+			document.main.Submit.style.visibility = "visible";
+			}
+		}
+
+	document.main.BioModelsID.addEventListener("DOMCharacterDataModified", Check(), true);
+	document.main.BioModelsID.focus();
+
+</script>
+
+<b>BIOMD</b><input type=text name=BioModelsID onKeyUp="javascript:Check();" onClick="javascript:Check();" onMouseMove="javascript:Check();" /><input type=text name=Valid value="" style="border:#ffffff;" />
+
+<br/>
+
+<input type=submit name=Submit value="Download" style="visibility:hidden;" />
+
+</form>
+
