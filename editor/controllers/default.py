@@ -14,7 +14,7 @@ def index():
     example action using the internationalization operator T and flash
     rendered by views/default/index.html or views/generic.html
     """
-    return redirect(URL(r=request, c="upload", f="upload")) #dict(message=T('Test'))
+    return redirect("/biographer/Workbench/") #dict(message=T('Test'))
 
 def user():
     """
