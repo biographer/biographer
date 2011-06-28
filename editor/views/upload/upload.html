@@ -1,4 +1,15 @@
-{ "nodes":[
+{{extend 'layout.html'}}
+
+<h1>Good morning</h1>
+
+<a href="help">Help</a><br/><br/>
+
+<form enctype="multipart/form-data" method="POST">
+
+<input type=radio name=Type value=JSON checked />
+You may start by providing a JSON biographer object<br/>
+
+<input type=hidden name=example value='{ "nodes":[
 		{
 		"id" : 0,
 		"type" : "simple_species",
@@ -103,4 +114,26 @@
 		"target" : 6
 		}
 	]
-}
+}'/>
+
+<textarea name="JSON" onClick="document.forms[0].JSON.value='';" style="width:600px;height:400px;">
+Enter JSON here ...
+</textarea>
+<br/>
+
+(<input type=button value="It happens, that some strange people don't know JSON. Are you one of these people ?" onClick="alert('Let me help you a bit...');javascript:document.forms[0].JSON.value=document.forms[0].example.value;"/>)
+
+<br/>
+<br/>
+
+<input type=radio name=Type value=ODP />
+or by importing an OpenOffice Impress File<br/>
+
+<input type="file" name="ODP" size=55 /><br/>
+
+<br/>
+
+<input type="submit" value="Upload" />
+
+</form>
+

@@ -1,0 +1,27 @@
+{{extend 'layout.html'}}
+
+<h1>Let's play with your JSON</h1>
+
+<input type=button value=Back onClick="location.href='parser';"/><br/>
+
+<br/>
+
+Here is the object we understood:<br/>
+<pre style="white-space:normal;">
+{{ = session.bioGraph.DICT() }}
+</pre>
+
+<br/>
+
+Transcoder reported:<br/>
+<pre>
+{{ = session.bioGraph.DEBUG }}
+</pre>
+
+<br/>
+
+Transcoder generated a python object. Python object generated the following JSON code:<br/>
+<pre>
+{{ = session.bioGraph.JSON() }}
+</pre>
+

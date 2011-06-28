@@ -1,0 +1,21 @@
+{{extend 'layout.html'}}
+
+<h1>Here are some details on your BioGraph</h1>
+
+<input type=button value=Back onClick="location.href='parser';"/><br/>
+
+<br/>
+
+Let's see ...<br/>
+<br/>
+<table border=0 cellspacing=5 cellpadding=5 style="border:1pt dashed #111;">
+	<tr>
+		<td>{{ = session.bioGraph.NodeCount() }}</td>
+		<td>Nodes</td>
+	</tr>
+	<tr>
+		<td>{{ = session.bioGraph.EdgeCount() }}</td>
+		<td>Edges</td>
+	</tr>
+</table>
+

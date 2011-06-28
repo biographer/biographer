@@ -1,0 +1,27 @@
+{{extend 'layout.html'}}
+
+<h1>You decided to provide JSON</h1>
+
+<input type=button value=Back onClick="location.href='../../biographer/';"/><br/>
+
+<br/>
+
+Here it is:<br/>
+
+<a class=nice href="details">&nbsp;Analyze the code&nbsp;</a> | <a class=nice href="recompile">&nbsp;Try to recompile it&nbsp;</a>
+
+<pre>
+{{ = session.JSON }}
+</pre>
+<br/>
+
+<style>
+a.nice {
+	text-decoration:none;
+	}
+a.nice:hover {
+	background:	#2233ee;
+	color:		#ffffff;
+	}
+</style>
+
