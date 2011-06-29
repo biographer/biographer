@@ -36,7 +36,7 @@ TYPE = { "entitiy pool node":0, "auxiliary unit":1, "compartment node":2, "conta
 SBO = { "unspecified":0, "compartment":1, "simple chemical":247, "macromolecule":245, "nucleic acid feature":250, "complex":253, "source sink":291, "perturbing agent":405 }
 
 # Edge SBOs
-SBO = SBO.update({ "consumption":10, "production":11, "modulation":19, "stimulation":459, "catalysis":13, "inhibition":20, "enzymatic catalyst":460, "necessary stimulation":461 })
+SBO.update({ "consumption":10, "production":11, "modulation":19, "stimulation":459, "catalysis":13, "inhibition":20, "enzymatic catalyst":460, "necessary stimulation":461 })
 
 
 #### helper functions ####
@@ -98,8 +98,8 @@ class Node:
 				result += "Warning: Node ID < 0 !\n"
 				show = True
 
-		if type(self.compartment) == type(0):			# check compartment
-			if self.compartment < 0:
+		if type(self.data['compartment']) == type(0):			# check compartment
+			if self.data['compartment'] < 0:
 				result += "Warning: Node compartment < 0 !\n"
 				show = True
 
@@ -291,7 +291,7 @@ class Graph:
 		        n.type         		= TYPE['process node']
 			n.data["label"]		= reaction.getName()
 			self.Nodes.append(n)
-			self.IDmapNodes[ n.id ]	= len(self.Nodes.append(n))-1
+			self.IDmapNodes[ n.id ]	= len(self.Nodes)-1
 
 			for reactant in reaction.getListOfReactants():		# create Edges from the educts, products and modifiers to this process node
 				e		= Edge( defaults=True )
@@ -310,7 +310,7 @@ class Graph:
 			for modifier in reaction.getListOfModifiers():
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
-				e.sbo		= modifier.getSBO()
+				e.sbo		= modifier.getSBOTerm()
 				e.source        = modifier.getId()
 				e.target	= n.id
 				self.Edges.append(e)
@@ -374,7 +374,7 @@ class Graph:
 				self.DEBUG += "Error: ID collision: Node "+str(n.id)+"\n"
 			else:
 				usedIDs.append(n.id)
-			if n.type == TYPE["compartment"]:
+			if n.type == TYPE["compartment node"]:
 				compartments.append(n.id)
 			nodeIDs.append(n.id)
 		for e in self.Edges:
@@ -384,8 +384,8 @@ class Graph:
 				usedIDs.append(e.id)
 
 		for n in self.Nodes:						# Nodes lie inside non-existing compartments ?
-			if n.compartment in compartments:
-				self.DEBUG += "Error: Compartment "+str(n.compartment)+" for Node "+str(n.id)+" does not exist !\n"
+			if n.data['compartment'] in compartments:
+				self.DEBUG += "Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" does not exist !\n"
 
 		for e in self.Edges:						# Edges connect non-existing Nodes ?
 			if not e.source in nodeIDs:
@@ -396,7 +396,7 @@ class Graph:
 		for i in range(0, len(self.Nodes)):				# Nodes have non-existing subcomponents ?
 			n = self.Nodes[i]					# or subcomponents lie outside parent ?
 			changes = False
-			for subID in n.subcomponents:
+			for subID in n.data['subcomponents']:
 				try:
 					s = self.Nodes[ IDmapNodes[subID] ]
 					if s.x+s.width > n.x+n.width:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-biographer = local_import("biographer")
+import biographer
 
 def importer():
 	return dict()
@@ -8,5 +8,6 @@ def importer():
 def upload():
 	session.SBML = request.vars.SBML
 	session.bioGraph = biographer.Graph( SBMLinput=session.SBML )
-	return redirect("/biographer/Workbench")
+	del session.bioGraph.SBML
+	return redirect(URL(r=request,c='Workbench',f='index'))
 
