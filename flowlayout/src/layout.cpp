@@ -233,8 +233,9 @@ void Network::adjust_compartments(){
    float delta; 
    for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane
       bcomp[comp].xmin=bcomp[comp].ymin=1e50;
-      bcomp[comp].ymin=bcomp[comp].ymax=-1e50;
+      bcomp[comp].xmax=bcomp[comp].ymax=-1e50;
    }
+  
    for(i=0;i<n;i++){
       comp=(*nodes)[i].pts.compartment;
       if(comp==0)continue;
@@ -248,7 +249,7 @@ void Network::adjust_compartments(){
       (*compartments)[comp].xmax+=((bcomp[comp].xmax-(*compartments)[comp].xmax)/n);
       (*compartments)[comp].ymin+=((bcomp[comp].ymin-(*compartments)[comp].ymin)/n);
       (*compartments)[comp].ymax+=((bcomp[comp].ymax-(*compartments)[comp].ymax)/n);
-   }  
+   } 
    for(i=1;i<cn;i++){
      j=above_comp[i];
      if(j==0)continue;
@@ -327,14 +328,32 @@ float Network::init_layout(){
 }
    
 float Network::post_pro(){
-   int n1,n2,n=nodes->size();
+   int m=edges->size(),n=nodes->size(),n1,n2,i;
    float d,i_d,force=0.0;
    Point vec;
+   
+   for(i=0;i<m;i++){
+                    
+      n1=(*edges)[i].from; //reaction
+      n2=(*edges)[i].to; //compound;
+      
+      vec=pos[n2]-pos[n1];
+      i_d=dij1[i]*0.7;
+      d=dist(pos[n1],pos[n2]);
+      if(d<i_d)continue;
+      force+=((d-i_d)*(d-i_d));
+
+      //distantal movements;
+      mov[n2].x+=(vec.x/d*(i_d-d)/n);
+      mov[n2].y+=(vec.y/d*(i_d-d)/n);
+      mov[n1].x-=(vec.x/d*(i_d-d)/n);
+      mov[n1].y-=(vec.y/d*(i_d-d)/n);
+   }
    
    for(n1=0;n1<n;n1++)
       for(n2=n1+1;n2<n;n2++){
          if(isadj[n1][n2])continue;              
-         i_d=dij2[n1][n2];
+         i_d=dij2[n1][n2]*0.3;
          d=dist(pos[n1],pos[n2]);
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
          
@@ -342,17 +361,17 @@ float Network::post_pro(){
          
          vec=pos[n1]-pos[n2];
          if(fabs(d)<zero){
-            vec.x=1.0;
+            vec.x=i_d;
             vec.y=0.0;
          }
          else{
-            vec.x/=d;
-            vec.y/=d;
+            vec.x=vec.x*(i_d-d)/d;
+            vec.y=vec.x*(i_d-d)/d;
          }
-         mov[n1].x+=(vec.x/10);mov[n1].y+=(vec.y/10);
-         mov[n2].x-=(vec.x/10);mov[n2].y-=(vec.y/10);
+         mov[n1].x+=(vec.x/n);mov[n1].y+=(vec.y/n);
+         mov[n2].x-=(vec.x/n);mov[n2].y-=(vec.y/n);
       }
-   return force;
+   return force;      
 }
    
 float Network::layout(){
@@ -408,7 +427,7 @@ float Network::layout(){
    while(true){     
       k++;
       cur_force=0.0;
-      if(100<k)cur_force=firm_distribution(); //firmly ditribute edges about a compound;
+      if(100<k)cur_force+=firm_distribution(); //firmly ditribute edges about a compound;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
@@ -422,7 +441,6 @@ float Network::layout(){
    printf("Total force = %0.3f\n",cur_force);
    
    init_compartments();
-   //adjust_compartments();
   
    //phase 3: bring in compartments;
    pre_force=inf;
@@ -430,7 +448,8 @@ float Network::layout(){
    while(true){
       k++;
       cur_force=0.0;
-      //cur_force+=firm_distribution();
+      adjust_compartments();
+      cur_force+=firm_distribution();
       cur_force+=calc_force_compartments();
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
@@ -443,21 +462,16 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force); 
-   
+  
    //phase4: post processing.
    pre_force=inf;
-   k=inc=0;
    while(true){
-      k++;
-      cur_force=0.0;
-      cur_force+=post_pro();
-      //cur_force+=calc_force_compartments();
+      cur_force=post_pro();
+      cur_force+=calc_force_compartments();
+      move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
-      if(cur_force>pre_force)inc++;
-      if(inc>log(1.0*n))break;
-     // printf("%0.3f\n",cur_force);
-      pre_force=cur_force;    
-   }   
+      pre_force=cur_force;
+   }
    
    //copying coordinations from pos[] to nodes[];
    for(i=0;i<n;i++){
