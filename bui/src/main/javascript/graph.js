@@ -29,14 +29,27 @@
 
     /**
      * @private
+     * Extracted because this function is called from the constructor and from
+     * rawSVG in order to replace it for the export process.
+     */
+    var __getStylesheetContents = function() {
+        return '@import url(\'' + bui.settings.css.stylesheetUrl + '\');';
+    };
+
+    /**
+     * @private
      * Extracted from the constructor to improve readability
      */
     var __initialPaintGraph = function() {
         var privates = this._privates(identifier);
 
+        var div = document.createElement('div');
+        privates.container.appendChild(div);
+
         privates.root = document.createElementNS(bui.svgns, 'svg');
+        privates.root.setAttributeNS(null, 'xmlns', bui.svgns);
         privates.root.setAttributeNS(null, 'id', privates.id);
-        privates.container.appendChild(privates.root);
+        div.appendChild(privates.root);
 
         var offset = jQuery(privates.root).offset();
         privates.rootOffset = {
@@ -54,8 +67,7 @@
 
         privates.css = document.createElementNS(bui.svgns, 'style');
         privates.css.setAttributeNS(null, 'type', 'text/css');
-        privates.css.textContent = '@import url(\'' +
-                bui.settings.css.stylesheetUrl + '\');';
+        privates.css.textContent = __getStylesheetContents();
         privates.root.appendChild(privates.css);
 
         privates.rootGroup = document.createElementNS(bui.svgns, 'g');
@@ -389,6 +401,33 @@
          */
         connectingArcs : function() {
             return this._privates(identifier).connectingArcs;
+        },
+
+        /**
+         * Return the raw SVG.
+         *
+         * Please note that the execution of this method may take a while as an
+         * additional HTTP request needs to be made in order to retrieve the
+         * stylesheet. The result is the complete SVG with embedded CSS.
+         *
+         * @return {String} The raw SVG as it can be used to save / export it.
+         */
+        rawSVG : function() {
+            var inner = this._privates(identifier).root.parentNode.innerHTML;
+
+            var css = '';
+            
+            jQuery.ajax({
+                url : bui.settings.css.stylesheetUrl,
+                async : false,
+                success : function(data) {
+                    css = data;
+                }
+            });
+
+            inner = inner.replace(__getStylesheetContents(), css);
+
+            return inner;
         }
     };
 
