@@ -42,6 +42,12 @@ bui.settings = {
                 standard : 'defaultText',
                 small : 'smallText'
             },
+            line : 'line',
+            lineStyle : {
+                solid : 'solid',
+                dotted : 'dotted',
+                dashed : 'dashed'
+            },
             connectingArcs : {
                 stimulation : 'stimulation',
                 catalysis : 'catalysis',

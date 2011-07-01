@@ -37,3 +37,16 @@ line {
     fill: white;
     stroke: black;
 }
+
+.line {
+    fill: none;
+    stroke: black;
+}
+
+.dotted {
+    stroke-dasharray: 1, 3;
+}
+
+.dashed {
+    stroke-dasharray: 4, 5;
+}

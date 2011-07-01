@@ -135,6 +135,10 @@
                 listenerIdentifier(this));
 
         this._initialPaint();
+
+        this._line.setAttributeNS(null, 'id', this.id());
+
+        this.addClass(bui.settings.css.classes.line);
     };
 
     bui.AbstractLine.prototype = {
@@ -203,6 +207,27 @@
             }
 
             return privates.marker;
+        },
+
+        /**
+         * Set the line style. Available line style can be retrieved through
+         * the {@link bui.AbstractLine.Style} object.
+         *
+         * @param {Object} style A property of {@link bui.AbstractLine.Style}.
+         * @return {bui.AbstractLine} Fluent interface
+         * @example
+         * line.lineStyle(bui.AbstractLine.Style.dotted);
+         */
+        lineStyle : function(style) {
+            for (var availableStyle in bui.AbstractLine.Style) {
+                if (bui.AbstractLine.Style.hasOwnProperty(availableStyle)) {
+                    this.removeClass(bui.AbstractLine.Style[availableStyle]);
+                }
+            }
+
+            this.addClass(bui.AbstractLine.Style[style]);
+
+            return this;
         }
 
     };
@@ -216,5 +241,16 @@
     bui.AbstractLine.ListenerType = {
         /** @field */
         marker : bui.util.createListenerTypeId()
+    };
+
+    /**
+     * @namespace
+     * This Object defines the various line styles which can be applied to
+     * a line.
+     */
+    bui.AbstractLine.Style = {
+        solid : bui.settings.css.classes.lineStyle.solid,
+        dotted : bui.settings.css.classes.lineStyle.dotted,
+        dashed : bui.settings.css.classes.lineStyle.dashed
     };
 })(bui);
