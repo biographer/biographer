@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Node';
+    var identifier = 'bui.Labelable';
 
     /**
      * @private

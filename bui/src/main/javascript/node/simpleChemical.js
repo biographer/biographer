@@ -30,8 +30,6 @@
         container.appendChild(privates.circle);
     };
 
-
-
     /**
      * @class
      * Class for SBGN simple chemicals. Please note that the width and height
@@ -51,7 +49,8 @@
     };
 
     bui.SimpleChemical.prototype = {
-        _forceRectangular : true
+        _forceRectangular : true,
+        _calculationHook : circularShapeLineEndCalculationHook
     };
 
     bui.util.setSuperClass(bui.SimpleChemical, bui.Labelable);

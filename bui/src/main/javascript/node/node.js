@@ -242,7 +242,7 @@
                 positionChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Node.ListenerType.size,
-                sizeChanged.createDelegate(this),
+                positionPlaceHolder.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.classes,
                 classesChanged.createDelegate(this),
@@ -369,12 +369,11 @@
 
             if (width !== undefined && height !== undefined) {
                 width = Math.max(this._minWidth, width);
-                height= Math.max(this._minHeight, height);
+                height = Math.max(this._minHeight, height);
 
                 if (this._forceRectangular === true) {
                     height = width;
                 }
-
                 var changed = privates.width !== width ||
                         privates.height !== height;
                 privates.width = width;
@@ -538,7 +537,9 @@
                 hitAngle = Math.PI / 2 - hitAngle;
             }
 
-            var opposite = Math.tan(hitAngle) * adjacent;
+            var hookResult = this._calculationHook(adjacent, hitAngle);
+            var opposite = hookResult.opposite;
+            adjacent = hookResult.adjacent;
 
             var xChange = 0, yChange = 0;
             if (goesThroughLeftOrRightSide) {
@@ -558,6 +559,23 @@
             return {
                 x : position.x + xChange,
                 y : position.y + yChange
+            };
+        },
+
+        /**
+         * @private
+         * This hook can be used to alter the calculateLineEnd function result.
+         *
+         * @param {Number} adjacent The length of the adjacent line
+         * @param {Number} hitAngle The angle with which the line will 'hit'
+         *   the shape in radians.
+         * @return {Object} An object with adjacent and opposite properties.
+         *   (think of trigonometric functions).
+         */
+        _calculationHook : function(adjacent, hitAngle) {
+            return {
+                adjacent : adjacent,
+                opposite : Math.tan(hitAngle) * adjacent
             };
         }
     };

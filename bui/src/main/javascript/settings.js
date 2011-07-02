@@ -53,7 +53,9 @@ bui.settings = {
                 catalysis : 'catalysis',
                 modulation : 'modulation',
                 necessaryStimulation : 'necessaryStimulation'
-            }
+            },
+            splineEdgeHandle : 'splineEdgeHandle',
+            splineAutoEdgeHandle : 'autoAlign'
         }
     },
     /**

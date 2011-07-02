@@ -60,3 +60,20 @@
         return this._getPrivateMembers(identifier);
     };
 })(bui);
+
+/**
+ * @private
+ * @see bui.Node._calculationHook
+ */
+var circularShapeLineEndCalculationHook = function(adjacent, hitAngle) {
+    var radius = this.size().width / 2;
+
+    var padding = bui.settings.style.edgeToNodePadding;
+    radius += Math.sqrt(Math.pow(padding.topBottom, 2) +
+            Math.pow(padding.leftRight, 2));
+
+    return {
+        opposite : Math.sin(hitAngle) * radius,
+        adjacent : Math.cos(hitAngle) * radius
+    };
+};

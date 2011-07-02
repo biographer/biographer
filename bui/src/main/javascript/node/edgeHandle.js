@@ -53,7 +53,8 @@
     bui.EdgeHandle.prototype = {
         _circle : null,
         _forceRectangular : true,
-        _enableResizing : false
+        _enableResizing : false,
+        _calculationHook : circularShapeLineEndCalculationHook
     };
 
     bui.util.setSuperClass(bui.EdgeHandle, bui.Node);

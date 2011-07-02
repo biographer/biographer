@@ -50,3 +50,13 @@ line {
 .dashed {
     stroke-dasharray: 4, 5;
 }
+
+.splineEdgeHandle circle {
+    fill: #9ea5ff;
+    stroke: blue;
+    opacity: 0.5;
+}
+
+.splineEdgeHandle.autoAlign circle {
+    opacity: 0.2;
+}
