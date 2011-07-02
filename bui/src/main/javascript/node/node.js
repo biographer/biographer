@@ -113,6 +113,7 @@
             this.removeClass(bui.settings.css.classes.invisible);
         } else {
             this.addClass(bui.settings.css.classes.invisible);
+            this.placeholderVisible(false);
         }
     };
 
@@ -170,6 +171,12 @@
         }
     };
 
+    var mouseClick = function(event) {
+        if (event.ctrlKey) {
+            this.placeholderVisible(!this.placeholderVisible());
+        }
+    };
+
      /**
      * @private
      * Initial paint of the placeholder node and group node
@@ -184,15 +191,20 @@
 
         privates.placeholder = document.createElement('div');
         privates.placeholder.setAttribute('class',
-                placeholderClass(privates.placeholderVisible));
+                placeholderClass(false));
         this.graph().placeholderContainer().appendChild(privates.placeholder);
 
         sizeChanged.call(this);
         positionChanged.call(this);
 
+         jQuery(privates.nodeGroup)
+                 .add(privates.placeholder)
+                 .click(mouseClick.createDelegate(this));
+
         if (this._enableDragging === true) {
             jQuery(privates.placeholder).draggable({
-                stop : placeholderDragStop.createDelegate(this)
+                stop : placeholderDragStop.createDelegate(this),
+                distance: 20
             });
         }
 
@@ -226,8 +238,8 @@
         privates.y = 0;
         privates.width = this._minWidth;
         privates.height = this._minHeight;
-        privates.placeholderVisible = this._placeholderVisible;
         privates.parent = this.graph();
+        privates.placeholderVisible = false;
 
         this.bind(bui.Drawable.ListenerType.remove,
                 nodeRemoved.createDelegate(this),
@@ -260,7 +272,6 @@
         _forceRectangular : false,
         _enableResizing : true,
         _enableDragging : true,
-        _placeholderVisible : false,
 
         /**
          * Use this function to retrieve this node's group. This function
@@ -577,6 +588,34 @@
                 adjacent : adjacent,
                 opposite : Math.tan(hitAngle) * adjacent
             };
+        },
+
+        /**
+         * Show or hide the placeholder which  is used for modification
+         * of the node's position and size.
+         *
+         * @param {Boolean} [visible] Show or hide the placeholder
+         * @return {bui.Node|Boolean} Fluent interface or the current
+         *   visibility in case you don't pass a parameter
+         */
+        placeholderVisible : function(visible) {
+            var privates = this._privates(identifier);
+
+            if (visible !== undefined) {
+                privates.placeholderVisible = visible;
+
+                if (visible === true) {
+                    jQuery(privates.placeholder)
+                            .removeClass(bui.settings.css.classes.invisible);
+                } else {
+                    jQuery(privates.placeholder)
+                            .addClass(bui.settings.css.classes.invisible);
+                }
+
+                return this;
+            }
+
+            return privates.placeholderVisible;
         }
     };
 

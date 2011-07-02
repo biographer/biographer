@@ -12,6 +12,34 @@
     };
 
     /**
+     * @private
+     * Source changed event listener
+     */
+    var sourceChanged = function(node, source) {
+        var privates = this._privates(identifier);
+        privates.sourceHelperLine.target(source);
+    };
+
+    /**
+     * @private
+     * Target changed event listener
+     */
+    var targetChanged = function(node, target) {
+        var privates = this._privates(identifier);
+        privates.targetHelperLine.target(target);
+    };
+
+    /**
+     * @private
+     * Visibility changed event listener
+     */
+    var visibilityChanged = function(node, visible) {
+        if (visible === false) {
+            this.layoutElementsVisible(false);
+        }
+    };
+
+    /**
      * @class
      * A drawable which has both, a source and a target
      *
@@ -20,6 +48,16 @@
      */
     bui.Spline = function(args){
         bui.Spline.superClazz.apply(this, arguments);
+
+        this.bind(bui.AttachedDrawable.ListenerType.source,
+                sourceChanged.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.AttachedDrawable.ListenerType.target,
+                targetChanged.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Drawable.ListenerType.visible,
+                visibilityChanged.createDelegate(this),
+                listenerIdentifier(this));
     };
 
     bui.Spline.prototype = {
@@ -46,6 +84,18 @@
                             listener,
                             listenerIdentifier(this))
                     .visible(true);
+
+            privates.sourceHelperLine = this.graph()
+                    .add(bui.StraightLine)
+                    .lineStyle(bui.AbstractLine.Style.dotted)
+                    .source(privates.sourceSplineHandle)
+                    .visible(true);
+
+            privates.targetHelperLine = this.graph()
+                    .add(bui.StraightLine)
+                    .lineStyle(bui.AbstractLine.Style.dotted)
+                    .source(privates.targetSplineHandle)
+                    .visible(true);
         },
 
         /**
@@ -61,8 +111,10 @@
                 var sourceSplineHandle = privates.sourceSplineHandle,
                         targetSplineHandle = privates.targetSplineHandle;
 
-                var sourcePosition = source.calculateLineEnd(sourceSplineHandle),
-                        targetPosition = target.calculateLineEnd(targetSplineHandle),
+                var sourcePosition = source
+                        .calculateLineEnd(sourceSplineHandle),
+                        targetPosition = target
+                                .calculateLineEnd(targetSplineHandle),
                         sourceSplineHandlePosition = sourceSplineHandle
                                 .absoluteCenter(),
                         targetSplineHandlePosition = targetSplineHandle
@@ -82,6 +134,25 @@
 
                 this._line.setAttributeNS(null, 'd', data);
             }
+        },
+
+        /**
+         * Show or hide the layout elements of this Spline. The layout
+         * elements include two edgeSplineHandles and two lines. The handles
+         * are used to modify the shape of the line while the two lines are
+         * used as visual assistance.
+         *
+         * @param {Boolean} visible Pass true to show layout elements, false
+         *   to hide them.
+         * @return {bui.Spline} Fluent interface
+         */
+        layoutElementsVisible : function(visible) {
+            var privates = this._privates(identifier);
+            privates.sourceSplineHandle.visible(visible);
+            privates.targetSplineHandle.visible(visible);
+            privates.sourceHelperLine.visible(visible);
+            privates.targetHelperLine.visible(visible);
+            return this;
         }
     };
 

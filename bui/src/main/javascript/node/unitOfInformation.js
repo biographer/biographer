@@ -26,5 +26,9 @@
         this.adaptSizeToLabel(true);
     };
 
+    bui.UnitOfInformation.prototype = {
+        _enableResizing : false
+    };
+
     bui.util.setSuperClass(bui.UnitOfInformation, bui.RectangularNode);
 })(bui);

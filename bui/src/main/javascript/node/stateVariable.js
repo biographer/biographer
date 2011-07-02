@@ -59,5 +59,9 @@
         this.adaptSizeToLabel(true);
     };
 
+    bui.StateVariable.prototype = {
+        _enableResizing : false
+    };
+
     bui.util.setSuperClass(bui.StateVariable, bui.Labelable);
 })(bui);
