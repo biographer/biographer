@@ -1,14 +1,14 @@
 (function(bui) {
-    var identifier = 'bui.DragHandle';
+    var identifier = 'bui.EdgeHandle';
 
     /**
      * @private
      * Function used for the generation of listener identifiers
-     * @param {bui.DragHandle} DragHandle
+     * @param {bui.EdgeHandle} EdgeHandle
      * @return {String} listener identifier
      */
-    var listenerIdentifier = function(DragHandle) {
-        return identifier + DragHandle.id();
+    var listenerIdentifier = function(EdgeHandle) {
+        return identifier + EdgeHandle.id();
     };
 
     /**
@@ -37,8 +37,8 @@
      * @extends bui.Node
      * @constructor
      */
-    bui.DragHandle = function() {
-        bui.DragHandle.superClazz.apply(this, arguments);
+    bui.EdgeHandle = function() {
+        bui.EdgeHandle.superClazz.apply(this, arguments);
 
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
@@ -46,15 +46,15 @@
 
         initialPaint.call(this);
 
-        var widthHeight = bui.settings.style.dragHandleRadius * 2;
+        var widthHeight = bui.settings.style.edgeHandleRadius * 2;
         this.size(widthHeight, widthHeight);
     };
 
-    bui.DragHandle.prototype = {
+    bui.EdgeHandle.prototype = {
         _circle : null,
         _forceRectangular : true,
         _enableResizing : false
     };
 
-    bui.util.setSuperClass(bui.DragHandle, bui.Node);
+    bui.util.setSuperClass(bui.EdgeHandle, bui.Node);
 })(bui);

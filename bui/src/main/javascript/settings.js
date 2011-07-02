@@ -74,7 +74,7 @@ bui.settings = {
                 height : -2
             }
         },
-        dragHandleRadius : 4,
+        edgeHandleRadius : 4,
         nodeCornerRadius : 25,
         adaptToLabelNodePadding : {
             top : 5,
