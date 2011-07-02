@@ -12,6 +12,7 @@
         bui.SplineEdgeHandle.superClazz.apply(this, arguments);
 
         this.addClass(bui.settings.css.classes.splineEdgeHandle);
+        this.position(10, 10);
     };
 
     bui.util.setSuperClass(bui.SplineEdgeHandle, bui.EdgeHandle);

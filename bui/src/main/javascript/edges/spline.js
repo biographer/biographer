@@ -31,6 +31,21 @@
             this._line = document.createElementNS(bui.svgns, 'path');
             this.graph().edgeGroup().appendChild(this._line);
             this.addClass(bui.settings.css.classes.invisible);
+
+            var listener = this._sourceOrTargetDimensionChanged
+                    .createDelegate(this);
+            privates.sourceSplineHandle = this.graph()
+                    .add(bui.SplineEdgeHandle)
+                    .bind(bui.Node.ListenerType.absolutePosition,
+                            listener,
+                            listenerIdentifier(this))
+                    .visible(true);
+            privates.targetSplineHandle = this.graph()
+                    .add(bui.SplineEdgeHandle)
+                    .bind(bui.Node.ListenerType.absolutePosition,
+                            listener,
+                            listenerIdentifier(this))
+                    .visible(true);
         },
 
         /**
@@ -42,20 +57,25 @@
 
             if (target !== null && source !== null) {
 
-                // TODO change to sourceSplineHandle absoluteCenter
-                var sourcePosition = source.calculateLineEnd(target),
-                        targetPosition = target.calculateLineEnd(source),
-                        sourceSplineHandle = { x : sourcePosition.x + 20, y : sourcePosition.y + 20},
-                        targetSplineHandle = { x : targetPosition.x - 20, y : targetPosition.y - 20};
+                var privates = this._privates(identifier);
+                var sourceSplineHandle = privates.sourceSplineHandle,
+                        targetSplineHandle = privates.targetSplineHandle;
+
+                var sourcePosition = source.calculateLineEnd(sourceSplineHandle),
+                        targetPosition = target.calculateLineEnd(targetSplineHandle),
+                        sourceSplineHandlePosition = sourceSplineHandle
+                                .absoluteCenter(),
+                        targetSplineHandlePosition = targetSplineHandle
+                                .absoluteCenter();
                 
                 var data = ['M',
                         sourcePosition.x,
                         sourcePosition.y,
                         'C',
-                        sourceSplineHandle.x,
-                        sourceSplineHandle.y,
-                        targetSplineHandle.x,
-                        targetSplineHandle.y,
+                        sourceSplineHandlePosition.x,
+                        sourceSplineHandlePosition.y,
+                        targetSplineHandlePosition.x,
+                        targetSplineHandlePosition.y,
                         targetPosition.x,
                         targetPosition.y].join(' ');
 
