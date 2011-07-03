@@ -10,7 +10,9 @@ def importer():
 def load():
 	reload(biographer)
 	session.JSON = request.vars.File.file.read()
-	session.bioGraph = biographer.Graph( JSON = session.JSON )
+	if session.bioGraph is None:
+		session.bioGraph = biographer.Graph()
+	session.bioGraph.importJSON( session.JSON )
 	session.flash= request.vars.File.filename+" uploaded and parsed"
 	return redirect( URL(r=request, c="Workbench", f="index") )
 

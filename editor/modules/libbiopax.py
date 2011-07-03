@@ -3,4 +3,12 @@
 
 import lxml
 
-#...
+class BioPAX:
+	def __init__(self, biopax):
+		self.load( biopax )
+
+	def load(self, biopax):
+		#... XML parser
+		pass
+
+

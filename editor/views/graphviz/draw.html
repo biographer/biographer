@@ -1,5 +1,9 @@
 {{extend 'layout.html'}}
 
+<img src="{{=URL(r=request, c='static', f='images')}}/graphviz.png" width="100%" />
+
+<hr/>
+
 <pre>{{ = session.graphviz}}</pre>
 
 <hr/>

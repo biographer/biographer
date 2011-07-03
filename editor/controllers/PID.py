@@ -27,7 +27,9 @@ def upload():
 	if URL != "":
 		connection.request("GET", URL)					# download BioPAX
 		biopax = connection.getresponse().read()
-		session.bioGraph = biographer.Graph().importBioPAX( biopax )	# load bioGraph from BioPAX
+		if session.bioGraph is None:
+			session.bioGraph = biographer.Graph()
+		session.bioGraph.importBioPAX( biopax )				# load bioGraph from BioPAX
 	else:									# BioPAX link not found
 		session.flash = "Error: BioPAX for this pathway could not be downloaded"
 	connection.close()

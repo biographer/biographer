@@ -24,8 +24,8 @@ DefaultIndent = 9	# for JSON output string formatting, 9 spaces per indent
 
 MandatoryNodeKeys	= ['id','type','sbo','is_abstract']
 NodeKeys		= MandatoryNodeKeys + ['data']
-OptionalNodeKeys	= ['clone_marker', 'x', 'y', 'width', 'height', 'radius', 'label', 'compartment', 'subnodes', 'modifications']
-DefaultNode		= { "type":"simple_species", "sbo":"252", "abstract":False, "data":{ "clone_marker":-1, "x":10, "y":10, "width":50, "height":20, "radius":30, "label":"Orphan Node", "compartment":-1, "subcomponents":[], "modifications":[] } }
+OptionalNodeKeys	= ['clone_marker', 'x', 'y', 'width', 'height', 'radius', 'label', 'compartment', 'subcomponents', 'modifications']
+DefaultNode		= { "type":"simple_species", "sbo":"252", "is_abstract":False, "data":{ "clone_marker":-1, "x":10, "y":10, "width":50, "height":20, "radius":30, "label":"Orphan Node", "compartment":-1, "subcomponents":[], "modifications":[] } }
 
 MandatoryEdgeKeys	= ['id','sbo','source','target']
 EdgeKeys		= MandatoryEdgeKeys + ['data']
@@ -48,13 +48,13 @@ def checkJSON( JSON ):
 	if len(JSON) > 0:
 		if JSON.lstrip()[0] != "{":				# JSON needs to start with "{"
 			JSON = "{\n"+JSON+"\n}"
-		while count(JSON, "[") > count(JSON, "]"):		# count "[" = count "]"
+		while JSON.count("[") > JSON.count("]"):		# count "[" = count "]"
 			JSON += "]"
-		while count(JSON, "[") < count(JSON, "]"):
+		while JSON.count("[") < JSON.count("]"):
 			JSON = "["+JSON
-		while count(JSON, "{") > count(JSON, "}"):		# count "{" = count "}"
+		while JSON.count("{") > JSON.count("}"):		# count "{" = count "}"
 			JSON += "}"
-		while count(JSON, "{") < count(JSON, "}"):
+		while JSON.count("{") < JSON.count("}"):
 			JSON = "{"+JSON
 	else:
 		JSON = "{}"
@@ -240,7 +240,7 @@ class Graph:
 
 	def importJSON(self, JSON):						# import JSON
 		self.empty()
-		self.DEBUG += "Importing JSON ...\n"
+		self.DEBUG = "Importing JSON ...\n"
 		JSON = checkJSON(JSON)
 		try:
 			JSON = json.loads(JSON)
@@ -262,9 +262,9 @@ class Graph:
 	def importSBML(self, SBML):				# import SBML
 		self.empty()
 
-		self.DEBUG += "Importing SBML ...\n"
+		self.DEBUG = "Importing SBML ...\n"
 		SBML = libsbml.readSBMLFromString( SBML )
-		model = self.SBML.getModel()
+		model = SBML.getModel()
 		if model is None:
 			self.DEBUG += "Error: SBML model is None !\n"
 			return False
@@ -325,7 +325,7 @@ class Graph:
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def importODP(self, odp):						# import an OpenOffice Impress Document
-		self.DEBUG += "Importing ODP ...\n"
+		self.DEBUG = "Importing ODP ...\n"
 		impress = ODP( odp )
 		self.DEBUG += impress.DEBUG
 		self.Nodes = impress.Nodes
@@ -342,7 +342,7 @@ class Graph:
 		return impress.export()
 
 	def importBioPAX(self, biopax):
-		self.DEBUG += "Importing BioPAX ...\n"
+		self.DEBUG = "Importing BioPAX ...\n"
 		b = BioPAX( biopax )
 		self.Nodes = b.Nodes
 		self.Edges = b.Edges
@@ -352,25 +352,24 @@ class Graph:
 
 	# http://networkx.lanl.gov/pygraphviz/tutorial.html
 
-	def Graphviz(self):
+	def GraphvizObject(self):
 		self.DEBUG += "Exporting Graphviz ...\n"
 		G = pygraphviz.AGraph()
-		G.add_node( "a" )
-#		for node in self.Nodes:
-#			G.add_node( str(node.id) )
-#		for edge in self.Edges:
-#			G.add_edge( str(edge.source), str(edge.target) )
+		for node in self.Nodes:
+			G.add_node( str(node.id) )
+		for edge in self.Edges:
+			G.add_edge( str(edge.source), str(edge.target) )
 		return G
 
-	def exportGraphviz(self):
-		return self.Graphviz.string()
+	def exportGraphvizScript(self):
+		return self.GraphvizObject().string()
 
-	def exportGraphvizPNG(self):
-		G = self.Graphviz
+	def exportGraphvizPNG(self, tempfile="/tmp/biographer-graphviz.png"):
+		G = self.GraphvizObject()
 		self.DEBUG += "Graphviz -> PNG ...\n"
 		G.layout()
-		G.draw("/tmp/graphviz.png")
-		return open("/tmp/graphviz.png").read()
+		G.draw(tempfile)
+		return open(tempfile).read()
 		
 
 	### basic functions on Graph properties ###
@@ -416,7 +415,7 @@ class Graph:
 				usedIDs.append(e.id)
 
 		for n in self.Nodes:						# Nodes lie inside non-existing compartments ?
-			if n.data['compartment'] in compartments:
+			if not n.data['compartment'] in compartments:
 				self.DEBUG += "Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" does not exist !\n"
 
 		for e in self.Edges:						# Edges connect non-existing Nodes ?

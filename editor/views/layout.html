@@ -39,8 +39,9 @@
 				background:	#8caed4;
 				}
 	pre			{
-				border:1pt solid #000;
-				white-space:pre;"
+				border:		1pt solid #000;
+				white-space:	pre;
+				overflow:	hidden;
 				}
 	button.ImportButton	{
 				color:	#e5e6e7;
@@ -127,14 +128,6 @@
         jQuery('ul.sf-menu').superfish();});
       </script-->
       <div style="clear: both;"></div><!-- Clear the divs -->
-
-<script>
-	div	= document.getElementById("divImportMenu");
-	a	= document.getElementById("ImportLink");
-	div.style.left		= a.style.left;
-	div.style.top		= a.style.top;
-	div.style.visibility	= "visible";
-</script>
 
 <a class=MenuLink href={{=URL(r=request, c='Workbench', f='index')}}>Workbench</a>
 <a class=MenuLink href={{=URL(r=request, c='Visualizer', f='index')}}>Visualizer</a>

@@ -6,6 +6,10 @@ import biographer
 
 def draw():
 	reload(biographer)
-	session.graphviz = session.bioGraph.exportGraphviz()
+	if session.bioGraph is not None:
+		session.graphviz = session.bioGraph.exportGraphvizScript()
+		session.bioGraph.exportGraphvizPNG( tempfile="/var/www/web2py/applications"+URL(r=request, c='static', f='images')+"/graphviz.png" )
+	else:
+		session.graphviz = ""
 	return dict()
 

@@ -23,7 +23,9 @@ def upload():
 		if p > -1:
 			connection.request("GET", page[p:q])					# download SBML
 			session.SBML		= connection.getresponse().read()
-			session.bioGraph	= biographer.Graph().importSBML( session.SBML )
+			if session.bioGraph is None:
+				session.bioGraph = biographer.Graph()
+			session.bioGraph.importSBML( session.SBML )
 			session.flash		= "SBML retrieved successfully"
 		else:										# link not found
 			session.flash		= "Sorry: SBML for this pathway not found"

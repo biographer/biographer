@@ -3,13 +3,15 @@
 import sys
 sys.path.append("/var/www/web2py/applications/biographer/modules")
 import biographer
+reload(biographer)
 
 def importer():
 	return dict()
 
 def upload():
-	reload(biographer)
 	session.SBML = request.vars.File.file.read()
-	session.bioGraph = biographer.Graph().importSBML( session.SBML )
+	if session.bioGraph is None:
+		session.bioGraph = biographer.Graph()
+	session.bioGraph.importSBML( session.SBML )
 	return redirect( URL(r=request,c='Workbench',f='index') )
 
