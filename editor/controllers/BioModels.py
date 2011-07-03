@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import sys
+sys.path.append("/var/www/web2py/applications/biographer/modules")
+
 import biographer
 import httplib
 
@@ -15,4 +18,4 @@ def download():
 	connection.close()
 	session.bioGraph = biographer.Graph( SBMLinput=session.SBML )
 	del session.bioGraph.SBML
-	return redirect(URL(r=request, c='Workbench', f='index'))
+	return redirect( URL(r=request, c='Workbench', f='index') )
