@@ -1,125 +1,21 @@
 {{extend 'layout.html'}}
 
-<h1>JSON Importer</h1>
-
 <form action="load" enctype="multipart/form-data" method="POST">
 
-Please paste your JSON code here:<br/>
-
-<textarea name="JSON" style="width:600px;height:400px;"></textarea>
-
+<a href="http://www.json.org/"><img src="{{=URL(r=request, c="static", f="images")}}/JSON3.png"/></a>
+<br/>
 <br/>
 
-<input type=button value="Example" onClick="javascript:document.forms[0].JSON.value=document.forms[0].example.value;"/>
-<input type=button value="Empty" onClick="javascript:document.forms[0].JSON.value='';"/>
-<input type="submit" value="Upload" />
+Please upload your file: <input type=file name=File onChange="submit();"/> <input type=submit value=Load />
 
-<input type=hidden name=example value='{ "nodes":[
-		{
-		"id" : 0,
-		"type" : "simple_species",
-		"sbo" : 252,
-		"x" : 50,
-		"y" : 300,
-		"label" : "Sucrose",
-		"width" : 100,
-		"height" : 100,
-		"compartment" : 5
-		},
-		{
-		"id" : 1,
-		"type" : "simple_species",
-		"sbo" : 252,
-		"x" : 50,
-		"y" : 450,
-		"label" : "H2O",
-		"width" : 100,
-		"height" : 100,
-		"compartment" : 5
-		},
-		{
-		"id" : 2,
-		"type" : "simple_species",
-		"sbo" : 252,
-		"x" : 550,
-		"y" : 300,
-		"label" : "Glucose",
-		"width" : 100,
-		"height" : 100,
-		"compartment" : 5
-		},
-		{
-		"id" : 3,
-		"type" : "simple_species",
-		"sbo" : 252,
-		"x" : 550,
-		"y" : 450,
-		"label" : "Fructose",
-		"width" : 100,
-		"height" : 100,
-		"compartment" : 5
-		},
-		{
-		"id" : 4,
-		"type" : "simple_species",
-		"x" : 50,
-		"y" : 300,
-		"width" : 10,
-		"height" : 10,
-		"compartment" : 5
-		},
-		{
-		"id" : 5,
-		"type" : "compartment",
-		"x" : 0,
-		"y" : 0,
-		"width" : 1000,
-		"height" : 1000,
-		"compartment" : -1
-		},
-		{
-		"id" : 6,
-		"type" : "reaction",
-		"x" : 50,
-		"y" : 300,
-		"width" : 10,
-		"height" : 10,
-		"compartment" : 5
-		}
-	],
-  "edges": [
-		{
-		"id" : 7,
-		"sbo" : 10,
-		"source" : 0,
-		"target" : 6
-		},
-		{
-		"id" : 8,
-		"sbo" : 10,
-		"source" : 1,
-		"target" : 6
-		},
-		{
-		"id" : 9,
-		"sbo" : 10,
-		"source" : 6,
-		"target" : 2
-		},
-		{
-		"id" : 10,
-		"sbo" : 10,
-		"source" : 6,
-		"target" : 3
-		},
-		{
-		"id" : 11,
-		"sbo" : 10,
-		"source" : 4,
-		"target" : 6
-		}
-	]
-}'/>
+<hr/>
+
+Example:<br/>
+<a href="{{=URL(r=request, c="static", f="examples")}}/example.json">{{=URL(r=request, c="static", f="examples")}}/example.json</a>
+
+<hr/>
+
+For more information on the <i>JavaScript Object Notation</i> Format, please visit <a href="http://www.json.org/">http://www.json.org/</a>.
 
 </form>
 

@@ -2,24 +2,30 @@
 
 <form name=main action=upload method=POST enctype="multipart/form-data">
 
-<img src="{{=URL(r=request, c="static", f="images")}}/Reactome.png"/>
+<a href="http://www.reactome.org/"><img src="{{=URL(r=request, c="static", f="images")}}/Reactome.png" style="vertical-align:middle;"/></a>
 <br/>
 
-Please go to the <a href="http://www.reactome.org/">Reactome website</a>, select your pathway and paste the <i>Stable identifier</i> here:<br/>
-
-<input type=text name=RSI /><br/>
+<br/>
+Stable identifier: <input type=text name=RSI /> <input type=submit value=Load />
+<br/>
 
 <hr/>
 Example:<br/>
 
 <script>
-	function TryIt( ID ) {
+	function Example( ID ) {
 		document.main.RSI.value = 'REACT_6167.3';
 		document.main.submit();
 		}
 </script>
 
-Stable identifier REACT_6167.3 : <a href="http://www.reactome.org/cgi-bin/eventbrowser_st_id?ST_ID=REACT_6167.3">Influenza Infection [Homo sapiens, Influenza A virus]</a>. <input type=button value="Try this pathway" onClick="TryIt();"/>
+<a href="http://www.reactome.org/cgi-bin/eventbrowser_st_id?ST_ID=REACT_6167.3">Influenza Infection [Homo sapiens, Influenza A virus]</a>
+<br/>
+<input type=button value="Load this pathway" onClick="Example();"/>
+
+<hr/>
+
+For more information on the Reactome Pathway Database, please visit <a href="http://www.reactome.org/">http://www.reactome.org/</a>.
 
 </form>
 

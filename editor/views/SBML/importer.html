@@ -2,49 +2,19 @@
 
 <form name=main action=upload method=POST enctype="multipart/form-data">
 
-<img src="{{=URL(r=request, c="static", f="images")}}/SBML.png"/>
-
-<script>
-	function Upload() {
-		document.main.way.upload.checked = true;
-		}
-	function Example() {
-		document.main.way.example.checked = true;
-		document.main.SBML.value = document.main.example.value;
-		}
-</script>
+<a href="http://sbml.org/"><img src="{{=URL(r=request, c="static", f="images")}}/SBML.png" style="vertical-align:middle;"/></a>
+<br/>
+<br/>
 
 <br/>
 
-<input type=radio name=way value=upload checked />
-Upload an SBML file:<br/>
-<input type=file name=File onClick="Upload();" onKeyDown="Upload();"/>
+Please upload your file: <input type=file name=File onClick="Upload();" onKeyDown="Upload();"/> <input type=submit value=Load />
 
-<br/>
-
-<input type=radio name=way value=download />
-Load an SBML file from URL:<br/>
-<input type=text name=URL value="http://" />
-
-<br/>
-
-<input type=radio name=way value=text />
-Paste your SBML code here: <br/>
-<textarea name=text style="width:600px;height:400px;"></textarea>
-
-<br/>
-
-<input type=radio name=way value=example />
-or try an example SBML
-
-<br/>
-
-<input type=submit value=Start />
 <br/>
 
 <hr/>
 
-For more information on the SBML format, visit <a href="http://sbml.org/">http://sbml.org/</a>.
+For more information on the SBML format, please visit <a href="http://sbml.org/">http://sbml.org/</a>.
 
 <hr/>
 
@@ -52,8 +22,6 @@ In order to use this code on your machine, you need to get <a href="http://sourc
 Get the tarball, unpack it and run <i>./configure --with-python; make; make install</i><br/>
 Requires <i>xml2-config</i>, provided by package <i>libxml2-dev</i><br/>
 <a href="http://sourceforge.net/projects/sbml">libsbml's license is the GNU LGPL</a><br/>
-
-<input type=hidden name=example value=''/>
 
 </form>
 

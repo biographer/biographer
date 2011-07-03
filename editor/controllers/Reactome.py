@@ -11,31 +11,22 @@ def importer():
 
 def upload():
 	session.RSI = request.vars.RSI
-	connection = httplib.HTTPConnection("www.reactome.org")
-	connection.request("GET", "/cgi-bin/eventbrowser?DB=gk_current&ID=168254&ZOOM=2") #"/cgi-bin/eventbrowser_st_id?ST_ID="+str(session.RSI))
+	connection = httplib.HTTPConnection("www.reactome.org")					# retrieve page for Reactome ID
+	 #"/cgi-bin/eventbrowser_st_id?ST_ID="+str(session.RSI))
+	connection.request("GET", "/cgi-bin/eventbrowser?DB=gk_current&ID=168254&ZOOM=2")
 	page = connection.getresponse().read()
-	open("/tmp/reactome.html","w").write(page)
-	print page
-	if page.lower().find("internal error") > -1:
-		session.flash = "Error: Invalid Reactome stable identifier"
+	if page.lower().find("internal error") > -1:						# page not found
+		session.flash = "Error: Invalid Reactome stable identifier"			# -> invalid ID
 	else:	
-		p = page.find('/cgi-bin/sbml_export?')
+		p = page.find('/cgi-bin/sbml_export?')						# find SBML export link
 		q = page.find('"', p)
-		print ""
-		print ""
 		if p > -1:
-			print page[p:q]
-			connection.request("GET", page[p:q])
-			session.SBML = connection.getresponse().read()
-
-			reload(biographer)
-			session.bioGraph = biographer.Graph( SBMLinput=session.SBML )
-			del session.bioGraph.SBML
-
-		else:
-			session.flash = "Sorry: SBML for this pathway not found"
-			print ""
-			print "key not found"
+			connection.request("GET", page[p:q])					# download SBML
+			session.file		= connection.getresponse().read()
+			session.bioGraph	= biographer.Graph( SBML=session.file )
+			session.flash		= "SBML successfully retrieved"
+		else:										# link not found
+			session.flash		= "Sorry: SBML for this pathway not found"
 	connection.close()
 	return redirect( URL(r=request, c='Workbench', f='index') )
 

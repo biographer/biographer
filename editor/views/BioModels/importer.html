@@ -1,11 +1,12 @@
 {{extend 'layout.html'}}
 
-<h1>EBI BioModels Importer</h1>
-
 <form name=main action=download method=POST>
 
-You decided to load a SBML model from <a href="http://www.ebi.ac.uk/biomodels-main/publmodels">http://biomodels.net/</a>.<br/>
-Please paste your BioModels-ID below:<br/>
+<a href="http://www.ebi.ac.uk/biomodels-main/publmodels"><img src="{{=URL(r=request, c="static", f="images")}}/BioModels.png" style="vertical-align:bottom;"/></a>
+<br/>
+<br/>
+
+Please enter your BioModels ID:
 <br/>
 
 <script type="text/javascript">
@@ -30,13 +31,29 @@ Please paste your BioModels-ID below:<br/>
 	document.main.BioModelsID.addEventListener("DOMCharacterDataModified", Check(), true);
 	document.main.BioModelsID.focus();
 
+	function Example() {
+		document.main.BioModelsID.value = "245";
+		document.main.submit();
+		}
 </script>
 
 <b>BIOMD</b><input type=text name=BioModelsID onKeyUp="javascript:Check();" onClick="javascript:Check();" onMouseMove="javascript:Check();" /><input type=text name=Valid value="" style="border:#ffffff;" />
 
 <br/>
 
-<input type=submit name=Submit value="Download" style="visibility:hidden;" />
+<input type=submit name=Submit value="Load" style="visibility:hidden;" />
+
+<hr/>
+
+Example:
+<br/>
+<a href="http://www.ebi.ac.uk/biomodels-main/BIOMD0000000245">Yeast Aerobic Metabolism</a>
+<br/>
+<input type=button value="Load this pathway" onClick="Example();"/>
+
+<hr/>
+
+For more information on the BioModels Database of the European Bioinformatics Institute, please visit <a href="http://biomodels.net/">http://biomodels.net/</a>.
 
 </form>
 

@@ -3,13 +3,10 @@
   <head>
     
     <meta charset="utf-8" />        
-    
     <title>{{=response.title or request.application}}</title>
-    
     <meta name="application-name" content="{{=request.application}}" /> 
-    
     <meta name="google-site-verification" content="" />
-    
+
     <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
     <script src="{{=URL('static','js/modernizr-1.7.min.js')}}"></script>
     
@@ -19,6 +16,74 @@
     {{response.files.append(URL('static','js/superfish.js'))}}
     {{#------ include web2py specific js code (jquery, calendar, form stuff) ------}}
     {{include 'web2py_ajax.html'}}
+
+	<style>
+	h1			{
+				padding-bottom: 15pt;
+				}
+	table.MenuTable		{
+				border:0pt solid ffffff;
+				background: #ffffff;
+				}
+	td.MenuHover		{
+				background: #ffffff;
+				}
+	a.MenuLink		{
+				text-decoration:none;
+				width:		100%;
+				padding:	3px;
+				margin:		3px;
+				}
+	a.MenuLink:hover	{
+				text-decoration:none;
+				background:	#8caed4;
+				}
+	pre			{
+				border:1pt solid #000;
+				white-space:pre;"
+				}
+	button.ImportButton	{
+				color:	#e5e6e7;
+				}
+	#divImportMenu		{
+				position:	absolute;
+				left:		500px;
+				top:		74px;
+				width:		120px;
+				height:		20px;
+				overflow:	hidden;
+				background:	#eaeaea; 
+				padding:	5px;
+				text-align:	left;
+				border-left:	none;
+				border-right:	none;
+				border-top:	1pt solid black;
+				border-bottom:	1pt solid black;
+				}
+	#divImportMenu:hover	{
+				height:		230px;
+				cursor:		pointer;
+				background:	#eee;
+				}
+	#appname		{
+				color: #cccccc;
+				}
+	#statusbar		{
+				height:		20px;
+				padding:	5px;
+				margin:		#5px 0px 20px 0px;
+				color:		#e5e6e7;
+				}
+	#footer			{
+				margin-top: 30px;
+				padding: 5px;
+				}
+	#statusbar, #footer	{
+				background:	#eaeaea; 
+				border-top:	1px solid black;
+				border-bottom:	1px solid black;
+				}
+	</style>
 
     {{
     #using sidebars need to know what sidebar you want to use
@@ -47,13 +112,13 @@
     
     <div id="header"> <!-- header and login nav -->
       {{block header}} <!-- this is default header -->
-      {{try:}}{{=auth.navbar(action=URL('default','user'))}}{{except:pass}}               
+      {{#try:}}{{#=auth.navbar(action=URL('default','user'))}}{{#except:pass}}               
       <h1><span id="appname">{{=request.application.capitalize()}}</span></h1>
       <div style="clear: both;"></div><!-- Clear the divs -->
       {{end}}                                     
     </div><!-- header  -->
     
-    <div id="statusbar"><!-- statusbar is menu zone -->
+<div id="statusbar"><!-- statusbar is menu zone -->
       {{block statusbar}}
       {{#------ superfish menu ------}}
       {{#=MENU(response.menu,_class='sf-menu')}}
@@ -62,41 +127,38 @@
         jQuery('ul.sf-menu').superfish();});
       </script-->
       <div style="clear: both;"></div><!-- Clear the divs -->
-	<style>
-		td.MenuHover		{
-					background: #ffffff;
-					}
-		td.MenuHover:hover	{
-					background: #8caed4;
-					}
-		a.MenuLink		{
-					text-decoration: none;
-					}
-		a.MenuLink:hover	{
-					text-decoration: none;
-					background: #8caed4;
-					}
-	</style>
-	<table border=0 cellspacing=1 cellpadding=15 style="border:0pt solid ffffff; background: #ffffff;">
-		<tr>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='Workbench', f='index')}}>Workbench</a></td>
-			<td><b>| Import: </b></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='JSON', f='importer')}}>JSON</a></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='ODP', f='importer')}}>ODP</a></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='SBML', f='importer')}}>SBML</a></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='BioModels', f='importer')}}>BioModels.net</a></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='BioPAX', f='importer')}}>BioPAX</a></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='Reactome', f='importer')}}>Reactome</a></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='PID', f='importer')}}>PID</a></td>
-<!--			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='PathVisio', f='importer')}}>PathVision</a></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='WikiPathways', f='importer')}}>WikiPathways</a></td>-->
-			<td><b>&nbsp;|&nbsp;</b></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='graphviz', f='index')}}>graphviz</a></td>
-			<td class=MenuHover><a class=MenuLink href={{=URL(r=request, c='Visualizer', f='index')}}>Visualizer</a></td>
-		</tr>
-	</table>
-      {{end}}               
-    </div><!-- statusbar -->
+
+<script>
+	div	= document.getElementById("divImportMenu");
+	a	= document.getElementById("ImportLink");
+	div.style.left		= a.style.left;
+	div.style.top		= a.style.top;
+	div.style.visibility	= "visible";
+</script>
+
+<a class=MenuLink href={{=URL(r=request, c='Workbench', f='index')}}>Workbench</a>
+<a class=MenuLink href={{=URL(r=request, c='Visualizer', f='index')}}>Visualizer</a>
+<a class=MenuLink href={{=URL(r=request, c='graphviz', f='index')}}>graphviz</a>
+
+{{end}}               
+
+</div><!-- statusbar -->
+
+<div id="divImportMenu">
+	Import
+	<br/>
+	<a class=MenuLink href={{=URL(r=request, c='JSON', f='importer')}}>JSON</a><br/>
+	<a class=MenuLink href={{=URL(r=request, c='ODP', f='importer')}}>ODP</a><br/>
+	<a class=MenuLink href={{=URL(r=request, c='SBML', f='importer')}}>SBML</a><br/>
+	<a class=MenuLink href={{=URL(r=request, c='BioModels', f='importer')}}>BioModels.net</a><br/>
+	<a class=MenuLink href={{=URL(r=request, c='Reactome', f='importer')}}>Reactome</a><br/>
+	<a class=MenuLink href={{=URL(r=request, c='BioPAX', f='importer')}}>BioPAX</a><br/>
+	<a class=MenuLink href={{=URL(r=request, c='PID', f='importer')}}>PID</a><br/>
+	<a class=MenuLink href={{=URL(r=request, c='BioCarta', f='importer')}}>BioCarta</a><br/>
+<!--	<a class=MenuLink href={{=URL(r=request, c='PathVisio', f='importer')}}>PathVision</a><br/>
+	<a class=MenuLink href={{=URL(r=request, c='WikiPathways', f='importer')}}>WikiPathways</a><br/>	-->
+</div>
+
     
     <div id="page"> <!-- Here my central body -->     
 
@@ -107,13 +169,6 @@
             </div>
           </div><!-- left_sidebar -->
       {{pass}}
-
-	<style>
-	pre	{
-		border:1pt solid #000;
-		white-space:pre;"
-		}
-	</style>
 
       <div id="content" {{=XML(style_content)}} >
         {{include}} 
