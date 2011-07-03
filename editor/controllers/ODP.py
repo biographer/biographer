@@ -7,6 +7,6 @@ def importer():
 
 def upload():
 	example = "/var/www/web2py/applications/biographer/doc/demograph/demograph.odp"	# hardcoded example
-	session.bioGraph = biographer.Graph( ODPfile=example )
-	return redirect("/biographer/Workbench")
+	session.bioGraph = biographer.Graph().importfile( example )
+	return redirect( URL(r=request, c='Workbench', f='index') )
 

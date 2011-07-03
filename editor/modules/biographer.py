@@ -11,8 +11,11 @@
 ### dependencies ###
 
 from math import ceil
-import json, libsbml
+import json
+import libsbml
 from libimpress import ODP
+from libbiopax import BioPAX
+import pygraphviz
 
 
 #### defaults & constants ####
@@ -45,7 +48,14 @@ def checkJSON( JSON ):
 	if len(JSON) > 0:
 		if JSON.lstrip()[0] != "{":				# JSON needs to start with "{"
 			JSON = "{\n"+JSON+"\n}"
-		# ...
+		while count(JSON, "[") > count(JSON, "]"):		# count "[" = count "]"
+			JSON += "]"
+		while count(JSON, "[") < count(JSON, "]"):
+			JSON = "["+JSON
+		while count(JSON, "{") > count(JSON, "}"):		# count "{" = count "}"
+			JSON += "}"
+		while count(JSON, "{") < count(JSON, "}"):
+			JSON = "{"+JSON
 	else:
 		JSON = "{}"
 	return JSON
@@ -174,28 +184,27 @@ class Edge:
 ### Graph ###
 
 class Graph:
-	def __init__(self, JSONfile=None, JSONinput=None, SBMLfile=None, SBMLinput=None, ODPfile=None):
-		self.empty()
-		self.DEBUG = ""
-		if JSONfile is not None:
-			self.importJSON( filename=JSONfile )
-		if JSONinput is not None:
-			self.importJSON( JSON=JSONinput )
-		if SBMLfile is not None:
-			self.importSBML( filename=SBMLfile )
-		if SBMLinput is not None:
-			self.importSBML( SBML=SBMLinput )
-		if ODPfile is not None:
-			self.importODP( ODPfile )
-
-
-	### primary functions for Graph creation: import / export ###
-
 	def empty(self):							# reset current model
 		self.Nodes = []
 		self.Edges = []
 		self.maxID = 1
 		self.IDmapNodes = self.IDmapEdges = {}
+
+	def __init__(self, filename=None, JSON=None, SBML=None, ODP=None, BioPAX=None):
+		self.empty()
+		self.DEBUG = ""
+		if filename is not None:
+			self.importfile( filename )
+		if JSON is not None:
+			self.importJSON( JSON )
+		if SBML is not None:
+			self.importSBML( SBML )
+		if ODP is not None:
+			self.importODP( ODP )
+		if BioPAX is not None:
+			self.importBioPAX( BioPAX )
+
+	### handling element IDs ###
 
 	def mapIDs(self):							# generate a map of IDs and array indices
 		self.maxID = 1							# thereby determine the highest ID used in our model
@@ -219,26 +228,30 @@ class Graph:
 		self.maxID += 1
 		return self.maxID
 
-	def importJSON(self, filename=None, JSON=None):				# import JSON
-		if filename is not None:
-			self.DEBUG += "Loading JSON from file: "+filename+" ...\n"
-			self.importJSON( JSON=open(filename,"r").read() )
-		elif JSON is not None:
-			self.empty()
-			self.DEBUG += "Loading JSON from string ...\n"
-			JSON = checkJSON(JSON)
-			try:
-				JSON = jason.loads(JSON)
-			except:
-				self.DEBUG += "Fatal: JSON parser raised an exception!\n"
-				return
-			self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
-			self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
-			self.mapIDs()
-			self.selfcheck()
-			self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
-		else:
-			self.DEBUG += "Failed to import JSON: No input.\n"
+
+	### functions for Graph creation: import / export ###
+
+	def importfile(self, filename):
+		content	= open(filename).read()
+
+		pass	#... detect file type
+
+		self.importJSON( content )
+
+	def importJSON(self, JSON):						# import JSON
+		self.empty()
+		self.DEBUG += "Importing JSON ...\n"
+		JSON = checkJSON(JSON)
+		try:
+			JSON = json.loads(JSON)
+		except:
+			self.DEBUG += "Fatal: JSON parser raised an exception!\n"
+			return
+		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
+		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
+		self.mapIDs()
+		self.selfcheck()
+		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
 		return json.dumps( { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }, indent=Indent )
@@ -246,19 +259,11 @@ class Graph:
 	def exportDICT(self):							# export current model as python dictionary
 		return self.__dict__
 
-	def importSBML(self, filename=None, SBML=None):				# import SBML
+	def importSBML(self, SBML):				# import SBML
 		self.empty()
 
-		if filename is not None:
-			self.DEBUG += "Loading bioGraph from file: "+filename+" ...\n"
-			self.SBML = libsbml.readSBML( filename )		# something goes wrong here!
-		elif SBML is not None:
-			self.DEBUG += "Loading bioGraph from string ...\n"
-			self.SBML = libsbml.readSBMLFromString( SBML )
-		else:
-			self.DEBUG += "Failed to import SBML: No input.\n"
-			return False
-
+		self.DEBUG += "Importing SBML ...\n"
+		SBML = libsbml.readSBMLFromString( SBML )
 		model = self.SBML.getModel()
 		if model is None:
 			self.DEBUG += "Error: SBML model is None !\n"
@@ -319,27 +324,54 @@ class Graph:
 		self.selfcheck()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
-	def importODP(self, filename):						# import an OpenOffice Impress Document
-		self.ODP = ODP( filename )
-		self.DEBUG += self.ODP.DEBUG
-
-		self.Nodes = self.ODP.Nodes
-		self.Edges = self.ODP.Edges
+	def importODP(self, odp):						# import an OpenOffice Impress Document
+		self.DEBUG += "Importing ODP ...\n"
+		impress = ODP( odp )
+		self.DEBUG += impress.DEBUG
+		self.Nodes = impress.Nodes
+		self.Edges = impress.Edges
 		self.mapIDs()
-
 		self.selfcheck()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
-	def exportODP(self, filename=None):					# export an OpenOffice Impress Document
-		if self.ODP is None:
-			self.ODP = ODP()
-			self.ODP.Nodes = self.Nodes
-			self.ODP.Edges = self.Edges
-		if filename is not None:
-			self.ODP.saveas( filename )
-		else:
-			return self.ODP.export()
+	def exportODP(self):							# export an OpenOffice Impress Document
+		self.DEBUG += "Exporting ODP ...\n"
+		impress = ODP()
+		impress.Nodes = self.Nodes
+		impress.Edges = self.Edges
+		return impress.export()
 
+	def importBioPAX(self, biopax):
+		self.DEBUG += "Importing BioPAX ...\n"
+		b = BioPAX( biopax )
+		self.Nodes = b.Nodes
+		self.Edges = b.Edges
+		self.mapIDs()
+		self.selfcheck()
+		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
+
+	# http://networkx.lanl.gov/pygraphviz/tutorial.html
+
+	def Graphviz(self):
+		self.DEBUG += "Exporting Graphviz ...\n"
+		G = pygraphviz.AGraph()
+		G.add_node( "a" )
+#		for node in self.Nodes:
+#			G.add_node( str(node.id) )
+#		for edge in self.Edges:
+#			G.add_edge( str(edge.source), str(edge.target) )
+		return G
+
+	def exportGraphviz(self):
+		return self.Graphviz.string()
+
+	def exportGraphvizPNG(self):
+		G = self.Graphviz
+		self.DEBUG += "Graphviz -> PNG ...\n"
+		G.layout()
+		G.draw("/tmp/graphviz.png")
+		return open("/tmp/graphviz.png").read()
+		
 
 	### basic functions on Graph properties ###
 

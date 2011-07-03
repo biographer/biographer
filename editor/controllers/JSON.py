@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 
-biographer = local_import("biographer")
+import sys
+sys.path.append("/var/www/web2py/applications/biographer/modules")
+import biographer
 
 def importer():
 	return dict()
 
-def upload():
-	session.JSON = request.vars.JSON
-	session.bioGraph = biographer.Graph( JSONinput=session.JSON )
-	return redirect("/biographer/Workbench")
+def load():
+	reload(biographer)
+	session.JSON = request.vars.File.file.read()
+	session.bioGraph = biographer.Graph( JSON = session.JSON )
+	session.flash= request.vars.File.filename+" uploaded and parsed"
+	return redirect( URL(r=request, c="Workbench", f="index") )
 
 def details():
 	return dict()

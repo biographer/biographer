@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
-def index():
-	# fürs erste: ODP output anzeigen
-	# später: Bens JavaScript
+import sys
+sys.path.append("/var/www/web2py/applications/biographer/modules")
+import biographer
+
+def draw():
+	reload(biographer)
+	session.graphviz = session.bioGraph.exportGraphviz()
 	return dict()
 

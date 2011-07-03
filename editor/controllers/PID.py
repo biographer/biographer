@@ -10,11 +10,11 @@ def importer():
 	return dict()
 
 def upload():
-	connection = httplib.HTTPConnection("pid.nci.nih.gov")		# retrieve page for specified Pathway ID
+	connection = httplib.HTTPConnection("pid.nci.nih.gov")			# retrieve page for specified Pathway ID
 	connection.request("GET", "/search/pathway_landing.shtml?source=NCI-Nature%20curated&what=graphic&jpg=on&ppage=1&pathway_id="+request.vars.PIDPID)
 	page = connection.getresponse().read()
 	URL = ""
-	p = page.find('<a class="button-style" href="')			# find BioPAX link
+	p = page.find('<a class="button-style" href="')				# find BioPAX link
 	while p > -1:
 		q = page.find('</a>', p)
 		partial = page[p:q]
@@ -25,10 +25,10 @@ def upload():
 			break
 		p = page.find('<a class="button-style" href="', q)
 	if URL != "":
-		connection.request("GET", URL)				# download BioPAX
+		connection.request("GET", URL)					# download BioPAX
 		biopax = connection.getresponse().read()
-		session.bioGraph = biographer.Graph( BioPAX=biopax )	# load bioGraph from BioPAX
-	else:								# BioPAX link not found
+		session.bioGraph = biographer.Graph().importBioPAX( biopax )	# load bioGraph from BioPAX
+	else:									# BioPAX link not found
 		session.flash = "Error: BioPAX for this pathway could not be downloaded"
 	connection.close()
 	return redirect( URL(r=request, c='Workbench', f='index') )
