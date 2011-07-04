@@ -15,6 +15,13 @@ bui.svgns = "http://www.w3.org/2000/svg";
 bui.settings = {
     /**
      * @field
+     * Whether or not the bui.Graph will be initialised in high or low
+     * performance mode. True for high performance.
+     */
+    initialHighPerformance : true,
+
+    /**
+     * @field
      * Prefixes for various ids
      */
     idPrefix : {
@@ -23,6 +30,15 @@ bui.settings = {
         edge : 'edge',
         connectingArc : 'connectingArc'
     },
+
+    /**
+     * @field
+     * Id suffixes
+     */
+    idSuffix : {
+        hover : 'hover'
+    },
+
     /**
      * @field
      * The url from which the CSS file should be imported and CSS classes

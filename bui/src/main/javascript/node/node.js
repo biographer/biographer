@@ -86,7 +86,18 @@
         x += correction.x * -1;
         y += correction.y * -1;
 
+        var suspendHandle = this.graph().suspendRedraw(200);
         this.position(x, y);
+        this.graph().unsuspendRedraw(suspendHandle);
+    };
+
+    /**
+     * @private jQuery UI drag listener
+     */
+    var placeholderDrag = function() {
+        if (this.graph().highPerformance() === true) {
+            placeholderDragStop.call(this);
+        }
     };
 
     /**
@@ -102,7 +113,15 @@
         width += correction.width * -1;
         height += correction.height * -1;
 
+        var suspendHandle = this.graph().suspendRedraw(200);
         this.size(width, height);
+        this.graph().unsuspendRedraw(suspendHandle);
+    };
+
+    var placeholderResize = function() {
+        if (this.graph().highPerformance() === true) {
+            placeholderResizeStop.call(this);
+        }
     };
 
     /**
@@ -204,6 +223,7 @@
         if (this._enableDragging === true) {
             jQuery(privates.placeholder).draggable({
                 stop : placeholderDragStop.createDelegate(this),
+                drag : placeholderDrag.createDelegate(this),
                 distance: 20
             });
         }
@@ -211,6 +231,7 @@
         if (this._enableResizing === true) {
             jQuery(privates.placeholder).resizable({
                 stop : placeholderResizeStop.createDelegate(this),
+                resize : placeholderResize.createDelegate(this),
                 aspectRatio : (this._forceRectangular ? 1 : false)
             });
         }

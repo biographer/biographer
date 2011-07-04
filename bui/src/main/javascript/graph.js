@@ -148,6 +148,7 @@
         privates.drawables = {};
         privates.idCounter = 0;
         privates.scale = 1;
+        privates.highPerformance = bui.settings.initialHighPerformance;
 
         __initialPaintGraph.call(this);
     };
@@ -428,6 +429,32 @@
             inner = inner.replace(__getStylesheetContents(), css);
 
             return inner;
+        },
+
+        /**
+         * A graph supports a high and low performance mode. This has
+         * implications on the way dragging and resizing is realized. When in
+         * high performance mode the SVG will be changed while dragging or
+         * resizing the node. In low performance mode this will only be done
+         * at the end of the dragging or resizing.
+         *
+         * @param {Boolean} [highPerformance] Set the performance for this
+         *   graph to high (true) or low (false). Omit to retrieve current
+         *   performance setting.
+         * @return {Boolean|bui.Graph} If you pass a boolean to this function
+         *   it will set the new value and return the instance of the object
+         *   on which you called the function (fluent interface). If you don't
+         *   pass a parameter the current setting will be removed.
+         */
+        highPerformance : function(highPerformance) {
+            var privates = this._privates(identifier);
+
+            if (highPerformance !== undefined) {
+                privates.highPerformance = highPerformance;
+                return this;
+            }
+
+            return privates.highPerformance;
         }
     };
 
