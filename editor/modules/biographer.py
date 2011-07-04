@@ -13,6 +13,7 @@
 from math import ceil
 import json
 import libsbml
+import copy
 from libimpress import ODP
 from libbiopax import BioPAX
 import pygraphviz
@@ -68,11 +69,11 @@ def checkJSON( JSON ):
 class Node:
 	def __init__(self, JSON=None, defaults=False):			# input may be string or dictionary
 		if defaults:
-			self.__dict__.update(DefaultNode)
+			self.__dict__.update(copy.deepcopy(DefaultNode))
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
-			self.__dict__.update(JSON)			# map all input key/value pairs to the python object
+			self.__dict__.update(copy.deepcopy(JSON))	# map all input key/value pairs to the python object
 
 	def exportJSON(self, Indent=DefaultIndent):			# export Node as JSON string
 		return json.dumps( self.__dict__, indent=Indent )
@@ -109,7 +110,7 @@ class Node:
 				show = True
 
 		if type(self.data['compartment']) == type(0):			# check compartment
-			if self.data['compartment'] < 0:
+			if self.data['compartment'] < 0 and self.type in [0,3]:
 				result += "Warning: Node compartment < 0 !\n"
 				show = True
 
@@ -128,11 +129,11 @@ class Node:
 class Edge:
 	def __init__(self, JSON=None, defaults=False):			# input parameter may be string or dictionary
 		if defaults:
-			self.__dict__.update(DefaultEdge)
+			self.__dict__.update(copy.deepcopy(DefaultEdge))
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
-			self.__dict__.update(JSON)			# import all input key/value pairs to the python object
+			self.__dict__.update(copy.deepcopy(JSON))	# import all input key/value pairs to the python object
 
 	def exportJSON(self, Indent=DefaultIndent):
 		return json.dumps( self.__dict__, indent=Indent )
@@ -275,7 +276,8 @@ class Graph:
 			n.sbo			= SBO["compartment"]
 			n.type                  = TYPE["compartment node"]
 			n.data["label"]		= compartment.getName()
-			n.data["compartment"]	= compartment.getOutside()
+			if compartment.isSetOutside():
+				n.data["compartment"]	= compartment.getOutside()
 			self.Nodes.append(n)
 
 		for species in model.getListOfSpecies():
@@ -301,6 +303,7 @@ class Graph:
 			for reactant in reaction.getListOfReactants():		# create Edges from the educts, products and modifiers to this process node
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
+				e.sbo           = 10
 				e.source        = reactant.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
@@ -308,6 +311,7 @@ class Graph:
 			for product in reaction.getListOfProducts():
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
+				e.sbo           = 11
 				e.source        = n.id
 				e.target	= product.getSpecies()
 				self.Edges.append(e)
@@ -354,11 +358,14 @@ class Graph:
 
 	def GraphvizObject(self):
 		self.DEBUG += "Exporting Graphviz ...\n"
-		G = pygraphviz.AGraph()
+		G = pygraphviz.AGraph(directed=True)
 		for node in self.Nodes:
-			G.add_node( str(node.id) )
+			G.add_node( str(node.id),
+				    label=node.id if "label" not in node.data else node.data["label"],
+				    shape='ellipse' if node.type != TYPE["process node"] else 'box' )
 		for edge in self.Edges:
-			G.add_edge( str(edge.source), str(edge.target) )
+			G.add_edge( str(edge.source), str(edge.target),
+				    arrowhead='normal' if edge.sbo in [10, 11] else 'tee' )
 		return G
 
 	def exportGraphvizScript(self):
@@ -367,7 +374,7 @@ class Graph:
 	def exportGraphvizPNG(self, tempfile="/tmp/biographer-graphviz.png"):
 		G = self.GraphvizObject()
 		self.DEBUG += "Graphviz -> PNG ...\n"
-		G.layout()
+		G.layout(prog='dot')
 		G.draw(tempfile)
 		return open(tempfile).read()
 		
