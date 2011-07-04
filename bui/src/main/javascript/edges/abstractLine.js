@@ -97,7 +97,35 @@
         endpointVisibilityChanged.call(this);
     };
 
+    /**
+     * @private mouse in listener
+     */
+    var lineMouseIn = function() {
+        if (this.hoverEffect() === true) {
+            this.addClass(bui.settings.css.classes.lineHover);
 
+            var marker = this._privates(identifier).marker;
+            if (marker !== null) {
+                this._line.setAttributeNS(null, 'marker-end',
+                        bui.util.createMarkerAttributeValue(
+                                bui.util.getHoverId(marker)
+                        ));
+            }
+        }
+    };
+
+    /**
+     * @private mouse out listener
+     */
+    var lineMouseOut = function() {
+        this.removeClass(bui.settings.css.classes.lineHover);
+
+        var marker = this._privates(identifier).marker;
+        if (marker !== null) {
+            this._line.setAttributeNS(null, 'marker-end',
+                    bui.util.createMarkerAttributeValue(marker));
+        }
+    };
     
     /**
      * @class
@@ -114,6 +142,10 @@
         args.id = bui.settings.idPrefix.edge + args.id;
         bui.AbstractLine.superClazz.call(this, args);
         this._addType(bui.AbstractLine.ListenerType);
+
+        var privates = this._privates(identifier);
+        privates.hoverEffect = true;
+        privates.marker = null;
 
         this.bind(bui.Drawable.ListenerType.visible,
                 visibilityChanged.createDelegate(this),
@@ -137,6 +169,8 @@
         this._initialPaint();
 
         this._line.setAttributeNS(null, 'id', this.id());
+        jQuery(this._line).mouseenter(lineMouseIn.createDelegate(this));
+        jQuery(this._line).mouseleave(lineMouseOut.createDelegate(this));
 
         this.addClass(bui.settings.css.classes.line);
     };
@@ -171,6 +205,7 @@
          */
         _markerChanged : function(line, marker) {
             if (marker === null) {
+                this._line.setAttributeNS(null, 'marker-end', '');
                 this._line.removeAttributeNS(null, 'marker-end');
             } else {
                 this._line.setAttributeNS(null, 'marker-end',
@@ -195,12 +230,18 @@
             var privates = this._privates(identifier);
 
             if (markerId !== undefined) {
-                var marker = this.graph().connectingArcs()[markerId];
-
-                if (marker !== undefined && marker.id !== privates.marker) {
-                    privates.marker = marker.id;
+                if (markerId === null) {
+                    privates.marker = null;
                     this.fire(bui.AbstractLine.ListenerType.marker,
-                            [this, marker.id]);
+                            [this, null]);
+                } else {
+                    var marker = this.graph().connectingArcs()[markerId];
+
+                    if (marker !== undefined && marker.id !== privates.marker){
+                        privates.marker = marker.id;
+                        this.fire(bui.AbstractLine.ListenerType.marker,
+                                [this, marker.id]);
+                    }
                 }
 
                 return this;
@@ -228,8 +269,26 @@
             this.addClass(bui.AbstractLine.Style[style]);
 
             return this;
-        }
+        },
 
+        /**
+         * Enable or disable the line's hover effect.
+         *
+         * @param {Boolean} [hoverEffect] True to activate hover effects, false
+         *   otherwise. Omit to retrieve current setting.
+         * @return {Boolean|bui.AbstractLine} Fluent interface in case you pass
+         *   a new value, the current value if you omit the parameter.
+         */
+        hoverEffect : function(hoverEffect) {
+            var privates = this._privates(identifier);
+            
+            if (hoverEffect !== undefined) {
+                privates.hoverEffect = hoverEffect;
+                return this;
+            }
+
+            return privates.hoverEffect;
+        }
     };
 
     bui.util.setSuperClass(bui.AbstractLine, bui.AttachedDrawable);

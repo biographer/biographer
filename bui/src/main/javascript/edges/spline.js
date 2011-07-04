@@ -88,12 +88,14 @@
             privates.sourceHelperLine = this.graph()
                     .add(bui.StraightLine)
                     .lineStyle(bui.AbstractLine.Style.dotted)
+                    .hoverEffect(false)
                     .source(privates.sourceSplineHandle)
                     .visible(true);
 
             privates.targetHelperLine = this.graph()
                     .add(bui.StraightLine)
                     .lineStyle(bui.AbstractLine.Style.dotted)
+                    .hoverEffect(false)
                     .source(privates.targetSplineHandle)
                     .visible(true);
         },

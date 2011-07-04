@@ -93,6 +93,7 @@
                 privates.connectingArcs[id] = ca;
 
                 privates.defsGroup.appendChild(ca.element);
+                privates.defsGroup.appendChild(ca.hoverElement);
             }
         }
     };

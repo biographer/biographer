@@ -64,6 +64,7 @@ bui.settings = {
                 dotted : 'dotted',
                 dashed : 'dashed'
             },
+            lineHover : 'lineHover',
             connectingArcs : {
                 stimulation : 'stimulation',
                 catalysis : 'catalysis',

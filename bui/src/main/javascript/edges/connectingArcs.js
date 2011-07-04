@@ -9,8 +9,9 @@
 
     /**
      * @private
-     * Helper function for the generation of SVGPathElement elements.
+     * Helper function for the generation of SVGMarkerElement elements.
      *
+     * @param {String} id The id for the element.
      * @param {String|Element} data If you pass a String, a SVGPathElement
      *   will be created and its data attribute filled with the value of this
      *   parameter. In every other case it will be assumed that it's a valid
@@ -22,15 +23,10 @@
      * @param {Number} height Value for the markerHeight and viewBox attribute
      * @param {String} [classes] CSS classes which should be applied to the
      *   marker element.
-     * @return {Object} An object with id and element properties. The id
-     *   property holds the marker's id and the element property the
-     *   SVGMarkerElement.
+     * @return {SVGMarkerElement} The generated marker element.
      */
-    var createPathWithData = function(data, refX, refY, width, height, classes)
-    {
+    var createMarker = function(id, data, refX, refY, width, height, classes) {
         var marker = document.createElementNS(bui.svgns, 'marker');
-        var id = (bui.settings.idPrefix.connectingArc +
-                connectingArcIdCounter++);
         marker.setAttributeNS(null, 'id', id);
         marker.setAttributeNS(null, 'orient', 'auto');
         marker.setAttributeNS(null, 'refX', refX);
@@ -52,10 +48,44 @@
             marker.appendChild(data);
         }
 
+        return marker;
+    };
+
+    /**
+     * @private
+     * Helper function for the generation of SVGPathElement elements.
+     *
+     * @param {String|Element} data If you pass a String, a SVGPathElement
+     *   will be created and its data attribute filled with the value of this
+     *   parameter. In every other case it will be assumed that it's a valid
+     *   SVG object and it will be added as a child to the generated marker
+     *   element.
+     * @param {Number} refX Value for the refX attribute
+     * @param {Number} refY Value for the refY attribute
+     * @param {Number} width Value for the markerWidth and viewBox attribute
+     * @param {Number} height Value for the markerHeight and viewBox attribute
+     * @param {String} [classes] CSS classes which should be applied to the
+     *   marker element.
+     * @return {Object} An object with id, hoverId, element and hoverElement
+     *   properties. The id property holds the marker's id and the element
+     *   property the SVGMarkerElement.
+     */
+    var createPathWithData = function(data, refX, refY, width, height, classes)
+    {
+        var id = (bui.settings.idPrefix.connectingArc +
+                connectingArcIdCounter++),
+                hoverId = bui.util.getHoverId(id);
+
+        var element = createMarker(id, data, refX, refY, width, height,
+                classes),
+                hoverElement = createMarker(hoverId, data, refX, refY,
+                        width, height, classes);
 
         return {
             id : id,
-            element : marker
+            hoverId : hoverId,
+            element : element,
+            hoverElement : hoverElement
         };
     };
 

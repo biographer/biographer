@@ -255,4 +255,14 @@
     bui.util.createMarkerAttributeValue = function(elementId) {
         return ['url(#', elementId, ')'].join('');
     };
+
+    /**
+     * Retrieve the hover id..
+     *
+     * @param {String} id An element's id.
+     * @return {String} The element's hover id..
+     */
+    bui.util.getHoverId = function(id) {
+        return id + bui.settings.idSuffix.hover;
+    };
 })(bui);

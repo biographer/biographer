@@ -43,6 +43,10 @@ line {
     stroke: black;
 }
 
+.lineHover {
+    stroke-width: 4;
+}
+
 .dotted {
     stroke-dasharray: 1, 3;
 }
