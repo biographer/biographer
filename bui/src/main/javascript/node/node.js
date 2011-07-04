@@ -191,7 +191,7 @@
     };
 
     var mouseClick = function(event) {
-        if (event.ctrlKey) {
+        if (event.ctrlKey === true) {
             this.placeholderVisible(!this.placeholderVisible());
         }
     };
@@ -223,8 +223,7 @@
         if (this._enableDragging === true) {
             jQuery(privates.placeholder).draggable({
                 stop : placeholderDragStop.createDelegate(this),
-                drag : placeholderDrag.createDelegate(this),
-                distance: 20
+                drag : placeholderDrag.createDelegate(this)
             });
         }
 

@@ -126,7 +126,7 @@
                     bui.util.createMarkerAttributeValue(marker));
         }
     };
-    
+
     /**
      * @class
      * A drawable which has both, a source and a target

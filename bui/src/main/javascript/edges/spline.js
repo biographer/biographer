@@ -40,6 +40,15 @@
     };
 
     /**
+     * @private mouse click listener
+     */
+    var lineMouseClick = function(event) {
+        if (event.ctrlKey === true) {
+            this.layoutElementsVisible(!this.layoutElementsVisible());
+        }
+    };
+
+    /**
      * @class
      * A drawable which has both, a source and a target
      *
@@ -66,6 +75,7 @@
          */
         _initialPaint : function() {
             var privates = this._privates(identifier);
+            privates.layoutElementsVisible = true;
             this._line = document.createElementNS(bui.svgns, 'path');
             this.graph().edgeGroup().appendChild(this._line);
             this.addClass(bui.settings.css.classes.invisible);
@@ -77,27 +87,29 @@
                     .bind(bui.Node.ListenerType.absolutePosition,
                             listener,
                             listenerIdentifier(this))
-                    .visible(true);
+                    .visible(privates.layoutElementsVisible);
             privates.targetSplineHandle = this.graph()
                     .add(bui.SplineEdgeHandle)
                     .bind(bui.Node.ListenerType.absolutePosition,
                             listener,
                             listenerIdentifier(this))
-                    .visible(true);
+                    .visible(privates.layoutElementsVisible);
 
             privates.sourceHelperLine = this.graph()
                     .add(bui.StraightLine)
                     .lineStyle(bui.AbstractLine.Style.dotted)
                     .hoverEffect(false)
                     .source(privates.sourceSplineHandle)
-                    .visible(true);
+                    .visible(privates.layoutElementsVisible);
 
             privates.targetHelperLine = this.graph()
                     .add(bui.StraightLine)
                     .lineStyle(bui.AbstractLine.Style.dotted)
                     .hoverEffect(false)
                     .source(privates.targetSplineHandle)
-                    .visible(true);
+                    .visible(privates.layoutElementsVisible);
+
+            jQuery(this._line).click(lineMouseClick.createDelegate(this));
         },
 
         /**
@@ -144,17 +156,26 @@
          * are used to modify the shape of the line while the two lines are
          * used as visual assistance.
          *
-         * @param {Boolean} visible Pass true to show layout elements, false
+         * @param {Boolean} [visible] Pass true to show layout elements, false
          *   to hide them.
-         * @return {bui.Spline} Fluent interface
+         * @return {bui.Spline|Boolean} Fluent interface in case you don't pass
+         *   a parameter, the current visibility otherwise.
          */
         layoutElementsVisible : function(visible) {
             var privates = this._privates(identifier);
-            privates.sourceSplineHandle.visible(visible);
-            privates.targetSplineHandle.visible(visible);
-            privates.sourceHelperLine.visible(visible);
-            privates.targetHelperLine.visible(visible);
-            return this;
+
+            if (visible !== undefined) {
+                privates.layoutElementsVisible = visible;
+
+                privates.sourceSplineHandle.visible(visible);
+                privates.targetSplineHandle.visible(visible);
+                privates.sourceHelperLine.visible(visible);
+                privates.targetHelperLine.visible(visible);
+
+                return this;
+            }
+
+            return privates.layoutElementsVisible;
         }
     };
 
