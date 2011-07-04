@@ -23,15 +23,24 @@
      * @param {Number} height Value for the markerHeight and viewBox attribute
      * @param {String} [classes] CSS classes which should be applied to the
      *   marker element.
+     * @param {Number} [markerWidthCorrection] Correction of the markers width.
+     *   This value will be multiplied to the width attribute for the
+     *   markerWidth attribute. Defaults to 1, i.e. no changes.
      * @return {SVGMarkerElement} The generated marker element.
      */
-    var createMarker = function(id, data, refX, refY, width, height, classes) {
+    var createMarker = function(id, data, refX, refY, width, height, classes,
+                                markerWidthCorrection) {
+        if (markerWidthCorrection === undefined) {
+            markerWidthCorrection = 1;
+        }
+
         var marker = document.createElementNS(bui.svgns, 'marker');
         marker.setAttributeNS(null, 'id', id);
         marker.setAttributeNS(null, 'orient', 'auto');
         marker.setAttributeNS(null, 'refX', refX);
         marker.setAttributeNS(null, 'refY', refY);
-        marker.setAttributeNS(null, 'markerWidth', width);
+        marker.setAttributeNS(null, 'markerWidth',
+                width * markerWidthCorrection);
         marker.setAttributeNS(null, 'markerHeight', height);
         marker.setAttributeNS(null, 'viewBox',
                 ['-2 -2', width+4, height+4].join(' '));
@@ -79,7 +88,8 @@
         var element = createMarker(id, data, refX, refY, width, height,
                 classes),
                 hoverElement = createMarker(hoverId, data, refX, refY,
-                        width, height, classes);
+                        width, height, classes,
+                        bui.settings.style.markerWidthCorrection);
 
         return {
             id : id,

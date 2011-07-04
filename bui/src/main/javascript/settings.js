@@ -113,6 +113,7 @@ bui.settings = {
         edgeToNodePadding : {
             topBottom : 5,
             leftRight : 5
-        }
+        },
+        markerWidthCorrection : 0.25 // (1 / .lineHover#stroke-width) (see CSS)
     }
 };
