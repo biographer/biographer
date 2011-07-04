@@ -301,7 +301,7 @@ class Graph:
 			for reactant in reaction.getListOfReactants():		# create Edges from the educts, products and modifiers to this process node
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
-				e.source        = reactant.getId()
+				e.source        = reactant.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
 
@@ -309,14 +309,14 @@ class Graph:
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
 				e.source        = n.id
-				e.target	= product.getId()
+				e.target	= product.getSpecies()
 				self.Edges.append(e)
 
 			for modifier in reaction.getListOfModifiers():
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
 				e.sbo		= modifier.getSBOTerm()
-				e.source        = modifier.getId()
+				e.source        = modifier.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
 
