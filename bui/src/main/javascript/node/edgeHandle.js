@@ -54,7 +54,7 @@
         _circle : null,
         _forceRectangular : true,
         _enableResizing : false,
-        _calculationHook : circularShapeLineEndCalculationHook
+        _calculationHook : circularShapeLineEndCalculationHookWithoutPadding
     };
 
     bui.util.setSuperClass(bui.EdgeHandle, bui.Node);

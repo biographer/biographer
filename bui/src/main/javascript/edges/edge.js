@@ -100,7 +100,7 @@
 
         var handles = privates.handles,
                 graph = this.graph(),
-                listener = lineClicked.createDelegate(this),
+                mouseDownListener = lineMouseDown.createDelegate(this),
                 listenerId = listenerIdentifier(this),
                 sourceNode = this.source(),
                 targetNode = null;
@@ -112,8 +112,8 @@
                     .add(bui.StraightLine)
                     .source(sourceNode)
                     .target(targetNode)
-                    .bind(bui.AbstractLine.ListenerType.click,
-                            listener,
+                    .bind(bui.AbstractLine.ListenerType.mousedown,
+                            mouseDownListener,
                             listenerId);
 
             lines.push(line);
@@ -143,6 +143,10 @@
     var addHandleAfter = function(node, x, y) {
         var privates = this._privates(identifier);
 
+        var graphHtmlTopLeft = this.graph().htmlTopLeft();
+        x -= graphHtmlTopLeft.x;
+        y -= graphHtmlTopLeft.y;
+
         var handle = this.graph()
                 .add(bui.EdgeHandle)
                 .positionCenter(x, y)
@@ -160,13 +164,14 @@
         privates.handles.splice(index, 0, handle);
 
         redrawLines.call(this);
+
+        handle.startDragging(x, y);
     };
 
-    /**
-     * @private line clicked listener
-     */
-    var lineClicked = function(line, event) {
-        addHandleAfter.call(this, line.source(), event.pageX, event.pageY);
+    var lineMouseDown = function(line, event) {
+        if (event.ctrlKey !== true) {
+            addHandleAfter.call(this, line.source(), event.pageX, event.pageY);
+        }
     };
 
     /**

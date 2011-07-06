@@ -65,10 +65,10 @@
  * @private
  * @see bui.Node._calculationHook
  */
-var circularShapeLineEndCalculationHook = function(adjacent, hitAngle) {
+var _circularShapeLineEndCalculationHook =
+        function(adjacent, hitAngle, padding) {
     var radius = this.size().width / 2;
 
-    var padding = bui.settings.style.edgeToNodePadding;
     radius += Math.sqrt(Math.pow(padding.topBottom, 2) +
             Math.pow(padding.leftRight, 2));
 
@@ -76,4 +76,28 @@ var circularShapeLineEndCalculationHook = function(adjacent, hitAngle) {
         opposite : Math.sin(hitAngle) * radius,
         adjacent : Math.cos(hitAngle) * radius
     };
+};
+
+/**
+ * @private
+ * @see bui.Node._calculationHook
+ */
+var circularShapeLineEndCalculationHook = function(adjacent, hitAngle) {
+    return _circularShapeLineEndCalculationHook.call(this, adjacent,
+            hitAngle,
+            bui.settings.style.edgeToNodePadding);
+};
+
+/**
+ * @private
+ * @see bui.Node._calculationHook
+ */
+var circularShapeLineEndCalculationHookWithoutPadding =
+        function(adjacent, hitAngle) {
+    return _circularShapeLineEndCalculationHook.call(this, adjacent,
+            hitAngle,
+            {
+                topBottom : 0,
+                leftRight : 0
+            });
 };
