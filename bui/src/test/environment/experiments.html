@@ -83,15 +83,6 @@
                 .visible(true);
             compartment.label('cytosol');
 
-            edgeHandle = graph
-                .add(bui.EdgeHandle)
-                .visible(true);
-
-            splineEdgeHandle = graph
-                .add(bui.SplineEdgeHandle)
-                .position(564, 274)
-                .visible(true);
-
             unspecifiedEntity = graph
                 .add(bui.UnspecifiedEntity)
                 .position(500, 500)
@@ -104,20 +95,16 @@
                     .position(440, 250)
                     .visible(true);
 
-            edge = graph
+            spline = graph
                     .add(bui.Spline)
                     .source(process)
                     .target(compartment);
 
-//            edge = graph
-//                    .add(bui.Spline)
-//                    .source(simpleChemical)
-//                    .target(compartment);
-//
-//            edge = graph
-//                    .add(bui.Spline)
-//                    .source(splineEdgeHandle)
-//                    .target(simpleChemical);
+            edge = graph
+                    .add(bui.Edge)
+                    .source(simpleChemical)
+                    .target(compartment)
+                    .visible(true);
         });
     </script>
 </head>
