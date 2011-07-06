@@ -560,6 +560,10 @@
          * @return {Object} an object with x and y properties
          */
         calculateLineEnd : function(otherNode) {
+            if (this.visible() === false) {
+                return this.center();
+            }
+
             var position = this.center(),
                     size = this.size(),
                     otherPosition = otherNode.center();

@@ -100,30 +100,44 @@
     /**
      * @private mouse in listener
      */
-    var lineMouseIn = function() {
-        if (this.hoverEffect() === true) {
+    var lineMouseIn = function(event) {
+        this.hoverEffectActive(true);
+        this.fire(bui.AbstractLine.ListenerType.mouseEnter,
+                                [this, event]);
+    };
+
+    /**
+     * @private mouse out listener
+     */
+    var lineMouseOut = function(event) {
+        this.hoverEffectActive(false);
+        this.fire(bui.AbstractLine.ListenerType.mouseLeave,
+                                [this, event]);
+    };
+
+    /**
+     * @private hoverEffectActive listener
+     */
+    var hoverEffectActiveChanged = function(edge, active) {
+        var marker;
+        if (active === true && this.hoverEffect()) {
             this.addClass(bui.settings.css.classes.lineHover);
 
-            var marker = this._privates(identifier).marker;
+            marker = this._privates(identifier).marker;
             if (marker !== null) {
                 this._line.setAttributeNS(null, 'marker-end',
                         bui.util.createMarkerAttributeValue(
                                 bui.util.getHoverId(marker)
                         ));
             }
-        }
-    };
+        } else {
+            this.removeClass(bui.settings.css.classes.lineHover);
 
-    /**
-     * @private mouse out listener
-     */
-    var lineMouseOut = function() {
-        this.removeClass(bui.settings.css.classes.lineHover);
-
-        var marker = this._privates(identifier).marker;
-        if (marker !== null) {
-            this._line.setAttributeNS(null, 'marker-end',
-                    bui.util.createMarkerAttributeValue(marker));
+            marker = this._privates(identifier).marker;
+            if (marker !== null) {
+                this._line.setAttributeNS(null, 'marker-end',
+                        bui.util.createMarkerAttributeValue(marker));
+            }
         }
     };
 
@@ -162,6 +176,7 @@
         var privates = this._privates(identifier);
         privates.hoverEffect = true;
         privates.marker = null;
+        privates.hoverEffectActive = false;
 
         this.bind(bui.Drawable.ListenerType.visible,
                 visibilityChanged.createDelegate(this),
@@ -180,6 +195,9 @@
                 listenerIdentifier(this));
         this.bind(bui.AbstractLine.ListenerType.marker,
                 this._markerChanged.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.AbstractLine.ListenerType.hoverEffectActive,
+                hoverEffectActiveChanged.createDelegate(this),
                 listenerIdentifier(this));
 
         this._initialPaint();
@@ -292,7 +310,7 @@
         /**
          * Enable or disable the line's hover effect.
          *
-         * @param {Boolean} [hoverEffect] True to activate hover effects, false
+         * @param {Boolean} [hoverEffect] True to enable hover effects, false
          *   otherwise. Omit to retrieve current setting.
          * @return {Boolean|bui.AbstractLine} Fluent interface in case you pass
          *   a new value, the current value if you omit the parameter.
@@ -306,6 +324,35 @@
             }
 
             return privates.hoverEffect;
+        },
+
+        /**
+         * Show or hide the hover effect.
+         *
+         * @param {Boolean} [active] True to show the hover effect. Omit to
+         *   retrieve whether it is shown or not.
+         * @return {Boolean|bui.AbstractLine} If you pass a parameter the
+         *   instance on which you called this function will be returned. In
+         *   case you don't pass a parameter the current setting will be
+         *   returned.
+         */
+        hoverEffectActive : function(active) {
+            var privates = this._privates(identifier);
+
+            if (active !== undefined) {
+                // effect may only be shown when hover effects are activated.
+                active = active && this.hoverEffect();
+                
+                if (active !== privates.hoverEffectActive) {
+                    privates.hoverEffectActive = active;
+                    this.fire(bui.AbstractLine.ListenerType.hoverEffectActive,
+                                [this, active]);
+                }
+
+                return this;
+            }
+
+            return privates.hoverEffectActive;
         }
     };
 
@@ -321,7 +368,13 @@
         /** @field */
         click : bui.util.createListenerTypeId(),
         /** @field */
-        mousedown : bui.util.createListenerTypeId()
+        mousedown : bui.util.createListenerTypeId(),
+        /** @field */
+        mouseEnter : bui.util.createListenerTypeId(),
+        /** @field */
+        mouseLeave : bui.util.createListenerTypeId(),
+        /** @field */
+        hoverEffectActive : bui.util.createListenerTypeId()
     };
 
     /**

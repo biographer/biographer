@@ -12,7 +12,7 @@
     };
 
     /**
-     * @private size changed listener
+     * @private size listener
      */
     var sizeChanged = function(node, width) {
         var r = width / 2;
@@ -22,6 +22,9 @@
         privates.circle.setAttributeNS(null, 'r', r);
     };
 
+    /**
+     * @private
+     */
     var initialPaint = function() {
         var privates = this._privates(identifier);
 

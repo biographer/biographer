@@ -100,7 +100,10 @@
 
         var handles = privates.handles,
                 graph = this.graph(),
+                clickListener = lineClicked.createDelegate(this),
                 mouseDownListener = lineMouseDown.createDelegate(this),
+                mouseEnterListener = lineMouseEnter.createDelegate(this),
+                mouseLeaveListener = lineMouseLeave.createDelegate(this),
                 listenerId = listenerIdentifier(this),
                 sourceNode = this.source(),
                 targetNode = null;
@@ -112,8 +115,17 @@
                     .add(bui.StraightLine)
                     .source(sourceNode)
                     .target(targetNode)
+                    .bind(bui.AbstractLine.ListenerType.click,
+                            clickListener,
+                            listenerId)
                     .bind(bui.AbstractLine.ListenerType.mousedown,
                             mouseDownListener,
+                            listenerId)
+                    .bind(bui.AbstractLine.ListenerType.mouseEnter,
+                            mouseEnterListener,
+                            listenerId)
+                    .bind(bui.AbstractLine.ListenerType.mouseLeave,
+                            mouseLeaveListener,
                             listenerId);
 
             lines.push(line);
@@ -168,9 +180,45 @@
         handle.startDragging(x, y);
     };
 
+    /**
+     * @private line mouse down event listener
+     */
     var lineMouseDown = function(line, event) {
         if (event.ctrlKey !== true) {
             addHandleAfter.call(this, line.source(), event.pageX, event.pageY);
+        }
+    };
+
+    /**
+     * @private line clicked listener
+     */
+    var lineClicked = function(line, event) {
+        if (event.ctrlKey === true) {
+            this.edgeHandlesVisible(!this.edgeHandlesVisible());
+        }
+    };
+
+    /**
+     * @private line mouseEnter listener
+     */
+    var lineMouseEnter = function() {
+        var privates = this._privates(identifier);
+
+        var lines = privates.lines;
+        for(var i = 0; i < lines.length; i++) {
+            lines[i].hoverEffectActive(true);
+        }
+    };
+
+    /**
+     * @private line mouseLeave listener
+     */
+    var lineMouseLeave = function() {
+        var privates = this._privates(identifier);
+
+        var lines = privates.lines;
+        for(var i = 0; i < lines.length; i++) {
+            lines[i].hoverEffectActive(false);
         }
     };
 
