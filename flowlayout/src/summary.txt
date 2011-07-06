@@ -2,585 +2,585 @@ number of iteration: 60
 Total force = 0.000
 number of iteration: 42
 Total force = 44.983
-number of iteration: 1843
-Total force = 93263.047
-number of iteration: 669
-Total force = 121331.102
-time used: 5.020 seconds
+number of iteration: 2230
+Total force = 93348.266
+number of iteration: 799
+Total force = 135613.203
+time used: 5.522 seconds
 
 0
 Reaction
 Reactome:177934
-17.026 33.235
+-16.260 15.438
 1.780 0.500
 0.000
 1
-Compound
+Reaction
 Reactome:179856
-29.494 3.924
+-15.275 -0.305
 5.690 0.820
 0.000
 2
 Reaction
 Reactome:109841
--41.832 4.479
+31.714 2.747
 1.780 0.500
 0.000
 3
-Compound
+Reaction
 MAP:Cs56-65-5_CY_Reactome:177939
-30.643 -13.441
+-14.256 -14.796
 4.440 0.820
 0.000
 4
 Reaction
 MAN:R12
-30.654 -51.471
+50.413 -32.641
 0.920 0.500
 0.000
 5
 Reaction
 Reactome:177940
-4.618 8.062
+-60.180 -1.627
 1.780 0.500
 0.000
 6
 Reaction
 Reactome:109803
--0.999 4.959
+-17.497 -1.511
 1.780 0.500
 0.000
 7
-Compound
+Reaction
 Reactome:109788
--12.458 9.504
+-8.265 4.494
 6.190 0.690
 0.000
 8
 Reaction
 Reactome:177930
--2.470 -7.682
+-65.414 -8.353
 1.780 0.500
 0.000
 9
-Compound
+Reaction
 Reactome:179849
-1.815 1.875
+-65.571 -0.289
 3.940 0.690
 0.000
 10
-Compound
+Reaction
 MAP:Cb16761_CY_Reactome:109860
--25.792 -31.292
+20.063 -29.822
 4.250 0.820
 0.000
 11
 Reaction
 Reactome:109804
--17.941 3.623
+-1.620 -3.824
 1.780 0.500
 0.000
 12
-Compound
+Reaction
 Reactome:109787
--10.176 1.925
+-9.193 -2.100
 6.750 0.690
 0.000
 13
-Compound
+Reaction
 MAP:Cb17552_CY_Reactome:177938
-35.582 -6.113
+-54.171 -11.082
 4.250 0.820
 0.000
 14
 Reaction
 Reactome:177936
-44.556 8.776
+-45.795 8.880
 1.780 0.500
 0.000
 15
-Compound
+Reaction
 Reactome:112406
--51.614 3.104
+37.535 12.443
 6.810 1.040
 0.000
 16
 Reaction
 MAN:R28
-15.503 -3.587
+-35.254 -5.401
 0.920 0.500
 0.000
 17
-Compound
+Reaction
 Reactome:29358_MAN:R12
-35.142 -53.031
+50.624 -29.389
 4.170 0.820
 0.000
 18
-Compound
+Reaction
 MAP:UQ02750_CY
--44.573 2.040
+43.596 -0.301
 4.330 0.820
 0.000
 19
 Reaction
 Reactome:109860
--22.278 -26.548
+17.549 -23.622
 1.780 0.500
 0.000
 20
-Compound
+Reaction
 Reactome:180337
-40.191 18.271
+-37.489 16.071
 7.580 1.040
 0.000
 21
 Reaction
 Reactome:177938
-34.613 -0.712
+-48.128 -5.462
 1.780 0.500
 0.000
 22
-Compound
+Reaction
 Reactome:163338
--57.977 23.121
+21.678 15.439
 5.690 0.820
 0.000
 23
-Compound
+Reaction
 Reactome:109796
-43.593 2.414
+-47.531 0.018
 5.060 0.690
 0.000
 24
-Compound
+Reaction
 Reactome:109789
--39.822 13.393
+12.386 14.242
 7.220 1.040
 0.000
 25
-Compound
+Reaction
 Reactome:109793
--53.367 4.543
+35.544 8.629
 5.690 1.040
 0.000
 26
-Compound
+Reaction
 MAP:UP04049_CY_pho259pho621
--24.708 2.029
+4.743 -6.312
 6.500 0.820
 0.000
 27
-Compound
+Reaction
 Reactome:198666
-25.369 -54.892
+57.015 -31.244
 4.360 0.820
 0.000
 28
-Compound
+Reaction
 MAP:UP36507_CY
--53.755 -3.697
+47.825 -0.257
 4.310 0.820
 0.000
 29
-Compound
+Reaction
 MAP:Cs56-65-5_CY_Reactome:109852
--63.629 -10.314
+43.098 16.265
 4.440 0.820
 0.000
 30
-Compound
+Reaction
 MAP:Cs56-65-5_CY_Reactome:109860
--18.788 -31.859
+13.513 -30.156
 4.440 0.820
 0.000
 31
-Compound
+Reaction
 MAP:UP27361_CY_pho202pho204
--4.917 -17.067
+9.023 -18.696
 6.500 0.820
 0.000
 32
-Compound
+Reaction
 MAP:Cb15996_CY_Reactome:177945
-46.718 -6.892
+-43.031 4.297
 4.250 0.820
 0.000
 33
-Compound
+Reaction
 MAP:Cb15996_CY_Reactome:177938
-42.638 -1.324
+-47.933 -11.545
 4.250 0.820
 0.000
 34
-Compound
+Reaction
 Reactome:109844
-15.985 -23.455
+27.858 -18.681
 4.750 0.690
 0.000
 35
 Reaction
 Reactome:177945
-39.411 -2.709
+-46.216 4.991
 1.780 0.500
 0.000
 36
-Compound
+Reaction
 Reactome:179845
-27.724 31.793
+3.623 14.250
 5.390 0.690
 0.000
 37
 Reaction
 MAN:R2
--47.119 5.825
+40.502 4.362
 0.810 0.500
 0.000
 38
-Compound
+Reaction
 Reactome:179882
-16.196 17.625
+-37.980 8.813
 8.670 0.690
 0.000
 39
-Compound
+Reaction
 Reactome:197745
-76.696 31.816
+79.225 12.322
 10.360 0.820
 0.000
 40
 Reaction
 Reactome:109852
--57.968 -4.134
+45.699 10.319
 1.780 0.500
 0.000
 41
-Compound
+Reaction
 Reactome:113582_MAN:R12
-31.006 -55.879
+54.202 -35.979
 4.360 0.820
 0.000
 42
 Reaction
 MAN:R25
-10.635 -6.721
+-41.266 -7.071
 0.920 0.500
 0.000
 43
-Compound
+Reaction
 MAP:Cs56-65-5_CY_Reactome:177933
-23.782 26.401
+-23.790 30.653
 4.440 0.820
 0.000
 44
-Compound
+Reaction
 MAP:Cs56-65-5_CY_Reactome:109841
--35.537 14.159
+27.656 5.780
 4.440 0.820
 0.000
 45
-Compound
+Reaction
 MAP:Cb17552_CY_Reactome:177945
-41.597 -9.671
+-47.347 11.043
 4.250 0.820
 0.000
 46
-Compound
+Reaction
 MAP:C2
-13.596 -6.510
+-37.692 -7.864
 2.890 0.820
 0.000
 47
-Compound
+Reaction
 MAP:Cb16761_CY_Reactome:109852
--54.067 -8.780
+48.762 17.522
 4.250 0.820
 0.000
 48
-Compound
+Reaction
 MAP:UP27361_CY
--23.756 -9.632
+32.353 -16.424
 4.310 0.820
 0.000
 49
-Compound
+Reaction
 MAP:Cs56-65-5_CY_Reactome:177930
--10.082 -16.829
+-71.258 -15.120
 4.440 0.820
 0.000
 50
 Reaction
 Reactome:109857
--27.852 -14.130
+25.085 -18.031
 1.780 0.500
 0.000
 51
 Reaction
 Reactome:177925
-24.445 14.149
+-30.205 7.455
 1.780 0.500
 0.000
 52
-Compound
+Reaction
 MAP:Cb16761_CY_Reactome:177933
-23.937 23.800
+-30.263 31.073
 4.250 0.820
 0.000
 53
-Compound
+Reaction
 Reactome:109848
--58.440 -11.330
+52.311 -0.208
 4.310 0.820
 0.000
 54
 Reaction
 Reactome:109867
-21.303 -35.461
+35.438 -24.110
 1.780 0.500
 0.000
 55
-Compound
+Reaction
 MAP:UP31946_CY
--15.449 2.054
+-4.012 -0.229
 4.310 0.820
 0.000
 56
-Compound
+Reaction
 MAP:Cb16761_CY_Reactome:109829
--59.375 17.713
+24.599 26.427
 4.250 0.820
 0.000
 57
-Compound
+Reaction
 Reactome:109845
-25.276 -47.544
+42.978 -29.439
 4.750 0.690
 0.000
 58
-Compound
+Reaction
 Reactome:109843
--21.716 -20.957
+14.230 -17.803
 4.750 0.690
 0.000
 59
-Compound
+Reaction
 Reactome:180286
-7.221 1.978
+-53.057 1.782
 8.110 1.040
 0.000
 60
 Reaction
 MAN:R1
--57.110 -0.098
+45.512 7.413
 0.810 0.500
 0.000
 61
-Compound
+Reaction
 MAP:Cx114
-37.048 2.112
+-43.031 -0.206
 6.030 0.690
 0.000
 62
-Compound
+Reaction
 MAN:C10
-14.166 2.023
+-28.822 1.142
 5.440 0.690
 0.000
 63
-Compound
+Reaction
 Reactome:180331
-54.040 2.758
+-58.001 8.291
 10.940 1.040
 0.000
 64
-Compound
+Reaction
 MAP:Cb16761_CY_Reactome:177930
-0.807 -12.715
+-64.871 -15.214
 4.250 0.820
 0.000
 65
-Compound
+Reaction
 Reactome:112340
--16.427 -23.385
+20.048 -18.679
 4.310 0.820
 0.000
 66
-Compound
+Reaction
 MAP:UP29353_CY
-19.176 1.939
+-32.396 -0.288
 4.310 0.820
 0.000
 67
 Reaction
 Reactome:177922
-40.240 31.953
+26.251 13.864
 1.780 0.500
 0.000
 68
 Reaction
 Reactome:109865
-6.415 -21.814
+18.076 -20.594
 1.780 0.500
 0.000
 69
 Reaction
 Reactome:177943
-29.010 10.170
+-47.947 4.303
 1.780 0.500
 0.000
 70
-Compound
+Reaction
 MAP:C3
-10.646 -8.565
+-39.198 -10.131
 2.890 0.820
 0.000
 71
-Compound
+Reaction
 MAP:Cs56-65-5_CY_Reactome:109829
--64.270 17.336
+18.402 24.653
 4.440 0.820
 0.000
 72
-Compound
+Reaction
 MAP:Cb16761_CY_Reactome:109841
--37.522 3.490
+29.586 -1.764
 4.250 0.820
 0.000
 73
-Compound
+Reaction
 MAP:Cb16761_CY_Reactome:177934
-10.444 38.883
+-18.785 21.389
 4.250 0.820
 0.000
 74
-Compound
+Reaction
 Reactome:180301
-33.131 24.756
+-26.222 16.060
 7.310 1.040
 0.000
 75
-Compound
+Reaction
 MAP:Cb16761_CY_Reactome:177939
-25.350 -15.070
+-20.433 -16.153
 4.250 0.820
 0.000
 76
-Compound
+Reaction
 MAP:Cs56-65-5_CY_Reactome:177934
-16.174 41.442
+-12.392 21.000
 4.440 0.820
 0.000
 77
 Reaction
 Reactome:109802
--23.467 10.016
+0.966 6.975
 1.780 0.500
 0.000
 78
-Compound
+Reaction
 Reactome:179863
-65.492 50.746
+68.040 19.830
 5.000 0.820
 0.000
 79
-Compound
+Reaction
 Reactome:180348
--3.949 2.014
+-71.379 -0.376
 7.310 1.040
 0.000
 80
-Compound
+Reaction
 MAP:UQ02750_CY_pho218pho222
--31.682 -7.040
+24.950 -8.402
 6.530 0.820
 0.000
 81
-Compound
+Reaction
 Reactome:179837
-64.801 31.789
+68.814 11.024
 5.690 0.820
 0.000
 82
 Reaction
 Reactome:109863
--19.235 -14.703
+16.437 -13.572
 1.780 0.500
 0.000
 83
 Reaction
 Reactome:177933
-28.979 22.259
+-29.122 24.650
 1.780 0.500
 0.000
 84
-Compound
+Reaction
 Reactome:179847
-52.716 31.827
+45.966 13.691
 4.780 0.690
 0.000
 85
-Compound
+Reaction
 Reactome:109838
--28.098 -21.881
+21.172 -15.993
 4.670 0.690
 0.000
 86
-Compound
+Reaction
 Reactome:109795
--63.093 2.007
+53.627 13.694
 6.810 1.040
 0.000
 87
 Reaction
 Reactome:177939
-26.342 -7.265
+-19.334 -8.966
 1.780 0.500
 0.000
 88
-Compound
+Reaction
 Reactome:198710
-36.921 -49.203
+47.638 -36.817
 4.360 0.820
 0.000
 89
-Compound
+Reaction
 Reactome:179791
-17.523 -12.121
+-29.488 -10.458
 8.190 1.740
 0.000
 90
-Compound
+Reaction
 Reactome:109794
--46.134 10.093
+37.161 -0.317
 6.810 1.040
 0.000
 91
-Compound
+Reaction
 Reactome:179820
-36.698 6.883
+-57.327 -0.380
 8.560 1.040
 0.000
 92
-Compound
+Reaction
 Reactome:179838
-26.543 1.939
+-22.274 -0.350
 5.780 0.820
 0.000
 93
 Reaction
 Reactome:109829
--54.478 15.676
+24.033 18.857
 1.780 0.500
 0.000
 94
-Compound
+Reaction
 Reactome:109783
-21.988 2.024
+-36.657 -0.350
 5.060 0.690
 0.000
 95
 Reaction
 Reactome:177942
-64.079 38.140
+63.217 13.743
 1.780 0.500
 0.000

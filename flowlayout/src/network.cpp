@@ -30,8 +30,11 @@ VI * Network::getNeighbors(int nodeIndex){
    VI *arr=new VI();
    arr->clear();
    int i,n=(*nodes)[nodeIndex].neighbors->size();
-   for(i=0;i<n;i++)
-      arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
+   for(i=0;i<n;i++){
+      if((*nodes)[nodeIndex].pts.type=reaction)
+         arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
+      else arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].from);
+   }
    return arr;
 }
 

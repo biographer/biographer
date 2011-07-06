@@ -41,6 +41,8 @@ protected:
    void move_nodes(); //move the nodes to a new position.
    void init_compartments(); //initialize the compartment boundaries;
    void adjust_compartments(); //adjusting the boundaries of compartments.
+   bool swap_node();
+   float swap_force(int p1, int p2);
    
    VP pos, mov;
    struct rect{

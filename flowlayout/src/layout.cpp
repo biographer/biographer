@@ -152,6 +152,56 @@ void Network::move_nodes(){
       pts_dir[i]=lim(pts_dir[i]+mov_dir[i]/n);
    }
 }
+
+float Network::swap_force(int p1, int p2){
+   int m,i;
+   float force=0.0,i_d,d;
+   VI neighbors= *getNeighbors(p1);
+   m=neighbors.size();
+   for(i=0;i<m;i++){
+      i_d=dij2[p1][neighbors[i]]*0.3333;
+      d=dist(pos[p1],pos[neighbors[i]]);
+      force+=((i_d-d)*(i_d-d));
+      d=dist(pos[p2],pos[neighbors[i]]);
+      force-=((i_d-d)*(i_d-d));
+   }
+   neighbors.clear();
+   return force;
+}
+
+bool Network::swap_node(){
+   int i,j,k,m,n=nodes->size(),tem;
+   VI neighbors;
+   float f1,f2;
+   Point baseNode, temp;
+   bool flag=false;
+   for(k=0;k<n;k++){
+      neighbors= *getNeighbors(k);
+      m=neighbors.size();
+      if(m==1)continue;
+      baseNode=pos[k];
+      for(i=0;i<m-1;i++)
+         for(j=i+1;j<m;j++)
+            if(lim(angle(pos[neighbors[j]]-baseNode))<lim(angle(pos[neighbors[i]]-baseNode))){
+               tem=neighbors[i];neighbors[i]=neighbors[j];neighbors[j]=tem;
+            }
+      for(i=0;i<m;i++){
+         j=i+1;
+         if(j==m)j=0;
+         f1=swap_force(neighbors[i],neighbors[j]);
+         f2=swap_force(neighbors[j],neighbors[i]);
+         if(f1+f2>0){
+            temp=pos[neighbors[i]];
+            pos[neighbors[i]]=pos[neighbors[j]];
+            pos[neighbors[j]]=temp;
+            flag=true;            
+         }
+      }
+   }
+   neighbors.clear();
+   return flag;
+} 
+      
 float Network::firm_distribution(){
    int i,j,k,m,n=nodes->size(),tem;
    VI neighbors;
@@ -173,7 +223,7 @@ float Network::firm_distribution(){
          j=i+1;
          beta=lim(angle(pos[neighbors[i]]-baseNode)+average-angle(pos[neighbors[j]]-baseNode));
          d=dist(pos[neighbors[i]],baseNode);
-         force+=(d*d*sin(0.1*beta));
+         force+=(d*d*sin(0.5*beta));
          mov[j]=mov[j]+(to_left(pos[neighbors[j]]-baseNode,beta/10)-pos[neighbors[j]]+baseNode);
       }
       neighbors.clear();
@@ -269,7 +319,7 @@ void Network::get_ideal_distance(){
    for(n1=0;n1<n;n1++){
       dij2[n1].resize(n);
       isadj[n1].resize(n);
-      for(n2=n1+1;n2<n;n2++){
+      for(n2=0;n2<n;n2++){
          dij2[n1][n2]=get_dij2(n1,n2);
          isadj[n1][n2]=false;
       }
@@ -420,6 +470,14 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
+   
+   bool flag=true;
+   k=0;
+   while(flag){
+      flag=swap_node();
+      k++;
+      if(k>n)break;
+   }
 
    //phase 2: adj and nadj.
    k=inc=0;
@@ -467,11 +525,12 @@ float Network::layout(){
    pre_force=inf;
    while(true){
       cur_force=post_pro();
+      adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       pre_force=cur_force;
-   }
+   } 
    
    //copying coordinations from pos[] to nodes[];
    for(i=0;i<n;i++){
