@@ -365,6 +365,23 @@
         },
 
         /**
+         * Position the node's center on the given coordinate.
+         *
+         * The positioning is done relatively.
+         *
+         * @param {Number} x Position on x-coordinate.
+         * @param {Number} y Position on y-coordinate.
+         * @return {bui.Node} Fluent interface
+         */
+        positionCenter : function(x, y) {
+            var size = this.size();
+
+            this.position(x - size.width / 2, y - size.height / 2);
+
+            return this;
+        },
+
+        /**
          * Retrieve the absolute position of this node in the HTML document.
          *
          * @return {Object} Object with x and y properties.

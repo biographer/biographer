@@ -128,6 +128,14 @@
     };
 
     /**
+     * @private line click listener
+     */
+    var lineClick = function(event) {
+        this.fire(bui.AbstractLine.ListenerType.click,
+                                [this, event]);
+    };
+
+    /**
      * @class
      * A drawable which has both, a source and a target
      *
@@ -171,6 +179,7 @@
         this._line.setAttributeNS(null, 'id', this.id());
         jQuery(this._line).mouseenter(lineMouseIn.createDelegate(this));
         jQuery(this._line).mouseleave(lineMouseOut.createDelegate(this));
+        jQuery(this._line).click(lineClick.createDelegate(this));
 
         this.addClass(bui.settings.css.classes.line);
     };
@@ -299,7 +308,9 @@
      */
     bui.AbstractLine.ListenerType = {
         /** @field */
-        marker : bui.util.createListenerTypeId()
+        marker : bui.util.createListenerTypeId(),
+        /** @field */
+        click : bui.util.createListenerTypeId()
     };
 
     /**
