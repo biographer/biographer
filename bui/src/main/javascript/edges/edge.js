@@ -86,6 +86,52 @@
     };
 
     /**
+     * Redraw the lines. This function is called after the addition of drag
+     * handles.
+     */
+    var redrawLines = function() {
+        var privates = this._privates(identifier);
+
+        // deleting old lines
+        var lines = privates.lines;
+        for(var i = 0; i < lines.length; i++) {
+            lines[i].remove();
+        }
+
+        var handles = privates.handles,
+                graph = this.graph(),
+                listener = lineClicked.createDelegate(this),
+                listenerId = listenerIdentifier(this),
+                sourceNode = this.source(),
+                targetNode = null;
+
+        lines = [];
+
+        var addLine = function() {
+            var line = graph
+                    .add(bui.StraightLine)
+                    .source(sourceNode)
+                    .target(targetNode)
+                    .bind(bui.AbstractLine.ListenerType.click,
+                            listener,
+                            listenerId);
+
+            lines.push(line);
+            sourceNode = targetNode;
+        };
+
+        for(i = 0; i < handles.length; i++) {
+            targetNode = handles[i];
+            addLine();
+        }
+
+        targetNode = this.target();
+        addLine();
+
+        privates.lines = lines;
+    };
+
+    /**
      * Add a handle after the given node. The node may be any of the line's
      * edge handles. If the node can't be matched the edge handle will be added
      * to the beginning.
@@ -112,6 +158,8 @@
         }
 
         privates.handles.splice(index, 0, handle);
+
+        redrawLines.call(this);
     };
 
     /**
@@ -132,15 +180,11 @@
     bui.Edge = function() {
         bui.Edge.superClazz.apply(this, arguments);
 
-        var line = this.graph().add(bui.StraightLine);
-        line.bind(bui.AbstractLine.ListenerType.click,
-                lineClicked.createDelegate(this),
-                listenerIdentifier(this));
-
         var privates = this._privates(identifier);
         privates.edgeHandlesVisible = true;
-        privates.lines = [line];
         privates.handles = [];
+        privates.lines = [];
+        redrawLines.call(this);
 
         this.bind(bui.AttachedDrawable.ListenerType.source,
                 sourceChanged.createDelegate(this),
