@@ -10,6 +10,9 @@
 <br/>
 
 <style>
+	h3		{
+			padding-top:	30px;
+			}
 	div.debug	{
 			width:		100%;
 			max-height:	400px;
@@ -26,24 +29,24 @@
 <a name=Terminal></a>
 <h3>Terminal</h3>
 <div class=debug>
-<pre class=terminal>{{try:}}{{=session.bioGraph.DEBUG}}{{except:pass}}</pre>
+<pre class=terminal id=Terminal>{{try:}}{{=session.bioGraph.DEBUG}}{{except:pass}}</pre>
 </div>
 
 <a name=JSON></a>
 <h3>JSON</h3>
 <div class=debug>
-<pre class=terminal>{{try:}}{{=session.JSON}}{{except:pass}}</pre>
+<pre class=terminal id=JSON>{{try:}}{{=session.JSON}}{{except:pass}}</pre>
 </div>
 
 <a name=SBML></a>
 <h3>SBML</h3>
 <div class=debug>
-<pre class=terminal>{{try:}}{{=session.SBML}}{{except:pass}}</pre>
+<pre class=terminal id=SBML>{{try:}}{{=session.SBML}}{{except:pass}}</pre>
 </div>
 
 <a name=BioPAX></a>
 <h3>BioPAX</h3>
 <div class=debug>
-<pre class=terminal>{{try:}}{{=session.BioPAX}}{{except:pass}}</pre>
+<pre class=terminal id=BioPAX>{{try:}}{{=session.BioPAX}}{{except:pass}}</pre>
 </div>
 
