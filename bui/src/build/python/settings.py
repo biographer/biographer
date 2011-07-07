@@ -53,6 +53,8 @@ modules = ['intro',
            os.path.join(edges_sub_dir, 'straightLine.js'),
            os.path.join(edges_sub_dir, 'spline.js'),
            os.path.join(edges_sub_dir, 'edge.js'),
+
+           'importer.js',
            'outro']
 
 

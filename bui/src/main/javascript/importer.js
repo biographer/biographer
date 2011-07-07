@@ -5,12 +5,12 @@
      * nodes.
      */
     var nodeMapping = {
-        245 : { class : bui.Macromolecule },
-        247 : { class : bui.SimpleChemical },
-        253 : { class : bui.Complex },
-        285 : { class : bui.UnspecifiedEntity },
-        290 : { class : bui.Compartment },
-        354 : { class : bui.NucleicAcidFeature }
+        245 : { klass : bui.Macromolecule },
+        247 : { klass : bui.SimpleChemical },
+        253 : { klass : bui.Complex },
+        285 : { klass : bui.UnspecifiedEntity },
+        290 : { klass : bui.Compartment },
+        354 : { klass : bui.NucleicAcidFeature }
     };
 
     /**
@@ -18,7 +18,7 @@
      * Mapping between SBO terms and biographer-ui classes for process nodes.
      */
     var processNodeMapping = {
-        375 : { class : bui.Process }
+        375 : { klass : bui.Process }
     };
 
     /**
@@ -26,11 +26,11 @@
      * Mapping between SBO terms and biographer-ui classes for connecting arcs.
      */
     var edgeMarkerMapping = {
-        168 : { class : bui.connectingArcs.modulation.id },
-        169 : { class : bui.connectingArcs.inhibition.id },
-        170 : { class : bui.connectingArcs.stimulation.id },
-        171 : { class : bui.connectingArcs.necessaryStimulation.id },
-        172 : { class : bui.connectingArcs.catalysis.id }
+        168 : { klass : bui.connectingArcs.modulation.id },
+        169 : { klass : bui.connectingArcs.inhibition.id },
+        170 : { klass : bui.connectingArcs.stimulation.id },
+        171 : { klass : bui.connectingArcs.necessaryStimulation.id },
+        172 : { klass : bui.connectingArcs.catalysis.id }
     };
 
     /**
@@ -60,7 +60,7 @@
      *   should be added.
      * @param {Object} data JSON data which should be imported
      */
-    bui.import = function(graph, data) {
+    bui.importFromJSON = function(graph, data) {
         
     };
 })(bui);
