@@ -17,7 +17,8 @@ import copy
 from libimpress import ODP
 from libbiopax import BioPAX
 import pygraphviz
-
+import os
+from hashlib import md5
 
 #### defaults & constants ####
 
@@ -401,7 +402,7 @@ class Graph:
 
 	# http://networkx.lanl.gov/pygraphviz/tutorial.html
 
-	def doGraphviz(self, tempfile="/tmp/biographer-graphviz.png"):
+	def doGraphviz(self, folder="/tmp"):
 		self.DEBUG += "Exporting Graphviz ...\n"
 
 		G = pygraphviz.AGraph(directed=True)
@@ -415,10 +416,14 @@ class Graph:
 			G.add_edge( str(edge.source), str(edge.target),
 				    arrowhead='normal' if edge.sbo in [ SBO['consumption'], SBO['production'] ] else 'tee' )
 
-		G.layout( prog='dot' )
-		G.draw( tempfile )
+		dot = G.string()
+		filename = "dot-"+md5(dot).hexdigest()+".png"
+		path = os.path.join(folder, filename)
+		if not os.path.exists( path ):
+			G.layout( prog='dot' )
+			G.draw( path )
 
-		return G.string(), open( tempfile ).read()
+		return dot, filename
 
 
 	### basic functions on Graph properties ###
