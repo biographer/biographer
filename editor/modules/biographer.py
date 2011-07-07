@@ -26,11 +26,13 @@ DefaultIndent = 9	# for JSON output string formatting, 9 spaces per indent
 MandatoryNodeKeys	= ['id','type','sbo','is_abstract']
 NodeKeys		= MandatoryNodeKeys + ['data']
 OptionalNodeKeys	= ['clone_marker', 'x', 'y', 'width', 'height', 'radius', 'label', 'compartment', 'subcomponents', 'modifications']
+NodeKeyAliases		= { 'modification':'modifications', 'subnodes':'subcomponents' }
 DefaultNode		= { "type":"simple_species", "sbo":"252", "is_abstract":False, "data":{ "clone_marker":-1, "x":10, "y":10, "width":50, "height":20, "radius":30, "label":"Orphan Node", "compartment":-1, "subcomponents":[], "modifications":[] } }
 
 MandatoryEdgeKeys	= ['id','sbo','source','target']
 EdgeKeys		= MandatoryEdgeKeys + ['data']
 OptionalEdgeKeys	= ['type', 'style', 'thickness', 'label', 'label_x', 'label_y', 'handles']
+EdgeKeyAliases		= {}
 DefaultEdge		= { "sbo":10, "source":0, "target":0, "data":{ "type":"straight", "style":"solid", "thickness":1, "label":"Orphan Edge", "label_x":10, "label_y":10, "handles":[] } }
 
 # Node types
@@ -86,25 +88,41 @@ class Node:
 		show = False
 
 		for key in self.__dict__.keys():			# check if we recognize all keys
+			if key in NodeKeyAliases.keys():		# is it an alias ...
+				newkey = NodeKeyAliases[key]
+				result += 'Hint: Node property "'+key+'" recognized as property "'+newkey+'".\n'
+				self.__dict__[newkey] = self.__dict__[key]
+				del self.__dict__[key]
+				key = newkey
 			if not key in NodeKeys:
-				if key in OptionalNodeKeys:
-					result += 'Node key "'+key+'" belongs under "data" !\n'
+				if key in OptionalNodeKeys:		# is it an optional key ...
+					result += 'Hint: Node property "'+key+'" belongs under "data" !\n'
 					self.data[key] = self.__dict__[key]
 					del self.__dict__[key]
 				else:
-					result += 'Warning: Unrecognized Node key "'+key+'" !\n'
+					result += 'Warning: Unrecognized Node property "'+key+'" !\n'
+					show = True
+
+		for key in self.data.keys():				# check optional keys
+			if key in NodeKeyAliases.keys():		# is it an alias ...
+				newkey = NodeKeyAliases[key]
+				result += 'Hint: Optional node property "'+key+'" recognized as property "'+newkey+'".\n'
+				self.data[newkey] = self.data[key]
+				del self.data[key]
+				key = newkey
+			if not key in OptionalNodeKeys:
+				if key in NodeKeys:			# is it a mandatory key ...
+					result += 'Hint: Node key "'+key+'" does not belong under "data" !\n'
+					self.__dict__[key] = self.data[key]
+					del self.data[key]
+				else:
+					result += 'Warning: Unrecognized optional Node property "'+key+'" !\n'
 					show = True
 
 		for key in MandatoryNodeKeys:				# check mandatory keys
 			if not key in self.__dict__:
 				result += "Error: "+key+" undefined but mandatory !\n"
 				show = True
-
-		if 'data' in self.__dict__.keys():			# check optional keys
-			for key in self.data:
-				if not key in OptionalNodeKeys:
-					result += 'Warning: Unrecognized optional Node key "'+key+'" !\n'
-					show = True
 
 		if str(self.id) == "-1":				# check ID
 			result += "Error: Node ID -1 is not allowed !\n"
@@ -151,25 +169,41 @@ class Edge:
 		show = False
 
 		for key in self.__dict__.keys():			# check if we recognize all keys
+			if key in EdgeKeyAliases.keys():		# is it an alias ...
+				newkey = EdgeKeyAliases[key]
+				result += 'Hint: Edge property "'+key+'" recognized as property "'+newkey+'".\n'
+				self.__dict__[newkey] = self.__dict__[key]
+				del self.__dict__[key]
+				key = newkey
 			if not key in EdgeKeys:
 				if key in OptionalEdgeKeys:
-					result += 'Edge key "'+key+'" belongs under "data" !\n'
+					result += 'Hint: Edge property "'+key+'" belongs under "data" !\n'
 					self.data[key] = self.__dict__[key]
 					del self.__dict__[key]
 				else:
-					result += 'Warning: Unrecognized Edge key "'+key+'" !\n'
+					result += 'Warning: Unrecognized Edge property "'+key+'" !\n'
+					show = True
+
+		for key in self.data.keys():				# check optional keys
+			if key in EdgeKeyAliases.keys():		# is it an alias ...
+				newkey = EdgeKeyAliases[key]
+				result += 'Hint: Optional edge property "'+key+'" recognized as property "'+newkey+'".\n'
+				self.data[newkey] = self.data[key]
+				del self.data[key]
+				key = newkey
+			if not key in OptionalEdgeKeys:
+				if key in NodeKeys:			# is it a mandatory key ...
+					result += 'Hint: Edge property "'+key+'" does not belong under "data" !\n'
+					self.__dict__[key] = self.data[key]
+					del self.data[key]
+				else:
+					result += 'Warning: Unrecognized optional Edge property "'+key+'" !\n'
 					show = True
 
 		for key in MandatoryEdgeKeys:				# check for mandatory keys
 			if not key in self.__dict__.keys():
 				result += "Error: Mandatory Edge key "+key+" is missing !\n"
 				show = True
-
-		if 'data' in self.__dict__.keys():			# check optional keys
-			for key in self.data.keys():
-				if not key in OptionalEdgeKeys:
-					result += 'Warning: Unrecognized optional Edge key "'+key+'" !\n'
-					show = True
 
 		if str(self.id) == "-1":				# check ID
 			result += "Error: Edge ID -1 is not allowed !\n"
@@ -447,17 +481,17 @@ class Graph:
 				try:
 					s = self.Nodes[ IDmapNodes[subID] ]
 					if s.x+s.width > n.x+n.width:
-						result += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
+						self.DEBUG += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
 						if autoresize:
 							n.width = s.x+s.width-n.x
 							changes = True
 					if s.y+s.height > n.y+n.height:
-						result += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
+						self.DEBUG += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
 						if autoresize:
 							n.height = s.y+s.height-n.y
 							changes = True
 				except:
-					result += "Error: Error checking subcomponent "+str(subID)+" of Node "+str(n.id)+" !\n"
+					self.DEBUG += "Error: Error checking subcomponent "+str(subID)+" of Node "+str(n.id)+" !\n"
 			if changes and autoresize:
 				self.Node[i] = n	# save changes
 
