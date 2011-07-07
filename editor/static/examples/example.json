@@ -48,6 +48,7 @@
 		"type" : "simple_species",
 		"x" : 50,
 		"y" : 300,
+		"label": "Sucrase",
 		"width" : 10,
 		"height" : 10,
 		"compartment" : 5
@@ -64,6 +65,7 @@
 		{
 		"id" : 6,
 		"type" : "reaction",
+		"label": "Cleavage",
 		"x" : 50,
 		"y" : 300,
 		"width" : 10,

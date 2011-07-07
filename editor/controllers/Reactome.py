@@ -37,6 +37,5 @@ def upload():
 		else:										# link not found
 			session.flash		= "Sorry: SBML for this pathway not found"
 	connection.close()
-	print session
 	return redirect( URL(r=request, c='Workbench', f='index') )
 
