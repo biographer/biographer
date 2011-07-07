@@ -90,6 +90,8 @@
      * handles.
      */
     var redrawLines = function() {
+        var suspendHandle = this.graph().suspendRedraw(200);
+
         var privates = this._privates(identifier);
 
         // deleting old lines
@@ -141,6 +143,8 @@
         addLine();
 
         privates.lines = lines;
+
+        this.graph().unsuspendRedraw(suspendHandle);
     };
 
     /**
