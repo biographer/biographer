@@ -90,13 +90,13 @@ class Node:
 		for key in self.__dict__.keys():			# check if we recognize all keys
 			if key in NodeKeyAliases.keys():		# is it an alias ...
 				newkey = NodeKeyAliases[key]
-				result += 'Hint: Node property "'+key+'" recognized as property "'+newkey+'".\n'
+				result += 'Hint: Node property "'+key+'" should be named "'+newkey+'" ! Error corrected automatically.\n'
 				self.__dict__[newkey] = self.__dict__[key]
 				del self.__dict__[key]
 				key = newkey
 			if not key in NodeKeys:
 				if key in OptionalNodeKeys:		# is it an optional key ...
-					result += 'Hint: Node property "'+key+'" belongs under "data" !\n'
+					result += 'Hint: Node property "'+key+'" belongs under "data" ! Error corrected automatically.\n'
 					self.data[key] = self.__dict__[key]
 					del self.__dict__[key]
 				else:
@@ -106,13 +106,13 @@ class Node:
 		for key in self.data.keys():				# check optional keys
 			if key in NodeKeyAliases.keys():		# is it an alias ...
 				newkey = NodeKeyAliases[key]
-				result += 'Hint: Optional node property "'+key+'" recognized as property "'+newkey+'".\n'
+				result += 'Hint: Optional node property "'+key+'" should be named "'+newkey+'" ! Error corrected automatically.\n'
 				self.data[newkey] = self.data[key]
 				del self.data[key]
 				key = newkey
 			if not key in OptionalNodeKeys:
 				if key in NodeKeys:			# is it a mandatory key ...
-					result += 'Hint: Node key "'+key+'" does not belong under "data" !\n'
+					result += 'Hint: Node key "'+key+'" does not belong under "data" ! Error corrected automatically.\n'
 					self.__dict__[key] = self.data[key]
 					del self.data[key]
 				else:
@@ -234,7 +234,7 @@ class Graph:
 		self.Edges = []
 		self.maxID = 1
 		self.IDmapNodes = self.IDmapEdges = {}
-		self.graphviz = None
+		G = None
 
 	def __init__(self, filename=None, JSON=None, SBML=None, ODP=None, BioPAX=None):
 		self.empty()
@@ -401,26 +401,25 @@ class Graph:
 
 	# http://networkx.lanl.gov/pygraphviz/tutorial.html
 
-	def Graphviz(self):
-		if self.graphviz is None:
-			self.DEBUG += "Exporting Graphviz ...\n"
-			self.graphviz = pygraphviz.AGraph(directed=True)
-			for node in self.Nodes:
-				if (not node.is_abstract) and (self.EdgeCount(node.id) > 0):
-					self.graphviz.add_node( str(node.id),
-						    label=node.id if "label" not in node.data else str(node.data["label"]),
-						    shape='ellipse' if node.type != TYPE["process node"] else 'box' )
-			for edge in self.Edges:
-				self.graphviz.add_edge( str(edge.source), str(edge.target),
-					    arrowhead='normal' if edge.sbo in [ SBO['consumption'], SBO['production'] ] else 'tee' )
-		return self.graphviz.string()
+	def doGraphviz(self, tempfile="/tmp/biographer-graphviz.png"):
+		self.DEBUG += "Exporting Graphviz ...\n"
 
-	def GraphvizPNG(self, tempfile="/tmp/biographer-graphviz.png"):
-		self.DEBUG += "Graphviz -> PNG ...\n"
-		self.graphviz.layout( prog='dot' )
-		self.graphviz.draw( tempfile )
-		return open( tempfile ).read()
-		
+		G = pygraphviz.AGraph(directed=True)
+
+		for node in self.Nodes:
+			if (not node.is_abstract) and (self.EdgeCount(node.id) > 0):
+				G.add_node( str(node.id),
+					label=node.id if "label" not in node.data else str(node.data["label"]),
+					shape='ellipse' if node.type != TYPE["process node"] else 'box' )
+		for edge in self.Edges:
+			G.add_edge( str(edge.source), str(edge.target),
+				    arrowhead='normal' if edge.sbo in [ SBO['consumption'], SBO['production'] ] else 'tee' )
+
+		G.layout( prog='dot' )
+		G.draw( tempfile )
+
+		return G.string(), open( tempfile ).read()
+
 
 	### basic functions on Graph properties ###
 

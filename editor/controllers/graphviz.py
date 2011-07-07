@@ -19,8 +19,7 @@ def draw():
 		random_string	= ''.join( random.choice(string.ascii_uppercase + string.digits) for x in range(12) ) + '.png'
 		path		= os.path.join(request.folder, "static/graphviz", random_string)
 		url		= URL(r=request, c="static/graphviz", f=random_string)
-		dot		= session.bioGraph.Graphviz()
-		session.bioGraph.GraphvizPNG( tempfile=path )
+		dot, png	= session.bioGraph.doGraphviz( tempfile=path )
 		return dict( url=url, dot=dot )
 	else:
 		session.flash = "You must import a Graph first !"
