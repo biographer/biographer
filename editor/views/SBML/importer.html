@@ -1,0 +1,37 @@
+{{extend 'layout.html'}}
+
+<form name=main action=load method=POST enctype="multipart/form-data">
+
+<a href="http://sbml.org/"><img src="{{=URL(r=request, c="static", f="images")}}/SBML.png" style="vertical-align:middle;"/></a>
+<br/>
+<br/>
+
+<br/>
+
+Please upload your file: <input type=file name=File onChange="submit();"/> <input type=submit value=Load />
+
+<hr/>
+
+<script>
+	function Example() {
+		document.main.submit();
+		}
+</script>
+
+Example:<br/>
+Reactome Pathway R_168254<br/>
+<input type=button value="Load this pathway" onClick="Example();"/>
+
+<hr/>
+
+For more information on the SBML format, please visit <a href="http://sbml.org/">http://sbml.org/</a>.
+
+<hr/>
+
+In order to use this code on your machine, you need to get <a href="http://sourceforge.net/projects/sbml/files/libsbml/4.3.1/">libsbml 4.3.1</a> from <a href="http://downloads.sourceforge.net/project/sbml/libsbml/4.3.1/libSBML-4.3.1-src.tar.gz">here</a>.<br/>
+Get the tarball, unpack it and run <i>./configure --with-python; make; make install</i><br/>
+Requires <i>xml2-config</i>, provided by package <i>libxml2-dev</i><br/>
+<a href="http://sourceforge.net/projects/sbml">libsbml's license is the GNU LGPL</a><br/>
+
+</form>
+
