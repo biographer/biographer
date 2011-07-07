@@ -408,7 +408,7 @@ class Graph:
 			for node in self.Nodes:
 				if (not node.is_abstract) and (self.EdgeCount(node.id) > 0):
 					self.graphviz.add_node( str(node.id),
-						    label=node.id if "label" not in node.data else node.data["label"],
+						    label=node.id if "label" not in node.data else str(node.data["label"]),
 						    shape='ellipse' if node.type != TYPE["process node"] else 'box' )
 			for edge in self.Edges:
 				self.graphviz.add_edge( str(edge.source), str(edge.target),
