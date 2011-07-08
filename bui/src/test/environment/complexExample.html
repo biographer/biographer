@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Biographer-ui Test Suite</title>
+
+    <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.8.13.css" />
+
+	<script type="text/javascript" src="resources/js/jquery-1.6.min.js"></script>
+    <script type="text/javascript" src="resources/js/jquery.simulate.js"></script>
+	<script type="text/javascript" src="resources/js/jquery-ui-1.8.12.custom.min.js"></script>
+    <script type="text/javascript" src="resources/js/biographer-ui.js"></script>
+    <script type="text/javascript" src="resources/examples/simple.js"></script>
+    <script type="text/javascript" src="resources/examples/complex.js"></script>
+
+    <script type="text/javascript">
+
+
+        bui.ready(function() {
+            graph = new bui.Graph(document.getElementsByTagName('body')[0]);
+
+            bui.importFromJSON(graph, complexExample);
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
