@@ -230,13 +230,6 @@ class Edge:
 ### Graph ###
 
 class Graph:
-	def empty(self):							# reset current model
-		self.Nodes = []
-		self.Edges = []
-		self.maxID = 1
-		self.IDmapNodes = self.IDmapEdges = {}
-		G = None
-
 	def __init__(self, filename=None, JSON=None, SBML=None, ODP=None, BioPAX=None):
 		self.empty()
 		self.DEBUG = ""
@@ -250,6 +243,85 @@ class Graph:
 			self.importODP( ODP )
 		if BioPAX is not None:
 			self.importBioPAX( BioPAX )
+
+	def empty(self):							# reset current model
+		self.Nodes = []
+		self.Edges = []
+		self.JSON = None
+		self.SBML = None
+		self.BioPAX = None
+		self.MD5 = None
+		self.maxID = 1
+		self.IDmapNodes = self.IDmapEdges = {}
+
+	def initialize(self):							# do everything necessary to complete a new model
+		self.mapIDs()
+		self.hash()
+		self.selfcheck()
+
+	def selfcheck(self, autoresize=True):					# perform some basic integrity checks on the created Graph
+
+		for n in self.Nodes:						# self-check all Nodes and Edges
+			self.DEBUG += n.selfcheck()
+		for e in self.Edges:
+			self.DEBUG += e.selfcheck()
+
+		usedIDs = []		# remember IDs				# check for colliding IDs
+		nodeIDs = []		# remember Node IDs
+		compartments = [-1]	# remember compartments
+		for n in self.Nodes:
+			if n.id in usedIDs:
+				self.DEBUG += "Error: ID collision: Node "+str(n.id)+"\n"
+			else:
+				usedIDs.append(n.id)
+			if n.type == TYPE["compartment node"]:
+				compartments.append(n.id)
+			nodeIDs.append(n.id)
+		for e in self.Edges:
+			if e.id in usedIDs:
+				self.DEBUG += "Error: ID collision: Edge "+str(e.id)+"\n"
+			else:
+				usedIDs.append(e.id)
+
+		for n in self.Nodes:						# Nodes lie inside non-existing compartments ?
+			if not n.data['compartment'] in compartments:
+				self.DEBUG += "Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" does not exist !\n"
+
+		for e in self.Edges:						# Edges connect non-existing Nodes ?
+			if not e.source in nodeIDs:
+				self.DEBUG += "Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" does not exist !\n"
+			if not e.target in nodeIDs:
+				self.DEBUG += "Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" does not exist !\n"
+
+		for i in range(0, len(self.Nodes)):				# Nodes have non-existing subcomponents ?
+			n = self.Nodes[i]					# or subcomponents lie outside parent ?
+			changes = False
+			for subID in n.data['subcomponents']:
+				try:
+					s = self.Nodes[ IDmapNodes[subID] ]
+					if s.x+s.width > n.x+n.width:
+						self.DEBUG += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
+						if autoresize:
+							n.width = s.x+s.width-n.x
+							changes = True
+					if s.y+s.height > n.y+n.height:
+						self.DEBUG += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
+						if autoresize:
+							n.height = s.y+s.height-n.y
+							changes = True
+				except:
+					self.DEBUG += "Error: Error checking subcomponent "+str(subID)+" of Node "+str(n.id)+" !\n"
+			if changes and autoresize:
+				self.Node[i] = n	# save changes
+
+
+	### generating a unique Graph identifier ###
+
+	def hash(self):
+		if self.MD5 is None:
+			self.MD5 = md5( self.exportJSON() ).hexdigest()
+		return self.MD5
+
 
 	### handling element IDs ###
 
@@ -296,12 +368,14 @@ class Graph:
 			return
 		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
 		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
-		self.mapIDs()
-		self.selfcheck()
+		self.initialize()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
-		return json.dumps( { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }, indent=Indent )
+		if self.JSON is None:
+			self.DEBUG = "Exporting JSON ...\n"
+			self.JSON = json.dumps( { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }, indent=Indent )
+		return self.JSON
 
 	def exportDICT(self):							# export current model as python dictionary
 		return self.__dict__
@@ -370,8 +444,7 @@ class Graph:
 				e.target	= n.id
 				self.Edges.append(e)
 
-		self.mapIDs()
-		self.selfcheck()
+		self.initialize()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def importODP(self, odp):						# import an OpenOffice Impress Document
@@ -380,8 +453,7 @@ class Graph:
 		self.DEBUG += impress.DEBUG
 		self.Nodes = impress.Nodes
 		self.Edges = impress.Edges
-		self.mapIDs()
-		self.selfcheck()
+		self.initialize()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def exportODP(self):							# export an OpenOffice Impress Document
@@ -396,13 +468,12 @@ class Graph:
 		b = BioPAX( biopax )
 		self.Nodes = b.Nodes
 		self.Edges = b.Edges
-		self.mapIDs()
-		self.selfcheck()
+		self.initialize()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	# http://networkx.lanl.gov/pygraphviz/tutorial.html
 
-	def doGraphviz(self, folder="/tmp"):
+	def exportGraphviz(self, folder="/tmp", updateNodeProperties=False):
 		self.DEBUG += "Exporting Graphviz ...\n"
 
 		G = pygraphviz.AGraph(directed=True)
@@ -416,14 +487,28 @@ class Graph:
 			G.add_edge( str(edge.source), str(edge.target),
 				    arrowhead='normal' if edge.sbo in [ SBO['consumption'], SBO['production'] ] else 'tee' )
 
-		dot = G.string()
-		filename = "dot-"+md5(dot).hexdigest()+".png"
-		path = os.path.join(folder, filename)
-		if not os.path.exists( path ):
+		png = self.MD5+".png"
+		dot = self.MD5+".dot"
+		s   = self.MD5+".str"
+		pngpath = os.path.join(folder, png)
+		dotpath = os.path.join(folder, dot)
+		spath	= os.path.join(folder, s)
+		if os.path.exists( pngpath ):
+			# no need to do the cpu-intense layouting again
+			self.dot = open(dotpath).read()
+			strGraph = open(spath).read()
+		else:
 			G.layout( prog='dot' )
-			G.draw( path )
+			G.draw( pngpath )
+			self.dot = G.string()
+			open(dotpath,'w').write(self.dot)
+			strGraph = str(G)
+			open(spath,'w').write(strGraph)
 
-		return dot, filename
+		if updateNodeProperties:
+			print strGraph
+
+		return self.dot, png
 
 
 	### basic functions on Graph properties ###
@@ -443,61 +528,6 @@ class Graph:
 			return len( self.Edges )
 		else:
 			return len( self.EdgesOfNode(nodeID) )
-
-	def selfcheck(self, autoresize=True):					# perform some basic integrity checks on the created Graph
-
-		for n in self.Nodes:						# self-check all Nodes and Edges
-			self.DEBUG += n.selfcheck()
-		for e in self.Edges:
-			self.DEBUG += e.selfcheck()
-
-		usedIDs = []		# remember IDs				# check for colliding IDs
-		nodeIDs = []		# remember Node IDs
-		compartments = [-1]	# remember compartments
-		for n in self.Nodes:
-			if n.id in usedIDs:
-				self.DEBUG += "Error: ID collision: Node "+str(n.id)+"\n"
-			else:
-				usedIDs.append(n.id)
-			if n.type == TYPE["compartment node"]:
-				compartments.append(n.id)
-			nodeIDs.append(n.id)
-		for e in self.Edges:
-			if e.id in usedIDs:
-				self.DEBUG += "Error: ID collision: Edge "+str(e.id)+"\n"
-			else:
-				usedIDs.append(e.id)
-
-		for n in self.Nodes:						# Nodes lie inside non-existing compartments ?
-			if not n.data['compartment'] in compartments:
-				self.DEBUG += "Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" does not exist !\n"
-
-		for e in self.Edges:						# Edges connect non-existing Nodes ?
-			if not e.source in nodeIDs:
-				self.DEBUG += "Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" does not exist !\n"
-			if not e.target in nodeIDs:
-				self.DEBUG += "Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" does not exist !\n"
-
-		for i in range(0, len(self.Nodes)):				# Nodes have non-existing subcomponents ?
-			n = self.Nodes[i]					# or subcomponents lie outside parent ?
-			changes = False
-			for subID in n.data['subcomponents']:
-				try:
-					s = self.Nodes[ IDmapNodes[subID] ]
-					if s.x+s.width > n.x+n.width:
-						self.DEBUG += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
-						if autoresize:
-							n.width = s.x+s.width-n.x
-							changes = True
-					if s.y+s.height > n.y+n.height:
-						self.DEBUG += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
-						if autoresize:
-							n.height = s.y+s.height-n.y
-							changes = True
-				except:
-					self.DEBUG += "Error: Error checking subcomponent "+str(subID)+" of Node "+str(n.id)+" !\n"
-			if changes and autoresize:
-				self.Node[i] = n	# save changes
 
 
 	### functions for really doing something with the Graph ###

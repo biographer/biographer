@@ -14,7 +14,7 @@ import os
 def draw():
 	reload(biographer)
 	if session.bioGraph is not None:
-		dot, filename	= session.bioGraph.doGraphviz( folder=os.path.join(request.folder, "static/graphviz") )
+		dot, filename	= session.bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), updateNodeProperties=True )
 		url		= URL(r=request, c="static/graphviz", f=filename)
 		return dict( url=url, dot=dot )
 	else:
