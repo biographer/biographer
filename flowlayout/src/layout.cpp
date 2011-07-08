@@ -224,62 +224,63 @@ float Network::swap_force(int p1, int p2){
 
 bool Network::swap_node(){
    int i,j,k,m,n=nodes->size(),tem;
-   VI neighbors;
+   VI *neighbors;
    float f1,f2;
    Point baseNode, temp;
    bool flag=false;
    for(k=0;k<n;k++){
-      neighbors= *getNeighbors(k);
-      m=neighbors.size();
+      neighbors= getNeighbors(k);
+      m=neighbors->size();
       if(m==1)continue;
       baseNode=pos[k];
       for(i=0;i<m-1;i++)
          for(j=i+1;j<m;j++)
-            if(lim(angle(pos[neighbors[j]]-baseNode))<lim(angle(pos[neighbors[i]]-baseNode))){
-               tem=neighbors[i];neighbors[i]=neighbors[j];neighbors[j]=tem;
+            if(lim(angle(pos[(*neighbors)[j]]-baseNode))<lim(angle(pos[(*neighbors)[i]]-baseNode))){
+               tem=(*neighbors)[i];(*neighbors)[i]=(*neighbors)[j];(*neighbors)[j]=tem;
             }
       for(i=0;i<m;i++){
          j=i+1;
          if(j==m)j=0;
-         f1=swap_force(neighbors[i],neighbors[j]);
-         f2=swap_force(neighbors[j],neighbors[i]);
+         f1=swap_force((*neighbors)[i],(*neighbors)[j]);
+         f2=swap_force((*neighbors)[j],(*neighbors)[i]);
          if(f1+f2>0){
-            temp=pos[neighbors[i]];
-            pos[neighbors[i]]=pos[neighbors[j]];
-            pos[neighbors[j]]=temp;
+            temp=pos[(*neighbors)[i]];
+            pos[(*neighbors)[i]]=pos[(*neighbors)[j]];
+            pos[(*neighbors)[j]]=temp;
             flag=true;            
          }
       }
+      neighbors->clear();
    }
-   neighbors.clear();
+   free(neighbors);
    return flag;
 } 
       
 float Network::firm_distribution(){
    int i,j,k,m,n=nodes->size(),tem;
-   VI neighbors;
+   VI *neighbors;
    float average,beta,d,force=0.0;
    Point baseNode;
    for(k=0;k<n;k++){
       if((*nodes)[k].pts.type!=compound)continue;
-      neighbors= *getNeighbors(k);
-      m=neighbors.size();
+      neighbors= getNeighbors(k);
+      m=neighbors->size();
       if(m<10)continue;
       baseNode=pos[k];
       for(i=0;i<m-1;i++)
          for(j=i+1;j<m;j++)
-            if(lim(angle(pos[neighbors[j]]-baseNode))<lim(angle(pos[neighbors[i]]-baseNode))){
-               tem=neighbors[i];neighbors[i]=neighbors[j];neighbors[j]=tem;
+            if(lim(angle(pos[(*neighbors)[j]]-baseNode))<lim(angle(pos[(*neighbors)[i]]-baseNode))){
+               tem=(*neighbors)[i];(*neighbors)[i]=(*neighbors)[j];(*neighbors)[j]=tem;
             }               
       average=2.0*PI/m;
       for(i=0;i<m-1;i++){
          j=i+1;
-         beta=lim(angle(pos[neighbors[i]]-baseNode)+average-angle(pos[neighbors[j]]-baseNode));
-         d=dist(pos[neighbors[i]],baseNode);
+         beta=lim(angle(pos[(*neighbors)[i]]-baseNode)+average-angle(pos[(*neighbors)[j]]-baseNode));
+         d=dist(pos[(*neighbors)[i]],baseNode);
          force+=(d*d*sin(0.5*fabs(beta)));
-         mov[j]=mov[j]+(to_left(pos[neighbors[j]]-baseNode,beta*0.1)-pos[neighbors[j]]+baseNode);
+         mov[j]=mov[j]+(to_left(pos[(*neighbors)[j]]-baseNode,beta*0.1)-pos[(*neighbors)[j]]+baseNode);
       }
-      neighbors.clear();
+      neighbors->clear();
    }
    return force;
 }
@@ -326,6 +327,7 @@ void Network::init_compartments(){
       (*compartments)[i].xmin=-inf;
       (*compartments)[i].xmax=inf;
    }
+   ymid.clear();
 }   
    
 void Network::adjust_compartments(){

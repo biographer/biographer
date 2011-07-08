@@ -144,7 +144,6 @@ void Network::read(const char* file){
       }
       addEdge(p,q,(Edgetype)k);
    }
-   stdin=old_stdin;
 }
 
 void Network::dumpNodes(const char* file){
@@ -160,7 +159,5 @@ void Network::dumpNodes(const char* file){
       cout<<tmp.pts.name<<endl;
       printf("%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",tmp.pts.compartment,tmp.pts.x, tmp.pts.y, tmp.pts.width, tmp.pts.height, tmp.pts.dir);
    }
-   fflush(stdout);
-   stdout=old_stdout;
 } 
   
