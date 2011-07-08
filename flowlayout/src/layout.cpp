@@ -17,7 +17,7 @@ float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
 float Network::get_dij2(int i, int j){ //minimum distance between non-adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
-   return 3*(sqrt(x)+sqrt(y));
+   return 2*(sqrt(x)+sqrt(y));
 }
 
 float Network::calc_force_adj(){
@@ -75,7 +75,7 @@ float Network::calc_force_adj(){
             i_alpha=i_alpha1;
          }
       }
-      force+=(i_d*i_d*sin(0.5*fabs(beta))*0.1); //angular force;
+      force+=(d*d*sin(0.5*fabs(beta))*0.1); //angular force;
       mov[n2]=mov[n2]+(to_left(vec,0.1*beta/n)-vec); //angular movement; 
       mov_dir[n1]-=(0.1*beta);
    }
@@ -155,16 +155,68 @@ void Network::move_nodes(){
 }
 
 float Network::swap_force(int p1, int p2){
-   int m,i;
-   float force=0.0,i_d,d;
-   VI neighbors= *getNeighbors(p1);
+   int m,i,y,_type=(*nodes)[p1].pts.type;
+   float force=0.0,i_d,d,alpha, i_alpha, beta, beta1;
+   Point vec;
+   VI neighbors= *((*nodes)[p1].neighbors);
    m=neighbors.size();
+   //distantal force;
    for(i=0;i<m;i++){
-      i_d=dij2[p1][neighbors[i]]*0.3333;
-      d=dist(pos[p1],pos[neighbors[i]]);
+      i_d=dij1[neighbors[i]];
+      if(_type==reaction)y=(*edges)[neighbors[i]].to;
+      else y=(*edges)[neighbors[i]].from;
+      d=dist(pos[p1],pos[y]);
       force+=((i_d-d)*(i_d-d));
-      d=dist(pos[p2],pos[neighbors[i]]);
+      d=dist(pos[p2],pos[y]);
       force-=((i_d-d)*(i_d-d));
+   }
+   
+   //angular force;
+   for(i=0;i<m;i++){
+      i_d=dij1[neighbors[i]];
+      y=(*edges)[neighbors[i]].to;              
+      if(_type==reaction)vec=pos[y]-pos[p1]; 
+      else vec=pos[p1]-pos[y];           
+                       
+      alpha=angle(vec);
+      if(_type==substrate){
+         i_alpha=0.5*PI+pts_dir[p1];
+         beta=lim(i_alpha-alpha);
+      }         
+      else if(_type==product){
+         i_alpha=1.5*PI+pts_dir[p1];
+         beta=lim(i_alpha-alpha);
+      }
+      else{ //other compounds, rotating to the nearer side.
+         i_alpha=pts_dir[p1]; beta=lim(i_alpha-alpha);
+         float i_alpha1=PI+pts_dir[p1], beta1=lim(i_alpha-alpha);
+         if(fabs(beta)>fabs(beta1)){
+            beta=beta1;
+            i_alpha=i_alpha1;
+         }
+      }
+      force+=(d*d*sin(0.5*fabs(beta))); //angular force;
+      
+      if(_type==reaction)vec=pos[y]-pos[p2]; 
+      else vec=pos[p2]-pos[y];
+      alpha=angle(vec);
+      if(_type==substrate){
+         i_alpha=0.5*PI+pts_dir[p1];
+         beta=lim(i_alpha-alpha);
+      }         
+      else if(_type==product){
+         i_alpha=1.5*PI+pts_dir[p1];
+         beta=lim(i_alpha-alpha);
+      }
+      else{ //other compounds, rotating to the nearer side.
+         i_alpha=pts_dir[p1]; beta=lim(i_alpha-alpha);
+         float i_alpha1=PI+pts_dir[p1], beta1=lim(i_alpha-alpha);
+         if(fabs(beta)>fabs(beta1)){
+            beta=beta1;
+            i_alpha=i_alpha1;
+         }
+      }
+      force-=(d*d*sin(0.5*fabs(beta))); //angular force;
    }
    neighbors.clear();
    return force;
@@ -225,7 +277,7 @@ float Network::firm_distribution(){
          beta=lim(angle(pos[neighbors[i]]-baseNode)+average-angle(pos[neighbors[j]]-baseNode));
          d=dist(pos[neighbors[i]],baseNode);
          force+=(d*d*sin(0.5*fabs(beta)));
-         mov[j]=mov[j]+(to_left(pos[neighbors[j]]-baseNode,beta/10)-pos[neighbors[j]]+baseNode);
+         mov[j]=mov[j]+(to_left(pos[neighbors[j]]-baseNode,beta*0.1)-pos[neighbors[j]]+baseNode);
       }
       neighbors.clear();
    }
@@ -238,7 +290,6 @@ void Network::init_compartments(){
    float tem;
    vector<comp_y>ymid;
    ymid.resize(cn);
-  // above_comp.resize(cn);
    above_comp=(int *)malloc(sizeof(int)*cn);
    for(comp=0;comp<cn;comp++){
       ymid[comp].id=comp;
@@ -283,8 +334,8 @@ void Network::adjust_compartments(){
    int i,j,comp;  
    float delta; 
    for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane
-      bcomp[comp].xmin=bcomp[comp].ymin=1e50;
-      bcomp[comp].xmax=bcomp[comp].ymax=-1e50;
+      bcomp[comp].xmin=bcomp[comp].ymin=inf;
+      bcomp[comp].xmax=bcomp[comp].ymax=-inf;
    }
   
    for(i=0;i<n;i++){
@@ -301,11 +352,11 @@ void Network::adjust_compartments(){
       (*compartments)[comp].ymin+=((bcomp[comp].ymin-(*compartments)[comp].ymin)/n);
       (*compartments)[comp].ymax+=((bcomp[comp].ymax-(*compartments)[comp].ymax)/n);
    } 
+   
    for(i=1;i<cn;i++){
      j=above_comp[i];
      if(j==0)continue;
      delta=(*compartments)[i].ymax-(*compartments)[j].ymin;
-     if(delta<=0)continue;
      delta/=2;
      (*compartments)[i].ymax-=delta;
      (*compartments)[j].ymin+=delta;
@@ -352,7 +403,7 @@ float Network::init_layout(){
          mov[n1].x+=pos[n2].x;
          mov[n2].x+=pos[n1].x;
       }
-      else if(_type==product){
+      else if(_type==substrate){
          mov[n1].y+=(pos[n2].y-dij1[i]);
          mov[n2].y+=(pos[n1].y+dij1[i]);
          mov[n1].x+=pos[n2].x;
@@ -404,7 +455,7 @@ float Network::post_pro(){
    for(n1=0;n1<n;n1++)
       for(n2=n1+1;n2<n;n2++){
          if(isadj[n1][n2])continue;              
-         i_d=dij2[n1][n2]*0.3;
+         i_d=dij2[n1][n2]*0.5;
          d=dist(pos[n1],pos[n2]);
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
          
@@ -478,6 +529,15 @@ float Network::layout(){
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
 
+   bool flag=true;
+   k=0;
+   while(flag){
+      flag=swap_node();
+      //if(k<10)near_swap();
+      k++;
+      if(k>n)break;
+   }
+   
    k=inc=0;
    pre_force=inf;
    while(true){
@@ -491,15 +551,6 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
-   
-   bool flag=true;
-   k=0;
-   while(flag){
-      flag=swap_node();
-      //if(k<10)near_swap();
-      k++;
-      if(k>n)break;
-   }
      
    //phase 2: adj and nadj.
    k=inc=0;
@@ -521,7 +572,7 @@ float Network::layout(){
    printf("Total force = %0.3f\n",cur_force);
    
    init_compartments();
-  
+   
    //phase 3: bring in compartments;
    pre_force=inf;
    k=inc=0;
@@ -531,8 +582,6 @@ float Network::layout(){
       adjust_compartments();
       cur_force+=firm_distribution();
       cur_force+=calc_force_compartments();
-      move_nodes();
-      cur_force=0.0;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
@@ -548,6 +597,7 @@ float Network::layout(){
    //phase4: post processing.
    pre_force=inf;
    while(true){
+      near_swap();
       cur_force=post_pro();
       move_nodes();
       adjust_compartments();
@@ -557,19 +607,18 @@ float Network::layout(){
       pre_force=cur_force;
    } 
    
-  // cur_force+=calc_force_compartments();
- //  move_nodes();
-   
    cout<<endl;
    for(i=1;i<compartments->size();i++){
       cout<<(*compartments)[i].name<<endl;
       printf("%0.3f %0.3f\n",(*compartments)[i].ymin, (*compartments)[i].ymax);
    }
-   
+  
    k=0;
    int comp;
    for(i=0;i<n;i++){
       comp=(*nodes)[i].pts.compartment;
+      if(comp==1)cout<<(*nodes)[i].pts.name<<endl;
+      if((*nodes)[i].pts.name=="MAP:Cb17552_CY")cout<<"here: "<<(*nodes)[i].pts.type<<' '<<comp<<endl;
       if(comp==0){                  
          if((*nodes)[i].pts.type!=reaction)cout<<(*nodes)[i].pts.name<<endl;
          continue;
