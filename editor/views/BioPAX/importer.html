@@ -1,0 +1,21 @@
+{{extend 'layout.html'}}
+
+<form name=main action=upload method=POST enctype="multipart/form-data">
+
+<a href="http://www.biopax.org/"><img src="{{=URL(r=request, c="static", f="images")}}/BioPAX.png" style="vertical-align:middle;"/></a>
+<br/>
+<br/>
+
+Please upload your file: <input type=file name=File onChange="submit();"/> <input type=submit value=Load />
+
+<hr/>
+
+Example:<br/>
+<a href="{{=URL(r=request, c="static", f="examples")}}/caspase_pathway.owl">{{=URL(r=request, c="static", f="examples")}}/caspase_pathway.owl</a>
+
+<hr/>
+
+For more information on the BioPAX format, please visit <a href="http://www.biopax.org/">http://www.biopax.org/</a>.
+
+</form>
+

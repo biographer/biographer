@@ -1,0 +1,52 @@
+{{extend 'layout.html'}}
+
+<h1>Workbench</h1>
+
+[ 
+<a href="#Terminal">Terminal</a> | 
+<a href="#JSON">JSON</a> | 
+<a href="#SBML">SBML</a> | 
+<a href="#BioPAX">BioPAX</a> ]
+<br/>
+
+<style>
+	h3		{
+			padding-top:	30px;
+			}
+	div.debug	{
+			width:		100%;
+			max-height:	400px;
+			overflow:	scroll;
+			border:		1pt solid #000;
+			}
+	pre.terminal	{
+			border:		none;
+			white-space:	pre;
+			overflow:	hidden;
+			}
+</style>
+
+<a name=Terminal></a>
+<h3>Terminal</h3>
+<div class=debug>
+<pre class=terminal id=Terminal>{{try:}}{{=session.bioGraph.DEBUG}}{{except:pass}}</pre>
+</div>
+
+<a name=JSON></a>
+<h3>JSON</h3>
+<div class=debug>
+<pre class=terminal id=JSON>{{try:}}{{=session.JSON}}{{except:pass}}</pre>
+</div>
+
+<a name=SBML></a>
+<h3>SBML</h3>
+<div class=debug>
+<pre class=terminal id=SBML>{{try:}}{{=session.SBML}}{{except:pass}}</pre>
+</div>
+
+<a name=BioPAX></a>
+<h3>BioPAX</h3>
+<div class=debug>
+<pre class=terminal id=BioPAX>{{try:}}{{=session.BioPAX}}{{except:pass}}</pre>
+</div>
+
