@@ -1,5 +1,8 @@
 #include "network.h"
 
+const char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"};
+const char nodetypes[][20]={"None", "Reaction", "Compound","Other"};
+
 Network::Network(){
    nodes = new VN(); nodes->clear();
    edges = new VE(); edges->clear();
@@ -104,4 +107,60 @@ void Network::addReaction(int index, const VI* substrates,const VI* products, co
       addEdge(index, (*inhibitors)[i], inhibitor);
    }
 }
+  
+void Network::read(const char* file){
+   int c,ci,i,n,m,p,q,k,_index;
+   Nodetype _type;
+   char s[100],t[100];
+   float _x,_y, _width, _height,_dir;
+   FILE* old_stdin=stdin;
+   if (file) freopen(file,"r",stdin);
+   scanf("%d\n",&c); // num compartments
+   for(i=0;i<c;i++){
+      scanf("%d %s\n",&_index,t);
+      addCompartment(_index,t);
+   }  
+   scanf("%s\n",s); // "///"  
+   scanf("%d",&n); //number of nodes
+   for(i=0;i<n;i++){
+      scanf("%d\n",&_index);
+      scanf("%s\n",t);
+      if(strcmp(t,"Compound")==0)_type=compound;
+      else if(strcmp(t,"Reaction")==0)_type=reaction;
+      else if(strcmp(t,"Other")==0)_type=other;
+      else _type=none;
+      scanf("%s\n",s);
+      scanf("%d\n",&ci); 
+      scanf("%f%f",& _x,& _y);
+      scanf("%f%f%f",& _width,& _height,& _dir);      
+      addNode(_index, _type, s, _width, _height, _x, _y, _dir,ci);            
+   }
+   scanf("%s\n",s); // "///"
+   scanf("%d\n",&m); // numer of edges
+   for(i=0;i<m;i++){
+      scanf("%s %d %d\n",s,&p,&q);
+      for(k=0;k<7;k++){
+         if(strcmp(edgetypes[k],s)==0)break;
+      }
+      addEdge(p,q,(Edgetype)k);
+   }
+   stdin=old_stdin;
+}
+
+void Network::dumpNodes(const char* file){
+   Node tmp;
+   int i;
+   int n=nodes->size();
+   FILE* old_stdout=stdout;
+   if (file) freopen(file,"w",stdout);
+   for(i=0;i<n;i++){
+      printf("%d\n",i);
+      tmp = (*nodes)[i];
+      printf("%s\n",nodetypes[(int)(tmp.pts.type)]);
+      cout<<tmp.pts.name<<endl;
+      printf("%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",tmp.pts.compartment,tmp.pts.x, tmp.pts.y, tmp.pts.width, tmp.pts.height, tmp.pts.dir);
+   }
+   fflush(stdout);
+   stdout=old_stdout;
+} 
   
