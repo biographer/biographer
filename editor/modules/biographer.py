@@ -10,6 +10,7 @@
 
 ### dependencies ###
 
+import re
 from math import ceil
 import json
 import libsbml
@@ -77,6 +78,39 @@ class Node:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
 			self.__dict__.update(copy.deepcopy(JSON))	# map all input key/value pairs to the python object
+
+	def setByGraphviz( dot ):
+		p = re.compile('\d+')
+		if not "data" in self.__dict__:
+			self.__dict__.append("data")
+
+		key = 'pos="'
+		p = dot.find(key)
+		if p == -1:
+			return False
+		p += len(key)
+		q = dot.find('"', p)
+		pos = p.findall( dot[p:q] )
+		self.data['x'] = pos[0]
+		self.data['y'] = pos[1]
+
+		key = 'width="'
+		p = dot.find(key)
+		if p == -1:
+			return False
+		p += len(key)
+		q = dot.find('"', p)
+		self.data['width'] = p.findall( dot[p:q] )
+
+		key = 'height="'
+		p = dot.find(key)
+		if p == -1:
+			return False
+		p += len(key)
+		q = dot.find('"', p)
+		self.data['height'] = p.findall( dot[p:q] )
+
+		return str(self.id)+" is now at ( "+str(self.data['x'])+" | "+str(self.data['y'])+" ), width = "+str(self.data.width)+", height = "+str(self.data.height)
 
 	def exportJSON(self, Indent=DefaultIndent):			# export Node as JSON string
 		return json.dumps( self.__dict__, indent=Indent )
@@ -472,11 +506,10 @@ class Graph:
 		self.initialize()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
-	# http://networkx.lanl.gov/pygraphviz/tutorial.html
-
 	def exportGraphviz(self, folder="/tmp", useCache=True, updateNodeProperties=False):
 		self.DEBUG += "Exporting Graphviz ...\n"
 
+		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		G = pygraphviz.AGraph(directed=True)
 
 		for node in self.Nodes:
@@ -508,8 +541,13 @@ class Graph:
 			strGraph = str(G)
 			open(spath,'w').write(strGraph)
 
+		# http://www.graphviz.org/doc/info/attrs.html#d:pos
 		if updateNodeProperties:
-			print strGraph
+			for node in self.Nodes:
+				p = dot.find("\t"+str(node.id)+"\t")
+				if p > -1:
+					q = dot.find(";", p)
+					print node.setByGraphviz( dot[p:q] )
 
 		return self.dot, png, cached
 
