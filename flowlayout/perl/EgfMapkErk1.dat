@@ -56,7 +56,7 @@ Reactome:109841
 3
 Compound
 MAP:Cs56-65-5_CY_Reactome:177939
-0
+3
 0.0
 0.0
 4.44
@@ -119,7 +119,7 @@ Reactome:179849
 10
 Compound
 MAP:Cb16761_CY_Reactome:109860
-0
+3
 0.0
 0.0
 4.25
@@ -146,7 +146,7 @@ Reactome:109787
 13
 Compound
 MAP:Cb17552_CY_Reactome:177938
-0
+3
 0.0
 0.0
 4.25
@@ -182,7 +182,7 @@ MAN:R28
 17
 Compound
 Reactome:29358_MAN:R12
-0
+4
 0.0
 0.0
 4.17
@@ -290,7 +290,7 @@ MAP:UP36507_CY
 29
 Compound
 MAP:Cs56-65-5_CY_Reactome:109852
-0
+3
 0.0
 0.0
 4.44
@@ -299,7 +299,7 @@ MAP:Cs56-65-5_CY_Reactome:109852
 30
 Compound
 MAP:Cs56-65-5_CY_Reactome:109860
-0
+3
 0.0
 0.0
 4.44
@@ -317,7 +317,7 @@ MAP:UP27361_CY_pho202pho204
 32
 Compound
 MAP:Cb15996_CY_Reactome:177945
-0
+3
 0.0
 0.0
 4.25
@@ -326,7 +326,7 @@ MAP:Cb15996_CY_Reactome:177945
 33
 Compound
 MAP:Cb15996_CY_Reactome:177938
-0
+3
 0.0
 0.0
 4.25
@@ -398,7 +398,7 @@ Reactome:109852
 41
 Compound
 Reactome:113582_MAN:R12
-0
+4
 0.0
 0.0
 4.36
@@ -416,7 +416,7 @@ MAN:R25
 43
 Compound
 MAP:Cs56-65-5_CY_Reactome:177933
-0
+3
 0.0
 0.0
 4.44
@@ -425,7 +425,7 @@ MAP:Cs56-65-5_CY_Reactome:177933
 44
 Compound
 MAP:Cs56-65-5_CY_Reactome:109841
-0
+3
 0.0
 0.0
 4.44
@@ -434,7 +434,7 @@ MAP:Cs56-65-5_CY_Reactome:109841
 45
 Compound
 MAP:Cb17552_CY_Reactome:177945
-0
+3
 0.0
 0.0
 4.25
@@ -452,7 +452,7 @@ MAP:C2
 47
 Compound
 MAP:Cb16761_CY_Reactome:109852
-0
+3
 0.0
 0.0
 4.25
@@ -470,7 +470,7 @@ MAP:UP27361_CY
 49
 Compound
 MAP:Cs56-65-5_CY_Reactome:177930
-0
+3
 0.0
 0.0
 4.44
@@ -497,7 +497,7 @@ Reactome:177925
 52
 Compound
 MAP:Cb16761_CY_Reactome:177933
-0
+3
 0.0
 0.0
 4.25
@@ -533,7 +533,7 @@ MAP:UP31946_CY
 56
 Compound
 MAP:Cb16761_CY_Reactome:109829
-0
+3
 0.0
 0.0
 4.25
@@ -605,7 +605,7 @@ Reactome:180331
 64
 Compound
 MAP:Cb16761_CY_Reactome:177930
-0
+3
 0.0
 0.0
 4.25
@@ -668,7 +668,7 @@ MAP:C3
 71
 Compound
 MAP:Cs56-65-5_CY_Reactome:109829
-0
+3
 0.0
 0.0
 4.44
@@ -677,7 +677,7 @@ MAP:Cs56-65-5_CY_Reactome:109829
 72
 Compound
 MAP:Cb16761_CY_Reactome:109841
-0
+3
 0.0
 0.0
 4.25
@@ -686,7 +686,7 @@ MAP:Cb16761_CY_Reactome:109841
 73
 Compound
 MAP:Cb16761_CY_Reactome:177934
-0
+3
 0.0
 0.0
 4.25
@@ -704,7 +704,7 @@ Reactome:180301
 75
 Compound
 MAP:Cb16761_CY_Reactome:177939
-0
+3
 0.0
 0.0
 4.25
@@ -713,7 +713,7 @@ MAP:Cb16761_CY_Reactome:177939
 76
 Compound
 MAP:Cs56-65-5_CY_Reactome:177934
-0
+3
 0.0
 0.0
 4.44
