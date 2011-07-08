@@ -264,7 +264,7 @@ float Network::firm_distribution(){
       if((*nodes)[k].pts.type!=compound)continue;
       neighbors= *getNeighbors(k);
       m=neighbors.size();
-      if(m<2)continue;
+      if(m<10)continue;
       baseNode=pos[k];
       for(i=0;i<m-1;i++)
          for(j=i+1;j<m;j++)
