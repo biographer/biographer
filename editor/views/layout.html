@@ -55,6 +55,7 @@
 				border-right:	none;
 				border-top:	1pt solid black;
 				border-bottom:	1pt solid black;
+				visibility:	hidden;
 				}
 	#divImportMenu:hover	{
 				height:		230px;
@@ -147,6 +148,11 @@
 	<a class=MenuLink href={{=URL(r=request, c='WikiPathways', f='importer')}}>WikiPathways</a><br/>	-->
 </div>
 
+<script>
+	divImportMenu = document.getElementById('divImportMenu');
+	divImportMenu.style.left = document.body.clientWidth / 2;
+	divImportMenu.style.visibility = "visible";
+</script>
     
     <div id="page"> <!-- Here my central body -->     
 
