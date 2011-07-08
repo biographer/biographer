@@ -26,8 +26,8 @@ def download():
 
 	if os.path.exists( cachename ):
 		session.SBML = open(cachename).read()
-		session.flash = "SBML loaded from cache"
 		session.bioGraph.importSBML( session.SBML )
+		session.flash = "BioModel's SBML loaded from cache"
 	else:
 		connection = httplib.HTTPConnection("www.ebi.ac.uk")
 		connection.request("GET", "/biomodels-main/download?mid=BIOMD"+session.BioModelsID)
@@ -36,7 +36,8 @@ def download():
 		if session.SBML.lower()[:6] == "<?xml ":
 			open(cachename,'w').write( session.SBML )
 			session.bioGraph.importSBML( session.SBML )
+			session.flash = "BioModel's SBML retrieved successfully"
 		else:
-			session.flash = "Error: Retrieved file is not SBML"
+			session.flash = "Error: Retrieved file is not in SBML format"
 
 	return redirect( URL(r=request, c='Workbench', f='index') )

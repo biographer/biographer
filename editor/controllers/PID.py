@@ -35,6 +35,7 @@ def upload():
 		if session.bioGraph is None:
 			session.bioGraph = biographer.Graph()
 		session.bioGraph.importBioPAX( biopax )				# load bioGraph from BioPAX
+		session.flash = "BioPAX loaded successfully"
 	else:									# BioPAX link not found
 		session.flash = "Error: BioPAX for this pathway could not be downloaded"
 	connection.close()

@@ -91,13 +91,13 @@ class Node:
 		for key in self.__dict__.keys():			# check if we recognize all keys
 			if key in NodeKeyAliases.keys():		# is it an alias ...
 				newkey = NodeKeyAliases[key]
-				result += 'Hint: Node property "'+key+'" should be named "'+newkey+'" ! Error corrected automatically.\n'
+				result += 'Automatically corrected error: Node property "'+key+'" should be named "'+newkey+'" !\n'
 				self.__dict__[newkey] = self.__dict__[key]
 				del self.__dict__[key]
 				key = newkey
 			if not key in NodeKeys:
 				if key in OptionalNodeKeys:		# is it an optional key ...
-					result += 'Hint: Node property "'+key+'" belongs under "data" ! Error corrected automatically.\n'
+					result += 'Automatically corrected error: Node property "'+key+'" belongs under "data" !\n'
 					self.data[key] = self.__dict__[key]
 					del self.__dict__[key]
 				else:
@@ -107,13 +107,13 @@ class Node:
 		for key in self.data.keys():				# check optional keys
 			if key in NodeKeyAliases.keys():		# is it an alias ...
 				newkey = NodeKeyAliases[key]
-				result += 'Hint: Optional node property "'+key+'" should be named "'+newkey+'" ! Error corrected automatically.\n'
+				result += 'Automatically corrected error: Optional node property "'+key+'" should be named "'+newkey+'" !\n'
 				self.data[newkey] = self.data[key]
 				del self.data[key]
 				key = newkey
 			if not key in OptionalNodeKeys:
 				if key in NodeKeys:			# is it a mandatory key ...
-					result += 'Hint: Node key "'+key+'" does not belong under "data" ! Error corrected automatically.\n'
+					result += 'Automatically corrected error: Node property "'+key+'" does not belong under "data" !\n'
 					self.__dict__[key] = self.data[key]
 					del self.data[key]
 				else:
@@ -172,13 +172,13 @@ class Edge:
 		for key in self.__dict__.keys():			# check if we recognize all keys
 			if key in EdgeKeyAliases.keys():		# is it an alias ...
 				newkey = EdgeKeyAliases[key]
-				result += 'Hint: Edge property "'+key+'" recognized as property "'+newkey+'".\n'
+				result += 'Automatically corrected error: Edge property "'+key+'" should be named "'+newkey+'" !\n'
 				self.__dict__[newkey] = self.__dict__[key]
 				del self.__dict__[key]
 				key = newkey
 			if not key in EdgeKeys:
 				if key in OptionalEdgeKeys:
-					result += 'Hint: Edge property "'+key+'" belongs under "data" !\n'
+					result += 'Automatically corrected error: Edge property "'+key+'" belongs under "data" !\n'
 					self.data[key] = self.__dict__[key]
 					del self.__dict__[key]
 				else:
@@ -188,13 +188,13 @@ class Edge:
 		for key in self.data.keys():				# check optional keys
 			if key in EdgeKeyAliases.keys():		# is it an alias ...
 				newkey = EdgeKeyAliases[key]
-				result += 'Hint: Optional edge property "'+key+'" recognized as property "'+newkey+'".\n'
+				result += 'Automatically corrected error: Optional edge property "'+key+'" should be named "'+newkey+'" !\n'
 				self.data[newkey] = self.data[key]
 				del self.data[key]
 				key = newkey
 			if not key in OptionalEdgeKeys:
 				if key in NodeKeys:			# is it a mandatory key ...
-					result += 'Hint: Edge property "'+key+'" does not belong under "data" !\n'
+					result += 'Automatically corrected error: Edge property "'+key+'" does not belong under "data" !\n'
 					self.__dict__[key] = self.data[key]
 					del self.data[key]
 				else:
@@ -255,9 +255,9 @@ class Graph:
 		self.IDmapNodes = self.IDmapEdges = {}
 
 	def initialize(self):							# do everything necessary to complete a new model
+		self.selfcheck()
 		self.mapIDs()
 		self.hash()
-		self.selfcheck()
 
 	def selfcheck(self, autoresize=True):					# perform some basic integrity checks on the created Graph
 
@@ -286,6 +286,7 @@ class Graph:
 		for n in self.Nodes:						# Nodes lie inside non-existing compartments ?
 			if not n.data['compartment'] in compartments:
 				self.DEBUG += "Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" does not exist !\n"
+				# automatic recovery is theoretically possible here
 
 		for e in self.Edges:						# Edges connect non-existing Nodes ?
 			if not e.source in nodeIDs:
@@ -368,8 +369,8 @@ class Graph:
 			return
 		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
 		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
-		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 		self.initialize()
+		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
 		if self.JSON is None:
@@ -444,8 +445,8 @@ class Graph:
 				e.target	= n.id
 				self.Edges.append(e)
 
-		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 		self.initialize()
+		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def importODP(self, odp):						# import an OpenOffice Impress Document
 		self.DEBUG = "Importing ODP ...\n"
@@ -453,8 +454,8 @@ class Graph:
 		self.DEBUG += impress.DEBUG
 		self.Nodes = impress.Nodes
 		self.Edges = impress.Edges
-		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 		self.initialize()
+		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def exportODP(self):							# export an OpenOffice Impress Document
 		self.DEBUG += "Exporting ODP ...\n"
@@ -468,12 +469,12 @@ class Graph:
 		b = BioPAX( biopax )
 		self.Nodes = b.Nodes
 		self.Edges = b.Edges
-		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 		self.initialize()
+		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	# http://networkx.lanl.gov/pygraphviz/tutorial.html
 
-	def exportGraphviz(self, folder="/tmp", updateNodeProperties=False):
+	def exportGraphviz(self, folder="/tmp", useCache=True, updateNodeProperties=False):
 		self.DEBUG += "Exporting Graphviz ...\n"
 
 		G = pygraphviz.AGraph(directed=True)
@@ -493,11 +494,13 @@ class Graph:
 		pngpath = os.path.join(folder, png)
 		dotpath = os.path.join(folder, dot)
 		spath	= os.path.join(folder, s)
-		if os.path.exists( pngpath ):
+		if useCache and os.path.exists( pngpath ):
+			cached = True
 			# no need to do the cpu-intense layouting again
 			self.dot = open(dotpath).read()
 			strGraph = open(spath).read()
 		else:
+			cached = False
 			G.layout( prog='dot' )
 			G.draw( pngpath )
 			self.dot = G.string()
@@ -508,7 +511,7 @@ class Graph:
 		if updateNodeProperties:
 			print strGraph
 
-		return self.dot, png
+		return self.dot, png, cached
 
 
 	### basic functions on Graph properties ###

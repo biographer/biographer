@@ -14,9 +14,13 @@ import os
 def draw():
 	reload(biographer)
 	if session.bioGraph is not None:
-		dot, filename	= session.bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), updateNodeProperties=True )
-		url		= URL(r=request, c="static/graphviz", f=filename)
+		dot, filename, cached	= session.bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
+		url			= URL(r=request, c="static/graphviz", f=filename)
+		if cached:
+			response.flash = "Graphviz layout loaded from cache"
+		else:
+			response.flash = "New layout created"
 		return dict( url=url, dot=dot )
 	else:
-		session.flash = "You must import a Graph first !"
+		response.flash = "You must import a Graph first !"
 		return dict( url="", dot="" )
