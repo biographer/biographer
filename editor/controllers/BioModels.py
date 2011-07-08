@@ -16,8 +16,8 @@ def importer():
 	return dict()
 
 def download():
-	session.JSON = ""
-	session.BioPAX = ""
+	session.JSON = None
+	session.BioPAX = None
 	if session.bioGraph is None:
 		session.bioGraph = biographer.Graph()
 
@@ -33,11 +33,12 @@ def download():
 		connection.request("GET", "/biomodels-main/download?mid=BIOMD"+session.BioModelsID)
 		session.SBML = connection.getresponse().read()
 		connection.close()
-		if session.SBML.lower()[:6] == "<?xml ":
+		if session.SBML.find("There is no model associated") > -1:
+			session.SBML = None
+			session.flash = "Sorry: No model with ID "+session.BioModelsID
+		else:
 			open(cachename,'w').write( session.SBML )
 			session.bioGraph.importSBML( session.SBML )
 			session.flash = "BioModel's SBML retrieved successfully"
-		else:
-			session.flash = "Error: Retrieved file is not in SBML format"
 
 	return redirect( URL(r=request, c='Workbench', f='index') )
