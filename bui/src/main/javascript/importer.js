@@ -1,37 +1,47 @@
 (function(bui) {
+
     /**
-     * @private
-     * Mapping between SBO terms and biographer-ui classes for entity pool
-     * nodes.
+     * Add mappings to the mappings object.
+     *
+     * @param {Object} mapping The mappings object
+     * @param {Number[]} keys The keys which should be mapped
+     * @param {Function} klass A classes' constructor
+     * @param {Function} [generator] Generator funtion which should be used
+     *   instead of the constructor.
      */
-    var nodeMapping = {
-        245 : { klass : bui.Macromolecule },
-        247 : { klass : bui.SimpleChemical },
-        253 : { klass : bui.Complex },
-        285 : { klass : bui.UnspecifiedEntity },
-        290 : { klass : bui.Compartment },
-        354 : { klass : bui.NucleicAcidFeature }
+    var addMapping = function(mapping, keys, klass, generator) {
+        var val = { klass : klass };
+
+        if (generator !== undefined) {
+            val.generator = generator;
+        }
+
+        for (var i = 0; i < keys.length; i++) {
+            mapping[keys[i]] = val;
+        }
     };
 
     /**
      * @private
-     * Mapping between SBO terms and biographer-ui classes for process nodes.
+     * Mapping between SBO terms and biographer-ui classes.
      */
-    var processNodeMapping = {
-        375 : { klass : bui.Process }
-    };
+    var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {};
 
-    /**
-     * @private
-     * Mapping between SBO terms and biographer-ui classes for connecting arcs.
-     */
-    var edgeMarkerMapping = {
-        168 : { klass : bui.connectingArcs.modulation.id },
-        169 : { klass : bui.connectingArcs.inhibition.id },
-        170 : { klass : bui.connectingArcs.stimulation.id },
-        171 : { klass : bui.connectingArcs.necessaryStimulation.id },
-        172 : { klass : bui.connectingArcs.catalysis.id }
-    };
+    addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
+    addMapping(nodeMapping, [247], bui.SimpleChemical);
+    addMapping(nodeMapping, [245, 252], bui.Macromolecule);
+    addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
+    addMapping(nodeMapping, [253], bui.Complex);
+    addMapping(nodeMapping, [290], bui.Compartment);
+
+    addMapping(processNodeMapping, [375], bui.Process);
+
+    addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
+    addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
+    addMapping(edgeMarkerMapping, [459], bui.connectingArcs.stimulation.id);
+    addMapping(edgeMarkerMapping, [461],
+            bui.connectingArcs.necessaryStimulation.id);
+    addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
 
     /**
      * Retrieve the class and generator from a mapping object. When the mapping
