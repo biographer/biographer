@@ -79,8 +79,8 @@ class Node:
 				JSON = json.loads(JSON)
 			self.__dict__.update(copy.deepcopy(JSON))	# map all input key/value pairs to the python object
 
-	def setByGraphviz( dot ):
-		p = re.compile('\d+')
+	def setByGraphviz( self, dot ):
+		r = re.compile('[\d\.]+')
 		if not "data" in self.__dict__:
 			self.__dict__.append("data")
 
@@ -90,7 +90,7 @@ class Node:
 			return False
 		p += len(key)
 		q = dot.find('"', p)
-		pos = p.findall( dot[p:q] )
+		pos = r.findall( dot[p:q] )
 		self.data['x'] = pos[0]
 		self.data['y'] = pos[1]
 
@@ -100,7 +100,7 @@ class Node:
 			return False
 		p += len(key)
 		q = dot.find('"', p)
-		self.data['width'] = p.findall( dot[p:q] )
+		self.data['width'] = r.findall( dot[p:q] )[0]
 
 		key = 'height="'
 		p = dot.find(key)
@@ -108,9 +108,9 @@ class Node:
 			return False
 		p += len(key)
 		q = dot.find('"', p)
-		self.data['height'] = p.findall( dot[p:q] )
+		self.data['height'] = r.findall( dot[p:q] )[0]
 
-		return str(self.id)+" is now at ( "+str(self.data['x'])+" | "+str(self.data['y'])+" ), width = "+str(self.data.width)+", height = "+str(self.data.height)
+		return str(self.id)+" is now at ( "+str(self.data['x'])+" | "+str(self.data['y'])+" ), width = "+str(self.data['width'])+", height = "+str(self.data['height'])
 
 	def exportJSON(self, Indent=DefaultIndent):			# export Node as JSON string
 		return json.dumps( self.__dict__, indent=Indent )
@@ -407,9 +407,8 @@ class Graph:
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
-		if self.JSON is None:
-			self.DEBUG += "Exporting JSON ...\n"
-			self.JSON = json.dumps( { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }, indent=Indent )
+		self.DEBUG += "Exporting JSON ...\n"
+		self.JSON = json.dumps( { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }, indent=Indent )
 		return self.JSON
 
 	def exportDICT(self):							# export current model as python dictionary
@@ -544,11 +543,10 @@ class Graph:
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
 		if updateNodeProperties:
 			for node in self.Nodes:
-				p = dot.find("\t"+str(node.id)+"\t")
+				p = self.dot.find("\t"+str(node.id)+"\t")
 				if p > -1:
-					q = dot.find(";", p)
-					print node.setByGraphviz( dot[p:q] )
-
+					q = self.dot.find(";", p)
+					node.setByGraphviz( self.dot[p:q] )
 		return self.dot, png, cached
 
 
