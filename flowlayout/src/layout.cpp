@@ -17,7 +17,7 @@ float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
 float Network::get_dij2(int i, int j){ //minimum distance between non-adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
-   return 2*(sqrt(x)+sqrt(y));
+   return 3*(sqrt(x)+sqrt(y));
 }
 
 float Network::calc_force_adj(){
@@ -95,7 +95,7 @@ float Network::calc_force_nadj(){
          d=dist(pos[n1],pos[n2]);
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
          
-         force+=((i_d-d)*(i_d-d)); //distantal force;
+         force+=((i_d-d)*(i_d-d)*deg[n1]*deg[n2]*(deg[n1]+deg[n2])); //distantal force;
          
          vec=pos[n1]-pos[n2];
          if(fabs(d)<zero){
@@ -388,15 +388,12 @@ float Network::init_layout(){
    float force=0.0,d,cost1,cost2;
    int n=nodes->size(), m=edges->size();
    int i, n1, n2;
-   Edgetype _type;   
-   cnt.resize(n);
-   for(i=0;i<n;i++)cnt[i]=0;
+   Edgetype _type;
    for(i=0;i<m;i++){
       _type=(*edges)[i].pts.type;
       //if(_type!=product && _type!=substrate)continue;
       n1=(*edges)[i].from; //reaction.
       n2=(*edges)[i].to; //compound.
-      cnt[n1]++; cnt[n2]++;
       if(_type==product){
          mov[n1].y+=(pos[n2].y+dij1[i]);
          mov[n2].y+=(pos[n1].y-dij1[i]);
@@ -410,16 +407,16 @@ float Network::init_layout(){
          mov[n2].x+=pos[n1].x;
       }
       else{
-         cost1=fabs((pos[n1].x-dij1[i])-mov[n2].x/cnt[n2]);
-         cost2=fabs((pos[n1].x+dij1[i])-mov[n2].x/cnt[n2]);
+         cost1=fabs((pos[n1].x-dij1[i])-mov[n2].x/deg[n2]);
+         cost2=fabs((pos[n1].x+dij1[i])-mov[n2].x/deg[n2]);
          if(cost1<cost2)mov[n2].x+=(pos[n1].x-dij1[i]);
          else mov[n2].x+=(pos[n1].x+dij1[i]);
          mov[n2].y+=pos[n1].y;
       }         
    }
    for(i=0;i<n;i++){
-      if(cnt[i]==0)continue;
-      mov[i].x/=cnt[i]; mov[i].y/=cnt[i];
+      if(deg[i]==0)continue;
+      mov[i].x/=deg[i]; mov[i].y/=deg[i];
       d=dist(mov[i],pos[i]);
       force+=(d*d);
       pos[i].x=mov[i].x;
@@ -459,7 +456,7 @@ float Network::post_pro(){
          d=dist(pos[n1],pos[n2]);
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
          
-         force+=((i_d-d)*(i_d-d)); //distantal force;
+         force+=((i_d-d)*(i_d-d)*deg[n1]*deg[n2]*(deg[n1]+deg[n2])); //distantal force;
          
          vec=pos[n1]-pos[n2];
          if(fabs(d)<zero){
@@ -504,12 +501,14 @@ float Network::layout(){
    mov.resize(n);
    pts_dir.resize(n);
    mov_dir.resize(n);
+   deg.resize(n);
    for(i=0;i<n;i++){
       pos[i].x=(*nodes)[i].pts.x;
       pos[i].y=(*nodes)[i].pts.y;
       mov[i].x=mov[i].y=0.0;
       pts_dir[i]=(*nodes)[i].pts.dir;
       mov_dir[i]=0.0;
+      deg[i]=((*nodes)[i].neighbors)->size();
    }   
    bcomp.resize(compartments->size());
    

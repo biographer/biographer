@@ -55,7 +55,7 @@ protected:
    vector< vector<bool> >isadj;
    vector<float>pts_dir;
    vector<float>mov_dir;
-   VI cnt;
+   VI deg;
    int * above_comp;
 };
    

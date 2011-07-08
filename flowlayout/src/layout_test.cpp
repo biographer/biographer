@@ -3,7 +3,7 @@
 int main(){
     clock_t start_time, end_time;
     start_time=clock();
-    freopen("newdata.txt","r",stdin);
+    freopen("data2.txt","r",stdin);
     freopen("summary.txt","w",stdout);
     char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"};
     char nodetypes[][20]={"None", "Reaction", "Compound","Other"};
