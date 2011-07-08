@@ -368,12 +368,12 @@ class Graph:
 			return
 		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
 		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
-		self.initialize()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
+		self.initialize()
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
 		if self.JSON is None:
-			self.DEBUG = "Exporting JSON ...\n"
+			self.DEBUG += "Exporting JSON ...\n"
 			self.JSON = json.dumps( { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }, indent=Indent )
 		return self.JSON
 
@@ -444,8 +444,8 @@ class Graph:
 				e.target	= n.id
 				self.Edges.append(e)
 
-		self.initialize()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
+		self.initialize()
 
 	def importODP(self, odp):						# import an OpenOffice Impress Document
 		self.DEBUG = "Importing ODP ...\n"
@@ -453,8 +453,8 @@ class Graph:
 		self.DEBUG += impress.DEBUG
 		self.Nodes = impress.Nodes
 		self.Edges = impress.Edges
-		self.initialize()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
+		self.initialize()
 
 	def exportODP(self):							# export an OpenOffice Impress Document
 		self.DEBUG += "Exporting ODP ...\n"
@@ -468,8 +468,8 @@ class Graph:
 		b = BioPAX( biopax )
 		self.Nodes = b.Nodes
 		self.Edges = b.Edges
-		self.initialize()
 		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
+		self.initialize()
 
 	# http://networkx.lanl.gov/pygraphviz/tutorial.html
 
