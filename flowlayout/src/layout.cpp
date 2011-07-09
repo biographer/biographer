@@ -95,7 +95,7 @@ float Network::calc_force_nadj(){
          d=dist(pos[n1],pos[n2]);
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
          
-         force+=((i_d-d)*(i_d-d)*deg[n1]*deg[n2]*(deg[n1]+deg[n2])); //distantal force;
+         force+=((i_d-d)*(i_d-d)); //distantal force;
          
          vec=pos[n1]-pos[n2];
          if(fabs(d)<zero){
@@ -414,6 +414,7 @@ float Network::init_layout(){
          if(cost1<cost2)mov[n2].x+=(pos[n1].x-dij1[i]);
          else mov[n2].x+=(pos[n1].x+dij1[i]);
          mov[n2].y+=pos[n1].y;
+         //mov[n1].y+=pos[n2].y;
       }         
    }
    for(i=0;i<n;i++){
@@ -439,7 +440,7 @@ float Network::post_pro(){
       n2=(*edges)[i].to; //compound;
       
       vec=pos[n2]-pos[n1];
-      i_d=dij1[i]*0.7;
+      i_d=dij1[i]*0.5;
       d=dist(pos[n1],pos[n2]);
       if(d<i_d)continue;
       force+=((d-i_d)*(d-i_d));
@@ -454,7 +455,7 @@ float Network::post_pro(){
    for(n1=0;n1<n;n1++)
       for(n2=n1+1;n2<n;n2++){
          if(isadj[n1][n2])continue;              
-         i_d=dij2[n1][n2]*0.5;
+         i_d=dij2[n1][n2]*0.3;
          d=dist(pos[n1],pos[n2]);
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
          
@@ -534,7 +535,7 @@ float Network::layout(){
    k=0;
    while(flag){
       flag=swap_node();
-      //if(k<10)near_swap();
+      if(k<10)near_swap();
       k++;
       if(k>n)break;
    }
@@ -618,8 +619,6 @@ float Network::layout(){
    int comp;
    for(i=0;i<n;i++){
       comp=(*nodes)[i].pts.compartment;
-      if(comp==1)cout<<(*nodes)[i].pts.name<<endl;
-      if((*nodes)[i].pts.name=="MAP:Cb17552_CY")cout<<"here: "<<(*nodes)[i].pts.type<<' '<<comp<<endl;
       if(comp==0){                  
          if((*nodes)[i].pts.type!=reaction)cout<<(*nodes)[i].pts.name<<endl;
          continue;
