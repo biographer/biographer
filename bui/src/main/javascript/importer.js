@@ -63,13 +63,13 @@
         }
     };
 
-    // TODO document varargs
     /**
      * Verify that an object has a property with the given name and that this
      * property is not null.
      *
      * @param {Object} obj The object which should be checked for the property.
-     * @param {String} property The name of the property
+     * @param {String} property Property names which should be checked. This is
+     *   a var args method.
      * @return {Boolean} True in case the property exists and is not null.
      *   False otherwise.
      */
@@ -90,14 +90,36 @@
     var defaultNodeGenerator = function(graph, nodeType, nodeJSON) {
         var node = graph.add(nodeType.klass);
 
-        if (propertySetAndNotNull(nodeJSON, 'label')) {
-            node.label(nodeJSON.label);
+        if (propertySetAndNotNull(nodeJSON.data, 'label')) {
+            if (node.label !== undefined) {
+                node.label(nodeJSON.data.label);
+            }
         }
 
-        if (propertySetAndNotNull(nodeJSON, 'x', 'y')) {
-            node.position(nodeJSON.x, nodeJSON.y);
+        if (propertySetAndNotNull(nodeJSON.data, 'x', 'y')) {
+            nodeJSON.data.x = toNumber(nodeJSON.data.x);
+            nodeJSON.data.y = toNumber(nodeJSON.data.y);
+
+            node.position(nodeJSON.data.x, nodeJSON.data.y);
         }
 
+        var standardNodeSize = bui.settings.style.importer.standardNodeSize;
+        var size = {
+            width : standardNodeSize.width,
+            height : standardNodeSize.height
+        };
+
+        if (node.sizeBasedOnLabel !== undefined) {
+            size = node.sizeBasedOnLabel();
+
+            // some padding because of various shapes
+            var padding = bui.settings.style.importer.sizeBasedOnLabelPassing;
+            size.width += padding.horizontal;
+            size.height += padding.vertical;
+        }
+
+        node.size(size.width, size.height)
+                .visible(true);
     };
 
     /**

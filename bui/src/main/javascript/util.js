@@ -266,3 +266,23 @@
         return id + bui.settings.idSuffix.hover;
     };
 })(bui);
+
+
+/**
+ * Ensure that a value is a number. If it is not an exception will be thrown.
+ * @param {Number|String} val The value which should be converted to a number.
+ *   If you pass a string it will be converted to a number if possible.
+ * @return {Number} The converted number.
+ */
+var toNumber = function(val) {
+    var type = typeof(val);
+
+    if (type === 'number') {
+        return val;
+    } else if (type === 'string' && isNaN(val) === false) {
+        return parseFloat(val);
+    } else {
+        throw 'It can\'t be ensured that the value: "' + val +
+                '" is a number.';
+    }
+};

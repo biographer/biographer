@@ -215,6 +215,38 @@
             this.fire(bui.Labelable.ListenerType.labelClass, [this]);
 
             return this;
+        },
+
+        /**
+         * Retrieve the node's size based on its label. A node width of 250
+         * pixels will be assumed.
+         *
+         * @return {Object} An object with width and height properties.
+         */
+        sizeBasedOnLabel : function() {
+            var privates = this._privates(identifier);
+            
+            var lines = bui.util.calculateLabelPositioning(250,
+                this.label(), privates.calculationClasses);
+
+            var maxHeight = Number.MIN_VALUE;
+            var maxWidth = Number.MIN_VALUE;
+
+            for(var i = 0; i < lines.length; i++) {
+                var line = lines[i];
+
+                maxWidth = Math.max(maxWidth, line.totalWidth);
+                maxHeight = Math.max(maxHeight, line.maxHeight);
+            }
+
+            var padding = bui.settings.style.adaptToLabelNodePadding;
+            maxWidth += padding.left + padding.right;
+            maxHeight += padding.top + padding.bottom;
+
+            return {
+                width : maxWidth,
+                height : maxHeight
+            };
         }
     };
 
