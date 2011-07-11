@@ -218,7 +218,7 @@
         },
 
         /**
-         * Retrieve the node's size based on its label. A node width of 250
+         * Retrieve the node's size based on its label. A node width of 300
          * pixels will be assumed.
          *
          * @return {Object} An object with width and height properties.
@@ -226,7 +226,7 @@
         sizeBasedOnLabel : function() {
             var privates = this._privates(identifier);
             
-            var lines = bui.util.calculateLabelPositioning(250,
+            var lines = bui.util.calculateLabelPositioning(300,
                 this.label(), privates.calculationClasses);
 
             var maxHeight = Number.MIN_VALUE;

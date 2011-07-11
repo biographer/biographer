@@ -86,7 +86,15 @@
         return true;
     };
 
-    // TODO fails on complex, also node sizes are missing, also document
+    /**
+     * Default generator for node types. This will be used when
+     * nodeJSON.generator is undefined.
+     *
+     * @param {bui.Graph} graph The graph to which the node shall be added
+     * @param {Object} nodeType Node type retrieved from the node mapping.
+     * @param {Object} nodeJSON Node information
+     * @return {bui.Node} The generated node
+     */
     var defaultNodeGenerator = function(graph, nodeType, nodeJSON) {
         var node = graph.add(nodeType.klass);
 
@@ -120,6 +128,8 @@
 
         node.size(size.width, size.height)
                 .visible(true);
+
+        return node;
     };
 
     /**
@@ -131,18 +141,28 @@
      */
     bui.importFromJSON = function(graph, data) {
         var nodes = data.nodes;
+        var generatedNodes = {};
 
         for(var i = 0; i < nodes.length; i++) {
-            // TODO: remove try-catch block
+            // TODO: remove try-catch block or use different error handling
             try {
                 var nodeJSON = nodes[i];
                 var nodeType = retrieveFrom(nodeMapping, nodeJSON.sbo);
+                var node;
 
                 if (nodeType.hasOwnProperty('generator')) {
-                    nodeType.generator(graph, nodeJSON);
+                    node = nodeType.generator(graph, nodeJSON);
                 } else {
-                    defaultNodeGenerator(graph, nodeType, nodeJSON);
+                    node = defaultNodeGenerator(graph, nodeType, nodeJSON);
                 }
+
+                var id = nodeJSON.id;
+
+                if (nodeJSON.data.ref !== undefined) {
+                    id = nodeJSON.data.ref;
+                }
+
+                generatedNodes[id] = node;
             } catch (e) {
                 console.log(e);
             }
