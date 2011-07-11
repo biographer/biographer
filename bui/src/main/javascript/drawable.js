@@ -39,6 +39,7 @@
         privates.classes = [];
         privates.visible = false;
         privates.select = false;
+        privates.json = null;
     };
 
     bui.Drawable.prototype = {
@@ -198,6 +199,29 @@
          */
         classString : function() {
             return this._privates(identifier).classes.join(' ');
+        },
+
+        /**
+         * Set some JSON meta information for this drawable. Please note that
+         * it won't be processed but only stored for later usage.
+         *
+         * @param {Object} [json] The data which you want to store within this
+         *   object. Omit to retrieve the current data.
+         * @return {Object|bui.Drawable} The stored data in case you call this
+         *   function without parameter. If you pass a parameter the data
+         *   will be stored and instance on which you called this function
+         *   will be returned (fluent interface).
+         */
+        json : function(json) {
+            var privates = this._privates(identifier);
+
+            if (json !== undefined) {
+                privates.json = json;
+
+                return this;
+            }
+
+            return privates.json;
         }
     };
 

@@ -133,22 +133,42 @@
     };
 
     /**
-     * Import nodes and edges from JSON using this function.
+     * Retrieve the node's id or the ref key if applicable.
+     *
+     * @param {Object} nodeJSON Node information
+     * @return {String} The node's id or ref key.
+     */
+    var getId = function(nodeJSON) {
+        var id = nodeJSON.id;
+
+        if (nodeJSON.data.ref !== undefined) {
+            id = nodeJSON.data.ref;
+        }
+
+        return id;
+    };
+
+    /**
+     * Import nodes.
      *
      * @param {bui.Graph} graph The target graph to which the nodes and edges
      *   should be added.
      * @param {Object} data JSON data which should be imported
+     * @return {Object} All the generated nodes. Keys of this object are the
+     *   node's ids or, if applicable, the node's ref key (node.data.ref).
      */
-    bui.importFromJSON = function(graph, data) {
-        var nodes = data.nodes;
-        var generatedNodes = {};
+    var addAllNodes = function(graph, data) {
+        var nodes = data.nodes,
+                generatedNodes = {},
+                node,
+                nodeJSON;
 
+        // add all nodes
         for(var i = 0; i < nodes.length; i++) {
             // TODO: remove try-catch block or use different error handling
             try {
-                var nodeJSON = nodes[i];
+                nodeJSON = nodes[i];
                 var nodeType = retrieveFrom(nodeMapping, nodeJSON.sbo);
-                var node;
 
                 if (nodeType.hasOwnProperty('generator')) {
                     node = nodeType.generator(graph, nodeJSON);
@@ -156,16 +176,40 @@
                     node = defaultNodeGenerator(graph, nodeType, nodeJSON);
                 }
 
-                var id = nodeJSON.id;
-
-                if (nodeJSON.data.ref !== undefined) {
-                    id = nodeJSON.data.ref;
-                }
-
-                generatedNodes[id] = node;
+                node.json(nodeJSON);
+                generatedNodes[getId(nodeJSON)] = node;
             } catch (e) {
                 console.log(e);
             }
         }
+
+        // add relationship information
+        for (var key in generatedNodes) {
+            if (generatedNodes.hasOwnProperty(key)) {
+                node = generatedNodes[key];
+                nodeJSON = node.json();
+
+                if (nodeJSON.data.subnodes !== undefined) {
+                    for (var j = 0; j <  nodeJSON.data.subnodes.length; j++) {
+                        var subNodeId = nodeJSON.data.subnodes[j];
+                        var subNode = generatedNodes[subNodeId];
+                        subNode.parent(node);
+                    }
+                }
+            }
+        }
+
+        return generatedNodes;
+    };
+
+    /**
+     * Import nodes and edges from JSON using this function.
+     *
+     * @param {bui.Graph} graph The target graph to which the nodes and edges
+     *   should be added.
+     * @param {Object} data JSON data which should be imported
+     */
+    bui.importFromJSON = function(graph, data) {
+        var generatedNodes = addAllNodes(graph, data);
     };
 })(bui);
