@@ -286,3 +286,27 @@ var toNumber = function(val) {
                 '" is a number.';
     }
 };
+
+/**
+ * Ensure that the given value is a boolean value.  If it is not an exception
+ *   will be thrown.
+ * @param {Boolean|Number|String} val The value which should be converted to
+ *   a boolean value. If you pass a boolean value it will simply be returned.
+ *   A numeric value will be result in true in case the parameter equals '1'.
+ *   All other numbers will result in false. A string will evaluate to true
+ *   when it equals (case insensitive) 'true' or '1'.
+ * @return {Boolean} The converted boolean value.
+ */
+var toBoolean = function(val) {
+    var type = typeof(val);
+
+    if (type === 'boolean') {
+        return val;
+    } else if (type === 'string') {
+        return val.toLowerCase() === 'true' || val === '1';
+    } else if (type === 'number') {
+        return val === 1;
+    } else {
+        throw 'The value: "' + val + 'can\'t be converted to boolean.';
+    }
+};
