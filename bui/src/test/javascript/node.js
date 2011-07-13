@@ -53,4 +53,45 @@ function testWith(node, x, y, width, height) {
     equal(bottomRight.y, y + height);
     equal(center.x, x + width / 2);
     equal(center.y, y + height / 2);
-}
+};
+
+test('parent-children', function() {
+    expect(15);
+
+    var graph = new bui.Graph(document.getElementById('dummy'));
+    
+    var parent = graph.add(bui.Node);
+
+    var assertAmountOfChildren = function(amount) {
+        equal(parent.children().length, amount);
+    };
+    var assertContainsChild = function() {
+        for(var i = 0; i < arguments.length; i++) {
+            var child = arguments[i];
+            ok(parent.children().indexOf(child) !== -1);
+            ok(parent === child.parent());
+        }
+    };
+
+    assertAmountOfChildren(0);
+    var child1 = graph.add(bui.Node);
+    assertAmountOfChildren(0);
+
+    child1.parent(parent);
+    assertAmountOfChildren(1);
+    assertContainsChild(child1);
+
+    var child2 = graph.add(bui.Node);
+    assertAmountOfChildren(1);
+
+    parent.addChild(child2);
+    assertAmountOfChildren(2);
+    assertContainsChild(child1, child2);
+
+    child1.parent(graph);
+    assertAmountOfChildren(1);
+    assertContainsChild(child2);
+
+    parent.removeChild(child2);
+    assertAmountOfChildren(0);
+});

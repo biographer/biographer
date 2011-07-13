@@ -199,6 +199,8 @@
             }
         }
 
+        // for all complexes that do not have a parent node
+
         return generatedNodes;
     };
 

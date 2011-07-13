@@ -259,6 +259,7 @@
         privates.width = this._minWidth;
         privates.height = this._minHeight;
         privates.parent = this.graph();
+        privates.children = [];
         privates.placeholderVisible = false;
 
         this.bind(bui.Drawable.ListenerType.remove,
@@ -540,7 +541,17 @@
             if (parent !== undefined) {
                 if (parent !== privates.parent) {
                     var old = privates.parent;
+
                     privates.parent = parent;
+
+                    if (old !== this.graph()) {
+                        old._removeChild(this);
+                    }
+
+                    if (parent !== this.graph()) {
+                        parent._addChild(this);
+                    }
+
                     this.fire(bui.Node.ListenerType.parent,
                             [this, parent, old]);
                 }
@@ -550,6 +561,68 @@
 
             return privates.parent;
         },
+
+        /**
+         * Add a child node to this node. This function call is synonymous with
+         * a child.parent(this) function call.
+         *
+         * @param {bui.Node} child The new child node
+         * @return {bui.Node} Fluent interface
+         */
+        addChild : function(child) {
+            child.parent(this);
+
+            return this;
+        },
+
+        /**
+         * Remove a child node from this node. This function call is synonymous
+         * with a child.parent(this.graph()) function call.
+         *
+         * @param {bui.Node} child The child node which should be removed
+         * @return {bui.Node} Fluent interface
+         */
+        removeChild : function(child) {
+            child.parent(this.graph());
+
+            return this;
+        },
+
+        /**
+         * @private
+         * Internal method for the addition of a child node.
+         *
+         * @param {bui.Node} child The new child
+         */
+        _addChild : function(child) {
+            this._privates(identifier).children.push(child);
+        },
+
+        /**
+         * @private
+         * Internal method for the removal of child nodes
+         *
+         * @param {bui.Node} child The child node which should be removed,
+         */
+        _removeChild : function(child) {
+            var children = this._privates(identifier).children;
+
+            var index = children.indexOf(child);
+
+            if (index !== -1) {
+                children.splice(index, 1);
+            }
+        },
+
+        /**
+         * Retrieve the node's child elements.
+         *
+         * @return {bui.Node[]} Child elements.
+         */
+        children : function() {
+            return this._privates(identifier).children;
+        },
+
 
         /**
          * @private
