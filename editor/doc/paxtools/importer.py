@@ -14,8 +14,9 @@ javaIO = JPackage("java.io")
 io = paxtools.io.SimpleIOHandler( paxtools.model.BioPAXLevel.L3 )
 
 # read from file
-fileIS = javaIO.FileInputStream("example.owl")
+fileIS = javaIO.FileInputStream("biopax-level3.owl")
 model = io.convertFromOWL(fileIS)
+
 io.convertToOWL(model, java.lang.System.out)
 
 # Shutdown Java Virtual Machine
