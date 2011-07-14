@@ -21,7 +21,6 @@ print "Java Class Path: \t", java.lang.System.getProperty("java.class.path")
 # get the paxtools package as a shortcut
 paxPkg = JPackage("org.biopax.paxtools")
 
-
 # short form e.g. Document = JPackage('org').w3c.dom.Document
 # create a new BioPAX model to add data to
 l3Factory = paxPkg.impl.level3.Level3FactoryImpl()

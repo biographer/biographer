@@ -58,9 +58,9 @@
 				visibility:	hidden;
 				}
 	#divImportMenu:hover	{
-				height:		230px;
+				height:		180px;
 				cursor:		pointer;
-				background:	#eee;
+				background:	#eaeaea;
 				}
 	#appname		{
 				color: #cccccc;
@@ -77,6 +77,7 @@
 				}
 	#statusbar, #footer	{
 				background:	#eaeaea; 
+				color:		black;
 				border-top:	1px solid black;
 				border-bottom:	1px solid black;
 				}
@@ -130,7 +131,11 @@
 <a class=MenuLink href="{{=URL(r=request, c='Visualization', f='index')}}">Visualization</a>
 <a class=MenuLink href="{{=URL(r=request, c='graphviz', f='draw')}}">graphviz</a>
 
-{{end}}               
+&nbsp;&nbsp;&nbsp;&nbsp;Project:
+<a class=MenuLink href="http://code.google.com/p/biographer/">Home</a>
+<a class=MenuLink href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a>
+
+{{end}}
 
 </div><!-- statusbar -->
 
@@ -144,14 +149,14 @@
 	<a class=MenuLink href="{{=URL(r=request, c='Reactome', f='importer')}}">Reactome</a><br/>
 	<a class=MenuLink href="{{=URL(r=request, c='BioPAX', f='importer')}}">BioPAX</a><br/>
 	<a class=MenuLink href="{{=URL(r=request, c='PID', f='importer')}}">PID</a><br/>
-	<a class=MenuLink href="{{=URL(r=request, c='BioCarta', f='importer')}}">BioCarta</a><br/>
-<!--	<a class=MenuLink href={{=URL(r=request, c='PathVisio', f='importer')}}>PathVision</a><br/>
+<!--	<a class=MenuLink href="{{=URL(r=request, c='BioCarta', f='importer')}}">BioCarta</a><br/>
+	<a class=MenuLink href={{=URL(r=request, c='PathVisio', f='importer')}}>PathVision</a><br/>
 	<a class=MenuLink href={{=URL(r=request, c='WikiPathways', f='importer')}}>WikiPathways</a><br/>	-->
 </div>
 
 <script>
 	divImportMenu = document.getElementById('divImportMenu');
-	divImportMenu.style.left = document.body.clientWidth / 2;
+	divImportMenu.style.left = document.body.clientWidth*0.7 + "px";
 	divImportMenu.style.visibility = "visible";
 </script>
     
