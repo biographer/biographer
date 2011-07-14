@@ -10,11 +10,14 @@ reload(biographer)
 # END WORKAROUND
 
 import os
+from copy import deepcopy
 
 def draw():
-	reload(biographer)
 	if session.bioGraph is not None:
-		dot, filename, cached	= session.bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
+		server_object		= deepcopy( session.bioGraph )
+		del session.bioGraph
+		dot, filename, cached	= server_object.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
+		session.bioGraph	= server_object
 		url			= URL(r=request, c="static/graphviz", f=filename)
 		if cached:
 			response.flash = "Graphviz layout loaded from cache"
@@ -24,3 +27,5 @@ def draw():
 	else:
 		response.flash = "You must import a Graph first !"
 		return dict( url="", dot="" )
+
+

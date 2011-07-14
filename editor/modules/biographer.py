@@ -511,14 +511,24 @@ class Graph:
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		G = pygraphviz.AGraph(directed=True)
 
+		changes = False
+
 		for node in self.Nodes:
-			if (not node.is_abstract) and (self.EdgeCount(node.id) > 0):
+			if (not node.is_abstract) and (self.EdgeCount(node) > 0):
 				G.add_node( str(node.id),
 					label=node.id if "label" not in node.data else str(node.data["label"]),
 					shape='ellipse' if node.type != TYPE["process node"] else 'box' )
+			elif updateNodeProperties:
+				self.Nodes.pop( self.Nodes.index(node) )
+				changes = True
+				self.DEBUG += "Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.\n"
+
 		for edge in self.Edges:
 			G.add_edge( str(edge.source), str(edge.target),
 				    arrowhead='normal' if edge.sbo in [ SBO['consumption'], SBO['production'] ] else 'tee' )
+
+		if changes:
+			self.initialize()	# re-hash
 
 		png = self.MD5+".png"
 		dot = self.MD5+".dot"
@@ -541,32 +551,40 @@ class Graph:
 			open(spath,'w').write(strGraph)
 
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
+		changes = False
 		if updateNodeProperties:
 			for node in self.Nodes:
 				p = self.dot.find("\t"+str(node.id)+"\t")
 				if p > -1:
 					q = self.dot.find(";", p)
 					node.setByGraphviz( self.dot[p:q] )
+				else:
+					self.Nodes.pop( self.Nodes.index(node) )
+					changes = True
+					self.DEBUG += "Warning: Updating Node "+str(node.id)+" from graphviz output failed! Node deleted.\n"
+		if changes:
+			self.initialize()
+
 		return self.dot, png, cached
 
 
 	### basic functions on Graph properties ###
 
-	def EdgesOfNode(self, nodeID):						# returns an array of Edge IDs, pointing from/to the specified Node
+	def EdgesOfNode(self, node):						# returns an array of Edge IDs, pointing from/to the specified Node
 		edges = []
 		for e in self.Edges:
-			if e.source == nodeID or e.target == nodeID:
-				edges.append( e.id )
+			if e.source == node.id or e.target == node.id:
+				edges.append( e )
 		return edges
 
 	def NodeCount(self):
 		return len(self.Nodes)
 
-	def EdgeCount(self, nodeID=None):
-		if nodeID == None:
+	def EdgeCount(self, node=None):
+		if node == None:
 			return len( self.Edges )
 		else:
-			return len( self.EdgesOfNode(nodeID) )
+			return len( self.EdgesOfNode(node) )
 
 
 	### functions for really doing something with the Graph ###
