@@ -15,7 +15,42 @@ Example:<br/>
 
 <hr/>
 
-For more information on the BioPAX format, please visit <a href="http://www.biopax.org/">http://www.biopax.org/</a>.
+For more information on the BioPAX format, please visit <a href="http://www.biopax.org/">http://www.biopax.org/</a>.<br/>
+
+<hr/>
+
+Simple installation:<br/>
+get paxtools-4.0.0-20110705-no-jena.jar from https://sourceforge.net/projects/biopax/files/paxtools/<br/>
+<pre>
+ apt-get install python-jpype openjdk-6-jdk maven2
+ export JAVA_HOME=/usr/lib/jvm/java-6-openjdk
+ cd /usr/lib
+ wget "https://downloads.sourceforge.net/project/biopax/paxtools/paxtools-4.0.0-20110705-no-jena.jar" --no-check-certificate
+</pre>
+
+Manually:<br/>
+<pre>
+ cvs -d:pserver:anonymous@biopax.cvs.sourceforge.net:/cvsroot/biopax login
+ cvs -z3 -d:pserver:anonymous@biopax.cvs.sourceforge.net:/cvsroot/biopax co -P paxtools
+ cd paxtools
+ mvn test
+ mvn compile
+ ...
+ follow python-readme.txt
+</pre>
+
+<hr/>
+
+Problem:
+<pre>
+Traceback ...
+    if os.path.exists(java_home+"/bin/javac") :
+TypeError: unsupported operand type(s) for +: 'NoneType' and 'str
+</pre>
+Solution:
+<pre>
+ export JAVA_HOME=/usr/lib/jvm/java-6-openjdk
+</pre>
 
 </form>
 

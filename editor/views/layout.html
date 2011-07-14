@@ -8,7 +8,7 @@
     <meta name="google-site-verification" content="" />
 
     <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
-    <script src="{{=URL('static','js/modernizr-1.7.min.js')}}"></script>
+    <script src="{{=URL('static','js/modernizr-1.7.min.js')}}"> </script>
     
     {{#------  require CSS and JS files for this page (read info in base.css) ------}}
     {{response.files.append(URL('static','css/base.css'))}}
@@ -125,9 +125,9 @@
       </script-->
       <div style="clear: both;"></div><!-- Clear the divs -->
 
-<a class=MenuLink href={{=URL(r=request, c='Workbench', f='index')}}>Workbench</a>
-<a class=MenuLink href={{=URL(r=request, c='Visualizer', f='index')}}>Visualizer</a>
-<a class=MenuLink href={{=URL(r=request, c='graphviz', f='draw')}}>graphviz</a>
+<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='index')}}">Workbench</a>
+<a class=MenuLink href="{{=URL(r=request, c='Visualizer', f='index')}}">Visualizer</a>
+<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='draw')}}">graphviz</a>
 
 {{end}}               
 
@@ -136,14 +136,14 @@
 <div id="divImportMenu">
 	Import
 	<br/>
-	<a class=MenuLink href={{=URL(r=request, c='JSON', f='importer')}}>JSON</a><br/>
-	<a class=MenuLink href={{=URL(r=request, c='ODP', f='importer')}}>ODP</a><br/>
-	<a class=MenuLink href={{=URL(r=request, c='SBML', f='importer')}}>SBML</a><br/>
-	<a class=MenuLink href={{=URL(r=request, c='BioModels', f='importer')}}>BioModels.net</a><br/>
-	<a class=MenuLink href={{=URL(r=request, c='Reactome', f='importer')}}>Reactome</a><br/>
-	<a class=MenuLink href={{=URL(r=request, c='BioPAX', f='importer')}}>BioPAX</a><br/>
-	<a class=MenuLink href={{=URL(r=request, c='PID', f='importer')}}>PID</a><br/>
-	<a class=MenuLink href={{=URL(r=request, c='BioCarta', f='importer')}}>BioCarta</a><br/>
+	<a class=MenuLink href="{{=URL(r=request, c='JSON', f='importer')}}">JSON</a><br/>
+	<a class=MenuLink href="{{=URL(r=request, c='ODP', f='importer')}}">ODP</a><br/>
+	<a class=MenuLink href="{{=URL(r=request, c='SBML', f='importer')}}">SBML</a><br/>
+	<a class=MenuLink href="{{=URL(r=request, c='BioModels', f='importer')}}">BioModels.net</a><br/>
+	<a class=MenuLink href="{{=URL(r=request, c='Reactome', f='importer')}}">Reactome</a><br/>
+	<a class=MenuLink href="{{=URL(r=request, c='BioPAX', f='importer')}}">BioPAX</a><br/>
+	<a class=MenuLink href="{{=URL(r=request, c='PID', f='importer')}}">PID</a><br/>
+	<a class=MenuLink href="{{=URL(r=request, c='BioCarta', f='importer')}}">BioCarta</a><br/>
 <!--	<a class=MenuLink href={{=URL(r=request, c='PathVisio', f='importer')}}>PathVision</a><br/>
 	<a class=MenuLink href={{=URL(r=request, c='WikiPathways', f='importer')}}>WikiPathways</a><br/>	-->
 </div>
