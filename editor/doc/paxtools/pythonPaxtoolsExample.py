@@ -60,9 +60,9 @@ io = paxPkg.io.SimpleIOHandler(paxPkg.model.BioPAXLevel.L3)
 io.convertToOWL(model, java.lang.System.out)
 
 # output to a file
-# fileOS = javaIO.FileOutputStream("test.owl")
-# io.convertToOWL(model, fileOS)
-# fileOS.close()
+fileOS = javaIO.FileOutputStream("test.owl")
+io.convertToOWL(model, fileOS)
+fileOS.close()
 
 # read from file
 fileIS = javaIO.FileInputStream("test.owl")
