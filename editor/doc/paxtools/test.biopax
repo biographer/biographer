@@ -10,7 +10,7 @@
 
 <bp:CellularLocationVocabulary rdf:about="cellularLocationVocabulary1">
  <bp:term rdf:datatype = "xsd:string">cytoplasm</bp:term>
- <bp:comment rdf:datatype = "xsd:string">comment</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">The cytoplasm is where most of the magic happens.</bp:comment>
 </bp:CellularLocationVocabulary>
 
 <bp:Protein rdf:about="protein1">
