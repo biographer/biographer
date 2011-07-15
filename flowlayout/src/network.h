@@ -48,7 +48,7 @@ protected:
    bool near_swap();
    float swap_force(int p1, int p2);
    bool edge_cross(int i, int j); //whether edge-i and egde-j cross each other.
-   float min_edge_crossing();
+   float min_edge_crossing(int deglim);
    
    
    VP pos, mov;

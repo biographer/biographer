@@ -479,7 +479,7 @@ float Network::post_pro(){
             vec.y=0.0;
          }
          else{
-            vec.x=vec.x*(i_d-d)/d;
+            vec.x=10*vec.x*(i_d-d)/d;
             vec.y=vec.y*(i_d-d)/d;
          }
          if(fabs(vec.y)<zero){
@@ -512,20 +512,23 @@ bool Network::near_swap(){
    return flag;
 }  
 
-float Network::min_edge_crossing(){
+float Network::min_edge_crossing(int deglim){
    int a1,a2,b1,b2,i,j,mindeg;
    int m=edges->size();
    float force=0.0;
    Point tem1, tem2;
    for(i=0;i<m;i++)
-      for(j=i+1;j<m;j++){
+      for(j=i+1;j<m;j++){                         
          if(!edge_cross(i,j))continue;
          force+=1.0;
          a1=(*edges)[i].from;
          a2=(*edges)[i].to;
          b1=(*edges)[j].from;
          b2=(*edges)[j].to;
+         if(a1==a2)continue;
+         if(b1==b2)continue;
          mindeg=min_four(deg[a1],deg[a2],deg[b1],deg[b2]); //the node with minimum connections.
+         if(mindeg>deglim)continue;
          if(mindeg==deg[a1]){ //rotate a1 around a2;
             tem1=pos[a2]+pos[b2]-pos[b1];
             tem2=pos[a2]+pos[b1]-pos[b2];
@@ -593,7 +596,7 @@ float Network::layout(){
    k=0;
    while(flag){
       flag=swap_node();
-      min_edge_crossing();
+      //min_edge_crossing(10);
       if(k<10)near_swap();
       k++;
       if(k>n)break;
@@ -619,6 +622,7 @@ float Network::layout(){
    while(true){     
       k++;
       cur_force=0.0;
+      //if(k<200)cur_force+=min_edge_crossing(200/k);
       if(100<k)cur_force+=firm_distribution(); //firmly ditribute edges about a compound;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
@@ -656,6 +660,7 @@ float Network::layout(){
    printf("Total force = %0.3f\n",cur_force); 
    
    //phase4: post processing.
+   min_edge_crossing(1);
    pre_force=inf;
    k=inc=0;
    while(true){
