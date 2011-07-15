@@ -65,7 +65,7 @@ bui.settings = {
      * The url from which the CSS file should be imported and CSS classes
      */
     css : {
-        stylesheetUrl : 'resources/css/visualization-svg.css',
+        stylesheetUrl : '../static/Visualization/test/resources/css/visualization-svg.css',
         classes : {
             invisible : 'hidden',
             selected : 'selected',
