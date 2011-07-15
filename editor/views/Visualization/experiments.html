@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Biographer-ui Test Suite</title>
+
+    <link rel="stylesheet" type="text/css" href="{{=URL(r=request, c="static", f="Visualization")}}/test/resources/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="{{=URL(r=request, c="static", f="Visualization")}}/test/resources/css/jquery-ui-1.8.13.css" />
+
+	<script type="text/javascript" src="{{=URL(r=request, c="static", f="Visualization")}}/test/resources/js/jquery-1.6.min.js"></script>
+    <script type="text/javascript" src="{{=URL(r=request, c="static", f="Visualization")}}/test/resources/js/jquery.simulate.js"></script>
+	<script type="text/javascript" src="{{=URL(r=request, c="static", f="Visualization")}}/test/resources/js/jquery-ui-1.8.12.custom.min.js"></script>
+    <script type="text/javascript" src="{{=URL(r=request, c="static", f="Visualization")}}/test/resources/js/biographer-ui.js"></script>
+    <script type="text/javascript" src="{{=URL(r=request, c="static", f="Visualization")}}/test/resources/examples/simple.js"></script>
+    <script type="text/javascript" src="{{=URL(r=request, c="static", f="Visualization")}}/test/resources/examples/complex.js"></script>
+
+    <script type="text/javascript">
+
+
+        bui.ready(function() {
+            graph = new bui.Graph(document.getElementsByTagName('body')[0]);
+
+            outterComplex = graph
+                .add(bui.Complex)
+                .position(100, 100)
+                .size(215, 240)
+                .visible(true);
+
+            simpleChemical = graph
+                .add(bui.SimpleChemical)
+                .position(300, 300)
+                .size(150, 150)
+                .label('Simple Chemical')
+                .visible(true);
+
+            nucleic = graph
+                .add(bui.NucleicAcidFeature)
+                .position(30, 140)
+                .size(150, 75)
+                .parent(outterComplex)
+                .label('IRF1-GAS')
+                .visible(true);
+            graph.add(bui.UnitOfInformation)
+                .position(40, -13)
+                .parent(nucleic)
+                .label('ct:grr')
+                .visible(true);
+
+            innerComplex = graph
+                .add(bui.Complex)
+                .position(10, 10)
+                .size(195, 110)
+                .parent(outterComplex)
+                .visible(true);
+
+            macromolecule = graph
+                .add(bui.Macromolecule)
+                .position(20, 20)
+                .size(150, 70)
+                .parent(innerComplex)
+                .label('STAT1a')
+                .visible(true);
+
+            graph.add(bui.StateVariable)
+                .position(13, -14)
+                .parent(macromolecule)
+                .label('P@Y701')
+                .visible(true);
+            graph.add(bui.StateVariable)
+                .position(80, -14)
+                .parent(macromolecule)
+                .label('P@Y727')
+                .visible(true);
+            graph.add(bui.UnitOfInformation)
+                .position(50, 53)
+                .parent(macromolecule)
+                .label('mt:prot')
+                .visible(true);
+
+            compartment = graph
+                .add(bui.Compartment)
+                .position(400, 40)
+                .size(150, 75)
+                .visible(true);
+            compartment.label('cytosol');
+
+            unspecifiedEntity = graph
+                .add(bui.UnspecifiedEntity)
+                .position(500, 500)
+                .size(200, 140)
+                .label('Unspecified')
+                .visible(true);
+
+            process = graph
+                    .add(bui.Process)
+                    .position(440, 250)
+                    .visible(true);
+
+            spline = graph
+                    .add(bui.Spline)
+                    .source(process)
+                    .target(compartment);
+
+            edge = graph
+                    .add(bui.Edge)
+                    .source(simpleChemical)
+                    .target(compartment)
+                    .visible(true);
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
