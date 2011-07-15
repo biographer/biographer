@@ -31,6 +31,10 @@ Please enter your BioModels ID:
 	document.main.BioModelsID.addEventListener("DOMCharacterDataModified", Check(), true);
 	document.main.BioModelsID.focus();
 
+	function Open() {
+		window.location.href = "http://www.ebi.ac.uk/biomodels-main/download?mid=BIOMD"+document.main.BioModelsID.value;
+		}
+
 	function Load( ID ) {
 		document.main.BioModelsID.value = ID;
 		document.main.submit();
@@ -41,6 +45,7 @@ Please enter your BioModels ID:
 
 <br/>
 
+<input type=button name=Open value="Open" onClick="Open();" />
 <input type=submit name=Submit value="Load" style="visibility:hidden;" />
 
 <hr/>
@@ -51,32 +56,21 @@ Please enter your BioModels ID:
 			}
 </style>
 
-<script>
-	function loadPrevious() {
-		Load( document.main.Previous.value );
-		}
-</script>
-
 Previously used BioModels:<br/>
-<select name=Previous class=Previous onChange="loadPrevious();">
+<select name=Previous class=Previous onChange="Load(this.value);">
+	<option value="" selected></option>
 {{ for row in session.PreviousBioModels: }}
-	<option value="{{ =row.BIOMD }}">{{ =row.BIOMD }} - {{ =row.Title }}</option>
+	<option value="{{ =row.BIOMD }}">BIOMD{{ =row.BIOMD }} - {{ =row.Title }}</option>
 {{ pass }}
 </select>
 
 <hr/>
 
-<script>
-	function loadExample() {
-		Load( "245" );
-		}
-</script>
-
 Example:
 <br/>
 <a href="http://www.ebi.ac.uk/biomodels-main/BIOMD0000000245">Yeast Aerobic Metabolism</a>
 <br/>
-<input type=button value="Load this pathway" onClick="loadExample();"/>
+<input type=button value="Load this pathway" onClick="Load('245');"/>
 
 <hr/>
 

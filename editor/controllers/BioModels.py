@@ -6,7 +6,6 @@ hardcoded = "/var/www/web2py/applications/biographer/modules"
 if not hardcoded in sys.path:
 	sys.path.append(hardcoded)
 import biographer
-reload(biographer)
 # END WORKAROUND
 
 import os
@@ -15,6 +14,20 @@ import httplib
 def importer():
 	session.PreviousBioModels = db( db.BioModels.Title != None ).select()
 	return dict()
+
+def update_database():
+	key = 'name="'
+	p = session.SBML.find(key)
+	if p > -1:
+		p += len(key)
+		q = session.SBML.find('"',p)
+		name = session.SBML[p:q].replace("_"," ")
+		if len(db( db.BioModels.BIOMD == session.BioModelsID ).select()) == 0:
+			db.BioModels.insert( BIOMD=session.BioModelsID, Title=name )
+		print session.BioModelsID
+		print name
+	else:
+		print "not found"
 
 def download():
 	session.JSON = None
@@ -40,6 +53,8 @@ def download():
 		else:
 			open(cachename,'w').write( session.SBML )
 			session.bioGraph.importSBML( session.SBML )
+			update_database()
 			session.flash = "BioModel's SBML retrieved successfully"
 
 	return redirect( URL(r=request, c='Workbench', f='index') )
+

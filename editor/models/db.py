@@ -19,5 +19,5 @@ db = DAL('sqlite://biographer.sqlite')
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
-db.define_table('BioModels', Field('BIOMD','integer'), Field('Title','string') )
+db.define_table('BioModels', Field('BIOMD','string'), Field('Title','string') )
 
