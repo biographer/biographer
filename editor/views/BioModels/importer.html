@@ -31,8 +31,8 @@ Please enter your BioModels ID:
 	document.main.BioModelsID.addEventListener("DOMCharacterDataModified", Check(), true);
 	document.main.BioModelsID.focus();
 
-	function Example() {
-		document.main.BioModelsID.value = "245";
+	function Load( ID ) {
+		document.main.BioModelsID.value = ID;
 		document.main.submit();
 		}
 </script>
@@ -45,11 +45,38 @@ Please enter your BioModels ID:
 
 <hr/>
 
+<style>
+	select.Previous	{
+			width:		800px;
+			}
+</style>
+
+<script>
+	function loadPrevious() {
+		Load( document.main.Previous.value );
+		}
+</script>
+
+Previously used BioModels:<br/>
+<select name=Previous class=Previous onChange="loadPrevious();">
+{{ for row in session.PreviousBioModels: }}
+	<option value="{{ =row.BIOMD }}">{{ =row.BIOMD }} - {{ =row.Title }}</option>
+{{ pass }}
+</select>
+
+<hr/>
+
+<script>
+	function loadExample() {
+		Load( "245" );
+		}
+</script>
+
 Example:
 <br/>
 <a href="http://www.ebi.ac.uk/biomodels-main/BIOMD0000000245">Yeast Aerobic Metabolism</a>
 <br/>
-<input type=button value="Load this pathway" onClick="Example();"/>
+<input type=button value="Load this pathway" onClick="loadExample();"/>
 
 <hr/>
 

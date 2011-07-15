@@ -13,6 +13,7 @@ import os
 import httplib
 
 def importer():
+	session.PreviousBioModels = db( db.BioModels.Title != None ).select()
 	return dict()
 
 def download():
