@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# http://www.web2py.com/book/default/chapter/06
+
 db = DAL('sqlite://biographer.sqlite')
 
 #########################################################################
