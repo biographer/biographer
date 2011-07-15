@@ -24,8 +24,11 @@ VI * Network::getNeighbors(int nodeIndex, Edgetype type){
    arr->clear();
    int i,n=(*nodes)[nodeIndex].neighbors->size();
    for(i=0;i<n;i++)
-      if((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].pts.type==type)
-         arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
+      if((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].pts.type==type){
+         if((*nodes)[nodeIndex].pts.type==reaction)
+            arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
+         else arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].from);
+      }
    return arr;
 }
 

@@ -11,13 +11,23 @@ struct comp_y{
 float Network::get_dij1(int i, int j){ //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
-   return (sqrt(x)+sqrt(y))*1;
+   return (sqrt(x)+sqrt(y))*1.0;
 }
 
 float Network::get_dij2(int i, int j){ //minimum distance between non-adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
    return 3*(sqrt(x)+sqrt(y));
+}
+
+bool Network::edge_cross(int i, int j){ //whether edge-i and edge-j cross each other.
+   int a1,a2,b1,b2;
+   a1=(*edges)[i].from;
+   a2=(*edges)[i].to;
+   b1=(*edges)[j].from;
+   b2=(*edges)[j].to;
+   if((pos[a1]-pos[b1])*(pos[a2]-pos[b1])<0 && (pos[a1]-pos[b2])*(pos[a2]-pos[b2])<0)return true;
+   return false;
 }
 
 float Network::calc_force_adj(){
@@ -257,31 +267,33 @@ bool Network::swap_node(){
 } 
       
 float Network::firm_distribution(){
-   int i,j,k,m,n=nodes->size(),tem;
+   int i,j,k,m,n=nodes->size(),tem,lnk;
    VI *neighbors;
    float average,beta,d,force=0.0;
    Point baseNode;
-   for(k=0;k<n;k++){
-      if((*nodes)[k].pts.type!=compound)continue;
-      neighbors= getNeighbors(k);
-      m=neighbors->size();
-      if(m<10)continue;
-      baseNode=pos[k];
-      for(i=0;i<m-1;i++)
-         for(j=i+1;j<m;j++)
-            if(lim(angle(pos[(*neighbors)[j]]-baseNode))<lim(angle(pos[(*neighbors)[i]]-baseNode))){
-               tem=(*neighbors)[i];(*neighbors)[i]=(*neighbors)[j];(*neighbors)[j]=tem;
-            }               
-      average=2.0*PI/m;
-      for(i=0;i<m-1;i++){
-         j=i+1;
-         beta=lim(angle(pos[(*neighbors)[i]]-baseNode)+average-angle(pos[(*neighbors)[j]]-baseNode));
-         d=dist(pos[(*neighbors)[i]],baseNode);
-         force+=(d*d*sin(0.5*fabs(beta)));
-         mov[j]=mov[j]+(to_left(pos[(*neighbors)[j]]-baseNode,beta*0.1)-pos[(*neighbors)[j]]+baseNode);
+   for(lnk=0;lnk<2;lnk++)
+      for(k=0;k<n;k++){
+         if((*nodes)[k].pts.type!=compound)continue;
+         if(lnk==0)neighbors= getNeighbors(k, product);
+         else neighbors= getNeighbors(k,substrate);
+         m=neighbors->size();
+         if(m<4)continue;
+         baseNode=pos[k];
+         for(i=0;i<m-1;i++)
+            for(j=i+1;j<m;j++)
+               if(lim(angle(pos[(*neighbors)[j]]-baseNode)+pts_dir[k])<lim(angle(pos[(*neighbors)[i]]-baseNode)+pts_dir[k])){
+                  tem=(*neighbors)[i];(*neighbors)[i]=(*neighbors)[j];(*neighbors)[j]=tem;
+               }               
+         average=(lim(angle(pos[(*neighbors)[m-1]]-baseNode))-lim(angle(pos[(*neighbors)[0]]-baseNode)))/(m-1);
+         for(i=0;i<m-1;i++){
+            j=i+1;
+            beta=lim(angle(pos[(*neighbors)[i]]-baseNode)+average-angle(pos[(*neighbors)[j]]-baseNode));
+            d=dist(pos[(*neighbors)[i]],baseNode);
+            force+=(d*d*sin(0.5*fabs(beta)));
+            mov[j]=mov[j]+(to_left(pos[(*neighbors)[j]]-baseNode,beta*0.1)-pos[(*neighbors)[j]]+baseNode);
+         }
+         neighbors->clear();
       }
-      neighbors->clear();
-   }
    return force;
 }
 
@@ -468,7 +480,11 @@ float Network::post_pro(){
          }
          else{
             vec.x=vec.x*(i_d-d)/d;
-            vec.y=vec.x*(i_d-d)/d;
+            vec.y=vec.y*(i_d-d)/d;
+         }
+         if(fabs(vec.y)<zero){
+            if(rand()%2)vec.y=1.0;
+            else vec.y=-1.0;
          }
          mov[n1].x+=(vec.x/n);mov[n1].y+=(vec.y/n);
          mov[n2].x-=(vec.x/n);mov[n2].y-=(vec.y/n);
@@ -494,7 +510,49 @@ bool Network::near_swap(){
          }
       }
    return flag;
-}    
+}  
+
+float Network::min_edge_crossing(){
+   int a1,a2,b1,b2,i,j,mindeg;
+   int m=edges->size();
+   float force=0.0;
+   Point tem1, tem2;
+   for(i=0;i<m;i++)
+      for(j=i+1;j<m;j++){
+         if(!edge_cross(i,j))continue;
+         force+=1.0;
+         a1=(*edges)[i].from;
+         a2=(*edges)[i].to;
+         b1=(*edges)[j].from;
+         b2=(*edges)[j].to;
+         mindeg=min_four(deg[a1],deg[a2],deg[b1],deg[b2]); //the node with minimum connections.
+         if(mindeg==deg[a1]){ //rotate a1 around a2;
+            tem1=pos[a2]+pos[b2]-pos[b1];
+            tem2=pos[a2]+pos[b1]-pos[b2];
+            if(dist(tem1,pos[a1])<dist(tem2,pos[a1]))pos[a1]=tem1;
+            else pos[a1]=tem2;
+         }
+         else if(mindeg==deg[a2]){
+            tem1=pos[a1]+pos[b2]-pos[b1];
+            tem2=pos[a1]+pos[b1]-pos[b2];
+            if(dist(tem1,pos[a2])<dist(tem2,pos[a2]))pos[a2]=tem1;
+            else pos[a2]=tem2;
+         }
+         else if(mindeg==deg[b1]){
+            tem1=pos[b2]+pos[a2]-pos[a1];
+            tem2=pos[b2]+pos[a1]-pos[a2];
+            if(dist(tem1,pos[b1])<dist(tem2,pos[b1]))pos[b1]=tem1;
+            else pos[b1]=tem2;
+         }
+         else{
+            tem1=pos[b1]+pos[a2]-pos[a1];
+            tem2=pos[b1]+pos[a1]-pos[a2];
+            if(dist(tem1,pos[b2])<dist(tem2,pos[b2]))pos[b2]=tem1;
+            else pos[b2]=tem2;
+         }
+      }
+   return force;
+}      
      
 float Network::layout(){
        
@@ -519,7 +577,7 @@ float Network::layout(){
 
    float cur_force,pre_force=inf;  
    int k, inc;
-   
+ 
    //phase 1. initialization
    k=inc=0;
    while(true){
@@ -535,6 +593,7 @@ float Network::layout(){
    k=0;
    while(flag){
       flag=swap_node();
+      min_edge_crossing();
       if(k<10)near_swap();
       k++;
       if(k>n)break;
@@ -553,7 +612,7 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
-     
+
    //phase 2: adj and nadj.
    k=inc=0;
    pre_force=inf;
@@ -572,7 +631,7 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
-   
+  
    init_compartments();
    
    //phase 3: bring in compartments;
@@ -595,10 +654,12 @@ float Network::layout(){
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force); 
-  
+   
    //phase4: post processing.
    pre_force=inf;
+   k=inc=0;
    while(true){
+      k++;
       near_swap();
       cur_force=post_pro();
       move_nodes();
@@ -608,6 +669,8 @@ float Network::layout(){
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       pre_force=cur_force;
    } 
+   printf("number of iteration: %d\n",k);    
+   printf("Total force = %0.3f\n",cur_force); 
    
    cout<<endl;
    for(i=1;i<compartments->size();i++){
@@ -637,8 +700,14 @@ float Network::layout(){
    pos.clear();
    mov.clear();
    dij1.clear();
-   for(i=0;i<n;i++)dij2[i].clear();
+   for(i=0;i<n;i++){
+      dij2[i].clear();
+      isadj[i].clear();
+   }
    dij2.clear();
+   isadj.clear();
+   mov_dir.clear();
+   deg.clear();
    free(above_comp);
    
    return cur_force;

@@ -16,7 +16,7 @@ int main(){
     for(i=0;i<c;i++){
        scanf("%d %s\n",&_index,t);
        nw.addCompartment(_index,t);
-    }  
+    } 
     scanf("%s\n",s); // "///"  
     scanf("%d",&n);
     for(i=0;i<n;i++){

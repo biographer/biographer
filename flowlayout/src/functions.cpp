@@ -14,6 +14,10 @@ Point operator-(const Point p1, const Point p2){
    return p;   
 }
 
+float operator*(const Point p1, const Point p2){
+   return p1.x*p2.y-p1.y*p2.x;
+}
+
 Point to_left(const Point p0, const float beta){
    float alpha=angle(p0), d=norm(p0);
    Point p;
@@ -44,6 +48,13 @@ float lim(float beta){
    if(beta<-PI)beta+=(2*PI);
    if(beta>PI)beta-=(2*PI);
    return beta;
+}
+
+int min_four(int a1,int a2,int a3,int a4){
+   if(a2<a1)a1=a2;
+   if(a3<a1)a1=a3;
+   if(a4<a1)a1=a4;
+   return a1;
 }
       
   
