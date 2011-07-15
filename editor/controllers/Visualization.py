@@ -1,7 +1,17 @@
 # -*- coding: utf-8 -*-
 
 def index():
-	# fürs erste: ODP output anzeigen
-	# später: Bens JavaScript
+	return dict()
+
+def complexExample():
+	return dict()
+
+def simpleExample():
+	return dict()
+
+def experiments():
+	return dict()
+
+def test():
 	return dict()
 
