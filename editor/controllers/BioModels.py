@@ -22,12 +22,8 @@ def update_database():
 		p += len(key)
 		q = session.SBML.find('"',p)
 		name = session.SBML[p:q].replace("_"," ")
-		if len(db( db.BioModels.BIOMD == session.BioModelsID ).select()) == 0:
+		if len( db( db.BioModels.BIOMD == session.BioModelsID ).select() ) == 0:
 			db.BioModels.insert( BIOMD=session.BioModelsID, Title=name )
-		print session.BioModelsID
-		print name
-	else:
-		print "not found"
 
 def download():
 	session.JSON = None
@@ -36,11 +32,15 @@ def download():
 		session.bioGraph = biographer.Graph()
 
 	session.BioModelsID = request.vars.BioModelsID.rjust(10, "0")
-	cachename = os.path.join( request.folder, "static/BioModels.net", session.BioModelsID+".sbml" )
+	cachefolder = os.path.join( request.folder, "static/BioModels.net" )
+	if not os.path.exists( cachefolder ):
+		os.mkdir( cachefolder )
+	cachename = os.path.join( cachefolder, session.BioModelsID+".sbml" )
 
 	if os.path.exists( cachename ):
 		session.SBML = open(cachename).read()
 		session.bioGraph.importSBML( session.SBML )
+		update_database()
 		session.flash = "BioModel's SBML loaded from cache"
 	else:
 		connection = httplib.HTTPConnection("www.ebi.ac.uk")
