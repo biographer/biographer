@@ -40,7 +40,7 @@ protected:
    float calc_force_nadj(); //calculating the force resulted from non-adjacent nodes;
    float calc_force_compartments(); //calculating force obeying compartments;
    float firm_distribution(); //firmly distribute the edges around a compound.
-   float post_pro();
+   float post_pro(int _round);
    void move_nodes(); //move the nodes to a new position.
    void init_compartments(); //initialize the compartment boundaries;
    void adjust_compartments(); //adjusting the boundaries of compartments.

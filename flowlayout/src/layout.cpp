@@ -441,7 +441,7 @@ float Network::init_layout(){
    return force;
 }
    
-float Network::post_pro(){
+float Network::post_pro(int _round){
    int m=edges->size(),n=nodes->size(),n1,n2,i;
    float d,i_d,force=0.0;
    Point vec;
@@ -450,11 +450,11 @@ float Network::post_pro(){
                     
       n1=(*edges)[i].from; //reaction
       n2=(*edges)[i].to; //compound;
-      
+      if(_round==1 && deg[n1]>2 && deg[n2]>2)continue;
       vec=pos[n2]-pos[n1];
       i_d=dij1[i]*0.5;
       d=dist(pos[n1],pos[n2]);
-      if(d<i_d)continue;
+      if(d<i_d && d>i_d*0.5)continue;
       force+=((d-i_d)*(d-i_d));
 
       //distantal movements;
@@ -463,7 +463,7 @@ float Network::post_pro(){
       mov[n1].x-=(vec.x/d*(i_d-d)/n);
       mov[n1].y-=(vec.y/d*(i_d-d)/n);
    }
-   
+   if(_round==1)return force;
    for(n1=0;n1<n;n1++)
       for(n2=n1+1;n2<n;n2++){
          if(isadj[n1][n2])continue;              
@@ -520,13 +520,13 @@ float Network::min_edge_crossing(int deglim){
    for(i=0;i<m;i++)
       for(j=i+1;j<m;j++){                         
          if(!edge_cross(i,j))continue;
-         force+=1.0;
          a1=(*edges)[i].from;
          a2=(*edges)[i].to;
          b1=(*edges)[j].from;
          b2=(*edges)[j].to;
          if(a1==a2)continue;
          if(b1==b2)continue;
+         force+=1.0;
          mindeg=min_four(deg[a1],deg[a2],deg[b1],deg[b2]); //the node with minimum connections.
          if(mindeg>deglim)continue;
          if(mindeg==deg[a1]){ //rotate a1 around a2;
@@ -659,14 +659,36 @@ float Network::layout(){
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force); 
    
-   //phase4: post processing.
-   min_edge_crossing(1);
+   //phase4: post processing. 
+   
+   pre_force=inf;
+   while(true){
+      cur_force=min_edge_crossing(1);
+      if(cur_force>=pre_force)break;
+      pre_force=cur_force;
+      cout<<cur_force<<endl;
+   }
+   /*
    pre_force=inf;
    k=inc=0;
    while(true){
       k++;
       near_swap();
-      cur_force=post_pro();
+      cur_force=post_pro(1);
+      move_nodes();
+      adjust_compartments();
+      cur_force+=calc_force_compartments();
+      move_nodes();
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      pre_force=cur_force;
+   }
+   */
+   pre_force=inf;
+   k=inc=0;
+   while(true){
+      k++;
+      near_swap();
+      cur_force=post_pro(2);
       move_nodes();
       adjust_compartments();
       cur_force+=calc_force_compartments();
