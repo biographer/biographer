@@ -21,27 +21,8 @@
 	h1			{
 				padding-bottom: 15pt;
 				}
-	table.MenuTable		{
-				border:0pt solid ffffff;
-				background: #ffffff;
-				}
-	td.MenuHover		{
-				background: #ffffff;
-				}
-	a.MenuLink		{
-				text-decoration:none;
-				width:		100%;
-				padding:	3px;
-				margin:		3px;
-				}
-	a.MenuLink:hover	{
-				text-decoration:none;
-				background:	#8caed4;
-				}
-	button.ImportButton	{
-				color:	#e5e6e7;
-				}
-	#divImportMenu		{
+
+	div.Menu		{
 				position:	absolute;
 				left:		500px;
 				top:		74px;
@@ -55,19 +36,36 @@
 				border-right:	none;
 				border-top:	1pt solid black;
 				border-bottom:	1pt solid black;
-				visibility:	hidden;
 				}
-	#divImportMenu:hover	{
+	div.Menu:hover		{
 				height:		180px;
 				cursor:		pointer;
 				background:	#eaeaea;
 				}
+	#Workbench
+	#Layout
+	#Visualization
+	#Import
+	#Export
+	#Project
+
+	a.MenuLink		{
+				text-decoration:none;
+				width:		100%;
+				padding:	3px;
+				margin:		3px;
+				}
+	a.MenuLink:hover	{
+				text-decoration:none;
+				background:	#8caed4;
+				}
+
 	#appname		{
 				color: #cccccc;
 				}
 	#statusbar		{
-				height:		20px;
-				padding:	5px;
+				height:		30px;
+				padding:	0px;
 				margin:		#5px 0px 20px 0px;
 				color:		#e5e6e7;
 				}
@@ -116,49 +114,73 @@
       {{end}}                                     
     </div><!-- header  -->
     
-<div id="statusbar"><!-- statusbar is menu zone -->
-      {{block statusbar}}
-      {{#------ superfish menu ------}}
-      {{#=MENU(response.menu,_class='sf-menu')}}
-      <!--script type="text/javascript">
-        jQuery(document).ready(function(){
-        jQuery('ul.sf-menu').superfish();});
-      </script-->
-      <div style="clear: both;"></div><!-- Clear the divs -->
+<div id=statusbar>
 
-<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='index')}}">Workbench</a>
-<a class=MenuLink href="{{=URL(r=request, c='Layout', f='index')}}">Layout</a>
-<a class=MenuLink href="{{=URL(r=request, c='Visualization', f='index')}}">Visualization</a>
-<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='draw')}}">graphviz</a>
+	<div class=Menu id=Workbench>
+		Workbench
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='index')}}">Console</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='BioLayout')}}">BioLayout</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='JSON')}}">JSON</a><br/>
+	</div>
 
-&nbsp;&nbsp;&nbsp;&nbsp;Project:
-<a class=MenuLink href="http://code.google.com/p/biographer/">Home</a>
-<a class=MenuLink href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a>
-<a class=MenuLink href="http://code.google.com/hosting/settings">Password</a>
+	<div class=Menu id=Layout>
+		Layout
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Layout', f='BioLayout')}}">biographer</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Layout', f='graphviz')}}">graphviz</a><br/>
+	</div>
 
-{{end}}
+	<div class=Menu id=Visualization>
+		Visualization
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Visualization', f='BioVis')}}">biographer</a>
+		<a class=MenuLink href="{{=URL(r=request, c='Visualization', f='graphviz')}}">graphviz</a>
+	</div>
 
-</div><!-- statusbar -->
+	<div class=Menu id=Import>
+		Import
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='JSON', f='importer')}}">JSON</a><br/>
+	<!--	<a class=MenuLink href="{{=URL(r=request, c='ODP', f='importer')}}">ODP</a><br/>	-->
+		<a class=MenuLink href="{{=URL(r=request, c='SBML', f='importer')}}">SBML</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='BioModels', f='importer')}}">BioModels.net</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Reactome', f='importer')}}">Reactome</a><br/>
+	<!--	<a class=MenuLink href="{{=URL(r=request, c='BioPAX', f='importer')}}">BioPAX</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='PID', f='importer')}}">PID</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='BioCarta', f='importer')}}">BioCarta</a><br/>
+		<a class=MenuLink href={{=URL(r=request, c='PathVisio', f='importer')}}>PathVision</a><br/>
+		<a class=MenuLink href={{=URL(r=request, c='WikiPathways', f='importer')}}>WikiPathways</a><br/>	-->
+	</div>
 
-<div id="divImportMenu">
-	Import
-	<br/>
-	<a class=MenuLink href="{{=URL(r=request, c='JSON', f='importer')}}">JSON</a><br/>
-	<a class=MenuLink href="{{=URL(r=request, c='ODP', f='importer')}}">ODP</a><br/>
-	<a class=MenuLink href="{{=URL(r=request, c='SBML', f='importer')}}">SBML</a><br/>
-	<a class=MenuLink href="{{=URL(r=request, c='BioModels', f='importer')}}">BioModels.net</a><br/>
-	<a class=MenuLink href="{{=URL(r=request, c='Reactome', f='importer')}}">Reactome</a><br/>
-	<a class=MenuLink href="{{=URL(r=request, c='BioPAX', f='importer')}}">BioPAX</a><br/>
-	<a class=MenuLink href="{{=URL(r=request, c='PID', f='importer')}}">PID</a><br/>
-<!--	<a class=MenuLink href="{{=URL(r=request, c='BioCarta', f='importer')}}">BioCarta</a><br/>
-	<a class=MenuLink href={{=URL(r=request, c='PathVisio', f='importer')}}>PathVision</a><br/>
-	<a class=MenuLink href={{=URL(r=request, c='WikiPathways', f='importer')}}>WikiPathways</a><br/>	-->
+	<div class=Menu id=Export>
+		Export
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='JSON', f='exporter')}}">JSON</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='ODP', f='exporter')}}">ODP</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='SBML', f='exporter')}}">SBML</a><br/>
+	</div>
+
+	<div class=Menu id=Project>
+		Project
+		<br/>
+		<a class=MenuLink href="http://code.google.com/p/biographer/">Home</a><br/>
+		<a class=MenuLink href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a><br/>
+		<a class=MenuLink href="http://code.google.com/p/biographer/source/list?repo=server">Changes</a><br/>
+		<a class=MenuLink href="http://code.google.com/p/biographer/source/checkout?repo=server">Checkout</a><br/>
+		<a class=MenuLink href="http://code.google.com/hosting/settings">Your password</a><br/>
+	</div>
 </div>
 
 <script>
-	divImportMenu = document.getElementById('divImportMenu');
-	divImportMenu.style.left = document.body.clientWidth/2 + 200 + "px";
-	divImportMenu.style.visibility = "visible";
+	x0	= document.body.clientWidth / 2 - 450;
+	space	= 90;
+	document.getElementById('Workbench').style.left 	= x0 + 0*space + "px";
+	document.getElementById('Layout').style.left 		= x0 + 1*space + "px";
+	document.getElementById('Visualization').style.left 	= x0 + 2*space + "px";
+	document.getElementById('Import').style.left 		= x0 + 3*space + "px";
+	document.getElementById('Export').style.left	 	= x0 + 4*space + "px";
+	document.getElementById('Project').style.left	 	= x0 + 5*space + "px";
 </script>
     
     <div id="page"> <!-- Here my central body -->     
