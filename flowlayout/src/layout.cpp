@@ -453,15 +453,23 @@ float Network::post_pro(int _round){
       if(_round==1 && deg[n1]>2 && deg[n2]>2)continue;
       vec=pos[n2]-pos[n1];
       i_d=dij1[i]*0.5;
+      if(_round==1)i_d*=1.4;
       d=dist(pos[n1],pos[n2]);
-      if(d<i_d && d>i_d*0.5)continue;
+      if(d<i_d && d>i_d*0.7)continue;
       force+=((d-i_d)*(d-i_d));
-
       //distantal movements;
-      mov[n2].x+=(vec.x/d*(i_d-d)/n);
-      mov[n2].y+=(vec.y/d*(i_d-d)/n);
-      mov[n1].x-=(vec.x/d*(i_d-d)/n);
-      mov[n1].y-=(vec.y/d*(i_d-d)/n);
+      if(_round==1){
+         mov[n2].x+=(6*vec.x/d*(i_d-d)/n);
+         mov[n2].y+=(6*vec.y/d*(i_d-d)/n);
+         mov[n1].x-=(2*vec.x/d*(i_d-d)/n);
+         mov[n1].y-=(2*vec.y/d*(i_d-d)/n);
+      }
+      else{      
+         mov[n2].x+=(vec.x/d*(i_d-d)/n);
+         mov[n2].y+=(vec.y/d*(i_d-d)/n);
+         mov[n1].x-=(vec.x/d*(i_d-d)/n);
+         mov[n1].y-=(vec.y/d*(i_d-d)/n);
+      }
    }
    if(_round==1)return force;
    for(n1=0;n1<n;n1++)
@@ -661,6 +669,22 @@ float Network::layout(){
    
    //phase4: post processing. 
    
+  /* pre_force=inf;
+   k=inc=0;
+   while(true){
+      k++;
+      near_swap();
+      cur_force=post_pro(1);
+      move_nodes();
+      adjust_compartments();
+      cur_force+=calc_force_compartments();
+      move_nodes();
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>log(1.0*n))break;
+      pre_force=cur_force;
+   }
+   */
    pre_force=inf;
    while(true){
       cur_force=min_edge_crossing(1);
@@ -668,7 +692,7 @@ float Network::layout(){
       pre_force=cur_force;
       cout<<cur_force<<endl;
    }
-   /*
+   
    pre_force=inf;
    k=inc=0;
    while(true){
@@ -680,9 +704,11 @@ float Network::layout(){
       cur_force+=calc_force_compartments();
       move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>log(1.0*n))break;
       pre_force=cur_force;
    }
-   */
+   
    pre_force=inf;
    k=inc=0;
    while(true){
@@ -694,6 +720,8 @@ float Network::layout(){
       cur_force+=calc_force_compartments();
       move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>log(1.0*n))break;
       pre_force=cur_force;
    } 
    printf("number of iteration: %d\n",k);    
