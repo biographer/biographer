@@ -168,7 +168,7 @@ float Network::swap_force(int p1, int p2){
    int m,i,y,_type=(*nodes)[p1].pts.type;
    float force=0.0,i_d,d,alpha, i_alpha, beta, beta1;
    Point vec;
-   VI neighbors= *((*nodes)[p1].neighbors);
+   VI neighbors= *((*nodes)[p1].neighbors); // it's a copy
    m=neighbors.size();
    //distantal force;
    for(i=0;i<m;i++){
@@ -228,7 +228,7 @@ float Network::swap_force(int p1, int p2){
       }
       force-=(d*d*sin(0.5*fabs(beta))); //angular force;
    }
-   neighbors.clear();
+   neighbors.clear(); 
    return force;
 }
 
@@ -260,9 +260,10 @@ bool Network::swap_node(){
             flag=true;            
          }
       }
-      neighbors->clear();
+      //neighbors->clear();
+		delete neighbors; // we should delete neighbors in the loop as it is generated in each iteration.
    }
-   free(neighbors);
+//   free(neighbors);
    return flag;
 } 
       
@@ -292,7 +293,8 @@ float Network::firm_distribution(){
             force+=(d*d*sin(0.5*fabs(beta)));
             mov[j]=mov[j]+(to_left(pos[(*neighbors)[j]]-baseNode,beta*0.1)-pos[(*neighbors)[j]]+baseNode);
          }
-         neighbors->clear();
+         //neighbors->clear();
+			delete neighbors; // we should delete neighbors in the loop as it is generated in each iteration.
       }
    return force;
 }
