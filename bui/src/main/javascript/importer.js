@@ -203,28 +203,19 @@
     };
 
     /**
-     * Layout this complex node and all its sub-nodes.
-     *
-     * @param {bui.Node} node A bui.Complex instances which needs layouting.
-     */
-    var layoutComplex = function(node) {
-        
-    };
-
-    /**
      * Layout the complex nodes using a table layout.
      *
      * @param {Object} nodes A map which keys map onto {@link bui.Node}
      *   instances.
      */
     var doComplexLayout = function(nodes) {
-        for(var key in nodes) {
+        for (var key in nodes) {
             if (nodes.hasOwnProperty(key)) {
                 var node = nodes[key];
 
                 if (node instanceof bui.Complex &&
                         node.parent() === node.graph()) {
-                    layoutComplex(node);
+                    node.tableLayout();
                 }
             }
         }

@@ -24,7 +24,7 @@
         var privates = this._privates(identifier);
         var value = ['scale(', privates.scale.toString(), ')'].join('');
 
-        privates.rootGroup.setAttributeNS(null, 'transform', value);
+        privates.rootGroup.setAttribute('transform', value);
     };
 
     /**
@@ -47,8 +47,8 @@
         privates.container.appendChild(div);
 
         privates.root = document.createElementNS(bui.svgns, 'svg');
-        privates.root.setAttributeNS(null, 'xmlns', bui.svgns);
-        privates.root.setAttributeNS(null, 'id', privates.id);
+        privates.root.setAttribute('xmlns', bui.svgns);
+        privates.root.setAttribute('id', privates.id);
         div.appendChild(privates.root);
 
         var offset = jQuery(privates.root).offset();
@@ -66,7 +66,7 @@
         privates.root.appendChild(privates.defsGroup);
 
         privates.css = document.createElementNS(bui.svgns, 'style');
-        privates.css.setAttributeNS(null, 'type', 'text/css');
+        privates.css.setAttribute('type', 'text/css');
         privates.css.textContent = __getStylesheetContents();
         privates.root.appendChild(privates.css);
 
