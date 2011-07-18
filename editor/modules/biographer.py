@@ -567,6 +567,15 @@ class Graph:
 
 		return self.dot, png, cached
 
+	def importBioLayout(self, Layout):	# -> from Acer
+		# ...
+
+	def exportBioLayout(self):		# -> to Acer
+		# ...
+
+	def doBioLayout(self):
+		# subprocess.Popen( shlex.split(...), stdin=PIPE, stdout=PIPE )
+
 
 	### basic functions on Graph properties ###
 
@@ -585,6 +594,10 @@ class Graph:
 			return len( self.Edges )
 		else:
 			return len( self.EdgesOfNode(node) )
+
+	def Dijkstra(self, edges):
+		# http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+		return # array of nodes
 
 
 	### functions for really doing something with the Graph ###
