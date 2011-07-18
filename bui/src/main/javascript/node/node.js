@@ -474,6 +474,24 @@
 
         /**
          * @description
+         * Use this function to retrieve the absolute bottom right coordinates
+         * of the node.
+         *
+         * @return {Object} Object with x and y properties.
+         */
+        absoluteBottomRight : function() {
+            var privates = this._privates(identifier);
+
+            var position = this.absolutePosition();
+
+            return {
+                x : position.x + privates.width,
+                y : position.y + privates.height
+            };
+        },
+
+        /**
+         * @description
          * Use this function to retrieve the center of the node.
          *
          * @return {Object} Object with x and y properties.

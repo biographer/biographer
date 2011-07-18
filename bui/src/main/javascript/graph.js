@@ -100,14 +100,14 @@
 
     /**
      * @private
-     * This function makes sure that each nodes fits onto the SVG canvas.
+     * This function makes sure that each node fits onto the SVG canvas.
      * In order to do so it's a observer of the nodes' position and size
      * events.
      */
     var __assertCanvasSize = function(node) {
         var privates = this._privates(identifier);
 
-        var bottomRight = node.bottomRight();
+        var bottomRight = node.absoluteBottomRight();
 
         if (bottomRight.x > privates.rootDimensions.width) {
             privates.rootDimensions.width = bottomRight.x;
@@ -366,14 +366,14 @@
         reduceCanvasSize : function() {
             var privates = this._privates(identifier);
 
-            var x = Integer.MIN_VALUE, y = Integer.MIN_VALUE;
+            var x = Number.MIN_VALUE, y = Number.MIN_VALUE;
 
             for(var i in privates.drawables) {
                 if (privates.drawables.hasOwnProperty(i)) {
                     var drawable = privates.drawables[i];
 
                     if (drawable.bottomRight !== undefined) {
-                        var bottomRight = drawable.bottomRight();
+                        var bottomRight = drawable.absoluteBottomRight();
 
                         x = Math.max(x, bottomRight.x);
                         y = Math.max(y, bottomRight.y);

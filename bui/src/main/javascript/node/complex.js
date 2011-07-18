@@ -59,5 +59,11 @@
         this.addClass(bui.settings.css.classes.complex);
     };
 
+    bui.Complex.prototype = {
+        tableLayout : function() {
+            // TODO
+        }
+    };
+
     bui.util.setSuperClass(bui.Complex, bui.Node);
 })(bui);
