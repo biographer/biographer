@@ -345,12 +345,12 @@
             // identify them.
             if (drawable.bottomRight !== undefined) {
                 drawable.bind(bui.Node.ListenerType.position,
-                        __assertCanvasSize.createDelegate(this),
+                        this.reduceCanvasSize.createDelegate(this),
                         listenerIdentifier(this));
                 drawable.bind(bui.Node.ListenerType.size,
-                        __assertCanvasSize.createDelegate(this),
+                        this.reduceCanvasSize.createDelegate(this),
                         listenerIdentifier(this));
-                __assertCanvasSize.call(this, drawable);
+                this.reduceCanvasSize.call(this, drawable);
             }
 
             this.fire(bui.Graph.ListenerType.add, [drawable]);
