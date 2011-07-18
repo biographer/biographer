@@ -1,7 +1,6 @@
 #include "network.h"
 
 int main(int argc,char *argv[]){
-   int i
    clock_t start_time, end_time;
    start_time=clock();
 //    freopen("data2.txt","r",stdin);
@@ -19,7 +18,8 @@ int main(int argc,char *argv[]){
    if (argc>=3){
       nw.dumpNodes(argv[2]);
    } else {
-      nw.dumpNodes("summary.txt");
+//      nw.dumpNodes("summary.txt");
+      nw.dumpNodes((char*) 0 );
    }
    return 0;
 }

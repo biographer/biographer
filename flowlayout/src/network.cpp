@@ -117,14 +117,18 @@ void Network::read(const char* file){
    char s[100],t[100];
    float _x,_y, _width, _height,_dir;
    FILE* old_stdin=stdin;
+	printf("importing network\n",c);
    if (file) freopen(file,"r",stdin);
-   scanf("%d\n",&c); // num compartments
+   while (scanf(" #%[^\n]",s)){}; // remove comment lines
+   scanf(" %d\n",&c); // num compartments
+	printf("number of compartments: %d\n",c);
    for(i=0;i<c;i++){
       scanf("%d %s\n",&_index,t);
       addCompartment(_index,t);
    }  
    scanf("%s\n",s); // "///"  
    scanf("%d",&n); //number of nodes
+	printf("number of nodes: %d\n",n);
    for(i=0;i<n;i++){
       scanf("%d\n",&_index);
       scanf("%s\n",t);
@@ -140,6 +144,8 @@ void Network::read(const char* file){
    }
    scanf("%s\n",s); // "///"
    scanf("%d\n",&m); // numer of edges
+	printf("number of edges: %d\n",m);
+	fflush(stdout);
    for(i=0;i<m;i++){
       scanf("%s %d %d\n",s,&p,&q);
       for(k=0;k<7;k++){
@@ -160,7 +166,7 @@ void Network::dumpNodes(const char* file){
       tmp = (*nodes)[i];
       printf("%s\n",nodetypes[(int)(tmp.pts.type)]);
       cout<<tmp.pts.name<<endl;
-      printf("%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",tmp.pts.compartment,tmp.pts.x, tmp.pts.y, tmp.pts.width, tmp.pts.height, tmp.pts.dir);
+      printf("%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",tmp.pts.compartment,tmp.pts.x, tmp.pts.y, tmp.pts.width, tmp.pts.height, tmp.pts.dir);
    }
 } 
   

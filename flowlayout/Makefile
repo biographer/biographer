@@ -5,7 +5,7 @@ SRC=src/
 BDIR=build/
 VPATH=$(SRC):$(BDIR)
 
-default: layout_test.cpp network.o layout.o functions.o
+default: layout_test2.cpp network.o layout.o functions.o
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)layout $<
 network.o: network.cpp network.h headers.h edge.h node.h
 	$(CC) -o $(BDIR)network.o $(CCFLAGS) -c $<
