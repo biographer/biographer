@@ -19,7 +19,6 @@ import json				# JSON format
 import libsbml				# SBML format
 from libimpress import ODP		# OpenDocument format
 from libbiopax import BioPAX		# BioPAX format
-from libbiolayout import Layout		# BioLayout format; biographer Layout application specific
 import pygraphviz			# calling graphviz from python
 import re				# regular expressions; graphviz output parsing
 from subprocess import Popen, PIPE	# for calling the layouter
@@ -573,7 +572,6 @@ class Graph:
 		return self.dot, png, cached
 
 	def exportBioLayout(self):			# -> to Acer's layouter
-		L = Layout()
 		# for node in self.Nodes:
 		return ""
 
