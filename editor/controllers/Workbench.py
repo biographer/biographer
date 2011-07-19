@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 def index():
 	if session.bioGraph is not None:
-		#if session.JSON is None or session.JSON == "":
-		session.JSON = session.bioGraph.exportJSON()
-		# export of SBML or BioPAX is not supported (yet)
+		session.bioGraph.exportJSON()
+		session.bioGraph.doBioLayout( os.path.join( request.folder, "static/Layout/build/layout" ) )
 	return dict()
 

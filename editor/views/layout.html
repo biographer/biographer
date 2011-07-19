@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html lang="{{=T.accepted_language or 'en'}}" class="no-js"><!-- no-js need it for modernzr -->
-  <head>
-    
+<html class="no-js"><!-- no-js need it for modernzr -->
+
+<head>
     <meta charset="utf-8" />        
     <title>{{=response.title or request.application}}</title>
     <meta name="application-name" content="{{=request.application}}" /> 
@@ -18,14 +17,10 @@
     {{include 'web2py_ajax.html'}}
 
 	<style>
-	h1			{
-				padding-bottom: 15pt;
-				}
-
 	div.Menu		{				/* global Menu properties */
 				position:	absolute;
 				left:		190px;
-				top:		74px;
+				top:		60px;
 				width:		110px;
 				height:		20px;
 				overflow:	hidden;
@@ -50,14 +45,29 @@
 				height:		92px;
 				}
 
+	#Layout			{
+				width:		72px;
+				}
 	#Layout:hover		{
 				height:		69px;
+				}
+
+	#Visualization		{
+				width:		72px;
 				}
 	#Visualization:hover	{
 				height:		69px;
 				}
+
+	#Import			{
+				width:		72px;
+				}
 	#Import:hover		{
 				height:		115px;
+				}
+
+	#Export			{
+				width:		72px;
 				}
 	#Export:hover		{
 				height:		92px;
@@ -74,14 +84,26 @@
 				background:	#8caed4;
 				}
 
+	h1			{
+				padding-bottom: 0pt;
+				}
+
+
 	#appname		{
 				color: #cccccc;
+				}
+	#appname h1		{
+				padding-bottom: 5pt;
 				}
 	#statusbar		{
 				height:		30px;
 				padding:	0px;
 				margin:		#5px 0px 20px 0px;
 				color:		#e5e6e7;
+				}
+	#wrapper		{
+				width:		90%;
+				overflow:	hidden;
 				}
 	#footer			{
 				margin-top: 30px;
@@ -110,23 +132,18 @@
     else: right_sidebar_style = 'style="display: none;"'
     style_content = 'style="width: %s"' % width_content
     }}
-  </head>
-  
-  <body>
+</head>
+
+<body>
+<div class="flash">{{=response.flash or ''}}</div> <!-- notification div -->
     
-    <div class="flash">{{=response.flash or ''}}</div> <!-- notification div -->
-    
-    <div id="container">                        
+<div id="container">                        
       
-      <div id="wrapper">        
+<div id="wrapper">        
     
-    <div id="header"> <!-- header and login nav -->
-      {{block header}} <!-- this is default header -->
-      {{#try:}}{{#=auth.navbar(action=URL('default','user'))}}{{#except:pass}}               
-      <h1><span id="appname">{{=request.application.capitalize()}}</span></h1>
-      <div style="clear: both;"></div><!-- Clear the divs -->
-      {{end}}                                     
-    </div><!-- header  -->
+<div id="header"> <!-- header and login nav -->
+	<span id="appname"><h1>biographer</h1></span>
+</div><!-- header  -->
     
 <div id=statusbar>
 
@@ -134,21 +151,21 @@
 		Workbench
 		<br/>
 		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='index')}}">Console</a><br/>
-		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='BioLayout')}}">BioLayout</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='BioLayout')}}" id=widthWorkbench>BioLayout</a><br/>
 		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='JSON')}}">JSON</a><br/>
 	</div>
 
 	<div class=Menu id=Layout>
 		Layout
 		<br/>
-		<a class=MenuLink href="{{=URL(r=request, c='BioLayout', f='Layout')}}">biographer</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='BioLayout', f='Layout')}}" id=widthLayout>biographer</a><br/>
 		<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='Layout')}}">graphviz</a><br/>
 	</div>
 
 	<div class=Menu id=Visualization>
 		Visualization
 		<br/>
-		<a class=MenuLink href="{{=URL(r=request, c='BioVis', f='Visualization')}}">biographer</a>
+		<a class=MenuLink href="{{=URL(r=request, c='BioVis', f='Visualization')}}" id=widthVisualization>biographer</a>
 		<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='Visualization')}}">graphviz</a>
 	</div>
 
@@ -158,7 +175,7 @@
 		<a class=MenuLink href="{{=URL(r=request, c='JSON', f='importer')}}">JSON</a><br/>
 	<!--	<a class=MenuLink href="{{=URL(r=request, c='ODP', f='importer')}}">ODP</a><br/>	-->
 		<a class=MenuLink href="{{=URL(r=request, c='SBML', f='importer')}}">SBML</a><br/>
-		<a class=MenuLink href="{{=URL(r=request, c='BioModels', f='importer')}}">BioModels.net</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='BioModels', f='importer')}}" id=widthImport>BioModels.net</a><br/>
 		<a class=MenuLink href="{{=URL(r=request, c='Reactome', f='importer')}}">Reactome</a><br/>
 	<!--	<a class=MenuLink href="{{=URL(r=request, c='BioPAX', f='importer')}}">BioPAX</a><br/>
 		<a class=MenuLink href="{{=URL(r=request, c='PID', f='importer')}}">PID</a><br/>
@@ -172,7 +189,7 @@
 		<br/>
 		<a class=MenuLink href="{{=URL(r=request, c='JSON', f='exporter')}}">JSON</a><br/>
 		<a class=MenuLink href="{{=URL(r=request, c='ODP', f='exporter')}}">ODP</a><br/>
-		<a class=MenuLink href="{{=URL(r=request, c='SBML', f='exporter')}}">SBML</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='SBML', f='exporter')}}" id=widthExport>SBML</a><br/>
 	</div>
 
 	<div class=Menu id=Project>
@@ -182,11 +199,12 @@
 		<a class=MenuLink href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a><br/>
 		<a class=MenuLink href="http://code.google.com/p/biographer/source/list?repo=server">Changes</a><br/>
 		<a class=MenuLink href="http://code.google.com/p/biographer/source/checkout?repo=server">Checkout</a><br/>
-		<a class=MenuLink href="http://code.google.com/hosting/settings">Your password</a><br/>
+		<a class=MenuLink href="http://code.google.com/hosting/settings" id=widthProject>Your password</a><br/>
 	</div>
-</div>
+</div>	<!-- statusbar -->
 
 <script>
+	wrapper		= document.getElementById('wrapper');
 	Workbench	= document.getElementById('Workbench');
 	Layout		= document.getElementById('Layout');
 	Visualization	= document.getElementById('Visualization');
@@ -194,40 +212,35 @@
 	Export		= document.getElementById('Export');
 	Project		= document.getElementById('Project');
 
-	Layout.offsetleft 		= Workbench.offsetLeft + Workbench.offsetWidth + "px";
-	Visualization.style.left 	= Layout.style.left + Layout.offsetWidth;
-	Import.style.left 		= Visualization.style.left + Visualization.offsetWidth;
-	Export.style.left	 	= Import.style.left + Import.offsetWidth;
-	Project.style.left	 	= Export.style.left + Export.offsetWidth;
+	padding				= 10;
+	Workbench.style.width		= document.getElementById('widthWorkbench').offsetWidth + padding + "px";
+	Layout.style.width		= document.getElementById('widthLayout').offsetWidth + padding + "px";
+	Visualization.style.width	= document.getElementById('widthVisualization').offsetWidth + padding + "px";
+	Import.style.width		= document.getElementById('widthImport').offsetWidth + padding + "px";
+	Export.style.width		= document.getElementById('widthExport').offsetWidth + padding + "px";
+	Project.style.width		= document.getElementById('widthProject').offsetWidth + padding + "px";
+
+	Workbench.style.left		= wrapper.offsetLeft + "px";
+	Layout.style.left 		= Workbench.offsetLeft + Workbench.offsetWidth + "px";
+	Visualization.style.left 	= Layout.offsetLeft + Layout.offsetWidth + "px";
+	Import.style.left 		= Visualization.offsetLeft + Visualization.offsetWidth + "px";
+	Export.style.left	 	= Import.offsetLeft + Import.offsetWidth + "px";
+	Project.style.left	 	= Export.offsetLeft + Export.offsetWidth + "px";
 </script>
     
-    <div id="page"> <!-- Here my central body -->     
+<div id="page"> <!-- Here my central body -->     
 
-      {{if left_sidebar_enabled:}}
-          <div id="left_sidebar" {{=XML(left_sidebar_style)}} >
-            <div style="padding: 4px;">
-          {{block left_sidebar}}Content Left Sidebar{{end}}       
-            </div>
-          </div><!-- left_sidebar -->
-      {{pass}}
+	<div id="content" {{=XML(style_content)}}>
+		{{include}} 
+	</div>
 
-      <div id="content" {{=XML(style_content)}} >
-        {{include}} 
-      </div>
+</div><!-- page -->                         
 
-      {{if right_sidebar_enabled:}}
-          <div id="right_sidebar" {{=XML(right_sidebar_style)}} >
-            <div style="padding: 4px;">
-              {{block right_sidebar}}Content Right Sidebar{{end}}
-            </div>
-      </div><!-- right_sidebar -->
-          {{pass}}
+</div><!-- wrapper -->
+<br/>
 
-      <div style="clear: both;"></div><!-- Clear the divs -->
-      
-    </div><!-- page -->                         
-      </div><!-- wrapper -->
-    </div><!-- container -->        
+</div><!-- container -->        
     
-  </body>
+</body>
+
 </html>

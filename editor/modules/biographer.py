@@ -27,26 +27,7 @@ from subprocess import Popen, PIPE	# for calling the layouter
 from shlex import split			# shell argument splitting
 
 
-#### helper functions ####
-
-def checkJSON( JSON ):
-	if len(JSON) > 0:
-		if JSON.lstrip()[0] != "{":				# JSON needs to start with "{"
-			JSON = "{\n"+JSON+"\n}"
-		while JSON.count("[") > JSON.count("]"):		# count "[" = count "]"
-			JSON += "]"
-		while JSON.count("[") < JSON.count("]"):
-			JSON = "["+JSON
-		while JSON.count("{") > JSON.count("}"):		# count "{" = count "}"
-			JSON += "}"
-		while JSON.count("{") < JSON.count("}"):
-			JSON = "{"+JSON
-	else:
-		JSON = "{}"
-	return JSON
-
-
-#### main classes ####
+#### main ####
 
 ### Node ###
 
@@ -241,6 +222,61 @@ class Edge:
 		return result
 
 
+#### helper functions ####
+
+def checkJSON( JSON ):
+	if len(JSON) > 0:
+		if JSON.lstrip()[0] != "{":				# JSON needs to start with "{"
+			JSON = "{\n"+JSON+"\n}"
+		while JSON.count("[") > JSON.count("]"):		# count "[" = count "]"
+			JSON += "]"
+		while JSON.count("[") < JSON.count("]"):
+			JSON = "["+JSON
+		while JSON.count("{") > JSON.count("}"):		# count "{" = count "}"
+			JSON += "}"
+		while JSON.count("{") < JSON.count("}"):
+			JSON = "{"+JSON
+	else:
+		JSON = "{}"
+	return JSON
+
+def biographerNode2LayoutNode( node ):
+	return {'id'		: node.id, \
+		'type'		: node.type, \
+		'compartment'	: node.data['compartment'], \
+		'x'		: node.data['x'], \
+		'y'		: node.data['y'], \
+		'width'		: node.data['width'], \
+		'height'	: node.data['height'], \
+		'direction'	: ''	}	# direction?
+
+def LayoutNode2biographerNode( node ):
+	result			= Node( defaults=True )
+	result.type		= node['type']
+	result.id		= node['id']
+	result.data['compartment'] = node['compartment']
+	result.data['x']	= node['x']
+	result.data['y']	= node['y']
+	result.data['width']	= node['width']
+	result.data['height']	= node['height']
+	# direction? nodes do not have a direction ...
+	return result
+
+def biographerEdge2LayoutEdge( edge ):
+	return {'id'	:	edge.id,
+		'type'	:	edge.data['type'], \
+		'source':	edge.source, \
+		'target':	edge.target }
+
+def LayoutEdge2biographerEdge( edge ):
+	result			= Edge( defaults=True )
+	result.id		= edge['id']
+	result.type		= edge['type']
+	result.source		= edge['source']
+	result.target		= edge['target']
+	return result
+
+
 ### Graph ###
 
 class Graph:
@@ -264,6 +300,7 @@ class Graph:
 		self.JSON = None
 		self.SBML = None
 		self.BioPAX = None
+		self.BioLayout = None
 		self.MD5 = None
 		self.maxID = 1
 		self.IDmapNodes = self.IDmapEdges = {}
@@ -551,22 +588,30 @@ class Graph:
 		self.DEBUG += "Exporting BioLayout ...\n"
 		L = Layout()
 		for node in self.Nodes:
-			L.add_node( biographerNode2LayoutNode )
+			L.add_node( biographerNode2LayoutNode(node) )
 		for edge in self.Edges:
-			L.add_edge( biographerEdge2LayoutEdge )
+			L.add_edge( biographerEdge2LayoutEdge(edge) )
 		self.BioLayout = L.export()
 		return self.BioLayout
 
 	def importBioLayout(self, BioLayout):
-		self.BioLayout = BioLayout
 		self.DEBUG += "Importing BioLayout ...\n"
-		L = Layout( self.BioLayout )
-		self.Nodes, self.Edges = Layout.exportbiographer()
+		self.BioLayout = BioLayout
+		L = Layout( BioLayout )
+		self.Nodes = []
+		for node in L.nodes:
+			self.Nodes.append( LayoutNode2biographerNode(node) )
+		self.Edges = []
+		for edge in L.edges:
+			self.Edges.append( LayoutEdge2biographerEdge(edge) )
 		self.initialize()
 
 	def doBioLayout(self, Layouter):
 		self.DEBUG += "Using "+Layouter+" to perform layout ...\n"
-		self.importBioLayout( Popen( split(Layouter), stdin=StringIO(self.exportBioLayout()), stdout=PIPE ).communicate()[0] )
+		layout = Popen( split(Layouter), stdin=PIPE, stdout=PIPE ).communicate( input=self.exportBioLayout() )[0]
+		print layout
+		self.importBioLayout( layout )
+		layout.stdin.close()
 		self.DEBUG += "Layouter finished.\n"
 
 

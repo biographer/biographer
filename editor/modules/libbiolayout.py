@@ -25,40 +25,6 @@
 # edgetype from to
 # ...
 
-from constants import *		# biographer defaults & constants
-from copy import deepcopy
-
-def biographerNode2LayoutNode( node ):
-	return {'id':node.id, \
-		'type':node.type, \
-		'compartment':node.data['compartment'], \
-		'x':node.data['x'], \
-		'y':node.data['y'], \
-		'width':node.data['width'], \
-		'height':node.data['height'], \
-		'direction':''}	# direction?
-
-def LayoutNode2biographerNode( node ):
-	result = deepcopy(DefaultNode)nenene
-	result.type		= node['type']
-	result.id		= node['id']
-	result.data['compartment'] = node['compartment']
-	result.data['x']	= node['x']
-	result.data['y']	= node['y']
-	result.data['width']	= node['width']
-	result.data['height']	= node['height']
-	# direction? nodes do not have a direction ...
-	return result
-
-def biographerEdge2LayoutEdge( edge ):
-	pass
-
-def LayoutEdge2biographerEdge( edge ):
-	result = deepcopy(DefaultEdge)nenene
-	result.type = edge['type']
-	result.from neenenene
-	return result
-
 class Layout:
 	def __init__(self, layout=None):
 		self.number_of_compartments = 0
@@ -75,8 +41,34 @@ class Layout:
 		self.nodes.append( d )
 
 	def add_edge(self, e):
-		self.edges.append( {'id':len(self.edges)}.update(e) )
+		if not 'id' in e.keys():
+			e['id'] = len(self.edges)
+		self.edges.append( e )
 
-	def export(self, layout):
+	def export(self):			# export object to Layouter
+		result = str( len(self.compartments) )+"\n"
+		for i in range(0, len(self.compartments)):
+			result += self.compartments[i]+"\n"
+		result += "///\n"
+		result += str( len(self.nodes) )+"\n"
+		for i in range(0, len(self.nodes)):
+			node = self.nodes[i]
+			result += str(i)+"\n"
+			result += str(node['type'])+"\n"
+			result += str(node['id'])+"\n"
+			result += str(node['compartment'])+"\n"
+			result += str(node['x'])+"\n"
+			result += str(node['y'])+"\n"
+			result += str(node['width'])+"\n"
+			result += str(node['height'])+"\n"
+			result += node['direction']+"\n"
+		result += "///\n"
+		result += str( len(self.edges) )+"\n"
+		for i in range(0, len(self.edges)):
+			edge = self.edges[i]
+			result += str(edge['type'])+" "+str(edge['source'])+" "+str(edge['target'])+"\n"
+		return result
+
+	def parse(self, layout):		# create object from Layouter input
 		pass
 

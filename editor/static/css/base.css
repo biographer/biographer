@@ -347,7 +347,6 @@ h6 {font-size: 0.8em;}
 /*body {background-color: #000;}*/
 #container, #header, #page, #content, #statusbar,
 #footer, #wrapper { display:block; line-height: 170%; }
-#wrapper {width: 900px;}
 #container {
     margin: 0 auto;
     padding: 0;
