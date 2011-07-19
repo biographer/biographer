@@ -27,10 +27,7 @@
 				background:	#eaeaea; 
 				padding:	5px;
 				text-align:	left;
-				border-left:	none;
-				border-right:	none;
-				border-top:	1pt solid black;
-				border-bottom:	1pt solid black;
+				border:		1pt solid black;
 				}
 	div.Menu:hover		{
 				height:		138px;		/* =6*23 */
@@ -38,36 +35,17 @@
 				background:	#eaeaea;
 				}
 
-	#Workbech		{				/* individual Menu properties */
-				width:		72px;
-				}
-	#Workbench:hover	{
+	#Workbench:hover	{				/* individual Menu properties */
 				height:		92px;
-				}
-
-	#Layout			{
-				width:		72px;
 				}
 	#Layout:hover		{
 				height:		69px;
 				}
-
-	#Visualization		{
-				width:		72px;
-				}
 	#Visualization:hover	{
 				height:		69px;
 				}
-
-	#Import			{
-				width:		72px;
-				}
 	#Import:hover		{
 				height:		115px;
-				}
-
-	#Export			{
-				width:		72px;
 				}
 	#Export:hover		{
 				height:		92px;
@@ -221,11 +199,11 @@
 	Project.style.width		= document.getElementById('widthProject').offsetWidth + padding + "px";
 
 	Workbench.style.left		= wrapper.offsetLeft + "px";
-	Layout.style.left 		= Workbench.offsetLeft + Workbench.offsetWidth + "px";
-	Visualization.style.left 	= Layout.offsetLeft + Layout.offsetWidth + "px";
-	Import.style.left 		= Visualization.offsetLeft + Visualization.offsetWidth + "px";
-	Export.style.left	 	= Import.offsetLeft + Import.offsetWidth + "px";
-	Project.style.left	 	= Export.offsetLeft + Export.offsetWidth + "px";
+	Layout.style.left 		= Workbench.offsetLeft + Workbench.offsetWidth -1 + "px";
+	Visualization.style.left 	= Layout.offsetLeft + Layout.offsetWidth -1 + "px";
+	Import.style.left 		= Visualization.offsetLeft + Visualization.offsetWidth -1 + "px";
+	Export.style.left	 	= Import.offsetLeft + Import.offsetWidth -1 + "px";
+	Project.style.left	 	= Export.offsetLeft + Export.offsetWidth -1 + "px";
 </script>
     
 <div id="page"> <!-- Here my central body -->     
@@ -240,7 +218,7 @@
 <br/>
 
 </div><!-- container -->        
-    
+
 </body>
 
 </html>

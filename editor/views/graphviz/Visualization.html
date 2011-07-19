@@ -1,0 +1,14 @@
+{{extend 'layout.html'}}
+
+<style>
+	div.image	{
+			border:		1pt solid #000;
+			width:		100%;
+			max-height:	82%;
+			overflow:	scroll;
+			}
+</style>
+
+<div class=image>
+	<a href="{{ = session.graphvizURL }}"><img src="{{ = session.graphvizURL }}" /></a>
+</div>

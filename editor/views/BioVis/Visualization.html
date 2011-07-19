@@ -1,0 +1,12 @@
+{{extend 'layout.html'}}
+
+<script type="text/javascript" src="{{=URL(r=request, c="static", f="Visualization")}}/biographer-ui.js"></script>
+
+<script type="text/javascript">
+        bui.ready(function() {
+            graph = new bui.Graph(document.getElementsByTagName('body')[0]);
+
+            bui.importFromJSON(graph, complexExample);
+        });
+</script>
+

@@ -1,12 +1,6 @@
 {{extend 'layout.html'}}
 
 <style>
-	div.image	{
-			border:		1pt solid #000;
-			width:		100%;
-			max-height:	600px;
-			overflow:	scroll;
-			}
 	pre.script	{
 			border:		1pt solid #000;
 			max-height:	600px;
@@ -15,16 +9,11 @@
 			}
 </style>
 
-<div class=image>
-<a href="{{ = url }}"><img src="{{ = url }}" /></a>
-</div>
-
-<hr/>
-
-<pre class=script>{{ = dot }}</pre>
+<pre class=script>{{ = session.graphvizDOT }}</pre>
 
 <hr/>
 
 In order to use this code on your machine, you need to have the python-pygraphviz package installed,<br/>
 which is available from <a href="http://networkx.lanl.gov/pygraphviz/">http://networkx.lanl.gov/pygraphviz/</a>.<br/>
 Of course, you also need <a href="http://www.graphviz.org/">graphviz</a>.
+
