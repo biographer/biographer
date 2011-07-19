@@ -22,11 +22,11 @@
 				padding-bottom: 15pt;
 				}
 
-	div.Menu		{
+	div.Menu		{				/* global Menu properties */
 				position:	absolute;
-				left:		500px;
+				left:		190px;
 				top:		74px;
-				width:		120px;
+				width:		110px;
 				height:		20px;
 				overflow:	hidden;
 				background:	#eaeaea; 
@@ -38,18 +38,32 @@
 				border-bottom:	1pt solid black;
 				}
 	div.Menu:hover		{
-				height:		180px;
+				height:		138px;		/* =6*23 */
 				cursor:		pointer;
 				background:	#eaeaea;
 				}
-	#Workbench
-	#Layout
-	#Visualization
-	#Import
-	#Export
-	#Project
 
-	a.MenuLink		{
+	#Workbech		{				/* individual Menu properties */
+				width:		72px;
+				}
+	#Workbench:hover	{
+				height:		92px;
+				}
+
+	#Layout:hover		{
+				height:		69px;
+				}
+	#Visualization:hover	{
+				height:		69px;
+				}
+	#Import:hover		{
+				height:		115px;
+				}
+	#Export:hover		{
+				height:		92px;
+				}
+
+	a.MenuLink		{				/* style of the links inside the Menus */
 				text-decoration:none;
 				width:		100%;
 				padding:	3px;
@@ -127,15 +141,15 @@
 	<div class=Menu id=Layout>
 		Layout
 		<br/>
-		<a class=MenuLink href="{{=URL(r=request, c='Layout', f='BioLayout')}}">biographer</a><br/>
-		<a class=MenuLink href="{{=URL(r=request, c='Layout', f='graphviz')}}">graphviz</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='BioLayout', f='Layout')}}">biographer</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='Layout')}}">graphviz</a><br/>
 	</div>
 
 	<div class=Menu id=Visualization>
 		Visualization
 		<br/>
-		<a class=MenuLink href="{{=URL(r=request, c='Visualization', f='BioVis')}}">biographer</a>
-		<a class=MenuLink href="{{=URL(r=request, c='Visualization', f='graphviz')}}">graphviz</a>
+		<a class=MenuLink href="{{=URL(r=request, c='BioVis', f='Visualization')}}">biographer</a>
+		<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='Visualization')}}">graphviz</a>
 	</div>
 
 	<div class=Menu id=Import>
@@ -173,14 +187,18 @@
 </div>
 
 <script>
-	x0	= document.body.clientWidth / 2 - 450;
-	space	= 90;
-	document.getElementById('Workbench').style.left 	= x0 + 0*space + "px";
-	document.getElementById('Layout').style.left 		= x0 + 1*space + "px";
-	document.getElementById('Visualization').style.left 	= x0 + 2*space + "px";
-	document.getElementById('Import').style.left 		= x0 + 3*space + "px";
-	document.getElementById('Export').style.left	 	= x0 + 4*space + "px";
-	document.getElementById('Project').style.left	 	= x0 + 5*space + "px";
+	Workbench	= document.getElementById('Workbench');
+	Layout		= document.getElementById('Layout');
+	Visualization	= document.getElementById('Visualization');
+	Import		= document.getElementById('Import');
+	Export		= document.getElementById('Export');
+	Project		= document.getElementById('Project');
+
+	Layout.offsetleft 		= Workbench.offsetLeft + Workbench.offsetWidth + "px";
+	Visualization.style.left 	= Layout.style.left + Layout.offsetWidth;
+	Import.style.left 		= Visualization.style.left + Visualization.offsetWidth;
+	Export.style.left	 	= Import.style.left + Import.offsetWidth;
+	Project.style.left	 	= Export.style.left + Export.offsetWidth;
 </script>
     
     <div id="page"> <!-- Here my central body -->     
