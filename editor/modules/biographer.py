@@ -57,7 +57,7 @@ class Node:
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
-			self.__dict__.update(deepcopy(JSON))	# map all input key/value pairs to the python object
+			self.__dict__.update(deepcopy(JSON))		# map all input key/value pairs to the python object
 
 	def setByGraphviz( self, dot ):
 		r = re.compile('[\d\.]+')
@@ -147,7 +147,7 @@ class Node:
 				result += "Warning: Node ID < 0 !\n"
 				show = True
 
-		if type(self.data['compartment']) == type(0):			# check compartment
+		if type(self.data['compartment']) == type(0):		# check compartment
 			if self.data['compartment'] < 0 and self.type in [0,3]:
 				result += "Warning: Node compartment < 0 !\n"
 				show = True
@@ -171,7 +171,7 @@ class Edge:
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
-			self.__dict__.update(deepcopy(JSON))	# import all input key/value pairs to the python object
+			self.__dict__.update(deepcopy(JSON))		# import all input key/value pairs to the python object
 
 	def exportJSON(self, Indent=DefaultIndent):
 		return json.dumps( self.__dict__, indent=Indent )
@@ -394,7 +394,7 @@ class Graph:
 	def exportDICT(self):							# export current model as python dictionary
 		return self.__dict__
 
-	def importSBML(self, SBML):				# import SBML
+	def importSBML(self, SBML):						# import SBML
 		self.empty()
 
 		self.DEBUG = "Importing SBML ...\n"
@@ -547,23 +547,32 @@ class Graph:
 
 		return self.dot, png, cached
 
-	def exportBioLayout(self):			# -> to Acer's layouter
+	def exportBioLayout(self):
+		self.DEBUG += "Exporting BioLayout ...\n"
 		L = Layout()
 		for node in self.Nodes:
-			
-		return ""
+			L.add_node( biographerNode2LayoutNode )
+		for edge in self.Edges:
+			L.add_edge( biographerEdge2LayoutEdge )
+		self.BioLayout = L.export()
+		return self.BioLayout
 
-	def importBioLayout(self, output):		# -> from Acer's layouter
-		self.Nodes = "" #blablabla
+	def importBioLayout(self, BioLayout):
+		self.BioLayout = BioLayout
+		self.DEBUG += "Importing BioLayout ...\n"
+		L = Layout( self.BioLayout )
+		self.Nodes, self.Edges = Layout.exportbiographer()
+		self.initialize()
 
 	def doBioLayout(self, Layouter):
+		self.DEBUG += "Using "+Layouter+" to perform layout ...\n"
 		self.importBioLayout( Popen( split(Layouter), stdin=StringIO(self.exportBioLayout()), stdout=PIPE ).communicate()[0] )
-		self.initialize()
+		self.DEBUG += "Layouter finished.\n"
 
 
 	### basic functions on Graph properties ###
 
-	def EdgesOfNode(self, node):						# returns an array of Edge IDs, pointing from/to the specified Node
+	def EdgesOfNode(self, node):							# returns an array of Edge IDs, pointing from/to the specified Node
 		edges = []
 		for e in self.Edges:
 			if e.source == node.id or e.target == node.id:

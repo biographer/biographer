@@ -26,12 +26,20 @@
 # ...
 
 from constants import *		# biographer defaults & constants
+from copy import deepcopy
 
 def biographerNode2LayoutNode( node ):
-	return {'id':ID, 'type':Type, 'compartment':compartment, 'x':x, 'y':y, 'width':width, 'height':height, 'direction':direction}
+	return {'id':node.id, \
+		'type':node.type, \
+		'compartment':node.data['compartment'], \
+		'x':node.data['x'], \
+		'y':node.data['y'], \
+		'width':node.data['width'], \
+		'height':node.data['height'], \
+		'direction':''}	# direction?
 
 def LayoutNode2biographerNode( node ):
-	result = DefaultNode
+	result = deepcopy(DefaultNode)nenene
 	result.type		= node['type']
 	result.id		= node['id']
 	result.data['compartment'] = node['compartment']
@@ -40,6 +48,15 @@ def LayoutNode2biographerNode( node ):
 	result.data['width']	= node['width']
 	result.data['height']	= node['height']
 	# direction? nodes do not have a direction ...
+	return result
+
+def biographerEdge2LayoutEdge( edge ):
+	pass
+
+def LayoutEdge2biographerEdge( edge ):
+	result = deepcopy(DefaultEdge)nenene
+	result.type = edge['type']
+	result.from neenenene
 	return result
 
 class Layout:
@@ -54,12 +71,12 @@ class Layout:
 	def add_compartment(self, label):
 		self.compartments.append( label )
 
-	def add_node(self, Type, ID, compartment, x, y, width, height, direction):
-		self.nodes.append( {'type':Type, 'id':ID, 'compartment':compartment, 'x':x, 'y':y, 'width':width, 'height':height, 'direction':direction} )
+	def add_node(self, d):
+		self.nodes.append( d )
 
-	def add_edge(self, Type, From, to):
-		self.edges.append( {'type':Type, 'from':From, 'to':to} )
+	def add_edge(self, e):
+		self.edges.append( {'id':len(self.edges)}.update(e) )
 
-	def parse(self, layout):
+	def export(self, layout):
 		pass
 

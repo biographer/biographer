@@ -28,4 +28,9 @@ def draw():
 		response.flash = "You must import a Graph first !"
 		return dict( url="", dot="" )
 
+def Layout():
+	return dict( url="", dot="" )
+
+def Visualization():
+	return dict( url="", dot="" )
 
