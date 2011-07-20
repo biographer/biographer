@@ -39,7 +39,7 @@
 				height:		115px;
 				}
 	#Project:hover		{
-				height:		138px;
+				height:		161px;		/* 7*23 */
 				}
 
 	a.MenuLink		{				/* style of the links inside the Menus */
@@ -56,6 +56,34 @@
 	h1			{
 				padding-bottom: 0pt;
 				}
+
+
+/*********** web2py specific ***********/
+div.flash {
+    font-weight: bold;
+    display: none;
+    position: fixed;    
+    padding: 10px;
+    top: 15%;
+    right: 10%;
+    min-width: 280px;
+    opacity: 0.85;
+    margin: 0px 0px 10px 10px;    
+    color: #fff;    
+    vertical-align: middle;
+    cursor: pointer;
+    background: #e54d4d;
+    border: 2px solid #fff;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    z-index: 2;
+}
+div.error {
+    background-color: red;
+    color: white;
+    padding: 3px;
+}
+/* end base.css import */
 
 
 	#appname		{
@@ -170,7 +198,8 @@
 		<a class=MenuLink href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a><br/>
 		<a class=MenuLink href="http://code.google.com/p/biographer/source/list?repo=server">Changes</a><br/>
 		<a class=MenuLink href="http://code.google.com/p/biographer/source/checkout?repo=server">Checkout</a><br/>
-		<a class=MenuLink href="http://code.google.com/hosting/settings" id=widthProject>Your password</a><br/>
+		<a class=MenuLink href="http://code.google.com/hosting/settings">Your password</a><br/>
+		<a class=MenuLink href="http://lynx.biologie.hu-berlin.de/biographer" id=widthProject>biographer@Lynx</a><br/>
 	</div>
 </div>	<!-- statusbar -->
 

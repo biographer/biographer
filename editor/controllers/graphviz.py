@@ -14,14 +14,13 @@ from copy import deepcopy
 def graphviz():
 	server_object		= deepcopy( session.bioGraph )
 	del session.bioGraph
-	session.graphvizDOT, filename, cached, boundaries = server_object.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
+	session.graphvizDOT, filename, cached, boundaries = server_object.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=False, updateNodeProperties=True )
 	session.bioGraph	= server_object
 	session.graphvizURL	= URL(r=request, c="static/graphviz", f=filename)
 	if cached:
 		response.flash = "graphviz layout loaded from cache"
 	else:
 		response.flash = "graphviz layout completed"
-	response.flash = boundaries
 	return dict()
 
 def Layout():

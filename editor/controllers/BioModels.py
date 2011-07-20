@@ -41,7 +41,7 @@ def download():
 		session.SBML = open(cachename).read()
 		session.bioGraph.importSBML( session.SBML )
 		update_database()
-		session.flash = "BioModel's SBML loaded from cache"
+		session.flash = "BioModel.net SBML loaded from cache"
 	else:
 		connection = httplib.HTTPConnection("www.ebi.ac.uk")
 		connection.request("GET", "/biomodels-main/download?mid=BIOMD"+session.BioModelsID)
@@ -49,12 +49,12 @@ def download():
 		connection.close()
 		if session.SBML.find("There is no model associated") > -1:
 			session.SBML = None
-			session.flash = "Sorry: No model with ID "+session.BioModelsID
+			session.flash = "Sorry: No BioModel with ID "+session.BioModelsID
 		else:
 			open(cachename,'w').write( session.SBML )
 			session.bioGraph.importSBML( session.SBML )
 			update_database()
-			session.flash = "BioModel's SBML retrieved successfully"
+			session.flash = "BioModel.net SBML retrieved successfully"
 
 	if request.vars.returnto is not None:
 		return redirect( request.vars.returnto )

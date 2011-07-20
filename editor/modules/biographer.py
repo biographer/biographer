@@ -305,12 +305,17 @@ class Graph:
 		self.maxID = 1
 		self.IDmapNodes = self.IDmapEdges = {}
 
-	def initialize(self):							# do everything necessary to complete a new model
-		self.selfcheck()
+	def generateObjectLinks(self):						# add connected Edges Object Link array to all Nodes
+		pass								# add source and target Node Object Links to all Edges
+
+	def initialize(self, removeOrphans=False):				# do everything necessary to complete a new model
+		self.DEBUG += "Initializing graph ...\n"
+		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
+		self.generateObjectLinks()
 		self.hash()
 
-	def selfcheck(self, autoresize=True):					# perform some basic integrity checks on the created Graph
+	def selfcheck(self, autoresize=True, removeOrphanEdges=False):		# perform some basic integrity checks on the created Graph
 
 		for n in self.Nodes:						# self-check all Nodes and Edges
 			self.DEBUG += n.selfcheck()
@@ -340,10 +345,19 @@ class Graph:
 				# automatic recovery is theoretically possible here
 
 		for e in self.Edges:						# Edges connect non-existing Nodes ?
+			orphan = False
 			if not e.source in nodeIDs:
-				self.DEBUG += "Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" does not exist !\n"
+				self.DEBUG += "Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" does not exist ! "
+				orphan = True
 			if not e.target in nodeIDs:
-				self.DEBUG += "Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" does not exist !\n"
+				self.DEBUG += "Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" does not exist ! "
+				orphan = True
+			if orphan:
+				if removeOrphanEdges:
+					del e
+					self.DEBUG += "Edge removed.\n"
+				else:
+					self.DEBUG += "\n"
 
 		for i in range(0, len(self.Nodes)):				# Nodes have non-existing subcomponents ?
 			n = self.Nodes[i]					# or subcomponents lie outside parent ?
@@ -619,7 +633,7 @@ class Graph:
 
 	### basic functions on Graph properties ###
 
-	def EdgesOfNode(self, node):							# returns an array of Edge IDs, pointing from/to the specified Node
+	def getNodeEdges(self, node):							# returns an array of Edges, pointing from/to the specified Node
 		edges = []
 		for e in self.Edges:
 			if e.source == node.id or e.target == node.id:
@@ -633,24 +647,32 @@ class Graph:
 		if node == None:
 			return len( self.Edges )
 		else:
-			return len( self.EdgesOfNode(node) )
+			return len( self.getNodeEdges(node) )
+
+	def getNeighbours(self, node):
+		results = []
+		for edge in self.getNodeEdges(node):
+			if edge.source == node.id:
+				results.append( self.getNodeByID(edge.target) )
+			elif edge.target == node.id:
+				results.append( self.getNodeByID(edge.source) )
+		return results
 
 
 	### functions for really doing something with the Graph ###
 
 	def CloneNode(self, nodeID, ConnectedEdges=None, NumClones=1):			# split Node into 1x original + 1x clone
 		self.DEBUG += "Splitting Node "+str(nodeID)+" ...\n"
-		try:
-			original = self.Nodes[ IDmapNodes[nodeID] ]
-		except:
-			self.DEBUG += "Fatal: Failed to map ID to array index!\n"
-			return
+
+		original = self.getNodeByID( nodeID )
 
 		# clone the thing ...	#
 
 		clone = []
 		for i in range(0, NumClones):
-			clone.append( original )
+			copy = Node( defaults=True )
+			copy.__dict__.update( original.__dict__ )
+			clone.append( copy )
 			clone[i].id = self.newID()
 			clone[i].data["clone_marker"] = original.id
 
@@ -665,7 +687,7 @@ class Graph:
 		# re-distribute Edges connected to the original Node onto clone Nodes #
 
 		if ConnectedEdges is None:						# if function is called from splitNodeOfDegree, avoid double work
-			ConnectedEdges = self.EdgesOfNode( original.id )
+			ConnectedEdges = self.getNodeEdges( original.id )
 
 		if len(ConnectedEdges) > 0:
 			CurrentClone = 0
@@ -703,14 +725,39 @@ class Graph:
 		self.MaxEdges = degree
 		self.DEBUG += "Maximum Edge count set to "+str(degree)+".\n"
 		for ID in self.IDmapNodes.keys():					# for all Nodes
-			edges = self.EdgesOfNode( ID )					# get the connected Edges,
+			edges = self.getNodeEdges( ID )					# get the connected Edges,
 			if len(edges) > degree:						# count them, and if they are too many ...
 				self.DEBUG += "Node "+str( ID )+" exceeds maximum edge count: "+str( len(edges) )+" edges.\n"
 				self.CloneNode( ID, ConnectedEdges=edges )		# ... clone the Node
 
 
-	def Dijkstra(self, node, distance):
+	def Dijkstra(self, start, distance):
+		if distance < 1:
+			self.DEBUG += "Fatal: Dijkstra requires positive integer arguments !\n"
+			return
+
 		# http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 		self.DEBUG += "Cutting ...\n"
-		
+
+		print "Suche Knoten mit Distanz: "+str(distance)
+
+		Besucht = {}
+		Queue = {start:0}
+		d = 0
+#		while d < distance:
+		print "Distanz: "+str(d)
+		print "Besucht: ", Besucht
+		print "Queue: ", Queue
+		d += 1
+		for node in Queue:						# für alle Nodes in der Queue,
+			if node not in Besucht.keys():				#  die noch nicht besucht wurden,
+				Besucht[node] = Queue[node]			#   speichere ihre Distanz in Besucht
+		Queue = {}							# leere die Queue
+		for node in Besucht.keys():					# für alle besuchten Nodes,
+			if Besucht[node] == d-1:				#  die zuletzt nach Besucht geschrieben wurden,
+				for neighbour in self.getNeighbours(node):	#   finde alle Nachbarn
+					Queue[ neighbour ] = d			#    und speichere ihre Distanz in der Queue
+
+		self.Nodes = Besucht.keys()
+		self.initialize( removeOrphans=True )
 

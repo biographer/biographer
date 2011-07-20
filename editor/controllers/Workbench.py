@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 def index():
-	if session.bioGraph is not None:
-		session.bioGraph.exportJSON()
-		session.bioGraph.exportBioLayout()
+	if session.bioGraph is None:
+		session.flash = "No graph is defined. Please load one !"
+		return redirect( URL(r=request, c="BioModels", f="importer")+"?returnto="+URL(r=request, c="Workbench", f="index") )
+	session.bioGraph.exportJSON()
+	session.bioGraph.exportBioLayout()
 	return dict()
 
 def BioLayout():
@@ -17,7 +19,7 @@ def JSON():
 	return dict()
 
 def Dijkstra():
-	if session.bioGraph is not None:
+	if session.bioGraph is None:
 		session.flash = "Error: No graph to cut !"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 	if request.vars.ID is None:
