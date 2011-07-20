@@ -109,9 +109,29 @@ var customExample = {
                 x : 220,
                 y : 245
             }
+        }, {
+            id : 'node13',
+            sbo : 245,
+            data : {
+                label : 'actin',
+                x : 590,
+                y : 320
+            }
+        }, {
+            id : 'node14',
+            sbo : 375,
+            data : {
+                x : 715,
+                y : 425
+            }
         }
     ],
-    edges : {
-
-    }
+    edges : [
+        {
+             id : 'edge1',
+             sbo : 459,
+             source : 'node1',
+             target : "node11"
+        }
+    ]
 };

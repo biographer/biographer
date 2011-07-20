@@ -223,6 +223,24 @@
     };
 
     /**
+     * Add edges to the graph. Information about the edges will be extracted
+     * from the data parameter.
+     *
+     * @param {bui.Graph} graph The target graph to which the nodes and edges
+     *   should be added.
+     * @param {Object} data JSON data which should be imported
+     * @return {Object} All the generated nodes. Keys of this object are the
+     *   node's ids or, if applicable, the node's ref key (node.data.ref).
+     */
+    var addAllEdges = function(graph, data, generatedNodes) {
+        var edges = data.edges;
+
+        for (var i = 0; i < edges.length; i++) {
+            
+        }
+    };
+
+    /**
      * Import nodes and edges from JSON using this function.
      *
      * @param {bui.Graph} graph The target graph to which the nodes and edges
@@ -232,6 +250,7 @@
     bui.importFromJSON = function(graph, data) {
         var generatedNodes = addAllNodes(graph, data);
         doComplexLayout(generatedNodes);
+        addAllEdges(graph, data, generatedNodes);
         graph.reduceCanvasSize();
     };
 })(bui);
