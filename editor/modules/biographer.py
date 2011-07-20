@@ -582,7 +582,7 @@ class Graph:
 		if changes:
 			self.initialize()
 
-		return G.string(), png, cached, G.bb
+		return G.string(), png, cached, None #G.bb
 
 	def exportBioLayout(self):
 		self.DEBUG += "Exporting BioLayout ...\n"
