@@ -131,7 +131,47 @@ var customExample = {
              id : 'edge1',
              sbo : 459,
              source : 'node1',
-             target : "node11"
+             target : 'node11'
+        }, {
+             id : 'edge2',
+             sbo : 459,
+             source : 'node11',
+             target : 'node12'
+        }, {
+             id : 'edge3',
+             sbo : 459,
+             source : 'node11',
+             target : 'node13'
+        }, {
+             id : 'edge4',
+             sbo : 459,
+             source : 'node13',
+             target : 'node14'
+        }, {
+             id : 'edge5',
+             sbo : 459,
+             source : 'node14',
+             target : 'node4'
+        }, {
+             id : 'edge6',
+             sbo : 459,
+             source : 'node4',
+             target : 'node10'
+        }, {
+             id : 'edge7',
+             sbo : 459,
+             source : 'node10',
+             target : 'node9'
+        }, {
+             id : 'edge8',
+             sbo : 459,
+             source : 'node10',
+             target : 'node8'
+        }, {
+             id : 'edge8',
+             sbo : 459,
+             source : 'node10',
+             target : 'node1'
         }
     ]
 };
