@@ -93,6 +93,7 @@ bui.settings = {
                 height : -2
             }
         },
+        graphReduceCanvasPadding : 30,
         edgeHandleRadius : 4,
         nodeCornerRadius : 25,
         adaptToLabelNodePadding : {

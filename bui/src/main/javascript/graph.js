@@ -381,6 +381,10 @@
                 }
             }
 
+            var padding = bui.settings.style.graphReduceCanvasPadding;
+            x += padding;
+            y += padding;
+
             privates.rootDimensions.width = x;
             privates.root.setAttribute('width', x);
 
