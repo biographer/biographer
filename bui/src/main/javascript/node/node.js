@@ -581,6 +581,16 @@
         },
 
         /**
+         * This function can be used to check whether this node has a parent
+         * node.
+         *
+         * @return {Boolean} True when this node has a parent node.
+         */
+        hasParent : function() {
+            return this.parent() !== this.graph();
+        },
+
+        /**
          * Add a child node to this node. This function call is synonymous with
          * a child.parent(this) function call.
          *

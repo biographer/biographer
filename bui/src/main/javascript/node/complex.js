@@ -62,11 +62,7 @@
     bui.Complex.prototype = {
         tableLayout : function(settings) {
             if (settings === undefined) {
-                // TODO put in general settings
-                settings = {
-                    maxColumns : 3,
-                    padding : 25
-                };
+                settings = bui.settings.style.complexTableLayout;
             }
 
             // the items of the table array represent rows. Row items represent
@@ -85,7 +81,7 @@
 
                 if (lastRow.length === settings.maxColumns) {
                     lastRow = [];
-                    table.push(row);
+                    table.push(lastRow);
                 }
 
                 lastRow.push(node);
@@ -101,8 +97,6 @@
 
                 addToTable(node);
             }
-
-            console.log(table);
 
             var totalWidth = Number.MIN_VALUE,
                     totalHeight = settings.padding;
@@ -130,9 +124,6 @@
                 totalHeight += highestColumn + settings.padding;
                 totalWidth = Math.max(totalWidth, totalColumnWidth);
             }
-
-            console.log(totalWidth);
-            console.log(totalHeight);
 
             this.size(totalWidth, totalHeight);
         }
