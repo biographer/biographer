@@ -144,6 +144,10 @@
 
         privates.lines = lines;
 
+        if (privates.marker !== null) {
+            lines[lines.length - 1].marker(privates.marker);
+        }
+
         this.graph().unsuspendRedraw(suspendHandle);
     };
 
@@ -241,6 +245,7 @@
         privates.edgeHandlesVisible = true;
         privates.handles = [];
         privates.lines = [];
+        privates.marker = null;
         redrawLines.call(this);
 
         this.bind(bui.AttachedDrawable.ListenerType.source,
@@ -267,6 +272,37 @@
             }
 
             return privates.edgeHandlesVisible;
+        },
+
+        /**
+         * Set the marker, i.e. a symbol at the end of the line.
+         *
+         * @param {Object} [markerId] Marker type identification.
+         *   The appropriate identifications can be retrieved through the id
+         *   property of the connecting arcs generation functions. Example:
+         *
+         *   bui.connectingArcs.stimulation.id
+         * @return {bui.Edge|String} The id of the current marker when
+         *   you omit the parameter. In case you pass a parameter it will be
+         *   set as a new marker and the current instance will be removed
+         *   (fluent interface).
+         */
+        marker : function(markerId) {
+            var privates = this._privates(identifier);
+
+            if (markerId !== undefined) {
+                if (markerId === null) {
+                    privates.marker = null;
+                } else {
+                    privates.marker = markerId;
+                }
+
+                redrawLines.call(this);
+
+                return this;
+            }
+
+            return privates.marker;
         }
     };
 

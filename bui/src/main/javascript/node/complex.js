@@ -114,7 +114,6 @@
                     var size = columnNode.size();
                     highestColumn = Math.max(size.height, highestColumn);
 
-                    console.log(totalColumnWidth);
                     columnNode.position(totalColumnWidth, totalHeight);
 
                     // this probably needs to go to the end of the loop

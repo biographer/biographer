@@ -236,7 +236,19 @@
         var edges = data.edges;
 
         for (var i = 0; i < edges.length; i++) {
-            
+            var edge = edges[i];
+
+            var markerId = retrieveFrom(edgeMarkerMapping, edge.sbo).klass;
+
+            var source = generatedNodes[edge.source];
+            var target = generatedNodes[edge.target];
+
+            edge = graph
+                    .add(bui.Edge)
+                    .source(source)
+                    .target(target)
+                    .marker(markerId)
+                    .visible(true);
         }
     };
 
