@@ -231,5 +231,6 @@
     bui.importFromJSON = function(graph, data) {
         var generatedNodes = addAllNodes(graph, data);
         doComplexLayout(generatedNodes);
+        graph.reduceCanvasSize();
     };
 })(bui);

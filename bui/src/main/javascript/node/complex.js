@@ -60,8 +60,81 @@
     };
 
     bui.Complex.prototype = {
-        tableLayout : function() {
-            // TODO
+        tableLayout : function(settings) {
+            if (settings === undefined) {
+                // TODO put in general settings
+                settings = {
+                    maxColumns : 3,
+                    padding : 25
+                };
+            }
+
+            // the items of the table array represent rows. Row items represent
+            // columns
+            var table = [[]];
+
+            /**
+             * @private
+             * Add a node to the table. This is a private utility function for
+             * the sake of readability.
+             *
+             * @param {bui.Node} node The node which should be added
+             */
+            var addToTable = function(node) {
+                var lastRow = table[table.length - 1];
+
+                if (lastRow.length === settings.maxColumns) {
+                    lastRow = [];
+                    table.push(row);
+                }
+
+                lastRow.push(node);
+            };
+
+            var children = this.children();
+            for (var i = 0; i < children.length; i++) {
+                var node = children[i];
+
+                if (node instanceof bui.Complex) {
+                    node.tableLayout(settings);
+                }
+
+                addToTable(node);
+            }
+
+            console.log(table);
+
+            var totalWidth = Number.MIN_VALUE,
+                    totalHeight = settings.padding;
+
+            for (var rowId = 0; rowId < table.length; rowId++) {
+                var row = table[rowId];
+
+                var totalColumnWidth = settings.padding,
+                        highestColumn = Number.MIN_VALUE;
+
+                for (var columnId = 0; columnId < row.length; columnId++) {
+                    // each column holds a node, i.e. a bui.Node instance
+                    var columnNode = row[columnId];
+
+                    var size = columnNode.size();
+                    highestColumn = Math.max(size.height, highestColumn);
+
+                    console.log(totalColumnWidth);
+                    columnNode.position(totalColumnWidth, totalHeight);
+
+                    // this probably needs to go to the end of the loop
+                    totalColumnWidth += size.width + settings.padding;
+                }
+
+                totalHeight += highestColumn + settings.padding;
+                totalWidth = Math.max(totalWidth, totalColumnWidth);
+            }
+
+            console.log(totalWidth);
+            console.log(totalHeight);
+
+            this.size(totalWidth, totalHeight);
         }
     };
 
