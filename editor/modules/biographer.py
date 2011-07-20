@@ -61,7 +61,7 @@ class Node:
 			return False
 		p += len(key)
 		q = dot.find('"', p)
-		self.data['width'] = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround
+		self.data['width'] = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround	# future
 
 		key = 'height="'
 		p = dot.find(key)
@@ -305,8 +305,12 @@ class Graph:
 		self.maxID = 1
 		self.IDmapNodes = self.IDmapEdges = {}
 
+	def status(self):
+		self.DEBUG += "Network has "+str(self.NodeCount())+" Nodes and "+str(self.EdgeCount())+" Edges.\n"
+
 	def generateObjectLinks(self):						# add connected Edges Object Link array to all Nodes
 		pass								# add source and target Node Object Links to all Edges
+		# future
 
 	def initialize(self, removeOrphans=False):				# do everything necessary to complete a new model
 		self.DEBUG += "Initializing graph ...\n"
@@ -314,6 +318,7 @@ class Graph:
 		self.mapIDs()
 		self.generateObjectLinks()
 		self.hash()
+		self.status()
 
 	def selfcheck(self, autoresize=True, removeOrphanEdges=False):		# perform some basic integrity checks on the created Graph
 
@@ -354,7 +359,7 @@ class Graph:
 				orphan = True
 			if orphan:
 				if removeOrphanEdges:
-					del e
+					self.Edges.pop( self.Edges.index(e) )
 					self.DEBUG += "Edge removed.\n"
 				else:
 					self.DEBUG += "\n"
@@ -414,7 +419,9 @@ class Graph:
 		return self.maxID
 
 	def getNodeByID(self, ID):
-		return self.Nodes[ self.IDmapNodes[ID] ]
+		if ID in self.IDmapNodes.keys():
+			return self.Nodes[ self.IDmapNodes[ID] ]
+		return None
 
 	def getEdgeByID(self, ID):
 		return self.Edges[ self.IDmapEdges[ID] ]
@@ -422,7 +429,7 @@ class Graph:
 
 	### functions for Graph creation: import / export ###
 
-	def importfile(self, filename):
+	def importfile(self, filename):	# future
 		content	= open(filename).read()
 
 		pass	#... detect file type
@@ -441,14 +448,15 @@ class Graph:
 		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
 		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
 		self.initialize()
-		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
 		self.DEBUG += "Exporting JSON ...\n"
 		self.JSON = json.dumps( { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }, indent=Indent )
+		self.status()
 		return self.JSON
 
 	def exportDICT(self):							# export current model as python dictionary
+		self.status()
 		return self.__dict__
 
 	def importSBML(self, SBML):						# import SBML
@@ -516,7 +524,6 @@ class Graph:
 				self.Edges.append(e)
 
 		self.initialize()
-		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def importODP(self, odp):						# import an OpenOffice Impress Document
 		self.DEBUG = "Importing ODP ...\n"
@@ -525,13 +532,13 @@ class Graph:
 		self.Nodes = impress.Nodes
 		self.Edges = impress.Edges
 		self.initialize()
-		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def exportODP(self):							# export an OpenOffice Impress Document
 		self.DEBUG += "Exporting ODP ...\n"
 		impress = ODP()
 		impress.Nodes = self.Nodes
 		impress.Edges = self.Edges
+		self.status()
 		return impress.export()
 
 	def importBioPAX(self, biopax):
@@ -540,10 +547,10 @@ class Graph:
 		self.Nodes = b.Nodes
 		self.Edges = b.Edges
 		self.initialize()
-		self.DEBUG += "Loaded "+str(len(self.Nodes))+" Nodes and "+str(len(self.Edges))+" Edges.\n"
 
 	def exportGraphviz(self, folder="/tmp", useCache=True, updateNodeProperties=False):
 		self.DEBUG += "Exporting Graphviz ...\n"
+		self.status()
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		G = pygraphviz.AGraph(directed=True)
@@ -608,6 +615,7 @@ class Graph:
 		for edge in self.Edges:
 			L.add_edge( biographerEdge2LayoutEdge(edge) )
 		self.BioLayout = L.export()
+		self.status()
 		return self.BioLayout
 
 	def importBioLayout(self, BioLayout):
@@ -732,31 +740,40 @@ class Graph:
 
 
 	def Dijkstra(self, start, distance):
+		try:
+			distance = int(distance)
+		except:
+			distance = 0
 		if distance < 1:
 			self.DEBUG += "Fatal: Dijkstra requires positive integer arguments !\n"
 			return
 
 		# http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
-		self.DEBUG += "Cutting ...\n"
+		self.status()
+		self.DEBUG += "Cutting width distance "+str(distance)+" around Node "+start.id+" ...\n"
 
 		print "Suche Knoten mit Distanz: "+str(distance)
 
 		Besucht = {}
 		Queue = {start:0}
 		d = 0
-#		while d < distance:
-		print "Distanz: "+str(d)
-		print "Besucht: ", Besucht
-		print "Queue: ", Queue
-		d += 1
-		for node in Queue:						# für alle Nodes in der Queue,
-			if node not in Besucht.keys():				#  die noch nicht besucht wurden,
-				Besucht[node] = Queue[node]			#   speichere ihre Distanz in Besucht
-		Queue = {}							# leere die Queue
-		for node in Besucht.keys():					# für alle besuchten Nodes,
-			if Besucht[node] == d-1:				#  die zuletzt nach Besucht geschrieben wurden,
-				for neighbour in self.getNeighbours(node):	#   finde alle Nachbarn
-					Queue[ neighbour ] = d			#    und speichere ihre Distanz in der Queue
+		while ( d < distance ):
+			print "Distanz: "+str(d)
+			print "Besucht: ", Besucht
+			print "Queue: ", Queue
+			d += 1
+			for node in Queue:						# für alle Nodes in der Queue,
+				if node not in Besucht.keys():				#  die noch nicht besucht wurden,
+					Besucht[node] = Queue[node]			#   speichere ihre Distanz in Besucht
+			Queue = {}							# leere die Queue
+			for node in Besucht.keys():					# für alle besuchten Nodes,
+				if Besucht[node] == d-1:				#  die zuletzt nach Besucht geschrieben wurden,
+					for neighbour in self.getNeighbours(node):	#   finde alle Nachbarn,
+						if neighbour is not None:		#    die es gibt,
+							print "gibt es: ", neighbour.id
+							Queue[ neighbour ] = d		#     und speichere ihre Distanz in der Queue
+						else:
+							print "gibt es nicht: ", neighbour
 
 		self.Nodes = Besucht.keys()
 		self.initialize( removeOrphans=True )

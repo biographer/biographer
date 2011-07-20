@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from copy import deepcopy
+
 def index():
 	if session.bioGraph is None:
 		session.flash = "No graph is defined. Please load one !"
@@ -26,7 +28,9 @@ def Dijkstra():
 		session.flash = "Error: Dijkstra without ID !"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 	if request.vars.distance is not None:
-		session.bioGraph.Dijkstra( session.bioGraph.getNodeByID(request.vars.ID), request.vars.distance )
+		bioGraph = deepcopy( session.bioGraph )
+		bioGraph.Dijkstra( session.bioGraph.getNodeByID(request.vars.ID), request.vars.distance )
+		session.bioGraph = bioGraph
 		session.flash = "Network cut into pieces !"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 	return dict( ID=request.vars.ID )
