@@ -61,7 +61,7 @@ class Node:
 			return False
 		p += len(key)
 		q = dot.find('"', p)
-		self.data['width'] = r.findall( dot[p:q] )[0]
+		self.data['width'] = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround
 
 		key = 'height="'
 		p = dot.find(key)
@@ -69,7 +69,7 @@ class Node:
 			return False
 		p += len(key)
 		q = dot.find('"', p)
-		self.data['height'] = r.findall( dot[p:q] )[0]
+		self.data['height'] = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround
 
 		return str(self.id)+" is now at ( "+str(self.data['x'])+" | "+str(self.data['y'])+" ), width = "+str(self.data['width'])+", height = "+str(self.data['height'])
 
@@ -399,6 +399,12 @@ class Graph:
 		self.maxID += 1
 		return self.maxID
 
+	def getNodeByID(self, ID):
+		return self.Nodes[ self.IDmapNodes[ID] ]
+
+	def getEdgeByID(self, ID):
+		return self.Edges[ self.IDmapEdges[ID] ]
+
 
 	### functions for Graph creation: import / export ###
 
@@ -552,20 +558,16 @@ class Graph:
 		s   = self.MD5+".str"
 		pngpath = os.path.join(folder, png)
 		dotpath = os.path.join(folder, dot)
-		spath	= os.path.join(folder, s)
 		if useCache and os.path.exists( pngpath ):
 			cached = True
 			# no need to do the cpu-intense layouting again
 			self.dot = open(dotpath).read()
-			strGraph = open(spath).read()
 		else:
 			cached = False
 			G.layout( prog='dot' )
 			G.draw( pngpath )
 			self.dot = G.string()
 			open(dotpath,'w').write(self.dot)
-			strGraph = str(G)
-			open(spath,'w').write(strGraph)
 
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
 		changes = False
@@ -582,7 +584,7 @@ class Graph:
 		if changes:
 			self.initialize()
 
-		return G.string(), png, cached, None #G.bb
+		return self.dot, png, cached, None #G.bb
 
 	def exportBioLayout(self):
 		self.DEBUG += "Exporting BioLayout ...\n"
@@ -632,10 +634,6 @@ class Graph:
 			return len( self.Edges )
 		else:
 			return len( self.EdgesOfNode(node) )
-
-	def Dijkstra(self, edges):
-		# http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
-		return # array of nodes
 
 
 	### functions for really doing something with the Graph ###
@@ -710,4 +708,9 @@ class Graph:
 				self.DEBUG += "Node "+str( ID )+" exceeds maximum edge count: "+str( len(edges) )+" edges.\n"
 				self.CloneNode( ID, ConnectedEdges=edges )		# ... clone the Node
 
+
+	def Dijkstra(self, node, distance):
+		# http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+		self.DEBUG += "Cutting ...\n"
+		
 

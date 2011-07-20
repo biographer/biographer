@@ -30,25 +30,16 @@
 				border:		1pt solid black;
 				}
 	div.Menu:hover		{
-				height:		138px;		/* =6*23 */
+				height:		92px;
 				cursor:		pointer;
 				background:	#eaeaea;
 				}
 
-	#Workbench:hover	{				/* individual Menu properties */
-				height:		92px;
-				}
-	#Layout:hover		{
-				height:		69px;
-				}
-	#Visualization:hover	{
-				height:		69px;
-				}
-	#Import:hover		{
+	#Import:hover		{				/* individual Menu properties */
 				height:		115px;
 				}
-	#Export:hover		{
-				height:		92px;
+	#Project:hover		{
+				height:		138px;
 				}
 
 	a.MenuLink		{				/* style of the links inside the Menus */
@@ -112,7 +103,7 @@
     }}
 </head>
 
-<body>
+<body id=body>
 <div class="flash">{{=response.flash or ''}}</div> <!-- notification div -->
     
 <div id="container">                        
@@ -136,14 +127,16 @@
 	<div class=Menu id=Layout>
 		Layout
 		<br/>
-		<a class=MenuLink href="{{=URL(r=request, c='BioLayout', f='Layout')}}" id=widthLayout>biographer</a><br/>
-		<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='Layout')}}">graphviz</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='BioLayout')}}" id=widthLayout>show BioLayout</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='BioLayout', f='Layout')}}">use biographer</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='Layout')}}">use graphviz</a><br/>
 	</div>
 
 	<div class=Menu id=Visualization>
 		Visualization
 		<br/>
-		<a class=MenuLink href="{{=URL(r=request, c='BioVis', f='Visualization')}}" id=widthVisualization>biographer</a>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='JSON')}}" id=widthVisualization>JSON network</a>
+		<a class=MenuLink href="{{=URL(r=request, c='BioVis', f='Visualization')}}">biographer</a>
 		<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='Visualization')}}">graphviz</a>
 	</div>
 

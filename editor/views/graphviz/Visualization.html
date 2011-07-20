@@ -7,13 +7,33 @@
 			max-height:	82%;
 			overflow:	scroll;
 			}
+	div.area	{
+			position:	relative;
+			left:		0px;
+			top:		0px;
+			width:		70px;
+			height:		20px;
+			border:		none;
+			background-color: #4e4ea9;
+			opacity:	.2;
+			}
+	div.area:hover	{
+			cursor:		pointer;
+			opactity:	.8;
+			}
 </style>
+
+<script>
+	function gotoDijkstra(ID) {
+		document.location.href = '{{ =URL(r=request, c="Workbench", f="Dijkstra") }}?ID='+ID;
+		}
+</script>
 
 <a href="{{ = session.graphvizURL }}">{{ = session.graphvizURL }}</a>
 
 <div class=image>
 
-<img src="{{ = session.graphvizURL }}" usemap="#DijkstraMap" />
+<img src="{{ = session.graphvizURL }}" />
 
 {{ = XML(DijkstraMap) }}
 

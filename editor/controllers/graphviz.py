@@ -27,22 +27,22 @@ def graphviz():
 def Layout():
 	if session.bioGraph is None:
 		session.flash = "Import a graph first !"
-		return redirect( URL(r=request, c="Workbench", f="index") )
+		return redirect( URL(r=request, c="BioModels", f="importer")+"?returnto="+URL(r=request, c="graphviz", f="Layout") )
 	graphviz()
 	return dict()
 
 def Visualization():
 	if session.bioGraph is None:
 		session.flash = "Import a graph first !"
-		return redirect( URL(r=request, c="Workbench", f="index") )
+		return redirect( URL(r=request, c="BioModels", f="importer")+"?returnto="+URL(r=request, c="graphviz", f="Visualization") )
 	graphviz()
-	Map = '<map name="DijkstraMap">\n'
+	Map = ""
 	for node in session.bioGraph.Nodes:
-		x1 = str( int(float(node.data['x'])) )
-		y1 = str( int(float(node.data['y'])) )
-		x2 = str( int(float(node.data['x']) + float(node.data['width'])*100) )
-		y2 = str( int(float(node.data['y']) + float(node.data['height'])*100) )
-		Map += '\t<area shape="rect" coords="'+x1+','+y1+','+x2+','+y2+'" href="'+URL(r=request, c="Workbench", f="Dijkstra")+'?id='+node.id+'" alt="'+node.data['label']+'" title="'+node.data['label']+'">\n'
-	Map += "</map>"
+		left	= str( int(float(node.data['x'])) )
+		top	= str( int(float(node.data['y'])) )
+		width	= str( int(float(node.data['width'])) )
+		height	= str( int(float(node.data['height'])) )
+		if left > 0 and top > 0 and width > 0 and height > 0:
+			Map 	+= '<div class=area style="left:'+left+'px; top:'+top+'px; width:'+width+'px; height:'+height+'px;" onClick="gotoDijkstra(\''+str(node.id)+'\');"></div>\n'
 	return dict( DijkstraMap=Map )
 

@@ -13,7 +13,7 @@ import httplib
 
 def importer():
 	session.PreviousBioModels = db( db.BioModels.Title != None ).select()
-	return dict()
+	return dict( returnto=request.vars.returnto )
 
 def update_database():
 	key = 'name="'
@@ -55,6 +55,9 @@ def download():
 			session.bioGraph.importSBML( session.SBML )
 			update_database()
 			session.flash = "BioModel's SBML retrieved successfully"
+
+	if request.vars.returnto is not None:
+		return redirect( request.vars.returnto )
 
 	return redirect( URL(r=request, c='Workbench', f='index') )
 
