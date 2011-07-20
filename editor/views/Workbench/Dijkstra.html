@@ -1,0 +1,17 @@
+<html>
+<body>
+	<script>
+		radius = prompt('Please enter Dijkstra radius:');
+		if ( radius == null ) {
+			document.location.href = 'index';
+			}
+		if (isNaN(radius)) {
+			alert("Please enter a valid radius or press cancel !");
+			document.location.href = 'Dijkstra?id={{=ID}}';
+			}
+		else	{
+			document.location.href = 'Dijkstra?id={{=ID}}&radius='+radius;
+			}
+	</script>
+</body>
+</html>

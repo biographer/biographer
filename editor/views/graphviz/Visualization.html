@@ -9,6 +9,10 @@
 			}
 </style>
 
+<a href="{{ = session.graphvizURL }}">{{ = session.graphvizURL }}</a>
+
 <div class=image>
-	<a href="{{ = session.graphvizURL }}"><img src="{{ = session.graphvizURL }}" /></a>
+	<img src="{{ = session.graphvizURL }}" usemap="#DijkstraMap" />
 </div>
+
+{{ = XML(DijkstraMap) }}
