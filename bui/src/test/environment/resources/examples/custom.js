@@ -1,21 +1,5 @@
 var customExample = {
     nodes : [
-//        {
-//            id : 'complex1',
-//            sbo : x,
-//            data : {
-//                x : 0,
-//                y : 0,
-//                label : '',
-//                subnodes : ['complex1'],
-//                modification : [
-//                   [
-//                      216,
-//                      '1068'
-//                   ]
-//                ]
-//            }
-//        },
         {
             id : 'node1',
             sbo : 253,
