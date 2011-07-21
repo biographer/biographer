@@ -275,7 +275,7 @@ float Network::firm_distribution(){
       for(k=0;k<n;k++){
          neighbors= getNeighbors(k,substrate);
          m=neighbors->size();
-         if(m<6)continue;
+         if(m<4)continue;
          baseNode=pos[k];
          for(i=0;i<m-1;i++)
             for(j=i+1;j<m;j++)
@@ -444,13 +444,14 @@ float Network::post_pro(int _round){
    int m=edges->size(),n=nodes->size(),n1,n2,i;
    float d,i_d,force=0.0;
    Point vec;
-   
+   float alpha;
    for(i=0;i<m;i++){                    
       n1=(*edges)[i].from; //reaction
       n2=(*edges)[i].to; //compound;
       if(_round==1 && deg[n1]>3 && deg[n2]>3)continue;
       vec=pos[n2]-pos[n1];
-      i_d=dij1[i]*0.5;
+      alpha=fabs(fabs(lim(angle(vec)))-0.5*PI);
+      i_d=dij1[i]*(0.45+0.1*sin(alpha));
       if(_round==1)i_d*=1.4;
       d=dist(pos[n1],pos[n2]);
       if(d<i_d && d>i_d*0.7)continue;
@@ -473,8 +474,10 @@ float Network::post_pro(int _round){
    //float multi;
    for(n1=0;n1<n;n1++)
       for(n2=n1+1;n2<n;n2++){
-         if(isadj[n1][n2])continue;              
-         i_d=dij2[n1][n2]*0.4;
+         if(isadj[n1][n2])continue; 
+         vec=pos[n1]-pos[n2];
+         alpha=fabs(fabs(lim(angle(vec)))-0.5*PI);             
+         i_d=dij2[n1][n2]*(0.35+0.1*sin(alpha));
          d=dist(pos[n1],pos[n2]);
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
          if(fabs(pos[n1].x-pos[n2].x)>(*nodes)[n1].pts.width+(*nodes)[n2].pts.width)continue;
@@ -482,7 +485,6 @@ float Network::post_pro(int _round){
          
          force+=((i_d-d)*(i_d-d)*deg[n1]*deg[n2]*(deg[n1]+deg[n2])); //distantal force;
          //multi=((*nodes)[n1].pts.width+(*nodes)[n2].pts.width)/((*nodes)[n1].pts.height+(*nodes)[n2].pts.height);
-         vec=pos[n1]-pos[n2];
          if(fabs(d)<zero){
             vec.x=i_d;
             vec.y=0.0;
@@ -669,14 +671,14 @@ float Network::layout(){
    
    //phase4: post processing. 
    
-  /* pre_force=inf;
+   pre_force=inf;
    k=inc=0;
    while(true){
       k++;
-      near_swap();
-      cur_force=post_pro(1);
-      move_nodes();
       adjust_compartments();
+      cur_force=calc_force_adj();
+      cur_force+=calc_force_nadj();
+      cur_force+=firm_distribution();
       cur_force+=calc_force_compartments();
       move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
@@ -684,7 +686,7 @@ float Network::layout(){
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
    }
-   */
+   
    pre_force=inf;
    while(true){
       cur_force=min_edge_crossing(1);
