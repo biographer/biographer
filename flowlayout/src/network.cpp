@@ -121,16 +121,32 @@ void Network::read(const char* file){
    if (file) freopen(file,"r",stdin);
    while (scanf(" #%[^\n]",s)){}; // remove comment lines
    scanf(" %d\n",&c); // num compartments
+   if (c>2000){
+      fprintf(stderr,"too many compartments %d",c);
+      abort();
+   }
 	printf("number of compartments: %d\n",c);
    for(i=0;i<c;i++){
       scanf("%d %s\n",&_index,t);
+      if (_index>c+1){ // not starting at zero
+         fprintf(stderr,"compartment index out of bound %d",_index);
+         abort();
+      }
       addCompartment(_index,t);
    }  
    scanf("%s\n",s); // "///"  
    scanf("%d",&n); //number of nodes
 	printf("number of nodes: %d\n",n);
+   if (c>10000){
+      fprintf(stderr,"too many nodes %d",c);
+      abort();
+   }
    for(i=0;i<n;i++){
       scanf("%d\n",&_index);
+      if (_index>=n){
+         fprintf(stderr,"node index out of bound %d",_index);
+         abort();
+      }
       scanf("%s\n",t);
       if(strcmp(t,"Compound")==0)_type=compound;
       else if(strcmp(t,"Reaction")==0)_type=reaction;
@@ -145,9 +161,21 @@ void Network::read(const char* file){
    scanf("%s\n",s); // "///"
    scanf("%d\n",&m); // numer of edges
 	printf("number of edges: %d\n",m);
-	fflush(stdout);
+   if (c>40000){
+      fprintf(stderr,"too many edges %d",c);
+      abort();
+   }
+   fflush(stdout);
    for(i=0;i<m;i++){
       scanf("%s %d %d\n",s,&p,&q);
+      if (p>=n){
+         fprintf(stderr,"edge node index out of bound %d",p);
+         abort();
+      }
+      if (q>=n){
+         fprintf(stderr,"edge node index out of bound %d",q);
+         abort();
+      }
       for(k=0;k<7;k++){
          if(strcmp(edgetypes[k],s)==0)break;
       }

@@ -9,7 +9,8 @@ int main(int argc,char *argv[]){
    if (argc>=2){
       nw.read(argv[1]);
    } else {
-      nw.read("data2.txt");
+//      nw.read("data2.txt");
+      nw.read();
    }   
    double _force=nw.layout();
    end_time=clock();

@@ -25,7 +25,7 @@ public:
    VI* getNeighbors(int nodeIndex, Edgetype type); //get the compounds of a specified type of a reaction
    VI* getNeighbors(int nodeIndex);  //get the reactions associated with a compound.
 
-   void read(const char * file); // read network from file
+   void read(const char * file=NULL); // read network from file
    void dumpNodes(const char* file); // write nodes with properties
    
    float layout();
