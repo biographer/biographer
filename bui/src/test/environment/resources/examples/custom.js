@@ -6,7 +6,7 @@ var customExample = {
             data : {
                 x : 100,
                 y : 500,
-                "subnodes" : [
+                subnodes : [
                    'node2',
                    'node3'
                 ]
@@ -30,7 +30,7 @@ var customExample = {
             data : {
                 x : 610,
                 y : 525,
-                "subnodes" : [
+                subnodes : [
                     'node5',
                     'node6',
                     'node7'
