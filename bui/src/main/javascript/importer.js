@@ -238,8 +238,10 @@
         for (var i = 0; i < edges.length; i++) {
             var edge = edges[i];
 
+            // TODO make sure that the marker could be found or fall back
             var markerId = retrieveFrom(edgeMarkerMapping, edge.sbo).klass;
 
+            // TODO make sure that source and target could be found
             var source = generatedNodes[edge.source];
             var target = generatedNodes[edge.target];
 

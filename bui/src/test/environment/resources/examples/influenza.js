@@ -974,13 +974,11 @@ var influenza = {
                   }, 
               
 { "data": { "modifications": [], "subcomponents": [], "clone_marker":
--1, "label": "Acidified Influenza A Viral Particle Docked At The
-Endocytic Vesicle Membrane With An Open Pore", "height": 35, "width":
+-1, "label": "Acidified Influenza A Viral Particle Docked At The Endocytic Vesicle Membrane With An Open Pore", "height": 35, "width":
 950, "radius": 30, "y": "749", "x": "4970", "compartment": "c24337" },
 "is_abstract": false, "type": 0, "sbo": -1, "id": "s189177" }, {
 "data": { "modifications": [], "subcomponents": [], "clone_marker": -1,
-"label": "Influenza A Viral Particle Docked At The Endocytic Vesicle
-Membrane With An Open Pore", "height": 35, "width": 105, "radius": 30,
+"label": "Influenza A Viral Particle Docked At The Endocytic Vesicle Membrane With An Open Pore", "height": 35, "width": 105, "radius": 30,
 "y": "895", "x": "5020", "compartment": "c24337" }, "is_abstract":
 false, "type": 0, "sbo": -1, "id": "s189181" }, { "data": {
 "modifications": [], "subcomponents": [], "clone_marker": -1, "label":
@@ -3133,8 +3131,7 @@ false, "type": 0, "sbo": -1, "id": "s189181" }, { "data": {
                                     "height": 35, 
                                     "width": 486, 
                                     "radius": 30, 
-                                    "y": "213
-8", "x": "2859", "compartment": -1 }, "is_abstract": false, "type": 4,
+                                    "y": "2138", "x": "2859", "compartment": -1 }, "is_abstract": false, "type": 4,
 "sbo": 0, "id": "r168858" }, { "data": { "modifications": [],
 "subcomponents": [], "clone_marker": -1, "label":
 "Binding_of_NS1_to_cleavage_and_host_polyadenylation_specificity_factor_CPSF_",
