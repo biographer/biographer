@@ -54,7 +54,7 @@
             path.setAttributeNS(null, 'd', data);
             marker.appendChild(path);
         } else {
-            marker.appendChild(data);
+            marker.appendChild(jQuery(data).clone(false)[0]);
         }
 
         return marker;
