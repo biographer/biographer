@@ -48,8 +48,8 @@ var simpleExample = {
                "Reactome:180493",
                "Reactome:65043"
             ],
-            "x" : "994",
-            "y" : "34"
+            "x" : 994,
+            "y" : 34
          },
          "id" : "Reactome:180523",
          "is_abstract" : 0,
@@ -65,9 +65,7 @@ var simpleExample = {
             "subnodes" : [
                "MAP:UP62993_CY",
                "Reactome:180344"
-            ],
-            "x" : null,
-            "y" : null
+            ]
          },
          "id" : "Reactome:180304",
          "is_abstract" : 1,
@@ -82,9 +80,7 @@ var simpleExample = {
             "ref" : "Reactome:179882",
             "subnodes" : [
                "Reactome:179860"
-            ],
-            "x" : null,
-            "y" : null
+            ]
          },
          "id" : "Reactome:179882",
          "is_abstract" : 1,
@@ -100,9 +96,7 @@ var simpleExample = {
             "subnodes" : [
                "Reactome:179863",
                "Reactome:179803"
-            ],
-            "x" : null,
-            "y" : null
+            ]
          },
          "id" : "Reactome:179860",
          "is_abstract" : 1,
@@ -120,8 +114,8 @@ var simpleExample = {
                "Reactome:65043",
                "Reactome:180499"
             ],
-            "x" : "1088",
-            "y" : "222"
+            "x" : 1088,
+            "y" : 222
          },
          "id" : "Reactome:180522",
          "is_abstract" : 0,
@@ -139,8 +133,8 @@ var simpleExample = {
                "Reactome:179882",
                "Reactome:162563"
             ],
-            "x" : "581",
-            "y" : "222"
+            "x" : 581,
+            "y" : 222
          },
          "id" : "Reactome:180269",
          "is_abstract" : 0,
@@ -152,9 +146,7 @@ var simpleExample = {
             "compartment" : "MAP:Cytosol",
             "label" : "Orthophosphate",
             "modification" : [],
-            "ref" : "MAP:Cs14265-44-2_CY",
-            "x" : null,
-            "y" : null
+            "ref" : "MAP:Cs14265-44-2_CY"
          },
          "id" : "MAP:Cs14265-44-2_CY",
          "is_abstract" : 1,
@@ -166,9 +158,7 @@ var simpleExample = {
             "compartment" : "MAP:Cytosol",
             "label" : "H2O",
             "modification" : [],
-            "ref" : "MAP:Cs7732-18-5_CY",
-            "x" : null,
-            "y" : null
+            "ref" : "MAP:Cs7732-18-5_CY"
          },
          "id" : "MAP:Cs7732-18-5_CY",
          "is_abstract" : 1,
@@ -180,9 +170,7 @@ var simpleExample = {
             "compartment" : "MAP:Plasmamembrane",
             "label" : "Paxillin",
             "modification" : [],
-            "ref" : "Reactome:180493",
-            "x" : null,
-            "y" : null
+            "ref" : "Reactome:180493"
          },
          "id" : "Reactome:180493",
          "is_abstract" : 1,
@@ -194,9 +182,7 @@ var simpleExample = {
             "compartment" : "MAP:Plasmamembrane",
             "label" : "Proto-oncogene tyrosine-protein kinase Src ",
             "modification" : [],
-            "ref" : "Reactome:65043",
-            "x" : null,
-            "y" : null
+            "ref" : "Reactome:65043"
          },
          "id" : "Reactome:65043",
          "is_abstract" : 1,
@@ -208,9 +194,7 @@ var simpleExample = {
             "compartment" : "MAP:Extracellular",
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863",
-            "x" : null,
-            "y" : null
+            "ref" : "Reactome:179863"
          },
          "id" : "Reactome:179863",
          "is_abstract" : 1,
@@ -222,9 +206,7 @@ var simpleExample = {
             "compartment" : "MAP:Cytosol",
             "label" : "SHP2 protein",
             "modification" : [],
-            "ref" : "Reactome:162563",
-            "x" : null,
-            "y" : null
+            "ref" : "Reactome:162563"
          },
          "id" : "Reactome:162563",
          "is_abstract" : 1,
@@ -236,9 +218,7 @@ var simpleExample = {
             "compartment" : "MAP:Cytosol",
             "label" : "GRB2()",
             "modification" : [],
-            "ref" : "MAP:UP62993_CY",
-            "x" : null,
-            "y" : null
+            "ref" : "MAP:UP62993_CY"
          },
          "id" : "MAP:UP62993_CY",
          "is_abstract" : 1,
@@ -271,9 +251,7 @@ var simpleExample = {
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803",
-            "x" : null,
-            "y" : null
+            "ref" : "Reactome:179803"
          },
          "id" : "Reactome:179803",
          "is_abstract" : 1,
@@ -286,8 +264,8 @@ var simpleExample = {
             "label" : "Tyrosine-protein kinase CSK",
             "modification" : [],
             "ref" : "Reactome:180499",
-            "x" : "581",
-            "y" : "34"
+            "x" : 581,
+            "y" : 34
          },
          "id" : "Reactome:180499",
          "is_abstract" : 0,
@@ -320,9 +298,7 @@ var simpleExample = {
                   "589"
                ]
             ],
-            "ref" : "Reactome:180344",
-            "x" : null,
-            "y" : null
+            "ref" : "Reactome:180344"
          },
          "id" : "Reactome:180344",
          "is_abstract" : 1,
@@ -333,8 +309,8 @@ var simpleExample = {
          "data" : {
             "label" : null,
             "ref" : "Reactome:177923",
-            "x" : "581",
-            "y" : "122"
+            "x" : 581,
+            "y" : 122
          },
          "id" : "Reactome:177923",
          "is_abstract" : 0,
@@ -348,8 +324,8 @@ var simpleExample = {
             "label" : "H2O",
             "modification" : [],
             "ref" : "MAP:Cs7732-18-5_CY",
-            "x" : "196",
-            "y" : "222"
+            "x" : 196,
+            "y" : 222
          },
          "id" : "MAP:Cs7732-18-5_CY_Reactome:177923",
          "is_abstract" : 0,
@@ -363,8 +339,8 @@ var simpleExample = {
             "label" : "Orthophosphate",
             "modification" : [],
             "ref" : "MAP:Cs14265-44-2_CY",
-            "x" : "179",
-            "y" : "34"
+            "x" : 179,
+            "y" : 34
          },
          "id" : "MAP:Cs14265-44-2_CY_Reactome:177923",
          "is_abstract" : 0,
@@ -373,20 +349,35 @@ var simpleExample = {
       },
       {
          "data" : {
-            "label" : "Cytosol",
-            "ref" : "MAP:Cytosol",
+            "label" : "Extracellular",
+            "ref" : "MAP:Extracellular",
             "subnodes" : [
-               "Reactome:180304",
-               "MAP:Cs14265-44-2_CY",
-               "Reactome:162563",
-               "MAP:Cs7732-18-5_CY",
-               "MAP:UP62993_CY",
-               "Reactome:180344"
-            ],
-            "x" : null,
-            "y" : null
+               "Reactome:179863"
+            ]
          },
-         "id" : "MAP:Cytosol",
+         "id" : "MAP:Extracellular",
+         "is_abstract" : 0,
+         "sbo" : 290,
+         "type" : "Compartment"
+      },
+      {
+         "data" : {
+            "label" : "Plasmamembrane",
+            "ref" : "MAP:Plasmamembrane",
+            "subnodes" : [
+               "Reactome:180493",
+               "Reactome:180523",
+               "Reactome:179882",
+               "Reactome:65043",
+               "Reactome:180522",
+               "Reactome:180269",
+               "Reactome:179860",
+               "Reactome:179803",
+               "Reactome:180499",
+               "Reactome:177923"
+            ]
+         },
+         "id" : "MAP:Plasmamembrane",
          "is_abstract" : 0,
          "sbo" : 290,
          "type" : "Compartment"
@@ -402,29 +393,7 @@ var simpleExample = {
                "MAP:Cs7732-18-5_CY",
                "MAP:UP62993_CY",
                "Reactome:180344"
-            ],
-            "x" : null,
-            "y" : null
-         },
-         "id" : "MAP:Cytosol",
-         "is_abstract" : 0,
-         "sbo" : 290,
-         "type" : "Compartment"
-      },
-      {
-         "data" : {
-            "label" : "Cytosol",
-            "ref" : "MAP:Cytosol",
-            "subnodes" : [
-               "Reactome:180304",
-               "MAP:Cs14265-44-2_CY",
-               "Reactome:162563",
-               "MAP:Cs7732-18-5_CY",
-               "MAP:UP62993_CY",
-               "Reactome:180344"
-            ],
-            "x" : null,
-            "y" : null
+            ]
          },
          "id" : "MAP:Cytosol",
          "is_abstract" : 0,
