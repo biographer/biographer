@@ -265,48 +265,105 @@
     bui.util.getHoverId = function(id) {
         return id + bui.settings.idSuffix.hover;
     };
+
+    /**
+     * Retrieve an objects value if it is set. If it's not set undefined will
+     * be returned.
+     *
+     * @param {Object} obj An object whose properties should be checked
+     * @param {Object} property1 One or more (var args function) property names
+     *   that should be accessed and checked.
+     * @return {Object} The properties value or undefined in case the property
+     *   does not exist.
+     *
+     */
+    bui.util.retrieveValueIfSet = function(obj, property1) {
+        obj = arguments[0];
+
+        for(var i = 1; i < arguments.length && obj !== undefined; i++) {
+            obj = obj[arguments[i]];
+        }
+
+        return obj;
+    };
+
+     /**
+     * Verify that an object has a property with the given name and that this
+     * property is not null.
+     *
+     * @param {Object} obj The object which should be checked for the property.
+     * @param {String} property Property names which should be checked. This is
+     *   a var args method.
+     * @return {Boolean} True in case the property exists and is not null.
+     *   False otherwise.
+     */
+    bui.util.propertySetAndNotNull = function() {
+        var obj = arguments[0];
+        
+        for(var i = 1; i < arguments.length; i++) {
+
+            var property = arguments[i];
+
+            if (typeof(property) === 'string') {
+                if ((obj.hasOwnProperty(property) === false ||
+                    obj[property] === null)) {
+                    return false;
+                }
+            } else {
+                property.splice(0, 0, obj);
+
+                var result = bui.util.retrieveValueIfSet.apply(window,
+                        property);
+
+                if (result === undefined || result === null) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    };
+
+    /**
+     * Ensure that a value is a number. If it is not an exception will be thrown.
+     * @param {Number|String} val The value which should be converted to a number.
+     *   If you pass a string it will be converted to a number if possible.
+     * @return {Number} The converted number.
+     */
+    bui.util.toNumber = function(val) {
+        var type = typeof(val);
+
+        if (type === 'number') {
+            return val;
+        } else if (type === 'string' && isNaN(val) === false) {
+            return parseFloat(val);
+        } else {
+            throw 'It can\'t be ensured that the value: "' + val +
+                    '" is a number.';
+        }
+    };
+
+    /**
+     * Ensure that the given value is a boolean value.  If it is not an exception
+     *   will be thrown.
+     * @param {Boolean|Number|String} val The value which should be converted to
+     *   a boolean value. If you pass a boolean value it will simply be returned.
+     *   A numeric value will be result in true in case the parameter equals '1'.
+     *   All other numbers will result in false. A string will evaluate to true
+     *   when it equals (case insensitive) 'true' or '1'.
+     * @return {Boolean} The converted boolean value.
+     */
+    bui.util.toBoolean = function(val) {
+        var type = typeof(val);
+
+        if (type === 'boolean') {
+            return val;
+        } else if (type === 'string') {
+            return val.toLowerCase() === 'true' || val === '1';
+        } else if (type === 'number') {
+            return val === 1;
+        } else {
+            throw 'The value: "' + val + 'can\'t be converted to boolean.';
+        }
+    };
 })(bui);
-
-
-/**
- * Ensure that a value is a number. If it is not an exception will be thrown.
- * @param {Number|String} val The value which should be converted to a number.
- *   If you pass a string it will be converted to a number if possible.
- * @return {Number} The converted number.
- */
-var toNumber = function(val) {
-    var type = typeof(val);
-
-    if (type === 'number') {
-        return val;
-    } else if (type === 'string' && isNaN(val) === false) {
-        return parseFloat(val);
-    } else {
-        throw 'It can\'t be ensured that the value: "' + val +
-                '" is a number.';
-    }
-};
-
-/**
- * Ensure that the given value is a boolean value.  If it is not an exception
- *   will be thrown.
- * @param {Boolean|Number|String} val The value which should be converted to
- *   a boolean value. If you pass a boolean value it will simply be returned.
- *   A numeric value will be result in true in case the parameter equals '1'.
- *   All other numbers will result in false. A string will evaluate to true
- *   when it equals (case insensitive) 'true' or '1'.
- * @return {Boolean} The converted boolean value.
- */
-var toBoolean = function(val) {
-    var type = typeof(val);
-
-    if (type === 'boolean') {
-        return val;
-    } else if (type === 'string') {
-        return val.toLowerCase() === 'true' || val === '1';
-    } else if (type === 'number') {
-        return val === 1;
-    } else {
-        throw 'The value: "' + val + 'can\'t be converted to boolean.';
-    }
-};

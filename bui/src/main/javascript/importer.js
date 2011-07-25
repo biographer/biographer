@@ -60,33 +60,11 @@
         if (mapping.hasOwnProperty(sbo)) {
             return mapping[sbo];
         } else {
-            // TODO handle error properly
-            console.log('SBO id "' + sbo + '" could not be found.');
+            throw('SBO id "' + sbo + '" could not be found.');
         }
     };
 
-    /**
-     * Verify that an object has a property with the given name and that this
-     * property is not null.
-     *
-     * @param {Object} obj The object which should be checked for the property.
-     * @param {String} property Property names which should be checked. This is
-     *   a var args method.
-     * @return {Boolean} True in case the property exists and is not null.
-     *   False otherwise.
-     */
-    var propertySetAndNotNull = function() {
-        var obj = arguments[0];
-        for(var i = 1; i < arguments.length; i++) {
-            var property = arguments[i];
-            if (obj.hasOwnProperty(property) === false ||
-                    obj[property] === null) {
-                return false;
-            }
-        }
-
-        return true;
-    };
+    
 
     /**
      * Default generator for node types. This will be used when
@@ -132,22 +110,6 @@
                 .visible(true);
 
         return node;
-    };
-
-    /**
-     * Retrieve the node's id or the ref key if applicable.
-     *
-     * @param {Object} nodeJSON Node information
-     * @return {String} The node's id or ref key.
-     */
-    var getId = function(nodeJSON) {
-        var id = nodeJSON.id;
-
-//        if (nodeJSON.data.ref !== undefined) {
-//            id = nodeJSON.data.ref;
-//        }
-
-        return id;
     };
 
     /**
