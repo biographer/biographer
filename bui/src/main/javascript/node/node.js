@@ -665,9 +665,9 @@
                 return this.center();
             }
 
-            var position = this.center(),
+            var position = this.absoluteCenter(),
                     size = this.size(),
-                    otherPosition = otherNode.center();
+                    otherPosition = otherNode.absoluteCenter();
 
             var padding = bui.settings.style.edgeToNodePadding;
             var widthWithPadding = size.width + padding.leftRight * 2,

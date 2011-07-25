@@ -58,7 +58,7 @@
         if (newSource !== null) {
             var listener = this._sourceOrTargetDimensionChanged
                     .createDelegate(this);
-            newSource.bind(bui.Node.ListenerType.position, listener,
+            newSource.bind(bui.Node.ListenerType.absolutePosition, listener,
                     listenerIdentifier(this));
             newSource.bind(bui.Node.ListenerType.size, listener,
                     listenerIdentifier(this));
@@ -83,7 +83,7 @@
         if (newTarget !== null) {
             var listener = this._sourceOrTargetDimensionChanged
                     .createDelegate(this);
-            newTarget.bind(bui.Node.ListenerType.position, listener,
+            newTarget.bind(bui.Node.ListenerType.absolutePosition, listener,
                     listenerIdentifier(this));
             newTarget.bind(bui.Node.ListenerType.size, listener,
                     listenerIdentifier(this));
