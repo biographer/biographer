@@ -69,6 +69,14 @@
             // columns
             var table = [[]];
 
+            var children = this.children();
+            // TODO filter auxiliary units at this point
+
+            // we are overriding the settings.maxColumns and make it dependent
+            // from the number of children according to Thomas's request.
+            var maxColumns = Math.max(1,
+                    Math.round(Math.sqrt(children.length)));
+
             /**
              * @private
              * Add a node to the table. This is a private utility function for
@@ -79,7 +87,7 @@
             var addToTable = function(node) {
                 var lastRow = table[table.length - 1];
 
-                if (lastRow.length === settings.maxColumns) {
+                if (lastRow.length === maxColumns) {
                     lastRow = [];
                     table.push(lastRow);
                 }
@@ -87,7 +95,6 @@
                 lastRow.push(node);
             };
 
-            var children = this.children();
             for (var i = 0; i < children.length; i++) {
                 var node = children[i];
 
