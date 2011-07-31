@@ -622,59 +622,59 @@ var simpleExample = {
          "is_abstract" : 1,
          "sbo" : 252,
          "type" : "Protein"
-      }//,
-//      {
-//         "data" : {
-//            "label" : "Extracellular",
-//            "ref" : "MAP:Extracellular",
-//            "subnodes" : [
-//               "Reactome:179863"
-//            ]
-//         },
-//         "id" : "MAP:Extracellular",
-//         "is_abstract" : 0,
-//         "sbo" : 290,
-//         "type" : "Compartment"
-//      },
-//      {
-//         "data" : {
-//            "label" : "Plasmamembrane",
-//            "ref" : "MAP:Plasmamembrane",
-//            "subnodes" : [
-//               "Reactome:180493",
-//               "Reactome:180523",
-//               "Reactome:179882",
-//               "Reactome:65043",
-//               "Reactome:180522",
-//               "Reactome:180269",
-//               "Reactome:179860",
-//               "Reactome:179803",
-//               "Reactome:180499",
-//               "Reactome:177923"
-//            ]
-//         },
-//         "id" : "MAP:Plasmamembrane",
-//         "is_abstract" : 0,
-//         "sbo" : 290,
-//         "type" : "Compartment"
-//      },
-//      {
-//         "data" : {
-//            "label" : "Cytosol",
-//            "ref" : "MAP:Cytosol",
-//            "subnodes" : [
-//               "Reactome:180304",
-//               "MAP:Cs14265-44-2_CY",
-//               "Reactome:162563",
-//               "MAP:Cs7732-18-5_CY",
-//               "MAP:UP62993_CY",
-//               "Reactome:180344"
-//            ]
-//         },
-//         "id" : "MAP:Cytosol",
-//         "is_abstract" : 0,
-//         "sbo" : 290,
-//         "type" : "Compartment"
-//      }
+      },
+      {
+         "data" : {
+            "label" : "Extracellular",
+            "ref" : "MAP:Extracellular",
+            "subnodes" : [
+               "Reactome:179863"
+            ]
+         },
+         "id" : "MAP:Extracellular",
+         "is_abstract" : 0,
+         "sbo" : 290,
+         "type" : "Compartment"
+      },
+      {
+         "data" : {
+            "label" : "Plasmamembrane",
+            "ref" : "MAP:Plasmamembrane",
+            "subnodes" : [
+               "Reactome:180493",
+               "Reactome:180523",
+               "Reactome:179882",
+               "Reactome:65043",
+               "Reactome:180522",
+               "Reactome:180269",
+               "Reactome:179860",
+               "Reactome:179803",
+               "Reactome:180499",
+               "Reactome:177923"
+            ]
+         },
+         "id" : "MAP:Plasmamembrane",
+         "is_abstract" : 0,
+         "sbo" : 290,
+         "type" : "Compartment"
+      },
+      {
+         "data" : {
+            "label" : "Cytosol",
+            "ref" : "MAP:Cytosol",
+            "subnodes" : [
+               "Reactome:180304",
+               "MAP:Cs14265-44-2_CY",
+               "Reactome:162563",
+               "MAP:Cs7732-18-5_CY",
+               "MAP:UP62993_CY",
+               "Reactome:180344"
+            ]
+         },
+         "id" : "MAP:Cytosol",
+         "is_abstract" : 0,
+         "sbo" : 290,
+         "type" : "Compartment"
+      }
    ]
 };
