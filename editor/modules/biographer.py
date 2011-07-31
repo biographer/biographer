@@ -585,6 +585,7 @@ class Graph:
 			self.dot = open(dotpath).read()
 		else:
 			cached = False
+			G.dpi = 70;
 			G.layout( prog='dot' )
 			G.draw( pngpath )
 			self.dot = G.string()
@@ -605,7 +606,7 @@ class Graph:
 		if changes:
 			self.initialize()
 
-		return self.dot, png, cached, None #G.bb
+		return self.dot, png, cached, None
 
 	def exportBioLayout(self):
 		self.DEBUG += "Exporting BioLayout ...\n"

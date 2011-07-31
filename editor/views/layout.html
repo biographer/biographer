@@ -27,23 +27,29 @@
 				background:	#eaeaea; 
 				padding:	5px;
 				text-align:	left;
-				border:		1pt solid black;
+				border-top:	1px solid black;
+				border-bottom:	1px solid black;
+				border-left:	1pt solid gray;
+				border-right:	1pt solid gray;
 				}
 	div.Menu:hover		{
 				height:		92px;
 				cursor:		pointer;
 				background:	#eaeaea;
+				border:		1px solid black;
+				opacity:	.7;
 				}
 
 	#Import:hover		{				/* individual Menu properties */
 				height:		115px;
 				}
 	#Project:hover		{
-				height:		161px;		/* 7*23 */
+				height:		184px;		/* 8*23 */
 				}
 
 	a.MenuLink		{				/* style of the links inside the Menus */
 				text-decoration:none;
+				color:		blue;
 				width:		100%;
 				padding:	3px;
 				margin:		3px;
@@ -194,6 +200,7 @@ div.error {
 	<div class=Menu id=Project>
 		Project
 		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Project', f='Roadmap')}}">Roadmap</a><br/>
 		<a class=MenuLink href="http://code.google.com/p/biographer/">Home</a><br/>
 		<a class=MenuLink href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a><br/>
 		<a class=MenuLink href="http://code.google.com/p/biographer/source/list?repo=server">Changes</a><br/>
@@ -221,11 +228,11 @@ div.error {
 	Project.style.width		= document.getElementById('widthProject').offsetWidth + padding + "px";
 
 	Workbench.style.left		= wrapper.offsetLeft + "px";
-	Layout.style.left 		= Workbench.offsetLeft + Workbench.offsetWidth -1 + "px";
-	Visualization.style.left 	= Layout.offsetLeft + Layout.offsetWidth -1 + "px";
-	Import.style.left 		= Visualization.offsetLeft + Visualization.offsetWidth -1 + "px";
-	Export.style.left	 	= Import.offsetLeft + Import.offsetWidth -1 + "px";
-	Project.style.left	 	= Export.offsetLeft + Export.offsetWidth -1 + "px";
+	Layout.style.left 		= Workbench.offsetLeft + Workbench.offsetWidth + "px";
+	Visualization.style.left 	= Layout.offsetLeft + Layout.offsetWidth + "px";
+	Import.style.left 		= Visualization.offsetLeft + Visualization.offsetWidth + "px";
+	Export.style.left	 	= Import.offsetLeft + Import.offsetWidth + "px";
+	Project.style.left	 	= Export.offsetLeft + Export.offsetWidth + "px";
 </script>
     
 <div id="page"> <!-- Here my central body -->     
@@ -240,6 +247,39 @@ div.error {
 <br/>
 
 </div><!-- container -->        
+
+<script>
+function bringToFront(id)  
+{  
+    if (!document.getElementById ||  
+        !document.getElementsByTagName)  
+        return;  
+  
+    var obj = document.getElementById(id);  
+    var divs = getAbsoluteDivs();  
+    var max_index = 0;  
+    var cur_index;  
+  
+    // Compute the maximal z-index of  
+    // other absolute-positioned divs  
+    for (i = 0; i < divs.length; i++)  
+    {  
+        var item = divs[i];  
+        if (item == obj ||  
+            item.style.zIndex == '')  
+            continue;  
+  
+        cur_index = parseInt(item.style.zIndex);  
+        if (max_index < cur_index)  
+        {  
+            max_index = cur_index;  
+        }  
+    }  
+  
+    obj.style.zIndex = max_index + 1;  
+}
+bringToFront('statusbar');
+</script>
 
 </body>
 

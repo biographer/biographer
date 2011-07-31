@@ -14,7 +14,7 @@ from copy import deepcopy
 def graphviz():
 	server_object		= deepcopy( session.bioGraph )
 	del session.bioGraph
-	session.graphvizDOT, filename, cached, boundaries = server_object.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=False, updateNodeProperties=True )
+	session.graphvizDOT, filename, cached, boundaries = server_object.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
 	session.bioGraph	= server_object
 	session.graphvizURL	= URL(r=request, c="static/graphviz", f=filename)
 	if cached:
