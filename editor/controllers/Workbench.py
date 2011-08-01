@@ -3,11 +3,11 @@
 from copy import deepcopy
 
 def index():
-	if session.bioGraph is None:
-		session.flash = "No graph is defined. Please load one !"
-		return redirect( URL(r=request, c="BioModels", f="importer")+"?returnto="+URL(r=request, c="Workbench", f="index") )
-	session.bioGraph.exportJSON()
-	session.bioGraph.exportBioLayout()
+#	if session.bioGraph is None:
+#		session.flash = "No graph is defined. Please load one !"
+#		return redirect( URL(r=request, c="BioModels", f="importer")+"?returnto="+URL(r=request, c="Workbench", f="index") )
+#	session.bioGraph.exportJSON()
+#	session.bioGraph.exportBioLayout()
 	return dict()
 
 def BioLayout():
@@ -34,3 +34,6 @@ def Dijkstra():
 		session.flash = "Network cut into pieces !"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 	return dict( ID=request.vars.ID )
+
+def Editor():
+	return dict()
