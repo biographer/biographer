@@ -1,74 +1,6 @@
 (function(bui) {
 
     /**
-     * Add mappings to the mappings object.
-     *
-     * @param {Object} mapping The mappings object
-     * @param {Number[]} keys The keys which should be mapped
-     * @param {Function} klass A classes' constructor
-     * @param {Function} [generator] Generator funtion which should be used
-     *   instead of the constructor.
-     */
-    var addMapping = function(mapping, keys, klass, generator) {
-        var val = { klass : klass };
-
-        if (generator !== undefined) {
-            val.generator = generator;
-        }
-
-        for (var i = 0; i < keys.length; i++) {
-            mapping[keys[i]] = val;
-        }
-    };
-
-    /**
-     * @private
-     * Mapping between SBO terms and biographer-ui classes.
-     */
-    var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {};
-
-    // TODO remove mapping to 167
-    addMapping(nodeMapping, [285, 167], bui.UnspecifiedEntity);
-    addMapping(nodeMapping, [247], bui.SimpleChemical);
-    addMapping(nodeMapping, [245, 252], bui.Macromolecule);
-    addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
-    addMapping(nodeMapping, [253], bui.Complex);
-    addMapping(nodeMapping, [290], bui.Compartment);
-
-    addMapping(nodeMapping, [375], bui.Process);
-    addMapping(processNodeMapping, [375], bui.Process);
-
-    addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
-    addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
-    // TODO remove mapping to 15 and 11
-    addMapping(edgeMarkerMapping, [459, 15, 11], bui.connectingArcs.stimulation.id);
-    addMapping(edgeMarkerMapping, [461],
-            bui.connectingArcs.necessaryStimulation.id);
-    addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
-
-    /**
-     * Retrieve the class and generator from a mapping object. When the mapping
-     * object does not have an appropriate class or generator object an
-     * exception will be thrown.
-     *
-     * @param {Object} mapping A mapping object, i.e. an object with SBO ids
-     *   as keys. The values should be objects will at least a 'klass'
-     *   property.
-     * @param {Number} sbo The SBO id.
-     * @return {Object} An object with a 'klass' and an optional 'generator'
-     *   property.
-     */
-    var retrieveFrom = function(mapping, sbo) {
-        if (mapping.hasOwnProperty(sbo)) {
-            return mapping[sbo];
-        } else {
-            throw('SBO id "' + sbo + '" could not be found.');
-        }
-    };
-
-    
-
-    /**
      * Default generator for node types. This will be used when
      * nodeJSON.generator is undefined.
      *
@@ -180,7 +112,7 @@
                             subNode.parent(node);
                         } else {
                             console.log('Broken sub node reference to sub' +
-                                    ' node id' + subNodeId);
+                                    ' node id: ' + subNodeId);
                         }
                     }
                 }

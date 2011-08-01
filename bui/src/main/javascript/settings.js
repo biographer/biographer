@@ -105,7 +105,7 @@ bui.settings = {
         complexCornerRadius : 25,
         complexTableLayout : {
             maxColumns : 3,
-            padding : 25
+            padding : 10
         },
         compartmentCornerRadius : {
             x : 25,
