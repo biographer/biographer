@@ -40,6 +40,9 @@
 				opacity:	.7;
 				}
 
+	#Workbench:hover	{
+				height:		115px;		/* 5*23 */
+				}
 	#Import:hover		{				/* individual Menu properties */
 				height:		115px;
 				}
@@ -154,6 +157,7 @@ div.error {
 		Workbench
 		<br/>
 		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='index')}}">Console</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='Editor')}}">Editor</a><br/>
 		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='BioLayout')}}" id=widthWorkbench>BioLayout</a><br/>
 		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='JSON')}}">JSON</a><br/>
 	</div>
