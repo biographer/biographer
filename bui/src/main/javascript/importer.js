@@ -44,6 +44,29 @@
         node.size(size.width, size.height)
                 .visible(true);
 
+        if (bui.util.propertySetAndNotNull(nodeJSON,
+                ['data', 'modification'])) {
+            var modifications = nodeJSON.data.modification;
+
+            for(var i = 0; i < modifications.length; i++) {
+                var modification = modifications[i];
+
+                var label, mapping = retrieveFrom(modificationMapping,
+                        modification[0]);
+
+                label = mapping.short;
+
+                if (bui.settings.style.importer.modificationLabel === 'long') {
+                    label += '@' + modification[1];
+                }
+
+                graph.add(bui.StateVariable)
+                    .label(label)
+                    .parent(node)
+                    .visible(true);
+            }
+        }
+
         return node;
     };
 

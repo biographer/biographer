@@ -127,7 +127,8 @@ bui.settings = {
             sizeBasedOnLabelPassing : {
                 horizontal : 20,
                 vertical : 20
-            }
+            },
+            modificationLabel : 'short' // either 'long' or 'short'
         },
         markerWidthCorrection : 0.25 // (1 / .lineHover#stroke-width) (see CSS)
     }
