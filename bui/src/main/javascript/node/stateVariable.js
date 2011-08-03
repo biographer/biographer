@@ -60,6 +60,7 @@
     };
 
     bui.StateVariable.prototype = {
+        auxiliaryUnit : true,
         _enableResizing : false
     };
 

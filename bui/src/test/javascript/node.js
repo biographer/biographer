@@ -56,7 +56,7 @@ function testWith(node, x, y, width, height) {
 };
 
 test('parent-children', function() {
-    expect(15);
+    expect(26);
 
     var graph = new bui.Graph(document.getElementById('dummy'));
     
@@ -94,4 +94,22 @@ test('parent-children', function() {
 
     parent.removeChild(child2);
     assertAmountOfChildren(0);
+
+    // now checking the filtering of child nodes
+    child1.foobar = true;
+
+    parent.addChild(child1);
+    parent.addChild(child2);
+    assertAmountOfChildren(2);
+    assertContainsChild(child1, child2);
+
+    equal(parent.children('foobar').length, 1);
+
+    child2.foobar = false;
+
+    equal(parent.children('foobar').length, 2);
+    equal(parent.children('foobar', true).length, 1);
+    ok(parent.children('foobar', true)[0] === child1);
+    equal(parent.children('foobar', false).length, 1);
+    ok(parent.children('foobar', false)[0] === child2);
 });

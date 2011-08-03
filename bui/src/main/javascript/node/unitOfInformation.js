@@ -27,6 +27,7 @@
     };
 
     bui.UnitOfInformation.prototype = {
+        auxiliaryUnit : true,
         _enableResizing : false
     };
 

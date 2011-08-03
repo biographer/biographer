@@ -643,14 +643,37 @@
         },
 
         /**
-         * Retrieve the node's child elements.
+         * Retrieve the node's child elements. The returned child nodes can
+         * also be filtered using the two parameters 'filterProperty' and
+         * 'requiredValue'.
          *
-         * @return {bui.Node[]} Child elements.
+         * @param {String} [filterProperty] Pass a property name to filter
+         *   child nodes which have this property set or a certain value (see
+         *   second parameter).
+         * @param {Object} [requiredValue] Pass a value as the second parameter
+         *   to assure that a child node has this as the value of the property
+         *   indicated through the first parameter.
+         * @return {bui.Node[]} All the node's child elements. The returned
+         *   array is actually a copy and can therefore be modified.
          */
-        children : function() {
-            return this._privates(identifier).children;
-        },
+        children : function(filterProperty, requiredValue) {
+            var filteredChildren = [],
+                    allChildren = this._privates(identifier).children;
 
+            for (var i = 0; i < allChildren.length; i++) {
+                var child = allChildren[i];
+
+                if (filterProperty === undefined ||
+                        (requiredValue === undefined &&
+                                child[filterProperty] !== undefined) ||
+                        (requiredValue !== undefined &&
+                                child[filterProperty] === requiredValue)) {
+                    filteredChildren.push(child);
+                }
+            }
+
+            return filteredChildren;
+        },
 
         /**
          * @private
