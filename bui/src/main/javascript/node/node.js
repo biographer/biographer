@@ -829,6 +829,25 @@
             });
 
             return this;
+        },
+
+        positionAuxiliaryUnits : function() {
+            var auxUnits = this.auxiliaryUnits();
+            var possiblePositions =
+                    bui.settings.style.automaticAuxiliaryUnitPositioning;
+
+            var nodeSize = this.size();
+
+            for (var i = 0; i < auxUnits.length &&
+                    i < possiblePositions.length; i++) {
+                var auxUnit = auxUnits[i];
+                var positionAt = possiblePositions[i];
+
+                var auxUnitSize = auxUnit.size();
+
+                auxUnit.positionCenter(nodeSize.width * positionAt[0],
+                        nodeSize.height * positionAt[1]);
+            }
         }
     };
 

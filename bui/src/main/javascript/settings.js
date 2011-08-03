@@ -95,7 +95,7 @@ bui.settings = {
         },
         graphReduceCanvasPadding : 30,
         edgeHandleRadius : 4,
-        nodeCornerRadius : 25,
+        nodeCornerRadius : 15,
         adaptToLabelNodePadding : {
             top : 5,
             right : 5,
@@ -128,8 +128,20 @@ bui.settings = {
                 horizontal : 20,
                 vertical : 20
             },
-            modificationLabel : 'short' // either 'long' or 'short'
+            modificationLabel : 'long' // either 'long' or 'short'
         },
+        // x/y coordinates as % of a node's size (1 = 100%)
+        // T = top, L = left, R = right, B = bottom, CX = Center X,
+        // CY = center y
+        automaticAuxiliaryUnitPositioning : [[0, 0], // T-L
+                [1, 1], // B-R
+                [1, 0], // T-R
+                [0, 1], // B-L
+                [0.5, 0], // T-CX
+                [1, 0.5], // CY-R
+                [0.5, 1], // B-CX
+                [0, 0.5] // CY-L
+        ],
         markerWidthCorrection : 0.25 // (1 / .lineHover#stroke-width) (see CSS)
     }
 };

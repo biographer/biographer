@@ -1280,7 +1280,7 @@ var complexExample = {
          },
          "id" : "Reactome:198666",
          "is_abstract" : 0,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -1292,7 +1292,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -1306,7 +1306,7 @@ var complexExample = {
          },
          "id" : "Reactome:198710",
          "is_abstract" : 0,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -1318,7 +1318,7 @@ var complexExample = {
          },
          "id" : "Reactome:112398",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -1332,7 +1332,7 @@ var complexExample = {
          },
          "id" : "Reactome:112340",
          "is_abstract" : 0,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -2626,7 +2626,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782_Reactome:109796_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -3361,7 +3361,7 @@ var complexExample = {
          },
          "id" : "Reactome:112398_Reactome:112406_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -3478,7 +3478,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782_Reactome:109783_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -3543,7 +3543,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782_Reactome:109783_Reactome:109793_1_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -3663,7 +3663,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782_Reactome:109783_Reactome:109788_1_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -3942,7 +3942,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782_Reactome:109783_MAN:C10_1_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -4367,7 +4367,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782_Reactome:109783_Reactome:109788_Reactome:109789_1_1_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -4675,7 +4675,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782_Reactome:109783_Reactome:109793_Reactome:109795_1_1_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -4829,7 +4829,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782_Reactome:109783_Reactome:109793_Reactome:112406_1_1_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {
@@ -4855,7 +4855,7 @@ var complexExample = {
          },
          "id" : "Reactome:109782_Reactome:109783_Reactome:109793_Reactome:109794_1_1_1",
          "is_abstract" : 1,
-         "sbo" : null,
+         "sbo" : 240,
          "type" : "Compound"
       },
       {

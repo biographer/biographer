@@ -164,6 +164,14 @@
         }
     };
 
+    var positionAuxiliaryUnits = function(nodes) {
+        for (var key in nodes) {
+            if (nodes.hasOwnProperty(key)) {
+                nodes[key].positionAuxiliaryUnits();
+            }
+        }
+    };
+
     /**
      * Add edges to the graph. Information about the edges will be extracted
      * from the data parameter.
@@ -211,6 +219,7 @@
     bui.importFromJSON = function(graph, data) {
         var generatedNodes = addAllNodes(graph, data);
         doComplexLayout(generatedNodes);
+        positionAuxiliaryUnits(generatedNodes);
         addAllEdges(graph, data, generatedNodes);
         graph.reduceCanvasSize();
     };

@@ -69,7 +69,7 @@
             // columns
             var table = [[]];
 
-            var children = this.children();
+            var children = this.childrenWithoutAuxiliaryUnits();
             // TODO filter auxiliary units at this point
 
             // we are overriding the settings.maxColumns and make it dependent
