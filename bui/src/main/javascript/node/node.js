@@ -644,35 +644,55 @@
 
         /**
          * Retrieve the node's child elements. The returned child nodes can
-         * also be filtered using the two parameters 'filterProperty' and
-         * 'requiredValue'.
+         * also be filtered using a callback which will be executed for every
+         * child node.
          *
-         * @param {String} [filterProperty] Pass a property name to filter
-         *   child nodes which have this property set or a certain value (see
-         *   second parameter).
-         * @param {Object} [requiredValue] Pass a value as the second parameter
-         *   to assure that a child node has this as the value of the property
-         *   indicated through the first parameter.
+         * @param {Function} [checkFunction] Filter nodes using this filter
+         *   function. The function will be called for every sub node. The
+         *   function should return true in order to include the node in the
+         *   return value.
          * @return {bui.Node[]} All the node's child elements. The returned
          *   array is actually a copy and can therefore be modified.
          */
-        children : function(filterProperty, requiredValue) {
+        children : function(checkFunction) {
             var filteredChildren = [],
                     allChildren = this._privates(identifier).children;
 
             for (var i = 0; i < allChildren.length; i++) {
                 var child = allChildren[i];
 
-                if (filterProperty === undefined ||
-                        (requiredValue === undefined &&
-                                child[filterProperty] !== undefined) ||
-                        (requiredValue !== undefined &&
-                                child[filterProperty] === requiredValue)) {
+                if (checkFunction === undefined ||
+                        checkFunction(child) === true) {
                     filteredChildren.push(child);
                 }
             }
 
             return filteredChildren;
+        },
+
+        /**
+         * Retrieve the node's auxiliary units.
+         *
+         * @return {bui.Node[]} All the node's auxiliary units. The returned
+         *   array is actually a copy and can therefore be modified.
+         */
+        auxiliaryUnits : function() {
+            return this.children(function(node) {
+                return node.auxiliaryUnit === true;
+            });
+        },
+
+        /**
+         * Retrieve the node's auxiliary units.
+         *
+         * @return {bui.Node[]} All the node's sub nodes without auxiliary
+         *   units. The returned array is actually a copy and can therefore be
+         *   modified.
+         */
+        childrenWithoutAuxiliaryUnits : function() {
+            return this.children(function(node) {
+                return node.auxiliaryUnit !== true;
+            });
         },
 
         /**

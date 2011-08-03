@@ -103,13 +103,25 @@ test('parent-children', function() {
     assertAmountOfChildren(2);
     assertContainsChild(child1, child2);
 
-    equal(parent.children('foobar').length, 1);
+    equal(parent.children(function(node) {
+        return node.foobar !== undefined;
+    }).length, 1);
 
     child2.foobar = false;
 
-    equal(parent.children('foobar').length, 2);
-    equal(parent.children('foobar', true).length, 1);
-    ok(parent.children('foobar', true)[0] === child1);
-    equal(parent.children('foobar', false).length, 1);
-    ok(parent.children('foobar', false)[0] === child2);
+    equal(parent.children(function(node) {
+        return node.foobar !== undefined;
+    }).length, 2);
+    equal(parent.children(function(node) {
+        return node.foobar === true;
+    }).length, 1);
+    ok(parent.children(function(node) {
+        return node.foobar === true;
+    })[0] === child1);
+    equal(parent.children(function(node) {
+        return node.foobar === false;
+    }).length, 1);
+    ok(parent.children(function(node) {
+        return node.foobar === false;
+    })[0] === child2);
 });
