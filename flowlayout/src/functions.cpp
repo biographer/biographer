@@ -1,4 +1,5 @@
 #include "functions.h"
+#define zero 1e-12
 
 Point operator+(const Point p1, const Point p2){
    //addition of two vectors
@@ -56,6 +57,19 @@ float lim(float beta){
    if(beta<-PI)beta+=(2*PI);
    if(beta>PI)beta-=(2*PI);
    return beta;
+}
+
+int p_compare(const Point p1, const Point p2){
+   //comparing two points (y-dominated).
+   if(fabs(p1.y-p2.y)>zero){
+      if(p1.y>p2.y)return 1;
+      else return -1;
+   }
+   if(fabs(p1.x-p2.x)>zero){
+      if(p1.x>p2.x)return 1;
+      else return -1;
+   }
+   return 0;
 }
 
 int min_four(int a1,int a2,int a3,int a4){

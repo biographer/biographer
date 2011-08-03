@@ -12,6 +12,7 @@ float angle(const Point p); // angle of a vector (w.r.t +x axis), within range [
 float dist(const Point p1, const Point p2); //the distance between point p1 and p2.
 float lim(float beta); //make an angle to fit in range [-PI, PI]
 
+int p_compare(const Point p1, const Point p2);//comparing two points (y-dominated).
 int min_four(int a1,int a2,int a3,int a4); //get the minimum among four integers.
 
 #endif

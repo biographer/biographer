@@ -49,6 +49,8 @@ protected:
    float swap_force(int p1, int p2); //the force reduced afer placing node-p1 at node-p2's position.
    bool edge_cross(int i, int j); //whether edge-i and egde-j cross each other.
    float min_edge_crossing(int deglim); //tries to minimize edge-edge crossing.
+   void post_pro_dist();
+   void brute_force_post_pro();
       
    VP pos, mov; //positions and dispalcements of nodes.
    struct rect{
