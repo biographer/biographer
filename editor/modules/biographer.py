@@ -13,6 +13,7 @@
 
 from constants import *			# biographer defaults & constants
 import os
+from time import time, sleep		# to measure layouter runtime
 from copy import deepcopy
 from math import ceil
 from hashlib import md5
@@ -608,8 +609,9 @@ class Graph:
 
 		return self.dot, png, cached, None
 
-	def exportBioLayout(self):
-		self.DEBUG += "Exporting BioLayout ...\n"
+	def export_to_Layouter(self):
+		self.DEBUG += "Exporting to Layouter ...\n"
+		print "Exporting to Layouter ..."
 		L = Layout()
 		for node in self.Nodes:
 			L.add_node( biographerNode2LayoutNode(node) )
@@ -617,10 +619,12 @@ class Graph:
 			L.add_edge( biographerEdge2LayoutEdge(edge) )
 		self.BioLayout = L.export()
 		self.status()
+		print "done."
 		return self.BioLayout
 
-	def importBioLayout(self, BioLayout):
-		self.DEBUG += "Importing BioLayout ...\n"
+	def import_from_Layouter(self, BioLayout):
+		self.DEBUG += "Importing from Layouter ...\n"
+		print "Importing from Layouter ..."
 		self.BioLayout = BioLayout
 		L = Layout( BioLayout )
 		self.Nodes = []
@@ -629,15 +633,37 @@ class Graph:
 		self.Edges = []
 		for edge in L.edges:
 			self.Edges.append( LayoutEdge2biographerEdge(edge) )
+		print "done."
 		self.initialize()
 
 	def doBioLayout(self, Layouter):
-		self.DEBUG += "Using "+Layouter+" to perform layout ...\n"
-		layout = Popen( split(Layouter), stdin=PIPE, stdout=PIPE ).communicate( input=self.exportBioLayout() )[0]
-		print layout
-		self.importBioLayout( layout )
-		layout.stdin.close()
-		self.DEBUG += "Layouter finished.\n"
+		timeout = 10
+		start = time()									# start a timer
+
+		self.DEBUG += "Executing "+Layouter+" ...\n"					# Input ...
+		self.LayouterInput = self.export_to_Layouter()
+		self.LayouterOutput = ""
+
+		print "Executing "+Layouter+" ..."						# execute "layout"
+		layouter = Popen( split(Layouter), stdin=PIPE, stdout=PIPE )
+		layouter.communicate( input=self.LayouterInput )				# stdin, stdout
+		self.LayouterRuntime = 0
+		while layouter.poll is None and self.LayouterRuntime < timeout:			# wait until timeout
+			sleep(3)
+			self.LayouterRuntime = time()-start
+
+		if self.LayouterRuntime >= timeout:						# process timed out !
+			self.DEBUG += "Error: Process timed out !\n"
+			print "Timeout!"
+			return
+
+		self.LayouterOutput = layouter.communicate( input=self.LayouterInput )[0]	# Output ...
+		layouter.stdin.close()
+		print "done."			# DEBUG messages
+		print self.LayouterOutput
+		self.import_from_Layouter( self.LayouterOutput )				# import STDOUT
+		self.DEBUG += "Executable finished.\n"
+		
 
 
 	### basic functions on Graph properties ###

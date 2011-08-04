@@ -8,8 +8,8 @@
 				}
 	div.debug		{
 				width:		100%;
-/*				max-height:	400px;*/
-				overflow:	hidden;
+				max-height:	400px;
+				overflow:	scroll;
 				border:		1pt solid #000;
 				}
 	div.debug iframe	{
@@ -19,7 +19,7 @@
 				overflow:	hidden;
 				overflow-y:	scroll;
 				}
-	pre.terminal		{
+	div.debug pre		{
 				border:		none;
 				white-space:	pre;
 				overflow:	hidden;
@@ -28,23 +28,25 @@
 
 <h3>Terminal</h3>
 <div class=debug>
-<pre class=terminal id=Terminal>{{try:}}{{=session.bioGraph.DEBUG}}{{except:pass}}</pre>
+	<pre id=Terminal>{{try:}}{{=session.bioGraph.DEBUG}}{{except:pass}}</pre>
 </div>
 
-<!--<h3>SBML</h3>
+<!--
+<h3>SBML</h3>
 <div class=debug>
-<pre class=terminal id=SBML>{{try:}}{{=session.bioGraph.SBML}}{{except:pass}}</pre>
-</div>-->
+	<pre id=SBML>{{try:}}{{=session.bioGraph.SBML}}{{except:pass}}</pre>
+</div>
+-->
 
 <a href=BioLayout><h3>BioLayout</h3></a>
 <div class=debug>
-<iframe src=BioLayout></iframe>
-<!--<pre class=terminal id=BioLayout>{{try:}}{{=session.bioGraph.BioLayout}}{{except:pass}}</pre>-->
+	<!--<iframe src=BioLayout></iframe>-->
+	<pre id=BioLayout>{{try:}}{{=session.bioGraph.BioLayout}}{{except:pass}}</pre>
 </div>
 
 <a href=JSON><h3>JSON</h3></a>
 <div class=debug>
-<iframe src=JSON></iframe>
-<!--<pre class=terminal id=JSON>{{try:}}{{=session.bioGraph.JSON}}{{except:pass}}</pre>-->
+	<!--<iframe src=JSON></iframe>-->
+	<pre id=JSON>{{try:}}{{=session.bioGraph.JSON}}{{except:pass}}</pre>
 </div>
 

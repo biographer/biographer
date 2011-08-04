@@ -19,7 +19,7 @@ def JSON():							# called from Workbench/index -> iframe
 
 def BioLayout():						# called from Workbench/index -> iframe
 	if session.bioGraph is not None:
-		session.bioGraph.exportBioLayout()
+		session.bioGraph.export_to_Layouter()
 	return dict()
 
 def Editor():							# Node: add / delete / rename, Edge: create / remove

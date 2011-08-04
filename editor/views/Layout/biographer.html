@@ -11,5 +11,13 @@
 
 <h2>server's input for the layout executable:</h3>
 
-<pre class=script>{{try:}}{{ = session.bioGraph.BioLayout }}{{except:}}{{pass}}</pre>
+<pre class=script>{{ = session.bioGraph.LayouterInput }}</pre>
+
+<h2>layouting time:</h3>
+
+<pre class=script>{{ = session.bioGraph.LayouterRuntime }}</pre>
+
+<h2>layouter output:</h3>
+
+<pre class=script>{{ = session.bioGraph.LayouterOutput }}</pre>
 
