@@ -294,8 +294,10 @@ class Layout:
 			result += self.compartments[i]+"\n"
 		result += "///\n"
 		result += str( len(self.nodes) )+"\n"
+		index_map = {}
 		for i in range(0, len(self.nodes)):
 			node = self.nodes[i]
+			index_map[ node['id'] ] = i
 			result += str(i)+"\n"
 			result += LayoutNodeType(node['type'])+"\n"
 			result += str(node['id'])+"\n"
@@ -309,7 +311,7 @@ class Layout:
 		result += str( len(self.edges) )+"\n"
 		for i in range(0, len(self.edges)):
 			edge = self.edges[i]
-			result += str(edge['type'])+" "+str(edge['source'])+" "+str(edge['target'])+"\n"
+			result += str(edge['type'])+" "+str(index_map[ edge['source'] ])+" "+str(index_map[ edge['target'] ])+"\n"
 		return result
 
 	def parse(self, layout):		# create object from Layouter input
