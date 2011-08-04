@@ -1,47 +1,45 @@
 {{extend 'layout.html'}}
 
 <style>
-	div.image	{
-			border:		1pt solid #000;
-			width:		100%;
-			height:		80%;
-			overflow:	scroll;
-			}
-	div.area	{
-			position:	relative;
-			left:		0px;
-			top:		0px;
-			width:		70px;
-			height:		20px;
-			border:		none;
-			color:		white;
-			text-align:	center;
-			background-color: #4e4ea9;
-			opacity:	.1;
-			}
-	div.area:hover	{
-			cursor:		pointer;
-			opacity:	.8;
-			}
-	img.graphviz	{
-			position:	relative;
-			top:		50px;
-			}
+	#canvas			{
+				position:		relative;
+				border:			1pt solid #000;
+				width:			100%;
+				height:			80%;
+				overflow:		scroll;
+				}
+	#canvas div		{
+				border:			none;
+				position:		absolute;
+				color:			white;
+				background-color:	 #4e4ea9;
+				text-align:		center;
+				vertical-align:		 middle;
+				opacity:		.3;
+				}
+	#canvas div:hover	{
+				cursor:			pointer;
+				opacity:		.8;
+				}
+	#canvas img		{
+				position:		relative;
+				top:			50px;
+				}
 </style>
 
 <script>
 	function gotoDijkstra(ID) {
-		document.location.href = '{{ =URL(r=request, c="Workbench", f="Dijkstra") }}?ID='+ID;
+		#document.location.href = '{{ =URL(r=request, c="Workbench", f="Dijkstra") }}?ID='+ID;
 		}
 </script>
 
 <a href="{{ = session.graphvizURL }}">{{ = session.graphvizURL }}</a>
 
-<div class=image>
+<div id=canvas>
+
+<img src="{{ = session.graphvizURL }}" />
 
 {{ = XML(DijkstraMap) }}
-
-<img class=graphviz src="{{ = session.graphvizURL }}" />
 
 </div>
 

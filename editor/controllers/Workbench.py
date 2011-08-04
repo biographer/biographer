@@ -9,15 +9,18 @@ import biographer
 
 from copy import deepcopy
 
-def index():							# show DEBUG messages and JSON & BioLayout iframes
+def index():							# show DEBUG messages, JSON & BioLayout
+	if session.bioGraph is not None:
+		session.bioGraph.exportJSON()
+		session.bioGraph.export_to_Layouter()
 	return dict()
 
-def JSON():							# called from Workbench/index -> iframe
+def JSON():							# called from Workbench/index
 	if session.bioGraph is not None:
 		session.bioGraph.exportJSON()
 	return dict()
 
-def BioLayout():						# called from Workbench/index -> iframe
+def Layout():							# called from Workbench/index
 	if session.bioGraph is not None:
 		session.bioGraph.export_to_Layouter()
 	return dict()

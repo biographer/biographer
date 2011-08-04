@@ -51,10 +51,6 @@ def SBML():									# import SBML
 		return redirect( URL(r=request,c='Workbench',f='index') )
 
 def BioModels():								# import from BioModels.net
-	if request.env.request_method == "GET":
-		session.PreviousBioModels = db( db.BioModels.Title != None ).select()
-		return dict( returnto=request.vars.returnto )
-
 	def BioModel_to_Database():
 		key = 'name="'
 		p = session.SBML.find(key)
@@ -65,7 +61,7 @@ def BioModels():								# import from BioModels.net
 			if len( db( db.BioModels.BIOMD == session.BioModelsID ).select() ) == 0:
 				db.BioModels.insert( BIOMD=session.BioModelsID, Title=name )
 
-	if request.env.request_method == "POST":
+	if (request.env.request_method == "POST") or (request.vars.BioModelsID is not None):	# allows direct call to import via e.g. /biographer/Import//BioModel?BioModelsID=1
 		session.JSON = None
 		session.BioPAX = None
 		if session.bioGraph is None:
@@ -96,9 +92,13 @@ def BioModels():								# import from BioModels.net
 				BioModel_to_Database()
 				session.flash = "BioModel.net SBML retrieved successfully"
 
-		if request.vars.returnto is not None and request.vars.returnto != "":
+		if (request.vars.returnto is not None) and (request.vars.returnto != ""):		# causing problems
 			return redirect( request.vars.returnto )
 		return redirect( URL(r=request, c='Workbench', f='index') )
+
+	if request.env.request_method == "GET":
+		session.PreviousBioModels = db( db.BioModels.Title != None ).select()
+		return dict( returnto=request.vars.returnto )
 
 def Reactome():									# import from Reactome
 	if request.env.request_method == "GET":

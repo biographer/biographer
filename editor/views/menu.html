@@ -1,59 +1,64 @@
 <style>
-	#menubar		{
-				position:	relative:
-				height:		30px;
-				padding:	0px;
-				margin:		#5px 0px 20px 0px;
-				color:		#e5e6e7;
+	#menubar			{
+					position:		relative:
+					height:			30px;
+					padding:		0px;
+					margin:			5px 0px 20px 0px;
+					color:			#e5e6e7;
 
-				background:	#eaeaea; 
-				color:		black;
-				border-top:	1px solid black;
-				border-bottom:	1px solid black;
-				}
-	#menubar li		{
-				float:			left;
-				}
-	#menubar div		{				/* global Menu properties */
-				border:		none;
-				position:	relative;
-				width:		auto;
-				height:		20px;
-				padding:	5px;
-				text-align:	left;
-				overflow:	hidden;
-				opacity:	.1;
-				float:			left;
-				}
-	#menubar div:hover	{
-				height:		auto;
-				cursor:		pointer;
-				background:	#eaeaea;
-				border:		1px solid black;
-				opacity:	1;
-				}
-	#menubar a		{
-				text-decoration:none;
-				color:		blue;
-				width:		100%;
-				padding:	3px;
-				margin:		3px;
-				}
-	#menubar a:hover	{
-				text-decoration:none;
-				background:	#8caed4;
-				}
+					background:		#eaeaea; 
+					color:			black;
+					border-top:		1px solid black;
+					border-bottom:		1px solid black;
+					}
+	#menubar li			{
+					float:			left;
+					}
+	#menubar div			{
+					position:		relative;
+					}
+	#menubar div div		{
+					border:			none;
+					position:		absolute;
+					width:			auto;
+					height:			20px;
+					overflow:		hidden;
+					padding:		5px;
+					text-align:		left;
+					opacity:		1;
+					float:			left;
+					}
+	#menubar div div:hover		{
+					height:			auto;
+					cursor:			pointer;
+					background:		#eaeaea;
+					border:			1px solid black;
+					opacity:		1;
+					}
+	#menubar div div a		{
+					text-decoration:	none;
+					color:			blue;
+					width:			100%;
+					padding:		3px;
+					margin:			3px;
+					}
+	#menubar div div a:hover	{
+					text-decoration:	none;
+					background:		#8caed4;
+					}
 </style>
 
 <div id=menubar>
 	<ul>
-		<li>Workbench</li>
-		<div id=Workbench>
-			Workbench<br/>
-			<a href="{{=URL(r=request, c='Workbench', f='index')}}">Terminal</a><br/>
-			<a href="{{=URL(r=request, c='Workbench', f='Editor')}}">Editor</a><br/>
-			<a href="{{=URL(r=request, c='Workbench', f='Cutter')}}">Cutter</a><br/>
-		</div>
+
+			<div>	Workbench
+				<div id=Workbench>
+					Workbench<br/>
+					<a href="{{=URL(r=request, c='Workbench', f='index')}}">Terminal</a><br/>
+					<a href="{{=URL(r=request, c='Workbench', f='Editor')}}">Editor</a><br/>
+					<a href="{{=URL(r=request, c='Workbench', f='Cutter')}}">Cutter</a><br/>
+				</div>
+			</div>
 
 		<li>Layout</li>
 		<div id=Layout>
