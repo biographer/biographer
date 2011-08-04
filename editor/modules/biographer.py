@@ -128,7 +128,7 @@ class Node:
 				result += "Warning: Node ID < 0 !\n"
 				show = True
 
-		if type(self.data['compartment']) == type(0):		# check compartment
+		if ( "compartment" in self.data.keys() ) and ( type(self.data['compartment']) == type(0) ):	# check compartment
 			if self.data['compartment'] < 0 and self.type in [0,3]:
 				result += "Warning: Node compartment < 0 !\n"
 				show = True
