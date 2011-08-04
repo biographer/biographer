@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
 
-<form name=main action=download method=POST>
+<form name=main method=POST>
 
 <input type=hidden name=returnto value="{{ = returnto or '' }}"/>
 
@@ -47,7 +47,7 @@ Please enter your BioModels ID:
 
 <br/>
 
-<input type=button name=Open value="Open" onClick="Open();" />
+<!--<input type=button name=Open value="Open" onClick="Open();" />-->
 <input type=submit name=Submit value="Load" style="visibility:hidden;" />
 
 <hr/>

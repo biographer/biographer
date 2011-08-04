@@ -96,9 +96,8 @@ def BioModels():								# import from BioModels.net
 				BioModel_to_Database()
 				session.flash = "BioModel.net SBML retrieved successfully"
 
-		if request.vars.returnto is not None:
+		if request.vars.returnto is not None and request.vars.returnto != "":
 			return redirect( request.vars.returnto )
-
 		return redirect( URL(r=request, c='Workbench', f='index') )
 
 def Reactome():									# import from Reactome

@@ -313,7 +313,7 @@ class Graph:
 		# future
 
 	def initialize(self, removeOrphans=False):				# do everything necessary to complete a new model
-		self.DEBUG += "Initializing graph ...\n"
+		self.DEBUG += "Initializing Graph ...\n"
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
 		self.generateObjectLinks()

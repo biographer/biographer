@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+request_folder = "/var/www/web2py/applications/biographer"
+
 import os, sys
 
-hardcoded = request.folder + "/modules"
+hardcoded = request_folder + "/modules"
 if not hardcoded in sys.path:
 	sys.path.append(hardcoded)
 import biographer
@@ -10,14 +12,14 @@ import biographer
 from copy import deepcopy
 
 def biographer():
-	if session.bioGraph is not None:
-		session.bioGraph.doBioLayout( os.path.join( request.folder, "static/Layout/build/layout" ) )
-		return dict()
-	else:
-		response.flash = "Please import a Graph first !"
-		return dict( url="", dot="" )
+	if session.bioGraph is None:
+		session.flash = "Unable to layout: No graph is loaded. Import a model from BioModels.net ?"
+		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="biographer") )
 
-def dographviz():							# also used by Visualization/graphviz
+	session.bioGraph.doBioLayout( os.path.join( request.folder, "static/Layout/build/layout" ) )
+	return dict()
+
+def dographviz():								# also used by Visualization/graphviz
 	server_object		= deepcopy( session.bioGraph )
 	del session.bioGraph
 	session.graphvizDOT, filename, cached, boundaries = server_object.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
@@ -31,8 +33,8 @@ def dographviz():							# also used by Visualization/graphviz
 
 def graphviz():
 	if session.bioGraph is None:
-		session.flash = "Import a graph first !"
-		return redirect( URL(r=request, c="BioModels", f="importer")+"?returnto="+URL(r=request, c="graphviz", f="Layout") )
+		session.flash = "Unable to layout: No graph is loaded. Import a model from BioModels.net ?"
+		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="graphviz") )
 	dographviz()
 	return dict()
 

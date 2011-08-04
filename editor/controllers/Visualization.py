@@ -1,24 +1,30 @@
 # -*- coding: utf-8 -*-
 
+request_folder = "/var/www/web2py/applications/biographer"
+
 import sys
 
-hardcoded = request.folder + "/modules"
+hardcoded = request_folder + "/modules"
 if not hardcoded in sys.path:
 	sys.path.append(hardcoded)
 import biographer
 
+hardcoded = request_folder + "/controllers"
+if not hardcoded in sys.path:
+	sys.path.append(hardcoded)
 from Layout import dographviz
 
-def index():									# REDIRECT to biographer
-	return redirect(URL(r=request, c="Visualization", f="biographer"))
-
 def biographer():								# Ben's JavsScripts
+	if session.bioGraph is None:
+		session.flash = "Unable to visualize: No graph is loaded. Import a model from BioModels.net ?"
+		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Visualization", f="biographer") )
+
 	return dict()
 
-def graphiz():									# graphviz
+def graphviz():									# graphviz
 	if session.bioGraph is None:
-		session.flash = "Import a graph first !"
-		return redirect( URL(r=request, c="BioModels", f="importer")+"?returnto="+URL(r=request, c="graphviz", f="Visualization") )
+		session.flash = "Unable to visualize: No graph is loaded. Import a model from BioModels.net ?"
+		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Visualization", f="graphviz") )
 
 	dographviz()
 

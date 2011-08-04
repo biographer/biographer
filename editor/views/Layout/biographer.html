@@ -9,5 +9,7 @@
 			}
 </style>
 
-<pre class=script>{{ = session.bioGraph.BioLayout }}</pre>
+<h2>server's input for the layout executable:</h3>
+
+<pre class=script>{{try:}}{{ = session.bioGraph.BioLayout }}{{except:}}{{pass}}</pre>
 
