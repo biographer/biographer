@@ -297,7 +297,7 @@ class Layout:
 		for i in range(0, len(self.nodes)):
 			node = self.nodes[i]
 			result += str(i)+"\n"
-			result += str(node['type'])+"\n"
+			result += LayoutNodeType(node['type'])+"\n"
 			result += str(node['id'])+"\n"
 			result += str(node['compartment'])+"\n"
 			result += str(node['x'])+"\n"

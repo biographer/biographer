@@ -20,6 +20,12 @@ DefaultEdge		= { "sbo":10, "source":0, "target":0, "data":{ "type":"straight", "
 # Node types
 TYPE = { "entitiy pool node":0, "auxiliary unit":1, "compartment node":2, "container node":3, "process node":4, "reference node":5 }
 
+def LayoutNodeType(type):
+	if type == TYPE["process node"]:
+		return "Reaction"
+	else:
+		return "Compound"
+
 # Node SBOs
 SBO = { "unspecified":0, "compartment":1, "simple chemical":247, "macromolecule":245, "nucleic acid feature":250, "complex":253, "source sink":291, "perturbing agent":405 }
 
