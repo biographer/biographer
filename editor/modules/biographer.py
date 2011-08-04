@@ -391,7 +391,7 @@ class Graph:
 
 	def initialize(self, removeOrphans=False):				# do everything necessary to complete a new model
 		self.DEBUG += "Initializing Graph ...\n"
-		self.selfcheck( removeOrphanEdges=removeOrphans )
+#		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
 		self.generateObjectLinks()
 		self.hash()
