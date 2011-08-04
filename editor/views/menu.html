@@ -1,6 +1,6 @@
 <style>
 	#menubar			{
-					position:		relative:
+					position:		relative;
 					height:			30px;
 					padding:		0px;
 					margin:			5px 0px 20px 0px;
@@ -11,10 +11,22 @@
 					border-top:		1px solid black;
 					border-bottom:		1px solid black;
 					}
+	#menubar a			{
+					text-decoration:	none;
+					color:			blue;
+					width:			100%;
+					padding:		3px;
+					margin:			3px;
+					}
+	#menubar a:hover		{
+					text-decoration:	none;
+					background:		#8caed4;
+					}
+
 	div.spacer			{
-					position:		static;
+					position:		relative;
 					width:			auto;
-					height:			20px;
+					height:			30px;
 					float:			left;
 					}
 	div.dropdown			{
@@ -35,21 +47,10 @@
 					border:			1px solid black;
 					opacity:		1;
 					}
-	#menubar a			{
-					text-decoration:	none;
-					color:			blue;
-					width:			100%;
-					padding:		3px;
-					margin:			3px;
-					}
-	#menubar a:hover		{
-					text-decoration:	none;
-					background:		#8caed4;
-					}
 </style>
 
 <div id=menubar>
-	<div class=spacer>
+	<div class=spacer style="left:0px;">
 		<div class=dropdown>
 			Workbench<br/>
 			<a href="{{=URL(r=request, c='Workbench', f='index')}}">Terminal</a><br/>
@@ -58,7 +59,7 @@
 		</div>
 	</div>
 
-	<div class=spacer>
+	<div class=spacer style="left:100px;">
 		<div class=dropdown>
 			Layout<br/>
 			<a href="{{=URL(r=request, c='Layout', f='biographer')}}">biographer</a><br/>
@@ -66,7 +67,7 @@
 		</div>
 	</div>
 
-	<div class=spacer>
+	<div class=spacer style="left:200px;">
 		<div class=dropdown>
 			Visualization<br/>
 			<a href="{{=URL(r=request, c='Visualization', f='biographer')}}">biographer</a><br/>
@@ -74,7 +75,7 @@
 		</div>
 	</div>
 
-	<div class=spacer>
+	<div class=spacer style="left:300px;">
 		<div class=dropdown>
 			Import<br/>
 			<a href="{{=URL(r=request, c='Import', f='JSON')}}">JSON</a><br/>
@@ -90,7 +91,7 @@
 		</div>
 	</div>
 
-	<div class=spacer>
+	<div class=spacer style="left:400px;">
 		<div class=dropdown>
 			Export<br/>
 			<a href="{{=URL(r=request, c='Export', f='JSON')}}">JSON</a><br/>
@@ -99,7 +100,7 @@
 		</div>
 	</div>
 
-	<div class=spacer>
+	<div class=spacer style="left:500px;">
 		<div class=dropdown>
 			Project<br/>
 			<a href="{{=URL(r=request, c='Project', f='Roadmap')}}">Roadmap</a><br/>
