@@ -3,10 +3,9 @@
 
 from subprocess import Popen, PIPE
 from shlex import split
+from time import sleep
 
-p = Popen(split("ps aux"), stdout=PIPE)
-q = Popen(split("grep 'python web2py.py'"), stdin=p.stdout, stdout=PIPE)
-results = q.communicate()[0]
+results = Popen(split("ps aux"), stdout=PIPE).communicate()[0]
 
 def isnumeric(s):
 	try:
@@ -16,13 +15,16 @@ def isnumeric(s):
 		return False
 
 for result in results.splitlines():
-	p = 0
-	print result
-	while not isnumeric(result[p]):
-		p += 1
-	q = p
-	while isnumeric(result[q]):
-		q += 1
-	cmd = "kill -s QUIT "+result[p:q]
-	print cmd
-	Popen(split(cmd)).communicate()[0]
+	if result.find("web2py.py --nogui") > -1:
+		p = 0
+		print result
+		while not isnumeric(result[p]):
+			p += 1
+		q = p
+		while isnumeric(result[q]):
+			q += 1
+
+		cmd = "kill -s KILL "+result[p:q]
+		print cmd
+		Popen(split(cmd)).communicate()
+

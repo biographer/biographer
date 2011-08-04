@@ -14,6 +14,7 @@
 executable="/var/www/web2py/web2py.py"
 IP="192.168.2.117"
 logfile="/var/log/web2py.log"
+killer="/var/www/web2py/applications/biographer/killweb2py.py"
 
 case $1 in
         start)
@@ -32,7 +33,7 @@ case $1 in
 			sleep 3
 			kill -s KILL $(pidof layout)
 			fi
-		./killweb2py.py
+		$killer
 		log_end_msg 0
 	;;
 	restart_if_changes)
@@ -48,6 +49,7 @@ case $1 in
 	;;
 	*)
 		/etc/init.d/web2py stop
+		sleep 1.5
 		/etc/init.d/web2py start
 	;;
 esac
