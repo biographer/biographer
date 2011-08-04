@@ -16,7 +16,7 @@ def biographer():
 		session.flash = "Unable to layout: No graph is loaded. Import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="biographer") )
 
-	session.bioGraph.doBioLayout( os.path.join(request.folder, "static/Layout/build/layout") )
+	session.bioGraph.doBioLayout( os.path.join(request.folder, "static/Layouter/build/layout") )
 	return dict()
 
 def graphviz():

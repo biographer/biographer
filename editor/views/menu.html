@@ -11,13 +11,13 @@
 					border-top:		1px solid black;
 					border-bottom:		1px solid black;
 					}
-	#menubar li			{
+	div.spacer			{
+					position:		static;
+					width:			auto;
+					height:			20px;
 					float:			left;
 					}
-	#menubar div			{
-					position:		relative;
-					}
-	#menubar div div		{
+	div.dropdown			{
 					border:			none;
 					position:		absolute;
 					width:			auto;
@@ -28,54 +28,54 @@
 					opacity:		1;
 					float:			left;
 					}
-	#menubar div div:hover		{
+	div.dropdown:hover		{
 					height:			auto;
 					cursor:			pointer;
 					background:		#eaeaea;
 					border:			1px solid black;
 					opacity:		1;
 					}
-	#menubar div div a		{
+	#menubar a			{
 					text-decoration:	none;
 					color:			blue;
 					width:			100%;
 					padding:		3px;
 					margin:			3px;
 					}
-	#menubar div div a:hover	{
+	#menubar a:hover		{
 					text-decoration:	none;
 					background:		#8caed4;
 					}
 </style>
 
 <div id=menubar>
-	<ul>
+	<div class=spacer>
+		<div class=dropdown>
+			Workbench<br/>
+			<a href="{{=URL(r=request, c='Workbench', f='index')}}">Terminal</a><br/>
+			<a href="{{=URL(r=request, c='Workbench', f='Editor')}}">Editor</a><br/>
+			<a href="{{=URL(r=request, c='Workbench', f='Cutter')}}">Cutter</a><br/>
+		</div>
+	</div>
 
-			<div>	Workbench
-				<div id=Workbench>
-					Workbench<br/>
-					<a href="{{=URL(r=request, c='Workbench', f='index')}}">Terminal</a><br/>
-					<a href="{{=URL(r=request, c='Workbench', f='Editor')}}">Editor</a><br/>
-					<a href="{{=URL(r=request, c='Workbench', f='Cutter')}}">Cutter</a><br/>
-				</div>
-			</div>
-
-		<li>Layout</li>
-		<div id=Layout>
+	<div class=spacer>
+		<div class=dropdown>
 			Layout<br/>
 			<a href="{{=URL(r=request, c='Layout', f='biographer')}}">biographer</a><br/>
 			<a href="{{=URL(r=request, c='Layout', f='graphviz')}}">graphviz</a><br/>
 		</div>
+	</div>
 
-		<li>Visualization</li>
-		<div id=Visualization>
+	<div class=spacer>
+		<div class=dropdown>
 			Visualization<br/>
 			<a href="{{=URL(r=request, c='Visualization', f='biographer')}}">biographer</a><br/>
 			<a href="{{=URL(r=request, c='Visualization', f='graphviz')}}">graphviz</a><br/>
 		</div>
+	</div>
 
-		<li>Import</li>
-		<div id=Import>
+	<div class=spacer>
+		<div class=dropdown>
 			Import<br/>
 			<a href="{{=URL(r=request, c='Import', f='JSON')}}">JSON</a><br/>
 			<a href="{{=URL(r=request, c='Import', f='SBML')}}">SBML</a><br/>
@@ -88,17 +88,19 @@
 			<a href={{=URL(r=request, c='PathVisio', f='importer')}}>PathVision</a><br/>
 			<a href={{=URL(r=request, c='WikiPathways', f='importer')}}>WikiPathways</a><br/>	-->
 		</div>
+	</div>
 
-		<li>Export</li>
-		<div id=Export>
+	<div class=spacer>
+		<div class=dropdown>
 			Export<br/>
 			<a href="{{=URL(r=request, c='Export', f='JSON')}}">JSON</a><br/>
 	<!--		<a href="{{=URL(r=request, c='ODP', f='exporter')}}">ODP</a><br/>
 			<a href="{{=URL(r=request, c='SBML', f='exporter')}}">SBML</a><br/>	-->
 		</div>
+	</div>
 
-		<li>Project</li>
-		<div id=Project>
+	<div class=spacer>
+		<div class=dropdown>
 			Project<br/>
 			<a href="{{=URL(r=request, c='Project', f='Roadmap')}}">Roadmap</a><br/>
 			<a href="http://code.google.com/p/biographer/">Home</a><br/>
@@ -108,6 +110,6 @@
 			<a href="http://code.google.com/hosting/settings">Your password</a><br/>
 			<a href="http://lynx.biologie.hu-berlin.de/biographer">biographer@Lynx</a><br/>
 		</div>
-	</ul>
+	</div>
 </div>
 
