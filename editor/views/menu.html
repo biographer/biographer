@@ -1,0 +1,147 @@
+	<style>
+	div.Menu		{				/* global Menu properties */
+				position:	absolute;
+				left:		190px;
+				top:		60px;
+				width:		110px;
+				height:		20px;
+				overflow:	hidden;
+				background:	#eaeaea; 
+				padding:	5px;
+				text-align:	left;
+				border-top:	1px solid black;
+				border-bottom:	1px solid black;
+				border-left:	1pt solid gray;
+				border-right:	1pt solid gray;
+				}
+	div.Menu:hover		{
+				height:		92px;
+				cursor:		pointer;
+				background:	#eaeaea;
+				border:		1px solid black;
+				opacity:	.7;
+				}
+
+	#Workbench:hover	{
+				height:		115px;		/* 5*23 */
+				}
+	#Import:hover		{				/* individual Menu properties */
+				height:		115px;
+				}
+	#Project:hover		{
+				height:		184px;		/* 8*23 */
+				}
+
+	a.MenuLink		{				/* style of the links inside the Menus */
+				text-decoration:none;
+				color:		blue;
+				width:		100%;
+				padding:	3px;
+				margin:		3px;
+				}
+	a.MenuLink:hover	{
+				text-decoration:none;
+				background:	#8caed4;
+				}
+
+	#statusbar		{
+				height:		30px;
+				padding:	0px;
+				margin:		#5px 0px 20px 0px;
+				color:		#e5e6e7;
+
+				background:	#eaeaea; 
+				color:		black;
+				border-top:	1px solid black;
+				border-bottom:	1px solid black;
+				}
+	</style>
+
+<div id=statusbar>
+
+	<div class=Menu id=Workbench>
+		Workbench
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='index')}}">Console</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='Editor')}}">Editor</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='BioLayout')}}" id=widthWorkbench>BioLayout</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='JSON')}}">JSON</a><br/>
+	</div>
+
+	<div class=Menu id=Layout>
+		Layout
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='BioLayout')}}" id=widthLayout>show BioLayout</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='BioLayout', f='Layout')}}">use biographer</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='Layout')}}">use graphviz</a><br/>
+	</div>
+
+	<div class=Menu id=Visualization>
+		Visualization
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Workbench', f='JSON')}}" id=widthVisualization>JSON network</a>
+		<a class=MenuLink href="{{=URL(r=request, c='BioVis', f='Visualization')}}">biographer</a>
+		<a class=MenuLink href="{{=URL(r=request, c='graphviz', f='Visualization')}}">graphviz</a>
+	</div>
+
+	<div class=Menu id=Import>
+		Import
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='JSON', f='importer')}}">JSON</a><br/>
+	<!--	<a class=MenuLink href="{{=URL(r=request, c='ODP', f='importer')}}">ODP</a><br/>	-->
+		<a class=MenuLink href="{{=URL(r=request, c='SBML', f='importer')}}">SBML</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='BioModels', f='importer')}}" id=widthImport>BioModels.net</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Reactome', f='importer')}}">Reactome</a><br/>
+	<!--	<a class=MenuLink href="{{=URL(r=request, c='BioPAX', f='importer')}}">BioPAX</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='PID', f='importer')}}">PID</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='BioCarta', f='importer')}}">BioCarta</a><br/>
+		<a class=MenuLink href={{=URL(r=request, c='PathVisio', f='importer')}}>PathVision</a><br/>
+		<a class=MenuLink href={{=URL(r=request, c='WikiPathways', f='importer')}}>WikiPathways</a><br/>	-->
+	</div>
+
+	<div class=Menu id=Export>
+		Export
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='JSON', f='exporter')}}">JSON</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='ODP', f='exporter')}}">ODP</a><br/>
+		<a class=MenuLink href="{{=URL(r=request, c='SBML', f='exporter')}}" id=widthExport>SBML</a><br/>
+	</div>
+
+	<div class=Menu id=Project>
+		Project
+		<br/>
+		<a class=MenuLink href="{{=URL(r=request, c='Project', f='Roadmap')}}">Roadmap</a><br/>
+		<a class=MenuLink href="http://code.google.com/p/biographer/">Home</a><br/>
+		<a class=MenuLink href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a><br/>
+		<a class=MenuLink href="http://code.google.com/p/biographer/source/list?repo=server">Changes</a><br/>
+		<a class=MenuLink href="http://code.google.com/p/biographer/source/checkout?repo=server">Checkout</a><br/>
+		<a class=MenuLink href="http://code.google.com/hosting/settings">Your password</a><br/>
+		<a class=MenuLink href="http://lynx.biologie.hu-berlin.de/biographer" id=widthProject>biographer@Lynx</a><br/>
+	</div>
+</div>	<!-- statusbar -->
+
+<script>
+	wrapper		= document.getElementById('wrapper');
+	Workbench	= document.getElementById('Workbench');
+	Layout		= document.getElementById('Layout');
+	Visualization	= document.getElementById('Visualization');
+	Import		= document.getElementById('Import');
+	Export		= document.getElementById('Export');
+	Project		= document.getElementById('Project');
+
+	padding				= 10;
+	Workbench.style.width		= document.getElementById('widthWorkbench').offsetWidth + padding + "px";
+	Layout.style.width		= document.getElementById('widthLayout').offsetWidth + padding + "px";
+	Visualization.style.width	= document.getElementById('widthVisualization').offsetWidth + padding + "px";
+	Import.style.width		= document.getElementById('widthImport').offsetWidth + padding + "px";
+	Export.style.width		= document.getElementById('widthExport').offsetWidth + padding + "px";
+	Project.style.width		= document.getElementById('widthProject').offsetWidth + padding + "px";
+
+	Workbench.style.left		= wrapper.offsetLeft + "px";
+	Layout.style.left 		= Workbench.offsetLeft + Workbench.offsetWidth + "px";
+	Visualization.style.left 	= Layout.offsetLeft + Layout.offsetWidth + "px";
+	Import.style.left 		= Visualization.offsetLeft + Visualization.offsetWidth + "px";
+	Export.style.left	 	= Import.offsetLeft + Import.offsetWidth + "px";
+	Project.style.left	 	= Export.offsetLeft + Export.offsetWidth + "px";
+</script>
+
