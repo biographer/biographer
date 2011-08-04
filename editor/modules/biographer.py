@@ -311,7 +311,7 @@ class Layout:
 		result += str( len(self.edges) )+"\n"
 		for i in range(0, len(self.edges)):
 			edge = self.edges[i]
-			result += str(edge['type'])+" "+str(index_map[ edge['source'] ])+" "+str(index_map[ edge['target'] ])+"\n"
+			result += str(edge['type'])+" "+str(index_map[ edge['source'].id ])+" "+str(index_map[ edge['target'].id ])+"\n"
 		return result
 
 	def parse(self, layout):		# create object from Layouter input
@@ -387,13 +387,16 @@ class Graph:
 	def status(self):
 		self.DEBUG += "Network has "+str(self.NodeCount())+" Nodes and "+str(self.EdgeCount())+" Edges.\n"
 
-	def generateObjectLinks(self):						# add connected Edges Object Link array to all Nodes
-		pass								# add source and target Node Object Links to all Edges
-		# future
+	def generateObjectLinks(self):
+		for n in self.Nodes:						# add connected Edges Object Link array to all Nodes
+			n.ConnectedEdges = self.getConnectedEdges(n)
+		for e in self.Edges:						# add source and target Node Object Links to all Edges
+			e.SourceNode = self.getNodeByID(e.source)
+			e.TargetNode = self.getNodeByID(e.target)
 
 	def initialize(self, removeOrphans=False):				# do everything necessary to complete a new model
 		self.DEBUG += "Initializing Graph ...\n"
-#		self.selfcheck( removeOrphanEdges=removeOrphans )
+		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
 		self.generateObjectLinks()
 		self.hash()
@@ -746,7 +749,7 @@ class Graph:
 
 	### basic functions on Graph properties ###
 
-	def getNodeEdges(self, node):							# returns an array of Edges, pointing from/to the specified Node
+	def getConnectedEdges(self, node):							# returns an array of Edges, pointing from/to the specified Node
 		edges = []
 		for e in self.Edges:
 			if e.source == node.id or e.target == node.id:
@@ -760,11 +763,11 @@ class Graph:
 		if node == None:
 			return len( self.Edges )
 		else:
-			return len( self.getNodeEdges(node) )
+			return len( self.getConnectedEdges(node) )
 
 	def getNeighbours(self, node):
 		results = []
-		for edge in self.getNodeEdges(node):
+		for edge in self.getConnectedEdges(node):
 			if edge.source == node.id:
 				results.append( self.getNodeByID(edge.target) )
 			elif edge.target == node.id:
@@ -800,7 +803,7 @@ class Graph:
 		# re-distribute Edges connected to the original Node onto clone Nodes #
 
 		if ConnectedEdges is None:						# if function is called from splitNodeOfDegree, avoid double work
-			ConnectedEdges = self.getNodeEdges( original.id )
+			ConnectedEdges = self.getConnectedEdges( original.id )
 
 		if len(ConnectedEdges) > 0:
 			CurrentClone = 0
@@ -838,7 +841,7 @@ class Graph:
 		self.MaxEdges = degree
 		self.DEBUG += "Maximum Edge count set to "+str(degree)+".\n"
 		for ID in self.IDmapNodes.keys():					# for all Nodes
-			edges = self.getNodeEdges( ID )					# get the connected Edges,
+			edges = self.getConnectedEdges( ID )					# get the connected Edges,
 			if len(edges) > degree:						# count them, and if they are too many ...
 				self.DEBUG += "Node "+str( ID )+" exceeds maximum edge count: "+str( len(edges) )+" edges.\n"
 				self.CloneNode( ID, ConnectedEdges=edges )		# ... clone the Node

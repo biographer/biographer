@@ -1,21 +1,68 @@
 {{extend 'layout.html'}}
 
-your model has x nodes and y edges
+<h2>Simple Model Editor</h2>
 
-for all nodes
- edit name
- button delete
-darunter edit name, button add
+Your model has {{ = len(session.bioGraph.Nodes) }} Nodes and {{ = len(session.bioGraph.Edges) }} Edges.<br/>
 
-for all edges
- dropdown node
- dropdown inhibits/reacts to/enhances...
- dropdown node
- button delete
-dasselbe in grün für new edge
+<br/>
 
+<style>
+	#Nodes, #Edges		{
+				border:		1px solid black;
+				padding:	10px;
+				}
+</style>
 
-Dijkstra
+<div id=Nodes>
+	<form action=DeleteNode method=POST>
+		Delete a Node: <select name=ID>
+		{{ for n in session.bioGraph.Nodes: }}
+			<option value="{{ = n.id }}">{{ = n.type }} {{ = n.id }} ({{ = len(n.ConnectedEdges) }} Edges)</option>
+		{{ pass }}
+		</select>
+		<input type=submit value=Delete />
+	</form>
 
-Reduce your model to all nodes around [dropdown] with a maximum distance of [edit] edges. [GO]
+	<hr/>
+
+	<form action=NewNode method=POST>
+		Create a Node: 
+		<input type=text name=ID value="name_of_new_node" />
+		<input type=submit value=Create />
+	</form>
+</div>
+
+<br/>
+
+<div id=Edges>
+	<form action=DeleteEdge method=POST>
+		Delete an Edge: <select name=ID>
+		{{ for e in session.bioGraph.Edges: }}
+			<option value="{{ = e.id }}">{{ = e.SourceNode.id }} - {{ = e.type }} -> {{ = e.TargetNode.id }}</option>
+		{{ pass }}
+		</select>
+		<input type=submit value=Delete />
+	</form>
+
+	<hr/>
+
+	<form action=NewEdge method=POST>
+		Create a new Edge: 
+		Delete a Node: <select name=source>
+		{{ for n in session.bioGraph.Nodes: }}
+			<option value="{{ = n.id }}">{{ = n.type }} {{ = n.id }}</option>
+		{{ pass }}
+		</select>
+		<select name=type>
+			<option value=catalyze>catalyzes</option>
+		</select>
+		<select name=target>
+		{{ for n in session.bioGraph.Nodes: }}
+			<option value="{{ = n.id }}">{{ = n.type }} {{ = n.id }}</option>
+		{{ pass }}
+		</select>
+		<input type=submit value=Create />
+	</form>
+</div>
+
 

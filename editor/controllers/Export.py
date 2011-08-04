@@ -4,7 +4,7 @@ def index():
 	return redirect(URL(r=request, c="Export", f="JSON"))
 
 def JSON():
-	return dict()
+	return session.bioGraph.exportJSON()
 
 def SBML():
 	return dict()
