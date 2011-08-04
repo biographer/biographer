@@ -24,9 +24,9 @@ case $1 in
 		msg="Starting web2py ..."
 		log_daemon_msg $msg
 		echo $msg >> $logfile
-		command="$python $executable --nogui --ip $IP -a main -M -N >> $logfile"
-		echo $command
-		sudo -u www-data $command &
+		command="$python $executable --nogui --ip $IP -a main -M -N"
+		#echo $command
+		`sudo -u www-data $command >> $logfile` &
 		log_end_msg 0
         ;;
         stop)
@@ -38,6 +38,7 @@ case $1 in
 			sleep 3
 			kill -s KILL $(pidof layout)
 			fi
+		echo ""
 		$python $killer
 		log_end_msg 0
 	;;
