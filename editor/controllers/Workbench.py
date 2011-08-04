@@ -26,6 +26,9 @@ def Layout():							# called from Workbench/index
 	return dict()
 
 def Editor():							# Node: add / delete / rename, Edge: create / remove
+	if session.bioGraph is None:
+		session.flash = "Unable to edit: No graph is loaded. Import a model from BioModels.net ?"
+		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Workbench", f="Editor") )
 	return dict()
 
 def Cutter():							# interface to use the Dijkstra algorithm
