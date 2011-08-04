@@ -4,7 +4,7 @@
 					height:			30px;
 					padding:		0px;
 					margin:			5px 0px 20px 0px;
-					color:			#e5e6e7;
+				/*	color:			#e5e6e7;	*/
 					background:		#eaeaea; 
 					color:			black;
 					border-top:		1px solid black;
@@ -31,6 +31,7 @@
 	div.dropdown			{
 					border:			none;
 					position:		absolute;
+					z-index:		+1;
 					width:			auto;
 					height:			20px;
 					overflow:		hidden;
@@ -103,11 +104,13 @@
 			Project<br/>
 			<a href="{{=URL(r=request, c='Project', f='Roadmap')}}">Roadmap</a><br/>
 			<a target="_blank" href="http://code.google.com/p/biographer/">Home</a><br/>
-			<a href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a><br/>
-			<a href="http://code.google.com/p/biographer/source/list?repo=server">Changes</a><br/>
-			<a href="http://code.google.com/p/biographer/source/checkout?repo=server">Checkout</a><br/>
-			<a href="http://code.google.com/hosting/settings">Your password</a><br/>
-			<a href="http://lynx.biologie.hu-berlin.de/biographer">biographer@Lynx</a><br/>
+			<a target="_blank" href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a><br/>
+			<a target="_blank" href="http://code.google.com/p/biographer/source/list?repo=server">Changes</a><br/>
+			<a target="_blank" href="http://code.google.com/p/biographer/source/checkout?repo=server">Checkout</a><br/>
+			<a target="_blank" href="http://code.google.com/hosting/settings">Your password</a><br/>
+			<a target="_blank" href="http://cheetah.biologie.hu-berlin.de/biographer/"><nobr>biographer running on Cheetah at the HU-Berlin</nobr></a><br/>
+			<a target="_blank" href="http://lynx.biologie.hu-berlin.de/biographer/"><nobr>biographer running on Lynx at the HU-Berlin</nobr></a><br/>
+			<a target="_blank" href="http://matthiasbock.dyndns.org/biographer/"><nobr>biographer running on matthiasbock.dyndns.org</nobr></a><br/>
 		</div>
 	</div>
 </div>
