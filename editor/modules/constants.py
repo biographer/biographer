@@ -9,7 +9,7 @@ MandatoryNodeKeys	= ['id','type','sbo','is_abstract']
 NodeKeys		= MandatoryNodeKeys + ['data']
 OptionalNodeKeys	= ['clone_marker', 'x', 'y', 'width', 'height', 'radius', 'label', 'compartment', 'subcomponents', 'modifications']
 NodeKeyAliases		= { 'modification':'modifications', 'subnodes':'subcomponents' }
-DefaultNode		= { "type":"simple_species", "sbo":"252", "is_abstract":False, "data":{ "clone_marker":-1, "x":10, "y":10, "width":50, "height":20, "radius":30, "label":"Orphan Node", "compartment":-1, "subcomponents":[], "modifications":[] } }
+DefaultNode		= { "type":"simple_species", "sbo":"252", "is_abstract":False, "data":{ "clone_marker":-1, "x":10, "y":10, "width":50, "height":20, "radius":30, "label":"Orphan Node", "compartment":0, "subcomponents":[], "modifications":[] } }
 
 MandatoryEdgeKeys	= ['id','sbo','source','target']
 EdgeKeys		= MandatoryEdgeKeys + ['data']
