@@ -304,7 +304,7 @@ class Layout:
 			result += str(node['y'])+"\n"
 			result += str(node['width'])+"\n"
 			result += str(node['height'])+"\n"
-			result += node['direction']+"\n"
+			result += "0\n"				 # direction, a property we don't have, but the Layouter needs
 		result += "///\n"
 		result += str( len(self.edges) )+"\n"
 		for i in range(0, len(self.edges)):
