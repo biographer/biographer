@@ -11,17 +11,22 @@
 
 . /lib/lsb/init-functions
 
+python="/usr/bin/python"
 executable="/var/www/web2py/web2py.py"
-IP="192.168.2.117"
+IP="127.0.0.1"
 logfile="/var/log/web2py.log"
-killer="/var/www/web2py/applications/biographer/killweb2py.py"
+biographer="/var/www/web2py/applications/biographer"
+killer="$biographer/killweb2py.py"
+md5file="$biographer/biographer.md5sum"
 
 case $1 in
         start)
 		msg="Starting web2py ..."
 		log_daemon_msg $msg
 		echo $msg >> $logfile
-		$(/usr/bin/python $executable --nogui --ip $IP -a main -M -N >> $logfile) &
+		command="$python $executable --nogui --ip $IP -a main -M -N >> $logfile"
+		echo $command
+		sudo -u www-data $command &
 		log_end_msg 0
         ;;
         stop)
@@ -33,13 +38,12 @@ case $1 in
 			sleep 3
 			kill -s KILL $(pidof layout)
 			fi
-		$killer
+		$python $killer
 		log_end_msg 0
 	;;
 	restart_if_changes)
-		md5file="/home/code/biographer.md5sum"
 		old=$(cat $md5file)
-		new=$(find -L /home/code/biographer -name "*.py" -exec md5sum '{}' \;)
+		new=$(find -L $biographer -name "*.py" -exec md5sum '{}' \;)
 		if [ "$old" != "$new" ]; then
 			/etc/init.d/web2py restart
 			echo -n "$new" > $md5file
