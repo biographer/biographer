@@ -72,7 +72,8 @@ bui.settings = {
                 necessaryStimulation : 'necessaryStimulation'
             },
             splineEdgeHandle : 'splineEdgeHandle',
-            splineAutoEdgeHandle : 'autoAlign'
+            splineAutoEdgeHandle : 'autoAlign',
+            hideBorder : 'hideBorder'
         }
     },
     /**
@@ -102,10 +103,11 @@ bui.settings = {
             bottom : 5,
             left : 5
         },
-        complexCornerRadius : 25,
+        complexCornerRadius : 15,
         complexTableLayout : {
-            maxColumns : 3,
-            padding : 10
+            padding : 10,
+            restrictNumberOfColumns : false,
+            showBorder : true
         },
         compartmentCornerRadius : {
             x : 25,
@@ -128,7 +130,7 @@ bui.settings = {
                 horizontal : 20,
                 vertical : 20
             },
-            modificationLabel : 'long' // either 'long' or 'short'
+            modificationLabel : 'short' // either 'long' or 'short'
         },
         // x/y coordinates as % of a node's size (1 = 100%)
         // T = top, L = left, R = right, B = bottom, CX = Center X,

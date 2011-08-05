@@ -60,9 +60,16 @@
     };
 
     bui.Complex.prototype = {
+        // TODO document
         tableLayout : function(settings) {
             if (settings === undefined) {
                 settings = bui.settings.style.complexTableLayout;
+            }
+
+            if (settings.showBorder === true) {
+                this.removeClass(bui.settings.css.classes.hideBorder);
+            } else {
+                this.addClass(bui.settings.css.classes.hideBorder);
             }
 
             // the items of the table array represent rows. Row items represent
@@ -70,36 +77,64 @@
             var table = [[]];
 
             var children = this.childrenWithoutAuxiliaryUnits();
-            // TODO filter auxiliary units at this point
 
-            // we are overriding the settings.maxColumns and make it dependent
-            // from the number of children according to Thomas's request.
-            var maxColumns = Math.max(1,
+            var maxColumnsOrRow = Math.max(1,
                     Math.round(Math.sqrt(children.length)));
 
-            /**
-             * @private
-             * Add a node to the table. This is a private utility function for
-             * the sake of readability.
-             *
-             * @param {bui.Node} node The node which should be added
-             */
-            var addToTable = function(node) {
-                var lastRow = table[table.length - 1];
+            var addToTable;
 
-                if (lastRow.length === maxColumns) {
-                    lastRow = [];
-                    table.push(lastRow);
+            if (settings.restrictNumberOfColumns === true) {
+                addToTable = function(node) {
+                    var lastRow = table[table.length - 1];
+
+                    if (lastRow.length === maxColumnsOrRow) {
+                        lastRow = [];
+                        table.push(lastRow);
+                    }
+
+                    lastRow.push(node);
+                };
+            } else {
+                var lastRow = 0;
+                addToTable = function(node) {
+                    var row = table[lastRow];
+
+                    if (row === undefined) {
+                        row = [];
+                        table[lastRow] = row;
+                    }
+
+                    row.push(node);
+
+                    lastRow++;
+
+                    if (lastRow >= maxColumnsOrRow) {
+                        lastRow = 0;
+                    }
+                };
+            }
+
+            var subComplexSettings = {};
+            // copy original settings
+            for (var key in settings) {
+                if (settings.hasOwnProperty(key)) {
+                    subComplexSettings[key] = settings[key];
                 }
+            }
+            subComplexSettings.padding *= 0.7;
+            subComplexSettings.restrictNumberOfColumns =
+                    !subComplexSettings.restrictNumberOfColumns;
 
-                lastRow.push(node);
-            };
+            if (subComplexSettings.padding < 4) {
+                subComplexSettings.showBorder = false;
+                subComplexSettings.padding = 0;
+            }
 
             for (var i = 0; i < children.length; i++) {
                 var node = children[i];
 
                 if (node instanceof bui.Complex) {
-                    node.tableLayout(settings);
+                    node.tableLayout(subComplexSettings);
                 }
 
                 addToTable(node);

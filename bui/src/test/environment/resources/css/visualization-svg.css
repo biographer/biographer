@@ -25,6 +25,9 @@ ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect {
     stroke-width: 2px;
     stroke: black
 }
+g.hideBorder > path {
+    stroke: white;
+}
 ellipse.selected, circle.selected {
     fill: #eee;
 }
