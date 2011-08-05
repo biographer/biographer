@@ -635,15 +635,20 @@ float Network::post_pro(int _round){
 }
   
 bool Network::near_swap(){
+   /* Similar to swap_node() function, this function swaps the positions of two nodes if the swapping reduces system force.
+      The difference is: rather than considering the ends of two adajcent edges, this function considers the nodes which are near to each other.
+      Our definition of near is: dist(pos[n1], pos[n2])<=dij2[n1][n2]*0.1 (actually, they are likely to be overlapping each other).
+      This function is implemented both in initialization and in post-processing.
+   */  
    int n1,n2,n=nodes->size();
    float i_d,d,f1,f2;
    bool flag=false;
    Point temp;
    for(n1=0;n1<n;n1++)
-      for(n2=n1+1;n2<n;n2++){          
-         i_d=dij2[n1][n2]*0.1;
-         d=dist(pos[n1],pos[n2]);
-         if(d>=i_d)continue;         
+      for(n2=n1+1;n2<n;n2++){       
+         i_d=dij2[n1][n2]*0.1; //the cut-down distance for "near" pairs.
+         d=dist(pos[n1],pos[n2]); //actually distance.
+         if(d>=i_d)continue;
          f1=swap_force(n1,n2);
          f2=swap_force(n2,n1);
          if(f1+f2>0){
@@ -655,23 +660,30 @@ bool Network::near_swap(){
 }  
 
 float Network::min_edge_crossing(int deglim){
+   /*This function tries to minimize edge crossings:
+        1. we find two edges which are crossing each other (by enumeration).
+        2. rotate the node which has least connection about the other end of that edge, such that the two edges are paranell to each other.
+     However, to avoid disturbing many nodes, we only rotate the nodes with less than "deglim" connections.
+   */
    int a1,a2,b1,b2,i,j,mindeg;
    int m=edges->size();
    float force=0.0;
    Point tem1, tem2;
    for(i=0;i<m;i++)
       for(j=i+1;j<m;j++){                         
-         if(!edge_cross(i,j))continue;
+         if(!edge_cross(i,j))continue; //whether the two nodes crosses each other.
+         //a1 and a2 are two ends of edge-i. b1 and b2 are two ends of edge-j.
          a1=(*edges)[i].from;
          a2=(*edges)[i].to;
          b1=(*edges)[j].from;
          b2=(*edges)[j].to;
-         if(a1==a2)continue;
-         if(b1==b2)continue;
-         force+=1.0;
+         if(a1==b1)continue;
+         if(a2==b2)continue;
+         force+=1.0; //one crossing.
          mindeg=min_four(deg[a1],deg[a2],deg[b1],deg[b2]); //the node with minimum connections.
          if(mindeg>deglim)continue;
-         if(mindeg==deg[a1]){ //rotate a1 around a2;
+         if(mindeg==deg[a1]){ 
+            //rotate a1 around a2, such that the two edges are paranell.
             tem1=pos[a2]+pos[b2]-pos[b1];
             tem2=pos[a2]+pos[b1]-pos[b2];
             if(dist(tem1,pos[a1])<dist(tem2,pos[a1]))pos[a1]=tem1;
@@ -700,6 +712,9 @@ float Network::min_edge_crossing(int deglim){
 }      
    
 void Network::brute_force_post_pro(){
+   /* This procedure brute-forcely removes the node overlapping.
+      Fortunately, it is not implemented.
+   */
    int n=nodes->size(),n1,n2,k,comp1,comp2;
    float dx,dy;
    VI lnk;
@@ -755,22 +770,23 @@ float Network::layout(){
    }   
    bcomp.resize(compartments->size());
    
-   get_ideal_distance();
+   get_ideal_distance(); //the ideal lengths and minimum distances.
 
-   float cur_force,pre_force=inf;  
+   float cur_force,pre_force=inf;  //current system force, and previous system force.
    int k, inc;
  
    //phase 1. initialization
+   //step1: a quick initial layout.
    k=inc=0;
    while(true){
       k++;
       cur_force=init_layout();
-      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(fabs(pre_force-cur_force)<pre_force*err)break; //the system force converges to a minimal.
       pre_force=cur_force;
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
-
+   //step2: doing node-swapping to optimize the initial layout.
    bool flag=true;
    k=0;
    while(flag){
@@ -779,7 +795,7 @@ float Network::layout(){
       k++;
       if(k>n)break;
    }
-   
+   //step3: get the adjacent nodes located in correct relative positions.
    k=inc=0;
    pre_force=inf;
    while(true){
@@ -788,14 +804,14 @@ float Network::layout(){
       if(k>300)cur_force+=firm_distribution();
       move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
-      if(cur_force>pre_force)inc++;
-      if(inc>log(1.0*n))break;
+      if(cur_force>pre_force)inc++; //number of increases.
+      if(inc>log(1.0*n))break; //quit if number of increases if larger than log(n).
       pre_force=cur_force;
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
 
-   //phase 2: adj and nadj.
+   //phase 2: considering the adjacent nodes and nonadjacent nodes. Make the layout spread out.
    k=inc=0;
    pre_force=inf;
    while(true){     
@@ -813,9 +829,9 @@ float Network::layout(){
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
   
-   init_compartments();
+   init_compartments(); //initilizing compartments using the coordinates generated from phase2.
    
-   //phase 3: bring in compartments;
+   //phase 3: bring in compartments into consideration, and re-layout the nodes such that they obeys compartment rule.
    pre_force=inf;
    k=inc=0;
    while(true){
@@ -836,8 +852,9 @@ float Network::layout(){
    
    //phase4: post processing. 
    
-   post_pro_dist();
+   post_pro_dist();//the post-processing distances: minimum distances between nodes with common neighbor are reduced.
    
+   //step1: minimizing edge corssings.
    pre_force=inf;
    while(true){
       cur_force=min_edge_crossing(1);
@@ -845,13 +862,13 @@ float Network::layout(){
       pre_force=cur_force;
       cout<<cur_force<<endl;
    }
-   
+   //step2: shrinking edges lengths (nodes must still conform to compartment rule).
    pre_force=inf;
    k=inc=0;
    while(true){
       k++;
       near_swap();
-      cur_force=post_pro(1);
+      cur_force=post_pro(1); //shrink edge lengths.
       move_nodes();
       adjust_compartments();
       cur_force+=calc_force_compartments();
@@ -861,13 +878,13 @@ float Network::layout(){
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
    }
-   
+   //step3: remove node-overlapping (nodes must still obey compartment rule).
    pre_force=inf;
    k=inc=0;
    while(true){
       k++;
       near_swap();
-      cur_force=post_pro(2);
+      cur_force=post_pro(2); //try to remove node-overlapping.
       move_nodes();
       adjust_compartments();
       cur_force+=calc_force_compartments();
@@ -882,6 +899,7 @@ float Network::layout(){
    
   // brute_force_post_pro();
    
+   //output compartment names and y-boundaries.
    cout<<endl;
    for(i=1;i<compartments->size();i++){
       cout<<(*compartments)[i].name<<endl;
@@ -894,16 +912,19 @@ float Network::layout(){
       (*nodes)[i].pts.y=pos[i].y;
       (*nodes)[i].pts.dir=mov_dir[i];
    }
-    
+   
+   //memory realease. 
    pos.clear();
    mov.clear();
    dij1.clear();
+   bcomp.clear();
    for(i=0;i<n;i++){
       dij2[i].clear();
       isadj[i].clear();
    }
    dij2.clear();
    isadj.clear();
+   pts_dir.clear();
    mov_dir.clear();
    deg.clear();
    free(above_comp);
