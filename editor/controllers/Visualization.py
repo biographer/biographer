@@ -11,14 +11,17 @@ import biographer
 
 from copy import deepcopy
 
-def biographer():								# Ben's JavsScripts
-	if session.bioGraph is None:
-		session.flash = "Unable to visualize: No graph is loaded. Import a model from BioModels.net ?"
-		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Visualization", f="biographer") )
+def index():
+	return redirect(URL(r=request, c="Visualization", f="biographer"))
+
+def biographer():								# Ben's JavaScripts
+#	if session.bioGraph is None:
+#		session.flash = "Unable to visualize: No graph is loaded. Import a model from BioModels.net ?"
+#		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Visualization", f="biographer") )
 
 	return dict()
 
-def example():
+def example():									# Ben's example
 	return dict()
 
 def graphviz():									# graphviz
