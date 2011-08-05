@@ -5,12 +5,6 @@
 <a href="http://www.reactome.org/"><img src="{{=URL(r=request, c="static", f="images")}}/Reactome.png" style="vertical-align:middle;"/></a>
 <br/>
 
-<br/>
-Stable identifier: <input type=text name=RSI /> <input type=submit value=Load />
-<br/>
-
-<hr/>
-
 <script>
 	function Example() {
 		document.main.RSI.value = 'REACT_6167.3';
@@ -18,10 +12,16 @@ Stable identifier: <input type=text name=RSI /> <input type=submit value=Load />
 		}
 </script>
 
-Example:<br/>
-<a href="http://www.reactome.org/cgi-bin/eventbrowser_st_id?ST_ID=REACT_6167.3">Influenza Infection [Homo sapiens, Influenza A virus]</a>
 <br/>
-<input type=button value="Load this pathway" onClick="Example();"/>
+Stable identifier: <input type=text name=RSI /> <input type=submit value="Load this Pathway"/>
+or
+<input type=button value="Load Example Pathway" onClick="Example();"/>
+<br/>
+
+<hr/>
+
+Example pathway is <a href="http://www.reactome.org/cgi-bin/eventbrowser_st_id?ST_ID=REACT_6167.3">Influenza Infection [Homo sapiens, Influenza A virus]</a>
+<br/>
 
 <hr/>
 
