@@ -585,8 +585,8 @@ class Graph:
 		for reaction in model.getListOfReactions():			# create a process node
 			n			= Node( defaults=True )
 			n.id			= reaction.getId()
-			n.sbo			= getSBO["Unspecified")
-		        n.type         		= getType['Process Node']
+			n.sbo			= getSBO("Unspecified")
+		        n.type         		= getType('Process Node')
 			n.data["label"]		= reaction.getName()
 			self.Nodes.append(n)
 			self.IDmapNodes[ n.id ]	= len(self.Nodes)-1
