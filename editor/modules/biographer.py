@@ -74,10 +74,13 @@ class Node:
 		return str(self.id)+" is now at ( "+str(self.data['x'])+" | "+str(self.data['y'])+" ), width = "+str(self.data['width'])+", height = "+str(self.data['height'])
 
 	def exportJSON(self, Indent=DefaultIndent):			# export Node as JSON string
-		return json.dumps( self.__dict__, indent=Indent )
+		return json.dumps( self.exportDICT(), indent=Indent )
 
 	def exportDICT(self):
-		return self.__dict__
+		me = self.__dict__
+		if "ConnectedEdges" in me.keys():			# do not export Node property" ConnectedEdges"
+			del me["ConnectedEdges"]			# it is not public
+		return me
 
 	def selfcheck(self):						# perform some basic integrity checks
 		result = ""
@@ -155,11 +158,16 @@ class Edge:
 				JSON = json.loads(JSON)
 			self.__dict__.update(deepcopy(JSON))		# import all input key/value pairs to the python object
 
-	def exportJSON(self, Indent=DefaultIndent):
-		return json.dumps( self.__dict__, indent=Indent )
+	def exportJSON(self, Indent=DefaultIndent):			# export Edge as JSON
+		return json.dumps( self.exportDICT(), indent=Indent )
 
-	def exportDICT(self):
-		return self.__dict__
+	def exportDICT(self):						# export Edge as dictionary
+		me = self.__dict__
+		if "SourceNode" in me.keys():				# do not export "SourceNode" and "TargetNode" properties
+			del me["SourceNode"]				# they are not public
+		if "TargetNode" in me.keys():				# and they are python objects and thus not JSON serializable
+			del me["TargetNode"]
+		return me
 
 	def selfcheck(self):
 		result = ""
@@ -311,7 +319,7 @@ class Layout:
 		result += str( len(self.edges) )+"\n"
 		for i in range(0, len(self.edges)):
 			edge = self.edges[i]
-			result += str(edge['type'])+" "+str(index_map[ edge['source'].id ])+" "+str(index_map[ edge['target'].id ])+"\n"
+			result += str(edge['type'])+" "+str(index_map[ edge['source'] ])+" "+str(index_map[ edge['target'] ])+"\n"
 		return result
 
 	def parse(self, layout):		# create object from Layouter input
