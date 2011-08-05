@@ -18,6 +18,9 @@ def biographer():								# Ben's JavsScripts
 
 	return dict()
 
+def example():
+	return dict()
+
 def graphviz():									# graphviz
 	if session.bioGraph is None:
 		session.flash = "Unable to visualize: No graph is loaded. Import a model from BioModels.net ?"
