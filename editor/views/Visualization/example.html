@@ -5,13 +5,13 @@
 
 	<title>An example</title>
 
-    <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
-    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.8.13.css" />
+    <link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/jquery-ui-1.8.13.css" />
 
-	<script type="text/javascript" src="resources/js/jquery-1.6.min.js"></script>
-    <script type="text/javascript" src="resources/js/jquery.simulate.js"></script>
-	<script type="text/javascript" src="resources/js/jquery-ui-1.8.12.custom.min.js"></script>
-    <script type="text/javascript" src="resources/js/biographer-ui.min.js"></script>
+	<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-1.6.min.js"></script>
+    <script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery.simulate.js"></script>
+	<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-ui-1.8.12.custom.min.js"></script>
+    <script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/biographer-ui.min.js"></script>
 
     
 
@@ -179,7 +179,7 @@
         };
 
         bui.ready(function() {
-            bui.settings.css.stylesheetUrl = '/biographer/static/Visualization/css/visualization-svg.css';
+            bui.settings.css.stylesheetUrl = '{{ = URL(r=request, c='static', f='Visualization') }}/css/visualization-svg.css';
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
 
             bui.importFromJSON(graph, customExample);
