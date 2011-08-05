@@ -307,7 +307,7 @@ class Layout:
 			node = self.nodes[i]
 			index_map[ node['id'] ] = i
 			result += str(i)+"\n"
-			result += LayoutNodeType(node['type'])+"\n"
+			result += getLayoutNodeType(node['type'])+"\n"
 			result += str(node['id'])+"\n"
 			result += str(node['compartment'])+"\n"
 			result += str(node['x'])+"\n"
@@ -324,6 +324,8 @@ class Layout:
 
 	def parse(self, layout):		# create object from Layouter input
 		pass
+
+# translations ... (to be included as import/export function in the appropriate python objects)
 
 def biographerNode2LayoutNode( node ):
 	return {'id'		: node.id, \
@@ -562,8 +564,8 @@ class Graph:
 		for compartment in model.getListOfCompartments():
 			n = Node( defaults=True )
 			n.id			= compartment.getId()
-			n.sbo			= SBO["compartment"]
-			n.type                  = TYPE["compartment node"]
+			n.sbo			= getSBO("Compartment")
+			n.type                  = getType("Compartment")
 			n.data["label"]		= compartment.getName()
 			if compartment.isSetOutside():
 				n.data["compartment"]	= compartment.getOutside()
@@ -573,7 +575,7 @@ class Graph:
 			n = Node( defaults=True )
 			n.id			= species.getId()
 			n.sbo			= species.getSBOTerm()
-			n.type			= TYPE["entitiy pool node"]
+			n.type			= getType("Entitiy Pool Node")
 			n.data["label"]		= species.getName()
 			n.data["compartment"]	= species.getCompartment()
 			self.Nodes.append(n)
@@ -583,8 +585,8 @@ class Graph:
 		for reaction in model.getListOfReactions():			# create a process node
 			n			= Node( defaults=True )
 			n.id			= reaction.getId()
-			n.sbo			= SBO["unspecified"]
-		        n.type         		= TYPE['process node']
+			n.sbo			= getSBO["Unspecified")
+		        n.type         		= getType['Process Node']
 			n.data["label"]		= reaction.getName()
 			self.Nodes.append(n)
 			self.IDmapNodes[ n.id ]	= len(self.Nodes)-1
@@ -592,7 +594,7 @@ class Graph:
 			for reactant in reaction.getListOfReactants():		# create Edges from the educts, products and modifiers to this process node
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
-				e.sbo           = SBO['consumption']
+				e.sbo           = getSBO('Consumption')
 				e.source        = reactant.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
@@ -600,7 +602,7 @@ class Graph:
 			for product in reaction.getListOfProducts():
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
-				e.sbo           = SBO['production']
+				e.sbo           = getSBO('production')
 				e.source        = n.id
 				e.target	= product.getSpecies()
 				self.Edges.append(e)
@@ -659,7 +661,7 @@ class Graph:
 
 		for edge in self.Edges:
 			G.add_edge( str(edge.source), str(edge.target),
-				    arrowhead='normal' if edge.sbo in [ SBO['consumption'], SBO['production'] ] else 'tee' )
+				    arrowhead='normal' if edge.sbo in [ getSBO('Consumption'), getSBO('Production') ] else 'tee' )
 
 		if changes:
 			self.initialize()	# re-hash
