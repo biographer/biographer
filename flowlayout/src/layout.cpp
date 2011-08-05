@@ -201,34 +201,40 @@ void Network::move_nodes(){
    for(int i=0;i<n;i++){
       pos[i].x+=mov[i].x; //update position
       pos[i].y+=mov[i].y; //update position
-      mov[i].x=mov[i].y=0.0; //set to zero.s
+      mov[i].x=mov[i].y=0.0; //set to zero.
       pts_dir[i]=lim(pts_dir[i]+mov_dir[i]/n); //adjustes default direaction.
       mov_dir[i]=0.0; //set to zero.
    }
 }
 
 float Network::swap_force(int p1, int p2){
+   /*This function calculates the force reduced afer placing node-p1 at node-p2's position.
+     When we swap two nodes, the sum of non-adjacent forces almost remain the same. Thus we only compute the adjacent forces reduced.
+     The computations are very similar to those in method calc_force_adj(). 
+     However, since swap_node() is only used in initialization, we make the angular force 10 times larger than that in calc_force_adj().
+     This magnification can increase the hierarchy of the layout.
+   */
    int m,i,y,_type=(*nodes)[p1].pts.type;
    float force=0.0,i_d,d,alpha, i_alpha, beta, beta1;
    Point vec;
-   VI neighbors= *((*nodes)[p1].neighbors); // it's a copy
+   VI neighbors= *((*nodes)[p1].neighbors); // The neighbor edges of node-p1 (it's a copy).
    m=neighbors.size();
    //distantal force;
    for(i=0;i<m;i++){
-      i_d=dij1[neighbors[i]];
-      if(_type==reaction)y=(*edges)[neighbors[i]].to;
+      i_d=dij1[neighbors[i]]; //ideal distance.
+      if(_type==reaction)y=(*edges)[neighbors[i]].to; //node-y is a neighbor node of node-p1 (the other end of a neighbor edge).
       else y=(*edges)[neighbors[i]].from;
-      d=dist(pos[p1],pos[y]);
-      force+=((i_d-d)*(i_d-d));
-      d=dist(pos[p2],pos[y]);
-      force-=((i_d-d)*(i_d-d));
+      d=dist(pos[p1],pos[y]); //distance between node-p1 and node-y.
+      force+=((i_d-d)*(i_d-d)); //adding the force induced when node-p1 is at pos[p1].
+      d=dist(pos[p2],pos[y]); //distance between node-p2 and node-y.
+      force-=((i_d-d)*(i_d-d)); //minus the force induced when node-p1 is moved to pos[p2].
    }
    
    //angular force;
    for(i=0;i<m;i++){
       i_d=dij1[neighbors[i]];
       y=(*edges)[neighbors[i]].to;              
-      if(_type==reaction)vec=pos[y]-pos[p1]; 
+      if(_type==reaction)vec=pos[y]-pos[p1]; //the direction of the vector: always from reactions to compouds
       else vec=pos[p1]-pos[y];           
                        
       alpha=angle(vec);
@@ -248,9 +254,9 @@ float Network::swap_force(int p1, int p2){
             i_alpha=i_alpha1;
          }
       }
-      force+=(d*d*sin(0.5*fabs(beta))); //angular force;
+      force+=(d*d*sin(0.5*fabs(beta))); //adding the angular force (10 time larger than that in calc_force_adj()) when node-p1 is at pos[p1].
       
-      if(_type==reaction)vec=pos[y]-pos[p2]; 
+      if(_type==reaction)vec=pos[y]-pos[p2]; //direction of the vector: always from reactions to compounds.
       else vec=pos[p2]-pos[y];
       alpha=angle(vec);
       if(_type==substrate){
@@ -269,24 +275,29 @@ float Network::swap_force(int p1, int p2){
             i_alpha=i_alpha1;
          }
       }
-      force-=(d*d*sin(0.5*fabs(beta))); //angular force;
+      force-=(d*d*sin(0.5*fabs(beta))); //minus the angular force when node-p1 is moved to pos[p2].
    }
-   neighbors.clear(); 
+   neighbors.clear(); //release memory.
    return force;
 }
 
 bool Network::swap_node(){
+   /*This function enumerates every nodes (k) and check all neighbors of node-k to see whether a swapping of two neighbors can reduce the system force.
+     If 'YES", then we swap them.
+     However, checking all pairs of neighbor nodes may be time consuming, thus we only check those "close" neighbors.
+     "close" neighbors are: we sort the edges increasingly by angle, then the neighbor node on edge[i] and the neighbor node on edge[i+1] are "close" neighbors.
+   */
    int i,j,k,m,n=nodes->size(),tem;
    VI *neighbors;
    float f1,f2;
    Point baseNode, temp;
    bool flag=false;
    for(k=0;k<n;k++){
-      neighbors= getNeighbors(k);
+      neighbors= getNeighbors(k); //the neighbor edges of node-k (it is a copy).
       m=neighbors->size();
-      if(m==1)continue;
+      if(m==1)continue; //one neighbor only.
       baseNode=pos[k];
-      for(i=0;i<m-1;i++)
+      for(i=0;i<m-1;i++) //sorting the edges increasinly by angle.
          for(j=i+1;j<m;j++)
             if(lim(angle(pos[(*neighbors)[j]]-baseNode))<lim(angle(pos[(*neighbors)[i]]-baseNode))){
                tem=(*neighbors)[i];(*neighbors)[i]=(*neighbors)[j];(*neighbors)[j]=tem;
@@ -294,23 +305,27 @@ bool Network::swap_node(){
       for(i=0;i<m;i++){
          j=i+1;
          if(j==m)j=0;
-         f1=swap_force((*neighbors)[i],(*neighbors)[j]);
-         f2=swap_force((*neighbors)[j],(*neighbors)[i]);
-         if(f1+f2>0){
+         f1=swap_force((*neighbors)[i],(*neighbors)[j]); //force reduced after moving node-p1 to pos[p2].
+         f2=swap_force((*neighbors)[j],(*neighbors)[i]); //force reduced after moving node-p2 to pos[p1].
+         if(f1+f2>0){ //force reduced after swapping node-p1 and node-p2.
+            //if it is positive, we swap the two nodes.
             temp=pos[(*neighbors)[i]];
             pos[(*neighbors)[i]]=pos[(*neighbors)[j]];
             pos[(*neighbors)[j]]=temp;
             flag=true;            
          }
       }
-      //neighbors->clear();
 	  delete neighbors; // we should delete neighbors in the loop as it is generated in each iteration.
    }
-//   free(neighbors);
    return flag;
 } 
       
 float Network::firm_distribution(){
+   /* This procedure tries to distribute the edges incident on a node firmly: the angles btween them tends to be the same.
+      This is done by:
+         1. sorting the edges in increasing order (by angle).
+         2. for each edge-i, we tried to rotate it to the bisector of edge-(i-1) and edge-(i+1).
+   */
    int i,j,jj,k,m,n=nodes->size(),tem,lnk;
    VI *neighbors;
    float average,beta,d,force=0.0;
@@ -320,19 +335,20 @@ float Network::firm_distribution(){
       m=neighbors->size();
       if(m<4)continue;
       baseNode=pos[k];
-      for(i=0;i<m-1;i++)
+      for(i=0;i<m-1;i++) //1. sorting the edges in increasing order (by angle).
          for(j=i+1;j<m;j++)
             if(lim(angle(pos[(*neighbors)[j]]-baseNode)+pts_dir[k])<lim(angle(pos[(*neighbors)[i]]-baseNode)+pts_dir[k])){
                tem=(*neighbors)[i];(*neighbors)[i]=(*neighbors)[j];(*neighbors)[j]=tem;
             }               
       for(i=0;i<m-1;i++){
+         //2. for each edge-i, we tried to rotate it to the bisector of edge-(i-1) and edge-(i+1).
          j=i+1; if(j==m)j=0;
          jj=i-1; if(jj<0)jj=m-1;
-         average=lim(lim(angle(pos[(*neighbors)[j]]-baseNode))+lim(angle(pos[(*neighbors)[jj]]-baseNode)))*0.5;
-         beta=lim(average-lim(angle(pos[(*neighbors)[i]]-baseNode)));
+         average=lim(lim(angle(pos[(*neighbors)[j]]-baseNode))+lim(angle(pos[(*neighbors)[jj]]-baseNode)))*0.5; //bisector of edge-(i-1) and edge-(i+1).
+         beta=lim(average-lim(angle(pos[(*neighbors)[i]]-baseNode))); //angle difference (from edge-i to the bisector).
          d=dist(pos[(*neighbors)[i]],baseNode);
-         force+=(d*d*sin(0.5*fabs(beta)))*0.05/m;
-         mov[j]=mov[j]+(to_left(pos[(*neighbors)[j]]-baseNode,beta*0.05/m)-pos[(*neighbors)[j]]+baseNode);
+         force+=(d*d*sin(0.5*fabs(beta)))*0.05/m; //this should not be a major force, so we make it small.
+         mov[j]=mov[j]+(to_left(pos[(*neighbors)[j]]-baseNode,beta*0.05/m)-pos[(*neighbors)[j]]+baseNode); //edge-i tends to rotate to the bisector.
       }
 	  delete neighbors; // we should delete neighbors in the loop as it is generated in each iteration.
    }
@@ -340,12 +356,17 @@ float Network::firm_distribution(){
 }
 
 void Network::init_compartments(){
+   /*This function initializing the compartment boundaries, using the node positions calculated:
+        1. calculate the average y-coordinates (ymid[comp].mid) for every compartment. (total y-coordinates of the nodes in the compartment divide by number of nodes in the compartment). 
+        2. sort the compartments in increasing order (by average y-coordinate).
+        3. for each compartment-i, set its lower boundary as (ymid[i-1].mid+ymid[i].mid)/2 and its upper boundary as (ymid[i].mid+ymid[i+1].mid)/2. 
+   */
    int cn=compartments->size(), n=nodes->size();
    int i,j,comp,k;
    float tem;
-   vector<comp_y>ymid;
+   vector<comp_y>ymid; //average y-coordinates for compartments.
    ymid.resize(cn);
-   above_comp=(int *)malloc(sizeof(int)*cn);
+   above_comp=(int *)malloc(sizeof(int)*cn); //the first compartment above compartment-i.
    for(comp=0;comp<cn;comp++){
       ymid[comp].id=comp;
       ymid[comp].cnt=0;
@@ -354,11 +375,12 @@ void Network::init_compartments(){
    for(i=0;i<n;i++){
       comp=(*nodes)[i].pts.compartment;
       if(comp==0)continue;
-      ymid[comp].cnt++;
-      ymid[comp].mid+=pos[i].y;
+      ymid[comp].cnt++; //accumulating number of nodes in the compartments.
+      ymid[comp].mid+=pos[i].y; //accumulating y-coordinates.
    }
-   for(comp=0;comp<cn;comp++)ymid[comp].mid/=ymid[comp].cnt;
-   //sort the compartments by y.
+   for(comp=0;comp<cn;comp++)ymid[comp].mid/=ymid[comp].cnt; //calculating average y-coordinates.
+   
+   //sort the compartments by average y-coordinates.
    for(i=1;i<cn;i++)
        for(j=i+1;j<cn;j++)
           if(ymid[i].mid>ymid[j].mid){
@@ -366,6 +388,7 @@ void Network::init_compartments(){
              k=ymid[i].cnt;ymid[i].cnt=ymid[j].cnt;ymid[j].cnt=k;
              tem=ymid[i].mid;ymid[i].mid=ymid[j].mid;ymid[j].mid=tem;
           }
+          
    //initializing the compartments (ymin and ymax);
    (*compartments)[ymid[1].id].ymin=-inf;
    for(i=1;i<cn-1;i++){
@@ -376,25 +399,31 @@ void Network::init_compartments(){
    }
    (*compartments)[ymid[cn-1].id].ymax=inf;
    above_comp[ymid[cn-1].id]=0;
-   //xmin,xmax;
+   
+   //xmin,xmax (we have not considered the x-boundaries of compartments yet).
    for(i=1;i<cn;i++){
       (*compartments)[i].xmin=-inf;
       (*compartments)[i].xmax=inf;
    }
-   ymid.clear();
+   ymid.clear(); //release memory.
 }   
    
 void Network::adjust_compartments(){
-   //adjust the boundaries of compartments, so that it tends the minimum rectangle contains all the nodes belongs to it.
+   /* This procedure adjusts the boundaries of compartments, so that it tends the minimum rectangle contains all the nodes belongs to it.
+         1. find the minimum reactangles that contains all the nodes belongs to the corresponding compartments.
+         2. adjust the compartments such that they tend to become the corresponding minimum rectangles.
+         3. adjust the compartments such that there is no gap between adjacent compartments.     
+   */
    int n=nodes->size(),cn=compartments->size();
    int i,j,comp;  
    float delta; 
-   for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane
+   for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane, so we starts from index-1.
+      //initialization the rectangles.
       bcomp[comp].xmin=bcomp[comp].ymin=inf;
       bcomp[comp].xmax=bcomp[comp].ymax=-inf;
-   }
-  
+   }  
    for(i=0;i<n;i++){
+      //adjusting (shrinking) the rectangles.
       comp=(*nodes)[i].pts.compartment;
       if(comp==0)continue;
       if(pos[i].x<bcomp[comp].xmin)bcomp[comp].xmin=pos[i].x;
@@ -403,6 +432,7 @@ void Network::adjust_compartments(){
       if(pos[i].y>bcomp[comp].ymax)bcomp[comp].ymax=pos[i].y;
    }
    for(comp=1;comp<cn;comp++){
+      //adjusting the compartments so that its tends to be the corresponding minimum rectangles.
       (*compartments)[comp].xmin+=((bcomp[comp].xmin-(*compartments)[comp].xmin)/n);
       (*compartments)[comp].xmax+=((bcomp[comp].xmax-(*compartments)[comp].xmax)/n);
       (*compartments)[comp].ymin+=((bcomp[comp].ymin-(*compartments)[comp].ymin)/n);
@@ -410,6 +440,7 @@ void Network::adjust_compartments(){
    } 
    
    for(i=1;i<cn;i++){
+     //adjusting the compartments so that there is no gap between adjacent ones.
      j=above_comp[i];
      if(j==0)continue;
      delta=(*compartments)[i].ymax-(*compartments)[j].ymin;
@@ -418,65 +449,80 @@ void Network::adjust_compartments(){
      (*compartments)[j].ymin+=delta;
    }
 }
+
 void Network::get_ideal_distance(){
+   /* This procedure computes the ideal lengths of edges (the ideal distances between adjacent nodes): dij1[i],
+      and the minimum distances between non-adjacent nodes: dij2[n1][n2].
+   */
    int n=nodes->size(), m=edges->size(), i,n1,n2;
    dij1.resize(m);
    dij2.resize(n);
-   isadj.resize(n);
+   isadj.resize(n); //whether two nodes are adjacent.
    
    for(n1=0;n1<n;n1++){
       dij2[n1].resize(n);
       isadj[n1].resize(n);
       for(n2=0;n2<n;n2++){
+         //minimum distances between non-adjacent nodes (n1 and n2).
          dij2[n1][n2]=get_dij2(n1,n2);
          isadj[n1][n2]=false;
       }
    }
    for(i=0;i<m;i++){
+      //ideal length of edge-i.
       n1=(*edges)[i].from;
       n2=(*edges)[i].to;
       dij1[i]=get_dij1(n1,n2);
-      isadj[n1][n2]=isadj[n2][n2]=true;
+      isadj[n1][n2]=isadj[n2][n2]=true; //they are adjacent to each other.
    }
 }
 
 float Network::init_layout(){
+   /* This function quickly generates an initial layout, using the edge information.
+      That is, for each reaction, we try to place subtrates in above, products in below and others on sides.
+      The eventual position of a node is an average: sum of expected positions divided by number of occurrences.
+   */
    float force=0.0,d,cost1,cost2;
    int n=nodes->size(), m=edges->size();
    int i, n1, n2;
    Edgetype _type;
    for(i=0;i<m;i++){
       _type=(*edges)[i].pts.type;
-      //if(_type!=product && _type!=substrate)continue;
       n1=(*edges)[i].from; //reaction.
       n2=(*edges)[i].to; //compound.
       if(_type==product){
+         //product should be below the reaction.
+         //accumulating sum of expected positions (movements).
          mov[n1].y+=(pos[n2].y+dij1[i]);
          mov[n2].y+=(pos[n1].y-dij1[i]);
          mov[n1].x+=pos[n2].x;
          mov[n2].x+=pos[n1].x;
       }
       else if(_type==substrate){
+         //substrate should be above the reaction.
+         //accumulating sum of expected positions (movements).
          mov[n1].y+=(pos[n2].y-dij1[i]);
          mov[n2].y+=(pos[n1].y+dij1[i]);
          mov[n1].x+=pos[n2].x;
          mov[n2].x+=pos[n1].x;
       }
       else{
+         //others on sides (the nearer side)
+         //accumulating sum of expected positions (movements).
          cost1=fabs((pos[n1].x-dij1[i])-mov[n2].x/deg[n2]);
          cost2=fabs((pos[n1].x+dij1[i])-mov[n2].x/deg[n2]);
          if(cost1<cost2)mov[n2].x+=(pos[n1].x-dij1[i]);
          else mov[n2].x+=(pos[n1].x+dij1[i]);
          mov[n2].y+=pos[n1].y;
-         //mov[n1].y+=pos[n2].y;
+         //here we do not move reaction node.
       }         
    }
    for(i=0;i<n;i++){
-      if(deg[i]==0)continue;
-      mov[i].x/=deg[i]; mov[i].y/=deg[i];
-      d=dist(mov[i],pos[i]);
-      force+=(d*d);
-      pos[i].x=mov[i].x;
+      if(deg[i]==0)continue; //seperate nodes (should this happen?)
+      mov[i].x/=deg[i]; mov[i].y/=deg[i]; //it is an average.
+      d=dist(mov[i],pos[i]); //length of displacement
+      force+=(d*d); //accumulating force.
+      pos[i].x=mov[i].x; 
       pos[i].y=mov[i].y;
       mov[i].x=mov[i].y=0.0;
    }
@@ -484,52 +530,66 @@ float Network::init_layout(){
 }
 
 void Network::post_pro_dist(){
+   /*In the post processing step, one of our objective is to make the edges shorter, which is mainly achieved by shorten the ideal edge lengths.
+     However, non-adjacent force can also contribute to edge length, especially the force between the nodes with common neighbor.
+     Thus, in this procedure, we reduce the minimum distance for non-adjacent node pairs which have common neighbor.
+   */
    int n=nodes->size(),i,j,n1,n2,nn,m,l;
-   vector< vector<bool> >cm;
+   vector< vector<bool> >cm; //cm[n1][n2]=true: node-n1 and node-n2 has common neighbor.
    VI *neighbors,*neis;
    cm.resize(n);
    for(n1=0;n1<n;n1++){
       cm[n1].resize(n);
-      neighbors=getNeighbors(n1);
+      neighbors=getNeighbors(n1); //neighbors of node-n1.
       m=neighbors->size();
       for(i=0;i<m;i++){
-         nn=(*neighbors)[i];
-         neis=getNeighbors(nn);
+         nn=(*neighbors)[i]; //nn is a neighbor node of node-n1.
+         neis=getNeighbors(nn); //the neighbors of node-nn.
          l=neis->size();
          for(j=0;j<l;j++){
+            //n2 is a neighbor node of node-nn. Node-nn is a common neighbor for node-n1 and node-n2.
             n2=(*neis)[j];
             cm[n1][n2]=true;
          }
-         delete neis;
+         delete neis; //release memory.
       }
-      delete neighbors;
+      delete neighbors; //release memory.
    }
    for(n1=0;n1<n;n1++)
       for(n2=n1+1;n2<n;n2++)
-         if(cm[n1][n2])dij2[n1][n2]*=0.8;
-   for(n1=0;n1<n;n1++)cm[n1].clear();
-   cm.clear();
+         if(cm[n1][n2])dij2[n1][n2]*=0.8; //reduce the minimum distance between nodes with common neighbor.
+   for(n1=0;n1<n;n1++)cm[n1].clear(); //release memory.
+   cm.clear(); //releas memory.
 } 
       
 float Network::post_pro(int _round){
+   /* This is a post_processing function, which has 2 schemes depending on the argument "_round".
+         1. _round=1, we processing the edges (adjacent nodes) only by making the edges shorter.
+         2. _round=2, other than making the edges shorter, we also try to remove node-overlapping.
+      The force function here is different from those in other functions or procedures. It is a exponetial function:
+         force=pow(2.0, 5.0*fabs(i_d-d)).
+      In this manner, we can force the overlapping nodes to seperate and can also make the edges to be shorter and fairer.
+   */
    int m=edges->size(),n=nodes->size(),n1,n2,i;
    float d,i_d,force=0.0;
    Point vec;
    
-   for(i=0;i<m;i++){                    
+   for(i=0;i<m;i++){
+      //dealing with the edges. Here we consider distantal forces only.                  
       n1=(*edges)[i].from; //reaction
       n2=(*edges)[i].to; //compound;
-      if(_round==1 && deg[n1]>3 && deg[n2]>3)continue;
+      if(_round==1 && deg[n1]>3 && deg[n2]>3)continue; //we do not disturb the edge, both of whose ends have high connections. Otherwise the many nodes will be disturbed.
       vec=pos[n2]-pos[n1];
-      i_d=dij1[i];
-      if(fabs(vec.y)*1.2>=(*nodes)[n1].pts.height+(*nodes)[n2].pts.height)i_d*=0.8;
+      i_d=dij1[i]; //ideal length
+      if(fabs(vec.y)*1.2>=(*nodes)[n1].pts.height+(*nodes)[n2].pts.height)i_d*=0.8; //further shrink the edge length if the two nodes are seperated far enough.
       if(fabs(vec.x)*1.2>=(*nodes)[n1].pts.width+(*nodes)[n2].pts.width)i_d*=0.9;
-      d=dist(pos[n1],pos[n2]);
-      if(d<i_d && d>i_d*0.7)continue;
-      if(_round==1)force+=pow(2.0,(double)5.0*fabs(i_d-d));
-      else force+=pow(2.0,(double)1.0*fabs(i_d-d));
+      d=dist(pos[n1],pos[n2]); //length
+      if(d<i_d && d>i_d*0.7)continue; //edge-length acceptable.
+      if(_round==1)force+=pow(2.0,(double)5.0*fabs(i_d-d)); //force calculation: an exponential function.
+      else force+=pow(2.0,(double)1.0*fabs(i_d-d)); //_round=2: our main objective is to seperate the overlapping nodes, thus the edge length should play a less important role. 
       //distantal movements;
       if(_round==1){
+         //we move the nodes faster for _round=1.
          mov[n2].x+=(2*vec.x/d*(i_d-d)/n);
          mov[n2].y+=(2*vec.y/d*(i_d-d)/n);
          mov[n1].x-=(2*vec.x/d*(i_d-d)/n);
@@ -542,18 +602,18 @@ float Network::post_pro(int _round){
          mov[n1].y-=(vec.y/d*(i_d-d)/n);
       }
    }
-   if(_round==1)return force;
+   if(_round==1)return force; //exit for _round=1: shrinking the edges only.
+   
    for(n1=0;n1<n;n1++)
       for(n2=n1+1;n2<n;n2++){
-         //if(isadj[n1][n2])continue;
-         if(isadj[n1][n2])i_d=dij2[n1][n2]*0.3;
+         if(isadj[n1][n2])i_d=dij2[n1][n2]*0.3; //special treatment for adjacent nodes.
          else i_d=dij2[n1][n2]*0.7;
          d=dist(pos[n1],pos[n2]);
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
-         if(fabs(pos[n1].x-pos[n2].x)>(*nodes)[n1].pts.width+(*nodes)[n2].pts.width)continue;
+         if(fabs(pos[n1].x-pos[n2].x)>(*nodes)[n1].pts.width+(*nodes)[n2].pts.width)continue; //if they are already seperated.
          if(fabs(pos[n1].y-pos[n2].y)>(*nodes)[n1].pts.height+(*nodes)[n2].pts.height)continue;
          
-         force+=pow(2.0,(double)5.0*fabs(i_d-d)); //distantal force;
+         force+=pow(2.0,(double)5.0*fabs(i_d-d)); //force calculation: it is an exponential function.
          vec=pos[n1]-pos[n2];
          if(fabs(d)<zero){
             vec.x=i_d;
@@ -561,9 +621,10 @@ float Network::post_pro(int _round){
          }
          else{
             vec.x=2*vec.x*(i_d-d)/d;
-            vec.y=3*vec.y*(i_d-d)/d;
+            vec.y=3*vec.y*(i_d-d)/d; //we move more in y-direction.
          }
          if(fabs(vec.y)<zero){
+            //if they are at the same level, we increase the displacement vector in x-direction.
             vec.y=i_d;
             vec.x*=5;
          }
@@ -676,8 +737,7 @@ void Network::brute_force_post_pro(){
    ps.clear();
 }      
                            
-float Network::layout(){
-       
+float Network::layout(){       
    //copying coordinates from nodes[] to pos[];   
    int n=nodes->size(),i;   
    pos.resize(n);
