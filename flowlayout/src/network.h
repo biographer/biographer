@@ -25,7 +25,7 @@ public:
    VI* getNeighbors(int nodeIndex, Edgetype type); //find a specified type (eg. substrates) of neighbor nodes of a node.
    VI* getNeighbors(int nodeIndex);  //find the neighbor nodes of a node.
 
-   void read(const char * file); // read network from file
+   void read(const char * file=NULL); // read network from file
    void dumpNodes(const char* file); // write nodes with properties
    
    float layout(); //run the layout algorithm to obtain the coordinates of nodes.
