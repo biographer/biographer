@@ -89,3 +89,7 @@ jslint_command = 'node src/build/javascript/jslint-check.js'
 
 # compress command
 compress_command = 'node src/build/javascript/compress.js'
+
+# replace in visualization-svg.css
+originalTextToBeReplacedInSettings = 'resources/css/visualization-svg.css'
+newTextToBeInserted = '/biographer/static/Visualization/css/visualization-svg.css'

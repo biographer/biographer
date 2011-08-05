@@ -146,3 +146,35 @@ def compress():
 
     # TODO make sure that the copyright notice is part of the compressed file
     os.system(settings.compress_command)
+
+@target
+def createDistribution():
+    logger.info('----- Creating biographer-ui distribution')
+
+    distributionDir = os.path.join('target', 'distribution')
+
+    shutil.copytree(os.path.join('target', 'test', 'resources'),
+                    distributionDir)
+
+    try:
+        shutil.rmtree(os.path.join(distributionDir, 'examples'))
+    except OSError as (no, msg):
+        if not no == 2:
+            logger.error('Can\'t remove the examples' +
+                    'directory. Error: %s' % msg)
+            raise
+
+    os.remove(os.path.join(distributionDir, 'css', 'qunit.css'))
+    os.remove(os.path.join(distributionDir, 'js', 'biographer-tests.js'))
+    os.remove(os.path.join(distributionDir, 'js', 'qunit.js'))
+    shutil.copy(os.path.join('target', 'biographer-ui.min.js'),
+                os.path.join(distributionDir, 'js', 'biographer-ui.min.js'))
+
+    # replace path to visualization-svg.css
+    for file in ['biographer-ui.min.js', 'biographer-ui.js']:
+        file = os.path.join(distributionDir, 'js', file)
+        contents = get_file_contents(file)
+        
+        write_to_file(file, contents.replace(
+            settings.originalTextToBeReplacedInSettings,
+            settings.newTextToBeInserted))
