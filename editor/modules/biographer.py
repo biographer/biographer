@@ -371,7 +371,6 @@ def LayoutEdge2biographerEdge( edge ):
 class Graph:
 	def __init__(self, filename=None, JSON=None, SBML=None, ODP=None, BioPAX=None):
 		self.empty()
-		self.DEBUG = ""
 		if filename is not None:
 			self.importfile( filename )
 		if JSON is not None:
@@ -383,7 +382,7 @@ class Graph:
 		if BioPAX is not None:
 			self.importBioPAX( BioPAX )
 
-	def empty(self):							# reset current model
+	def empty(self, clearDEBUG=True):					# reset current model
 		self.Nodes = []
 		self.Edges = []
 		self.JSON = None
@@ -393,9 +392,14 @@ class Graph:
 		self.MD5 = None
 		self.maxID = 1
 		self.IDmapNodes = self.IDmapEdges = {}
+		if clearDEBUG:
+			self.DEBUG = ""
+
+	def log(self, msg):
+		self.DEBUG += msg+"\n"
 
 	def status(self):
-		self.DEBUG += "Network has "+str(self.NodeCount())+" Nodes and "+str(self.EdgeCount())+" Edges.\n"
+		self.log("Network has "+str(self.NodeCount())+" Nodes and "+str(self.EdgeCount())+" Edges.")
 
 	def generateObjectLinks(self):
 		for n in self.Nodes:						# add connected Edges Object Link array to all Nodes
@@ -405,7 +409,7 @@ class Graph:
 			e.TargetNode = self.getNodeByID(e.target)
 
 	def initialize(self, removeOrphans=False):				# do everything necessary to complete a new model
-		self.DEBUG += "Initializing Graph ...\n"
+		self.log("Initializing Graph ...")
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
 		self.generateObjectLinks()
@@ -415,16 +419,16 @@ class Graph:
 	def selfcheck(self, autoresize=True, removeOrphanEdges=False):		# perform some basic integrity checks on the created Graph
 
 		for n in self.Nodes:						# self-check all Nodes and Edges
-			self.DEBUG += n.selfcheck()
+			self.log( n.selfcheck() )
 		for e in self.Edges:
-			self.DEBUG += e.selfcheck()
+			self.log( e.selfcheck() )
 
 		usedIDs = []		# remember IDs				# check for colliding IDs
 		nodeIDs = []		# remember Node IDs
 		compartments = [-1]	# remember compartments
 		for n in self.Nodes:
 			if n.id in usedIDs:
-				self.DEBUG += "Error: ID collision: Node "+str(n.id)+"\n"
+				self.log("Error: ID collision: Node "+str(n.id))
 			else:
 				usedIDs.append(n.id)
 			if n.type == TYPE["compartment node"]:
@@ -432,29 +436,27 @@ class Graph:
 			nodeIDs.append(n.id)
 		for e in self.Edges:
 			if e.id in usedIDs:
-				self.DEBUG += "Error: ID collision: Edge "+str(e.id)+"\n"
+				self.log("Error: ID collision: Edge "+str(e.id))
 			else:
 				usedIDs.append(e.id)
 
 		for n in self.Nodes:						# Nodes lie inside non-existing compartments ?
 			if not n.data['compartment'] in compartments:
-				self.DEBUG += "Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" does not exist !\n"
+				self.log("Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" does not exist !")
 				# automatic recovery is theoretically possible here
 
 		for e in self.Edges:						# Edges connect non-existing Nodes ?
 			orphan = False
 			if not e.source in nodeIDs:
-				self.DEBUG += "Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" does not exist ! "
+				self.log("Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" does not exist !")
 				orphan = True
 			if not e.target in nodeIDs:
-				self.DEBUG += "Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" does not exist ! "
+				self.log("Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" does not exist !")
 				orphan = True
 			if orphan:
 				if removeOrphanEdges:
 					self.Edges.pop( self.Edges.index(e) )
-					self.DEBUG += "Edge removed.\n"
-				else:
-					self.DEBUG += "\n"
+					self.log("Edge removed.")
 
 		for i in range(0, len(self.Nodes)):				# Nodes have non-existing subcomponents ?
 			n = self.Nodes[i]					# or subcomponents lie outside parent ?
@@ -463,17 +465,17 @@ class Graph:
 				try:
 					s = self.Nodes[ IDmapNodes[subID] ]
 					if s.x+s.width > n.x+n.width:
-						self.DEBUG += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
+						self.log("Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !")
 						if autoresize:
 							n.width = s.x+s.width-n.x
 							changes = True
 					if s.y+s.height > n.y+n.height:
-						self.DEBUG += "Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !\n"
+						self.log("Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !")
 						if autoresize:
 							n.height = s.y+s.height-n.y
 							changes = True
 				except:
-					self.DEBUG += "Error: Error checking subcomponent "+str(subID)+" of Node "+str(n.id)+" !\n"
+					self.log("Error: Error checking subcomponent "+str(subID)+" of Node "+str(n.id)+" !")
 			if changes and autoresize:
 				self.Node[i] = n	# save changes
 
@@ -530,19 +532,20 @@ class Graph:
 
 	def importJSON(self, JSON):						# import JSON
 		self.empty()
-		self.DEBUG = "Importing JSON ...\n"
+		self.log("Importing JSON ...")
+
 		JSON = checkJSON(JSON)
 		try:
 			JSON = json.loads(JSON)
 		except:
-			self.DEBUG += "Fatal: JSON parser raised an exception!\n"
+			self.log("Fatal: JSON parser raised an exception!")
 			return
 		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
 		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
 		self.initialize()
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
-		self.DEBUG += "Exporting JSON ...\n"
+		self.log("Exporting JSON ...")
 		self.JSON = json.dumps( { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }, indent=Indent )
 		self.status()
 		return self.JSON
@@ -553,12 +556,12 @@ class Graph:
 
 	def importSBML(self, SBML):						# import SBML
 		self.empty()
+		self.log("Importing SBML ...")
 
-		self.DEBUG = "Importing SBML ...\n"
 		SBML = libsbml.readSBMLFromString( SBML )
 		model = SBML.getModel()
 		if model is None:
-			self.DEBUG += "Error: SBML model is None !\n"
+			self.log("Error: SBML model is None !")
 			return False
 
 		for compartment in model.getListOfCompartments():
@@ -618,15 +621,16 @@ class Graph:
 		self.initialize()
 
 	def importODP(self, odp):						# import an OpenOffice Impress Document
-		self.DEBUG = "Importing ODP ...\n"
+		self.empty()
+		self.log("Importing ODP ...")
 		impress = ODP( odp )
-		self.DEBUG += impress.DEBUG
+		self.log( impress.DEBUG )
 		self.Nodes = impress.Nodes
 		self.Edges = impress.Edges
 		self.initialize()
 
 	def exportODP(self):							# export an OpenOffice Impress Document
-		self.DEBUG += "Exporting ODP ...\n"
+		self.log("Exporting ODP ...")
 		impress = ODP()
 		impress.Nodes = self.Nodes
 		impress.Edges = self.Edges
@@ -634,14 +638,15 @@ class Graph:
 		return impress.export()
 
 	def importBioPAX(self, biopax):
-		self.DEBUG = "Importing BioPAX ...\n"
+		self.empty()
+		self.log("Importing BioPAX ...")
 		b = BioPAX( biopax )
 		self.Nodes = b.Nodes
 		self.Edges = b.Edges
 		self.initialize()
 
 	def exportGraphviz(self, folder="/tmp", useCache=True, updateNodeProperties=False):
-		self.DEBUG += "Exporting Graphviz ...\n"
+		self.log("Exporting Graphviz ...")
 		self.status()
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
@@ -657,7 +662,7 @@ class Graph:
 			elif updateNodeProperties:
 				self.Nodes.pop( self.Nodes.index(node) )
 				changes = True
-				self.DEBUG += "Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.\n"
+				self.log("Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.")
 
 		for edge in self.Edges:
 			G.add_edge( str(edge.source), str(edge.target),
@@ -694,14 +699,14 @@ class Graph:
 				else:
 					self.Nodes.pop( self.Nodes.index(node) )
 					changes = True
-					self.DEBUG += "Warning: Updating Node "+str(node.id)+" from graphviz output failed! Node deleted.\n"
+					self.log("Warning: Updating Node "+str(node.id)+" from graphviz output failed! Node deleted.")
 		if changes:
 			self.initialize()
 
 		return self.dot, png, cached, None
 
 	def export_to_Layouter(self):
-		self.DEBUG += "Exporting to Layouter ...\n"
+		self.log("Exporting to Layouter ...")
 		print "Exporting to Layouter ..."
 		L = Layout()
 		for node in self.Nodes:
@@ -714,7 +719,7 @@ class Graph:
 		return self.BioLayout
 
 	def import_from_Layouter(self, BioLayout):
-		self.DEBUG += "Importing from Layouter ...\n"
+		self.log("Importing from Layouter ...")
 		print "Importing from Layouter ..."
 		self.BioLayout = BioLayout
 		L = Layout( BioLayout )
@@ -731,7 +736,7 @@ class Graph:
 		timeout = 10
 		start = time()									# start a timer
 
-		self.DEBUG += "Executing "+Layouter+" ...\n"					# Input ...
+		self.log("Executing "+Layouter+" ...")					# Input ...
 		self.LayouterInput = self.export_to_Layouter()
 		self.LayouterOutput = ""
 
@@ -744,7 +749,7 @@ class Graph:
 			self.LayouterRuntime = time()-start
 
 		if self.LayouterRuntime >= timeout:						# process timed out !
-			self.DEBUG += "Error: Process timed out !\n"
+			self.log("Error: Process timed out !")
 			print "Timeout!"
 			return
 
@@ -753,7 +758,7 @@ class Graph:
 		print "done."			# DEBUG messages
 		print self.LayouterOutput
 		self.import_from_Layouter( self.LayouterOutput )				# import STDOUT
-		self.DEBUG += "Executable finished.\n"
+		self.log("Executable finished.")
 		
 
 
@@ -788,7 +793,7 @@ class Graph:
 	### functions for really doing something with the Graph ###
 
 	def CloneNode(self, nodeID, ConnectedEdges=None, NumClones=1):			# split Node into 1x original + 1x clone
-		self.DEBUG += "Splitting Node "+str(nodeID)+" ...\n"
+		self.log("Splitting Node "+str(nodeID)+" ...")
 
 		original = self.getNodeByID( nodeID )
 
@@ -808,7 +813,7 @@ class Graph:
 		######################################################################
 
 		original.is_abstract = True
-		self.DEBUG += str(NumClones)+" clone(s) created. Original Node is now abstract (invisible).\n"
+		self.log(str(NumClones)+" clone(s) created. Original Node is now abstract (invisible).")
 	
 		# re-distribute Edges connected to the original Node onto clone Nodes #
 
@@ -822,14 +827,14 @@ class Graph:
 			for eID in ConnectedEdges:
 				if self.Edge[ IDmapEdges[eID] ].source == original.id:
 					self.Edge[ IDmapEdges[eID] ].source = clone[CurrentClone].id
-					self.DEBUG += "Edge "+str( e.ID )+" now originates from cloned Node "+str( clone[CurrentClone].id )+".\n"
+					self.log("Edge "+str( e.ID )+" now originates from cloned Node "+str( clone[CurrentClone].id )+".")
 					EdgesOfCurrentClone += 1
 				elif self.Edge[ IDmapEdges[eID] ].target == original.id:
 					self.Edge[ IDmapEdges[eID] ].target = clone[CurrentClone].id
-					self.DEBUG += "Edge "+str( e.ID )+" now points to cloned Node "+str( clone[CurrentClone].id )+".\n"
+					self.log("Edge "+str( e.ID )+" now points to cloned Node "+str( clone[CurrentClone].id )+".")
 					EdgesOfCurrentClone += 1
 				else:
-					self.DEBUG += "Warning: Edge "+str(eID)+" is listed as connected to Node "+str(original.id)+", but that's not true!\n"
+					self.log("Warning: Edge "+str(eID)+" is listed as connected to Node "+str(original.id)+", but that's not true!")
 
 				# Above code demands: An Edge cannot originate from it's target !
 
@@ -844,16 +849,16 @@ class Graph:
 			self.IDmapNodes[ clone[i].id ] = len(self.Nodes)-1		# update ID index
 			self.IDmap[ clone[i].id ] = self.IDmapNodes[ clone[i].id ]
 
-		self.DEBUG += "Node "+str(nodeID)+" cloned to 1 abstract Node + "+str(NumClones)+" clone Node(s). "+str( len(ConnectedEdges) )+" Edge(s) re-distributed.\n"
+		self.log("Node "+str(nodeID)+" cloned to 1 abstract Node + "+str(NumClones)+" clone Node(s). "+str( len(ConnectedEdges) )+" Edge(s) re-distributed.")
 			
 
 	def setMaxEdges(self, degree):							# split all Nodes, that have more than "degree" Edges connected
 		self.MaxEdges = degree
-		self.DEBUG += "Maximum Edge count set to "+str(degree)+".\n"
+		self.log("Maximum Edge count set to "+str(degree)+".")
 		for ID in self.IDmapNodes.keys():					# for all Nodes
 			edges = self.getConnectedEdges( ID )					# get the connected Edges,
 			if len(edges) > degree:						# count them, and if they are too many ...
-				self.DEBUG += "Node "+str( ID )+" exceeds maximum edge count: "+str( len(edges) )+" edges.\n"
+				self.log("Node "+str( ID )+" exceeds maximum edge count: "+str( len(edges) )+" edges.")
 				self.CloneNode( ID, ConnectedEdges=edges )		# ... clone the Node
 
 
@@ -863,12 +868,12 @@ class Graph:
 		except:
 			distance = 0
 		if distance < 1:
-			self.DEBUG += "Fatal: Dijkstra requires positive integer arguments !\n"
+			self.log("Fatal: Dijkstra requires positive integer arguments !")
 			return
 
 		# http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 		self.status()
-		self.DEBUG += "Cutting width distance "+str(distance)+" around Node "+start.id+" ...\n"
+		self.log("Cutting width distance "+str(distance)+" around Node "+start.id+" ...")
 
 		print "Suche Knoten mit Distanz: "+str(distance)
 
