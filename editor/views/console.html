@@ -16,26 +16,31 @@
 				float:			left;
 				}
 	#Console div		{
+				position:		relative;
 				padding:		5px;
 				}
 </style>
 
 <script>
 	function ConsoleMaximize(element) {
+		console = document.getElementById('Console');
+//		div = document.getElementById('ConsoleMaximize');
 		if ( element.value == "maximize" ) {
-			document.getElementById('Console').style.height = 400;
+			console.style.height = "400px";
 			element.value = "minimize";
+//			div.style.bottom = "0px";
 			}
 		else	{
-			document.getElementById('Console').style.height = 30;
+			console.style.height = "30px";
 			element.value = "maximize";
+//			div.style.top = "0px";
 			}
 		}
 </script>
 
 <div id=Console>
 	<a name=Console href=Console><h3>Console</h3></a>
-	<div align=right><input type=button id=ConsoleMaximize value=maximize onClick="ConsoleMaximize(this);"/></div>
+	<div align=right id=ConsoleMaximize><input type=button value=maximize onClick="ConsoleMaximize(this);"/></div>
 	<hr/>
 	<pre>{{ try: }}{{ = session.bioGraph.DEBUG }}{{ except:pass }}</pre>
 </div>
