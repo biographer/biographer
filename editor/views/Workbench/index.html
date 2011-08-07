@@ -8,6 +8,7 @@
 				}
 	div.debug		{
 				width:		100%;
+				min-height:	50px;
 				max-height:	400px;
 				overflow:	scroll;
 				border:		1pt solid #000;
@@ -23,12 +24,42 @@
 				border:		none;
 				white-space:	pre;
 				overflow:	hidden;
+				font-style:	fixed;
+				}
+	#Console		{
+				position:	fixed;
+				bottom:		5px;
+				width:		90%;
+				height:		20px;
+				}
+	#Console h3		{
+				padding:	0px;
+				padding-left:	5px;
+				float:		left;
+				}
+	#Console div		{
+				padding:	5px;
 				}
 </style>
 
-<h3>Terminal</h3>
-<div class=debug>
-	<pre id=Terminal>{{try:}}{{=session.bioGraph.DEBUG}}{{except:pass}}</pre>
+<script>
+	function ConsoleMaximize(element) {
+		if ( element.value == "maximize" ) {
+			document.getElementById('Console').style.height = 400;
+			element.value = "minimize";
+			}
+		else	{
+			document.getElementById('Console').style.height = 20;
+			element.value = "maximize";
+			}
+		}
+</script>
+
+<div class=debug id=Console>
+	<a name=Console href=Console><h3>Console</h3></a>
+	<div align=right><input type=button id=ConsoleMaximize value=maximize onClick="ConsoleMaximize(this);"/></div>
+	<hr/>
+	<pre>{{ = Console }}</pre>
 </div>
 
 <!--
@@ -38,16 +69,16 @@
 </div>
 -->
 
-<a name=Layout href=Layout><h3>Layout</h3></a> <small>(<a href="http://code.google.com/p/biographer/wiki/LayoutInputFormat">Layout Input Format</a>)</small>
+<a name=Layout href=Layout><h3>Layout</a> <small>(<a href="http://code.google.com/p/biographer/wiki/LayoutInputFormat">Layout Input Format</a>)</small></h3>
 <div class=debug>
 	<!--<iframe src=BioLayout></iframe>-->
-	<pre id=Layout>{{try:}}{{=session.bioGraph.BioLayout}}{{except:pass}}</pre>
+	<pre id=Layout>{{ = Layout }}</pre>
 </div>
 
 <a name=Layout href=JSON><h3>JSON</h3></a>
 <div class=debug>
 	<!--<iframe src=JSON></iframe>-->
-	<pre id=JSON>{{try:}}{{=session.bioGraph.JSON}}{{except:pass}}</pre>
+	<pre id=JSON>{{ = XML(JSON) }}</pre>
 </div>
 
 <br/>

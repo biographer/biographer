@@ -9,21 +9,22 @@ import biographer
 
 from copy import deepcopy
 
+NoModel = "- no model is loaded -"
+
 def index():							# show DEBUG messages, JSON & BioLayout
-	if session.bioGraph is not None:
-		session.bioGraph.exportJSON()
-		session.bioGraph.export_to_Layouter()
-	return dict()
+	if session.bioGraph is None:
+		return dict( Console=NoModel, JSON="network = \"\";", Layout=NoModel )
+	else:
+		return dict( Console=session.bioGraph.DEBUG, JSON="network = "+session.bioGraph.exportJSON()+";", Layout=session.bioGraph.export_to_Layouter() )
 
-def JSON():							# called from Workbench/index
-	if session.bioGraph is not None:
-		session.bioGraph.exportJSON()
-	return dict()
+def Console():
+	return index()
 
-def Layout():							# called from Workbench/index
-	if session.bioGraph is not None:
-		session.bioGraph.export_to_Layouter()
-	return dict()
+def JSON():
+	return index()
+
+def Layout():
+	return index()
 
 def Editor():							# Node: add / delete / rename, Edge: create / remove
 	if session.bioGraph is None:
