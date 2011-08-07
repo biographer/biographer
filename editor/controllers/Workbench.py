@@ -12,19 +12,31 @@ from copy import deepcopy
 NoModel = "- no model is loaded -"
 
 def index():							# show DEBUG messages, JSON & BioLayout
+
 	if session.bioGraph is None:
-		return dict( Console=NoModel, JSON="network = \"\";", Layout=NoModel )
+		session.flash = NoModel
+		net = open( request.folder+'static/examples/example.json' ).read()
 	else:
-		return dict( Console=session.bioGraph.DEBUG, JSON="network = "+session.bioGraph.exportJSON()+";", Layout=session.bioGraph.export_to_Layouter() )
+		net = session.bioGraph.exportJSON()
+	return dict( network=net )
 
 def Console():
-	return index()
+	if session.bioGraph is None:
+		return dict( Console=NoModel )
+	else:
+		return dict( Console=session.bioGraph.DEBUG )
 
 def JSON():
-	return index()
+	if session.bioGraph is None:
+		return dict( JSON="network = \"\";" )
+	else:
+		return dict( JSON="network = "+session.bioGraph.exportJSON()+";" )
 
 def Layout():
-	return index()
+	if session.bioGraph is None:
+		return dict( Layout=NoModel )
+	else:
+		return dict( Layout=session.bioGraph.export_to_Layouter() )
 
 def Editor():							# Node: add / delete / rename, Edge: create / remove
 	if session.bioGraph is None:
