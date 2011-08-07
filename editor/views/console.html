@@ -19,16 +19,66 @@
 	#Console h3		{
 				padding:		0px;
 				padding-left:		5px;
+				
+				}
+	#Console a:hover	{
+				color:			green;
+				text-decoration:	none;
 				}
 	#Console hr		{
 				padding:		0px;
+				}
+
+	#Console div		{
+				border:			none;
+				position:		absolute;
+				top:			0px;
+				left:			150px;
+				width:			230px;
+				min-height:		30px;
+				max-height:		30px;
+				overflow:		hidden;
+				background-color:	white;
+				opacity:		1;
+				}
+	#Console div:hover	{
+				border:			1px solid black;
+				width:			400px;
+				max-height:		300px;
+				}
+	#Console #Layout	{
+				z-index:		1;
+				}
+	#Console #JSON		{
+				z-index:		0;
+				left:			400px;
+				}
+	#Console iframe		{
+				width:			100%;
+				height:			auto;
+				word-wrap:		normal;
+				overflow:		scroll;
 				}
 </style>
 
 
 <div id=Console>
 	<a name=Console href="{{ = URL(r=request, c='Workbench', f='Console') }}"><h3>Console</h3></a>
-	Current Session: {{ = response.session_id }}<br/>{{ = response.session_filename }}
+
+	<div id=Layout>
+		<a name=Layout href="{{ = URL(r=request, c='Workbench', f='Layout') }}"><h3>Layout</a> <small>(<a href="http://code.google.com/p/biographer/wiki/LayoutInputFormat">Layout Input Format</a>)</small></h3>
+		<iframe src=Layout></iframe>
+	</div>
+
+	<div id=JSON>
+		<a name=Layout href="{{ = URL(r=request, c='Workbench', f='JSON') }}"><h3>JSON</h3></a>
+		<iframe src=JSON></iframe>
+	</div>
+
+	Session ID: {{ = response.session_id }}<br/>
+	{{ = response.session_filename }}
+
 	<hr/>
+
 	<pre>{{ try: }}{{ = session.bioGraph.DEBUG }}{{ except:pass }}</pre>
 </div>

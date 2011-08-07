@@ -2,50 +2,5 @@
 
 <h1>Workbench</h1>
 
-<style>
-	h3			{
-				padding-top:	20px;
-				}
-	div.debug		{
-				width:		100%;
-				min-height:	50px;
-				max-height:	400px;
-				overflow:	scroll;
-				border:		1pt solid #000;
-				}
-	div.debug iframe	{
-				width:		100%;
-				height:		auto;
-				word-wrap:	normal;
-				overflow:	hidden;
-				overflow-y:	scroll;
-				}
-	div.debug pre		{
-				border:		none;
-				white-space:	pre;
-				overflow:	hidden;
-				font-style:	fixed;
-				}
-</style>
-
-<!--
-<h3>SBML</h3>
-<div class=debug>
-	<pre id=SBML>{{try:}}{{=session.bioGraph.SBML}}{{except:pass}}</pre>
-</div>
--->
-
-<a name=Layout href=Layout><h3>Layout</a> <small>(<a href="http://code.google.com/p/biographer/wiki/LayoutInputFormat">Layout Input Format</a>)</small></h3>
-<div class=debug>
-	<!--<iframe src=BioLayout></iframe>-->
-	<pre id=Layout>{{ = Layout }}</pre>
-</div>
-
-<a name=Layout href=JSON><h3>JSON</h3></a>
-<div class=debug>
-	<!--<iframe src=JSON></iframe>-->
-	<pre id=JSON>{{ = XML(JSON) }}</pre>
-</div>
-
 <br/>
 <br/>
