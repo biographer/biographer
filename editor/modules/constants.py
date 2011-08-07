@@ -72,11 +72,13 @@ ModificationSBO[111100] = 'PTM Sumoylation'
 
 def getSBO(key):
 	if key in NodeSBO.values():
-		result = str(NodeSBO[NodeSBO.values().index(text)])
+		result = str(NodeSBO[NodeSBO.values().index(key)])
 	elif key in EdgeSBO.values():
-		result = str(EdgeSBO[EdgeSBO.values().index(text)])
+		result = str(EdgeSBO[EdgeSBO.values().index(key)])
 	elif key in ModificationSBO.values():
-		result = str(ModificationSBO[ModificationSBO.values().index(text)])
+		result = str(ModificationSBO[ModificationSBO.values().index(key)])
 	return rjust(result, 7, "0")
 
 ##############################
+
+

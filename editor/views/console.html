@@ -48,6 +48,10 @@
 				width:			400px;
 				max-height:		390px;
 				}
+	#Console div h3		{
+				float:			left;
+				padding-right:		15px;
+				}
 	#Console #Layout	{
 				z-index:		1;
 				}
@@ -68,12 +72,12 @@
 	<a name=Console href="{{ = URL(r=request, c='Workbench', f='Console') }}"><h3>Console</h3></a>
 
 	<div id=Layout>
-		<a name=Layout href="{{ = URL(r=request, c='Workbench', f='Layout') }}"><h3>Layout</a> <small>(<a href="http://code.google.com/p/biographer/wiki/LayoutInputFormat">Format Specification</a>)</small></h3>
+		<a name=Layout href="{{ = URL(r=request, c='Workbench', f='Layout') }}"><h3>Layout</h3></a> <small> [ <a href="http://code.google.com/p/biographer/wiki/LayoutInputFormat">Format</a> ]</small>
 		<iframe src="{{ = URL(r=request, c='Workbench', f='Layout') }}"></iframe>
 	</div>
 
 	<div id=JSON>
-		<a name=Layout href="{{ = URL(r=request, c='Workbench', f='JSON') }}"><h3>JSON</h3></a>
+		<a name=Layout href="{{ = URL(r=request, c='Workbench', f='JSON') }}"><h3>JSON</h3></a> <small> [ <a href="https://docs.google.com/document/d/17QG0BysHF6kEZ8Bw3qs5Xfkp3CKWMcSztVd8WoF3bLE/edit">Format</a> ]</small>
 		<iframe src="{{ = URL(r=request, c='Workbench', f='JSON') }}"></iframe>
 	</div>
 
