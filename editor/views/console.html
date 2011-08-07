@@ -1,46 +1,40 @@
 <style>
 	#Console		{
 				border:			1px solid gray;
+				border-bottom:		none;
 				position:		fixed;
 				bottom:			0px;
 				width:			90%;
 				height:			30px;
 				overflow:		hidden;
-				overflow-y:		scroll;
 				background-color:	white;
 				opacity:		1;
+				}
+	#Console:hover		{
+				border:			3px solid blue;
+				border-bottom:		none;
+				height:			400px;
+				overflow-y:		scroll;
+				}
+	#Console a		{
+				text-decoration:	none;
+				}
+	#Console a:hover	{
+				text-decoration:	underline;
+				cursor:			pointer;
 				}
 	#Console h3		{
 				padding:		0px;
 				padding-left:		5px;
-				float:			left;
 				}
-	#Console div		{
-				position:		relative;
-				padding:		5px;
+	#Console hr		{
+				padding:		0px;
 				}
 </style>
 
-<script>
-	function ConsoleMaximize(element) {
-		console = document.getElementById('Console');
-//		div = document.getElementById('ConsoleMaximize');
-		if ( element.value == "maximize" ) {
-			console.style.height = "400px";
-			element.value = "minimize";
-//			div.style.bottom = "0px";
-			}
-		else	{
-			console.style.height = "30px";
-			element.value = "maximize";
-//			div.style.top = "0px";
-			}
-		}
-</script>
 
 <div id=Console>
-	<a name=Console href=Console><h3>Console</h3></a>
-	<div align=right id=ConsoleMaximize><input type=button value=maximize onClick="ConsoleMaximize(this);"/></div>
+	<a name=Console href="{{ = URL(r=request, c='Workbench', f='Console') }}"><h3>Console</h3></a>
 	<hr/>
 	<pre>{{ try: }}{{ = session.bioGraph.DEBUG }}{{ except:pass }}</pre>
 </div>
