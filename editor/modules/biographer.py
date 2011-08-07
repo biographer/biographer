@@ -14,6 +14,7 @@
 from constants import *			# biographer defaults & constants
 import os
 from time import time, sleep		# to measure layouter runtime
+from datetime import datetime		# to log with timestamp
 from copy import deepcopy
 from math import ceil
 from hashlib import md5
@@ -396,7 +397,8 @@ class Graph:
 			self.DEBUG = ""
 
 	def log(self, msg):
-		self.DEBUG += msg+"\n"
+		time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+		self.DEBUG += time+": "+msg+"\n"
 
 	def status(self):
 		self.log("Network has "+str(self.NodeCount())+" Nodes and "+str(self.EdgeCount())+" Edges.")
