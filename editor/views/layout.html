@@ -101,6 +101,7 @@
 
 	<div id="content" {{=XML(style_content)}}>
 		{{include}} 
+		{{include 'console.html'}}
 	</div>
 
 </div><!-- page -->                         
@@ -110,38 +111,6 @@
 
 </div><!-- container -->        
 
-<script>
-function bringToFront(id)  
-{  
-    if (!document.getElementById ||  
-        !document.getElementsByTagName)  
-        return;  
-  
-    var obj = document.getElementById(id);  
-    var divs = getAbsoluteDivs();  
-    var max_index = 0;  
-    var cur_index;  
-  
-    // Compute the maximal z-index of  
-    // other absolute-positioned divs  
-    for (i = 0; i < divs.length; i++)  
-    {  
-        var item = divs[i];  
-        if (item == obj ||  
-            item.style.zIndex == '')  
-            continue;  
-  
-        cur_index = parseInt(item.style.zIndex);  
-        if (max_index < cur_index)  
-        {  
-            max_index = cur_index;  
-        }  
-    }  
-  
-    obj.style.zIndex = max_index + 1;  
-}
-bringToFront('menubar');
-</script>
 
 </body>
 

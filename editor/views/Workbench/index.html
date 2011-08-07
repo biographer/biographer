@@ -26,41 +26,7 @@
 				overflow:	hidden;
 				font-style:	fixed;
 				}
-	#Console		{
-				position:	fixed;
-				bottom:		5px;
-				width:		90%;
-				height:		20px;
-				}
-	#Console h3		{
-				padding:	0px;
-				padding-left:	5px;
-				float:		left;
-				}
-	#Console div		{
-				padding:	5px;
-				}
 </style>
-
-<script>
-	function ConsoleMaximize(element) {
-		if ( element.value == "maximize" ) {
-			document.getElementById('Console').style.height = 400;
-			element.value = "minimize";
-			}
-		else	{
-			document.getElementById('Console').style.height = 20;
-			element.value = "maximize";
-			}
-		}
-</script>
-
-<div class=debug id=Console>
-	<a name=Console href=Console><h3>Console</h3></a>
-	<div align=right><input type=button id=ConsoleMaximize value=maximize onClick="ConsoleMaximize(this);"/></div>
-	<hr/>
-	<pre>{{ = Console }}</pre>
-</div>
 
 <!--
 <h3>SBML</h3>
