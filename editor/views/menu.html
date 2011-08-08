@@ -106,7 +106,9 @@
 
 			<script> 
 				function ChangeFormat() {
-					document.getElementById('svg').value = graph.rawSVG();
+					if (graph !== undefined) {
+						document.getElementById('svg').value = graph.rawSVG();
+						}
 					document.Export.submit();
 					}
 			</script> 

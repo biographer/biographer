@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from subprocess import Popen, PIPE
 from shlex import split
 
@@ -35,6 +36,8 @@ def Layout():
 def Picture():
 	formats_supported = ['jpeg', 'png', 'pdf', 'svg', 'tiff', 'eps']
 
+	print "Hi!"
+
 #	if session.bioGraph is None:
 #		session.flash = "Unable to export: No Model is loaded !"
 #		return redirect( URL(r=request, c="Workbench", f="index") )
@@ -43,20 +46,18 @@ def Picture():
 		session.flash = "No export format specified or format not supported !"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
-#	if request.vars.svg is None or request.vars.svg == "":				# Error: no input
-#		session.flash = "Unable to export: No SVG input provided !"
-#		return redirect( URL(r=request, c="Workbench", f="index") )
+	if request.vars.svg is None or request.vars.svg == "":				# Error: no input
+		session.flash = "Unable to export: No SVG input provided !"
+		return redirect( URL(r=request, c="Workbench", f="index") )
 
-	svg = open(request.folder+"/static/Exporter/test.svg").read()
-	if request.vars.format != "svg":
-		java = "/usr/bin/java"							# prepare for Java execution
-		jar = request.folder+"/static/Exporter/svg-export-0.2.jar"
-		applet = java+" -jar "+jar+" -si -so -f "+request.vars.format
-	#	svg = request.vars.svg
-
-		content = Popen(split(applet), stdout=PIPE).communicate(svg)[0]		# call Ben's Java Exporter Applet
+	if request.vars.format == "svg":
+		content = request.vars.svg
 	else:
-		content = svg	#request.vars.svg
+		java = "/usr/bin/java"										# prepare for Java execution
+		jar = os.path.join( request.folder, "static/Exporter/svg-export-0.2.jar" )
+		applet = java+" -jar "+jar+" -si -so -f "+request.vars.format
+
+		content = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(request.vars.svg)[0]	# call Ben's Java Exporter Applet
 
 	if len(content) > 0:
 		IP = response.session_id.split("-")[0]						# save output to file
@@ -66,7 +67,7 @@ def Picture():
 		return redirect(URL(r=request, c="static", f="Exporter")+"/"+filename)		# pass file to the client
 
 	else:
-		session.flash = "Exporter failed: No output !"
+		session.flash = "Exporter failed: No output !"					# no content? what happened?
 		return redirect(URL(r=request, c="Workbench", f="index"))
 
 
