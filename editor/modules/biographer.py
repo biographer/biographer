@@ -233,24 +233,6 @@ class Edge:
 ### end Edge ###
 
 
-#### helper functions ####
-
-def checkJSON( JSON ):
-	if len(JSON) > 0:
-		if JSON.lstrip()[0] != "{":				# JSON needs to start with "{"
-			JSON = "{\n"+JSON+"\n}"
-		while JSON.count("[") > JSON.count("]"):		# count "[" = count "]"
-			JSON += "]"
-		while JSON.count("[") < JSON.count("]"):
-			JSON = "["+JSON
-		while JSON.count("{") > JSON.count("}"):		# count "{" = count "}"
-			JSON += "}"
-		while JSON.count("{") < JSON.count("}"):
-			JSON = "{"+JSON
-	else:
-		JSON = "{}"
-	return JSON
-
 ### biographer Layout ###
 
 # http://code.google.com/p/biographer/wiki/LayoutInputFormat
@@ -485,8 +467,8 @@ class Graph:
 	### generating a unique Graph identifier ###
 
 	def hash(self):
-		if self.MD5 is None:
-			self.MD5 = md5( self.exportJSON() ).hexdigest()
+#		if self.MD5 is None:
+		self.MD5 = md5( self.exportJSON() ).hexdigest()
 		return self.MD5
 
 
@@ -525,26 +507,92 @@ class Graph:
 
 	### functions for Graph creation: import / export ###
 
-	def importfile(self, filename):	# future
-		content	= open(filename).read()
+	def checkJSON(self, JSON):
+		pre = "JSON checker: "
+		if len(JSON) > 0:
+			if JSON.find("'") > -1:
+				JSON = JSON.replace("'",'"')			# JSON parser expects " quotes, ' quotes are not understood !
+				self.log(pre+"' quotations are not understood and have been replaced. Please only use \" quotes in the future.")
 
-		pass	#... detect file type
+			if JSON.lstrip()[0] != "{":				# JSON needs to start with "{"
+				JSON = "{\n"+JSON+"\n}"
+				self.log(pre+"JSON = '{' + JSON + '}'")
 
-		self.importJSON( content )
+			while JSON.count("[") > JSON.count("]"):		# count "[" = count "]"
+				JSON += "]"
+				self.log(pre+"JSON = JSON + '}'")
+			while JSON.count("[") < JSON.count("]"):
+				JSON = "["+JSON
+				self.log(pre+"JSON = '{' + JSON")
+
+			while JSON.count("{") > JSON.count("}"):		# count "{" = count "}"
+				JSON += "}"
+				self.log(pre+"JSON = JSON + '}'")
+			while JSON.count("{") < JSON.count("}"):
+				JSON = "{"+JSON
+				self.log(pre+"JSON = '{' + JSON")
+
+			json = JSON.lower()
+			if json.replace(" ","").find('nodes:') == -1:		# nodes: present?
+				self.log(pre+"No Nodes defined !")
+			if json.replace(" ","").find('edges:') == -1:		# edges: present?
+				self.log(pre+"No Edges defined !")
+
+			while JSON.find("//") > -1:				# remove commentary
+				p = JSON.find("//")
+				q = JSON.find("\n", p)
+				self.log(pre+"Removed commentary '"+JSON[p:q]+"'")
+				JSON = JSON[:p] + JSON[q+1:]
+
+			alphabet = range(ord("a"), ord("z")+1)+range(ord("A"), ord("Z")+1)
+			space = ""
+			for i in range(0,15):
+				space += " "
+			p = 0							### put all hash keys in quotes ###
+			quoter = True
+			while p < len(JSON):
+				if JSON[p] == "{":				# hash starts, quotation started
+					quoter = True
+				if JSON[p] == ":":				# definition starts, quotation stopped
+					quoter = False			
+				if JSON[p] == ",":				# definition completed, quotation restarted
+					quoter = True
+				if quoter:
+					if JSON[p] == '"' or JSON[p] == "'":	# quote found, quotation stopped
+						quoter = False
+					elif ord(JSON[p]) in alphabet:		# next byte is a character, not a quote !
+						before = (space+JSON+space)[p:p+30].replace(" ","").replace("\n","").replace("\t","")
+						q = p+1
+						while ord(JSON[q]) in alphabet:
+							q += 1
+						JSON = JSON[:q] + '"' + JSON[q:]	# insert quote after statement
+						JSON = JSON[:p] + '"' + JSON[p:]	# insert quote before statement
+						after = (space+JSON+space)[p:p+30].replace(" ","").replace("\n","").replace("\t","")
+						self.log(pre+"Quoting ... "+before+" ... -> ... "+after+" ...")
+						quoter = False			# done here, no more quotation
+				p += 1
+		else:
+			self.log(pre+"JSON = '{}'")
+			JSON = "{}"
+		return JSON	#.replace("\n","").replace("\t","").replace(" : ",":")	# for debugging, to make it easier to track the JSON importer problem
 
 	def importJSON(self, JSON):						# import JSON
 		self.empty()
 		self.log("Importing JSON ...")
 
-		JSON = checkJSON(JSON)
-		try:
-			JSON = json.loads(JSON)
-		except:
-			self.log("Fatal: JSON parser raised an exception!")
-			return
+		JSON = self.checkJSON(JSON)
+		print JSON
+#		try:
+		JSON = json.loads(JSON)
+		#except ValueError as e:
+		#	self.log(str(e.__dict__))
+		#	return
+#		except:
+#			self.log("Fatal: JSON parser raised an exception!")
+#			return
 		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
 		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
-		self.initialize()
+#		self.initialize()
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
 		self.log("Exporting JSON ...")

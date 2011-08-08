@@ -71,6 +71,7 @@ ModificationSBO[111100] = 'PTM Oxidation'
 ModificationSBO[111100] = 'PTM Sumoylation'
 
 def getSBO(key):
+#...
 	if key in NodeSBO.values():
 		result = str(NodeSBO[NodeSBO.values().index(key)])
 	elif key in EdgeSBO.values():

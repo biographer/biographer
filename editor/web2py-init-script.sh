@@ -47,10 +47,10 @@ case $1 in
 		old=$(cat $md5file)
 		new=$(find -L $biographer -name "*.py" -exec md5sum '{}' \;)
 		if [ "$old" != "$new" ]; then
-			/etc/init.d/web2py restart
 			echo -n "$new" > $md5file
 			date >> $logfile
-			echo "biographer code edited: web2py restarted." >> $logfile
+			echo "biographer code edited: Restarting web2py ..." >> $logfile
+			/etc/init.d/web2py restart
 			fi
 	;;
 	*)
