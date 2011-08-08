@@ -379,9 +379,12 @@ class Graph:
 		if clearDEBUG:
 			self.DEBUG = ""
 
-	def log(self, msg):
+	def log(self, msg, raw=False):
 		time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		self.DEBUG += time+": "+msg+"\n"
+		if not raw:
+			self.DEBUG += time+": "+msg+"\n"
+		else:
+			self.DEBUG += msg
 
 	def status(self):
 		self.log("Network has "+str(self.NodeCount())+" Nodes and "+str(self.EdgeCount())+" Edges.")
@@ -401,6 +404,7 @@ class Graph:
 
 	def initialize(self, removeOrphans=False):				# do everything necessary to complete a new model
 		self.log("Initializing Graph ...")
+		self.status()
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.generateObjectLinks()
 		self.mapIDs()
@@ -409,18 +413,20 @@ class Graph:
 
 	def selfcheck(self, autoresize=True, removeOrphanEdges=True):		# perform some basic integrity checks on the created Graph
 
-		for n in self.Nodes:						# self-check all Nodes and Edges
-			self.log( n.selfcheck() )
-		for e in self.Edges:
-			self.log( e.selfcheck() )
+		self.log("Performing Selfcheck ...")
 
-		usedIDs = []				# remember IDs
-		nodeIDs = []				# remember Node IDs
+		for n in self.Nodes:						# self-check all Nodes and Edges
+			self.log( n.selfcheck(), raw=True )
+		for e in self.Edges:
+			self.log( e.selfcheck(), raw=True )
+
+		usedIDs = []				# remember all used IDs
+		nodeIDs = []				# remember all Node IDs
 		compartmentIDs = [TopCompartmentID]	# remember compartments
-		for n in self.Nodes:						# check for (and correct) colliding Node IDs
+		for n in self.Nodes:						# check for (and correct) colliding Node IDs !
 			while n.id in usedIDs:
 				oldID = str(n.id)
-				rnd = [str(int(random()*10)) for i in range(0,5)]
+				rnd = ''.join([str(int(random()*10)) for i in range(0,5)])
 				n.id = 'random'+rnd
 				self.log("Collision: Node ID changed from '"+odlID+"' to '"+n.id+"' !")
 			usedIDs.append(n.id)
@@ -428,23 +434,23 @@ class Graph:
 				compartmentIDs.append(n.id)
 			nodeIDs.append(n.id)
 
-		for e in self.Edges:						# check for (and correct) colliding Node IDs
+		for e in self.Edges:						# check for (and correct) colliding Node IDs !
 			while e.id in usedIDs:
 				oldID = str(e.id)
-				rnd = [str(int(random()*10)) for i in range(0,5)]
+				rnd = ''.join([str(int(random()*10)) for i in range(0,5)])
 				e.id = 'random'+rnd
-				self.log("Collision: Edge ID changed from '"+odlID+"' to '"+e.id+"' !")
+				self.log("Collision: Edge ID changed from '"+oldID+"' to '"+e.id+"' !")
 			usedIDs.append(e.id)
 
-		for n in self.Nodes:						# Nodes inside non-existing compartments ?
+		for n in self.Nodes:
 			if not 'compartment' in n.data.keys():
 				n.data['compartment'] = TopCompartmentID
 				self.log("Strange: "+str(n.id)+".data[compartment] is not defined. Shouldn't have happened ! Node moved to top.")
-			if not n.data['compartment'] in compartmentIDs:
+			if not n.data['compartment'] in compartmentIDs:		# Compartment exists ?
 				self.log("Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" not found ! Node moved to top.")
 				n.data['compartment'] = TopCompartmentID
 
-		for e in self.Edges:						# for all Edges ...
+		for e in self.Edges:
 			orphan = False
 			if not e.source in nodeIDs:				# Source Node exists?
 				self.log("Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" not found !")
@@ -452,7 +458,7 @@ class Graph:
 			if not e.target in nodeIDs:				# Target Node exists ?
 				self.log("Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" not found !")
 				orphan = True
-			if orphan and removeOrphanEdges:			# Orphan!
+			if orphan and removeOrphanEdges:			# No -> Orphan!
 				self.log("Edge removed.")
 				self.Edges.pop( self.Edges.index(e) )		# remove it
 
@@ -582,7 +588,7 @@ class Graph:
 						JSON = JSON[:q] + '"' + JSON[q:]	# insert quote after statement
 						JSON = JSON[:p] + '"' + JSON[p:]	# insert quote before statement
 						after = (space+JSON+space)[p:p+30].replace(" ","").replace("\n","").replace("\t","")
-						self.log(pre+"Quoting ... "+before+" ... -> ... "+after+" ...")
+						self.log(pre+"Added missing quotation: ... "+before+" ... -> ... "+after+" ...")
 						quoter = False			# done here, no more quotation
 				p += 1
 		else:
