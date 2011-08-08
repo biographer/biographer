@@ -39,7 +39,7 @@ protected:
    float calc_force_adj(); //calculating the force resulted from edges (adjacent nodes).
    float calc_force_nadj(); //calculating the force resulted from non-adjacent nodes (node-overlapping in particular).
    float calc_force_compartments(); //make sure that the nodes obey compartment rule;
-   float firm_distribution(); //firmly distribute the edges around a compound (Not used in the algorithm yet).
+   float firm_distribution(); //firmly distribute the edges around a compound.
    float post_pro(int _round); //post-processing method: to make the layout more compacted and remove node-overlapping.
    void move_nodes(); //move the nodes to a new position.
    void init_compartments(); //initialize the compartment boundaries.

@@ -662,7 +662,7 @@ bool Network::near_swap(){
 float Network::min_edge_crossing(int deglim){
    /*This function tries to minimize edge crossings:
         1. we find two edges which are crossing each other (by enumeration).
-        2. rotate the node which has least connection about the other end of that edge, such that the two edges are paranell to each other.
+        2. rotate the node which has least connection about the other end of that edge, such that the two edges are parallel to each other.
      However, to avoid disturbing many nodes, we only rotate the nodes with less than "deglim" connections.
    */
    int a1,a2,b1,b2,i,j,mindeg;
@@ -683,7 +683,7 @@ float Network::min_edge_crossing(int deglim){
          mindeg=min_four(deg[a1],deg[a2],deg[b1],deg[b2]); //the node with minimum connections.
          if(mindeg>deglim)continue;
          if(mindeg==deg[a1]){ 
-            //rotate a1 around a2, such that the two edges are paranell.
+            //rotate a1 around a2, such that the two edges are parallel.
             tem1=pos[a2]+pos[b2]-pos[b1];
             tem2=pos[a2]+pos[b1]-pos[b2];
             if(dist(tem1,pos[a1])<dist(tem2,pos[a1]))pos[a1]=tem1;
@@ -776,7 +776,7 @@ float Network::layout(){
    int k, inc;
  
    //phase 1. initialization
-   //step1: a quick initial layout.
+   //step1: a quick initial layout: generate the coordinates according to the edges.
    k=inc=0;
    while(true){
       k++;
@@ -829,9 +829,11 @@ float Network::layout(){
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
   
-   init_compartments(); //initilizing compartments using the coordinates generated from phase2.
+   //phase 3: constrained layout: bring in compartments into consideration, and re-layout the nodes such that they obeys compartment rule.
    
-   //phase 3: bring in compartments into consideration, and re-layout the nodes such that they obeys compartment rule.
+   init_compartments(); //step1: initilizing compartments using the coordinates generated from phase2.
+   
+   //step2: compartment-constrained layout.
    pre_force=inf;
    k=inc=0;
    while(true){

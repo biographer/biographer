@@ -19,7 +19,7 @@ Cytosol
 -22.010 3.486
 Nucleus
 -1.#IO -22.010
-time used: 2.237 seconds
+time used: 2.137 seconds
 
 0
 Reaction
