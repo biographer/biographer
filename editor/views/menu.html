@@ -1,12 +1,13 @@
 <style>
 	#menubar			{
+					border:			1px solid gray;
 					position:		relative;
 					height:			30px;
 					padding:		0px;
 					margin:			5px 0px 20px 0px;
-					background:		#eaeaea; 
 					color:			black;
-					border:			1px solid gray;
+					background-color:	#eaeaea; 
+					opacity:		1;
 					}
 	#menubar a			{
 					text-decoration:	none;
@@ -96,10 +97,38 @@
 			<a href="{{=URL(r=request, c='Export', f='Layout')}}">Layout</a><br/>
 	<!--		<a href="{{=URL(r=request, c='ODP', f='exporter')}}">ODP</a><br/>
 			<a href="{{=URL(r=request, c='SBML', f='exporter')}}">SBML</a><br/>	-->
+
+			<style>
+				#format		{
+						width:		60px;
+						}
+			</style>
+
+			<script> 
+				function ChangeFormat() {
+					document.getElementById('svg').value = graph.rawSVG();
+					document.Export.submit();
+					}
+			</script> 
+
+			<form name=Export action="{{=URL(r=request, c='Export', f='Picture')}}" method=POST>
+				<nobr>
+				Picture: 
+				<select name=format id=format onChange="ChangeFormat();">
+					<option value='' selected></option>
+					<option value='jpeg'>jpeg</option>
+					<option value='png'>png</option>
+					<option value='pdf'>pdf</option>
+					<option value='svg'>svg</option>
+					<option value='tiff'>tiff</option>
+					<option value='eps'>eps</option>
+				</select>
+				<input type=hidden name=svg id=svg value=""/>
+			</form>
 		</div>
 	</div>
 
-	<div class=spacer style="left:550px;">
+	<div class=spacer style="left:590px;">
 		<div class=dropdown>
 			Project<br/>
 			<a href="{{=URL(r=request, c='Project', f='Roadmap')}}">Roadmap</a><br/>
