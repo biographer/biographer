@@ -518,14 +518,14 @@ class Graph:
 				JSON = "{\n"+JSON+"\n}"
 				self.log(pre+"JSON = '{' + JSON + '}'")
 
-			while JSON.count("[") > JSON.count("]"):		# count "[" = count "]"
+			while JSON.count("[") > JSON.count("]"):		# count "[" == count "]" ?
 				JSON += "]"
 				self.log(pre+"JSON = JSON + '}'")
 			while JSON.count("[") < JSON.count("]"):
 				JSON = "["+JSON
 				self.log(pre+"JSON = '{' + JSON")
 
-			while JSON.count("{") > JSON.count("}"):		# count "{" = count "}"
+			while JSON.count("{") > JSON.count("}"):		# count "{" == count "}" ?
 				JSON += "}"
 				self.log(pre+"JSON = JSON + '}'")
 			while JSON.count("{") < JSON.count("}"):

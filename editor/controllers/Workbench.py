@@ -28,7 +28,7 @@ def Console():
 
 def JSON():
 	if session.bioGraph is None:
-		return dict( JSON="network = \"\";" )
+		return dict( JSON='network = { "nodes":[], "edges":[] };' )
 	else:
 		return dict( JSON="network = "+session.bioGraph.exportJSON()+";" )
 
