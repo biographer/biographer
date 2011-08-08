@@ -72,14 +72,14 @@ ModificationSBO[111100] = 'PTM Glycosaminoglycan'
 ModificationSBO[111100] = 'PTM Oxidation'
 ModificationSBO[111100] = 'PTM Sumoylation'
 
-def getSBO(key):
+def getSBO(term):
 #...
-	if key in NodeSBO.values():
-		result = str(NodeSBO[NodeSBO.values().index(key)])
-	elif key in EdgeSBO.values():
-		result = str(EdgeSBO[EdgeSBO.values().index(key)])
-	elif key in ModificationSBO.values():
-		result = str(ModificationSBO[ModificationSBO.values().index(key)])
+	if term in NodeSBO.values():
+		result = str(NodeSBO[NodeSBO.values().index(term)])
+	elif term in EdgeSBO.values():
+		result = str(EdgeSBO[EdgeSBO.values().index(term)])
+	elif term in ModificationSBO.values():
+		result = str(ModificationSBO[ModificationSBO.values().index(term)])
 	return rjust(result, 7, "0")
 
 ##############################

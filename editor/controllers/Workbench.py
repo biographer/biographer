@@ -66,3 +66,8 @@ def Cutter():							# interface to use the Dijkstra algorithm
 
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
+def Clear():
+	session.bioGraph = None
+	session.flash = "Bench cleared."
+	return redirect( URL(r=request, c="Workbench", f="index") )
+	

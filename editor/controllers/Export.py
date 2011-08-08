@@ -57,7 +57,10 @@ def Picture():
 		jar = os.path.join( request.folder, "static/Exporter/svg-export-0.2.jar" )
 		applet = java+" -jar "+jar+" -si -so -f "+request.vars.format
 
-		content = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(request.vars.svg)[0]	# call Ben's Java Exporter Applet
+		result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(request.vars.svg)		# call Ben's Java Exporter Applet
+		content = result[0]	# stdout
+		error = result[1]	# stderr
+		session.bioGraph.log(error)
 
 	if len(content) > 0:
 		IP = response.session_id.split("-")[0]						# save output to file
