@@ -31,21 +31,53 @@ from shlex import split			# shell argument splitting
 
 #### main ####
 
+def randomID( prefix="random", length=5 ):
+	return prefix + ''.join( [str(int(random()*10)) for i in range(0,length)] )
+
+class data:								# data structure, used for both Node and Edge optional parameters
+	def __init__(self, dictionary={} ):
+		self.__dict__.update( deepcopy(dictionary) )
+		if not self.owns('id'):
+			self.id = randomID()
+
+	def owns(self, key1, key2=None, key3=None):
+		if key2 is None:
+			return key1 in self.__dict__.keys()
+		if key3 is None:
+			return self.owns(key1) and self.owns(key2)
+		return self.owns(key1) and self.owns(key2) and self.owns(key3)
+
+	def exportDICT(self):
+		me = deepcopy(self.__dict__)
+		del me['id']
+		return me
+
 ### Node ###
 
 class Node:
 	def __init__(self, JSON=None, defaults=False):			# input may be string or dictionary
 		if defaults:
-			self.__dict__.update(deepcopy(DefaultNode))
+			self.__dict__.update( deepcopy(DefaultNode) )
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
-			self.__dict__.update(deepcopy(JSON))		# map all input key/value pairs to the python object
+			self.__dict__.update( deepcopy(JSON) )		# map all input key/value pairs to the python object
+			# after that self.data will be a dictionary
+			# we don't want that, we want to access all parameters in the way node.data.subcomponents etc...
+			self.data = data(self.data)
+
+	def owns(self, key1, key2=None, key3=None):
+		if key2 is None:
+			return key1 in self.__dict__.keys()
+		if key3 is None:
+			return self.owns(key1) and self.owns(key2)
+		return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
 	def setByGraphviz( self, dot ):
+		if not self.owns("data"):
+			self.data = data()
+
 		r = re.compile('[\d\.]+')
-		if not "data" in self.__dict__:
-			self.__dict__.append("data")
 
 		key = 'pos="'
 		p = dot.find(key)
@@ -54,8 +86,8 @@ class Node:
 		p += len(key)
 		q = dot.find('"', p)
 		pos = r.findall( dot[p:q] )
-		self.data['x'] = pos[0]
-		self.data['y'] = pos[1]
+		self.data.x = pos[0]
+		self.data.y = pos[1]
 
 		key = 'width="'
 		p = dot.find(key)
@@ -63,7 +95,7 @@ class Node:
 			return False
 		p += len(key)
 		q = dot.find('"', p)
-		self.data['width'] = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround	# future
+		self.data.width = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround	# future
 
 		key = 'height="'
 		p = dot.find(key)
@@ -71,17 +103,20 @@ class Node:
 			return False
 		p += len(key)
 		q = dot.find('"', p)
-		self.data['height'] = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround
+		self.data.height = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround
 
-		return str(self.id)+" is now at ( "+str(self.data['x'])+" | "+str(self.data['y'])+" ), width = "+str(self.data['width'])+", height = "+str(self.data['height'])
+		return str(self.id)+" is now at ( "+str(self.data.x)+" | "+str(self.data.y)+" ), width = "+str(self.data.width)+", height = "+str(self.data.height)
 
 	def exportJSON(self, Indent=DefaultIndent):			# export Node as JSON string
 		return json.dumps( self.exportDICT(), indent=Indent )
 
 	def exportDICT(self):
-		me = self.__dict__
-		if "ConnectedEdges" in me.keys():			# do not export Node property" ConnectedEdges"
-			del me["ConnectedEdges"]			# it is not public
+		me = deepcopy(self.__dict__)				# convert self to dictionary
+		me['data'] = self.data.exportDICT()
+		if "ConnectedEdges" in me.keys():			# do not export ConnectedEdges
+			del me["ConnectedEdges"]
+		if "SubNodes" in me.keys():
+			del me["SubNodes"]
 		return me
 
 	def selfcheck(self):						# perform some basic integrity checks
@@ -91,38 +126,43 @@ class Node:
 		for key in self.__dict__.keys():			# check if we recognize all keys
 			if key in NodeKeyAliases.keys():		# is it an alias ...
 				newkey = NodeKeyAliases[key]
-				result += 'Automatically corrected error: Node property "'+key+'" should be named "'+newkey+'" !\n'
+				result += 'Format error: '+self.id+'.'+key+' moved to '+self.id+'.'+newkey+'\n'
 				self.__dict__[newkey] = self.__dict__[key]
 				del self.__dict__[key]
 				key = newkey
 			if not key in NodeKeys:
 				if key in OptionalNodeKeys:		# is it an optional key ...
-					result += 'Automatically corrected error: Node property "'+key+'" belongs under "data" !\n'
-					self.data[key] = self.__dict__[key]
+					result += 'Format error: '+self.id+'.'+key+'" moved to '+self.id+'.data.'+key+'\n'
+					self.data.__dict__[key] = self.__dict__[key]
 					del self.__dict__[key]
 				else:
-					result += 'Warning: Unrecognized Node property "'+key+'" !\n'
+					result += 'Format error: Unrecognized Node property "'+key+'" !\n'
 					show = True
 
-		for key in self.data.keys():				# check optional keys
+		for key in self.data.__dict__.keys():				# check optional keys
 			if key in NodeKeyAliases.keys():		# is it an alias ...
 				newkey = NodeKeyAliases[key]
-				result += 'Automatically corrected error: Optional node property "'+key+'" should be named "'+newkey+'" !\n'
-				self.data[newkey] = self.data[key]
-				del self.data[key]
+				result += 'Format error: '+self.id+'.data.'+key+' moved to '+self.id+'.data.'+newkey+'\n'
+				self.data.__dict__[newkey] = self.data.__dict__[key]
+				del self.data.__dict__[key]
 				key = newkey
 			if not key in OptionalNodeKeys:
-				if key in NodeKeys:			# is it a mandatory key ...
-					result += 'Automatically corrected error: Node property "'+key+'" does not belong under "data" !\n'
-					self.__dict__[key] = self.data[key]
-					del self.data[key]
+				if key == 'id':
+					if not self.owns('id'):
+						result += 'Format error: '+self.id+'.data.id moved to '+self.id+'.id\n'
+						self.id = self.data.id
+						self.data.id = randomID()
+				elif key in NodeKeys:			# is it a mandatory key ...
+					result += 'Format error: '+self.id+'.data.'+key+' moved to '+self.id+'.'+key+'\n'
+					self.__dict__[key] = self.data.__dict__[key]
+					del self.data.__dict__[key]
 				else:
-					result += 'Warning: Unrecognized optional Node property "'+key+'" !\n'
+					result += 'Format error: Unrecognized optional Node property "'+key+'" !\n'
 					show = True
 
 		for key in MandatoryNodeKeys:				# check mandatory keys
-			if not key in self.__dict__:
-				result += "Error: "+key+" undefined but mandatory !\n"
+			if not self.owns(key):
+				result += 'Error: '+self.id+'.'+key+' undefined but mandatory !\n'
 				show = True
 
 		if str(self.id) == "-1":				# check ID
@@ -133,13 +173,13 @@ class Node:
 				result += "Warning: Node ID < 0 !\n"
 				show = True
 
-		if ( "compartment" in self.data.keys() ) and ( type(self.data['compartment']) == type(0) ):	# check compartment
-			if self.data['compartment'] < 0 and self.type in [0,3]:
+		if self.data.owns("compartment") and ( type(self.data.compartment) == type(0) ):	# check compartment
+			if self.data.compartment < 0 and self.type in [0,3]:
 				result += "Warning: Node compartment < 0 !\n"
 				show = True
 
 									# check visual properties
-		if ("width" in self.__dict__.keys()) is not ("height" in self.__dict__.keys()):
+		if self.data.owns("width") is not self.data.owns("height"):
 			result += "Warning: Incomplete information on Node size !\n"
 			show = True
 
@@ -159,15 +199,24 @@ class Edge:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
 			self.__dict__.update(deepcopy(JSON))		# import all input key/value pairs to the python object
+			self.data = data(self.data)
+
+	def owns(self, key1, key2=None, key3=None):
+		if key2 is None:
+			return key1 in self.__dict__.keys()
+		if key3 is None:
+			return self.owns(key1) and self.owns(key2)
+		return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
 	def exportJSON(self, Indent=DefaultIndent):			# export Edge as JSON
 		return json.dumps( self.exportDICT(), indent=Indent )
 
-	def exportDICT(self):						# export Edge as dictionary
-		me = self.__dict__
-		if "SourceNode" in me.keys():				# do not export "SourceNode" and "TargetNode" properties
-			del me["SourceNode"]				# they are not public
-		if "TargetNode" in me.keys():				# and they are python objects and thus not JSON serializable
+	def exportDICT(self):
+		me = deepcopy(self.__dict__)				# export self as dictionary
+		me['data'] = self.data.exportDICT()
+		if "SourceNode" in me.keys():				# do not export SourceNode and TargetNode
+			del me["SourceNode"]
+		if "TargetNode" in me.keys():
 			del me["TargetNode"]
 		return me
 
@@ -185,30 +234,35 @@ class Edge:
 			if not key in EdgeKeys:
 				if key in OptionalEdgeKeys:
 					result += 'Automatically corrected error: Edge property "'+key+'" belongs under "data" !\n'
-					self.data[key] = self.__dict__[key]
+					self.data.__dict__[key] = self.__dict__[key]
 					del self.__dict__[key]
 				else:
 					result += 'Warning: Unrecognized Edge property "'+key+'" !\n'
 					show = True
 
-		for key in self.data.keys():				# check optional keys
+		for key in self.data.__dict__.keys():			# check optional keys
 			if key in EdgeKeyAliases.keys():		# is it an alias ...
 				newkey = EdgeKeyAliases[key]
 				result += 'Automatically corrected error: Optional edge property "'+key+'" should be named "'+newkey+'" !\n'
-				self.data[newkey] = self.data[key]
-				del self.data[key]
+				self.data.__dict__[newkey] = self.data.__dict__[key]
+				del self.data.__dict__[key]
 				key = newkey
 			if not key in OptionalEdgeKeys:
-				if key in NodeKeys:			# is it a mandatory key ...
+				if key == 'id':
+					if not self.owns('id'):
+						result += 'Format error: '+self.id+'.data.id moved to '+self.id+'.id\n'
+						self.id = self.data.id
+						self.data.id = randomID()
+				elif key in NodeKeys:			# is it a mandatory key ...
 					result += 'Automatically corrected error: Edge property "'+key+'" does not belong under "data" !\n'
-					self.__dict__[key] = self.data[key]
-					del self.data[key]
+					self.__dict__[key] = self.data.__dict__[key]
+					del self.data.__dict__[key]
 				else:
 					result += 'Warning: Unrecognized optional Edge property "'+key+'" !\n'
 					show = True
 
 		for key in MandatoryEdgeKeys:				# check for mandatory keys
-			if not key in self.__dict__.keys():
+			if not self.owns(key):
 				result += "Error: Mandatory Edge key "+key+" is missing !\n"
 				show = True
 
@@ -221,10 +275,10 @@ class Edge:
 				show = True
 
 									# check label
-		if "label" in self.__dict__.keys() and not ("label_x" in self.__dict__.keys() and "label_y" in self.__dict__.keys()):
+		if self.data.owns("label") and not (self.data.owns("label_x") and self.data.owns("label_y")):
 			result += "Error: Label position missing !\n"
 			show = True
-		if ("label_x" in self.__dict__.keys()) is not ("label_y" in self.__dict__.keys()):
+		if self.data.owns("label_x") is not self.data.owns("label_y"):
 			result += "Error: Label position incomplete !\n"
 			show = True
 
@@ -314,22 +368,22 @@ class Layout:
 def biographerNode2LayoutNode( node ):
 	return {'id'		: node.id, \
 		'type'		: node.type, \
-		'compartment'	: node.data['compartment'], \
-		'x'		: node.data['x'], \
-		'y'		: node.data['y'], \
-		'width'		: node.data['width'], \
-		'height'	: node.data['height'], \
+		'compartment'	: node.data.compartment, \
+		'x'		: node.data.x, \
+		'y'		: node.data.y, \
+		'width'		: node.data.width, \
+		'height'	: node.data.height, \
 		'direction'	: ''	}	# direction?
 
 def LayoutNode2biographerNode( node ):
 	result			= Node( defaults=True )
 	result.type		= node['type']
 	result.id		= node['id']
-	result.data['compartment'] = node['compartment']
-	result.data['x']	= node['x']
-	result.data['y']	= node['y']
-	result.data['width']	= node['width']
-	result.data['height']	= node['height']
+	result.data.compartment = node['compartment']
+	result.data.x	= node['x']
+	result.data.y	= node['y']
+	result.data.width	= node['width']
+	result.data.height	= node['height']
 	# direction? nodes do not have a direction ...
 	return result
 
@@ -366,7 +420,15 @@ class Graph:
 		if BioPAX is not None:
 			self.importBioPAX( BioPAX )
 
+	def owns(self, key1, key2=None, key3=None):
+		if key2 is None:
+			return key1 in self.__dict__.keys()
+		if key3 is None:
+			return self.owns(key1) and self.owns(key2)
+		return self.owns(key1) and self.owns(key2) and self.owns(key3)
+
 	def empty(self, clearDEBUG=True):					# reset current model
+		self.mapped = False
 		self.Nodes = []
 		self.Edges = []
 		self.JSON = None
@@ -392,12 +454,12 @@ class Graph:
 	def generateObjectLinks(self):
 		for n in self.Nodes:
 			n.ConnectedEdges = self.getConnectedEdges(n)		# add connected Edges as Python Object links
-			n.data['SubNodes'] = []
-			if 'subcomponents' in n.data.keys():
-				for subID in n.data['subcomponents']:		# add SubNodes as Python Object links
+			n.SubNodes = []
+			if n.data.owns('subcomponents'):
+				for subID in n.data.subcomponents:		# add SubNodes as Python Object links
 					node = self.getNodeByID(subID)
 					if node is not None:
-						n.data['SubNodes'].append( node )
+						n.SubNodes.append( node )
 		for e in self.Edges:
 			e.SourceNode = self.getNodeByID(e.source)		# add Source Node and
 			e.TargetNode = self.getNodeByID(e.target)		#  Target Node as Python Object links
@@ -426,8 +488,7 @@ class Graph:
 		for n in self.Nodes:						# check for (and correct) colliding Node IDs !
 			while n.id in usedIDs:
 				oldID = str(n.id)
-				rnd = ''.join([str(int(random()*10)) for i in range(0,5)])
-				n.id = 'random'+rnd
+				n.id = randomID()
 				self.log("Collision: Node ID changed from '"+odlID+"' to '"+n.id+"' !")
 			usedIDs.append(n.id)
 			if n.type == getType("Compartment Node"):
@@ -437,18 +498,17 @@ class Graph:
 		for e in self.Edges:						# check for (and correct) colliding Node IDs !
 			while e.id in usedIDs:
 				oldID = str(e.id)
-				rnd = ''.join([str(int(random()*10)) for i in range(0,5)])
-				e.id = 'random'+rnd
+				e.id = randomID()
 				self.log("Collision: Edge ID changed from '"+oldID+"' to '"+e.id+"' !")
 			usedIDs.append(e.id)
 
 		for n in self.Nodes:
-			if not 'compartment' in n.data.keys():
-				n.data['compartment'] = TopCompartmentID
-				self.log("Strange: "+str(n.id)+".data[compartment] is not defined. Shouldn't have happened ! Node moved to top.")
-			if not n.data['compartment'] in compartmentIDs:		# Compartment exists ?
-				self.log("Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" not found ! Node moved to top.")
-				n.data['compartment'] = TopCompartmentID
+			if not n.data.owns('compartment'):
+				n.data.compartment = TopCompartmentID
+				self.log("Strange: "+str(n.id)+".data.compartment is not defined. Node moved to top.")
+			if not n.data.compartment in compartmentIDs:		# valid compartment ?
+				self.log("Error: Compartment "+str(n.data.compartment)+" for Node "+str(n.id)+" not found ! Node moved to top.")
+				n.data.compartment = TopCompartmentID
 
 		for e in self.Edges:
 			orphan = False
@@ -464,25 +524,26 @@ class Graph:
 
 		for n in self.Nodes:						# Nodes have non-existing subcomponents ?
 										# or subcomponents lie outside parent ?
-			if not 'subcomponents' in n.data.keys():
-				n.data['subcomponents'] = []
-				self.log("Strange: "+str(n.id)+".data[subcomponents] is not defined. Shouldn't have happened ! Attached an empty array.")
-			for subID in n.data['subcomponents']:
+			if not n.data.owns('subcomponents'):
+				n.data.subcomponents = []
+				self.log("Strange: "+str(n.id)+".data.subcomponents is not defined. Attached an empty array.")
+			for subID in n.data.subcomponents:
 				s = self.getNodeByID( subID )
 				if s is None:
-					n.data['subcomponents'].pop( n.data['subcomponents'].index(subID) )	# Subcomponent not found -> remove !
+					n.data.subcomponents.pop( n.data.subcomponents.index(subID) )	# Subcomponent not found -> remove !
 					self.log("Error: Subcomponent "+str(subID)+" of Node "+str(n.id)+" not found ! Subcomponent removed.")
 				else:
-					if s.x+s.width > n.x+n.width:
-						self.log("Warning: Subcomponent "+str(s.id)+" of Node "+str(n.id)+" broadener than parent !")
-						if autoresize:
-							n.width = s.x+s.width-n.x
-							self.log("Autoresize: Made it smaller.")
-					if s.y+s.height > n.y+n.height:
-						self.log("Warning: Subcomponent "+str(s.id)+" of Node "+str(n.id)+" higher than parent !")
-						if autoresize:
-							n.height = s.y+s.height-n.y
-							self.log("Autoresize: Made it smaller.")
+					if s.data.owns('x','y','width') and n.data.owns('x','y','width'):
+						if s.data.x + s.data.width > n.data.x + n.data.width:
+							self.log("Warning: Subcomponent "+str(s.id)+" of Node "+str(n.id)+" broadener than parent !")
+							if autoresize:
+								n.data.width = s.data.x + s.data.width - n.data.x
+								self.log("Autoresize: Made it smaller.")
+						if s.data.y + s.data.height > n.data.y + n.data.height:
+							self.log("Warning: Subcomponent "+str(s.id)+" of Node "+str(n.id)+" higher than parent !")
+							if autoresize:
+								n.data.height = s.data.y + s.data.height - n.data.y
+								self.log("Autoresize: Made it smaller.")
 
 	### generating a unique Graph identifier ###
 
@@ -511,14 +572,20 @@ class Graph:
 					self.maxID = int( self.Edge[i].id )+1
 			except:
 				pass						# ... again ignored
+		self.mapped = True
 
 	def newID(self):							# generate a valid ID for the creation of a new object into our model
 		self.maxID += 1
 		return self.maxID
 
 	def getNodeByID(self, ID):
-		if ID in self.IDmapNodes.keys():
-			return self.Nodes[ self.IDmapNodes[ID] ]
+		if self.mapped:
+			if ID in self.IDmapNodes.keys():
+				return self.Nodes[ self.IDmapNodes[ID] ]
+		else:
+			for n in self.Nodes:
+				if n.id == ID:
+					return n
 		return None
 
 	def getEdgeByID(self, ID):
@@ -615,13 +682,14 @@ class Graph:
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
 		self.log("Exporting JSON ...")
-		self.JSON = json.dumps( { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }, indent=Indent )
+		self.JSON = json.dumps( self.exportDICT(status=False), indent=Indent )
 		self.status()
 		return self.JSON
 
-	def exportDICT(self):							# export current model as python dictionary
-		self.status()
-		return self.__dict__
+	def exportDICT(self, status=True):					# export current model as python dictionary
+		if status:
+			self.status()
+		return { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }
 
 	def importSBML(self, SBML):						# import SBML
 		self.empty()
@@ -638,9 +706,9 @@ class Graph:
 			n.id			= compartment.getId()
 			n.sbo			= getSBO("Compartment")
 			n.type                  = getType("Compartment")
-			n.data["label"]		= compartment.getName()
+			n.data.label		= compartment.getName()
 			if compartment.isSetOutside():
-				n.data["compartment"]	= compartment.getOutside()
+				n.data.compartment	= compartment.getOutside()
 			self.Nodes.append(n)
 
 		for species in model.getListOfSpecies():
@@ -648,8 +716,8 @@ class Graph:
 			n.id			= species.getId()
 			n.sbo			= species.getSBOTerm()
 			n.type			= getType("Entitiy Pool Node")
-			n.data["label"]		= species.getName()
-			n.data["compartment"]	= species.getCompartment()
+			n.data.label		= species.getName()
+			n.data.compartment	= species.getCompartment()
 			self.Nodes.append(n)
 
 		self.mapIDs()	# because we will use newID() below
@@ -659,7 +727,7 @@ class Graph:
 			n.id			= reaction.getId()
 			n.sbo			= getSBO("Unspecified")
 		        n.type         		= getType('Process Node')
-			n.data["label"]		= reaction.getName()
+			n.data.label		= reaction.getName()
 			self.Nodes.append(n)
 			self.IDmapNodes[ n.id ]	= len(self.Nodes)-1
 
@@ -726,8 +794,8 @@ class Graph:
 		for node in self.Nodes:
 			if (not node.is_abstract) and (self.EdgeCount(node) > 0):
 				G.add_node( str(node.id),
-					label=node.id if "label" not in node.data else str(node.data["label"]),
-					shape='ellipse' if node.type != TYPE["process node"] else 'box' )
+					label=node.id if "label" not in node.data else str(node.data.label),
+					shape='ellipse' if node.type != getType("Process Node") else 'box' )
 			elif updateNodeProperties:
 				self.Nodes.pop( self.Nodes.index(node) )
 				changes = True
@@ -861,74 +929,55 @@ class Graph:
 
 	### functions for really doing something with the Graph ###
 
-	def CloneNode(self, nodeID, ConnectedEdges=None, NumClones=1):			# split Node into 1x original + 1x clone
-		self.log("Splitting Node "+str(nodeID)+" ...")
+	def Split(self, node, NumClones=1):
+		self.log("Splitting "+str(node.id)+" ...")
 
-		original = self.getNodeByID( nodeID )
-
-		# clone the thing ...	#
-
-		clone = []
+		clones = []
 		for i in range(0, NumClones):
-			copy = Node( defaults=True )
-			copy.__dict__.update( original.__dict__ )
-			clone.append( copy )
-			clone[i].id = self.newID()
-			clone[i].data["clone_marker"] = original.id
+			clones.append( deepcopy(node) )
+			clones[i].id = self.newID()
+			clones[i].data.clone_marker = node.id
+		node.is_abstract = True
 
 		######################################################################
 		# an error will occur, if a Node is cloned, that is already abstract
 		# reaction Nodes cannot be cloned !
 		######################################################################
 
-		original.is_abstract = True
-		self.log(str(NumClones)+" clone(s) created. Original Node is now abstract (invisible).")
+		self.log(str(NumClones)+" clones created. "+str(node.id)+" is now abstract.")
 	
 		# re-distribute Edges connected to the original Node onto clone Nodes #
 
-		if ConnectedEdges is None:						# if function is called from splitNodeOfDegree, avoid double work
-			ConnectedEdges = self.getConnectedEdges( original.id )
-
-		if len(ConnectedEdges) > 0:
+		if len(node.ConnectedEdges) > 0:
 			CurrentClone = 0
 			EdgesPerClone = ceil( len(ConnectedEdges) / float(NumClones) )	# must be ceiled, because ALL Edges need to be distributed
 			EdgesOfCurrentClone = 0
-			for eID in ConnectedEdges:
-				if self.Edge[ IDmapEdges[eID] ].source == original.id:
-					self.Edge[ IDmapEdges[eID] ].source = clone[CurrentClone].id
-					self.log("Edge "+str( e.ID )+" now originates from cloned Node "+str( clone[CurrentClone].id )+".")
-					EdgesOfCurrentClone += 1
-				elif self.Edge[ IDmapEdges[eID] ].target == original.id:
-					self.Edge[ IDmapEdges[eID] ].target = clone[CurrentClone].id
-					self.log("Edge "+str( e.ID )+" now points to cloned Node "+str( clone[CurrentClone].id )+".")
-					EdgesOfCurrentClone += 1
-				else:
-					self.log("Warning: Edge "+str(eID)+" is listed as connected to Node "+str(original.id)+", but that's not true!")
+			for edge in node.ConnectedEdges:
 
-				# Above code demands: An Edge cannot originate from it's target !
+				if edge.source == node.id:
+					edge.source = clone[CurrentClone].id
+					self.log("Edge "+str(e.id)+" now originates from cloned Node "+str(clone[CurrentClone].id))
+					EdgesOfCurrentClone += 1
+
+				elif edge.target == node.id:
+					edge.target = clone[CurrentClone].id
+					self.log("Edge "+str(e.id)+" now points to cloned Node "+str(clone[CurrentClone].id))
+					EdgesOfCurrentClone += 1
 
 				if EdgesOfCurrentClone >= EdgesPerClone:
 					CurrentClone += 1
 
-		# save changes #
-
-		self.Nodes[ IDmapNodes[nodeID] ] = original				# save changes to the original Node
-		for i in range(0, NumClones):						# append clones to Node array
-			self.Nodes.append( clone[i] )
-			self.IDmapNodes[ clone[i].id ] = len(self.Nodes)-1		# update ID index
-			self.IDmap[ clone[i].id ] = self.IDmapNodes[ clone[i].id ]
-
-		self.log("Node "+str(nodeID)+" cloned to 1 abstract Node + "+str(NumClones)+" clone Node(s). "+str( len(ConnectedEdges) )+" Edge(s) re-distributed.")
+		self.log("Node "+str(node.id)+" cloned to 1 abstract Node + "+str(NumClones)+" clones. "+str( len(node.ConnectedEdges) )+" Edges re-distributed.")
+		self.initialize()
 			
 
 	def setMaxEdges(self, degree):							# split all Nodes, that have more than "degree" Edges connected
 		self.MaxEdges = degree
 		self.log("Maximum Edge count set to "+str(degree)+".")
-		for ID in self.IDmapNodes.keys():					# for all Nodes
-			edges = self.getConnectedEdges( ID )					# get the connected Edges,
-			if len(edges) > degree:						# count them, and if they are too many ...
-				self.log("Node "+str( ID )+" exceeds maximum edge count: "+str( len(edges) )+" edges.")
-				self.CloneNode( ID, ConnectedEdges=edges )		# ... clone the Node
+		for n in self.Nodes:							# for all Nodes
+			if len(n.ConnectedEdges) > degree:
+				self.log(str(n.id)+" exceeds maximum edge count.")
+				self.Split( n )
 
 
 	def Dijkstra(self, start, distance):

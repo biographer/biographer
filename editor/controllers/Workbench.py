@@ -10,12 +10,14 @@ import biographer
 from copy import deepcopy
 
 NoModel = "- no model is loaded -"
+EmptyNet = '{ "nodes":[], "edges":[] }'
 
 def index():							# show DEBUG messages, JSON & BioLayout
 
 	if session.bioGraph is None:
 		session.flash = NoModel
-		net = open( request.folder+'static/examples/example.json' ).read()
+#		net = open( request.folder+'static/examples/example.json' ).read()
+		net = EmptyNet
 	else:
 		net = session.bioGraph.exportJSON()
 	return dict( network=net )
@@ -28,7 +30,7 @@ def Console():
 
 def JSON():
 	if session.bioGraph is None:
-		return dict( JSON='network = { "nodes":[], "edges":[] };' )
+		return dict( JSON='network = ;'+EmptyNet )
 	else:
 		return dict( JSON="network = "+session.bioGraph.exportJSON()+";" )
 

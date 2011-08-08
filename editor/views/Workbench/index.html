@@ -34,7 +34,7 @@
 <script type="text/javascript">
 	if (Object === undefined || Object.create === undefined) $("#BrowserNotSupported").show();
 
-	var network = { {{ = XML(network) }} };
+	var network = {{ = XML(network) }};
 
 	bui.ready(function() {
 	    bui.settings.css.stylesheetUrl = '{{ = URL(r=request, c="static", f="Visualization") }}/css/visualization-svg.css';
