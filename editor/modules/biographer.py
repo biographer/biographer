@@ -17,6 +17,7 @@ from time import time, sleep		# to measure layouter runtime
 from datetime import datetime		# to log with timestamp
 from copy import deepcopy
 from math import ceil
+from random import random		# to generate new, random IDs on collision
 from hashlib import md5
 import json				# JSON format
 import libsbml				# SBML format
@@ -386,83 +387,96 @@ class Graph:
 		self.log("Network has "+str(self.NodeCount())+" Nodes and "+str(self.EdgeCount())+" Edges.")
 
 	def generateObjectLinks(self):
-		for n in self.Nodes:						# add connected Edges Object Link array to all Nodes
-			n.ConnectedEdges = self.getConnectedEdges(n)
-		for e in self.Edges:						# add source and target Node Object Links to all Edges
-			e.SourceNode = self.getNodeByID(e.source)
-			e.TargetNode = self.getNodeByID(e.target)
+		for n in self.Nodes:
+			n.ConnectedEdges = self.getConnectedEdges(n)		# add connected Edges as Python Object links
+			n.data['SubNodes'] = []
+			if 'subcomponents' in n.data.keys():
+				for subID in n.data['subcomponents']:		# add SubNodes as Python Object links
+					node = self.getNodeByID(subID)
+					if node is not None:
+						n.data['SubNodes'].append( node )
+		for e in self.Edges:
+			e.SourceNode = self.getNodeByID(e.source)		# add Source Node and
+			e.TargetNode = self.getNodeByID(e.target)		#  Target Node as Python Object links
 
 	def initialize(self, removeOrphans=False):				# do everything necessary to complete a new model
 		self.log("Initializing Graph ...")
 		self.selfcheck( removeOrphanEdges=removeOrphans )
-		self.mapIDs()
 		self.generateObjectLinks()
+		self.mapIDs()
 		self.hash()
 		self.status()
 
-	def selfcheck(self, autoresize=True, removeOrphanEdges=False):		# perform some basic integrity checks on the created Graph
+	def selfcheck(self, autoresize=True, removeOrphanEdges=True):		# perform some basic integrity checks on the created Graph
 
 		for n in self.Nodes:						# self-check all Nodes and Edges
 			self.log( n.selfcheck() )
 		for e in self.Edges:
 			self.log( e.selfcheck() )
 
-		usedIDs = []		# remember IDs				# check for colliding IDs
-		nodeIDs = []		# remember Node IDs
-		compartments = [-1]	# remember compartments
-		for n in self.Nodes:
-			if n.id in usedIDs:
-				self.log("Error: ID collision: Node "+str(n.id))
-			else:
-				usedIDs.append(n.id)
-			if n.type == TYPE["compartment node"]:
-				compartments.append(n.id)
+		usedIDs = []				# remember IDs
+		nodeIDs = []				# remember Node IDs
+		compartmentIDs = [TopCompartmentID]	# remember compartments
+		for n in self.Nodes:						# check for (and correct) colliding Node IDs
+			while n.id in usedIDs:
+				oldID = str(n.id)
+				rnd = [str(int(random()*10)) for i in range(0,5)]
+				n.id = 'random'+rnd
+				self.log("Collision: Node ID changed from '"+odlID+"' to '"+n.id+"' !")
+			usedIDs.append(n.id)
+			if n.type == getType("Compartment Node"):
+				compartmentIDs.append(n.id)
 			nodeIDs.append(n.id)
-		for e in self.Edges:
-			if e.id in usedIDs:
-				self.log("Error: ID collision: Edge "+str(e.id))
-			else:
-				usedIDs.append(e.id)
 
-		for n in self.Nodes:						# Nodes lie inside non-existing compartments ?
-			if not n.data['compartment'] in compartments:
-				self.log("Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" does not exist !")
-				# automatic recovery is theoretically possible here
+		for e in self.Edges:						# check for (and correct) colliding Node IDs
+			while e.id in usedIDs:
+				oldID = str(e.id)
+				rnd = [str(int(random()*10)) for i in range(0,5)]
+				e.id = 'random'+rnd
+				self.log("Collision: Edge ID changed from '"+odlID+"' to '"+e.id+"' !")
+			usedIDs.append(e.id)
 
-		for e in self.Edges:						# Edges connect non-existing Nodes ?
+		for n in self.Nodes:						# Nodes inside non-existing compartments ?
+			if not 'compartment' in n.data.keys():
+				n.data['compartment'] = TopCompartmentID
+				self.log("Strange: "+str(n.id)+".data[compartment] is not defined. Shouldn't have happened ! Node moved to top.")
+			if not n.data['compartment'] in compartmentIDs:
+				self.log("Error: Compartment "+str(n.data['compartment'])+" for Node "+str(n.id)+" not found ! Node moved to top.")
+				n.data['compartment'] = TopCompartmentID
+
+		for e in self.Edges:						# for all Edges ...
 			orphan = False
-			if not e.source in nodeIDs:
-				self.log("Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" does not exist !")
+			if not e.source in nodeIDs:				# Source Node exists?
+				self.log("Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" not found !")
 				orphan = True
-			if not e.target in nodeIDs:
-				self.log("Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" does not exist !")
+			if not e.target in nodeIDs:				# Target Node exists ?
+				self.log("Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" not found !")
 				orphan = True
-			if orphan:
-				if removeOrphanEdges:
-					self.Edges.pop( self.Edges.index(e) )
-					self.log("Edge removed.")
+			if orphan and removeOrphanEdges:			# Orphan!
+				self.log("Edge removed.")
+				self.Edges.pop( self.Edges.index(e) )		# remove it
 
-		for i in range(0, len(self.Nodes)):				# Nodes have non-existing subcomponents ?
-			n = self.Nodes[i]					# or subcomponents lie outside parent ?
-			changes = False
+		for n in self.Nodes:						# Nodes have non-existing subcomponents ?
+										# or subcomponents lie outside parent ?
+			if not 'subcomponents' in n.data.keys():
+				n.data['subcomponents'] = []
+				self.log("Strange: "+str(n.id)+".data[subcomponents] is not defined. Shouldn't have happened ! Attached an empty array.")
 			for subID in n.data['subcomponents']:
-				try:
-					s = self.Nodes[ IDmapNodes[subID] ]
+				s = self.getNodeByID( subID )
+				if s is None:
+					n.data['subcomponents'].pop( n.data['subcomponents'].index(subID) )	# Subcomponent not found -> remove !
+					self.log("Error: Subcomponent "+str(subID)+" of Node "+str(n.id)+" not found ! Subcomponent removed.")
+				else:
 					if s.x+s.width > n.x+n.width:
-						self.log("Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !")
+						self.log("Warning: Subcomponent "+str(s.id)+" of Node "+str(n.id)+" broadener than parent !")
 						if autoresize:
 							n.width = s.x+s.width-n.x
-							changes = True
+							self.log("Autoresize: Made it smaller.")
 					if s.y+s.height > n.y+n.height:
-						self.log("Warning: Subcomponent "+str(s.id)+" for Node "+str(n.id)+" lies outside it's parent !")
+						self.log("Warning: Subcomponent "+str(s.id)+" of Node "+str(n.id)+" higher than parent !")
 						if autoresize:
 							n.height = s.y+s.height-n.y
-							changes = True
-				except:
-					self.log("Error: Error checking subcomponent "+str(subID)+" of Node "+str(n.id)+" !")
-			if changes and autoresize:
-				self.Node[i] = n	# save changes
-
+							self.log("Autoresize: Made it smaller.")
 
 	### generating a unique Graph identifier ###
 
@@ -581,18 +595,17 @@ class Graph:
 		self.log("Importing JSON ...")
 
 		JSON = self.checkJSON(JSON)
-		print JSON
-#		try:
-		JSON = json.loads(JSON)
+		try:
+			JSON = json.loads(JSON)
 		#except ValueError as e:
 		#	self.log(str(e.__dict__))
 		#	return
-#		except:
-#			self.log("Fatal: JSON parser raised an exception!")
-#			return
+		except:
+			self.log("Fatal: JSON parser raised an exception!")
+			return
 		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
 		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
-#		self.initialize()
+		self.initialize()
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
 		self.log("Exporting JSON ...")
@@ -817,7 +830,7 @@ class Graph:
 	def getConnectedEdges(self, node):							# returns an array of Edges, pointing from/to the specified Node
 		edges = []
 		for e in self.Edges:
-			if e.source == node.id or e.target == node.id:
+			if (str(e.source) == str(node.id)) or (str(e.target) == str(node.id)):
 				edges.append( e )
 		return edges
 

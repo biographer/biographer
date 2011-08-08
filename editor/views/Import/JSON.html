@@ -6,20 +6,17 @@
 <br/>
 <br/>
 
-Please upload your file: <input type=file name=File onChange="submit();"/> <input type=submit value=Load />
-
-<hr/>
+Please upload your file: <input type=file name=File onChange="submit();"/> <input type=submit value=Load /> <br/>
 
 <script>
 	function Example() {
 		document.main.submit();
 		}
 </script>
-
-Example:<br/>
-<a href="{{=URL(r=request, c="static", f="examples")}}/example.json">{{=URL(r=request, c="static", f="examples")}}/example.json</a>
 <br/>
-<input type=button value="Load this pathway" onClick="Example();"/>
+Example pathway: 
+<a href="{{=URL(r=request, c="static", f="examples")}}/example.json">{{=URL(r=request, c="static", f="examples")}}/example.json</a>
+<input type=button value="Load Example Pathway" onClick="Example();"/>
 
 <hr/>
 
