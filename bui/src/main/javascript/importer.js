@@ -115,7 +115,7 @@
 
                 addNode(nodeJSON, nodeJSON.id);
             } catch (e) {
-                console.log(e);
+                log(e);
             }
         }
 
@@ -134,7 +134,7 @@
                         if (subNode !== undefined) {
                             subNode.parent(node);
                         } else {
-                            console.log('Broken sub node reference to sub' +
+                            log('Broken sub node reference to sub' +
                                     ' node id: ' + subNodeId);
                         }
                     }
@@ -204,7 +204,7 @@
                     .marker(marker.klass)
                     .visible(true);
             } else {
-                console.log([marker, source, target]);
+                log([marker, source, target]);
             }
         }
     };

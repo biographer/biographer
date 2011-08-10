@@ -25,7 +25,7 @@ bui.settings = {
      * Set to true to enable modification support. Please note though that this
      * can have a strong impact on the initial load time as described in the
      * following issue.
-     * http://code.google.com/p/biographer/issues/detail?id=5
+     * http://code.google.com/p/biographer/issues/detail?id=6
      */
     enableModificationSupport : false,
 

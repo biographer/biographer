@@ -367,3 +367,14 @@
         }
     };
 })(bui);
+
+/**
+ * A secure function call to the console.log function which makes sure that a
+ * console object and its log function exists before continuing. Use this
+ * function the way console.log would be used.
+ */
+log = function() {
+    if (console !== undefined && console.log !== undefined) {
+        console.log.apply(this, arguments);
+    }
+};

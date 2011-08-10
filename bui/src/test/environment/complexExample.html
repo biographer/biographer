@@ -18,9 +18,13 @@
 
 
         bui.ready(function() {
-            graph = new bui.Graph(document.getElementsByTagName('body')[0]);
+            var start = new Date().getTime();
 
+            graph = new bui.Graph(document.getElementsByTagName('body')[0]);
             bui.importFromJSON(graph, complexExample);
+
+            var elapsed = new Date().getTime() - start;
+            console.log('Complete generation took ' + elapsed + 'ms.');
         });
     </script>
 </head>

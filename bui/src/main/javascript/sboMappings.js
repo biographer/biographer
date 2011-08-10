@@ -62,7 +62,7 @@ var addModificationMapping = function(keys, long, short) {
 
     for (var i = 0; i < keys.length; i++) {
         if (modificationMapping.hasOwnProperty(keys[i])) {
-            console.log('Warning: The mapping of modification keys has' +
+            log('Warning: The mapping of modification keys has' +
                     ' already a mapping for key: ' + keys[i]);
         } else {
             modificationMapping[keys[i]] = val;
