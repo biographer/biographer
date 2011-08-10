@@ -51,6 +51,8 @@ NodeSBO[290] = "Compartment"
 NodeSBO[375] = "Process"
 
 EdgeSBO[10] = EdgeSBO[336] = "Reactant"
+EdgeSBO[393] = "Production"
+EdgeSBO[394] = "Consumption"
 EdgeSBO[19] = "Modulation"
 EdgeSBO[20] = "Inhibition"
 EdgeSBO[459] = EdgeSBO[15] = EdgeSBO[11] = "Stimulation"
@@ -91,7 +93,7 @@ def getSBO(term):						# return SBO of text SBO term
 		result = keyOf(EdgeSBO, term)			# Edge SBO
 	elif term in ModificationSBO.values():
 		result = keyOf(ModificationSBO, term)		# Modification SBO
-	if result == 0:
+	else:
 		print "Error: Unknown SBO term '"+str(term)+"' !"
 	return str(result)
 
