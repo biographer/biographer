@@ -126,41 +126,43 @@ class Node:
 		show = False
 
 		for key in self.__dict__.keys():			# check if we recognize all keys
-			if key in NodeKeyAliases.keys():		# is it an alias ...
-				newkey = NodeKeyAliases[key]
-				result += 'Format error: '+self.id+'.'+key+' moved to '+self.id+'.'+newkey+'\n'
-				self.__dict__[newkey] = self.__dict__[key]
-				del self.__dict__[key]
-				key = newkey
-			if not key in NodeKeys:
-				if key in OptionalNodeKeys:		# is it an optional key ...
-					result += 'Format error: '+self.id+'.'+key+'" moved to '+self.id+'.data.'+key+'\n'
-					self.data.__dict__[key] = self.__dict__[key]
+			if key != "ConnectedEdges":			# skip it ...
+				if key in NodeKeyAliases.keys():		# is it an alias ...
+					newkey = NodeKeyAliases[key]
+					result += 'Format error: '+self.id+'.'+key+' moved to '+self.id+'.'+newkey+'\n'
+					self.__dict__[newkey] = self.__dict__[key]
 					del self.__dict__[key]
-				else:
-					result += 'Format error: Unrecognized Node property "'+key+'" !\n'
-					show = True
+					key = newkey
+				if not key in NodeKeys:
+					if key in OptionalNodeKeys:		# is it an optional key ...
+						result += 'Format error: '+self.id+'.'+key+'" moved to '+self.id+'.data.'+key+'\n'
+						self.data.__dict__[key] = self.__dict__[key]
+						del self.__dict__[key]
+					else:
+						result += 'Format error: Unrecognized Node property "'+key+'" !\n'
+						show = True
 
 		for key in self.data.__dict__.keys():				# check optional keys
-			if key in NodeKeyAliases.keys():		# is it an alias ...
-				newkey = NodeKeyAliases[key]
-				result += 'Format error: '+self.id+'.data.'+key+' moved to '+self.id+'.data.'+newkey+'\n'
-				self.data.__dict__[newkey] = self.data.__dict__[key]
-				del self.data.__dict__[key]
-				key = newkey
-			if not key in OptionalNodeKeys:
-				if key == 'id':
-					if not self.owns('id'):
-						result += 'Format error: '+self.id+'.data.id moved to '+self.id+'.id\n'
-						self.id = self.data.id
-						self.data.id = randomID()
-				elif key in NodeKeys:			# is it a mandatory key ...
-					result += 'Format error: '+self.id+'.data.'+key+' moved to '+self.id+'.'+key+'\n'
-					self.__dict__[key] = self.data.__dict__[key]
+			if not key in ['SourceNode', 'TargetNode']:		# skip it ...
+				if key in NodeKeyAliases.keys():		# is it an alias ...
+					newkey = NodeKeyAliases[key]
+					result += 'Format error: '+self.id+'.data.'+key+' moved to '+self.id+'.data.'+newkey+'\n'
+					self.data.__dict__[newkey] = self.data.__dict__[key]
 					del self.data.__dict__[key]
-				else:
-					result += 'Format error: Unrecognized optional Node property "'+key+'" !\n'
-					show = True
+					key = newkey
+				if not key in OptionalNodeKeys:
+					if key == 'id':
+						if not self.owns('id'):
+							result += 'Format error: '+self.id+'.data.id moved to '+self.id+'.id\n'
+							self.id = self.data.id
+							self.data.id = randomID()
+					elif key in NodeKeys:			# is it a mandatory key ...
+						result += 'Format error: '+self.id+'.data.'+key+' moved to '+self.id+'.'+key+'\n'
+						self.__dict__[key] = self.data.__dict__[key]
+						del self.data.__dict__[key]
+					else:
+						result += 'Format error: Unrecognized optional Node property "'+key+'" !\n'
+						show = True
 
 		for key in MandatoryNodeKeys:				# check mandatory keys
 			if not self.owns(key):
