@@ -238,10 +238,7 @@
                             aspectRatio : (this._forceRectangular ? 1 : false)
                         });
             }
-
         }
-
-
     };
 
     /**
@@ -536,9 +533,10 @@
          *
          * @param {Number} x Relative change on the x-axis.
          * @param {Number} y Relative change on the y-axis.
-         * @param {Boolean} [duration] Whether this movement should be animated
-         *   and how long this animation should run. When omitted or a value
-         *   <= 0 is passed the movement will be executed immediately.
+         * @param {Number} [duration] Whether this movement should be animated
+         *   and how long this animation should run in milliseconds. When
+         *   omitted or a value <= 0 is passed the movement will be executed
+         *   immediately.
          * @return {bui.Node} Fluent interface.
          */
         move : function(x, y, duration) {
@@ -547,7 +545,28 @@
             if (duration === undefined || duration <= 0) {
                 this.position(privates.x + x, privates.y + y);
             } else {
-                throw "Not implemented.";
+                var node = this,
+                        timeOffset = 38, // every 38 milliseconds
+                        remainingCalls = Math.floor(duration / timeOffset);
+
+
+                var animatedMove = function() {
+                    // to avoid rounding issues
+                    var diffX = x / remainingCalls,
+                            diffY = y / remainingCalls;
+
+                    node.position(privates.x + diffX, privates.y + diffY);
+
+                    remainingCalls--;
+
+                    if (remainingCalls >= 1) {
+                        x -= diffX;
+                        y -= diffY;
+                        setTimeout(arguments.callee, timeOffset);
+                    }
+                };
+
+                setTimeout(animatedMove, timeOffset);
             }
 
             return this;
