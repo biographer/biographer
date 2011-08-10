@@ -366,6 +366,45 @@
             throw 'The value: "' + val + 'can\'t be converted to boolean.';
         }
     };
+    
+    // TODO take care of scaling
+    bui.util.alignCanvas = function(graph, nodeJSONId, canvas, viewport) {
+        var drawables = graph.drawables(),
+                node;
+
+        for (var key in drawables) {
+            if (drawables.hasOwnProperty(key)) {
+                var drawable = drawables[key];
+
+                if (drawable.json() !== null &&
+                        drawable.json().id === nodeJSONId) {
+                    node = drawable;
+                }
+            }
+        }
+
+        if (node === undefined) {
+            log('Node with id ' + nodeJSONId +
+                    ' could not be found in the graph.');
+            return;
+        }
+
+        if (canvas === undefined) {
+            canvas = jQuery('body');
+        }
+        if (viewport === undefined) {
+            viewport = jQuery(window);
+        }
+
+        var position = node.absolutePosition(),
+                size = node.size(),
+                scale = graph.scale();
+
+        canvas.scrollLeft(position.x * scale - ((
+                viewport.width() - size.width * scale) / 2));
+        canvas.scrollTop(position.y * scale - ((
+                viewport.height() - size.height * scale) / 2));
+    };
 })(bui);
 
 /**
