@@ -224,6 +224,15 @@
         graph.reduceCanvasSize();
     };
 
+    /**
+     * Update node positions by reimporting data from JSON.
+     *
+     * @param {bui.Graph} graph The target graph to which the nodes and edges
+     *   should be added.
+     * @param {Object} data JSON data which should be imported
+     * @param {Number} [duration] An optional duration in milliseconds.
+     *   {@link bui.Node#move}
+     */
     bui.importUpdatedNodePositionsFromJSON = function(graph, data, duration) {
         var drawables = graph.drawables();
 

@@ -84,6 +84,9 @@
             var addToTable;
 
             if (settings.restrictNumberOfColumns === true) {
+                /**
+                 * @private
+                 */
                 addToTable = function(node) {
                     var lastRow = table[table.length - 1];
 
@@ -96,6 +99,9 @@
                 };
             } else {
                 var lastRow = 0;
+                /**
+                 * @private
+                 */
                 addToTable = function(node) {
                     var row = table[lastRow];
 
