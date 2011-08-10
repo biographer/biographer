@@ -366,8 +366,21 @@
             throw 'The value: "' + val + 'can\'t be converted to boolean.';
         }
     };
-    
-    // TODO take care of scaling
+
+    /**
+     *
+     * @param {bui.Graph} graph The graph in which the node is located to
+     *   the viewpoint should be aligned to.
+     * @param {String} nodeJSONId The JSON identifier which was used in the
+     *   import JSON data.
+     * @param {jQueryHTMLElement} [canvas] Use this parameter and the viewport
+     *   parameter in combination to change the viewport. Mostly this is
+     *   required when you place the visualization in an HTMLElement with
+     *   overflow: (scroll|auto). In such cases, pass the aforementioned
+     *   HTMLElement as third and fourth parameter.
+     * @param {jQueryHTMLElement} [viewport] Please refer to the documentation
+     *   of the canvas parameter.
+     */
     bui.util.alignCanvas = function(graph, nodeJSONId, canvas, viewport) {
         var drawables = graph.drawables(),
                 node;
@@ -395,7 +408,7 @@
         if (viewport === undefined) {
             viewport = jQuery(window);
         }
-
+        
         var position = node.absolutePosition(),
                 size = node.size(),
                 scale = graph.scale();
