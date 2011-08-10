@@ -7,17 +7,22 @@ from time import sleep
 
 results = Popen(split("ps aux"), stdout=PIPE).communicate()[0]
 
-def isnumeric(s):
+def isnumeric(c):
 	try:
-		int(s)
+		int(c)
 		return True
 	except:
 		return False
+
+def isspace(c):
+	return c==" " or c=="\t"
 
 for result in results.splitlines():
 	if result.find("web2py.py --nogui") > -1:
 		p = 0
 		print result
+		while not isspace(result[p]):
+			p += 1
 		while not isnumeric(result[p]):
 			p += 1
 		q = p

@@ -212,6 +212,14 @@ class Edge:
 			return self.owns(key1) and self.owns(key2)
 		return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
+	def theotherID(self, nodeID):
+		if self.owns('source') and self.owns('target'):
+			if self.source == nodeID:
+				return self.target
+			if self.target == nodeID:
+				return self.source
+		return None
+
 	def exportJSON(self, Indent=DefaultIndent):			# export Edge as JSON
 		return json.dumps( self.exportDICT(), indent=Indent )
 
@@ -435,6 +443,7 @@ class Graph:
 		self.mapped = False
 		self.Nodes = []
 		self.Edges = []
+		self.CenterNode = None
 		self.JSON = None
 		self.SBML = None
 		self.BioPAX = None
@@ -904,6 +913,14 @@ class Graph:
 				edges.append( e )
 		return edges
 
+	def getConnectedNodes(self, node):
+		results = []
+		if not node.owns('ConnectedEdges'):
+			node.ConnectedEdges = self.getConnectedEdges(node)
+		for edge in node.ConnectedEdges:
+			results.append( self.getNodeByID( edge.theotherID(node.id) ) )
+		return results
+
 	def NodeCount(self):
 		return len(self.Nodes)
 
@@ -912,15 +929,6 @@ class Graph:
 			return len( self.Edges )
 		else:
 			return len( self.getConnectedEdges(node) )
-
-	def getNeighbours(self, node):
-		results = []
-		for edge in self.getConnectedEdges(node):
-			if edge.source == node.id:
-				results.append( self.getNodeByID(edge.target) )
-			elif edge.target == node.id:
-				results.append( self.getNodeByID(edge.source) )
-		return results
 
 
 	### functions for really doing something with the Graph ###
