@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
 
-<form name=main action=load method=POST enctype="multipart/form-data">
+<form name=main method=POST enctype="multipart/form-data">
 
 <a href="http://sbml.org/"><img src="{{=URL(r=request, c="static", f="images")}}/SBML.png" style="vertical-align:middle;"/></a>
 <br/>
@@ -8,9 +8,9 @@
 
 <br/>
 
-Please upload your file: <input type=file name=File onChange="submit();"/> <input type=submit value=Load />
+Please upload your file: <input type=file name=File onChange="submit();"/> <input type=submit value=Load /> <br/>
 
-<hr/>
+<br/>
 
 <script>
 	function Example() {
@@ -18,9 +18,7 @@ Please upload your file: <input type=file name=File onChange="submit();"/> <inpu
 		}
 </script>
 
-Example:<br/>
-Reactome Pathway R_168254<br/>
-<input type=button value="Load this pathway" onClick="Example();"/>
+Example: Reactome Pathway R_168254 <input type=button value="Load Example Pathway" onClick="Example();"/>
 
 <hr/>
 
