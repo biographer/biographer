@@ -55,7 +55,7 @@ def SBML():									# import SBML
 			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+URL(r=request,c='Workbench',f='index') )
 		if Layouter == "graphviz":
 			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
-		return redirect( URL(r=request,c='Workbench',f='index') )
+		return redirect( URL(r=request, c='Workbench',f='index') )
 	
 def BioModels():								# import from BioModels.net
 	def BioModel_to_Database():
@@ -99,9 +99,22 @@ def BioModels():								# import from BioModels.net
 				BioModel_to_Database()
 				session.flash = "BioModel.net SBML retrieved successfully"
 
-#		if (request.vars.returnto is not None) and (request.vars.returnto != ""):		# causing problems
-#			return redirect( request.vars.returnto )
-		return redirect( URL(r=request, c='Workbench', f='index') )
+		if type(request.vars.returnto) == type([]):			# some strand error, I don't fully understand,
+			returnto = str(request.vars.returnto[0])		# where two returnto parameters are provided as a list
+		else:
+			returnto = str(request.vars.returnto)
+		if (returnto is not None) and (returnto != ""):			# explicit redirection
+			return redirect( returnto )
+
+		Layouter = request.vars.Layouter				# implicit redirection: a Layouter was chosen
+		if Layouter == "Ask":
+			return redirect( URL(r=request,c='Layout',f='choose')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "biographer":
+			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "graphviz":
+			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+
+		return redirect( URL(r=request, c='Workbench', f='index') )	# else: goto Workbench
 
 	if request.env.request_method == "GET":
 		session.PreviousBioModels = db( db.BioModels.Title != None ).select()

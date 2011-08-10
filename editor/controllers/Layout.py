@@ -13,13 +13,17 @@ from copy import deepcopy
 
 def choose():
 	if request.env.request_method == "GET":
-		return dict( returnto=request.vars.returnto )
+		return dict( returnto=str(request.vars.returnto) )
 
 	elif request.env.request_method == "POST":
-		returnto = request.vars.returnto
+		if type(request.vars.returnto) == type([]):			# some strand error, I don't fully understand,
+			returnto = str(request.vars.returnto[0])		# where two returnto parameters are provided as a list
+		else:								# same, as in Import.py
+			returnto = str(request.vars.returnto)
 		if returnto == "":
 			returnto = URL(r=request,c='Workbench',f='index')
 
+		Layouter = request.vars.Layouter
 		if Layouter == "biographer":
 			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+returnto )
 		if Layouter == "graphviz":

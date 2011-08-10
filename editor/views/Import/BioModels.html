@@ -1,16 +1,5 @@
 {{extend 'layout.html'}}
 
-<form name=main method=POST>
-
-<input type=hidden name=returnto value="{{ = returnto or '' }}"/>
-
-<a href="http://www.ebi.ac.uk/biomodels-main/publmodels"><img src="{{=URL(r=request, c="static", f="images")}}/BioModels.png" style="vertical-align:bottom;"/></a>
-<br/>
-<br/>
-
-Please enter your BioModels ID:
-<br/>
-
 <script type="text/javascript">
 
 	function Check() {
@@ -43,12 +32,44 @@ Please enter your BioModels ID:
 		}
 </script>
 
-<b>BIOMD</b><input type=text name=BioModelsID onKeyUp="javascript:Check();" onClick="javascript:Check();" onMouseMove="javascript:Check();" /><input type=text name=Valid value="" style="border:#ffffff;" />
+<form name=main method=POST>
 
+<input type=hidden name=returnto value="{{ = returnto or '' }}"/>
+
+<a href="http://www.ebi.ac.uk/biomodels-main/publmodels"><img src="{{=URL(r=request, c="static", f="images")}}/BioModels.png" style="vertical-align:bottom;"/></a>
+<br/>
 <br/>
 
-<!--<input type=button name=Open value="Open" onClick="Open();" />-->
-<input type=submit name=Submit value="Load" style="visibility:hidden;" />
+<div id=Import>
+   <table>
+	<tr>
+		<td>Please enter your <i>BioModels ID</i> of the model you want to display:</td>
+		<td>
+			<b>BIOMD</b>
+			<input type=text name=BioModelsID onKeyUp="javascript:Check();" onClick="javascript:Check();" onMouseMove="javascript:Check();" />
+			<input type=text name=Valid value="" style="border:#ffffff;" />
+		</td>
+	</tr>
+	<tr>
+		<td>Which Layouter do you want to use to arrange the Nodes:</td>
+		<td>
+		<select name=Layouter>
+			<option value="None">Don't Layout</option>
+			<option value="Ask">Ask me later</option>
+			<option value="biographer">biographer (native Layouter)</option>
+			<option value="graphviz" selected>graphviz</option>
+		</select>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<!--<input type=button name=Open value="Open" onClick="Open();" />-->
+			<input type=submit name=Submit value="Load" style="visibility:hidden;" />
+		</td>
+	</tr>
+   </table>
+</div>
 
 <hr/>
 
@@ -58,7 +79,7 @@ Please enter your BioModels ID:
 			}
 </style>
 
-Previously used BioModels:<br/>
+Previously used BioModels (click to load):<br/>
 <select name=Previous class=Previous onChange="Load(this.value);">
 	<option value="" selected></option>
 {{ for row in session.PreviousBioModels: }}
@@ -69,10 +90,8 @@ Previously used BioModels:<br/>
 <hr/>
 
 Example:
-<br/>
 <a href="http://www.ebi.ac.uk/biomodels-main/BIOMD0000000245">Yeast Aerobic Metabolism</a>
-<br/>
-<input type=button value="Load this pathway" onClick="Load('245');"/>
+<input type=button value="Load Example Pathway" onClick="Load('245');"/>
 
 <hr/>
 
