@@ -9,9 +9,9 @@ TopCompartmentID = 0
 
 MandatoryNodeKeys	= ['id','type','sbo','is_abstract']
 NodeKeys		= MandatoryNodeKeys + ['data']
-OptionalNodeKeys	= ['clone_marker', 'x', 'y', 'width', 'height', 'radius', 'label', 'compartment', 'subcomponents', 'modifications']
-NodeKeyAliases		= { 'modification':'modifications', 'subnodes':'subcomponents' }
-DefaultNode		= { "type":"simple_species", "sbo":"252", "is_abstract":False, "data":{ "clone_marker":-1, "x":10, "y":10, "width":50, "height":20, "radius":30, "label":"Orphan Node", "compartment":TopCompartmentID, "subcomponents":[], "modifications":[] } }
+OptionalNodeKeys	= ['clone_marker', 'x', 'y', 'width', 'height', 'radius', 'label', 'compartment', 'subnodes', 'modifications']
+NodeKeyAliases		= { 'modification':'modifications', 'subcomponents':'subnodes' }
+DefaultNode		= { "type":"simple_species", "sbo":"252", "is_abstract":False, "data":{ "clone_marker":-1, "x":10, "y":10, "width":50, "height":20, "radius":30, "label":"Orphan Node", "compartment":TopCompartmentID, "subnodes":[], "modifications":[] } }
 
 MandatoryEdgeKeys	= ['id','sbo','source','target']
 EdgeKeys		= MandatoryEdgeKeys + ['data']
@@ -26,7 +26,12 @@ DefaultEdge		= { "sbo":13, "source":0, "target":0, "data":{ "type":"straight", "
 TYPE = { "Entitiy Pool Node":0, "Auxiliary Unit":1, "Compartment Node":2, "Container Node":3, "Process Node":4, "Reference Node":5 }
 
 def getType(text):
-	return TYPE[text]			# für's erste
+	if text in TYPE.keys():
+		return TYPE[text]
+	text = text+" Node"
+	if text in TYPE.keys():
+		return TYPE[text]
+	return 0
 
 def getLayoutNodeType(type):			# -> Acer/Thomas
 	if type == TYPE["process node"]:
@@ -36,7 +41,7 @@ def getLayoutNodeType(type):			# -> Acer/Thomas
 
 NodeSBO = EdgeSBO = ModificationSBO = {}
 
-NodeSBO[285] = NodeSBO[167] = "Unspecified Entity"
+NodeSBO[285] = NodeSBO[167] = "Unspecified"
 NodeSBO[247] = NodeSBO[240] = "Simple Chemical"
 
 NodeSBO[245] = NodeSBO[252] = "Macromolecule"
@@ -72,15 +77,23 @@ ModificationSBO[111100] = 'PTM Glycosaminoglycan'
 ModificationSBO[111100] = 'PTM Oxidation'
 ModificationSBO[111100] = 'PTM Sumoylation'
 
-def getSBO(term):
-#...
+def keyOf(dictionary, value):					# return the first key, having the given value inside the dictionary
+	for key in dictionary.keys():
+		if dictionary[key] == value:
+			return key
+	return None
+
+def getSBO(term):						# return SBO of text SBO term
+	result = 285 #Unspecified				# default SBO, if nothing matches
 	if term in NodeSBO.values():
-		result = str(NodeSBO[NodeSBO.values().index(term)])
+		result = keyOf(NodeSBO, term)			# Node SBO
 	elif term in EdgeSBO.values():
-		result = str(EdgeSBO[EdgeSBO.values().index(term)])
+		result = keyOf(EdgeSBO, term)			# Edge SBO
 	elif term in ModificationSBO.values():
-		result = str(ModificationSBO[ModificationSBO.values().index(term)])
-	return rjust(result, 7, "0")
+		result = keyOf(ModificationSBO, term)		# Modification SBO
+	if result == 0:
+		print "Error: Unknown SBO term '"+str(term)+"' !"
+	return str(result)
 
 ##############################
 

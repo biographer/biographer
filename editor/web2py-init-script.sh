@@ -28,6 +28,8 @@ case $1 in
 		command="$python $executable --nogui --ip $IP -a main -M -N"
 		#echo $command
 		`sudo -u www-data $command >> $logfile` &
+		new=$(find -L $biographer -name "*.py" -exec md5sum '{}' \;)
+		echo -n "$new" > $md5file
 		log_end_msg 0
         ;;
         stop)

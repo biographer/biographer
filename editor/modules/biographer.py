@@ -63,8 +63,10 @@ class Node:
 				JSON = json.loads(JSON)
 			self.__dict__.update( deepcopy(JSON) )		# map all input key/value pairs to the python object
 			# after that self.data will be a dictionary
-			# we don't want that, we want to access all parameters in the way node.data.subcomponents etc...
-			self.data = data(self.data)
+			# we don't want that, we want to access all parameters in the way node.data.subnodes etc...
+		if not self.owns('data'):
+			self.data = {}
+		self.data = data(self.data)
 
 	def owns(self, key1, key2=None, key3=None):
 		if key2 is None:
@@ -199,7 +201,9 @@ class Edge:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
 			self.__dict__.update(deepcopy(JSON))		# import all input key/value pairs to the python object
-			self.data = data(self.data)
+		if not self.owns('data'):
+			self.data = {}
+		self.data = data(self.data)
 
 	def owns(self, key1, key2=None, key3=None):
 		if key2 is None:
@@ -444,9 +448,9 @@ class Graph:
 	def log(self, msg, raw=False):
 		time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 		if not raw:
-			self.DEBUG += time+": "+msg+"\n"
-		else:
-			self.DEBUG += msg
+			msg = time+": "+msg
+		self.DEBUG += msg+"\n"
+		print msg
 
 	def status(self):
 		self.log("Network has "+str(self.NodeCount())+" Nodes and "+str(self.EdgeCount())+" Edges.")
@@ -455,8 +459,8 @@ class Graph:
 		for n in self.Nodes:
 			n.ConnectedEdges = self.getConnectedEdges(n)		# add connected Edges as Python Object links
 			n.SubNodes = []
-			if n.data.owns('subcomponents'):
-				for subID in n.data.subcomponents:		# add SubNodes as Python Object links
+			if n.data.owns('subnodes'):
+				for subID in n.data.subnodes:		# add SubNodes as Python Object links
 					node = self.getNodeByID(subID)
 					if node is not None:
 						n.SubNodes.append( node )
@@ -465,11 +469,12 @@ class Graph:
 			e.TargetNode = self.getNodeByID(e.target)		#  Target Node as Python Object links
 
 	def initialize(self, removeOrphans=False):				# do everything necessary to complete a new model
+		self.mapped = False
 		self.log("Initializing Graph ...")
 		self.status()
 		self.selfcheck( removeOrphanEdges=removeOrphans )
-		self.generateObjectLinks()
 		self.mapIDs()
+		self.generateObjectLinks()
 		self.hash()
 		self.status()
 
@@ -522,25 +527,25 @@ class Graph:
 				self.log("Edge removed.")
 				self.Edges.pop( self.Edges.index(e) )		# remove it
 
-		for n in self.Nodes:						# Nodes have non-existing subcomponents ?
-										# or subcomponents lie outside parent ?
-			if not n.data.owns('subcomponents'):
-				n.data.subcomponents = []
-				self.log("Strange: "+str(n.id)+".data.subcomponents is not defined. Attached an empty array.")
-			for subID in n.data.subcomponents:
+		for n in self.Nodes:						# Nodes have non-existing subnodes ?
+										# or subnodes lie outside parent ?
+			if not n.data.owns('subnodes'):
+				n.data.subnodes = []
+				self.log("Strange: "+str(n.id)+".data.subnodes is not defined. Attached an empty array.")
+			for subID in n.data.subnodes:
 				s = self.getNodeByID( subID )
 				if s is None:
-					n.data.subcomponents.pop( n.data.subcomponents.index(subID) )	# Subcomponent not found -> remove !
-					self.log("Error: Subcomponent "+str(subID)+" of Node "+str(n.id)+" not found ! Subcomponent removed.")
+					n.data.subnodes.pop( n.data.subnodes.index(subID) )	# Subnode not found -> remove !
+					self.log("Error: Subnode "+str(subID)+" of Node "+str(n.id)+" not found ! Subnode removed.")
 				else:
 					if s.data.owns('x','y','width') and n.data.owns('x','y','width'):
 						if s.data.x + s.data.width > n.data.x + n.data.width:
-							self.log("Warning: Subcomponent "+str(s.id)+" of Node "+str(n.id)+" broadener than parent !")
+							self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" broadener than parent !")
 							if autoresize:
 								n.data.width = s.data.x + s.data.width - n.data.x
 								self.log("Autoresize: Made it smaller.")
 						if s.data.y + s.data.height > n.data.y + n.data.height:
-							self.log("Warning: Subcomponent "+str(s.id)+" of Node "+str(n.id)+" higher than parent !")
+							self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" higher than parent !")
 							if autoresize:
 								n.data.height = s.data.y + s.data.height - n.data.y
 								self.log("Autoresize: Made it smaller.")
@@ -714,7 +719,7 @@ class Graph:
 		for species in model.getListOfSpecies():
 			n = Node( defaults=True )
 			n.id			= species.getId()
-			n.sbo			= species.getSBOTerm()
+			n.sbo			= getSBO( species.getSBOTerm() )
 			n.type			= getType("Entitiy Pool Node")
 			n.data.label		= species.getName()
 			n.data.compartment	= species.getCompartment()
@@ -734,7 +739,7 @@ class Graph:
 			for reactant in reaction.getListOfReactants():		# create Edges from the educts, products and modifiers to this process node
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
-				e.sbo           = getSBO('Consumption')
+				e.sbo           = getSBO('Reactant')
 				e.source        = reactant.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
@@ -742,7 +747,7 @@ class Graph:
 			for product in reaction.getListOfProducts():
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
-				e.sbo           = getSBO('production')
+				e.sbo           = getSBO('Production')
 				e.source        = n.id
 				e.target	= product.getSpecies()
 				self.Edges.append(e)
@@ -750,7 +755,7 @@ class Graph:
 			for modifier in reaction.getListOfModifiers():
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
-				e.sbo		= modifier.getSBOTerm()
+				e.sbo		= getSBO( modifier.getSBOTerm() )
 				e.source        = modifier.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
@@ -790,23 +795,22 @@ class Graph:
 		G = pygraphviz.AGraph(directed=True)
 
 		changes = False
-
 		for node in self.Nodes:
 			if (not node.is_abstract) and (self.EdgeCount(node) > 0):
-				G.add_node( str(node.id),
-					label=node.id if "label" not in node.data else str(node.data.label),
-					shape='ellipse' if node.type != getType("Process Node") else 'box' )
+				G.add_node( 	str(node.id),
+						label = node.data.label if node.data.owns("label") else str(node.id),
+						shape = 'ellipse' if node.type != getType("Process Node") else 'box'
+						)
 			elif updateNodeProperties:
 				self.Nodes.pop( self.Nodes.index(node) )
 				changes = True
 				self.log("Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.")
+		if changes:
+			self.initialize()	# e.g. ID map won't fit anymore, because we deleted Nodes
 
 		for edge in self.Edges:
 			G.add_edge( str(edge.source), str(edge.target),
 				    arrowhead='normal' if edge.sbo in [ getSBO('Consumption'), getSBO('Production') ] else 'tee' )
-
-		if changes:
-			self.initialize()	# re-hash
 
 		png = self.MD5+".png"
 		dot = self.MD5+".dot"
@@ -844,7 +848,6 @@ class Graph:
 
 	def export_to_Layouter(self):
 		self.log("Exporting to Layouter ...")
-		print "Exporting to Layouter ..."
 		L = Layout()
 		for node in self.Nodes:
 			L.add_node( biographerNode2LayoutNode(node) )
@@ -852,12 +855,10 @@ class Graph:
 			L.add_edge( biographerEdge2LayoutEdge(edge) )
 		self.BioLayout = L.export()
 		self.status()
-		print "done."
 		return self.BioLayout
 
 	def import_from_Layouter(self, BioLayout):
 		self.log("Importing from Layouter ...")
-		print "Importing from Layouter ..."
 		self.BioLayout = BioLayout
 		L = Layout( BioLayout )
 		self.Nodes = []
@@ -866,7 +867,6 @@ class Graph:
 		self.Edges = []
 		for edge in L.edges:
 			self.Edges.append( LayoutEdge2biographerEdge(edge) )
-		print "done."
 		self.initialize()
 
 	def doBioLayout(self, Layouter):
@@ -877,8 +877,7 @@ class Graph:
 		self.LayouterInput = self.export_to_Layouter()
 		self.LayouterOutput = ""
 
-		print "Executing "+Layouter+" ..."						# execute "layout"
-		layouter = Popen( split(Layouter), stdin=PIPE, stdout=PIPE )
+		layouter = Popen( split(Layouter), stdin=PIPE, stdout=PIPE )			# execute "layout"
 		layouter.communicate( input=self.LayouterInput )				# stdin, stdout
 		self.LayouterRuntime = 0
 		while layouter.poll is None and self.LayouterRuntime < timeout:			# wait until timeout
@@ -887,13 +886,10 @@ class Graph:
 
 		if self.LayouterRuntime >= timeout:						# process timed out !
 			self.log("Error: Process timed out !")
-			print "Timeout!"
 			return
 
 		self.LayouterOutput = layouter.communicate( input=self.LayouterInput )[0]	# Output ...
 		layouter.stdin.close()
-		print "done."			# DEBUG messages
-		print self.LayouterOutput
 		self.import_from_Layouter( self.LayouterOutput )				# import STDOUT
 		self.log("Executable finished.")
 		
