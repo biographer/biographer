@@ -23,7 +23,7 @@
     };
 
     /**
-     * @private  
+     * @private
      */
     var positionPlaceHolder = function() {
         var privates = this._privates(identifier);
@@ -35,7 +35,7 @@
                 correction.y) + 'px';
 
         correction = bui.settings.style.placeholderCorrection.size;
-        privates.placeholder.style.width =  (privates.width +
+        privates.placeholder.style.width = (privates.width +
                 correction.width) + 'px';
         privates.placeholder.style.height = (privates.height +
                 correction.height) + 'px';
@@ -196,7 +196,7 @@
         }
     };
 
-     /**
+    /**
      * @private
      * Initial paint of the placeholder node and group node
      */
@@ -216,26 +216,32 @@
         sizeChanged.call(this);
         positionChanged.call(this);
 
-         jQuery(privates.nodeGroup)
-                 .add(privates.placeholder)
-                 .click(mouseClick.createDelegate(this));
+        var nodeGroupHtmlElement = jQuery(privates.nodeGroup)
+                .add(privates.placeholder);
 
-        if (this._enableDragging === true &&
-                bui.settings.enableModificationSupport === true) {
-            jQuery(privates.placeholder).draggable({
-                stop : placeholderDragStop.createDelegate(this),
-                drag : placeholderDrag.createDelegate(this)
-            });
+
+        if (bui.settings.enableModificationSupport === true) {
+
+            nodeGroupHtmlElement.click(mouseClick.createDelegate(this));
+
+            if (this._enableDragging === true) {
+                jQuery(privates.placeholder).draggable({
+                            stop : placeholderDragStop.createDelegate(this),
+                            drag : placeholderDrag.createDelegate(this)
+                        });
+            }
+
+            if (this._enableResizing === true) {
+                jQuery(privates.placeholder).resizable({
+                            stop : placeholderResizeStop.createDelegate(this),
+                            resize : placeholderResize.createDelegate(this),
+                            aspectRatio : (this._forceRectangular ? 1 : false)
+                        });
+            }
+
         }
 
-        if (this._enableResizing === true &&
-                bui.settings.enableModificationSupport === true) {
-            jQuery(privates.placeholder).resizable({
-                stop : placeholderResizeStop.createDelegate(this),
-                resize : placeholderResize.createDelegate(this),
-                aspectRatio : (this._forceRectangular ? 1 : false)
-            });
-        }
+
     };
 
     /**
@@ -701,7 +707,7 @@
          * @private
          * Used to calculate line endpoints. Generally spoken this method
          * will only be used by the class {@link bui.StraightLine}.
-         * 
+         *
          * @param {bui.Node} otherNode
          * @return {Object} an object with x and y properties
          */
@@ -826,9 +832,9 @@
 
             var placeholder = this._privates(identifier).placeholder;
             jQuery(placeholder).simulate("mousedown", {
-                clientX : x,
-                clientY : y
-            });
+                        clientX : x,
+                        clientY : y
+                    });
 
             return this;
         },

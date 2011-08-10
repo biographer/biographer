@@ -117,18 +117,22 @@
                     .add(bui.StraightLine)
                     .source(sourceNode)
                     .target(targetNode)
-                    .bind(bui.AbstractLine.ListenerType.click,
-                            clickListener,
-                            listenerId)
-                    .bind(bui.AbstractLine.ListenerType.mousedown,
-                            mouseDownListener,
-                            listenerId)
                     .bind(bui.AbstractLine.ListenerType.mouseEnter,
                             mouseEnterListener,
                             listenerId)
                     .bind(bui.AbstractLine.ListenerType.mouseLeave,
                             mouseLeaveListener,
                             listenerId);
+
+            if (bui.settings.enableModificationSupport === true) {
+                line.bind(bui.AbstractLine.ListenerType.click,
+                            clickListener,
+                            listenerId)
+                    .bind(bui.AbstractLine.ListenerType.mousedown,
+                            mouseDownListener,
+                            listenerId);
+
+            }
 
             lines.push(line);
             sourceNode = targetNode;

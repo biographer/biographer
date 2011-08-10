@@ -471,7 +471,7 @@
          *   reference.
          */
         drawables : function() {
-            this._privates(identifier).drawables;
+            return this._privates(identifier).drawables;
         }
     };
 

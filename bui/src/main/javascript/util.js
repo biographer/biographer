@@ -372,9 +372,10 @@
  * A secure function call to the console.log function which makes sure that a
  * console object and its log function exists before continuing. Use this
  * function the way console.log would be used.
+ * @param {Object} object The object which you want to log.
  */
-log = function() {
+log = function(object) {
     if (console !== undefined && console.log !== undefined) {
-        console.log.apply(this, arguments);
+        console.log(object);
     }
 };
