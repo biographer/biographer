@@ -11,12 +11,30 @@ import biographer
 
 from copy import deepcopy
 
+def choose():
+	if request.env.request_method == "GET":
+		return dict( returnto=request.vars.returnto )
+
+	elif request.env.request_method == "POST":
+		returnto = request.vars.returnto
+		if returnto == "":
+			returnto = URL(r=request,c='Workbench',f='index')
+
+		if Layouter == "biographer":
+			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+returnto )
+		if Layouter == "graphviz":
+			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+returnto )
+		return redirect( returnto )
+
 def biographer():
 	if session.bioGraph is None:
 		session.flash = "Unable to layout: No graph is loaded. Import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="biographer") )
 
 	session.bioGraph.doBioLayout( os.path.join(request.folder, "static/Layouter/build/layout") )
+
+	if request.vars.returnto is not None:
+		return redirect(str(request.vars.returnto))
 	return dict()
 
 def graphviz():

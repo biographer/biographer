@@ -1,0 +1,15 @@
+{{extend 'layout.html'}}
+
+<form method=POST>
+
+<select name=Layouter>
+	<option value="None">Don't Layout</option>
+	<option value="biographer">biographer (native Layouter)</option>
+	<option value="graphviz" selected>graphviz</option>
+</select>
+
+<input type=hidden name=returnto value="{{ = returnto }}"/>
+<input type=submit value=Go />
+
+</form>
+

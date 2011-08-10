@@ -125,8 +125,8 @@ class Node:
 		result = ""
 		show = False
 
-		for key in self.__dict__.keys():			# check if we recognize all keys
-			if key != "ConnectedEdges":			# skip it ...
+		for key in self.__dict__.keys():				# check if we recognize all keys
+			if not key in ["ConnectedEdges", "SubNodes"]:		# skip it ...
 				if key in NodeKeyAliases.keys():		# is it an alias ...
 					newkey = NodeKeyAliases[key]
 					result += 'Format error: '+self.id+'.'+key+' moved to '+self.id+'.'+newkey+'\n'
@@ -457,11 +457,13 @@ class Graph:
 			self.DEBUG = ""
 
 	def log(self, msg, raw=False):
-		time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		if not raw:
-			msg = time+": "+msg
-		self.DEBUG += msg+"\n"
-		print msg
+		msg = msg.strip()
+		if msg != "":
+			time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+			if not raw:
+				msg = time+": "+msg
+			self.DEBUG += msg+"\n"
+			print msg
 
 	def status(self):
 		self.log("Network has "+str(self.NodeCount())+" Nodes and "+str(self.EdgeCount())+" Edges.")
