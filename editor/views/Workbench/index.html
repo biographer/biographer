@@ -3,6 +3,16 @@
 <h1>Workbench</h1>
 
 <style>
+	#ZoomMenu		{
+				border:		1px solid gray;
+				background:	transparent;
+				padding:	10px;
+				margin:		5px;
+
+				position:	absolute;
+	/*			width:		auto;
+				float:		left;		*/
+				}
 	#BrowserNotSupported	{
 				border:		1px solid black;
 				text-align:	center;
@@ -21,7 +31,22 @@
 	Sorry, it seems your Browser is not supported. Maybe you need to activate JavaScript !
 </div>
 
-<div id=canvas></div>
+<div id=canvas>
+	<div id=ZoomMenu>
+		<script>
+			function zoom(difference) {
+				currentZoomLevel = graph.scale();
+				newZoomLevel = currentZoomLevel + difference;
+				if ( newZoomLevel > 0 && newZoomLevel <= 1 ) graph.scale(newZoomLevel);
+				}
+		</script>
+
+		Zoom: 
+		<input type=button value="+" onClick="zoom(+0.1);"/>
+		<input type=button value="O" onClick="graph.scale(1);"/>
+		<input type=button value="-" onClick="zoom(-0.1);"/>
+	</div>
+</div>
 
 <link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/visualization-html.css" />
 <link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/jquery-ui-1.8.13.css" />
@@ -37,11 +62,12 @@
 	var network = {{ = XML(network) }};
 
 	bui.ready(function() {
-	    bui.settings.css.stylesheetUrl = '{{ = URL(r=request, c="static", f="Visualization") }}/css/visualization-svg.css';
-	    graph = new bui.Graph(document.getElementById('canvas'));
-
-	    bui.importFromJSON(graph, network);
+		bui.settings.css.stylesheetUrl = '{{ = URL(r=request, c="static", f="Visualization") }}/css/visualization-svg.css';
+		graph = new bui.Graph(document.getElementById('canvas'));
+		bui.importFromJSON(graph, network);
 	});
+
+	graph.scale(0.5);
 </script>
 
 Click the Edges to add handles. Ctrl+Click Nodes to move or resize them.
