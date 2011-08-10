@@ -546,7 +546,8 @@
                 this.position(privates.x + x, privates.y + y);
             } else {
                 var node = this,
-                        timeOffset = 1000 / 30, // 1000 milliseconds / x fps
+                        // 1000 milliseconds / x fps
+                        timeOffset = 1000 / bui.settings.animationFPS,
                         remainingCalls = Math.floor(duration / timeOffset);
 
 

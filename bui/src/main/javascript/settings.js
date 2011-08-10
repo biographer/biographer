@@ -31,6 +31,12 @@ bui.settings = {
 
     /**
      * @field
+     * How many frames per second (FPS) should be used for animations.
+     */
+    animationFPS : 30,
+
+    /**
+     * @field
      * Prefixes for various ids
      */
     idPrefix : {
