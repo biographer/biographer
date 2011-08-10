@@ -34,7 +34,7 @@ def getType(text):
 	return 0
 
 def getLayoutNodeType(type):			# -> Acer/Thomas
-	if type == TYPE["process node"]:
+	if type == TYPE["Process Node"]:
 		return "Reaction"
 	else:
 		return "Compound"
