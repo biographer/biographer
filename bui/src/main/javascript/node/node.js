@@ -546,11 +546,11 @@
                 this.position(privates.x + x, privates.y + y);
             } else {
                 var node = this,
-                        timeOffset = 38, // every 38 milliseconds
+                        timeOffset = 1000 / 30, // 1000 milliseconds / x fps
                         remainingCalls = Math.floor(duration / timeOffset);
 
 
-                var animatedMove = function() {
+                (function() {
                     // to avoid rounding issues
                     var diffX = x / remainingCalls,
                             diffY = y / remainingCalls;
@@ -564,9 +564,7 @@
                         y -= diffY;
                         setTimeout(arguments.callee, timeOffset);
                     }
-                };
-
-                setTimeout(animatedMove, timeOffset);
+                })();
             }
 
             return this;

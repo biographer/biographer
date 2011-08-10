@@ -223,4 +223,46 @@
         addAllEdges(graph, data, generatedNodes);
         graph.reduceCanvasSize();
     };
+
+    bui.importUpdatedNodePositionsFromJSON = function(graph, data, duration) {
+        var drawables = graph.drawables();
+
+        // optimize the data structure to map json IDs to node references
+        // to achieve a computational complexity of O(2n).
+        var nodes = {};
+        for (var key in drawables) {
+            if (drawables.hasOwnProperty(key)) {
+                var drawable = drawables[key];
+
+                // achieve bui.Node subclass has a bottomRight function.
+                if (drawable.bottomRight !== undefined) {
+                    var jsonId = drawable.json().id;
+                    nodes[jsonId] = drawable;
+                }
+            }
+        }
+
+        var nodesJSON = data.nodes;
+        for (var i = 0; i < nodesJSON.length; i++) {
+            var nodeJSON = nodesJSON[i],
+                    node = nodes[nodeJSON.id];
+            
+            if (node === undefined) {
+                log('Can\'t update nodes position for json node id ' +
+                        nodeJSON.id + ' because the node can\'t be found.');
+                continue;
+            } else if (bui.util.propertySetAndNotNull(nodeJSON,
+                ['data', 'x'], ['data', 'y']) === false) {
+                continue;
+            } else if (node.hasParent() === true) {
+                continue;
+            }
+
+            var x = nodeJSON.data.x,
+                    y = nodeJSON.data.y,
+                    currentPosition = node.position();
+
+            node.move(x - currentPosition.x, y - currentPosition.y, duration);
+        }
+    };
 })(bui);
