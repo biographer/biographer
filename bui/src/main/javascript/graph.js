@@ -460,6 +460,18 @@
             }
 
             return privates.highPerformance;
+        },
+
+        /**
+         * Retrieve an object which holds references to all the graph's
+         * drawables.
+         *
+         * @return {Object} Key/value store of the graph's drawables. The keys
+         *   are the drawable's IDs. The value is the drawable instance
+         *   reference.
+         */
+        drawables : function() {
+            this._privates(identifier).drawables;
         }
     };
 
