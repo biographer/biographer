@@ -22,6 +22,15 @@ bui.settings = {
 
     /**
      * @field
+     * Set to true to enable modification support. Please note though that this
+     * can have a strong impact on the initial load time as described in the
+     * following issue.
+     * http://code.google.com/p/biographer/issues/detail?id=5
+     */
+    enableModificationSupport : false,
+
+    /**
+     * @field
      * Prefixes for various ids
      */
     idPrefix : {

@@ -220,14 +220,16 @@
                  .add(privates.placeholder)
                  .click(mouseClick.createDelegate(this));
 
-        if (this._enableDragging === true) {
+        if (this._enableDragging === true &&
+                bui.settings.enableModificationSupport == true) {
             jQuery(privates.placeholder).draggable({
                 stop : placeholderDragStop.createDelegate(this),
                 drag : placeholderDrag.createDelegate(this)
             });
         }
 
-        if (this._enableResizing === true) {
+        if (this._enableResizing === true &&
+                bui.settings.enableModificationSupport == true) {
             jQuery(privates.placeholder).resizable({
                 stop : placeholderResizeStop.createDelegate(this),
                 resize : placeholderResize.createDelegate(this),
