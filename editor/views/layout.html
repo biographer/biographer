@@ -105,7 +105,16 @@
 </div><!-- header  -->
     
 {{include 'menu.html'}}
-    
+
+<!-- re-occuring, identical style definitions, which are defined globally below -->
+<style>
+	#Import			{
+				border:			1px solid gray;
+				padding:		10px;
+				}
+</style>
+<!-- end global style -->
+
 <div id="page"> <!-- Here my central body -->     
 
 	<div id="content" {{=XML(style_content)}}>

@@ -33,5 +33,8 @@ def graphviz():
 		response.flash = "graphviz layout loaded from cache"
 	else:
 		response.flash = "graphviz layout completed"
+
+	if request.vars.returnto is not None:
+		return redirect(str(request.vars.returnto))
 	return dict()
 

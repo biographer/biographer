@@ -8,17 +8,43 @@
 
 <br/>
 
-Please upload your file: <input type=file name=File onChange="submit();"/> <input type=submit value=Load /> <br/>
+<div id=Import>
+   <table>
+	<tr>
+		<td>Please choose the SBML file you want to display:</td>
+		<td><input type=file name=File onChange="submit();"/></td>
+	</tr>
+	<tr>
+		<td>Which Layouter do you want to use to arrange the Nodes:</td>
+		<td>
+		<select name=Layouter>
+			<option value="None">Don't Layout</option>
+			<option value="Ask">Ask me later</option>
+			<option value="biographer">biographer (native Layouter)</option>
+			<option value="graphviz" selected>graphviz</option>
+		</select>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<input type=submit value=Load />
+			(if no file is chosen, an example will be loaded)
+		</td>
+	</tr>
+   </table>
+</div>
 
 <br/>
 
 <script>
-	function Example() {
+	function Example() {		// Import.py will automatically load an example from /static/examples/, if no File is submitted by this form
 		document.main.submit();
 		}
 </script>
 
-Example: Reactome Pathway R_168254 <input type=button value="Load Example Pathway" onClick="Example();"/>
+Example: Reactome Pathway R_168254
+<!-- <input type=button value="Load Example Pathway" onClick="Example();"/> -->
 
 <hr/>
 

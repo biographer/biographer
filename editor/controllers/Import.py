@@ -48,7 +48,16 @@ def SBML():									# import SBML
 			session.bioGraph = biographer.Graph()
 		session.bioGraph.importSBML( session.SBML )
 
-		return redirect( URL(r=request,c='Workbench',f='index') )
+		Layouter = request.vars.Layouter
+		if Layouter == "None":
+			return redirect( URL(r=request,c='Workbench',f='index') )
+		if Layouter == "Ask":
+			return redirect( URL(r=request,c='Layout',f='Choose')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "biographer":
+			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "graphviz":
+			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+	
 
 def BioModels():								# import from BioModels.net
 	def BioModel_to_Database():
