@@ -227,6 +227,8 @@
                     var json = drawable.json();
                     var size = drawable.size();
 
+                    json.data = json.data || {};
+
                     json.data.width = size.width;
                     json.data.height = size.height;
                 }
