@@ -368,6 +368,7 @@
     };
 
     /**
+     * Align the viewport to a node.
      *
      * @param {bui.Graph} graph The graph in which the node is located to
      *   the viewpoint should be aligned to.

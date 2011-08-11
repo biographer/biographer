@@ -210,6 +210,31 @@
     };
 
     /**
+     * Update the node JSON data with the calculated sizes.
+     *
+     * @param {bui.Graph} graph Set node sizes in the {@link bui.Node#json}
+     *   object.
+     */
+    var updateJSONDataWithSizes = function(graph) {
+        var drawables = graph.drawables();
+
+        for(var key in drawables) {
+            if (drawables.hasOwnProperty(key)) {
+                var drawable = drawables[key];
+
+                // all nodes have a bottomRight property
+                if (drawable.bottomRight !== undefined) {
+                    var json = drawable.json();
+                    var size = drawable.size();
+
+                    json.data.width = size.width;
+                    json.data.height = size.height;
+                }
+            }
+        }
+    };
+
+    /**
      * Import nodes and edges from JSON using this function.
      *
      * @param {bui.Graph} graph The target graph to which the nodes and edges
@@ -222,6 +247,7 @@
         positionAuxiliaryUnits(generatedNodes);
         addAllEdges(graph, data, generatedNodes);
         graph.reduceCanvasSize();
+        updateJSONDataWithSizes(graph);
     };
 
     /**
