@@ -46,6 +46,7 @@ public:
    
 #ifdef USEJSON   
    JSONcontext* readJSON(const char * file=NULL);
+   void writeJSON(JSONcontext* ctx,const char* file=NULL);
 #endif USEJSON
    
    

@@ -239,6 +239,7 @@ void Network::dumpNodes(const char* file){
 
 #ifdef USEJSON
 
+// FIXME: check for memory leaks
 JSONcontext* Network::readJSON(const char* file){
    JsonParser *parser;
    JsonObject *obj;
@@ -319,4 +320,30 @@ JSONcontext* Network::readJSON(const char* file){
    return ctx;
 }
 
+// FIXME: check for memory leaks
+void Network::writeJSON(JSONcontext* ctx,const char* file){
+   GError *error;
+   JsonGenerator* gen=json_generator_new ();
+   json_generator_set_root(gen,ctx->root);
+   JsonArray* jnodes=json_object_get_array_member(json_node_get_object (ctx->root),"nodes");
+   
+   int i;
+   int n=nodes->size();
+   
+   for(i=0;i<n;i++){ // add x,y position to json object
+      JsonObject *node=json_array_get_object_element(jnodes,(*(ctx->nodeidx))[i]); //get corresponding json node using nodeidx
+      JsonObject *data=json_object_get_object_member(node,"data");
+      json_object_set_double_member(data,"x",(*nodes)[i].pts.x);
+      json_object_set_double_member(data,"y",(*nodes)[i].pts.y);
+   }
+   
+   json_generator_to_file(gen,file,&error);
+   if (error)
+   {
+      g_print ("Unable to write `%s': %s\n", file, error->message);
+      g_error_free (error);
+      abort();
+   }
+   
+}
 #endif USEJSON
