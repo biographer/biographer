@@ -4,6 +4,22 @@
 #include "node.h"
 #include "headers.h"
 
+#ifdef USEJSON 
+#include <stdlib.h>
+#include <glib-object.h>
+#include <json-glib/json-glib.h>
+#endif USEJSON
+
+#ifdef USEJSON   
+class JSONcontext{
+   public: 
+      JSONcontext(){
+         nodeidx=new VI();
+      }
+      JsonNode* root;
+      VI* nodeidx;
+};
+
 class Network{
       
 public:
@@ -27,6 +43,11 @@ public:
 
    void read(const char * file=NULL); // read network from file
    void dumpNodes(const char* file); // write nodes with properties
+   
+#ifdef USEJSON   
+   JSONcontext* readJSON(const char * file=NULL);
+#endif USEJSON
+   
    
    float layout(); //run the layout algorithm to obtain the coordinates of nodes.
       
@@ -66,4 +87,5 @@ protected:
    int * above_comp;  //the compartment (index) in above.
 };
    
+#endif
 #endif

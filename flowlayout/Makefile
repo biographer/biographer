@@ -1,12 +1,14 @@
 CC=g++
 XINC=-Isrc
-CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC)
+CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DUSEJSON `pkg-config --cflags glib-2.0 json-glib-1.0` -lglib-2.0 -ljson-glib-1.0
 SRC=src/
 BDIR=build/
 VPATH=$(SRC):$(BDIR)
 
 default: layout_test2.cpp network.o layout.o functions.o
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)layout $<
+json:	layout_json.cpp network.o layout.o functions.o
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)layoutJson $<
 network.o: network.cpp network.h headers.h edge.h node.h
 	$(CC) -o $(BDIR)network.o $(CCFLAGS) -c $<
 layout.o: layout.cpp network.h headers.h edge.h node.h
