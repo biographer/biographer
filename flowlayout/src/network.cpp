@@ -144,7 +144,7 @@ void Network::dump(){
    printf("nodes:\n");
    for(i=0;i<n;i++){
       tmp = &((*nodes)[i]);
-      printf("%d %s %s\n",i,nodetypes[(int)(tmp->pts.type)],tmp->pts.name);
+      cout<<i<<' '<<nodetypes[tmp->pts.type]<<' '<<tmp->pts.name<<endl;
       printf("(%0.3f,%0.3f)+(%0.3f,%0.3f) dir %0.3f, comp %d\n",tmp->pts.x, tmp->pts.y, tmp->pts.width, tmp->pts.height, tmp->pts.dir, tmp->pts.compartment);
    }
    n=edges->size();
@@ -157,7 +157,7 @@ void Network::dump(){
    printf("compartments:\n");
    for(i=0;i<n;i++){
       c = &((*compartments)[i]);
-      printf("%d %s\n",i,c->name);
+      cout<<i<<' '<<c->name<<endl;
       printf("(%0.3f,%0.3f)-(%0.3f,%0.3f)",c->xmin, c->ymin, c->xmax, c->ymax);
       
    }
