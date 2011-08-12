@@ -4,6 +4,11 @@
 
 class Edge {
 public:
+   Edge(){
+      from=0;
+      to=0;
+      pts.type=directed;
+   }
    Edge(int _from, int _to, Edgetype _type){   
        from=_from;
        to=_to;

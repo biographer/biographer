@@ -12,6 +12,7 @@ int main(int argc,char *argv[]){
    } else {
       abort();
    }   
+   nw.dump();
    double _force=nw.layout();
    end_time=clock();
    double dif=difftime(end_time,start_time);

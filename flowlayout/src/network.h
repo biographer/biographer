@@ -8,9 +8,7 @@
 #include <stdlib.h>
 #include <glib-object.h>
 #include <json-glib/json-glib.h>
-#endif USEJSON
 
-#ifdef USEJSON   
 class JSONcontext{
    public: 
       JSONcontext(){
@@ -19,6 +17,8 @@ class JSONcontext{
       JsonNode* root;
       VI* nodeidx;
 };
+
+#endif USEJSON
 
 class Network{
       
@@ -41,13 +41,14 @@ public:
    VI* getNeighbors(int nodeIndex, Edgetype type); //find a specified type (eg. substrates) of neighbor nodes of a node.
    VI* getNeighbors(int nodeIndex);  //find the neighbor nodes of a node.
 
+   void dump();
    void read(const char * file=NULL); // read network from file
    void dumpNodes(const char* file); // write nodes with properties
    
 #ifdef USEJSON   
    JSONcontext* readJSON(const char * file=NULL);
    void writeJSON(JSONcontext* ctx,const char* file=NULL);
-#endif USEJSON
+#endif
    
    
    float layout(); //run the layout algorithm to obtain the coordinates of nodes.
@@ -88,5 +89,4 @@ protected:
    int * above_comp;  //the compartment (index) in above.
 };
    
-#endif
 #endif

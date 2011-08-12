@@ -135,6 +135,36 @@ void Network::addReaction(int index, const VI* substrates,const VI* products, co
       addEdge(index, (*inhibitors)[i], inhibitor);
    }
 }
+void Network::dump(){
+   Node* tmp;
+   Edge* e;
+   Compartment* c;
+   int i;
+   int n=nodes->size();
+   printf("nodes:\n");
+   for(i=0;i<n;i++){
+      tmp = &((*nodes)[i]);
+      printf("%d %s %s\n",i,nodetypes[(int)(tmp->pts.type)],tmp->pts.name);
+      printf("(%0.3f,%0.3f)+(%0.3f,%0.3f) dir %0.3f, comp %d\n",tmp->pts.x, tmp->pts.y, tmp->pts.width, tmp->pts.height, tmp->pts.dir, tmp->pts.compartment);
+   }
+   n=edges->size();
+   printf("edges:\n");
+   for(i=0;i<n;i++){
+      e = &((*edges)[i]);
+      printf("%s %d -> %d\n",edgetypes[(int)(e->pts.type)],e->from,e->to);
+   }
+   n=compartments->size();
+   printf("compartments:\n");
+   for(i=0;i<n;i++){
+      c = &((*compartments)[i]);
+      printf("%d %s\n",i,c->name);
+      printf("(%0.3f,%0.3f)-(%0.3f,%0.3f)",c->xmin, c->ymin, c->xmax, c->ymax);
+      
+   }
+   
+}
+
+
 char scanerr[200];
 #define MSCANF(f,v) if(!(scanf(f,v))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
 #define MSCANF2(f,v,x) if(!(scanf(f,v,x))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
@@ -261,7 +291,7 @@ JSONcontext* Network::readJSON(const char* file){
       abort();
    }
    addCompartment(0,"unknown"); // add dummy compartment, may be overwritten by compartment from json
-   ctx->root = json_parser_get_root (parser);
+   ctx->root = json_node_copy(json_parser_get_root(parser)); // needs to be copied ??
    obj=json_node_get_object (ctx->root);
    jnodes=json_object_get_array_member(obj,"nodes");
    jedges=json_object_get_array_member(obj,"edges");
@@ -271,7 +301,6 @@ JSONcontext* Network::readJSON(const char* file){
       JsonObject *data=json_object_get_object_member(n,"data");
       const char* type=json_object_get_string_member(n,"type");
       const char* id=json_object_get_string_member(n,"id");
-      g_print ("node %s id %s\n",type,id);
       if (json_object_has_member(n,"is_abstract") && (json_object_get_boolean_member(n,"is_abstract") || json_object_get_int_member(n,"is_abstract"))){
          continue;
       }
@@ -280,6 +309,7 @@ JSONcontext* Network::readJSON(const char* file){
          abort();
       }
       int idx=json_object_get_int_member(n,"index");
+      g_print ("node %d %s id %s\n",idx,type,id);
       if(strcmp(type,"Compartment")==0){
          addCompartment(idx,id);
       } else {
@@ -317,6 +347,7 @@ JSONcontext* Network::readJSON(const char* file){
       addEdge(from,to,(Edgetype)k);
       g_print ("edge %s %i -> %i\n",edgetypes[k],from,to);
    }
+   g_object_unref(parser);
    return ctx;
 }
 
