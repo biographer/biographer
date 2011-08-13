@@ -56,6 +56,23 @@ bui.settings = {
 
     /**
      * @field
+     * The data exchange format
+     */
+    dataFormat : {
+        node : {
+            id : 'id',
+            sbo : 'sbo',
+            label : ['data', 'label'],
+            x : ['data', 'x'],
+            y : ['data', 'y'],
+            width : ['data', 'width'],
+            height : ['data', 'height']
+        }
+
+    },
+
+    /**
+     * @field
      * The url from which the CSS file should be imported and CSS classes
      */
     css : {

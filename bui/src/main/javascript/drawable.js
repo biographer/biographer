@@ -222,6 +222,35 @@
             }
 
             return privates.json;
+        },
+
+        /**
+         * Update the JSON object.
+         * 
+         * @param {String|String[]} path The property name which should be
+         *   updated. Pass a string array to handle property chains.
+         * @param {Object} value The property's value.
+         * @returh {bui.Drawable} Fluent interface
+         */
+        updateJson : function(path, value) {
+            var privates = this._privates(identifier);
+
+            privates.json = privates.json || {};
+
+            if (typeof(path) === 'string') {
+                privates.json[path] = value;
+            } else {
+                var lastProperty = privates.json;
+                for(var i = 0; i < path.length - 1; i++) {
+                    var propertyName = path[i];
+                    lastProperty[propertyName] =
+                            lastProperty[propertyName] || {};
+                    lastProperty = lastProperty[propertyName];
+                }
+                lastProperty[path[path.length-1]] = value;
+            }
+
+            return this;
         }
     };
 
