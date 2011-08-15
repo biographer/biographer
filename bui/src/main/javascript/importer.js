@@ -48,7 +48,7 @@
                 ['data', 'modification'])) {
             var modifications = nodeJSON.data.modification;
 
-            for(var i = 0; i < modifications.length; i++) {
+            for (var i = 0; i < modifications.length; i++) {
                 var modification = modifications[i];
 
                 var label, mapping = retrieveFrom(modificationMapping,
@@ -61,9 +61,9 @@
                 }
 
                 graph.add(bui.StateVariable)
-                    .label(label)
-                    .parent(node)
-                    .visible(true);
+                        .label(label)
+                        .parent(node)
+                        .visible(true);
             }
         }
 
@@ -108,7 +108,7 @@
         };
 
         // add all nodes
-        for(var i = 0; i < nodes.length; i++) {
+        for (var i = 0; i < nodes.length; i++) {
             // TODO: remove try-catch block or use different error handling
             try {
                 nodeJSON = nodes[i];
@@ -127,7 +127,7 @@
 
                 if (nodeJSON.data !== undefined &&
                         nodeJSON.data.subnodes !== undefined) {
-                    for (var j = 0; j <  nodeJSON.data.subnodes.length; j++) {
+                    for (var j = 0; j < nodeJSON.data.subnodes.length; j++) {
                         var subNodeId = nodeJSON.data.subnodes[j];
                         var subNode = generatedNodes[subNodeId];
 
@@ -164,6 +164,12 @@
         }
     };
 
+    /**
+     * Position the auxiliary units for each node.
+     *
+     * @param {Object} All the generated nodes. Keys of this object are the
+     *   node's ids or, if applicable, the node's ref key (node.data.ref).
+     */
     var positionAuxiliaryUnits = function(nodes) {
         for (var key in nodes) {
             if (nodes.hasOwnProperty(key)) {
@@ -186,26 +192,36 @@
         var edges = data.edges;
 
         for (var i = 0; i < edges.length; i++) {
-            var edge = edges[i];
+            var edgeJSON = edges[i], marker;
 
-            // TODO make sure that the marker could be found or fall back
-            var marker = retrieveFrom(edgeMarkerMapping, edge.sbo);
-
-            // TODO make sure that source and target could be found
-            var source = generatedNodes[edge.source];
-            var target = generatedNodes[edge.target];
-
-            if (marker !== undefined && source !== undefined &&
-                    target !== undefined) {
-                graph
-                    .add(bui.Edge)
-                    .source(source)
-                    .target(target)
-                    .marker(marker.klass)
-                    .visible(true);
-            } else {
-                log([marker, source, target]);
+            try {
+                marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
+            } catch (e) {
+                // falling back to no marker in case something goes wrong
+                log(e);
+                marker = undefined;
             }
+
+            var source = generatedNodes[edgeJSON.source];
+            var target = generatedNodes[edgeJSON.target];
+
+            if (source === undefined) {
+                log('Edge source ' + edgeJSON.source + ' could not be found.');
+                continue;
+            } else if (target === undefined) {
+                log('Edge target ' + edgeJSON.target + ' could not be found.');
+                continue;
+            }
+
+            var edge = graph.add(bui.Edge)
+                    .source(source)
+                    .target(target);
+
+            if (marker !== undefined) {
+                edge.marker(marker.klass);
+            }
+
+            edge.visible(true);
         }
     };
 
@@ -255,13 +271,13 @@
         for (var i = 0; i < nodesJSON.length; i++) {
             var nodeJSON = nodesJSON[i],
                     node = nodes[nodeJSON.id];
-            
+
             if (node === undefined) {
                 log('Can\'t update nodes position for json node id ' +
                         nodeJSON.id + ' because the node can\'t be found.');
                 continue;
             } else if (bui.util.propertySetAndNotNull(nodeJSON,
-                ['data', 'x'], ['data', 'y']) === false) {
+                    ['data', 'x'], ['data', 'y']) === false) {
                 continue;
             } else if (node.hasParent() === true) {
                 continue;

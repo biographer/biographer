@@ -118,7 +118,7 @@ var customExample = {
              target : 'node11'
         }, {
              id : 'edge2',
-             sbo : 459,
+             sbo : 132154, // incorrect SBO id to test robustness
              source : 'node11',
              target : 'node12'
         }, {
