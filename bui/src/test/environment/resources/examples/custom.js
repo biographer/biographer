@@ -157,7 +157,7 @@ var customExample = {
              target : 'node9',
             data : {
                 type : 'curve',
-                handles : [{ x : 532, y : 339 }, { x : 552, y : 228 }]
+                handles : [{ x : 540, y : 540 }, { x : 534, y : 517 }]
             }
         }, {
              id : 'edge8',

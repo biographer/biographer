@@ -529,7 +529,7 @@
 
         /**
          * @description
-         * Use this function to move the relative to its current position.
+         * Use this function to move the node relative to its current position.
          *
          * @param {Number} x Relative change on the x-axis.
          * @param {Number} y Relative change on the y-axis.
@@ -569,6 +569,23 @@
             }
 
             return this;
+        },
+
+        /**
+         * @description
+         * Use this function to move the node.
+         *
+         * @param {Number} x Absolute position on the x-axis.
+         * @param {Number} y Absolute position on the y-axis.
+         * @param {Number} [duration] Whether this movement should be animated
+         *   and how long this animation should run in milliseconds. When
+         *   omitted or a value <= 0 is passed the movement will be executed
+         *   immediately.
+         * @return {bui.Node} Fluent interface.
+         */
+        moveAbsolute : function(x, y, duration) {
+            var privates = this._privates(identifier);
+            return this.move(x - privates.x, y - privates.y, duration);
         },
 
         /**

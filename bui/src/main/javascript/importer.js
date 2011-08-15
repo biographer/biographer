@@ -267,7 +267,7 @@
 
         graph.unsuspendRedraw(suspendHandle);
         var elapsed = new Date().getTime() - start;
-        log('Complete import took ' + elapsed + 'ms.');
+        log('## Complete import took ' + elapsed + 'ms.');
     };
 
     /**
@@ -296,13 +296,13 @@
             }
         }
 
-        var nodesJSON = data.nodes;
-        for (var i = 0; i < nodesJSON.length; i++) {
+        var nodesJSON = data.nodes, i;
+        for (i = 0; i < nodesJSON.length; i++) {
             var nodeJSON = nodesJSON[i],
                     node = optimizedDrawables[nodeJSON.id];
 
             if (node === undefined) {
-                log('Can\'t update nodes position for json node id ' +
+                log('Warning: Can\'t update nodes position for json node id ' +
                         nodeJSON.id + ' because the node can\'t be found.');
                 continue;
             } else if (bui.util.propertySetAndNotNull(nodeJSON,
@@ -317,6 +317,25 @@
                     currentPosition = node.position();
 
             node.move(x - currentPosition.x, y - currentPosition.y, duration);
+        }
+
+        var edgesJSON = data.edges;
+        for (i = 0; i < edgesJSON.length; i++) {
+            var edgeJSON = edgesJSON[i],
+                    edge = optimizedDrawables[edgeJSON.id];
+
+            if (edge === undefined) {
+                log('Warning: Can\'t update edge for json edge id ' +
+                        edgeJSON.id + ' because the edge can\'t be found.');
+                continue;
+            } else if (!bui.util.propertySetAndNotNull(edgeJSON,
+                    ['data', 'type'], ['data', 'handles'])) {
+                continue;
+            } else if (edgeJSON.data.type !== 'curve') {
+                continue;
+            }
+
+            edge.setSplineHandlePositions(edgeJSON.data.handles, duration);
         }
     };
 })(bui);

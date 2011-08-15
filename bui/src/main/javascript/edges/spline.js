@@ -178,18 +178,30 @@
             return privates.layoutElementsVisible;
         },
 
-        setSplineHandlePositions : function(positions) {
+        /**
+         * Set the spline handle positions and optionally animate them.
+         * 
+         * @param {Object[]} positions An array of positions, i.e. an array
+         *   of objects where each object has an x and y property which
+         *   resembles the spline handle coordinates.
+         * @param {Number} [duration] Optional duration for an animation. The
+         *   default value assumes no animation. Refer to {@link bui.Node#move}
+         *   for additional information about this parameter.
+         * @return {bui.Spline} Fluent interface
+         */
+        setSplineHandlePositions : function(positions, duration) {
             var privates = this._privates(identifier);
 
             if (positions.length >= 1) {
-                privates.sourceSplineHandle.position(positions[0].x,
-                        positions[0].y);
+                privates.sourceSplineHandle.moveAbsolute(positions[0].x,
+                        positions[0].y, duration);
             }
             if (positions.length >= 2) {
-                privates.targetSplineHandle.position(positions[1].x,
-                        positions[1].y);
+                privates.targetSplineHandle.moveAbsolute(positions[1].x,
+                        positions[1].y, duration);
             }
 
+            return this;
         }
     };
 

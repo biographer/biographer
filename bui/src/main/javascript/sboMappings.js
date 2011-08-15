@@ -106,6 +106,6 @@ var retrieveFrom = function(mapping, sbo) {
     if (mapping.hasOwnProperty(sbo)) {
         return mapping[sbo];
     } else {
-        throw('SBO id "' + sbo + '" could not be found.');
+        throw('Warning: SBO id "' + sbo + '" could not be found.');
     }
 };
