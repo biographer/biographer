@@ -19,12 +19,8 @@
 
 
         bui.ready(function() {
-            console.log(customExample);
-
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
             bui.importFromJSON(graph, customExample);
-
-            console.log(customExample);
 
             setTimeout(function() {
                 bui.importUpdatedNodePositionsFromJSON(graph,

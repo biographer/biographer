@@ -18,14 +18,9 @@
 
 
         bui.ready(function() {
-            var start = new Date().getTime();
-
             graph = new bui.Graph(document.getElementsByTagName('div')[0]);
             graph.scale(0.7);
             bui.importFromJSON(graph, complexExample);
-
-            var elapsed = new Date().getTime() - start;
-            console.log('Complete generation took ' + elapsed + 'ms.');
 
             setTimeout(function() {
                 var canvas = jQuery('#canvas');

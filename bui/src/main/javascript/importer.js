@@ -219,7 +219,7 @@
                 }
             }
 
-            edge.source(source).target(target);
+            edge.json(edgeJSON).source(source).target(target);
 
             if (edgeJSON.sbo !== undefined) {
                 try {
@@ -247,11 +247,27 @@
      * @param {Object} data JSON data which should be imported
      */
     bui.importFromJSON = function(graph, data) {
+        var start = new Date().getTime();
+        var suspendHandle = graph.suspendRedraw(20000);
+
+        log('## Importing all nodes');
         var generatedNodes = addAllNodes(graph, data);
+
+        log('## Layout complexes');
         doComplexLayout(generatedNodes);
+
+        log('## Layout auxiliary units');
         positionAuxiliaryUnits(generatedNodes);
+
+        log('## Adding all edges');
         addAllEdges(graph, data, generatedNodes);
+
+        log('## Reducing canvas size');
         graph.reduceCanvasSize();
+
+        graph.unsuspendRedraw(suspendHandle);
+        var elapsed = new Date().getTime() - start;
+        log('Complete import took ' + elapsed + 'ms.');
     };
 
     /**
@@ -266,17 +282,16 @@
     bui.importUpdatedNodePositionsFromJSON = function(graph, data, duration) {
         var drawables = graph.drawables();
 
-        // optimize the data structure to map json IDs to node references
+        // optimize the data structure to map json IDs to drawable references
         // to achieve a computational complexity of O(2n).
-        var nodes = {};
+        var optimizedDrawables = {};
         for (var key in drawables) {
             if (drawables.hasOwnProperty(key)) {
                 var drawable = drawables[key];
+                var json = drawable.json();
 
-                // achieve bui.Node subclass has a bottomRight function.
-                if (drawable.bottomRight !== undefined) {
-                    var jsonId = drawable.json().id;
-                    nodes[jsonId] = drawable;
+                if (json !== undefined && json !== null) {
+                    optimizedDrawables[json.id] = drawable;
                 }
             }
         }
@@ -284,7 +299,7 @@
         var nodesJSON = data.nodes;
         for (var i = 0; i < nodesJSON.length; i++) {
             var nodeJSON = nodesJSON[i],
-                    node = nodes[nodeJSON.id];
+                    node = optimizedDrawables[nodeJSON.id];
 
             if (node === undefined) {
                 log('Can\'t update nodes position for json node id ' +

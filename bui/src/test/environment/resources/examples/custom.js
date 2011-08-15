@@ -165,7 +165,7 @@ var customExample = {
              source : 'node10',
              target : 'node8'
         }, {
-             id : 'edge8',
+             id : 'edge9',
              sbo : 459,
              source : 'node10',
              target : 'node1'
