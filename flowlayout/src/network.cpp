@@ -1,5 +1,6 @@
 #include "network.h"
 
+
 const char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"}; //for the convenience of input and output.
 const char nodetypes[][20]={"None", "Reaction", "Compound","Other"}; //for the convenience of input and output in order of enum Nodetype.
 const char jnodetypes[][20]={"None", "Reaction", "Compound","SimpleCompound","Complex","Protein","Other"}; //json node types
@@ -281,8 +282,10 @@ double json_object_get_number_member(JsonObject* jobj,const gchar *name){
       return (double) json_node_get_int(node);
    } else if (tp == G_TYPE_DOUBLE){
       return (double) json_node_get_double(node);
+   } else if (tp == G_TYPE_STRING){
+      return atof(json_node_get_string(node));
    } else {
-      printf("json object member %s not a number, but a %s",name,json_node_type_name(node) );
+      printf("json object member %s not a number, but a %s (%d)",name,json_node_type_name(node),tp);
       return 0;
    }
    
@@ -385,14 +388,13 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
       json_object_set_double_member(data,"x",(*nodes)[i].pts.x);
       json_object_set_double_member(data,"y",(*nodes)[i].pts.y);
    }
+   gsize length;
+   gchar* jdata=json_generator_to_data(gen,&length);
    
-   json_generator_to_file(gen,file,&error);
-   if (error)
-   {
-      g_print ("Unable to write `%s': %s\n", file, error->message);
-      g_error_free (error);
-      abort();
-   }
+   ofstream out(file);
+   out<<jdata;
+   out.close();
+   
    
 }
 #endif USEJSON
