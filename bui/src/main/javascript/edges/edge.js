@@ -108,7 +108,8 @@
                 mouseLeaveListener = lineMouseLeave.createDelegate(this),
                 listenerId = listenerIdentifier(this),
                 sourceNode = this.source(),
-                targetNode = null;
+                targetNode = null,
+                lineStyle = privates.lineStyle;
 
         lines = [];
 
@@ -117,6 +118,7 @@
                     .add(bui.StraightLine)
                     .source(sourceNode)
                     .target(targetNode)
+                    .lineStyle(lineStyle)
                     .bind(bui.AbstractLine.ListenerType.mouseEnter,
                             mouseEnterListener,
                             listenerId)
@@ -307,6 +309,22 @@
             }
 
             return privates.marker;
+        },
+
+        /**
+         * Set the line style. Available line style can be retrieved through
+         * the {@link bui.AbstractLine.Style} object.
+         *
+         * @param {Object} style A property of {@link bui.AbstractLine.Style}.
+         * @return {bui.AbstractLine} Fluent interface
+         * @example
+         * edge.lineStyle(bui.AbstractLine.Style.dotted);
+         */
+        lineStyle : function(style) {
+            var privates = this._privates(identifier);
+            privates.lineStyle = style;
+            redrawLines.call(this);
+            return this;
         }
     };
 

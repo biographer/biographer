@@ -192,15 +192,7 @@
         var edges = data.edges;
 
         for (var i = 0; i < edges.length; i++) {
-            var edgeJSON = edges[i], marker;
-
-            try {
-                marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
-            } catch (e) {
-                // falling back to no marker in case something goes wrong
-                log(e);
-                marker = undefined;
-            }
+            var edgeJSON = edges[i];
 
             var source = generatedNodes[edgeJSON.source];
             var target = generatedNodes[edgeJSON.target];
@@ -213,12 +205,25 @@
                 continue;
             }
 
+            // ensuring that data exists
+            edgeJSON.data = edgeJSON.data || {};
+
             var edge = graph.add(bui.Edge)
                     .source(source)
                     .target(target);
 
-            if (marker !== undefined) {
-                edge.marker(marker.klass);
+            if (edgeJSON.sbo !== undefined) {
+                try {
+                    var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
+                    edge.marker(marker.klass);
+                } catch (e) {
+                    log(e);
+                }
+            }
+
+            var style = bui.AbstractLine.Style[edgeJSON.data.style];
+            if (style !== undefined) {
+                edge.lineStyle(style);
             }
 
             edge.visible(true);

@@ -120,12 +120,18 @@ var customExample = {
              id : 'edge2',
              sbo : 132154, // incorrect SBO id to test robustness
              source : 'node11',
-             target : 'node12'
+             target : 'node12',
+             data : {
+                style : 'dashed'
+            }
         }, {
              id : 'edge3',
              sbo : 459,
              source : 'node11',
-             target : 'node13'
+             target : 'node13',
+            data : {
+                style : 'dotted'
+            }
         }, {
              id : 'edge4',
              sbo : 459,
@@ -135,7 +141,10 @@ var customExample = {
              id : 'edge5',
              sbo : 459,
              source : 'node14',
-             target : 'node4'
+             target : 'node4',
+            data : {
+                style : 'dashed'
+            }
         }, {
              id : 'edge6',
              sbo : 459,
