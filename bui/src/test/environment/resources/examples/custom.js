@@ -154,7 +154,11 @@ var customExample = {
              id : 'edge7',
              sbo : 459,
              source : 'node10',
-             target : 'node9'
+             target : 'node9',
+            data : {
+                type : 'curve',
+                handles : [{ x : 532, y : 339 }, { x : 552, y : 228 }]
+            }
         }, {
              id : 'edge8',
              sbo : 459,

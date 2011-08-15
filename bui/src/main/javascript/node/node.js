@@ -29,15 +29,16 @@
         var privates = this._privates(identifier);
         var htmlPosition = this.htmlTopLeft();
         var correction = bui.settings.style.placeholderCorrection.position;
+        var dimensions = this.size();
         privates.placeholder.style.left = (htmlPosition.x +
                 correction.x) + 'px';
         privates.placeholder.style.top = (htmlPosition.y +
                 correction.y) + 'px';
 
         correction = bui.settings.style.placeholderCorrection.size;
-        privates.placeholder.style.width = ( +
+        privates.placeholder.style.width = (privates.width +
                 correction.width) + 'px';
-        privates.placeholder.style.height = ( +
+        privates.placeholder.style.height = (privates.height +
                 correction.height) + 'px';
 
         this.updateJson(bui.settings.dataFormat.node.width, privates.width);
@@ -66,13 +67,6 @@
 
         this.updateJson(bui.settings.dataFormat.node.x, position.x);
         this.updateJson(bui.settings.dataFormat.node.y, position.y);
-    };
-
-    /**
-     * @private size changed listener
-     */
-    var sizeChanged = function() {
-        positionPlaceHolder.call(this);
     };
 
     /**
@@ -116,8 +110,8 @@
 
         var correction = bui.settings.style.placeholderCorrection.size;
 
-        width += correction.width * -1;
-        height += correction.height * -1;
+        width -= correction.width;
+        height -= correction.height;
 
         var suspendHandle = this.graph().suspendRedraw(200);
         this.size(width, height);
@@ -219,7 +213,7 @@
                 placeholderClass(false));
         this.graph().placeholderContainer().appendChild(privates.placeholder);
 
-        sizeChanged.call(this);
+        positionPlaceHolder.call(this);
         positionChanged.call(this);
 
         var nodeGroupHtmlElement = jQuery(privates.nodeGroup)

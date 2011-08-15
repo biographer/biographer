@@ -192,7 +192,7 @@
         var edges = data.edges;
 
         for (var i = 0; i < edges.length; i++) {
-            var edgeJSON = edges[i];
+            var edgeJSON = edges[i], edge;
 
             var source = generatedNodes[edgeJSON.source];
             var target = generatedNodes[edgeJSON.target];
@@ -205,12 +205,21 @@
                 continue;
             }
 
-            // ensuring that data exists
+            // ensuring that the data property exists
             edgeJSON.data = edgeJSON.data || {};
 
-            var edge = graph.add(bui.Edge)
-                    .source(source)
-                    .target(target);
+            if (edgeJSON.data.type !== 'curve') {
+                edge = graph.add(bui.Edge);
+            } else {
+                edge = graph.add(bui.Spline)
+                        .layoutElementsVisible(false);
+
+                if (edgeJSON.data.handles !== undefined) {
+                    edge.setSplineHandlePositions(edgeJSON.data.handles);
+                }
+            }
+
+            edge.source(source).target(target);
 
             if (edgeJSON.sbo !== undefined) {
                 try {

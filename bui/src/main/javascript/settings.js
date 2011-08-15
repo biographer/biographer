@@ -27,7 +27,7 @@ bui.settings = {
      * following issue.
      * http://code.google.com/p/biographer/issues/detail?id=6
      */
-    enableModificationSupport : false,
+    enableModificationSupport : true,
 
     /**
      * @field

@@ -176,6 +176,20 @@
             }
 
             return privates.layoutElementsVisible;
+        },
+
+        setSplineHandlePositions : function(positions) {
+            var privates = this._privates(identifier);
+
+            if (positions.length >= 1) {
+                privates.sourceSplineHandle.position(positions[0].x,
+                        positions[0].y);
+            }
+            if (positions.length >= 2) {
+                privates.targetSplineHandle.position(positions[1].x,
+                        positions[1].y);
+            }
+
         }
     };
 
