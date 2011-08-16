@@ -560,3 +560,28 @@ var getSBOForInstance = function(mapping, instance) {
 
     return null;
 };
+
+/**
+ * Determine the SBO ID for a modification label using the
+ * modificationsMapping, both labels, i.e. short and long, will be matched
+ * against the first parameter.
+ *
+ * @param {String} label The label for which the SBO ID should be determined.
+ * @return {Number} SBO id or null in case no SBO could be found.
+ */
+var getModificationSBOForLabel = function(label) {
+    label = label.toLowerCase();
+    
+    for (var sbo in modificationMapping) {
+        if (modificationMapping.hasOwnProperty(sbo)) {
+            var mapping = modificationMapping[sbo];
+
+            if (label === mapping.short.toLowerCase() ||
+                    label === mapping.long.toLowerCase()) {
+                return bui.util.toNumber(sbo);
+            }
+        }
+    }
+
+    return null;
+};
