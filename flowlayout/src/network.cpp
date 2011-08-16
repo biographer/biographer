@@ -333,6 +333,7 @@ JSONcontext* Network::readJSON(const char* file){
       g_print ("node %d %s id %s\n",idx,type,id);
       if(strcmp(type,"Compartment")==0){
          addCompartment(idx,id);
+         (*(ctx->cpidx))[idx]=i;
       } else {
          double x=json_object_get_number_member(data,"x");
          double y=json_object_get_number_member(data,"y");
@@ -375,19 +376,45 @@ JSONcontext* Network::readJSON(const char* file){
 // FIXME: check for memory leaks
 void Network::writeJSON(JSONcontext* ctx,const char* file){
    GError *error;
-   JsonGenerator* gen=json_generator_new ();
+   JsonGenerator* gen;
+   gen = (JsonGenerator*) g_object_new (JSON_TYPE_GENERATOR,
+                       "pretty", TRUE,
+                       "indent", 2,
+                       NULL);
+                       
    json_generator_set_root(gen,ctx->root);
    JsonArray* jnodes=json_object_get_array_member(json_node_get_object (ctx->root),"nodes");
-   
+
+   const float inf=1e50;
    int i;
    int n=nodes->size();
+   float xmin=inf;
+   float xmax=-inf;
+   float ymin=inf;
+   float ymax=-inf;
    
    for(i=0;i<n;i++){ // add x,y position to json object
       JsonObject *node=json_array_get_object_element(jnodes,(*(ctx->nodeidx))[i]); //get corresponding json node using nodeidx
       JsonObject *data=json_object_get_object_member(node,"data");
       json_object_set_double_member(data,"x",(*nodes)[i].pts.x);
       json_object_set_double_member(data,"y",(*nodes)[i].pts.y);
+      // getting overal bounds
+      if (xmin>(*nodes)[i].pts.x-(*nodes)[i].pts.width/2) xmin=(*nodes)[i].pts.x-(*nodes)[i].pts.width/2;
+      if (xmax<(*nodes)[i].pts.x+(*nodes)[i].pts.width/2) xmin=(*nodes)[i].pts.x+(*nodes)[i].pts.width/2;
+      if (ymin>(*nodes)[i].pts.y-(*nodes)[i].pts.height/2) ymin=(*nodes)[i].pts.y-(*nodes)[i].pts.height/2;
+      if (ymax<(*nodes)[i].pts.y+(*nodes)[i].pts.height/2) ymin=(*nodes)[i].pts.y+(*nodes)[i].pts.height/2;
    }
+   
+   n=compartments->size();
+   for(i=0;i<n;i++){ // add x,y position to json object
+      JsonObject *node=json_array_get_object_element(jnodes,(*(ctx->cpidx))[i]); //get corresponding json node using nodeidx
+      JsonObject *data=json_object_get_object_member(node,"data");
+      json_object_set_double_member(data,"x",max(xmin,(*compartments)[i].xmin));
+      json_object_set_double_member(data,"y",max(ymin,(*compartments)[i].ymin));
+      json_object_set_double_member(data,"width",min(xmax,(*compartments)[i].xmax)-max(xmin,(*compartments)[i].xmin));
+      json_object_set_double_member(data,"height",min(ymax,(*compartments)[i].ymax)-max(ymin,(*compartments)[i].ymin));
+   }
+   
    gsize length;
    gchar* jdata=json_generator_to_data(gen,&length);
    

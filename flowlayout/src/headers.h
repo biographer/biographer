@@ -13,6 +13,7 @@
 #include <string>
 #include <queue>
 #include <set>
+#include <algorithm>
 
 #define VI vector<int>
 #define VN vector<Node>

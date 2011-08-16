@@ -13,9 +13,11 @@ class JSONcontext{
    public: 
       JSONcontext(){
          nodeidx=new VI();
+         cpidx=new VI();
       }
       JsonNode* root;
       VI* nodeidx;
+      VI* cpidx;
 };
 
 #endif USEJSON
