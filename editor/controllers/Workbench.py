@@ -38,7 +38,7 @@ def Layout():
 	if session.bioGraph is None:
 		return dict( Layout=NoModel )
 	else:
-		return dict( Layout=session.bioGraph.export_to_Layouter() )
+		return dict( Layout=session.bioGraph.exportLayout() )
 
 def Editor():							# Node: add / delete / rename, Edge: create / remove
 	if session.bioGraph is None:

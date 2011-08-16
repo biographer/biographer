@@ -855,7 +855,7 @@ class Graph:
 
 		write( len(self.Edges) )			# Edges
 		for edge in self.Edges:
-			write( edge.type +" "+ self.getNodeIndex(edge.SourceNode) +" "+ self.getNodeIndex(edge.TargetNode) )
+			write( edge.type +" "+ str(self.getNodeIndex(edge.SourceNode)) +" "+ str(self.getNodeIndex(edge.TargetNode)) )
 
 		self.log(layout)
 
