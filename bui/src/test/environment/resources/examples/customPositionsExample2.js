@@ -1,4 +1,4 @@
-var customNewPositionsExample = {
+var customPositionsExample2 = {
     nodes : [
         {
             id : 'node1',
@@ -16,8 +16,8 @@ var customNewPositionsExample = {
         {
             id : 'node4',
             data : {
-                x : 560,
-                y : 325
+                x : 1020,
+                y : 570
             }
         },
         {
@@ -32,22 +32,22 @@ var customNewPositionsExample = {
         {
             id : 'node8',
             data : {
-                x : 330,
-                y : 45
+                x : 640,
+                y : 480
             }
         },
         {
             id : 'node9',
             data : {
-                x : 445,
-                y : 255
+                x : 670,
+                y : 300
             }
         },
         {
             id : 'node10',
             data : {
-                x : 440,
-                y : 350
+                x : 720,
+                y : 400
             }
         },
         {
@@ -85,8 +85,8 @@ var customNewPositionsExample = {
             data : {
                 type : 'curve',
                 handles : [
-                    { x : 532, y : 339 },
-                    { x : 552, y : 228 }
+                    { x : 600, y : 370 },
+                    { x : 520, y : 360 }
                 ]
             }
         }
