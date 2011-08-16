@@ -13,7 +13,7 @@ OptionalNodeKeys	= ['clone_marker', 'x', 'y', 'width', 'height', 'radius', 'labe
 NodeKeyAliases		= { 'modification':'modifications', 'subcomponents':'subnodes' }
 DefaultNode		= { "type":"simple_species", "sbo":"252", "is_abstract":False, "data":{ "clone_marker":-1, "x":10, "y":10, "width":50, "height":20, "radius":30, "label":"", "compartment":TopCompartmentID, "subnodes":[], "modifications":[] } }
 
-MandatoryEdgeKeys	= ['id','sbo','source','target']
+MandatoryEdgeKeys	= ['id','sbo','type','source','target']
 EdgeKeys		= MandatoryEdgeKeys + ['data']
 OptionalEdgeKeys	= ['type', 'style', 'thickness', 'label', 'label_x', 'label_y', 'handles']
 EdgeKeyAliases		= {}
