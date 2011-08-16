@@ -275,7 +275,6 @@
      *   that should be accessed and checked.
      * @return {Object} The properties value or undefined in case the property
      *   does not exist.
-     *
      */
     bui.util.retrieveValueIfSet = function(obj, property1) {
         obj = arguments[0];
@@ -431,7 +430,7 @@
  * function the way console.log would be used.
  * @param {Object} object The object which you want to log.
  */
-log = function(object) {
+var log = function(object) {
     if (console !== undefined && console.log !== undefined) {
         console.log(object);
     }
@@ -446,7 +445,7 @@ log = function(object) {
  *   updated. Pass a string array to handle property chains.
  * @param {Object} value The property's value.
  */
-updateJson = function(json, path, value) {
+var updateJson = function(json, path, value) {
     if (typeof(path) === 'string') {
         json[path] = value;
     } else {
@@ -537,4 +536,27 @@ var retrieveFrom = function(mapping, sbo) {
     } else {
         throw('Warning: SBO id "' + sbo + '" could not be found.');
     }
+};
+
+/**
+ * Retrieve the SBO key for an instance of class.
+ *
+ * @param {Object} mapping A mapping object for SBO mapping. Most commonly the
+ *   nodeMapping object will be used for this.
+ * @param {Object} instance An object which is an instance of one of the mapped
+ *   classes.
+ * @return {Number} The found SBO id or null in case no mapping could be found.
+ */
+var getSBOForInstance = function(mapping, instance) {
+    for (var sbo in mapping) {
+        if (mapping.hasOwnProperty(sbo)) {
+            var klass = mapping[sbo].klass;
+
+            if (instance instanceof klass) {
+                return bui.util.toNumber(sbo);
+            }
+        }
+    }
+
+    return null;
 };

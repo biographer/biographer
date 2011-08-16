@@ -61,9 +61,12 @@ bui.settings = {
     dataFormat : {
         nodes : 'nodes',
         edges : 'edges',
-        node : {
+        drawable : {
             id : 'id',
-            sbo : 'sbo',
+            visible : 'visible',
+            sbo : 'sbo'
+        },
+        node : {
             label : ['data', 'label'],
             x : ['data', 'x'],
             y : ['data', 'y'],

@@ -109,7 +109,6 @@
 
         // add all nodes
         for (var i = 0; i < nodes.length; i++) {
-            // TODO: remove try-catch block or use different error handling
             try {
                 nodeJSON = nodes[i];
 

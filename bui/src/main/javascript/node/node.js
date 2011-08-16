@@ -900,10 +900,20 @@
             return this;
         },
 
-        // overridden in bui.Drawable
+        // overridden
         toJSON : function() {
-            var json = bui.Node.superClazz.prototype.toJSON.call(this);
-            json.sbo = 431321;
+            var json = bui.Node.superClazz.prototype.toJSON.call(this),
+                    dataFormat = bui.settings.dataFormat,
+                    privates = this._privates(identifier),
+                    position = this.absolutePosition();
+
+            updateJson(json, dataFormat.drawable.sbo,
+                    getSBOForInstance(nodeMapping, this));
+            updateJson(json, dataFormat.node.x, position.x);
+            updateJson(json, dataFormat.node.y, position.y);
+            updateJson(json, dataFormat.node.width, privates.width);
+            updateJson(json, dataFormat.node.height, privates.height);
+
             return json;
         }
     };

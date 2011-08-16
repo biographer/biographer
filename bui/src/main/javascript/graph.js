@@ -480,11 +480,11 @@
          * @return {Object} The exported graph.
          */
         toJSON : function() {
-            var json = {};
+            var json = {}, edges = [], nodes = [];
 
             var dataFormat = bui.settings.dataFormat;
-            updateJson(json, dataFormat.nodes, {});
-            updateJson(json, dataFormat.edges, {});
+            updateJson(json, dataFormat.nodes, nodes);
+            updateJson(json, dataFormat.edges, edges);
 
             var drawables = this._privates(identifier).drawables;
 
@@ -493,10 +493,10 @@
                         drawables[key].includeInJSON !== false) {
                     var drawable = drawables[key];
 
-                    if (drawable.bottomRight !== undefined) {
-                        json.nodes.push(drawable.toJSON());
+                    if (drawable.drawableType() === 'node') {
+                        nodes.push(drawable.toJSON());
                     } else {
-                        json.edges.push(drawable.toJSON());
+                        edges.push(drawable.toJSON());
                     }
                 }
             }

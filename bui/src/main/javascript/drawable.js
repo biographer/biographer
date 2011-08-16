@@ -256,11 +256,18 @@
         },
 
         /**
-         * Export this node instance to JSON
+         * Export this drawable instance to JSON
+         *
+         * @return {Object} The drawable instance exported to JSON. 
          */
         toJSON : function() {
-            var json = {}, privates = this._privates(identifier);
-            json.id = privates.id;
+            var json = {},
+                    privates = this._privates(identifier),
+                    dataFormat = bui.settings.dataFormat.drawable;
+            
+            updateJson(json, dataFormat.id, privates.id);
+            updateJson(json, dataFormat.visible, privates.visible);
+
             return json;
         },
 
