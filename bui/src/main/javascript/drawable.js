@@ -251,6 +251,15 @@
             }
 
             return this;
+        },
+
+        /**
+         * Export this node instance to JSON
+         */
+        toJSON : function() {
+            var json = {}, privates = this._privates(identifier);
+            json.id = privates.id;
+            return json;
         }
     };
 

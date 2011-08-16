@@ -472,6 +472,35 @@
          */
         drawables : function() {
             return this._privates(identifier).drawables;
+        },
+
+        /**
+         * Export the whole graph to JSON.
+         * 
+         * @return {Object} The exported graph.
+         */
+        toJSON : function() {
+            var json = {
+                nodes : [],
+                edges : []
+            };
+
+            var drawables = this._privates(identifier).drawables;
+
+            for (var key in drawables) {
+                if (drawables.hasOwnProperty(key) &&
+                        drawables[key].includeInJSON !== false) {
+                    var drawable = drawables[key];
+
+                    if (drawable.bottomRight !== undefined) {
+                        json.nodes.push(drawable.toJSON());
+                    } else {
+                        json.edges.push(drawable.toJSON());
+                    }
+                }
+            }
+
+            return json;
         }
     };
 

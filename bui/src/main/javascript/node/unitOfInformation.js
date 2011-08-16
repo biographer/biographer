@@ -28,6 +28,7 @@
 
     bui.UnitOfInformation.prototype = {
         auxiliaryUnit : true,
+        includeInJSON : false,
         _enableResizing : false
     };
 

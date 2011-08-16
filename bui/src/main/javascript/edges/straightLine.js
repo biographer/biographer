@@ -23,6 +23,8 @@
     };
 
     bui.StraightLine.prototype = {
+        includeInJSON : false,
+
         /**
          * @private initial paint
          */

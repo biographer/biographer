@@ -26,7 +26,6 @@ var addMapping = function(mapping, keys, klass, generator) {
 var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {},
         modificationMapping = {};
 
-// TODO remove mapping to 167
 addMapping(nodeMapping, [285, 167], bui.UnspecifiedEntity);
 addMapping(nodeMapping, [247, 240], bui.SimpleChemical);
 addMapping(nodeMapping, [245, 252], bui.Macromolecule);
@@ -41,7 +40,6 @@ addMapping(processNodeMapping, [375], bui.Process);
 
 addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
 addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
-// TODO remove mapping to 15 and 11
 addMapping(edgeMarkerMapping, [459, 15, 11], bui.connectingArcs.stimulation.id);
 addMapping(edgeMarkerMapping, [461],
         bui.connectingArcs.necessaryStimulation.id);

@@ -414,10 +414,14 @@
                 size = node.size(),
                 scale = graph.scale();
 
-        canvas.scrollLeft(position.x * scale - ((
-                viewport.width() - size.width * scale) / 2));
-        canvas.scrollTop(position.y * scale - ((
-                viewport.height() - size.height * scale) / 2));
+        var scrollLeft = position.x * scale - ((
+                viewport.width() - size.width * scale) / 2);
+        var scrollTop = position.y * scale - ((
+                viewport.height() - size.height * scale) / 2);
+        canvas.animate({
+            scrollLeft : scrollLeft,
+            scrollTop : scrollTop
+        });
     };
 })(bui);
 

@@ -874,6 +874,11 @@
             return this;
         },
 
+        /**
+         * Automatically position the node's auxiliary units.
+         *
+         * @return {bui.Node} Fluent interface
+         */
         positionAuxiliaryUnits : function() {
             var auxUnits = this.auxiliaryUnits();
             var possiblePositions =
@@ -891,6 +896,8 @@
                 auxUnit.positionCenter(nodeSize.width * positionAt[0],
                         nodeSize.height * positionAt[1]);
             }
+
+            return this;
         }
     };
 

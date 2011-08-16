@@ -61,6 +61,7 @@
 
     bui.StateVariable.prototype = {
         auxiliaryUnit : true,
+        includeInJSON : false,
         _enableResizing : false
     };
 

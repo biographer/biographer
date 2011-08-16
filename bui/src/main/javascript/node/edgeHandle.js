@@ -54,6 +54,7 @@
     };
 
     bui.EdgeHandle.prototype = {
+        includeInJSON : false,
         _circle : null,
         _forceRectangular : true,
         _enableResizing : false,

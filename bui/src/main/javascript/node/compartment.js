@@ -56,11 +56,13 @@
 
         this.addClass(bui.settings.css.classes.compartment);
 
-        this._privates(identifier).label = this.graph()
+        var label = this.graph()
                 .add(bui.Labelable)
                 .parent(this)
                 .visible(true)
                 .adaptSizeToLabel(true);
+        label.includeInJSON = false;
+        this._privates(identifier).label = label;
     };
 
     bui.Compartment.prototype = {

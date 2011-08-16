@@ -24,6 +24,9 @@
             graph = new bui.Graph(canvas);
             bui.importFromJSON(graph, customExample);
 
+            console.log(customExample);
+            console.log(graph.toJSON());
+
             // move the nodes after one second.
             setTimeout(function() {
                 bui.importUpdatedNodePositionsFromJSON(graph,
