@@ -1,0 +1,5388 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sbml xmlns="http://www.sbml.org/sbml/level2" level="2" version="1" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:RCT="http://www.reactome.org/reactomesbml">
+<model name="R_168254">
+<listOfCompartments>
+<compartment name="UNKNOWN COMPARTMENT" id="c0"/>
+<compartment name="endoplasmic_reticulum_membrane" id="c12045"/>
+<compartment name="endosome_lumen" id="c171907"/>
+<compartment name="Golgi_lumen" id="c17963"/>
+<compartment name="Golgi_membrane" id="c20699"/>
+<compartment name="endocytic_vesicle_membrane" id="c24337"/>
+<compartment name="cytosol" id="c70101"/>
+<compartment name="mitochondrial_inner_membrane" id="c70616"/>
+<compartment name="nucleoplasm" id="c7660"/>
+<compartment name="plasma_membrane" id="c876"/>
+<compartment name="extracellular_region" id="c984"/>
+</listOfCompartments>
+<listOfSpecies>
+<species name="UTP" compartment="c7660" id="s113562">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s113562</RCT:speciesID>
+<RCT:primaryXRef>15713</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="GTP" compartment="c7660" id="s113571">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s113571</RCT:speciesID>
+<RCT:primaryXRef>15996</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Transforming growth factor beta 1 precursor" compartment="c17963" id="s114705">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s114705</RCT:speciesID>
+<RCT:sequenceStart>30</RCT:sequenceStart>
+<RCT:sequenceEnd>390</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Mature intronless transcript derived mRNA" compartment="c7660" id="s158444">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="RAN GTPase" compartment="c7660" id="s165528">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Crm1" compartment="c7660" id="s165529">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s165529</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Ran GTPase:GTP" compartment="c7660" id="s165530">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s113571</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s165528</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Crm1:Ran GTPase:GDP" compartment="c70101" id="s165538">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s29420</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s165539</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s165540</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Crm1" compartment="c70101" id="s165539">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Ran GTPase" compartment="c70101" id="s165540">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Viral dsRNA (-) Stranded" compartment="c70101" id="s167931">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="PKR" compartment="c70101" id="s168699">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="M1" compartment="c70101" id="s169073">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="CPSF:NS1 Complex" compartment="c7660" id="s169074">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s169113</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169104</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="NS1:Viral dsRNA Complex" compartment="c70101" id="s169075">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s169118</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s167931</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="M2" compartment="c70101" id="s169089">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="NS1:PAB II Complex" compartment="c7660" id="s169102">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s169113</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72008</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="CPSF" compartment="c7660" id="s169104">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="NS1" compartment="c7660" id="s169113">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="NS1" compartment="c70101" id="s169118">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="NS1 Homodimer:PKR Complex" compartment="c70101" id="s169142">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s169118</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s168699</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="NS1 Homodimer" compartment="c70101" id="s169143">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s169118</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="NS1 Homodimer" compartment="c7660" id="s169145">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s169113</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="PB1-F2" compartment="c70101" id="s169216">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="PB1-F2: ANT 3 Complex" compartment="c70616" id="s169235">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s49745</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169216</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="PB2" compartment="c984" id="s169238">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Cleaved HA Influenza A Viral Particle" compartment="c984" id="s169239">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196491</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188859</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196493</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188840</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169241</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188828</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188833</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188872</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169238</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169250</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169243</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169252</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169703</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188829</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169246</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188876</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188838</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169251</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169705</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="M1" compartment="c984" id="s169241">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="PA" compartment="c984" id="s169243">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="PB1" compartment="c984" id="s169246">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="HA1" compartment="c0" id="s169250">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s169250</RCT:speciesID>
+<RCT:sequenceStart>18</RCT:sequenceStart>
+<RCT:sequenceEnd>343</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NP" compartment="c984" id="s169251">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="HA2" compartment="c0" id="s169252">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s169252</RCT:speciesID>
+<RCT:sequenceStart>345</RCT:sequenceStart>
+<RCT:sequenceEnd>566</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NEP/NS2" compartment="c7660" id="s169474">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Host Derived Lipid Bilayer Membrane Rich In Sphingolipids And Cholesterol" compartment="c876" id="s169703">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="NEP/NS2" compartment="c984" id="s169705">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="TGF-beta 1" compartment="c984" id="s170838">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s170838</RCT:speciesID>
+<RCT:sequenceStart>279</RCT:sequenceStart>
+<RCT:sequenceEnd>390</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Importin alpha" compartment="c70101" id="s180612">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s180612</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Importin beta-1" compartment="c7660" id="s180714">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s180714</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Importin beta-1" compartment="c70101" id="s180733">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s180733</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="M1" compartment="c7660" id="s186959">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 3" compartment="c7660" id="s188826">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 2" compartment="c7660" id="s188827">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 7" compartment="c984" id="s188828">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188828</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 6" compartment="c984" id="s188829">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188829</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="PB1" compartment="c70101" id="s188830">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="NP" compartment="c7660" id="s188832">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 8" compartment="c984" id="s188833">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188833</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 2" compartment="c984" id="s188838">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188838</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 8" compartment="c7660" id="s188839">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 5" compartment="c984" id="s188840">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188840</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="PA" compartment="c70101" id="s188842">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="PB1" compartment="c7660" id="s188843">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="RNP:Karyopherin alpha:Karyopherin beta complex" compartment="c7660" id="s188844">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188865</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s180714</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Ribonucleoprotein (RNP) Complex" compartment="c7660" id="s188846">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="NP" compartment="c70101" id="s188848">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Ribonucleoprotein (RNP) Complex" compartment="c70101" id="s188849">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188874</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196480</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196499</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196477</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196492</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188856</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196489</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196479</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="PB2" compartment="c70101" id="s188851">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="RNP:Karyopherin alpha:Karyopherin beta complex" compartment="c70101" id="s188853">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188874</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196480</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s180612</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196499</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196477</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196492</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s180733</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188856</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196489</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196479</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 4" compartment="c70101" id="s188856">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188856</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="PB2" compartment="c7660" id="s188857">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 5" compartment="c7660" id="s188858">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 3" compartment="c984" id="s188859">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188859</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 7" compartment="c7660" id="s188863">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Karyopherin alpha" compartment="c7660" id="s188865">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188865</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 4" compartment="c7660" id="s188867">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 6" compartment="c7660" id="s188868">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="RNP Complex:Karyopherin alpha" compartment="c70101" id="s188871">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188874</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196480</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s180612</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196499</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196477</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196492</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188856</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196489</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196479</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 1" compartment="c984" id="s188872">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188872</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 8" compartment="c70101" id="s188874">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188874</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 1" compartment="c7660" id="s188875">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 4" compartment="c984" id="s188876">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188876</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="PA" compartment="c7660" id="s188877">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Sialic Acid Bound Influenza A Viral Particle" compartment="c876" id="s188954">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196491</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188859</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188957</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196493</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188840</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169241</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188828</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188833</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188872</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169238</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169250</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169243</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169252</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188829</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169703</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169246</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188838</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188876</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169251</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169705</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="sialic acid" compartment="c876" id="s188957">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188957</RCT:speciesID>
+<RCT:primaryXRef>21622</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="PA" compartment="c171907" id="s189131">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 6" compartment="c171907" id="s189133">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189133</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Host Derived Lipid Bilayer Membrane Rich In Sphingolipids And Cholesterol" compartment="c171907" id="s189135">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Host Derived Lipid Bilayer Membrane Rich In Sphingolipids And Cholesterol" compartment="c24337" id="s189136">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="PB1" compartment="c171907" id="s189137">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Influenza A Viral Particle Docked At The Endocytic Vesicle Membrane" compartment="c24337" id="s189138">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189151</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189133</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189174</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189135</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189163</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189176</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189173</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189155</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189179</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189167</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189146</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189137</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189141</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189162</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189169</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189140</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189131</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189175</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189152</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="PB2" compartment="c171907" id="s189140">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="NP" compartment="c171907" id="s189141">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 4" compartment="c171907" id="s189146">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189146</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NEP/NS2" compartment="c24337" id="s189148">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="M2" compartment="c171907" id="s189151">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189151</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NA" compartment="c171907" id="s189152">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="HA2" compartment="c171907" id="s189154">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189154</RCT:speciesID>
+<RCT:sequenceStart>345</RCT:sequenceStart>
+<RCT:sequenceEnd>566</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="M1" compartment="c171907" id="s189155">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Influenza A Viral Envelope Inserted Into The Endocytic Vesicle Membrane" compartment="c24337" id="s189157">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189136</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195773</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189175</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189165</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195780</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="sialic acid" compartment="c24337" id="s189161">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189161</RCT:speciesID>
+<RCT:primaryXRef>21622</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 3" compartment="c171907" id="s189162">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189162</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 7" compartment="c171907" id="s189163">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189163</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="HA1" compartment="c24337" id="s189165">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189165</RCT:speciesID>
+<RCT:sequenceStart>18</RCT:sequenceStart>
+<RCT:sequenceEnd>343</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 8" compartment="c171907" id="s189167">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189167</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="M1" compartment="c24337" id="s189168">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 1" compartment="c171907" id="s189169">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189169</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Influenza A Viral Particle" compartment="c171907" id="s189171">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189151</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189133</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189135</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189174</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189163</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189176</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189173</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189155</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189179</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189167</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189146</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189137</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189141</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189162</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189169</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189140</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189154</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189131</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189152</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="HA1" compartment="c171907" id="s189173">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189173</RCT:speciesID>
+<RCT:sequenceStart>18</RCT:sequenceStart>
+<RCT:sequenceEnd>343</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 2" compartment="c171907" id="s189174">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189174</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Inter-Membrane Spanning HA2" compartment="c24337" id="s189175">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189175</RCT:speciesID>
+<RCT:sequenceStart>345</RCT:sequenceStart>
+<RCT:sequenceEnd>566</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NEP/NS2" compartment="c171907" id="s189176">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Acidified Influenza A Viral Particle Docked At The Endocytic Vesicle Membrane With An Open Pore" compartment="c24337" id="s189177">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189151</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189133</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189174</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189135</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189163</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189176</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189173</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189155</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189179</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189167</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189146</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189137</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s74722</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189141</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189162</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189169</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189140</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189131</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189175</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189152</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 5" compartment="c171907" id="s189179">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189179</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Influenza A Viral Particle Docked At The Endocytic Vesicle Membrane With An Open Pore" compartment="c24337" id="s189181">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189151</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189133</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189174</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189135</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189163</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189176</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189173</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189155</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189179</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189167</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189146</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189137</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189141</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189162</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189169</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189140</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189131</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189175</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189152</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Influenza A Viral Particle With A Fusion Competent HA2" compartment="c171907" id="s189182">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s189151</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189133</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189174</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189135</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189163</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189176</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189173</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189155</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189179</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189167</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189146</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189137</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189141</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189162</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189169</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189140</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189154</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189131</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s189152</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Viral Proteins" compartment="c70101" id="s192631">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s169118</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169089</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192893</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188830</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188842</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192683</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188851</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Influenza cRNA (complete)" compartment="c7660" id="s192638">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Initiated cRNA-vRNA Complex" compartment="c7660" id="s192650">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192638</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="vRNP Export Complex" compartment="c7660" id="s192667">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s165529</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s186959</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169474</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="cRNP" compartment="c7660" id="s192682">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192638</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="HA1" compartment="c12045" id="s192683">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192683</RCT:speciesID>
+<RCT:sequenceStart>18</RCT:sequenceStart>
+<RCT:sequenceEnd>343</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Elongated vRNA-mRNA Complex" compartment="c7660" id="s192700">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192982</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192977</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192990</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192965</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192981</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192973</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192995</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192994</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192966</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="vRNA Transcription Complex" compartment="c7660" id="s192703">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s158444</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="M1 mRNA" compartment="c70101" id="s192712">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Viral Polymerase" compartment="c7660" id="s192720">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Initiated vRNA Transcription Complex" compartment="c7660" id="s192756">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192865</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="vRNP:M1:NEP" compartment="c7660" id="s192767">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s186959</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169474</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="vRNP:M1:NEP:NP" compartment="c70101" id="s192768">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188874</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196480</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196499</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196477</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196492</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188856</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196479</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196489</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="vRNP" compartment="c7660" id="s192774">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="viral mRNA" compartment="c70101" id="s192803">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE SET</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192986</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192712</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192914</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192972</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192983</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192996</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192985</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192993</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192969</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192987</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="NEP/NS2" compartment="c70101" id="s192845">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="vRNA (genomic)" compartment="c7660" id="s192849">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE SET</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="7-methylguanosine cap" compartment="c7660" id="s192865">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192865</RCT:speciesID>
+<RCT:primaryXRef>17825</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="NA" compartment="c12045" id="s192893">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Initiated vRNA-cRNA Complex" compartment="c7660" id="s192901">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s193303</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="vRNP:M1 for Export" compartment="c7660" id="s192906">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s186959</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="M2 mRNA" compartment="c70101" id="s192914">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="vRNP destined for Export" compartment="c7660" id="s192922">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188843</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188877</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188857</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="NA mRNA" compartment="c7660" id="s192965">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192965</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NS2 mRNA" compartment="c7660" id="s192966">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192966</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NS1 mRNA" compartment="c70101" id="s192969">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192969</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NA mRNA" compartment="c70101" id="s192972">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192972</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NP mRNA" compartment="c7660" id="s192973">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192973</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="P1 mRNA" compartment="c7660" id="s192977">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192977</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="HA mRNA" compartment="c7660" id="s192981">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192981</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NS1 mRNA" compartment="c7660" id="s192982">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192982</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="PB1 mRNA" compartment="c70101" id="s192983">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192983</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="PA mRNA" compartment="c70101" id="s192985">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192985</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NP mRNA" compartment="c70101" id="s192986">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192986</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="HA mRNA" compartment="c70101" id="s192987">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192987</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="viral mRNA" compartment="c7660" id="s192988">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE SET</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192990</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192982</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192965</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192977</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192981</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192973</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192995</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192994</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192966</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="M1 mRNA" compartment="c7660" id="s192990">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="PB2 mRNA" compartment="c70101" id="s192993">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192993</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="M2 mRNA" compartment="c7660" id="s192994">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="PA mRNA" compartment="c7660" id="s192995">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192995</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NS2 mRNA" compartment="c70101" id="s192996">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s192996</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Mature intronless transcript derived mRNA with m7G cap removed" compartment="c7660" id="s193039">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="vRNA (Genomic):NP Complex" compartment="c7660" id="s193302">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188826</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188858</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188827</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188868</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188839</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188863</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188867</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188875</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188832</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Influenza H1N1 cRNA (extending)" compartment="c7660" id="s193303">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Glycosylated, palmitylated and folded HA trimer:Lipid Raft Complex" compartment="c20699" id="s195723">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195743</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195764</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glycosylated NA Tetramer" compartment="c20699" id="s195724">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195751</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glycosylated, palmitylated and folded HA trimer" compartment="c20699" id="s195725">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195743</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="M2 Tetramer" compartment="c20699" id="s195727">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195770</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Gycosylated NA Tetramer" compartment="c876" id="s195728">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195750</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="palmitylated M2" compartment="c876" id="s195729">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195729</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Lipid Raft" compartment="c876" id="s195731">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="palmitylated M2 Tetramer" compartment="c876" id="s195732">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195729</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Gycosylated NA Tetramer:Lipid Raft" compartment="c876" id="s195735">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195750</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195731</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Gycosylated NA Tetramer:Lipid Raft" compartment="c20699" id="s195736">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195751</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195764</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="NP:Lipid Raft" compartment="c20699" id="s195737">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195740</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195764</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glycosylated, palmitylated and folded HA trimer" compartment="c876" id="s195738">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195762</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="NP" compartment="c20699" id="s195740">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="palmitylated M2" compartment="c20699" id="s195741">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195741</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="HA folded, glycosylated, and palmitylated" compartment="c20699" id="s195743">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Glycosylated NA" compartment="c876" id="s195750">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Glycosylated NA" compartment="c20699" id="s195751">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="NP" compartment="c876" id="s195752">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Glycosylated, palmitylated and folded HA trimer:Lipid Raft Complex" compartment="c876" id="s195755">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195762</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195731</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="M2" compartment="c12045" id="s195756">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195756</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="palmitylated M2 Tetramer" compartment="c20699" id="s195761">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195741</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="HA folded, glycosylated, and palmitylated" compartment="c876" id="s195762">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Lipid Raft" compartment="c20699" id="s195764">
+<annotation>
+<RCT:physicalEntityClass>NOT SPECIFIED</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="NP:Lipid Raft" compartment="c876" id="s195766">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195752</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195731</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="M2" compartment="c20699" id="s195770">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195770</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="M2" compartment="c24337" id="s195773">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195773</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glycosylated NA Tetramer" compartment="c12045" id="s195775">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195815</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glycosylated NA" compartment="c24337" id="s195780">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="M1" compartment="c876" id="s195782">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Glycosylated and folded HA trimer" compartment="c12045" id="s195787">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195809</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="HA folded and glycosylated" compartment="c20699" id="s195788">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="HA" compartment="c12045" id="s195790">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="HA folded and glycosylated" compartment="c24337" id="s195793">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="M2 Tetramer" compartment="c24337" id="s195794">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195773</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glycosylated NA Tetramer" compartment="c24337" id="s195796">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195780</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="M2 Tetramer" compartment="c12045" id="s195797">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195756</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glycosylated and folded HA trimer" compartment="c24337" id="s195803">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195793</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glycosylated and folded HA" compartment="c12045" id="s195809">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Glycosylated NA" compartment="c12045" id="s195815">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Glycosylated and folded HA trimer" compartment="c20699" id="s195819">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195788</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="NA" compartment="c984" id="s195915">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Intracellular assembly complex" compartment="c876" id="s195925">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196480</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196477</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195752</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196479</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195729</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195762</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188874</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195750</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196499</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196492</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188856</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196489</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Segment 7 RNP" compartment="c70101" id="s195939">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196477</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="PB1" compartment="c70101" id="s195940">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Influenza A Viral Particle" compartment="c0" id="s195941">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196491</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188859</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196493</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169241</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188840</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188828</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188833</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188872</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169238</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169250</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169243</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169252</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188829</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169703</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169246</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188876</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188838</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169251</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169705</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Segment 4 RNP" compartment="c70101" id="s195942">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188856</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Segment 6 RNP" compartment="c70101" id="s195943">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196479</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Sialic Acid Bound Influenza A Viral Particle" compartment="c876" id="s195945">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196491</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188859</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188957</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196493</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188840</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169241</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188828</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188833</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188872</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169238</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169243</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188829</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169703</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169246</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196487</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188876</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188838</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169251</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169705</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="PB2" compartment="c70101" id="s195946">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Segment 1 RNP" compartment="c70101" id="s195947">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196480</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="PA" compartment="c70101" id="s195948">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Segment 8 RNP" compartment="c70101" id="s195949">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188874</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Segment 2 RNP" compartment="c70101" id="s195950">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196492</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Segment 5 RNP" compartment="c70101" id="s195951">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196499</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Segment 3 RNP" compartment="c70101" id="s195952">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s196489</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 7" compartment="c70101" id="s196477">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196477</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 6" compartment="c70101" id="s196479">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196479</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 1" compartment="c70101" id="s196480">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196480</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="HA folded, glycosylated, and palmitylated" compartment="c0" id="s196487">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 3" compartment="c70101" id="s196489">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196489</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="palmitylated M2" compartment="c0" id="s196491">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196491</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 2" compartment="c70101" id="s196492">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196492</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glycosylated NA" compartment="c0" id="s196493">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="RNP pre-assembly complex" compartment="c70101" id="s196496">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s188874</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195940</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188856</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195946</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s192845</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s188848</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s195948</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s169073</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Genomic RNA Segment 5" compartment="c70101" id="s196499">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s196499</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="NA" compartment="c12045" id="s203497">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+</annotation>
+</species>
+<species name="ATP" compartment="c7660" id="s29358">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s29358</RCT:speciesID>
+<RCT:primaryXRef>15422</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Orthophosphate" compartment="c70101" id="s29372">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s29372</RCT:speciesID>
+<RCT:primaryXRef>18367</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="GDP" compartment="c70101" id="s29420">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s29420</RCT:speciesID>
+<RCT:primaryXRef>17552</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="CTP" compartment="c7660" id="s29470">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s29470</RCT:speciesID>
+<RCT:primaryXRef>17677</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="NTP" compartment="c7660" id="s30595">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE SET</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s29358</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s113571</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s29470</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s113562</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Aminoacyl-tRNA" compartment="c70101" id="s37001">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE SET</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379707</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379786</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379792</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379765</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379772</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379757</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379720</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379785</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379783</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379719</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379794</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379736</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379746</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379738</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379728</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379790</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379784</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379787</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379700</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s379751</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="Ala-tRNA(Ala)" compartment="c70101" id="s379700">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379700</RCT:speciesID>
+<RCT:primaryXRef>17732</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Asp-tRNA(Asp)" compartment="c70101" id="s379707">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379707</RCT:speciesID>
+<RCT:primaryXRef>29158</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Cys-tRNA(Cys)" compartment="c70101" id="s379719">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379719</RCT:speciesID>
+<RCT:primaryXRef>29152</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Arg-tRNA(Arg)" compartment="c70101" id="s379720">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379720</RCT:speciesID>
+<RCT:primaryXRef>18366</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Asn-tRNA(Asn)" compartment="c70101" id="s379728">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379728</RCT:speciesID>
+<RCT:primaryXRef>29265</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Lys-tRNA(Lys)" compartment="c70101" id="s379736">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379736</RCT:speciesID>
+<RCT:primaryXRef>16047</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Ser-tRNA(Ser)" compartment="c70101" id="s379738">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379738</RCT:speciesID>
+<RCT:primaryXRef>29162</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Pro-tRNA(Pro)" compartment="c70101" id="s379746">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379746</RCT:speciesID>
+<RCT:primaryXRef>29154</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Glu-tRNA(Glu)" compartment="c70101" id="s379751">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379751</RCT:speciesID>
+<RCT:primaryXRef>29157</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Leu-tRNA(Leu)" compartment="c70101" id="s379757">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379757</RCT:speciesID>
+<RCT:primaryXRef>16624</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Trp-tRNA(Trp)" compartment="c70101" id="s379765">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379765</RCT:speciesID>
+<RCT:primaryXRef>29159</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Gln-tRNA(Gln)" compartment="c70101" id="s379772">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379772</RCT:speciesID>
+<RCT:primaryXRef>29166</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Thr-tRNA(Thr)" compartment="c70101" id="s379783">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379783</RCT:speciesID>
+<RCT:primaryXRef>29163</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Gly-tRNA(Gly)" compartment="c70101" id="s379784">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379784</RCT:speciesID>
+<RCT:primaryXRef>29156</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Tyr-tRNA(Tyr)" compartment="c70101" id="s379785">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379785</RCT:speciesID>
+<RCT:primaryXRef>29161</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="His-tRNA(His)" compartment="c70101" id="s379786">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379786</RCT:speciesID>
+<RCT:primaryXRef>29155</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Ile-tRNA(Ile)" compartment="c70101" id="s379787">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379787</RCT:speciesID>
+<RCT:primaryXRef>29160</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Val-tRNA(Val)" compartment="c70101" id="s379790">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379790</RCT:speciesID>
+<RCT:primaryXRef>29164</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Phe-tRNA(Phe)" compartment="c70101" id="s379792">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379792</RCT:speciesID>
+<RCT:primaryXRef>29153</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="Met-tRNA(Met)" compartment="c70101" id="s379794">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s379794</RCT:speciesID>
+<RCT:primaryXRef>16635</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="ADP/ATP translocase 3 monomer" compartment="c70616" id="s49745">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s49745</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+<RCT:PubmedID>12450408</RCT:PubmedID>
+</annotation>
+</species>
+<species name="H+" compartment="c70101" id="s70106">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s70106</RCT:speciesID>
+<RCT:primaryXRef>15378</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+<species name="PABPN1" compartment="c7660" id="s72008">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72008</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 10" compartment="c70101" id="s72325">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72325</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 11" compartment="c70101" id="s72327">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72327</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 12" compartment="c70101" id="s72329">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72329</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 13" compartment="c70101" id="s72331">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72331</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 14" compartment="c70101" id="s72333">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72333</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 15" compartment="c70101" id="s72335">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72335</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 16" compartment="c70101" id="s72337">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72337</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 17" compartment="c70101" id="s72339">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72339</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 18" compartment="c70101" id="s72341">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72341</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 19" compartment="c70101" id="s72343">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72343</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 1A" compartment="c70101" id="s72345">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72345</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 2" compartment="c70101" id="s72347">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72347</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 20" compartment="c70101" id="s72349">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72349</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 21" compartment="c70101" id="s72351">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72351</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 23" compartment="c70101" id="s72353">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72353</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 24" compartment="c70101" id="s72355">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72355</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 25" compartment="c70101" id="s72357">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72357</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 26" compartment="c70101" id="s72359">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72359</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 27" compartment="c70101" id="s72361">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72361</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 27A" compartment="c70101" id="s72363">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72363</RCT:speciesID>
+<RCT:sequenceStart>77</RCT:sequenceStart>
+<RCT:sequenceEnd>156</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 28" compartment="c70101" id="s72365">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72365</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 29" compartment="c70101" id="s72367">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72367</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 3" compartment="c70101" id="s72369">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72369</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 30" compartment="c70101" id="s72371">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72371</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 3A" compartment="c70101" id="s72373">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72373</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 4" compartment="c70101" id="s72375">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72375</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 4Y" compartment="c70101" id="s72377">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72377</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 5" compartment="c70101" id="s72379">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72379</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 6" compartment="c70101" id="s72381">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72381</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 7" compartment="c70101" id="s72383">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72383</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 8" compartment="c70101" id="s72385">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72385</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein 9" compartment="c70101" id="s72387">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72387</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="40S small ribosomal protein P4" compartment="c70101" id="s72389">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72389</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="18S rRNA" compartment="c70101" id="s72391">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72391</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S acidic ribosomal protein P0" compartment="c70101" id="s72396">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72396</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S acidic ribosomal protein P1" compartment="c70101" id="s72398">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72398</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S acidic ribosomal protein P2" compartment="c70101" id="s72400">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72400</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L10" compartment="c70101" id="s72402">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72402</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L10a" compartment="c70101" id="s72404">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72404</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L11" compartment="c70101" id="s72406">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72406</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L12" compartment="c70101" id="s72408">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72408</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L13" compartment="c70101" id="s72410">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72410</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L13a" compartment="c70101" id="s72412">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72412</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L14" compartment="c70101" id="s72414">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72414</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L15" compartment="c70101" id="s72416">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72416</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L17" compartment="c70101" id="s72418">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72418</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L18" compartment="c70101" id="s72420">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72420</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L18a" compartment="c70101" id="s72422">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72422</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L19" compartment="c70101" id="s72424">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72424</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L21" compartment="c70101" id="s72426">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72426</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L22" compartment="c70101" id="s72428">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72428</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L23" compartment="c70101" id="s72430">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72430</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L23a" compartment="c70101" id="s72432">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72432</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L24" compartment="c70101" id="s72434">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72434</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L26" compartment="c70101" id="s72436">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72436</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L26-like 1" compartment="c70101" id="s72438">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72438</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L27" compartment="c70101" id="s72440">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72440</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L27a" compartment="c70101" id="s72442">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72442</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L28" compartment="c70101" id="s72444">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72444</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L29" compartment="c70101" id="s72446">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72446</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L3" compartment="c70101" id="s72448">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72448</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L3-like" compartment="c70101" id="s72450">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72450</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L30" compartment="c70101" id="s72452">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72452</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L31" compartment="c70101" id="s72454">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72454</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L32" compartment="c70101" id="s72456">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72456</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L34" compartment="c70101" id="s72458">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72458</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L35" compartment="c70101" id="s72460">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72460</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L35a" compartment="c70101" id="s72462">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72462</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L36" compartment="c70101" id="s72464">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72464</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L37" compartment="c70101" id="s72466">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72466</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L37a" compartment="c70101" id="s72468">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72468</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L38" compartment="c70101" id="s72470">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72470</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L39" compartment="c70101" id="s72472">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72472</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L4" compartment="c70101" id="s72474">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72474</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L40" compartment="c70101" id="s72476">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72476</RCT:speciesID>
+<RCT:sequenceStart>77</RCT:sequenceStart>
+<RCT:sequenceEnd>128</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L41" compartment="c70101" id="s72478">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72478</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L44" compartment="c70101" id="s72480">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72480</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L5" compartment="c70101" id="s72482">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72482</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L6" compartment="c70101" id="s72484">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72484</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L7" compartment="c70101" id="s72486">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72486</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L7a" compartment="c70101" id="s72488">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72488</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L8" compartment="c70101" id="s72490">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72490</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="60S ribosomal protein L9 " compartment="c70101" id="s72492">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72492</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="5S rRNA" compartment="c70101" id="s72494">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72494</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="5.8S rRNA" compartment="c70101" id="s72496">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72496</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="28S rRNA" compartment="c70101" id="s72498">
+<annotation>
+<RCT:physicalEntityClass>SEQUENCE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72498</RCT:speciesID>
+<RCT:sequenceStart>1</RCT:sequenceStart>
+<RCT:sequenceEnd>-1</RCT:sequenceEnd>
+</RCT:content>
+</annotation>
+</species>
+<species name="80S ribosome" compartment="c70101" id="s72500">
+<annotation>
+<RCT:physicalEntityClass>COMPOSITE COMPLEX</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s72426</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72440</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72460</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72450</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72339</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72355</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72496</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72462</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72480</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72410</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72420</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72341</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72351</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72383</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72432</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72331</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72428</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72371</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72492</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72488</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72345</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72335</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72474</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72402</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72404</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72478</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72444</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72385</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72412</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72490</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72377</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72452</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72396</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72498</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72414</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72357</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72347</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72470</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72408</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72391</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72418</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72456</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72387</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72333</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72422</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72472</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72436</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72424</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72327</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72438</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72482</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72486</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72329</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72325</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72406</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72375</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72367</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72430</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72363</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72466</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72442</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72416</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72369</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72448</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72361</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72398</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72373</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72468</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72458</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72400</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72379</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72476</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72337</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72381</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72446</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72365</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72434</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72464</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72484</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72353</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72359</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72454</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72343</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72349</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72494</RCT:speciesID>
+</RCT:content>
+<RCT:content>
+<RCT:speciesID>s72389</RCT:speciesID>
+</RCT:content>
+</annotation>
+</species>
+<species name="H+" compartment="c171907" id="s74722">
+<annotation>
+<RCT:physicalEntityClass>SMALL MOLECULE</RCT:physicalEntityClass>
+<RCT:content>
+<RCT:speciesID>s74722</RCT:speciesID>
+<RCT:primaryXRef>15378</RCT:primaryXRef>
+</RCT:content>
+</annotation>
+</species>
+</listOfSpecies>
+<listOfReactions>
+<reaction name="Binding_of_the_influenza_virion_to_the_host_cell" id="r168272" reversible="false">
+<annotation>
+<RCT:PubmedID>0</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s169239" stoichiometry="1"/>
+<speciesReference species="s188957" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s188954" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Priming_and_Initiation_of_Transcription" id="r168280" reversible="false">
+<annotation>
+<RCT:PubmedID>11296240</RCT:PubmedID>
+<RCT:PubmedID>6261960</RCT:PubmedID>
+<RCT:PubmedID>8107213</RCT:PubmedID>
+<RCT:PubmedID>6269803</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192703" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192756" stoichiometry="1"/>
+<speciesReference species="s193039" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s192720"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Clathrin_Mediated_Pit_Formation_And_Endocytosis_Of_The_Influenza_Virion" id="r168285" reversible="false">
+<annotation>
+<RCT:PubmedID>0</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s188954" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s189161" stoichiometry="1"/>
+<speciesReference species="s189171" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Recognition_of_the_Nuclear_Localization_Signal_NLS_by_a_Karyopherin_Alpha_Family_Protein" id="r168297" reversible="false">
+<annotation>
+<RCT:PubmedID>7559393</RCT:PubmedID>
+<RCT:PubmedID>15702989</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s180612" stoichiometry="1"/>
+<speciesReference species="s188849" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s188871" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Ribonucleoprotein_release_from_M1_proteins" id="r168299" reversible="false">
+<annotation>
+<RCT:PubmedID>1985199</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s189177" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s188849" stoichiometry="1"/>
+<speciesReference species="s189148" stoichiometry="165"/>
+<speciesReference species="s189157" stoichiometry="1"/>
+<speciesReference species="s189168" stoichiometry="3000"/>
+<speciesReference species="s70106" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Polyadenylation_and_Termination" id="r168301" reversible="false">
+<annotation>
+<RCT:PubmedID>10233995</RCT:PubmedID>
+<RCT:PubmedID>2033659</RCT:PubmedID>
+<RCT:PubmedID>9733864</RCT:PubmedID>
+<RCT:PubmedID>7241649</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192700" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192720" stoichiometry="1"/>
+<speciesReference species="s192988" stoichiometry="1"/>
+<speciesReference species="s193302" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s192720"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Concerted_hemagglutinin_pore_formation" id="r168306" reversible="false">
+<annotation>
+<RCT:PubmedID>3663665</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s189138" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s189181" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Release_of_the_RNP_into_the_host_cell_nucleus" id="r168310" reversible="false">
+<annotation>
+<RCT:PubmedID>7559393</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s188844" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s180714" stoichiometry="1"/>
+<speciesReference species="s188846" stoichiometry="1"/>
+<speciesReference species="s188865" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Fusion_of_the_influenza_virion_HA2_protein_transmembrane_domain_to_the_host_cell_endosome_membrane" id="r168312" reversible="false">
+<annotation>
+<RCT:PubmedID>11208147</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s189182" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s189138" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Virion_associated_M2_protein_mediated_ion_infusion" id="r168313" reversible="false">
+<annotation>
+<RCT:PubmedID>7688826</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s189181" stoichiometry="1"/>
+<speciesReference species="s74722" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s189177" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s189181"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Recruitment_of_Karyopherin_Beta_to_form_a_Trimeric_Complex" id="r168317" reversible="false">
+<annotation>
+<RCT:PubmedID>7559393</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s180733" stoichiometry="1"/>
+<speciesReference species="s188871" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s188853" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Conformation_change_in_hemagglutinin_freeing_the_fusion_peptide_of_HA2" id="r168324" reversible="false">
+<annotation>
+<RCT:PubmedID>11208147</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s189171" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s189182" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Assembly_of_an_Active_Transcription_Complex" id="r168326" reversible="false">
+<annotation>
+<RCT:PubmedID>6261960</RCT:PubmedID>
+<RCT:PubmedID>7769657</RCT:PubmedID>
+<RCT:PubmedID>10526235</RCT:PubmedID>
+<RCT:PubmedID>12072510</RCT:PubmedID>
+<RCT:PubmedID>9755184</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s158444" stoichiometry="1"/>
+<speciesReference species="s192720" stoichiometry="1"/>
+<speciesReference species="s193302" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192703" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Elongation_of_viral_mRNA" id="r168334" reversible="false">
+<annotation>
+<RCT:PubmedID>833924</RCT:PubmedID>
+<RCT:PubmedID>10233995</RCT:PubmedID>
+<RCT:PubmedID>6616622</RCT:PubmedID>
+<RCT:PubmedID>9733864</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192756" stoichiometry="1"/>
+<speciesReference species="s30595" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192700" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s192720"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Docking_and_transport_of_the_RNP_Karyopherin_complex_through_the_nuclear_pore" id="r168337" reversible="false">
+<annotation>
+<RCT:PubmedID>1985200</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s188853" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s188844" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Binding_of_vRNP_M1_NEP_complex_to_CRM1_export_receptor" id="r168857" reversible="false">
+<annotation>
+<RCT:PubmedID>11118210</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s165529" stoichiometry="1"/>
+<speciesReference species="s192767" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192667" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Palmitoylation_of_cysteine_residues_on_HA_in_the_cis_Golgi_network" id="r168858" reversible="false">
+<annotation>
+<RCT:PubmedID>1901916</RCT:PubmedID>
+<RCT:PubmedID>8262238</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195819" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195725" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Binding_of_NS1_to_cleavage_and_host_polyadenylation_specificity_factor_CPSF_" id="r168859" reversible="false">
+<annotation>
+<RCT:PubmedID>9651582</RCT:PubmedID>
+<RCT:PubmedID>11421366</RCT:PubmedID>
+<RCT:PubmedID>12667806</RCT:PubmedID>
+<RCT:PubmedID>9986787</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s169104" stoichiometry="1"/>
+<speciesReference species="s169145" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s169074" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Membrane_fusion" id="r168860" reversible="false">
+<listOfReactants>
+<speciesReference species="s169703" stoichiometry="1"/>
+<speciesReference species="s188957" stoichiometry="1"/>
+<speciesReference species="s195925" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195945" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Association_of_HA_into_rafts" id="r168862" reversible="false">
+<annotation>
+<RCT:PubmedID>14561897</RCT:PubmedID>
+<RCT:PubmedID>9312009</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195725" stoichiometry="1"/>
+<speciesReference species="s195764" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195723" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="NA_activation_of_TGF_beta" id="r168865" reversible="false">
+<annotation>
+<RCT:PubmedID>9934696</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s114705" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s170838" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s195915"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Budding_of_vesicle_with_the_HA_trimer_NA_tetramer_and_M2_tetramer_from_the_endoplasmic_reticulum_into_the_cytosol" id="r168869" reversible="false">
+<annotation>
+<RCT:PubmedID>0</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195775" stoichiometry="1"/>
+<speciesReference species="s195787" stoichiometry="1"/>
+<speciesReference species="s195797" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195794" stoichiometry="1"/>
+<speciesReference species="s195796" stoichiometry="1"/>
+<speciesReference species="s195803" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Neuraminidase_enzymatic_release_from_sialic_acid" id="r168870" reversible="false">
+<listOfReactants>
+<speciesReference species="s195945" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195941" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s195915"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Fusion_of_vesicle_containing_the_HA_trimer_NA_tetramer_and_M2_tetramer_to_the_Golgi_apparatus" id="r168871" reversible="false">
+<annotation>
+<RCT:PubmedID>0</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195794" stoichiometry="1"/>
+<speciesReference species="s195796" stoichiometry="1"/>
+<speciesReference species="s195803" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195724" stoichiometry="1"/>
+<speciesReference species="s195727" stoichiometry="1"/>
+<speciesReference species="s195819" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Trimerization_of_HA" id="r168875" reversible="false">
+<annotation>
+<RCT:PubmedID>7729412</RCT:PubmedID>
+<RCT:PubmedID>8460475</RCT:PubmedID>
+<RCT:PubmedID>3757030</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195809" stoichiometry="3"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195787" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="PB1_F2_binds_to_the_mitochondrial_adenine_nucleotide_translocator_3_ANT3_inducing_apoptosis" id="r168878" reversible="false">
+<annotation>
+<RCT:PubmedID>15163724</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s169216" stoichiometry="1"/>
+<speciesReference species="s49745" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s169235" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="vRNP_Export_through_the_nuclear_pore" id="r168880" reversible="false">
+<listOfReactants>
+<speciesReference species="s165530" stoichiometry="1"/>
+<speciesReference species="s192667" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s165538" stoichiometry="1"/>
+<speciesReference species="s192768" stoichiometry="1"/>
+<speciesReference species="s29372" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Association_of_NP_into_rafts" id="r168882" reversible="false">
+<annotation>
+<RCT:PubmedID>15522099</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195740" stoichiometry="1"/>
+<speciesReference species="s195764" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195737" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Binding_of_NS1_to_poly_A_binding_protein_II_PABII_" id="r168883" reversible="false">
+<annotation>
+<RCT:PubmedID>10205180</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s169145" stoichiometry="1"/>
+<speciesReference species="s72008" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s169102" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Entry_of_HA_into_the_endoplasmic_reticulum" id="r168884" reversible="false">
+<annotation>
+<RCT:PubmedID>8460475</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195790" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195790" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Binding_of_NS1_to_dsRNA" id="r168891" reversible="false">
+<annotation>
+<RCT:PubmedID>14645582</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s167931" stoichiometry="1"/>
+<speciesReference species="s169143" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s169075" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Binding_of_NEP_NS2_to_vRNP_M1" id="r168893" reversible="false">
+<listOfReactants>
+<speciesReference species="s169474" stoichiometry="1"/>
+<speciesReference species="s192906" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192767" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Accumulation_of_M1_at_the_inner_leaflet_of_the_lipid_bilayer" id="r168894" reversible="false">
+<annotation>
+<RCT:PubmedID>8918911</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s169073" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195782" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="RNP_association" id="r168895" reversible="false">
+<listOfReactants>
+<speciesReference species="s195939" stoichiometry="1"/>
+<speciesReference species="s195942" stoichiometry="1"/>
+<speciesReference species="s195943" stoichiometry="1"/>
+<speciesReference species="s195947" stoichiometry="1"/>
+<speciesReference species="s195949" stoichiometry="1"/>
+<speciesReference species="s195950" stoichiometry="1"/>
+<speciesReference species="s195951" stoichiometry="1"/>
+<speciesReference species="s195952" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s196496" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Binding_of_NS1_to_PKR" id="r168896" reversible="false">
+<listOfReactants>
+<speciesReference species="s168699" stoichiometry="1"/>
+<speciesReference species="s169143" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s169142" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Assembly_of_NA_tetramers" id="r169847" reversible="false">
+<annotation>
+<RCT:PubmedID>7541844</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195815" stoichiometry="4"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195775" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Glycosylation_of_NA" id="r169919" reversible="false">
+<annotation>
+<RCT:PubmedID>9400974</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s203497" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195815" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Glycosylation_and_Folding_of_HA" id="r169921" reversible="false">
+<annotation>
+<RCT:PubmedID>10764645</RCT:PubmedID>
+<RCT:PubmedID>12535523</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195790" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195809" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Assembly_of_M2_tetramers" id="r188544" reversible="false">
+<annotation>
+<RCT:PubmedID>11087364</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195756" stoichiometry="4"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195797" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="cRNA_Extension" id="r192624" reversible="false">
+<annotation>
+<RCT:PubmedID>8709268</RCT:PubmedID>
+<RCT:PubmedID>17166911</RCT:PubmedID>
+<RCT:PubmedID>15308750</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s188832" stoichiometry="3"/>
+<speciesReference species="s192901" stoichiometry="1"/>
+<speciesReference species="s30595" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192682" stoichiometry="1"/>
+<speciesReference species="s192720" stoichiometry="1"/>
+<speciesReference species="s193302" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s192720"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Viral_mRNA_Export" id="r192627" reversible="false">
+<annotation>
+<RCT:PubmedID>10920397</RCT:PubmedID>
+<RCT:PubmedID>16933365</RCT:PubmedID>
+<RCT:PubmedID>17132145</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192988" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192803" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Newly_synthesized_vRNP_for_export" id="r192677" reversible="false">
+<annotation>
+<RCT:PubmedID>17151603</RCT:PubmedID>
+<RCT:PubmedID>14691253</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s188843" stoichiometry="1"/>
+<speciesReference species="s188857" stoichiometry="1"/>
+<speciesReference species="s188877" stoichiometry="1"/>
+<speciesReference species="s192774" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192922" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Synthesis_of_PB1_F2" id="r192704" reversible="false">
+<annotation>
+<RCT:PubmedID>11726970</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192983" stoichiometry="1"/>
+<speciesReference species="s37001" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s169216" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s72500"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Binding_of_M1_to_vRNP" id="r192746" reversible="false">
+<annotation>
+<RCT:PubmedID>11222100</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s186959" stoichiometry="1"/>
+<speciesReference species="s192922" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192906" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Viral_mRNA_Splicing_M_NS_segments_" id="r192781" reversible="false">
+<annotation>
+<RCT:PubmedID>11421366</RCT:PubmedID>
+<RCT:PubmedID>10920397</RCT:PubmedID>
+<RCT:PubmedID>6945577</RCT:PubmedID>
+<RCT:PubmedID>6246509</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192982" stoichiometry="1"/>
+<speciesReference species="s192990" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192966" stoichiometry="1"/>
+<speciesReference species="s192994" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Viral_Polymerase_Assembly" id="r192830" reversible="false">
+<annotation>
+<RCT:PubmedID>3023071</RCT:PubmedID>
+<RCT:PubmedID>3783823</RCT:PubmedID>
+<RCT:PubmedID>11483758</RCT:PubmedID>
+<RCT:PubmedID>8948635</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s188843" stoichiometry="1"/>
+<speciesReference species="s188857" stoichiometry="1"/>
+<speciesReference species="s188877" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192720" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Initiation_of_cRNA_Synthesis" id="r192832" reversible="false">
+<annotation>
+<RCT:PubmedID>8189550</RCT:PubmedID>
+<RCT:PubmedID>15163719</RCT:PubmedID>
+<RCT:PubmedID>16474140</RCT:PubmedID>
+<RCT:PubmedID>12072510</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192720" stoichiometry="1"/>
+<speciesReference species="s193302" stoichiometry="1"/>
+<speciesReference species="s30595" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192901" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s192720"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Viral_Protein_Synthesis" id="r192841" reversible="false">
+<annotation>
+<RCT:PubmedID>16630668</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192803" stoichiometry="1"/>
+<speciesReference species="s37001" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192631" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s72500"/>
+</listOfModifiers>
+</reaction>
+<reaction name="vRNA_Extension" id="r192851" reversible="false">
+<annotation>
+<RCT:PubmedID>8709268</RCT:PubmedID>
+<RCT:PubmedID>3243763</RCT:PubmedID>
+<RCT:PubmedID>15298169</RCT:PubmedID>
+<RCT:PubmedID>11252672</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s188832" stoichiometry="3"/>
+<speciesReference species="s192650" stoichiometry="1"/>
+<speciesReference species="s30595" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192638" stoichiometry="1"/>
+<speciesReference species="s192682" stoichiometry="1"/>
+<speciesReference species="s192720" stoichiometry="1"/>
+<speciesReference species="s193302" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s192720"/>
+</listOfModifiers>
+</reaction>
+<reaction name="NP_binds_vRNA" id="r192912" reversible="false">
+<annotation>
+<RCT:PubmedID>17151603</RCT:PubmedID>
+<RCT:PubmedID>9032315</RCT:PubmedID>
+<RCT:PubmedID>9371635</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s188832" stoichiometry="3"/>
+<speciesReference species="s192849" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s193302" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Initiation_of_vRNA_Synthesis" id="r192916" reversible="false">
+<annotation>
+<RCT:PubmedID>15163719</RCT:PubmedID>
+<RCT:PubmedID>16474140</RCT:PubmedID>
+<RCT:PubmedID>7561757</RCT:PubmedID>
+<RCT:PubmedID>12771209</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192682" stoichiometry="1"/>
+<speciesReference species="s192720" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192650" stoichiometry="1"/>
+</listOfProducts>
+<listOfModifiers>
+<modifierSpeciesReference species="s192720"/>
+</listOfModifiers>
+</reaction>
+<reaction name="Export_of_Spliced_Viral_mRNA" id="r192925" reversible="false">
+<annotation>
+<RCT:PubmedID>10920397</RCT:PubmedID>
+<RCT:PubmedID>1531330</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s192966" stoichiometry="1"/>
+<speciesReference species="s192994" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s192914" stoichiometry="1"/>
+<speciesReference species="s192996" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Association_of_NA_into_rafts" id="r195726" reversible="false">
+<annotation>
+<RCT:PubmedID>11451488</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195724" stoichiometry="1"/>
+<speciesReference species="s195764" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195736" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Transport_of_processed_viral_proteins_to_the_cell_membrane" id="r195730" reversible="false">
+<annotation>
+<RCT:PubmedID>10890900</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195723" stoichiometry="1"/>
+<speciesReference species="s195736" stoichiometry="1"/>
+<speciesReference species="s195737" stoichiometry="1"/>
+<speciesReference species="s195761" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195732" stoichiometry="1"/>
+<speciesReference species="s195735" stoichiometry="1"/>
+<speciesReference species="s195755" stoichiometry="1"/>
+<speciesReference species="s195766" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Entry_of_M2_into_the_endoplasmic_reticulum" id="r195733" reversible="false">
+<annotation>
+<RCT:PubmedID>8460475</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195756" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195756" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Entry_of_NA_into_the_endoplasmic_reticulum" id="r195734" reversible="false">
+<annotation>
+<RCT:PubmedID>8460475</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s203497" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s203497" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Palmitoylation_of_cysteine_residues_on_M2_in_the_cis_golgi_network" id="r195739" reversible="false">
+<annotation>
+<RCT:PubmedID>2219738</RCT:PubmedID>
+<RCT:PubmedID>2045796</RCT:PubmedID>
+</annotation>
+<listOfReactants>
+<speciesReference species="s195727" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195761" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+<reaction name="Association_with_M1_at_cell_membrane" id="r195926" reversible="false">
+<listOfReactants>
+<speciesReference species="s169073" stoichiometry="2992"/>
+<speciesReference species="s192845" stoichiometry="157"/>
+<speciesReference species="s195728" stoichiometry="100"/>
+<speciesReference species="s195732" stoichiometry="60"/>
+<speciesReference species="s195738" stoichiometry="500"/>
+<speciesReference species="s195752" stoichiometry="976"/>
+<speciesReference species="s195940" stoichiometry="37"/>
+<speciesReference species="s195946" stoichiometry="37"/>
+<speciesReference species="s195948" stoichiometry="37"/>
+<speciesReference species="s196496" stoichiometry="1"/>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s195925" stoichiometry="1"/>
+</listOfProducts>
+</reaction>
+</listOfReactions>
+</model>
+</sbml>
