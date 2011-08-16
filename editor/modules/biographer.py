@@ -828,16 +828,22 @@ class Graph:
 	def exportLayout(self):
 		self.log("Exporting Layout ...")
 		layout = ""
+		print "."
 		def write(s):
 			layout += str(s)+"\n"
+		print "."
 
 		write( len(self.Compartments) )			# Compartments
+		print "."
 		for compartment in self.Compartments:
 			write( str(self.getNodeIndex(compartment)) +" "+ compartment.id )
+		print "."
 
 		write("///")
+		print "."
 
 		write( len(self.Nodes) )
+		print "."
 		for node in self.Nodes:				# Nodes
 			write( self.getNodeIndex(node) )
 			write( getLayoutNodeType(node.type) )
@@ -849,10 +855,13 @@ class Graph:
 			write( node.data.height )
 			write( 0 )				# direction, a property we don't have, but the Layouter needs
 
+		print "."
 		write("///")
+		print "."
 
 
 		write( len(self.Edges) )			# Edges
+		print "."
 		for edge in self.Edges:
 			write( edge.type +" "+ self.getNodeIndex(edge.SourceNode) +" "+ self.getNodeIndex(edge.TargetNode) )
 
@@ -869,16 +878,17 @@ class Graph:
 		timeout = 10
 		start = time()									# start a timer
 
-		self.log("Executing "+Layouter+" ...")						# Input ...
 		self.LayouterInput = self.exportLayout()
 		self.LayouterOutput = ""
 
+		self.log("Executing "+Layouter+" ...")						# Input ...
 		layouter = Popen( split(Layouter), stdin=PIPE, stdout=PIPE )			# execute "layout"
 		layouter.communicate( input=self.LayouterInput )				# stdin, stdout
 		self.LayouterRuntime = 0
 		while layouter.poll is None and self.LayouterRuntime < timeout:			# wait until timeout
 			sleep(3)
 			self.LayouterRuntime = time()-start
+			print str(self.LayouterRuntime))
 
 		if self.LayouterRuntime >= timeout:						# process timed out !
 			self.log("Error: Process timed out !")
