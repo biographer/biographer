@@ -855,6 +855,8 @@ class Graph:
 		for edge in self.Edges:
 			write( edge.type +" "+ self.getNodeIndex(edge.SourceNode) +" "+ self.getNodeIndex(edge.TargetNode) )
 
+		print layout
+
 		return layout
 
 	def importLayout(self, layout):
