@@ -115,10 +115,12 @@ class Node:
 	def exportDICT(self):
 		me = deepcopy(self.__dict__)				# convert self to dictionary
 		me['data'] = self.data.exportDICT()
-		if "ConnectedEdges" in me.keys():			# do not export ConnectedEdges
+		if "ConnectedEdges" in me.keys():			# do not export ConnectedEdges,
 			del me["ConnectedEdges"]
-		if "SubNodes" in me.keys():
+		if "SubNodes" in me.keys():				# SubNodes,
 			del me["SubNodes"]
+		if "CompartmentNode" in me.keys():			# and the CompartmentNode
+			del me["CompartmentNode"]
 		return me
 
 	def exportLayout(self):
