@@ -64,10 +64,15 @@
         includeInJSON : false,
         _enableResizing : false,
 
+        // TODO document
         toJSON : function() {
             // is actually an override but won't call the superclass because
             // units of information aren't considered as nodes in the JSON
             // data format
+
+            var json = [null, ''];
+
+            return json;
         }
     };
 

@@ -193,6 +193,8 @@
     var mouseClick = function(event) {
         if (event.ctrlKey === true) {
             this.placeholderVisible(!this.placeholderVisible());
+        } else {
+            this.fire(bui.Node.ListenerType.click, [this, event]);
         }
     };
 
@@ -215,8 +217,6 @@
 
         positionPlaceHolder.call(this);
         positionChanged.call(this);
-
-
 
         if (bui.settings.enableModificationSupport === true) {
 
@@ -905,7 +905,8 @@
             var json = bui.Node.superClazz.prototype.toJSON.call(this),
                     dataFormat = bui.settings.dataFormat,
                     privates = this._privates(identifier),
-                    position = this.absolutePosition();
+                    position = this.absolutePosition(),
+                    i;
 
             updateJson(json, dataFormat.drawable.sbo,
                     getSBOForInstance(nodeMapping, this));
@@ -919,12 +920,27 @@
                 var subNodes = [];
                 updateJson(json, dataFormat.node.subNodes, subNodes);
 
-                for(var i = 0; i < children.length; i++) {
+                for(i = 0; i < children.length; i++) {
                     subNodes.push(children[i].id());
                 }
             }
 
-            // modifications can currently not be translated back to JSON
+            var auxUnits = this.auxiliaryUnits();
+            if (auxUnits.length > 0) {
+                var auxUnitsJson = [];
+                updateJson(json, dataFormat.node.modifications, auxUnitsJson);
+
+                for (i = 0; i < auxUnits.length; i++) {
+                    var auxUnit = auxUnits[i];
+
+                    if (auxUnit instanceof bui.StateVariable) {
+                        auxUnitsJson.push(auxUnit.toJSON());
+                    } else {
+                        log('Warning: Can\'t export units of information to ' +
+                                'JSON.');
+                    }
+                }
+            }
 
             return json;
         }
@@ -944,6 +960,8 @@
         /** @field */
         absolutePosition : bui.util.createListenerTypeId(),
         /** @field */
-        size : bui.util.createListenerTypeId()
+        size : bui.util.createListenerTypeId(),
+        /** @field */
+        click : bui.util.createListenerTypeId()
     };
 })(bui);
