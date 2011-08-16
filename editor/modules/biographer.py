@@ -829,23 +829,17 @@ class Graph:
 		self.log("Exporting Layout ...")
 		global layout
 		layout = ""
-		print "."
 		def write(s):
 			global layout
 			layout += str(s)+"\n"
-		print "."
 
 		write( len(self.Compartments) )			# Compartments
-		print "."
 		for compartment in self.Compartments:
 			write( str(self.getNodeIndex(compartment)) +" "+ compartment.id )
-		print "."
 
 		write("///")
-		print "."
 
 		write( len(self.Nodes) )
-		print "."
 		for node in self.Nodes:				# Nodes
 			write( self.getNodeIndex(node) )
 			write( getLayoutNodeType(node.type) )
@@ -857,17 +851,13 @@ class Graph:
 			write( node.data.height )
 			write( 0 )				# direction, a property we don't have, but the Layouter needs
 
-		print "."
 		write("///")
-		print "."
-
 
 		write( len(self.Edges) )			# Edges
-		print "."
 		for edge in self.Edges:
 			write( edge.type +" "+ self.getNodeIndex(edge.SourceNode) +" "+ self.getNodeIndex(edge.TargetNode) )
 
-		print layout
+		self.log(layout)
 
 		return layout
 
