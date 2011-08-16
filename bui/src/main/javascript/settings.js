@@ -71,7 +71,8 @@ bui.settings = {
             x : ['data', 'x'],
             y : ['data', 'y'],
             width : ['data', 'width'],
-            height : ['data', 'height']
+            height : ['data', 'height'],
+            subNodes : ['data', 'subnodes']
         }
 
     },

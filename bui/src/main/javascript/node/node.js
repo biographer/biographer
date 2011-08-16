@@ -216,13 +216,13 @@
         positionPlaceHolder.call(this);
         positionChanged.call(this);
 
-        var nodeGroupHtmlElement = jQuery(privates.nodeGroup)
-                .add(privates.placeholder);
 
 
         if (bui.settings.enableModificationSupport === true) {
 
-            nodeGroupHtmlElement.click(mouseClick.createDelegate(this));
+            jQuery(privates.nodeGroup)
+                    .add(privates.placeholder)
+                    .click(mouseClick.createDelegate(this));
 
             if (this._enableDragging === true) {
                 jQuery(privates.placeholder).draggable({
@@ -913,6 +913,18 @@
             updateJson(json, dataFormat.node.y, position.y);
             updateJson(json, dataFormat.node.width, privates.width);
             updateJson(json, dataFormat.node.height, privates.height);
+
+            var children = this.childrenWithoutAuxiliaryUnits();
+            if (children.length > 0) {
+                var subNodes = [];
+                updateJson(json, dataFormat.node.subNodes, subNodes);
+
+                for(var i = 0; i < children.length; i++) {
+                    subNodes.push(children[i].id());
+                }
+            }
+
+            // modifications can currently not be translated back to JSON
 
             return json;
         }

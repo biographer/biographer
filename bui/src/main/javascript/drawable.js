@@ -239,19 +239,6 @@
 
             updateJson(privates.json, path, value);
 
-//            if (typeof(path) === 'string') {
-//                privates.json[path] = value;
-//            } else {
-//                var lastProperty = privates.json;
-//                for(var i = 0; i < path.length - 1; i++) {
-//                    var propertyName = path[i];
-//                    lastProperty[propertyName] =
-//                            lastProperty[propertyName] || {};
-//                    lastProperty = lastProperty[propertyName];
-//                }
-//                lastProperty[path[path.length-1]] = value;
-//            }
-
             return this;
         },
 

@@ -9,8 +9,29 @@ var customExample = {
                 subnodes : [
                    'node2',
                    'node3'
+                ],
+                'modification' : [
+                   [
+                      216,
+                      "1068"
+                   ],
+                   [
+                      216,
+                      "1148"
+                   ],
+                   [
+                      216,
+                      "1173"
+                   ],
+                   [
+                      216,
+                      "1086"
+                   ],
+                   [
+                      216,
+                      "992"
+                   ]
                 ]
-                // TODO state variable 'tense'
             }
         }, {
             id : 'node2',

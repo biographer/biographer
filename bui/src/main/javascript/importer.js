@@ -63,7 +63,8 @@
                 graph.add(bui.StateVariable)
                         .label(label)
                         .parent(node)
-                        .visible(true);
+                        .visible(true)
+                        .json(modification);
             }
         }
 

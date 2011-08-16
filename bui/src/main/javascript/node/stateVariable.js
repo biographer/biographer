@@ -62,7 +62,13 @@
     bui.StateVariable.prototype = {
         auxiliaryUnit : true,
         includeInJSON : false,
-        _enableResizing : false
+        _enableResizing : false,
+
+        toJSON : function() {
+            // is actually an override but won't call the superclass because
+            // units of information aren't considered as nodes in the JSON
+            // data format
+        }
     };
 
     bui.util.setSuperClass(bui.StateVariable, bui.Labelable);
