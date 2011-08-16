@@ -1,0 +1,20 @@
+#canvas {
+    width: 500px;
+    height: 500px;
+    border: solid 1px #ddd;
+}
+.symbol_box{
+    border: solid 1px black;
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+    background-color:#eee;
+
+}
+.drop_hover {
+    background-color: #FFFFF0;
+}
+input {
+    width: 50px;
+    height: 13px;
+}
