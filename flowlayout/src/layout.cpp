@@ -753,6 +753,10 @@ void Network::brute_force_post_pro(){
 }      
                            
 float Network::layout(){       
+   /*This function contains the work-flow of the layout algorithm, which is comprised of 4 phase:
+        initilization, free-layout, constrained-layout, and post-processing.
+   */
+   
    //copying coordinates from nodes[] to pos[];   
    int n=nodes->size(),i;   
    pos.resize(n);
@@ -781,7 +785,7 @@ float Network::layout(){
    while(true){
       k++;
       cur_force=init_layout();
-      if(fabs(pre_force-cur_force)<=pre_force*err)break; //the system force converges to a minimal.
+      if(fabs(pre_force-cur_force)<pre_force*err)break; //the system force converges to a minimal.
       pre_force=cur_force;
    }
    printf("number of iteration: %d\n",k);    
@@ -803,7 +807,7 @@ float Network::layout(){
       cur_force=calc_force_adj();
       if(k>300)cur_force+=firm_distribution();
       move_nodes();
-      if(fabs(pre_force-cur_force)<=pre_force*err)break;
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++; //number of increases.
       if(inc>log(1.0*n))break; //quit if number of increases if larger than log(n).
       pre_force=cur_force;
@@ -821,7 +825,7 @@ float Network::layout(){
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
-      if(fabs(pre_force-cur_force)<=pre_force*err)break;
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
@@ -844,7 +848,7 @@ float Network::layout(){
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
-      if(fabs(pre_force-cur_force)<=pre_force*err)break;
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;    
@@ -875,8 +879,8 @@ float Network::layout(){
       adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
-      if(fabs(pre_force-cur_force)<=pre_force*err)break;
-      if(cur_force>pre_force || cur_force>inf)inc++;
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force||cur_force==inf)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
    }
@@ -891,8 +895,8 @@ float Network::layout(){
       adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
-      if(fabs(pre_force-cur_force)<=pre_force*err)break;
-      if(cur_force>pre_force || cur_force>inf)inc++;
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
    } 
@@ -933,7 +937,201 @@ float Network::layout(){
    
    return cur_force;
 }
-     
+
+void Network::init_layout2(vector<bool>fixinit){
+   /*
+     initilization for layout_update: only initilize positions for un-fixed nodes.
+     this is siliar to init_layout() method.
+   */
+   
+   int n1,n2,i,e,cnt,n=nodes->size(),type_n1,type_e;
+   float force=0.0,x,y;
+   VI neighbors;
+   neighbors.clear();
+   for(n1=0;n1<n;n1++){
+      if(fixinit[n1])continue; //pos[n1] is already fixed.
+      neighbors=*((*nodes)[n1].neighbors);
+      type_n1=(*nodes)[n1].pts.type;
+      cnt=neighbors.size();
+      x=y=0.0;
+      for(i=0;i<cnt;i++){
+         e=neighbors[i];
+         type_e=(*edges)[e].pts.type;
+         if(type_n1==reaction)n2=(*edges)[e].to;
+         else n2=(*edges)[e].from;
+         if(type_e==substrate){
+            if(type_n1==reaction){
+               x+=pos[n2].x;
+               y+=(pos[n2].y-dij1[e]);
+            }
+            else{
+               x+=pos[n2].x;
+               y+=(pos[n2].y+dij1[e]);
+            }
+         }
+         else if(type_e==product){
+            if(type_n1==reaction){
+               x+=pos[n2].x;
+               y+=(pos[n2].y+dij1[e]);
+            }
+            else{
+               x+=pos[n2].x;
+               y+=(pos[n2].y-dij1[e]);
+            }
+         }
+         else{
+            y+=(pos[n2].y);
+            if(fabs(pos[n2].x-dij1[e]-x/(i+1))<fabs(pos[n2].x+dij1[e]-x/(i+1)))x+=(pos[n2].x-dij1[e]);
+            else x+=(pos[n2].x+dij1[e]);
+         }
+         neighbors.clear();
+      }
+      pos[n1].x=x/cnt;
+      pos[n1].y=y/cnt;
+   }
+}
+
+float Network::layout_update(vector<bool>fixinit){      
+   /*This function update the layout if some new nodes are added or some nodes are required to change.
+     The vector fixinit contains the information of whether a node's position has been fixed.
+     This is similar to the layout() function, except that the second phase(free layout) is deleted.
+   */ 
+   
+   //copying coordinates from nodes[] to pos[];   
+   int n=nodes->size(),i;   
+   pos.resize(n);
+   mov.resize(n);
+   pts_dir.resize(n);
+   mov_dir.resize(n);
+   deg.resize(n);
+   for(i=0;i<n;i++){
+      pos[i].x=(*nodes)[i].pts.x;
+      pos[i].y=(*nodes)[i].pts.y;
+      mov[i].x=mov[i].y=0.0;
+      pts_dir[i]=(*nodes)[i].pts.dir;
+      mov_dir[i]=0.0;
+      deg[i]=((*nodes)[i].neighbors)->size();
+   }   
+   bcomp.resize(compartments->size());
+   
+   get_ideal_distance(); //the ideal lengths and minimum distances.
+
+   float cur_force,pre_force=inf;  //current system force, and previous system force.
+   int k, inc;
+ 
+   //phase 1. initialization
+   
+   //step1: quick initial layout.
+   init_layout2(fixinit);
+   
+   //step2&3 are skipped.
+   //phase2 is skiped.
+   
+   //phase 3: constrained layout: bring in compartments into consideration, and re-layout the nodes such that they obeys compartment rule.
+   
+   init_compartments(); //step1: initilizing compartments using the coordinates generated from phase2.
+   
+   //step2: compartment-constrained layout.
+   pre_force=inf;
+   k=inc=0;
+   while(true){
+      k++;
+      cur_force=0.0;
+      adjust_compartments();
+      cur_force+=calc_force_compartments();
+      cur_force+=calc_force_adj();
+      cur_force+=calc_force_nadj();
+      move_nodes();
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>log(1.0*n))break;
+      pre_force=cur_force;    
+   }
+   printf("number of iteration: %d\n",k);    
+   printf("Total force = %0.3f\n",cur_force); 
+   
+   //phase4: post processing. 
+   
+   post_pro_dist();//the post-processing distances: minimum distances between nodes with common neighbor are reduced.
+   
+   //step1: minimizing edge corssings.
+   pre_force=inf;
+   while(true){
+      cur_force=min_edge_crossing(1);
+      if(cur_force>=pre_force)break;
+      pre_force=cur_force;
+      cout<<cur_force<<endl;
+   }
+   //step2: shrinking edges lengths (nodes must still conform to compartment rule).
+   pre_force=inf;
+   k=inc=0;
+   while(true){
+      k++;
+      near_swap();
+      cur_force=post_pro(1); //shrink edge lengths.
+      move_nodes();
+      adjust_compartments();
+      cur_force+=calc_force_compartments();
+      move_nodes();
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force||cur_force==inf)inc++;
+      if(inc>log(1.0*n))break;
+      pre_force=cur_force;
+   }
+   //step3: remove node-overlapping (nodes must still obey compartment rule).
+   pre_force=inf;
+   k=inc=0;
+   while(true){
+      k++;
+      near_swap();
+      cur_force=post_pro(2); //try to remove node-overlapping.
+      move_nodes();
+      adjust_compartments();
+      cur_force+=calc_force_compartments();
+      move_nodes();
+      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>log(1.0*n))break;
+      pre_force=cur_force;
+   } 
+   printf("number of iteration: %d\n",k);    
+   printf("Total force = %0.3f\n",cur_force); 
+   
+  // brute_force_post_pro();
+   
+   //output compartment names and y-boundaries.
+   cout<<endl;
+   for(i=1;i<compartments->size();i++){
+      cout<<(*compartments)[i].name<<endl;
+      printf("%0.3f %0.3f\n",(*compartments)[i].ymin, (*compartments)[i].ymax);
+   }
+   
+   //copying coordinations from pos[] to nodes[];
+   for(i=0;i<n;i++){
+      (*nodes)[i].pts.x=pos[i].x;
+      (*nodes)[i].pts.y=pos[i].y;
+      (*nodes)[i].pts.dir=mov_dir[i];
+   }
+   
+   //memory realease. 
+   pos.clear();
+   mov.clear();
+   dij1.clear();
+   bcomp.clear();
+   for(i=0;i<n;i++){
+      dij2[i].clear();
+      isadj[i].clear();
+   }
+   dij2.clear();
+   isadj.clear();
+   pts_dir.clear();
+   mov_dir.clear();
+   deg.clear();
+   free(above_comp);
+   
+   return cur_force;
+}
+
      
    
    
