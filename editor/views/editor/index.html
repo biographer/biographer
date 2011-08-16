@@ -1,0 +1,166 @@
+{{extend 'layout.html'}}
+<table>
+	<tr>
+		<td>
+			<div id="canvas" class='droppable'></div>
+		</td>
+		<td>
+			<div id="message"></div>
+			<button id='export_json'>export JSON</button>
+			<button id='export_svg'>export SVG</button>
+			<table>
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Drag This</th>
+						<th>Label</th>
+					</tr>
+				</thead>
+				<tr>
+					<td>SimpleChemical</td>
+					<td> <div class="symbol_box editor_draggable" id='SimpleChemical'></div> </td>
+					<td> <input type="text" placeholder="ATP" class='label' /> </td>
+				</tr>
+				<tr>
+					<td>Macromolecule</td>
+					<td> <div class="symbol_box editor_draggable" id='Macromolecule'></div> </td>
+					<td> <input type="text" placeholder="Hexokinase" class='label' /> </td>
+				</tr>
+				<tr>
+					<td>NucleicAcidFeature</td>
+					<td> <div class="symbol_box editor_draggable" id='NucleicAcidFeature'></div> </td>
+					<td> <input type="text" placeholder="ENA1" class='label' /> </td>
+				</tr>
+				<tr>
+					<td>Compartment</td>
+					<td> <div class="symbol_box editor_draggable" id='Compartment'></div> </td>
+					<td> <input type="text" placeholder="Cytosol" class='label' /> </td>
+				</tr>
+				<tr>
+					<td>Complex</td>
+					<td> <div class="symbol_box editor_draggable" id='Complex'></div> </td>
+					<td> </td>
+				</tr>
+				<tr>
+					<td>Reaction</td>
+					<td> <div class="symbol_box editor_draggable" id='RectangularNode'></div> </td>
+					<td> <input type="text" placeholder="Reaction" class='label' /> </td>
+				</tr>
+				<tr>
+					<td>Spline/Edge</td>
+					<td colspan='2'>  <button id="draw_edge_spline">Draw Edge/Spline</button>
+						<select id="select_edge_spline">
+							<option>Spline</option>
+							<option>Edge</option>
+						</select>
+					<div id="edge_message"></div> </td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<br />
+<script type="text/javascript">
+var graphData = { 
+   nodes : [
+      {
+         "data" : {
+            "label" : "ATP",
+            "modification" : [],
+            "x" : 50,
+            "y" : 50
+         },
+         "id" : "Reactome:29358",
+         "is_abstract" : false,
+         "sbo" : 247,
+         "type" : "SimpleCompound"
+      },
+   ],
+   edges : []
+};
+
+var selected_nodes = [];
+var edge_select_on = false;
+function edgeSelect(drawable, select_status) {
+    if (edge_select_on == true){
+	    $('#edge_message').html('please select a second node');
+	    selected_nodes.push(drawable);
+	    if (selected_nodes.length>=2){
+		edge_select_on = false;
+		$('#edge_message').html('');
+		//draw edge now
+		new_edge = graph.add(bui[$('#select_edge_spline').val()])
+			    .source(selected_nodes[0])
+			    .target(selected_nodes[1])
+			    .visible(true);
+		selected_nodes = []
+		edge_select_on = false;
+	    }
+    }
+}
+
+bui.ready(function() {
+    bui.settings.css.stylesheetUrl = '{{=URL(request.application, 'static/css', 'visualization-svg.css')}}'
+    graph = new bui.Graph($('#canvas')[0]);
+    bui.importFromJSON(graph, graphData);
+    //=========================
+	//add edge select listner to all nodes
+	all_drawables = graph.drawables();
+	for (var key in all_drawables) {
+	    var drawable = all_drawables[key];
+	    if (drawable.drawableType()=='node'){
+		drawable.bind(bui.Node.ListenerType.click, edgeSelect, 'edge_select');
+	    }
+	}
+    //=========================
+    $('#draw_edge_spline').click(function(){
+	$('#edge_message').html('click on two nodes to draw an edge between them');
+	edge_select_on = true;
+    });
+    //=========================
+    $('#export_json').click(function(){
+	    alert(JSON.stringify(graphData));
+    });
+    //=========================
+    $('#export_svg').click(function(){
+	    alert($('#canvas').html());
+    });
+});
+
+$(document).ready(function() {
+});
+$('.editor_draggable').draggable({
+        zIndex: 2,
+        revert: true, 
+    });
+var canvaspos = $('#canvas').position(); 	
+$('.droppable').droppable({ 
+    hoverClass: 'drop_hover',
+    greedy: true,
+    drop: function( event, ui ) {
+	if(ui.helper.hasClass('symbol_box')){
+		pos_top = ui.offset.top-canvaspos.top;
+		pos_left = ui.offset.left-canvaspos.left;
+		//new_node = graph.add(bui.SimpleChemical)
+		var size = {};
+		if(ui.helper.attr('id')=='RectangularNode'){
+			size = {h:20, w:20};
+		}else if((ui.helper.attr('id')=='Compartment')||(ui.helper.attr('id')=='Complex')){
+			size = {h:100, w:100};
+		}else {
+			size = {h:50, w:50};
+		}
+
+		new_node = graph.add(bui[ui.helper.attr('id')])
+			.position(pos_left, pos_top)
+			.size(size.h, size.w)
+			.visible(true)
+		if(ui.helper.attr('id')!='Complex'){
+			//new_node.addClass('.droppable')//FIXME this does not work, what is the object where I need to add the droppable class
+			new_node.label(ui.helper.parent().parent().find('.label').val());
+		}
+		new_node.bind(bui.Node.ListenerType.click, edgeSelect, 'edge_select');
+	}
+    }
+});
+</script>
