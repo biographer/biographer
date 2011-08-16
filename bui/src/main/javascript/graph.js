@@ -480,10 +480,11 @@
          * @return {Object} The exported graph.
          */
         toJSON : function() {
-            var json = {
-                nodes : [],
-                edges : []
-            };
+            var json = {};
+
+            var dataFormat = bui.settings.dataFormat;
+            updateJson(json, dataFormat.nodes, {});
+            updateJson(json, dataFormat.edges, {});
 
             var drawables = this._privates(identifier).drawables;
 

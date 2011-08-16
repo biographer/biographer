@@ -237,18 +237,20 @@
 
             privates.json = privates.json || {};
 
-            if (typeof(path) === 'string') {
-                privates.json[path] = value;
-            } else {
-                var lastProperty = privates.json;
-                for(var i = 0; i < path.length - 1; i++) {
-                    var propertyName = path[i];
-                    lastProperty[propertyName] =
-                            lastProperty[propertyName] || {};
-                    lastProperty = lastProperty[propertyName];
-                }
-                lastProperty[path[path.length-1]] = value;
-            }
+            updateJson(privates.json, path, value);
+
+//            if (typeof(path) === 'string') {
+//                privates.json[path] = value;
+//            } else {
+//                var lastProperty = privates.json;
+//                for(var i = 0; i < path.length - 1; i++) {
+//                    var propertyName = path[i];
+//                    lastProperty[propertyName] =
+//                            lastProperty[propertyName] || {};
+//                    lastProperty = lastProperty[propertyName];
+//                }
+//                lastProperty[path[path.length-1]] = value;
+//            }
 
             return this;
         },
@@ -260,6 +262,20 @@
             var json = {}, privates = this._privates(identifier);
             json.id = privates.id;
             return json;
+        },
+
+        /**
+         * Retrieve the drawables type, i.e. either node or edge.
+         *
+         * @return {String} If the drawable is a node, 'node' will be returned.
+         *   Otherwise 'edge' will be returned.
+         */
+        drawableType : function() {
+            if (this.bottomRight !== undefined) {
+                return 'node';
+            } else {
+                return 'edge';
+            }
         }
     };
 

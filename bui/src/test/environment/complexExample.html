@@ -18,20 +18,16 @@
 
 
         bui.ready(function() {
-            graph = new bui.Graph(document.getElementsByTagName('div')[0]);
+            graph = new bui.Graph(document.getElementsByTagName('body')[0]);
             graph.scale(0.7);
             bui.importFromJSON(graph, complexExample);
 
             setTimeout(function() {
-                var canvas = jQuery('#canvas');
-                bui.util.alignCanvas(graph, 'Reactome:109788', canvas, canvas);
+                bui.util.alignCanvas(graph, 'Reactome:109788');
             }, 1000);
         });
     </script>
 </head>
 <body>
-<div id="canvas" style="width: 800px; height: 500px; overflow: scroll; border: 1px solid black;">
-    
-</div>
 </body>
 </html>

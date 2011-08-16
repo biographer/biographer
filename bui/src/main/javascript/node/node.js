@@ -898,6 +898,13 @@
             }
 
             return this;
+        },
+
+        // overridden in bui.Drawable
+        toJSON : function() {
+            var json = bui.Node.superClazz.prototype.toJSON.call(this);
+            json.sbo = 431321;
+            return json;
         }
     };
 

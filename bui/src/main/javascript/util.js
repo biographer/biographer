@@ -436,3 +436,105 @@ log = function(object) {
         console.log(object);
     }
 };
+
+
+/**
+ * Update a JSON object.
+ *
+ * @param {Object} json The object which should be updated.
+ * @param {String|String[]} path The property name which should be
+ *   updated. Pass a string array to handle property chains.
+ * @param {Object} value The property's value.
+ */
+updateJson = function(json, path, value) {
+    if (typeof(path) === 'string') {
+        json[path] = value;
+    } else {
+        var lastProperty = json;
+        for(var i = 0; i < path.length - 1; i++) {
+            var propertyName = path[i];
+            lastProperty[propertyName] =
+                    lastProperty[propertyName] || {};
+            lastProperty = lastProperty[propertyName];
+        }
+        lastProperty[path[path.length-1]] = value;
+    }
+};
+
+/*
+ * ###########################################################################
+ * The following variables and functions are required for the SBO mappings
+ * which are located in sboMappings.js.
+ *
+ */
+
+/**
+ * Add mappings to the mappings object.
+ *
+ * @param {Object} mapping The mappings object
+ * @param {Number[]} keys The keys which should be mapped
+ * @param {Function} klass A classes' constructor
+ * @param {Function} [generator] Generator funtion which should be used
+ *   instead of the constructor.
+ */
+var addMapping = function(mapping, keys, klass, generator) {
+    var val = { klass : klass };
+
+    if (generator !== undefined) {
+        val.generator = generator;
+    }
+
+    for (var i = 0; i < keys.length; i++) {
+        mapping[keys[i]] = val;
+    }
+};
+
+/**
+ * @private
+ * Mapping between SBO terms and biographer-ui classes.
+ */
+var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {},
+        modificationMapping = {};
+
+/**
+ * Add mappings to the mappings object.
+ *
+ * @param {Number[]} keys The keys which should be mapped
+ * @param {String} long Long name of the SBO term
+ * @param {String} short Short name (abbreviation of the SBO term
+ */
+var addModificationMapping = function(keys, long, short) {
+    var val = {
+        long : long,
+        short : short
+    };
+
+    for (var i = 0; i < keys.length; i++) {
+        if (modificationMapping.hasOwnProperty(keys[i])) {
+            log('Warning: The mapping of modification keys has' +
+                    ' already a mapping for key: ' + keys[i]);
+        } else {
+            modificationMapping[keys[i]] = val;
+        }
+    }
+};
+
+/**
+ * Retrieve the class and generator from a mapping object. When the mapping
+ * object does not have an appropriate class or generator object an
+ * exception will be thrown.
+ *
+ * @param {Object} mapping A mapping object, i.e. an object with SBO ids
+ *   as keys. The values should be objects will at least a 'klass'
+ *   property.
+ * @param {Number} sbo The SBO id.
+ * @return {Object} An object with a 'klass' and an optional 'generator'
+ *   property.
+ */
+var retrieveFrom = function(mapping, sbo) {
+    if (mapping.hasOwnProperty(sbo)) {
+        return mapping[sbo];
+    } else {
+        throw('Warning: SBO id "' + sbo + '" could not be found.');
+    }
+};

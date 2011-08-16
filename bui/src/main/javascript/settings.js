@@ -59,6 +59,8 @@ bui.settings = {
      * The data exchange format
      */
     dataFormat : {
+        nodes : 'nodes',
+        edges : 'edges',
         node : {
             id : 'id',
             sbo : 'sbo',
