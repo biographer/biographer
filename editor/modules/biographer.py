@@ -550,6 +550,11 @@ class Graph:
 			return 0						# not found
 		return self.Nodes.index(node)+1					# counting starts with 1...
 
+	def getCompartmentIndex(self, node):					# get the array index of a specified Node
+		if not node in self.Compartments:
+			return 0						# not found
+		return self.Compartments.index(node)+1				# counting starts with 1...
+
 
 	### functions for Graph creation: import / export ###
 
@@ -837,7 +842,7 @@ class Graph:
 
 		write( len(self.Compartments) )			# Compartments
 		for compartment in self.Compartments:
-			write( str(self.getNodeIndex(compartment)) +" "+ compartment.id )
+			write( str(self.getCompartmentIndex(compartment)) +" "+ compartment.id )
 
 		write("///")
 
@@ -846,7 +851,7 @@ class Graph:
 			write( self.getNodeIndex(node) )
 			write( getLayoutNodeType(node.type) )
 			write( node.id )
-			write( self.getNodeIndex(node.CompartmentNode) )
+			write( self.getCompartmentIndex(node.CompartmentNode) )
 			write( node.data.x )
 			write( node.data.y )
 			write( node.data.width )
