@@ -131,7 +131,8 @@ def Reactome():									# import from Reactome
 			session.bioGraph = biographer.Graph()
 
 		session.RSI = request.vars.RSI
-		cachename = os.path.join( request.folder, "static/Reactome", session.RSI+".sbml" )
+		cachename = os.path.join( request.folder, "static/Reactome/"+session.RSI+".sbml" )
+		print cachename
 
 		if os.path.exists( cachename ):
 			session.SBML = open(cachename).read()

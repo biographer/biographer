@@ -392,6 +392,7 @@ class Graph:
 		self.log("Network has "+str(self.NodeCount())+" Nodes ("+str(len(self.Compartments))+" Compartments) and "+str(self.EdgeCount())+" Edges.")
 
 	def pickCompartments(self):						# create array Compartments with links to the appropriate Node Objects
+		self.log("Picking Compartments ...")
 		self.Compartments = []
 		CompartmentNode = getNodeType("Compartment Node")
 		for node in self.Nodes:
@@ -399,6 +400,7 @@ class Graph:
 				self.Compartments.append(node)
 
 	def generateObjectLinks(self):
+		self.log("Generating object links ...")
 		for n in self.Nodes:
 			n.ConnectedEdges = self.getConnectedEdges(n)		# add connected Edges as Object links
 			n.SubNodes = []
@@ -423,7 +425,7 @@ class Graph:
 		self.pickCompartments()
 		self.generateObjectLinks()
 		self.hash()
-		self.status()
+		self.log("Graph initialized.")
 
 	def selfcheck(self, autoresize=True, removeOrphanEdges=True):		# perform some basic integrity checks on the created Graph
 
@@ -500,7 +502,6 @@ class Graph:
 	### generating a unique Graph identifier ###
 
 	def hash(self):
-#		if self.MD5 is None:
 		self.MD5 = md5( self.exportJSON() ).hexdigest()
 		return self.MD5
 
@@ -508,6 +509,7 @@ class Graph:
 	### handling element IDs ###
 
 	def mapIDs(self):							# generate a map of IDs and array indices
+		self.log("Mapping IDs ...")
 		self.maxID = 1							# thereby determine the highest ID used in our model
 		self.IDmapNodes = self.IDmapEdges = {}
 		for i in range(0, len(self.Nodes)):
@@ -857,7 +859,7 @@ class Graph:
 		for edge in self.Edges:
 			write( edge.type +" "+ str(self.getNodeIndex(edge.SourceNode)) +" "+ str(self.getNodeIndex(edge.TargetNode)) )
 
-		self.log(layout)
+#		self.log(layout)
 
 		return layout
 

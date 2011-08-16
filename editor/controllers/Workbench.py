@@ -30,7 +30,7 @@ def Console():
 
 def JSON():
 	if session.bioGraph is None:
-		return dict( JSON='network = ;'+EmptyNet )
+		return dict( JSON='network = '+EmptyNet+";" )
 	else:
 		return dict( JSON="network = "+session.bioGraph.exportJSON()+";" )
 
