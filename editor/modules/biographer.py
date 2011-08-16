@@ -149,7 +149,7 @@ class Node:
 		show = False
 
 		for key in self.__dict__.keys():				# check if we recognize all keys
-			if not key in ["ConnectedEdges", "SubNodes"]:		# skip it ...
+			if not key in ["ConnectedEdges", "SubNodes", "CompartmentNode"]:	# else skip it ...
 				if key in NodeKeyAliases.keys():		# is it an alias ...
 					newkey = NodeKeyAliases[key]
 					result += 'Format error: '+self.id+'.'+key+' moved to '+self.id+'.'+newkey+'\n'
@@ -203,7 +203,6 @@ class Node:
 			if self.data.compartment < 0 and self.type in [0,3]:
 				result += "Warning: Node compartment < 0 !\n"
 				show = True
-
 									# check visual properties
 		if self.data.owns("width") is not self.data.owns("height"):
 			result += "Warning: Incomplete information on Node size !\n"
