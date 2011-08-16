@@ -827,6 +827,7 @@ class Graph:
 
 	def exportLayout(self):
 		self.log("Exporting Layout ...")
+		global layout
 		layout = ""
 		print "."
 		def write(s):
