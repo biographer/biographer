@@ -889,7 +889,7 @@ class Graph:
 		while layouter.poll is None and self.LayouterRuntime < timeout:			# wait until timeout
 			sleep(3)
 			self.LayouterRuntime = time()-start
-			print str(self.LayouterRuntime))
+			print str(self.LayouterRuntime)
 
 		if self.LayouterRuntime >= timeout:						# process timed out !
 			self.log("Error: Process timed out !")
