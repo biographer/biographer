@@ -781,7 +781,7 @@ float Network::layout(){
    while(true){
       k++;
       cur_force=init_layout();
-      if(fabs(pre_force-cur_force)<pre_force*err)break; //the system force converges to a minimal.
+      if(fabs(pre_force-cur_force)<=pre_force*err)break; //the system force converges to a minimal.
       pre_force=cur_force;
    }
    printf("number of iteration: %d\n",k);    
@@ -803,7 +803,7 @@ float Network::layout(){
       cur_force=calc_force_adj();
       if(k>300)cur_force+=firm_distribution();
       move_nodes();
-      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(fabs(pre_force-cur_force)<=pre_force*err)break;
       if(cur_force>pre_force)inc++; //number of increases.
       if(inc>log(1.0*n))break; //quit if number of increases if larger than log(n).
       pre_force=cur_force;
@@ -821,7 +821,7 @@ float Network::layout(){
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
-      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(fabs(pre_force-cur_force)<=pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
@@ -844,7 +844,7 @@ float Network::layout(){
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
-      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(fabs(pre_force-cur_force)<=pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;    
@@ -875,7 +875,7 @@ float Network::layout(){
       adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
-      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(fabs(pre_force-cur_force)<=pre_force*err)break;
       if(cur_force>pre_force || cur_force>inf)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
@@ -891,7 +891,7 @@ float Network::layout(){
       adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
-      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(fabs(pre_force-cur_force)<=pre_force*err)break;
       if(cur_force>pre_force || cur_force>inf)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;

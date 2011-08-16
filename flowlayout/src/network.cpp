@@ -1,5 +1,6 @@
 #include "network.h"
 
+
 const char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"}; //for the convenience of input and output.
 const char nodetypes[][20]={"None", "Reaction", "Compound","Other"}; //for the convenience of input and output in order of enum Nodetype.
 const char jnodetypes[][20]={"None", "Reaction", "Compound","SimpleCompound","Complex","Protein","Other"}; //json node types
@@ -139,13 +140,18 @@ void Network::dump(){
    Node* tmp;
    Edge* e;
    Compartment* c;
-   int i;
+   int i,j;
    int n=nodes->size();
    printf("nodes:\n");
    for(i=0;i<n;i++){
       tmp = &((*nodes)[i]);
       cout<<i<<' '<<nodetypes[tmp->pts.type]<<' '<<tmp->pts.name<<endl;
       printf("(%0.3f,%0.3f)+(%0.3f,%0.3f) dir %0.3f, comp %d\n",tmp->pts.x, tmp->pts.y, tmp->pts.width, tmp->pts.height, tmp->pts.dir, tmp->pts.compartment);
+      printf("--edges: ");
+      for (j=0;j<tmp->neighbors->size();j++){
+         printf("%d ",(*tmp->neighbors)[j]);
+      }
+      printf("\n");
    }
    n=edges->size();
    printf("edges:\n");
@@ -269,6 +275,21 @@ void Network::dumpNodes(const char* file){
 
 #ifdef USEJSON
 
+double json_object_get_number_member(JsonObject* jobj,const gchar *name){
+   JsonNode* node=json_object_get_member(jobj,name);
+   GType tp=json_node_get_value_type(node);
+   if (tp == G_TYPE_INT64){
+      return (double) json_node_get_int(node);
+   } else if (tp == G_TYPE_DOUBLE){
+      return (double) json_node_get_double(node);
+   } else if (tp == G_TYPE_STRING){
+      return atof(json_node_get_string(node));
+   } else {
+      printf("json object member %s not a number, but a %s (%d)",name,json_node_type_name(node),tp);
+      return 0;
+   }
+   
+}
 // FIXME: check for memory leaks
 JSONcontext* Network::readJSON(const char* file){
    JsonParser *parser;
@@ -313,11 +334,11 @@ JSONcontext* Network::readJSON(const char* file){
       if(strcmp(type,"Compartment")==0){
          addCompartment(idx,id);
       } else {
-         double x=json_object_get_double_member(data,"x");
-         double y=json_object_get_double_member(data,"y");
-         double w=json_object_get_double_member(data,"width");
-         double h=json_object_get_double_member(data,"height");
-         double d=json_object_get_double_member(data,"dir");
+         double x=json_object_get_number_member(data,"x");
+         double y=json_object_get_number_member(data,"y");
+         double w=json_object_get_number_member(data,"width");
+         double h=json_object_get_number_member(data,"height");
+         double d=json_object_get_number_member(data,"dir");
          int c=json_object_get_int_member(data,"compartmentidx");
          for(k=0;k<7;k++){
             if(strcmp(jnodetypes[k],type)==0)break;
@@ -367,14 +388,13 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
       json_object_set_double_member(data,"x",(*nodes)[i].pts.x);
       json_object_set_double_member(data,"y",(*nodes)[i].pts.y);
    }
+   gsize length;
+   gchar* jdata=json_generator_to_data(gen,&length);
    
-   json_generator_to_file(gen,file,&error);
-   if (error)
-   {
-      g_print ("Unable to write `%s': %s\n", file, error->message);
-      g_error_free (error);
-      abort();
-   }
+   ofstream out(file);
+   out<<jdata;
+   out.close();
+   
    
 }
 #endif USEJSON

@@ -1,0 +1,553 @@
+{
+   "edges" : [
+      {
+         "id" : 0,
+         "sbo" : 15,
+         "source" : "MAP:Cs7732-18-5_CY_Reactome:177923",
+         "sourceidx" : 1,
+         "target" : "Reactome:177923",
+         "targetidx" : 0,
+         "type" : "Substrate"
+      },
+      {
+         "id" : 1,
+         "sbo" : 15,
+         "source" : "Reactome:180522",
+         "sourceidx" : 2,
+         "target" : "Reactome:177923",
+         "targetidx" : 0,
+         "type" : "Substrate"
+      },
+      {
+         "id" : 2,
+         "sbo" : 11,
+         "source" : "Reactome:177923",
+         "sourceidx" : 0,
+         "target" : "Reactome:180523",
+         "targetidx" : 3,
+         "type" : "Product"
+      },
+      {
+         "id" : 3,
+         "sbo" : 11,
+         "source" : "Reactome:177923",
+         "sourceidx" : 0,
+         "target" : "MAP:Cs14265-44-2_CY_Reactome:177923",
+         "targetidx" : 4,
+         "type" : "Product"
+      },
+      {
+         "id" : 4,
+         "sbo" : 11,
+         "source" : "Reactome:177923",
+         "sourceidx" : 0,
+         "target" : "Reactome:180499",
+         "targetidx" : 5,
+         "type" : "Product"
+      },
+      {
+         "id" : 5,
+         "sbo" : 13,
+         "source" : "Reactome:180269",
+         "sourceidx" : 6,
+         "target" : "Reactome:177923",
+         "targetidx" : 0,
+         "type" : "Catalyst"
+      }
+   ],
+   "nodes" : [
+      {
+         "data" : {
+            "compartmentidx" : 0,
+            "dir" : 0,
+            "height" : 1,
+            "label" : "Sustained activation of SRC kinase by SHP2",
+            "ref" : "Reactome:177923",
+            "width" : 1,
+            "x" : 581,
+            "y" : 122
+         },
+         "id" : "Reactome:177923",
+         "index" : 0,
+         "is_abstract" : 0,
+         "sbo" : 167,
+         "type" : "Reaction"
+      },
+      {
+         "data" : {
+            "label" : "Cytosol",
+            "ref" : "MAP:Cytosol",
+            "subnodes" : [
+               "MAP:Cs7732-18-5_CY_Reactome:177923",
+               "MAP:Cs14265-44-2_CY_Reactome:177923",
+               "Reactome:180304_Reactome:180269_0",
+               "MAP:UP62993_CY_Reactome:180304_0_Reactome:180269_0",
+               "Reactome:180344_Reactome:180304_0_Reactome:180269_0",
+               "Reactome:162563_Reactome:180269_0"
+            ]
+         },
+         "id" : "MAP:Cytosol",
+         "index" : 1,
+         "is_abstract" : 0,
+         "sbo" : 290,
+         "type" : "Compartment"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Cytosol",
+            "compartmentidx" : 1,
+            "dir" : 0,
+            "height" : 1,
+            "label" : "H2O",
+            "modification" : [],
+            "ref" : "MAP:Cs7732-18-5_CY",
+            "width" : 1,
+            "x" : 196,
+            "y" : 222
+         },
+         "id" : "MAP:Cs7732-18-5_CY_Reactome:177923",
+         "index" : 1,
+         "is_abstract" : 0,
+         "sbo" : 247,
+         "type" : "SimpleCompound"
+      },
+      {
+         "data" : {
+            "label" : "Plasmamembrane",
+            "ref" : "MAP:Plasmamembrane",
+            "subnodes" : [
+               "Reactome:180522",
+               "Reactome:180493_Reactome:180522_0",
+               "Reactome:65043_Reactome:180522_0",
+               "Reactome:180499_Reactome:180522_0",
+               "Reactome:180523",
+               "Reactome:180493_Reactome:180523_0",
+               "Reactome:65043_Reactome:180523_0",
+               "Reactome:180499",
+               "Reactome:180269",
+               "Reactome:179882_Reactome:180269_0",
+               "Reactome:179860_Reactome:179882_0_Reactome:180269_0",
+               "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180269_0",
+               "Reactome:179860_Reactome:179882_1_Reactome:180269_0",
+               "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180269_0"
+            ]
+         },
+         "id" : "MAP:Plasmamembrane",
+         "index" : 2,
+         "is_abstract" : 0,
+         "sbo" : 290,
+         "type" : "Compartment"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "Paxillin",
+            "modification" : [],
+            "ref" : "Reactome:180493"
+         },
+         "id" : "Reactome:180493_Reactome:180522_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "Proto-oncogene tyrosine-protein kinase Src ",
+            "modification" : [],
+            "ref" : "Reactome:65043"
+         },
+         "id" : "Reactome:65043_Reactome:180522_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "Tyrosine-protein kinase CSK",
+            "modification" : [],
+            "ref" : "Reactome:180499"
+         },
+         "id" : "Reactome:180499_Reactome:180522_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "dir" : 0,
+            "height" : 1,
+            "label" : "Paxillin:CSK:Src complex",
+            "modification" : [],
+            "ref" : "Reactome:180522",
+            "subnodes" : [
+               "Reactome:180493_Reactome:180522_0",
+               "Reactome:65043_Reactome:180522_0",
+               "Reactome:180499_Reactome:180522_0"
+            ],
+            "width" : 1,
+            "x" : 1088,
+            "y" : 222
+         },
+         "id" : "Reactome:180522",
+         "index" : 2,
+         "is_abstract" : 0,
+         "sbo" : 253,
+         "type" : "Complex"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "Paxillin",
+            "modification" : [],
+            "ref" : "Reactome:180493"
+         },
+         "id" : "Reactome:180493_Reactome:180523_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "Proto-oncogene tyrosine-protein kinase Src ",
+            "modification" : [],
+            "ref" : "Reactome:65043"
+         },
+         "id" : "Reactome:65043_Reactome:180523_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "dir" : 0,
+            "height" : 1,
+            "label" : "Paxillin:Src complex",
+            "modification" : [],
+            "ref" : "Reactome:180523",
+            "subnodes" : [
+               "Reactome:180493_Reactome:180523_0",
+               "Reactome:65043_Reactome:180523_0"
+            ],
+            "width" : 1,
+            "x" : 994,
+            "y" : 34
+         },
+         "id" : "Reactome:180523",
+         "index" : 3,
+         "is_abstract" : 0,
+         "sbo" : 253,
+         "type" : "Complex"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Cytosol",
+            "compartmentidx" : 1,
+            "dir" : 0,
+            "height" : 1,
+            "label" : "Orthophosphate",
+            "modification" : [],
+            "ref" : "MAP:Cs14265-44-2_CY",
+            "width" : 1,
+            "x" : 179,
+            "y" : 34
+         },
+         "id" : "MAP:Cs14265-44-2_CY_Reactome:177923",
+         "index" : 4,
+         "is_abstract" : 0,
+         "sbo" : 247,
+         "type" : "SimpleCompound"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "dir" : 0,
+            "height" : 1,
+            "label" : "Tyrosine-protein kinase CSK",
+            "modification" : [],
+            "ref" : "Reactome:180499",
+            "width" : 1,
+            "x" : 581,
+            "y" : 34
+         },
+         "id" : "Reactome:180499",
+         "index" : 5,
+         "is_abstract" : 0,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Cytosol",
+            "compartmentidx" : 1,
+            "label" : "GRB2()",
+            "modification" : [],
+            "ref" : "MAP:UP62993_CY"
+         },
+         "id" : "MAP:UP62993_CY_Reactome:180304_0_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Cytosol",
+            "compartmentidx" : 1,
+            "label" : "Phospho-GAB1",
+            "modification" : [
+               [
+                  216,
+                  "627"
+               ],
+               [
+                  216,
+                  "659"
+               ],
+               [
+                  216,
+                  "447"
+               ],
+               [
+                  216,
+                  "472"
+               ],
+               [
+                  216,
+                  "589"
+               ]
+            ],
+            "ref" : "Reactome:180344"
+         },
+         "id" : "Reactome:180344_Reactome:180304_0_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Cytosol",
+            "compartmentidx" : 1,
+            "label" : "GRB2:Phospho-GAB1",
+            "modification" : [],
+            "ref" : "Reactome:180304",
+            "subnodes" : [
+               "MAP:UP62993_CY_Reactome:180304_0_Reactome:180269_0",
+               "Reactome:180344_Reactome:180304_0_Reactome:180269_0"
+            ]
+         },
+         "id" : "Reactome:180304_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 253,
+         "type" : "Complex"
+      },
+      {
+         "data" : {
+            "label" : "Extracellular",
+            "ref" : "MAP:Extracellular",
+            "subnodes" : [
+               "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180269_0",
+               "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180269_0"
+            ]
+         },
+         "id" : "MAP:Extracellular",
+         "index" : 3,
+         "is_abstract" : 0,
+         "sbo" : 290,
+         "type" : "Compartment"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Extracellular",
+            "compartmentidx" : 3,
+            "label" : "EGF",
+            "modification" : [],
+            "ref" : "Reactome:179863"
+         },
+         "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "Phospho-EGFR",
+            "modification" : [
+               [
+                  216,
+                  "1068"
+               ],
+               [
+                  216,
+                  "1148"
+               ],
+               [
+                  216,
+                  "1173"
+               ],
+               [
+                  216,
+                  "1086"
+               ],
+               [
+                  216,
+                  "992"
+               ]
+            ],
+            "ref" : "Reactome:179803"
+         },
+         "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "EGF:Phospho-EGFR",
+            "modification" : [],
+            "ref" : "Reactome:179860",
+            "subnodes" : [
+               "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180269_0",
+               "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180269_0"
+            ]
+         },
+         "id" : "Reactome:179860_Reactome:179882_0_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 253,
+         "type" : "Complex"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Extracellular",
+            "compartmentidx" : 3,
+            "label" : "EGF",
+            "modification" : [],
+            "ref" : "Reactome:179863"
+         },
+         "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "Phospho-EGFR",
+            "modification" : [
+               [
+                  216,
+                  "1068"
+               ],
+               [
+                  216,
+                  "1148"
+               ],
+               [
+                  216,
+                  "1173"
+               ],
+               [
+                  216,
+                  "1086"
+               ],
+               [
+                  216,
+                  "992"
+               ]
+            ],
+            "ref" : "Reactome:179803"
+         },
+         "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "EGF:Phospho-EGFR",
+            "modification" : [],
+            "ref" : "Reactome:179860",
+            "subnodes" : [
+               "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180269_0",
+               "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180269_0"
+            ]
+         },
+         "id" : "Reactome:179860_Reactome:179882_1_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 253,
+         "type" : "Complex"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "label" : "EGF:Phospho-EGFR (Y992, Y1068, Y1086, Y1148, Y1173) dimer",
+            "modification" : [],
+            "ref" : "Reactome:179882",
+            "subnodes" : [
+               "Reactome:179860_Reactome:179882_0_Reactome:180269_0",
+               "Reactome:179860_Reactome:179882_1_Reactome:180269_0"
+            ]
+         },
+         "id" : "Reactome:179882_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 253,
+         "type" : "Complex"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Cytosol",
+            "compartmentidx" : 1,
+            "label" : "SHP2 protein",
+            "modification" : [],
+            "ref" : "Reactome:162563"
+         },
+         "id" : "Reactome:162563_Reactome:180269_0",
+         "is_abstract" : 1,
+         "sbo" : 252,
+         "type" : "Protein"
+      },
+      {
+         "data" : {
+            "compartment" : "MAP:Plasmamembrane",
+            "compartmentidx" : 2,
+            "dir" : 0,
+            "height" : 1,
+            "label" : "SHP2-GRB2:Phospho GAB1-EGF-Phospho-EGFR dimer",
+            "modification" : [],
+            "ref" : "Reactome:180269",
+            "subnodes" : [
+               "Reactome:180304_Reactome:180269_0",
+               "Reactome:179882_Reactome:180269_0",
+               "Reactome:162563_Reactome:180269_0"
+            ],
+            "width" : 1,
+            "x" : 581,
+            "y" : 222
+         },
+         "id" : "Reactome:180269",
+         "index" : 6,
+         "is_abstract" : 0,
+         "sbo" : 253,
+         "type" : "Complex"
+      }
+   ]
+}
