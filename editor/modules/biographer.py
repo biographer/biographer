@@ -522,7 +522,7 @@ class Graph:
 				n.id = randomID()
 				self.log("Collision: Node ID changed from '"+odlID+"' to '"+n.id+"' !")
 			usedIDs.append(n.id)
-			if n.type == getType("Compartment Node"):
+			if n.type == getNodeType("Compartment Node"):
 				compartmentIDs.append(n.id)
 			nodeIDs.append(n.id)
 
@@ -736,7 +736,7 @@ class Graph:
 			n = Node( defaults=True )
 			n.id			= compartment.getId()
 			n.sbo			= getSBO("Compartment")
-			n.type                  = getType("Compartment")
+			n.type                  = getNodeType("Compartment")
 			n.data.label		= compartment.getName()
 			if compartment.isSetOutside():
 				n.data.compartment	= compartment.getOutside()
@@ -746,7 +746,7 @@ class Graph:
 			n = Node( defaults=True )
 			n.id			= species.getId()
 			n.sbo			= getSBO( species.getSBOTerm() )
-			n.type			= getType("Entitiy Pool Node")
+			n.type			= getNodeType("Entitiy Pool Node")
 			n.data.label		= species.getName()
 			n.data.compartment	= species.getCompartment()
 			self.Nodes.append(n)
@@ -757,7 +757,7 @@ class Graph:
 			n			= Node( defaults=True )
 			n.id			= reaction.getId()
 			n.sbo			= getSBO("Unspecified")
-		        n.type         		= getType('Process Node')
+		        n.type         		= getNodeType('Process Node')
 			n.data.label		= reaction.getName()
 			self.Nodes.append(n)
 			self.IDmapNodes[ n.id ]	= len(self.Nodes)-1
@@ -766,6 +766,7 @@ class Graph:
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
 				e.sbo           = getSBO('Reactant')
+				e.type		= getEdgeType(e.sbo)
 				e.source        = reactant.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
@@ -774,6 +775,7 @@ class Graph:
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
 				e.sbo           = getSBO('Production')
+				e.type		= getEdgeType(e.sbo)
 				e.source        = n.id
 				e.target	= product.getSpecies()
 				self.Edges.append(e)
@@ -782,6 +784,7 @@ class Graph:
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
 				e.sbo		= getSBO( modifier.getSBOTerm() )
+				e.type		= getEdgeType(e.sbo)
 				e.source        = modifier.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
@@ -825,7 +828,7 @@ class Graph:
 			if (not node.is_abstract) and (self.EdgeCount(node) > 0):
 				G.add_node( 	str(node.id),
 						label = node.data.label if node.data.owns("label") else str(node.id),
-						shape = 'ellipse' if node.type != getType("Process Node") else 'box'
+						shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
 						)
 			elif updateNodeProperties:
 				self.Nodes.pop( self.Nodes.index(node) )

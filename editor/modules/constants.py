@@ -17,27 +17,11 @@ MandatoryEdgeKeys	= ['id','sbo','source','target']
 EdgeKeys		= MandatoryEdgeKeys + ['data']
 OptionalEdgeKeys	= ['type', 'style', 'thickness', 'label', 'label_x', 'label_y', 'handles']
 EdgeKeyAliases		= {}
-DefaultEdge		= { "sbo":13, "source":0, "target":0, "data":{ "type":"straight", "style":"solid", "thickness":1, "label":"Orphan Edge", "label_x":10, "label_y":10, "handles":[] } }
+DefaultEdge		= { "sbo":13, "type":"Substrate", "source":0, "target":0, "data":{ "type":"straight", "style":"solid", "thickness":1, "label":"Orphan Edge", "label_x":10, "label_y":10, "handles":[] } }
 
 # end defaults
 
 #### SBO Terms ####
-
-TYPE = { "Entitiy Pool Node":0, "Auxiliary Unit":1, "Compartment Node":2, "Container Node":3, "Process Node":4, "Reference Node":5 }
-
-def getType(text):
-	if text in TYPE.keys():
-		return TYPE[text]
-	text = text+" Node"
-	if text in TYPE.keys():
-		return TYPE[text]
-	return 0
-
-def getLayoutNodeType(type):			# -> Acer/Thomas
-	if type == TYPE["Process Node"]:
-		return "Reaction"
-	else:
-		return "Compound"
 
 NodeSBO = EdgeSBO = ModificationSBO = {}
 
@@ -96,6 +80,49 @@ def getSBO(term):						# return SBO of text SBO term
 	else:
 		print "Error: Unknown SBO term '"+str(term)+"' !"
 	return str(result)
+
+NodeTypes = { "Entitiy Pool Node":0, "Auxiliary Unit":1, "Compartment Node":2, "Container Node":3, "Process Node":4, "Reference Node":5 }
+
+def getNodeType(text):
+	if text in NodeTypes.keys():
+		return NodeTypes[text]
+	if text+" Node" in NodeTypes.keys():
+		return NodeTypes[text+" Node"]
+	return 0
+
+def getLayoutNodeType(type):			# -> Acer/Thomas
+	if type == NodeTypes["Process Node"]:
+		return "Reaction"
+	else:
+		return "Compound"
+
+LayoutEdgeTypes = ["Substrate", "Product", "Catalyst", "Activator", "Inhibitor"]
+
+#EdgeSBO[10] = EdgeSBO[336] = "Reactant"			->	Substrate
+#EdgeSBO[393] = "Production"					->	Product
+#EdgeSBO[394] = "Consumption"					->	Substrate
+#EdgeSBO[19] = "Modulation"					->	Catalyst
+#EdgeSBO[20] = "Inhibition"					->	Inhibitor
+#EdgeSBO[459] = EdgeSBO[15] = EdgeSBO[11] = "Stimulation"	->	Activator
+#EdgeSBO[461] =  "Necessary Stimulation"			->	Activator
+#EdgeSBO[13] = "Catalysis"					->	Catalyst
+
+SBODefinedEdgeType2LayoutEdgeTypeMapping = {	"Reactant":		"Substrate",
+						"Production":		"Product",
+						"Consumption":		"Substrate",
+						"Modulation":		"Catalyst",
+						"Inhibition":		"Inhibitor",
+						"Stimulation":		"Activator",
+						"Necessary Stimulation":"Activator",
+						"Catalysis":		"Catalyst"	}
+
+def getEdgeType(SBO):
+	t = LayoutEdgeTypes[0]						# fallback value: "Substrate"
+	if SBO in EdgeSBO.keys():					# define type by SBO
+		t = EdgeSBO[SBO]
+	if t in SBODefinedEdgeType2LayoutEdgeTypeMapping.keys():	# translate to a value the Layouter understands
+		t = SBODefinedEdgeType2LayoutEdgeTypeMapping[t]
+	return t
 
 ##############################
 

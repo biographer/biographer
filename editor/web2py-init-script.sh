@@ -13,8 +13,8 @@
 
 python="/usr/bin/python"
 executable="/var/www/web2py/web2py.py"
-#IP="127.0.0.1"
-IP="192.168.2.117"
+IP="127.0.0.1"
+#IP="192.168.2.117"
 logfile="/var/log/web2py.log"
 biographer="/var/www/web2py/applications/biographer"
 killer="$biographer/killweb2py.py"
