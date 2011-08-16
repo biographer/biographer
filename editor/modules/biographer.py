@@ -830,6 +830,7 @@ class Graph:
 		layout = ""
 		print "."
 		def write(s):
+			global layout
 			layout += str(s)+"\n"
 		print "."
 
