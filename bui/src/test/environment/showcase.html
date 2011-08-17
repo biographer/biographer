@@ -41,6 +41,11 @@
                 return false;
             });
 
+            $('.fitToPage').click(function() {
+                graph.fitToPage();
+                return false;
+            });
+
             $('.performance').click(function() {
                 var highPerformance = bui.util.toBoolean($(this).data('performance'));
                 console.log(highPerformance)
@@ -62,6 +67,7 @@
     <li class='focusToNode' data-node-id='node10'>Focus on a node</li>
     <li class='scale' data-rate='0.1'>Scale up</li>
     <li class='scale' data-rate='-0.1'>Scale down</li>
+    <li class='fitToPage'>Fit to page</li>
     <li class='performance' data-performance='true'>High performance mode</li>
     <li class='performance' data-performance='false'>Low performance mode</li>
     <li class='export'>Export to JSON (see console)</li>

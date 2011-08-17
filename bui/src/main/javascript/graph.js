@@ -311,6 +311,26 @@
         },
 
         /**
+         * Fit the Graph to the viewport, i.e. scale the graph down to show
+         * the whole graph or (in the case  of a very small graph) scale it
+         * up.
+         *
+         * @return {bui.Graph} Fluent interface
+         */
+        fitToPage : function() {
+            var dimensions = this._privates(identifier).rootDimensions;
+            
+            var viewportWidth = $(window).width();
+            var viewportHeight = $(window).height();
+
+            var scale = Math.min(viewportWidth / dimensions.width,
+                    viewportHeight / dimensions.height);
+            this.scale(scale);
+            
+            return this;
+        },
+
+        /**
          * @description
          * Add a drawable to this graph by calling this function with the
          * constructor of a drawable type. The object will be completely
