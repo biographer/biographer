@@ -176,7 +176,9 @@
         var privates = this._privates(identifier);
         privates.hoverEffect = true;
         privates.marker = null;
+        privates.markerId = null;
         privates.hoverEffectActive = false;
+        privates.lineStyle = null;
 
         this.bind(bui.Drawable.ListenerType.visible,
                 visibilityChanged.createDelegate(this),
@@ -268,6 +270,7 @@
             if (markerId !== undefined) {
                 if (markerId === null) {
                     privates.marker = null;
+                    privates.markerId = null;
                     this.fire(bui.AbstractLine.ListenerType.marker,
                             [this, null]);
                 } else {
@@ -275,6 +278,7 @@
 
                     if (marker !== undefined && marker.id !== privates.marker){
                         privates.marker = marker.id;
+                        privates.markerId = markerId;
                         this.fire(bui.AbstractLine.ListenerType.marker,
                                 [this, marker.id]);
                     }
@@ -301,6 +305,8 @@
                     this.removeClass(bui.AbstractLine.Style[availableStyle]);
                 }
             }
+
+            this._privates(identifier).lineStyle = style;
 
             this.addClass(bui.AbstractLine.Style[style]);
 
@@ -353,6 +359,28 @@
             }
 
             return privates.hoverEffectActive;
+        },
+
+        // overridden
+        toJSON : function() {
+            var json = bui.AbstractLine.superClazz.prototype.toJSON.call(this),
+                    dataFormat = bui.settings.dataFormat,
+                    privates = this._privates(identifier);
+
+            if (privates.lineStyle !== null &&
+                    privates.lineStyle !== bui.AbstractLine.Style.solid) {
+                updateJson(json, dataFormat.edge.style, privates.lineStyle);
+            }
+
+            if (privates.markerId !== null) {
+                var sbo = getSBOForMarkerId(privates.markerId);
+
+                if (sbo !== null) {
+                    updateJson(json, dataFormat.drawable.sbo, sbo);
+                }
+            }
+
+            return json;
         }
     };
 

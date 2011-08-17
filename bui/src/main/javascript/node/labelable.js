@@ -247,6 +247,17 @@
                 width : maxWidth,
                 height : maxHeight
             };
+        },
+
+        // overridden
+        toJSON : function() {
+            var json = bui.Labelable.superClazz.prototype.toJSON.call(this),
+                    privates = this._privates(identifier),
+                    dataFormat = bui.settings.dataFormat;
+
+            updateJson(json, dataFormat.node.label, privates.label);
+
+            return json;
         }
     };
 

@@ -74,6 +74,13 @@ bui.settings = {
             height : ['data', 'height'],
             subNodes : ['data', 'subnodes'],
             modifications : ['data', 'modifications']
+        },
+        edge : {
+            source : 'source',
+            target : 'target',
+            style : ['data', 'style'],
+            type : ['data', 'type'],
+            handles : ['data', 'handles']
         }
 
     },
