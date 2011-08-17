@@ -954,8 +954,6 @@
      */
     bui.Node.ListenerType = {
         /** @field */
-	click : bui.util.createListenerTypeId(),
-        /** @field */
         parent : bui.util.createListenerTypeId(),
         /** @field */
         position : bui.util.createListenerTypeId(),

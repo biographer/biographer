@@ -1,7 +1,7 @@
-(function(bui){
+(function(bui) {
     var identifier = 'bui.Drawable';
 
-     /**
+    /**
      * @private
      * Function used for the generation of listener identifiers
      * @param {bui.Drawable} drawable
@@ -151,13 +151,13 @@
                     node._privates(identifier).graph.id();
         },
 
-       /**
-        * @description
-        * Add a class to this drawable
-        *
-        * @param {String} klass the class which you want to add
-        * @return {bui.Drawable} Fluent interface
-        */
+        /**
+         * @description
+         * Add a class to this drawable
+         *
+         * @param {String} klass the class which you want to add
+         * @return {bui.Drawable} Fluent interface
+         */
         addClass : function(klass) {
             var classes = this._privates(identifier).classes;
             if (classes.indexOf(klass) == -1) {
@@ -170,27 +170,29 @@
         },
 
         /**
-        * @description
-        * Remove a class from this drawable, if no parameter is passed remove all classes
-        *
-        * @param {String} klass the class which you want to remove
-        * @return {bui.Drawable} Fluent interface
-        */
+         * @description
+         * Remove a class from this drawable, if no parameter is passed remove all classes
+         *
+         * @param {String} klass the class which you want to remove
+         * @return {bui.Drawable} Fluent interface
+         */
         removeClass : function(klass) {
-	    if(klass == undefined){//if undefine, remove all classes
-		this.fire(bui.Drawable.ListenerType.classes, [this, '']);
-	    } else {
-		    var classes = this._privates(identifier).classes;
+            if (klass === undefined) {
+                this._privates(identifier).classes = [];
+                this.fire(bui.Drawable.ListenerType.classes, [this, '']);
+            } else {
+                var classes = this._privates(identifier).classes;
 
-		    var index = classes.indexOf(klass);
+                var index = classes.indexOf(klass);
 
-		    if (index != -1) {
-			classes.splice(index, 1);
-			this.fire(bui.Drawable.ListenerType.classes, [this,
-			    this.classString()]);
-		    }
-	    }
+                if (index != -1) {
+                    classes.splice(index, 1);
+                    this.fire(bui.Drawable.ListenerType.classes, [this,
+                        this.classString()]);
+                }
+            }
 
+            return this;
         },
 
         /**
@@ -229,7 +231,7 @@
 
         /**
          * Update the JSON object.
-         * 
+         *
          * @param {String|String[]} path The property name which should be
          *   updated. Pass a string array to handle property chains.
          * @param {Object} value The property's value.
@@ -248,13 +250,13 @@
         /**
          * Export this drawable instance to JSON
          *
-         * @return {Object} The drawable instance exported to JSON. 
+         * @return {Object} The drawable instance exported to JSON.
          */
         toJSON : function() {
             var json = {},
                     privates = this._privates(identifier),
                     dataFormat = bui.settings.dataFormat.drawable;
-            
+
             updateJson(json, dataFormat.id, privates.id);
             updateJson(json, dataFormat.visible, privates.visible);
 
