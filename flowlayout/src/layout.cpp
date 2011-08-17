@@ -476,7 +476,23 @@ void Network::get_ideal_distance(){
       isadj[n1][n2]=isadj[n2][n2]=true; //they are adjacent to each other.
    }
 }
-
+int _find(VI* nd,int idx){
+   int n=nd->size();
+   int i;
+   for (i=0;i<n;i++){
+      if ((*nd)[i]==idx) return i;
+   }
+   return 0;
+}
+float _getwidths(Network* nw,VI* nd){
+   int n=nd->size();
+   int i;
+   float width=0;
+   for (i=0;i<n;i++){
+      width+=(*nw->nodes)[(*nd)[i]].pts.width;
+   }
+   return width;
+}
 float Network::init_layout(){
    /* This function quickly generates an initial layout, using the edge information.
       That is, for each reaction, we try to place subtrates in above, products in below and others on sides.
@@ -485,6 +501,7 @@ float Network::init_layout(){
    float force=0.0,d,cost1,cost2;
    int n=nodes->size(), m=edges->size();
    int i, n1, n2;
+   VI* nd;
    Edgetype _type;
    for(i=0;i<m;i++){
       _type=(*edges)[i].pts.type;
@@ -493,24 +510,40 @@ float Network::init_layout(){
       if(_type==product){
          //product should be below the reaction.
          //accumulating sum of expected positions (movements).
+         nd=getNeighbors(n1,product);
+         int sz=nd->size();
+         int idx=_find(nd,n2); // get position of product in product list
+         float width=_getwidths(this,nd); // sum of width of all products
+         float left=width*(sz-1)/sz;
+         float step=0;
+         if (sz>1) step=2*left/(sz-1);
          mov[n1].y+=(pos[n2].y+dij1[i]);
          mov[n2].y+=(pos[n1].y-dij1[i]);
-         mov[n1].x+=pos[n2].x;
-         mov[n2].x+=pos[n1].x;
+         mov[n1].x+=pos[n2].x+left+idx*step;// postioning nodes left and right of reaction depending on how many products
+         mov[n2].x+=pos[n1].x-left+idx*step;
       }
       else if(_type==substrate){
          //substrate should be above the reaction.
          //accumulating sum of expected positions (movements).
+         nd=getNeighbors(n1,substrate);
+         int sz=nd->size();
+         int idx=_find(nd,n2); // get position of substrate in product list
+         float width=_getwidths(this,nd); // sum of width of all substrates
+         float left=width*(sz-1)/sz;
+         float step=0;
+         if (sz>1) step=2*left/(sz-1);
          mov[n1].y+=(pos[n2].y-dij1[i]);
          mov[n2].y+=(pos[n1].y+dij1[i]);
-         mov[n1].x+=pos[n2].x;
-         mov[n2].x+=pos[n1].x;
+         mov[n1].x+=pos[n2].x+left+idx*step; // postioning nodes left and right of reaction depending on how many substrates
+         mov[n2].x+=pos[n1].x-left+idx*step;
       }
       else{
          //others on sides (the nearer side)
          //accumulating sum of expected positions (movements).
-         cost1=fabs((pos[n1].x-dij1[i])-mov[n2].x/deg[n2]);
-         cost2=fabs((pos[n1].x+dij1[i])-mov[n2].x/deg[n2]);
+/*         cost1=fabs((pos[n1].x-dij1[i])-mov[n2].x/deg[n2]);  // this assumes that mon has been completely accumulated
+         cost2=fabs((pos[n1].x+dij1[i])-mov[n2].x/deg[n2]);*/
+         cost1=fabs((pos[n1].x-dij1[i])-pos[n2].x);
+         cost2=fabs((pos[n1].x+dij1[i])-pos[n2].x);
          if(cost1<cost2)mov[n2].x+=(pos[n1].x-dij1[i]);
          else mov[n2].x+=(pos[n1].x+dij1[i]);
          mov[n2].y+=pos[n1].y;
@@ -522,8 +555,9 @@ float Network::init_layout(){
       mov[i].x/=deg[i]; mov[i].y/=deg[i]; //it is an average.
       d=dist(mov[i],pos[i]); //length of displacement
       force+=(d*d); //accumulating force.
-      pos[i].x=mov[i].x; 
-      pos[i].y=mov[i].y;
+      // mode towards expected positon
+      pos[i].x+=(mov[i].x-pos[i].x)/5; 
+      pos[i].y+=(mov[i].y-pos[i].y)/5;
       mov[i].x=mov[i].y=0.0;
    }
    return force;
@@ -759,6 +793,7 @@ float Network::layout(){
    
    //copying coordinates from nodes[] to pos[];   
    int n=nodes->size(),i;   
+   int progcc=0; // counter for show_progress
    pos.resize(n);
    mov.resize(n);
    pts_dir.resize(n);
@@ -785,7 +820,8 @@ float Network::layout(){
    while(true){
       k++;
       cur_force=init_layout();
-      if(fabs(pre_force-cur_force)<pre_force*err)break; //the system force converges to a minimal.
+      show_progress(progcc);
+      if(fabs(pre_force-cur_force)<pre_force*err || cur_force==0)break; //the system force converges to a minimal.
       pre_force=cur_force;
    }
    printf("number of iteration: %d\n",k);    
@@ -807,6 +843,7 @@ float Network::layout(){
       cur_force=calc_force_adj();
       if(k>300)cur_force+=firm_distribution();
       move_nodes();
+      show_progress(progcc);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++; //number of increases.
       if(inc>log(1.0*n))break; //quit if number of increases if larger than log(n).
@@ -825,6 +862,7 @@ float Network::layout(){
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
+      show_progress(progcc);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
@@ -848,6 +886,7 @@ float Network::layout(){
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
       move_nodes();
+      show_progress(progcc);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
@@ -864,6 +903,7 @@ float Network::layout(){
    pre_force=inf;
    while(true){
       cur_force=min_edge_crossing(1);
+      show_progress(progcc);
       if(cur_force>=pre_force)break;
       pre_force=cur_force;
       cout<<cur_force<<endl;
@@ -879,6 +919,7 @@ float Network::layout(){
       adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
+      show_progress(progcc);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force||cur_force==inf)inc++;
       if(inc>log(1.0*n))break;
@@ -895,6 +936,7 @@ float Network::layout(){
       adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
+      show_progress(progcc);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
