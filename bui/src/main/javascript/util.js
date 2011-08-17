@@ -585,3 +585,24 @@ var getModificationSBOForLabel = function(label) {
 
     return null;
 };
+
+/**
+ * Determine the SBO ID for an edge marker id using the
+ * edgeMarkerMapping.
+ *
+ * @param {String} id The connecting arcs (marker) id.
+ * @return {Number} SBO id or null in case no SBO could be found.
+ */
+var getSBOForMarkerId = function(id) {
+    for (var sbo in edgeMarkerMapping) {
+        if (edgeMarkerMapping.hasOwnProperty(sbo)) {
+            var mapping = edgeMarkerMapping[sbo];
+
+            if (mapping.klass === id) {
+                return bui.util.toNumber(sbo);
+            }
+        }
+    }
+
+    return null;
+};

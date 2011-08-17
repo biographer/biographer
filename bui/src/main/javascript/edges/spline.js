@@ -202,6 +202,24 @@
             }
 
             return this;
+        },
+
+        // overridden
+        toJSON : function() {
+            var json = bui.Spline.superClazz.prototype.toJSON.call(this),
+                    dataFormat = bui.settings.dataFormat,
+                    privates = this._privates(identifier);
+
+            var sourcePosition =
+                    privates.sourceSplineHandle.absoluteCenter(),
+                    targetPosition =
+                    privates.targetSplineHandle.absoluteCenter();
+
+            updateJson(json, dataFormat.edge.handles, [sourcePosition,
+                targetPosition]);
+            updateJson(json, dataFormat.edge.type, 'curve');
+
+            return json;
         }
     };
 

@@ -160,7 +160,7 @@ var customExample = {
              target : 'node14'
         }, {
              id : 'edge5',
-             sbo : 459,
+             sbo : 461,
              source : 'node14',
              target : 'node4',
             data : {
@@ -168,12 +168,12 @@ var customExample = {
             }
         }, {
              id : 'edge6',
-             sbo : 459,
+             sbo : 13,
              source : 'node4',
              target : 'node10'
         }, {
              id : 'edge7',
-             sbo : 459,
+             sbo : 20,
              source : 'node10',
              target : 'node9',
             data : {
@@ -182,7 +182,7 @@ var customExample = {
             }
         }, {
              id : 'edge8',
-             sbo : 459,
+             sbo : 19,
              source : 'node10',
              target : 'node8'
         }, {

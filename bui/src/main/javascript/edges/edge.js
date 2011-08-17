@@ -252,6 +252,7 @@
         privates.handles = [];
         privates.lines = [];
         privates.marker = null;
+        privates.lineStyle = null;
         redrawLines.call(this);
 
         this.bind(bui.AttachedDrawable.ListenerType.source,
@@ -325,6 +326,39 @@
             privates.lineStyle = style;
             redrawLines.call(this);
             return this;
+        },
+
+        // overridden
+        toJSON : function() {
+            var json = bui.Edge.superClazz.prototype.toJSON.call(this),
+                    dataFormat = bui.settings.dataFormat,
+                    privates = this._privates(identifier);
+
+            if (privates.lineStyle !== null &&
+                    privates.lineStyle !== bui.AbstractLine.Style.solid) {
+                updateJson(json, dataFormat.edge.style, privates.lineStyle);
+            }
+
+            if (privates.handles.length > 0) {
+                var handles = [];
+
+                for (var i = 0; i < privates.handles.length; i++) {
+                    var position = privates.handles[i].absoluteCenter();
+                    handles.push(position);
+                }
+
+                updateJson(json, dataFormat.edge.handles, handles);
+            }
+
+            if (privates.marker !== null) {
+                var sbo = getSBOForMarkerId(privates.marker);
+
+                if (sbo !== null) {
+                    updateJson(json, dataFormat.drawable.sbo, sbo);
+                }
+            }
+
+            return json;
         }
     };
 

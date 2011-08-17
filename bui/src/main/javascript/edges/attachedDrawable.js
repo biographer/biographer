@@ -147,6 +147,22 @@
             }
 
             return privates.target;
+        },
+
+        // overridden
+        toJSON : function() {
+            var json = bui.AttachedDrawable.superClazz.prototype.toJSON.call(this),
+                    dataFormat = bui.settings.dataFormat,
+                    privates = this._privates(identifier);
+
+            if (privates.source !== null) {
+                updateJson(json, dataFormat.edge.source, privates.source.id());
+            }
+            if (privates.target !== null) {
+                updateJson(json, dataFormat.edge.target, privates.target.id());
+            }
+
+            return json;
         }
     };
 
