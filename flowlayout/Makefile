@@ -7,7 +7,7 @@ SRC=src/
 BDIR=build/
 VPATH=$(SRC):$(BDIR)
 
-default: layout_test2.cpp network.o layout.o functions.o
+default: dolayout.cpp network.o layout.o functions.o
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)layout $<
 json:	layout_json.cpp network.o layout.o functions.o
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)layoutJson $<
