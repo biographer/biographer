@@ -996,10 +996,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Sos-mediated nucleotide exchange of Ras (EGF:EGFR-Sos:Grb2)",
             "ref" : "Reactome:177938",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1569,
             "y" : 2180
          },
@@ -1011,6 +1011,7 @@
       },
       {
          "data" : {
+            "height" : 0,
             "label" : "Plasmamembrane",
             "ref" : "MAP:Plasmamembrane",
             "subnodes" : [
@@ -1106,7 +1107,8 @@
                "Reactome:163338",
                "Reactome:179837",
                "Reactome:197745"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "MAP:Plasmamembrane",
          "index" : 1,
@@ -1116,6 +1118,7 @@
       },
       {
          "data" : {
+            "height" : 0,
             "label" : "Cytosol",
             "ref" : "MAP:Cytosol",
             "subnodes" : [
@@ -1212,7 +1215,8 @@
                "MAP:Cs56-65-5_CY_Reactome:109829",
                "MAP:Cb16761_CY_Reactome:109829",
                "MAP:UP27361_CY"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "MAP:Cytosol",
          "index" : 2,
@@ -1224,9 +1228,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GDP",
             "modification" : [],
-            "ref" : "MAP:Cb17552_CY"
+            "ref" : "MAP:Cb17552_CY",
+            "width" : 0
          },
          "id" : "MAP:Cb17552_CY_Reactome:109796_0",
          "is_abstract" : 1,
@@ -1237,9 +1243,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS",
             "modification" : [],
-            "ref" : "Reactome:109782"
+            "ref" : "Reactome:109782",
+            "width" : 0
          },
          "id" : "Reactome:109782_Reactome:109796_0",
          "is_abstract" : 1,
@@ -1251,7 +1259,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "p21 RAS:GDP",
             "modification" : [],
             "ref" : "Reactome:109796",
@@ -1259,7 +1267,7 @@
                "MAP:Cb17552_CY_Reactome:109796_0",
                "Reactome:109782_Reactome:109796_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 1889,
             "y" : 2293
          },
@@ -1274,11 +1282,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "GTP",
             "modification" : [],
             "ref" : "MAP:Cb15996_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 1131,
             "y" : 2293
          },
@@ -1293,11 +1301,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "GDP",
             "modification" : [],
             "ref" : "MAP:Cb17552_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 1569,
             "y" : 2080
          },
@@ -1311,9 +1319,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS",
             "modification" : [],
-            "ref" : "Reactome:109782"
+            "ref" : "Reactome:109782",
+            "width" : 0
          },
          "id" : "Reactome:109782_Reactome:109783_0",
          "is_abstract" : 1,
@@ -1324,9 +1334,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GTP",
             "modification" : [],
-            "ref" : "MAP:Cb15996_CY"
+            "ref" : "MAP:Cb15996_CY",
+            "width" : 0
          },
          "id" : "MAP:Cb15996_CY_Reactome:109783_0",
          "is_abstract" : 1,
@@ -1338,7 +1350,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "p21 RAS:GTP",
             "modification" : [],
             "ref" : "Reactome:109783",
@@ -1346,7 +1358,7 @@
                "Reactome:109782_Reactome:109783_0",
                "MAP:Cb15996_CY_Reactome:109783_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 1886,
             "y" : 2080
          },
@@ -1360,9 +1372,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "Son of sevenless protein homolog 1",
             "modification" : [],
-            "ref" : "MAP:UQ07889_CY"
+            "ref" : "MAP:UQ07889_CY",
+            "width" : 0
          },
          "id" : "MAP:UQ07889_CY_MAP:Cx114_0_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1373,9 +1387,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2()",
             "modification" : [],
-            "ref" : "MAP:UP62993_CY"
+            "ref" : "MAP:UP62993_CY",
+            "width" : 0
          },
          "id" : "MAP:UP62993_CY_MAP:Cx114_0_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1386,13 +1402,15 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2:SOS1",
             "modification" : [],
             "ref" : "MAP:Cx114",
             "subnodes" : [
                "MAP:UQ07889_CY_MAP:Cx114_0_Reactome:179820_0",
                "MAP:UP62993_CY_MAP:Cx114_0_Reactome:179820_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "MAP:Cx114_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1401,6 +1419,7 @@
       },
       {
          "data" : {
+            "height" : 0,
             "label" : "Extracellular",
             "ref" : "MAP:Extracellular",
             "subnodes" : [
@@ -1424,7 +1443,8 @@
                "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:179791_0",
                "Reactome:179863_Reactome:179847_0",
                "Reactome:179863"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "MAP:Extracellular",
          "index" : 3,
@@ -1436,9 +1456,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1449,6 +1471,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -1472,7 +1495,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1483,13 +1507,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:179820_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:179820_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_0_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1500,9 +1526,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1513,6 +1541,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -1536,7 +1565,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1547,13 +1577,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:179820_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:179820_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_1_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1564,13 +1596,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR (Y992, Y1068, Y1086, Y1148, Y1173) dimer",
             "modification" : [],
             "ref" : "Reactome:179882",
             "subnodes" : [
                "Reactome:179860_Reactome:179882_0_Reactome:179820_0",
                "Reactome:179860_Reactome:179882_1_Reactome:179820_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179882_Reactome:179820_0",
          "is_abstract" : 1,
@@ -1582,7 +1616,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "GRB2:SOS-EGF-Phospho-EGFR dimer",
             "modification" : [],
             "ref" : "Reactome:179820",
@@ -1590,7 +1624,7 @@
                "MAP:Cx114_Reactome:179820_0",
                "Reactome:179882_Reactome:179820_0"
             ],
-            "width" : 1,
+            "width" : 424.08,
             "x" : 1514,
             "y" : 2293
          },
@@ -1604,10 +1638,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "EGFR autophosphorylation",
             "ref" : "Reactome:177934",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1331,
             "y" : 3006
          },
@@ -1621,9 +1655,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179847_0_Reactome:179845_0",
          "is_abstract" : 1,
@@ -1634,9 +1670,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGFR",
             "modification" : [],
-            "ref" : "Reactome:179837"
+            "ref" : "Reactome:179837",
+            "width" : 0
          },
          "id" : "Reactome:179837_Reactome:179847_0_Reactome:179845_0",
          "is_abstract" : 1,
@@ -1647,13 +1685,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:EGFR",
             "modification" : [],
             "ref" : "Reactome:179847",
             "subnodes" : [
                "Reactome:179863_Reactome:179847_0_Reactome:179845_0",
                "Reactome:179837_Reactome:179847_0_Reactome:179845_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179847_Reactome:179845_0",
          "is_abstract" : 1,
@@ -1664,9 +1704,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179847_0_Reactome:179845_1",
          "is_abstract" : 1,
@@ -1677,9 +1719,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGFR",
             "modification" : [],
-            "ref" : "Reactome:179837"
+            "ref" : "Reactome:179837",
+            "width" : 0
          },
          "id" : "Reactome:179837_Reactome:179847_0_Reactome:179845_1",
          "is_abstract" : 1,
@@ -1690,13 +1734,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:EGFR",
             "modification" : [],
             "ref" : "Reactome:179847",
             "subnodes" : [
                "Reactome:179863_Reactome:179847_0_Reactome:179845_1",
                "Reactome:179837_Reactome:179847_0_Reactome:179845_1"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179847_Reactome:179845_1",
          "is_abstract" : 1,
@@ -1708,7 +1754,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "EGF:EGFR dimer",
             "modification" : [],
             "ref" : "Reactome:179845",
@@ -1716,7 +1762,7 @@
                "Reactome:179847_Reactome:179845_0",
                "Reactome:179847_Reactome:179845_1"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 1331,
             "y" : 3106
          },
@@ -1731,11 +1777,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ATP",
             "modification" : [],
             "ref" : "MAP:Cs56-65-5_CY",
-            "width" : 1,
+            "width" : 319.68,
             "x" : 1008,
             "y" : 3106
          },
@@ -1750,11 +1796,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ADP",
             "modification" : [],
             "ref" : "MAP:Cb16761_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 1696,
             "y" : 2906
          },
@@ -1768,9 +1814,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_0",
          "is_abstract" : 1,
@@ -1781,6 +1829,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -1804,7 +1853,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_0",
          "is_abstract" : 1,
@@ -1815,13 +1865,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_0",
          "is_abstract" : 1,
@@ -1832,9 +1884,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_1",
          "is_abstract" : 1,
@@ -1845,6 +1899,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -1868,7 +1923,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_1",
          "is_abstract" : 1,
@@ -1879,13 +1935,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_1",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_1"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_1",
          "is_abstract" : 1,
@@ -1897,7 +1955,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "EGF:Phospho-EGFR (Y992, Y1068, Y1086, Y1148, Y1173) dimer",
             "modification" : [],
             "ref" : "Reactome:179882",
@@ -1905,7 +1963,7 @@
                "Reactome:179860_Reactome:179882_0",
                "Reactome:179860_Reactome:179882_1"
             ],
-            "width" : 1,
+            "width" : 460.08,
             "x" : 967,
             "y" : 2906
          },
@@ -1919,10 +1977,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Nuclear translocation of phospho-ERK-1 dimer",
             "ref" : "Reactome:109867",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 3261,
             "y" : 290
          },
@@ -1936,6 +1994,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "Activated ERK1",
             "modification" : [
                [
@@ -1947,7 +2006,8 @@
                   "204"
                ]
             ],
-            "ref" : "MAP:UP27361_CY_pho202pho204"
+            "ref" : "MAP:UP27361_CY_pho202pho204",
+            "width" : 0
          },
          "id" : "MAP:UP27361_CY_pho202pho204_Reactome:109844_0",
          "is_abstract" : 1,
@@ -1958,6 +2018,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "Activated ERK1",
             "modification" : [
                [
@@ -1969,7 +2030,8 @@
                   "204"
                ]
             ],
-            "ref" : "MAP:UP27361_CY_pho202pho204"
+            "ref" : "MAP:UP27361_CY_pho202pho204",
+            "width" : 0
          },
          "id" : "MAP:UP27361_CY_pho202pho204_Reactome:109844_1",
          "is_abstract" : 1,
@@ -1981,7 +2043,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "phospho-ERK-1 dimer",
             "modification" : [],
             "ref" : "Reactome:109844",
@@ -1989,7 +2051,7 @@
                "MAP:UP27361_CY_pho202pho204_Reactome:109844_0",
                "MAP:UP27361_CY_pho202pho204_Reactome:109844_1"
             ],
-            "width" : 1,
+            "width" : 246.24,
             "x" : 3261,
             "y" : 378
          },
@@ -2001,6 +2063,7 @@
       },
       {
          "data" : {
+            "height" : 0,
             "label" : "Nucleus",
             "ref" : "MAP:Nucleus",
             "subnodes" : [
@@ -2011,7 +2074,8 @@
                "Reactome:198710",
                "Reactome:113582_MAN:R12",
                "Reactome:198666"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "MAP:Nucleus",
          "index" : 4,
@@ -2023,6 +2087,7 @@
          "data" : {
             "compartment" : "MAP:Nucleus",
             "compartmentidx" : 4,
+            "height" : 0,
             "label" : "phospho-ERK-1",
             "modification" : [
                [
@@ -2034,7 +2099,8 @@
                   "204"
                ]
             ],
-            "ref" : "Reactome:112359"
+            "ref" : "Reactome:112359",
+            "width" : 0
          },
          "id" : "Reactome:112359_Reactome:109845_0",
          "is_abstract" : 1,
@@ -2045,6 +2111,7 @@
          "data" : {
             "compartment" : "MAP:Nucleus",
             "compartmentidx" : 4,
+            "height" : 0,
             "label" : "phospho-ERK-1",
             "modification" : [
                [
@@ -2056,7 +2123,8 @@
                   "204"
                ]
             ],
-            "ref" : "Reactome:112359"
+            "ref" : "Reactome:112359",
+            "width" : 0
          },
          "id" : "Reactome:112359_Reactome:109845_1",
          "is_abstract" : 1,
@@ -2068,7 +2136,7 @@
             "compartment" : "MAP:Nucleus",
             "compartmentidx" : 4,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "phospho-ERK-1 dimer",
             "modification" : [],
             "ref" : "Reactome:109845",
@@ -2076,7 +2144,7 @@
                "Reactome:112359_Reactome:109845_0",
                "Reactome:112359_Reactome:109845_1"
             ],
-            "width" : 1,
+            "width" : 239.76,
             "x" : 3261,
             "y" : 202
          },
@@ -2090,10 +2158,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : null,
             "ref" : "MAN:R12",
-            "width" : 1,
+            "width" : 66.24,
             "x" : 3556,
             "y" : 114
          },
@@ -2108,11 +2176,11 @@
             "compartment" : "MAP:Nucleus",
             "compartmentidx" : 4,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ATP",
             "modification" : [],
             "ref" : "Reactome:29358",
-            "width" : 1,
+            "width" : 300.24,
             "x" : 3881,
             "y" : 202
          },
@@ -2127,11 +2195,11 @@
             "compartment" : "MAP:Nucleus",
             "compartmentidx" : 4,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ELK1",
             "modification" : [],
             "ref" : "Reactome:198710",
-            "width" : 1,
+            "width" : 313.92,
             "x" : 3556,
             "y" : 202
          },
@@ -2146,11 +2214,11 @@
             "compartment" : "MAP:Nucleus",
             "compartmentidx" : 4,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ADP",
             "modification" : [],
             "ref" : "Reactome:113582",
-            "width" : 1,
+            "width" : 313.92,
             "x" : 3390,
             "y" : 30
          },
@@ -2165,11 +2233,11 @@
             "compartment" : "MAP:Nucleus",
             "compartmentidx" : 4,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "Phospho-ELK1",
             "modification" : [],
             "ref" : "Reactome:198666",
-            "width" : 1,
+            "width" : 313.92,
             "x" : 3722,
             "y" : 30
          },
@@ -2183,10 +2251,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "RAF1  phosphorylates MEK1",
             "ref" : "Reactome:109841",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 2716,
             "y" : 1154
          },
@@ -2201,11 +2269,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ATP",
             "modification" : [],
             "ref" : "MAP:Cs56-65-5_CY",
-            "width" : 1,
+            "width" : 319.68,
             "x" : 3085,
             "y" : 1267
          },
@@ -2219,9 +2287,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "MEK1",
             "modification" : [],
-            "ref" : "MAP:UQ02750_CY"
+            "ref" : "MAP:UQ02750_CY",
+            "width" : 0
          },
          "id" : "MAP:UQ02750_CY_Reactome:109794_0",
          "is_abstract" : 1,
@@ -2232,9 +2302,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "YWHAB()",
             "modification" : [],
-            "ref" : "MAP:UP31946_CY"
+            "ref" : "MAP:UP31946_CY",
+            "width" : 0
          },
          "id" : "MAP:UP31946_CY_Reactome:109793_0_Reactome:109794_0",
          "is_abstract" : 1,
@@ -2245,9 +2317,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS",
             "modification" : [],
-            "ref" : "Reactome:109782"
+            "ref" : "Reactome:109782",
+            "width" : 0
          },
          "id" : "Reactome:109782_Reactome:109783_0_Reactome:109793_0_Reactome:109794_0",
          "is_abstract" : 1,
@@ -2258,9 +2332,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GTP",
             "modification" : [],
-            "ref" : "MAP:Cb15996_CY"
+            "ref" : "MAP:Cb15996_CY",
+            "width" : 0
          },
          "id" : "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109793_0_Reactome:109794_0",
          "is_abstract" : 1,
@@ -2271,13 +2347,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS:GTP",
             "modification" : [],
             "ref" : "Reactome:109783",
             "subnodes" : [
                "Reactome:109782_Reactome:109783_0_Reactome:109793_0_Reactome:109794_0",
                "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109793_0_Reactome:109794_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109783_Reactome:109793_0_Reactome:109794_0",
          "is_abstract" : 1,
@@ -2288,6 +2366,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "cRaf",
             "modification" : [
                [
@@ -2307,7 +2386,8 @@
                   "341"
                ]
             ],
-            "ref" : "Reactome:109792"
+            "ref" : "Reactome:109792",
+            "width" : 0
          },
          "id" : "Reactome:109792_Reactome:109793_0_Reactome:109794_0",
          "is_abstract" : 1,
@@ -2318,6 +2398,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Activated RAF1 complex",
             "modification" : [],
             "ref" : "Reactome:109793",
@@ -2325,7 +2406,8 @@
                "MAP:UP31946_CY_Reactome:109793_0_Reactome:109794_0",
                "Reactome:109783_Reactome:109793_0_Reactome:109794_0",
                "Reactome:109792_Reactome:109793_0_Reactome:109794_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109793_Reactome:109794_0",
          "is_abstract" : 1,
@@ -2337,7 +2419,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 116.64,
             "label" : "Activated RAF1 complex:MEK1",
             "modification" : [],
             "ref" : "Reactome:109794",
@@ -2345,7 +2427,7 @@
                "MAP:UQ02750_CY_Reactome:109794_0",
                "Reactome:109793_Reactome:109794_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 2762,
             "y" : 1267
          },
@@ -2360,11 +2442,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ADP",
             "modification" : [],
             "ref" : "MAP:Cb16761_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 2696,
             "y" : 1070
          },
@@ -2378,9 +2460,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "YWHAB()",
             "modification" : [],
-            "ref" : "MAP:UP31946_CY"
+            "ref" : "MAP:UP31946_CY",
+            "width" : 0
          },
          "id" : "MAP:UP31946_CY_Reactome:109793_0",
          "is_abstract" : 1,
@@ -2391,9 +2475,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS",
             "modification" : [],
-            "ref" : "Reactome:109782"
+            "ref" : "Reactome:109782",
+            "width" : 0
          },
          "id" : "Reactome:109782_Reactome:109783_0_Reactome:109793_0",
          "is_abstract" : 1,
@@ -2404,9 +2490,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GTP",
             "modification" : [],
-            "ref" : "MAP:Cb15996_CY"
+            "ref" : "MAP:Cb15996_CY",
+            "width" : 0
          },
          "id" : "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109793_0",
          "is_abstract" : 1,
@@ -2417,13 +2505,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS:GTP",
             "modification" : [],
             "ref" : "Reactome:109783",
             "subnodes" : [
                "Reactome:109782_Reactome:109783_0_Reactome:109793_0",
                "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109793_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109783_Reactome:109793_0",
          "is_abstract" : 1,
@@ -2434,6 +2524,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "cRaf",
             "modification" : [
                [
@@ -2453,7 +2544,8 @@
                   "341"
                ]
             ],
-            "ref" : "Reactome:109792"
+            "ref" : "Reactome:109792",
+            "width" : 0
          },
          "id" : "Reactome:109792_Reactome:109793_0",
          "is_abstract" : 1,
@@ -2465,7 +2557,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "Activated RAF1 complex",
             "modification" : [],
             "ref" : "Reactome:109793",
@@ -2474,7 +2566,7 @@
                "Reactome:109783_Reactome:109793_0",
                "Reactome:109792_Reactome:109793_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 2402,
             "y" : 1480
          },
@@ -2489,7 +2581,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "phospho-MEK1",
             "modification" : [
                [
@@ -2502,7 +2594,7 @@
                ]
             ],
             "ref" : "MAP:UQ02750_CY_pho218pho222",
-            "width" : 1,
+            "width" : 470.16,
             "x" : 3102,
             "y" : 1070
          },
@@ -2516,9 +2608,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "YWHAB()",
             "modification" : [],
-            "ref" : "MAP:UP31946_CY"
+            "ref" : "MAP:UP31946_CY",
+            "width" : 0
          },
          "id" : "MAP:UP31946_CY_Reactome:109793_0_Reactome:112406_0",
          "is_abstract" : 1,
@@ -2529,9 +2623,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS",
             "modification" : [],
-            "ref" : "Reactome:109782"
+            "ref" : "Reactome:109782",
+            "width" : 0
          },
          "id" : "Reactome:109782_Reactome:109783_0_Reactome:109793_0_Reactome:112406_0",
          "is_abstract" : 1,
@@ -2542,9 +2638,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GTP",
             "modification" : [],
-            "ref" : "MAP:Cb15996_CY"
+            "ref" : "MAP:Cb15996_CY",
+            "width" : 0
          },
          "id" : "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109793_0_Reactome:112406_0",
          "is_abstract" : 1,
@@ -2555,13 +2653,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS:GTP",
             "modification" : [],
             "ref" : "Reactome:109783",
             "subnodes" : [
                "Reactome:109782_Reactome:109783_0_Reactome:109793_0_Reactome:112406_0",
                "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109793_0_Reactome:112406_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109783_Reactome:109793_0_Reactome:112406_0",
          "is_abstract" : 1,
@@ -2572,6 +2672,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "cRaf",
             "modification" : [
                [
@@ -2591,7 +2692,8 @@
                   "341"
                ]
             ],
-            "ref" : "Reactome:109792"
+            "ref" : "Reactome:109792",
+            "width" : 0
          },
          "id" : "Reactome:109792_Reactome:109793_0_Reactome:112406_0",
          "is_abstract" : 1,
@@ -2602,6 +2704,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Activated RAF1 complex",
             "modification" : [],
             "ref" : "Reactome:109793",
@@ -2609,7 +2712,8 @@
                "MAP:UP31946_CY_Reactome:109793_0_Reactome:112406_0",
                "Reactome:109783_Reactome:109793_0_Reactome:112406_0",
                "Reactome:109792_Reactome:109793_0_Reactome:112406_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109793_Reactome:112406_0",
          "is_abstract" : 1,
@@ -2620,9 +2724,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "MEK",
             "modification" : [],
-            "ref" : "Reactome:112398"
+            "ref" : "Reactome:112398",
+            "width" : 0
          },
          "id" : "Reactome:112398_Reactome:112406_0",
          "is_abstract" : 1,
@@ -2634,7 +2740,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 116.64,
             "label" : "Activated RAF1 complex:MEK",
             "modification" : [],
             "ref" : "Reactome:112406",
@@ -2642,7 +2748,7 @@
                "Reactome:109793_Reactome:112406_0",
                "Reactome:112398_Reactome:112406_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 2416,
             "y" : 1267
          },
@@ -2656,10 +2762,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Gab1:Grb2 binds to EGF:Phospho-EGFR",
             "ref" : "Reactome:177940",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 549,
             "y" : 2406
          },
@@ -2673,9 +2779,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2()",
             "modification" : [],
-            "ref" : "MAP:UP62993_CY"
+            "ref" : "MAP:UP62993_CY",
+            "width" : 0
          },
          "id" : "MAP:UP62993_CY_Reactome:179849_0",
          "is_abstract" : 1,
@@ -2686,9 +2794,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GAB1",
             "modification" : [],
-            "ref" : "MAP:UQ13480_CY"
+            "ref" : "MAP:UQ13480_CY",
+            "width" : 0
          },
          "id" : "MAP:UQ13480_CY_Reactome:179849_0",
          "is_abstract" : 1,
@@ -2700,7 +2810,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "GRB2:GAB1",
             "modification" : [],
             "ref" : "Reactome:179849",
@@ -2708,7 +2818,7 @@
                "MAP:UP62993_CY_Reactome:179849_0",
                "MAP:UQ13480_CY_Reactome:179849_0"
             ],
-            "width" : 1,
+            "width" : 218.16,
             "x" : 686,
             "y" : 2506
          },
@@ -2722,9 +2832,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2735,6 +2847,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -2758,7 +2871,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2769,13 +2883,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180348_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180348_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_0_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2786,9 +2902,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2799,6 +2917,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -2822,7 +2941,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2833,13 +2953,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180348_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180348_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_1_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2850,13 +2972,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR (Y992, Y1068, Y1086, Y1148, Y1173) dimer",
             "modification" : [],
             "ref" : "Reactome:179882",
             "subnodes" : [
                "Reactome:179860_Reactome:179882_0_Reactome:180348_0",
                "Reactome:179860_Reactome:179882_1_Reactome:180348_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179882_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2867,9 +2991,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2()",
             "modification" : [],
-            "ref" : "MAP:UP62993_CY"
+            "ref" : "MAP:UP62993_CY",
+            "width" : 0
          },
          "id" : "MAP:UP62993_CY_Reactome:179849_0_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2880,9 +3006,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GAB1",
             "modification" : [],
-            "ref" : "MAP:UQ13480_CY"
+            "ref" : "MAP:UQ13480_CY",
+            "width" : 0
          },
          "id" : "MAP:UQ13480_CY_Reactome:179849_0_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2893,13 +3021,15 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2:GAB1",
             "modification" : [],
             "ref" : "Reactome:179849",
             "subnodes" : [
                "MAP:UP62993_CY_Reactome:179849_0_Reactome:180348_0",
                "MAP:UQ13480_CY_Reactome:179849_0_Reactome:180348_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179849_Reactome:180348_0",
          "is_abstract" : 1,
@@ -2911,7 +3041,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "GAB1:GRB2-EGF-Phospho-EGFR dimer",
             "modification" : [],
             "ref" : "Reactome:180348",
@@ -2919,7 +3049,7 @@
                "Reactome:179882_Reactome:180348_0",
                "Reactome:179849_Reactome:180348_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 477,
             "y" : 2293
          },
@@ -2933,10 +3063,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Stabilisation of RAS:RAF by 14-3-3",
             "ref" : "Reactome:109802",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1757,
             "y" : 1780
          },
@@ -2950,6 +3080,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "RAF1(ph259,ph621)",
             "modification" : [
                [
@@ -2961,7 +3092,8 @@
                   "621"
                ]
             ],
-            "ref" : "MAP:UP04049_CY_pho259pho621"
+            "ref" : "MAP:UP04049_CY_pho259pho621",
+            "width" : 0
          },
          "id" : "MAP:UP04049_CY_pho259pho621_Reactome:109788_0",
          "is_abstract" : 1,
@@ -2972,9 +3104,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS",
             "modification" : [],
-            "ref" : "Reactome:109782"
+            "ref" : "Reactome:109782",
+            "width" : 0
          },
          "id" : "Reactome:109782_Reactome:109783_0_Reactome:109788_0",
          "is_abstract" : 1,
@@ -2985,9 +3119,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GTP",
             "modification" : [],
-            "ref" : "MAP:Cb15996_CY"
+            "ref" : "MAP:Cb15996_CY",
+            "width" : 0
          },
          "id" : "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109788_0",
          "is_abstract" : 1,
@@ -2998,13 +3134,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS:GTP",
             "modification" : [],
             "ref" : "Reactome:109783",
             "subnodes" : [
                "Reactome:109782_Reactome:109783_0_Reactome:109788_0",
                "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109788_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109783_Reactome:109788_0",
          "is_abstract" : 1,
@@ -3016,7 +3154,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "RAS:RAF",
             "modification" : [],
             "ref" : "Reactome:109788",
@@ -3024,7 +3162,7 @@
                "MAP:UP04049_CY_pho259pho621_Reactome:109788_0",
                "Reactome:109783_Reactome:109788_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 1569,
             "y" : 1880
          },
@@ -3039,11 +3177,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "YWHAB()",
             "modification" : [],
             "ref" : "MAP:UP31946_CY",
-            "width" : 1,
+            "width" : 310.32,
             "x" : 1887,
             "y" : 1880
          },
@@ -3057,6 +3195,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "RAF1(ph259,ph621)",
             "modification" : [
                [
@@ -3068,7 +3207,8 @@
                   "621"
                ]
             ],
-            "ref" : "MAP:UP04049_CY_pho259pho621"
+            "ref" : "MAP:UP04049_CY_pho259pho621",
+            "width" : 0
          },
          "id" : "MAP:UP04049_CY_pho259pho621_Reactome:109788_0_Reactome:109789_0",
          "is_abstract" : 1,
@@ -3079,9 +3219,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS",
             "modification" : [],
-            "ref" : "Reactome:109782"
+            "ref" : "Reactome:109782",
+            "width" : 0
          },
          "id" : "Reactome:109782_Reactome:109783_0_Reactome:109788_0_Reactome:109789_0",
          "is_abstract" : 1,
@@ -3092,9 +3234,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GTP",
             "modification" : [],
-            "ref" : "MAP:Cb15996_CY"
+            "ref" : "MAP:Cb15996_CY",
+            "width" : 0
          },
          "id" : "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109788_0_Reactome:109789_0",
          "is_abstract" : 1,
@@ -3105,13 +3249,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS:GTP",
             "modification" : [],
             "ref" : "Reactome:109783",
             "subnodes" : [
                "Reactome:109782_Reactome:109783_0_Reactome:109788_0_Reactome:109789_0",
                "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109788_0_Reactome:109789_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109783_Reactome:109788_0_Reactome:109789_0",
          "is_abstract" : 1,
@@ -3122,13 +3268,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "RAS:RAF",
             "modification" : [],
             "ref" : "Reactome:109788",
             "subnodes" : [
                "MAP:UP04049_CY_pho259pho621_Reactome:109788_0_Reactome:109789_0",
                "Reactome:109783_Reactome:109788_0_Reactome:109789_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109788_Reactome:109789_0",
          "is_abstract" : 1,
@@ -3139,9 +3287,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "YWHAB()",
             "modification" : [],
-            "ref" : "MAP:UP31946_CY"
+            "ref" : "MAP:UP31946_CY",
+            "width" : 0
          },
          "id" : "MAP:UP31946_CY_Reactome:109789_0",
          "is_abstract" : 1,
@@ -3153,7 +3303,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "RAS:RAF:14-3-3",
             "modification" : [],
             "ref" : "Reactome:109789",
@@ -3161,7 +3311,7 @@
                "Reactome:109788_Reactome:109789_0",
                "MAP:UP31946_CY_Reactome:109789_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 1757,
             "y" : 1680
          },
@@ -3175,10 +3325,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Transient dissociation of 14-3-3 upon Ras binding",
             "ref" : "Reactome:109803",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1886,
             "y" : 1980
          },
@@ -3192,6 +3342,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "RAF1(ph259,ph621)",
             "modification" : [
                [
@@ -3203,7 +3354,8 @@
                   "621"
                ]
             ],
-            "ref" : "MAP:UP04049_CY_pho259pho621"
+            "ref" : "MAP:UP04049_CY_pho259pho621",
+            "width" : 0
          },
          "id" : "MAP:UP04049_CY_pho259pho621_Reactome:109787_0",
          "is_abstract" : 1,
@@ -3214,9 +3366,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "YWHAB()",
             "modification" : [],
-            "ref" : "MAP:UP31946_CY"
+            "ref" : "MAP:UP31946_CY",
+            "width" : 0
          },
          "id" : "MAP:UP31946_CY_Reactome:109787_0",
          "is_abstract" : 1,
@@ -3228,7 +3382,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "p-Raf1(S259,S621):14-3-3 protein beta/alpha",
             "modification" : [],
             "ref" : "Reactome:109787",
@@ -3236,7 +3390,7 @@
                "MAP:UP04049_CY_pho259pho621_Reactome:109787_0",
                "MAP:UP31946_CY_Reactome:109787_0"
             ],
-            "width" : 1,
+            "width" : 329.76,
             "x" : 2423,
             "y" : 1680
          },
@@ -3250,10 +3404,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Gab1 phosphorylation by EGFR kinase",
             "ref" : "Reactome:177930",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 477,
             "y" : 2180
          },
@@ -3268,11 +3422,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ATP",
             "modification" : [],
             "ref" : "MAP:Cs56-65-5_CY",
-            "width" : 1,
+            "width" : 319.68,
             "x" : 800,
             "y" : 2293
          },
@@ -3286,9 +3440,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2()",
             "modification" : [],
-            "ref" : "MAP:UP62993_CY"
+            "ref" : "MAP:UP62993_CY",
+            "width" : 0
          },
          "id" : "MAP:UP62993_CY_Reactome:180304_0_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3299,6 +3455,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "Phospho-GAB1",
             "modification" : [
                [
@@ -3322,7 +3479,8 @@
                   "589"
                ]
             ],
-            "ref" : "Reactome:180344"
+            "ref" : "Reactome:180344",
+            "width" : 0
          },
          "id" : "Reactome:180344_Reactome:180304_0_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3333,13 +3491,15 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2:Phospho-GAB1",
             "modification" : [],
             "ref" : "Reactome:180304",
             "subnodes" : [
                "MAP:UP62993_CY_Reactome:180304_0_Reactome:180286_0",
                "Reactome:180344_Reactome:180304_0_Reactome:180286_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:180304_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3350,9 +3510,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3363,6 +3525,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -3386,7 +3549,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3397,13 +3561,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180286_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180286_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_0_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3414,9 +3580,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3427,6 +3595,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -3450,7 +3619,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3461,13 +3631,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180286_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180286_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_1_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3478,13 +3650,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR (Y992, Y1068, Y1086, Y1148, Y1173) dimer",
             "modification" : [],
             "ref" : "Reactome:179882",
             "subnodes" : [
                "Reactome:179860_Reactome:179882_0_Reactome:180286_0",
                "Reactome:179860_Reactome:179882_1_Reactome:180286_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179882_Reactome:180286_0",
          "is_abstract" : 1,
@@ -3496,7 +3670,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "GRB2:Phospho GAB1-EGF-Phospho-EGFR dimer",
             "modification" : [],
             "ref" : "Reactome:180286",
@@ -3504,7 +3678,7 @@
                "Reactome:180304_Reactome:180286_0",
                "Reactome:179882_Reactome:180286_0"
             ],
-            "width" : 1,
+            "width" : 347.76,
             "x" : 770,
             "y" : 2080
          },
@@ -3519,11 +3693,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ADP",
             "modification" : [],
             "ref" : "MAP:Cb16761_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 425,
             "y" : 2080
          },
@@ -3537,10 +3711,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Sos-mediated nucleotide exchange of Ras (EGF:EGFR-Sos:Grb2:Shc)",
             "ref" : "Reactome:177945",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 2256,
             "y" : 2180
          },
@@ -3555,11 +3729,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "GTP",
             "modification" : [],
             "ref" : "MAP:Cb15996_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 2739,
             "y" : 2293
          },
@@ -3574,11 +3748,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "GDP",
             "modification" : [],
             "ref" : "MAP:Cb17552_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 2256,
             "y" : 2080
          },
@@ -3592,9 +3766,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "Son of sevenless protein homolog 1",
             "modification" : [],
-            "ref" : "MAP:UQ07889_CY"
+            "ref" : "MAP:UQ07889_CY",
+            "width" : 0
          },
          "id" : "MAP:UQ07889_CY_MAP:Cx114_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3605,9 +3781,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2()",
             "modification" : [],
-            "ref" : "MAP:UP62993_CY"
+            "ref" : "MAP:UP62993_CY",
+            "width" : 0
          },
          "id" : "MAP:UP62993_CY_MAP:Cx114_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3618,13 +3796,15 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2:SOS1",
             "modification" : [],
             "ref" : "MAP:Cx114",
             "subnodes" : [
                "MAP:UQ07889_CY_MAP:Cx114_0_Reactome:180331_0",
                "MAP:UP62993_CY_MAP:Cx114_0_Reactome:180331_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "MAP:Cx114_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3635,6 +3815,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "Phospho-SHC transforming protein",
             "modification" : [
                [
@@ -3646,7 +3827,8 @@
                   "350"
                ]
             ],
-            "ref" : "Reactome:180276"
+            "ref" : "Reactome:180276",
+            "width" : 0
          },
          "id" : "Reactome:180276_Reactome:180337_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3657,9 +3839,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180337_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3670,6 +3854,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -3693,7 +3878,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180337_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3704,13 +3890,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180337_0_Reactome:180331_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180337_0_Reactome:180331_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_0_Reactome:180337_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3721,9 +3909,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180337_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3734,6 +3924,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -3757,7 +3948,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180337_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3768,13 +3960,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180337_0_Reactome:180331_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180337_0_Reactome:180331_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_1_Reactome:180337_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3785,13 +3979,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR (Y992, Y1068, Y1086, Y1148, Y1173) dimer",
             "modification" : [],
             "ref" : "Reactome:179882",
             "subnodes" : [
                "Reactome:179860_Reactome:179882_0_Reactome:180337_0_Reactome:180331_0",
                "Reactome:179860_Reactome:179882_1_Reactome:180337_0_Reactome:180331_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179882_Reactome:180337_0_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3802,13 +3998,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR:Phospho-SHC",
             "modification" : [],
             "ref" : "Reactome:180337",
             "subnodes" : [
                "Reactome:180276_Reactome:180337_0_Reactome:180331_0",
                "Reactome:179882_Reactome:180337_0_Reactome:180331_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:180337_Reactome:180331_0",
          "is_abstract" : 1,
@@ -3820,7 +4018,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 116.64,
             "label" : "GRB2:SOS-Phospho-SHC:EGF:Phospho-EGFR dimer",
             "modification" : [],
             "ref" : "Reactome:180331",
@@ -3828,7 +4026,7 @@
                "MAP:Cx114_Reactome:180331_0",
                "Reactome:180337_Reactome:180331_0"
             ],
-            "width" : 1,
+            "width" : 516.24,
             "x" : 2310,
             "y" : 2293
          },
@@ -3842,10 +4040,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Mek2 binds Raf",
             "ref" : "MAN:R1",
-            "width" : 1,
+            "width" : 58.32,
             "x" : 2084,
             "y" : 1380
          },
@@ -3860,11 +4058,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "MEK2()",
             "modification" : [],
             "ref" : "MAP:UP36507_CY",
-            "width" : 1,
+            "width" : 310.32,
             "x" : 2084,
             "y" : 1480
          },
@@ -3878,9 +4076,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "YWHAB()",
             "modification" : [],
-            "ref" : "MAP:UP31946_CY"
+            "ref" : "MAP:UP31946_CY",
+            "width" : 0
          },
          "id" : "MAP:UP31946_CY_Reactome:109793_0_Reactome:109795_0",
          "is_abstract" : 1,
@@ -3891,9 +4091,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS",
             "modification" : [],
-            "ref" : "Reactome:109782"
+            "ref" : "Reactome:109782",
+            "width" : 0
          },
          "id" : "Reactome:109782_Reactome:109783_0_Reactome:109793_0_Reactome:109795_0",
          "is_abstract" : 1,
@@ -3904,9 +4106,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GTP",
             "modification" : [],
-            "ref" : "MAP:Cb15996_CY"
+            "ref" : "MAP:Cb15996_CY",
+            "width" : 0
          },
          "id" : "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109793_0_Reactome:109795_0",
          "is_abstract" : 1,
@@ -3917,13 +4121,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS:GTP",
             "modification" : [],
             "ref" : "Reactome:109783",
             "subnodes" : [
                "Reactome:109782_Reactome:109783_0_Reactome:109793_0_Reactome:109795_0",
                "MAP:Cb15996_CY_Reactome:109783_0_Reactome:109793_0_Reactome:109795_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109783_Reactome:109793_0_Reactome:109795_0",
          "is_abstract" : 1,
@@ -3934,6 +4140,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "cRaf",
             "modification" : [
                [
@@ -3953,7 +4160,8 @@
                   "341"
                ]
             ],
-            "ref" : "Reactome:109792"
+            "ref" : "Reactome:109792",
+            "width" : 0
          },
          "id" : "Reactome:109792_Reactome:109793_0_Reactome:109795_0",
          "is_abstract" : 1,
@@ -3964,6 +4172,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Activated RAF1 complex",
             "modification" : [],
             "ref" : "Reactome:109793",
@@ -3971,7 +4180,8 @@
                "MAP:UP31946_CY_Reactome:109793_0_Reactome:109795_0",
                "Reactome:109783_Reactome:109793_0_Reactome:109795_0",
                "Reactome:109792_Reactome:109793_0_Reactome:109795_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109793_Reactome:109795_0",
          "is_abstract" : 1,
@@ -3982,9 +4192,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "MEK2()",
             "modification" : [],
-            "ref" : "MAP:UP36507_CY"
+            "ref" : "MAP:UP36507_CY",
+            "width" : 0
          },
          "id" : "MAP:UP36507_CY_Reactome:109795_0",
          "is_abstract" : 1,
@@ -3996,7 +4208,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 116.64,
             "label" : "Activated RAF1 complex:MEK2",
             "modification" : [],
             "ref" : "Reactome:109795",
@@ -4004,7 +4216,7 @@
                "Reactome:109793_Reactome:109795_0",
                "MAP:UP36507_CY_Reactome:109795_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 2070,
             "y" : 1267
          },
@@ -4018,10 +4230,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Dissociation of phospho-ERK-1:MEK1",
             "ref" : "Reactome:109863",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 3261,
             "y" : 634
          },
@@ -4035,6 +4247,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "Activated ERK1",
             "modification" : [
                [
@@ -4046,7 +4259,8 @@
                   "204"
                ]
             ],
-            "ref" : "MAP:UP27361_CY_pho202pho204"
+            "ref" : "MAP:UP27361_CY_pho202pho204",
+            "width" : 0
          },
          "id" : "MAP:UP27361_CY_pho202pho204_Reactome:109843_0",
          "is_abstract" : 1,
@@ -4057,6 +4271,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "phospho-MEK1",
             "modification" : [
                [
@@ -4068,7 +4283,8 @@
                   "222"
                ]
             ],
-            "ref" : "MAP:UQ02750_CY_pho218pho222"
+            "ref" : "MAP:UQ02750_CY_pho218pho222",
+            "width" : 0
          },
          "id" : "MAP:UQ02750_CY_pho218pho222_Reactome:109843_0",
          "is_abstract" : 1,
@@ -4080,7 +4296,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "phospho-ERK-1:MEK1",
             "modification" : [],
             "ref" : "Reactome:109843",
@@ -4088,7 +4304,7 @@
                "MAP:UP27361_CY_pho202pho204_Reactome:109843_0",
                "MAP:UQ02750_CY_pho218pho222_Reactome:109843_0"
             ],
-            "width" : 1,
+            "width" : 239.76,
             "x" : 3519,
             "y" : 722
          },
@@ -4103,7 +4319,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "Activated ERK1",
             "modification" : [
                [
@@ -4116,7 +4332,7 @@
                ]
             ],
             "ref" : "MAP:UP27361_CY_pho202pho204",
-            "width" : 1,
+            "width" : 468,
             "x" : 3261,
             "y" : 550
          },
@@ -4130,10 +4346,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Shc phosphorylation by phospho-EGFR:EGF",
             "ref" : "Reactome:177933",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1478,
             "y" : 2606
          },
@@ -4148,11 +4364,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ATP",
             "modification" : [],
             "ref" : "MAP:Cs56-65-5_CY",
-            "width" : 1,
+            "width" : 319.68,
             "x" : 1155,
             "y" : 2706
          },
@@ -4166,9 +4382,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180301_0",
          "is_abstract" : 1,
@@ -4179,6 +4397,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -4202,7 +4421,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180301_0",
          "is_abstract" : 1,
@@ -4213,13 +4433,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180301_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180301_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_0_Reactome:180301_0",
          "is_abstract" : 1,
@@ -4230,9 +4452,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180301_0",
          "is_abstract" : 1,
@@ -4243,6 +4467,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -4266,7 +4491,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180301_0",
          "is_abstract" : 1,
@@ -4277,13 +4503,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180301_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180301_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_1_Reactome:180301_0",
          "is_abstract" : 1,
@@ -4294,13 +4522,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR (Y992, Y1068, Y1086, Y1148, Y1173) dimer",
             "modification" : [],
             "ref" : "Reactome:179882",
             "subnodes" : [
                "Reactome:179860_Reactome:179882_0_Reactome:180301_0",
                "Reactome:179860_Reactome:179882_1_Reactome:180301_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179882_Reactome:180301_0",
          "is_abstract" : 1,
@@ -4311,9 +4541,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "SHC",
             "modification" : [],
-            "ref" : "MAP:UP29353_CY"
+            "ref" : "MAP:UP29353_CY",
+            "width" : 0
          },
          "id" : "MAP:UP29353_CY_Reactome:180301_0",
          "is_abstract" : 1,
@@ -4325,7 +4557,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "EGF:Phospho-EGFR-SHC",
             "modification" : [],
             "ref" : "Reactome:180301",
@@ -4333,7 +4565,7 @@
                "Reactome:179882_Reactome:180301_0",
                "MAP:UP29353_CY_Reactome:180301_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 1478,
             "y" : 2706
          },
@@ -4348,11 +4580,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ADP",
             "modification" : [],
             "ref" : "MAP:Cb16761_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 1221,
             "y" : 2506
          },
@@ -4366,6 +4598,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "Phospho-SHC transforming protein",
             "modification" : [
                [
@@ -4377,7 +4610,8 @@
                   "350"
                ]
             ],
-            "ref" : "Reactome:180276"
+            "ref" : "Reactome:180276",
+            "width" : 0
          },
          "id" : "Reactome:180276_Reactome:180337_0",
          "is_abstract" : 1,
@@ -4388,9 +4622,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180337_0",
          "is_abstract" : 1,
@@ -4401,6 +4637,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -4424,7 +4661,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180337_0",
          "is_abstract" : 1,
@@ -4435,13 +4673,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:180337_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:180337_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_0_Reactome:180337_0",
          "is_abstract" : 1,
@@ -4452,9 +4692,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180337_0",
          "is_abstract" : 1,
@@ -4465,6 +4707,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -4488,7 +4731,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180337_0",
          "is_abstract" : 1,
@@ -4499,13 +4743,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:180337_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:180337_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_1_Reactome:180337_0",
          "is_abstract" : 1,
@@ -4516,13 +4762,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR (Y992, Y1068, Y1086, Y1148, Y1173) dimer",
             "modification" : [],
             "ref" : "Reactome:179882",
             "subnodes" : [
                "Reactome:179860_Reactome:179882_0_Reactome:180337_0",
                "Reactome:179860_Reactome:179882_1_Reactome:180337_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179882_Reactome:180337_0",
          "is_abstract" : 1,
@@ -4534,7 +4782,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "EGF:Phospho-EGFR:Phospho-SHC",
             "modification" : [],
             "ref" : "Reactome:180337",
@@ -4542,7 +4790,7 @@
                "Reactome:180276_Reactome:180337_0",
                "Reactome:179882_Reactome:180337_0"
             ],
-            "width" : 1,
+            "width" : 418.32,
             "x" : 1945,
             "y" : 2506
          },
@@ -4556,10 +4804,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Mek1 binds Raf",
             "ref" : "MAN:R2",
-            "width" : 1,
+            "width" : 58.32,
             "x" : 2748,
             "y" : 1380
          },
@@ -4574,11 +4822,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "MEK1",
             "modification" : [],
             "ref" : "MAP:UQ02750_CY",
-            "width" : 1,
+            "width" : 311.76,
             "x" : 2748,
             "y" : 1480
          },
@@ -4592,10 +4840,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "p-RAF binds 14-3-3 beta/alpha",
             "ref" : "Reactome:109804",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 2294,
             "y" : 1780
          },
@@ -4610,7 +4858,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "RAF1(ph259,ph621)",
             "modification" : [
                [
@@ -4623,7 +4871,7 @@
                ]
             ],
             "ref" : "MAP:UP04049_CY_pho259pho621",
-            "width" : 1,
+            "width" : 468,
             "x" : 2294,
             "y" : 1880
          },
@@ -4637,10 +4885,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "RAF1 phosphorylates MEK2",
             "ref" : "Reactome:109852",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 2080,
             "y" : 1154
          },
@@ -4655,11 +4903,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ATP",
             "modification" : [],
             "ref" : "MAP:Cs56-65-5_CY",
-            "width" : 1,
+            "width" : 319.68,
             "x" : 1747,
             "y" : 1267
          },
@@ -4674,11 +4922,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ADP",
             "modification" : [],
             "ref" : "MAP:Cb16761_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 1999,
             "y" : 1070
          },
@@ -4693,7 +4941,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "phospho-MEK2",
             "modification" : [
                [
@@ -4706,7 +4954,7 @@
                ]
             ],
             "ref" : "Reactome:109848",
-            "width" : 1,
+            "width" : 310.32,
             "x" : 2325,
             "y" : 1070
          },
@@ -4720,10 +4968,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "PI3K converts Phosphatidylinositol-4,5-bisphosphate to Phosphatidylinositol-3,4,5-trisphosphate",
             "ref" : "Reactome:177939",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 543,
             "y" : 1780
          },
@@ -4738,11 +4986,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ATP",
             "modification" : [],
             "ref" : "MAP:Cs56-65-5_CY",
-            "width" : 1,
+            "width" : 319.68,
             "x" : 160,
             "y" : 1880
          },
@@ -4757,11 +5005,11 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "Phosphatidylinositol-4,5-bisphosphate",
             "modification" : [],
             "ref" : "Reactome:179856",
-            "width" : 1,
+            "width" : 409.68,
             "x" : 543,
             "y" : 1880
          },
@@ -4776,11 +5024,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ADP",
             "modification" : [],
             "ref" : "MAP:Cb16761_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 354,
             "y" : 1680
          },
@@ -4795,11 +5043,11 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "Phosphatidylinositol-3,4,5-trisphosphate",
             "modification" : [],
             "ref" : "Reactome:179838",
-            "width" : 1,
+            "width" : 416.16,
             "x" : 733,
             "y" : 1680
          },
@@ -4813,9 +5061,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "PI3K-p85",
             "modification" : [],
-            "ref" : "MAP:C3"
+            "ref" : "MAP:C3",
+            "width" : 0
          },
          "id" : "MAP:C3_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4826,9 +5076,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4839,6 +5091,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -4862,7 +5115,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4873,13 +5127,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_0_Reactome:179791_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_0_Reactome:179791_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_0_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4890,9 +5146,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4903,6 +5161,7 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "Phospho-EGFR",
             "modification" : [
                [
@@ -4926,7 +5185,8 @@
                   "992"
                ]
             ],
-            "ref" : "Reactome:179803"
+            "ref" : "Reactome:179803",
+            "width" : 0
          },
          "id" : "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4937,13 +5197,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR",
             "modification" : [],
             "ref" : "Reactome:179860",
             "subnodes" : [
                "Reactome:179863_Reactome:179860_0_Reactome:179882_1_Reactome:179791_0",
                "Reactome:179803_Reactome:179860_0_Reactome:179882_1_Reactome:179791_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179860_Reactome:179882_1_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4954,13 +5216,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGF:Phospho-EGFR (Y992, Y1068, Y1086, Y1148, Y1173) dimer",
             "modification" : [],
             "ref" : "Reactome:179882",
             "subnodes" : [
                "Reactome:179860_Reactome:179882_0_Reactome:179791_0",
                "Reactome:179860_Reactome:179882_1_Reactome:179791_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179882_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4971,9 +5235,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "PI3K-p110",
             "modification" : [],
-            "ref" : "MAP:C2"
+            "ref" : "MAP:C2",
+            "width" : 0
          },
          "id" : "MAP:C2_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4984,9 +5250,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2()",
             "modification" : [],
-            "ref" : "MAP:UP62993_CY"
+            "ref" : "MAP:UP62993_CY",
+            "width" : 0
          },
          "id" : "MAP:UP62993_CY_Reactome:179849_0_Reactome:179791_0",
          "is_abstract" : 1,
@@ -4997,9 +5265,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GAB1",
             "modification" : [],
-            "ref" : "MAP:UQ13480_CY"
+            "ref" : "MAP:UQ13480_CY",
+            "width" : 0
          },
          "id" : "MAP:UQ13480_CY_Reactome:179849_0_Reactome:179791_0",
          "is_abstract" : 1,
@@ -5010,13 +5280,15 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2:GAB1",
             "modification" : [],
             "ref" : "Reactome:179849",
             "subnodes" : [
                "MAP:UP62993_CY_Reactome:179849_0_Reactome:179791_0",
                "MAP:UQ13480_CY_Reactome:179849_0_Reactome:179791_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:179849_Reactome:179791_0",
          "is_abstract" : 1,
@@ -5028,7 +5300,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "EGF:Phospho-EGFR-GRB2:GAB1:PI3Kreg:PI3Kcat",
             "modification" : [],
             "ref" : "Reactome:179791",
@@ -5038,7 +5310,7 @@
                "MAP:C2_Reactome:179791_0",
                "Reactome:179849_Reactome:179791_0"
             ],
-            "width" : 1,
+            "width" : 393.84,
             "x" : 963,
             "y" : 1880
          },
@@ -5052,10 +5324,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : null,
             "ref" : "MAN:R25",
-            "width" : 1,
+            "width" : 66.24,
             "x" : 1014,
             "y" : 1980
          },
@@ -5070,11 +5342,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "PI3K-p85",
             "modification" : [],
             "ref" : "MAP:C3",
-            "width" : 1,
+            "width" : 208.08,
             "x" : 1292,
             "y" : 2080
          },
@@ -5089,11 +5361,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "PI3K-p110",
             "modification" : [],
             "ref" : "MAP:C2",
-            "width" : 1,
+            "width" : 208.08,
             "x" : 1066,
             "y" : 2080
          },
@@ -5107,10 +5379,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Sos:Grb2 binds to Phospho-Shc:EGF:Phospho-EGFR",
             "ref" : "Reactome:177936",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1945,
             "y" : 2406
          },
@@ -5124,9 +5396,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "Son of sevenless protein homolog 1",
             "modification" : [],
-            "ref" : "MAP:UQ07889_CY"
+            "ref" : "MAP:UQ07889_CY",
+            "width" : 0
          },
          "id" : "MAP:UQ07889_CY_MAP:Cx114_0",
          "is_abstract" : 1,
@@ -5137,9 +5411,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GRB2()",
             "modification" : [],
-            "ref" : "MAP:UP62993_CY"
+            "ref" : "MAP:UP62993_CY",
+            "width" : 0
          },
          "id" : "MAP:UP62993_CY_MAP:Cx114_0",
          "is_abstract" : 1,
@@ -5151,7 +5427,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "GRB2:SOS1",
             "modification" : [],
             "ref" : "MAP:Cx114",
@@ -5159,7 +5435,7 @@
                "MAP:UQ07889_CY_MAP:Cx114_0",
                "MAP:UP62993_CY_MAP:Cx114_0"
             ],
-            "width" : 1,
+            "width" : 326.16,
             "x" : 1555,
             "y" : 2506
          },
@@ -5173,10 +5449,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "binding of active ras to pi3k alpha",
             "ref" : "MAN:R28",
-            "width" : 1,
+            "width" : 66.24,
             "x" : 1292,
             "y" : 1980
          },
@@ -5190,9 +5466,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "PI3K-p85",
             "modification" : [],
-            "ref" : "MAP:C3"
+            "ref" : "MAP:C3",
+            "width" : 0
          },
          "id" : "MAP:C3_MAP:Cx156_0_MAN:C10_0",
          "is_abstract" : 1,
@@ -5203,9 +5481,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "PI3K-p110",
             "modification" : [],
-            "ref" : "MAP:C2"
+            "ref" : "MAP:C2",
+            "width" : 0
          },
          "id" : "MAP:C2_MAP:Cx156_0_MAN:C10_0",
          "is_abstract" : 1,
@@ -5216,13 +5496,15 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "PI3K alpha",
             "modification" : [],
             "ref" : "MAP:Cx156",
             "subnodes" : [
                "MAP:C3_MAP:Cx156_0_MAN:C10_0",
                "MAP:C2_MAP:Cx156_0_MAN:C10_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "MAP:Cx156_MAN:C10_0",
          "is_abstract" : 1,
@@ -5233,9 +5515,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS",
             "modification" : [],
-            "ref" : "Reactome:109782"
+            "ref" : "Reactome:109782",
+            "width" : 0
          },
          "id" : "Reactome:109782_Reactome:109783_0_MAN:C10_0",
          "is_abstract" : 1,
@@ -5246,9 +5530,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "GTP",
             "modification" : [],
-            "ref" : "MAP:Cb15996_CY"
+            "ref" : "MAP:Cb15996_CY",
+            "width" : 0
          },
          "id" : "MAP:Cb15996_CY_Reactome:109783_0_MAN:C10_0",
          "is_abstract" : 1,
@@ -5259,13 +5545,15 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "p21 RAS:GTP",
             "modification" : [],
             "ref" : "Reactome:109783",
             "subnodes" : [
                "Reactome:109782_Reactome:109783_0_MAN:C10_0",
                "MAP:Cb15996_CY_Reactome:109783_0_MAN:C10_0"
-            ]
+            ],
+            "width" : 0
          },
          "id" : "Reactome:109783_MAN:C10_0",
          "is_abstract" : 1,
@@ -5277,7 +5565,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 92.16,
             "label" : "RAS:GTP:PI3Ka",
             "modification" : [],
             "ref" : "MAN:C10",
@@ -5285,7 +5573,7 @@
                "MAP:Cx156_MAN:C10_0",
                "Reactome:109783_MAN:C10_0"
             ],
-            "width" : 1,
+            "width" : 228.24,
             "x" : 1292,
             "y" : 1880
          },
@@ -5299,10 +5587,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "EGFR dimerization",
             "ref" : "Reactome:177922",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1331,
             "y" : 3206
          },
@@ -5316,9 +5604,11 @@
          "data" : {
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
+            "height" : 0,
             "label" : "EGF",
             "modification" : [],
-            "ref" : "Reactome:179863"
+            "ref" : "Reactome:179863",
+            "width" : 0
          },
          "id" : "Reactome:179863_Reactome:179847_0",
          "is_abstract" : 1,
@@ -5329,9 +5619,11 @@
          "data" : {
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
+            "height" : 0,
             "label" : "EGFR",
             "modification" : [],
-            "ref" : "Reactome:179837"
+            "ref" : "Reactome:179837",
+            "width" : 0
          },
          "id" : "Reactome:179837_Reactome:179847_0",
          "is_abstract" : 1,
@@ -5343,7 +5635,7 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "EGF:EGFR",
             "modification" : [],
             "ref" : "Reactome:179847",
@@ -5351,7 +5643,7 @@
                "Reactome:179863_Reactome:179847_0",
                "Reactome:179837_Reactome:179847_0"
             ],
-            "width" : 1,
+            "width" : 290.16,
             "x" : 1331,
             "y" : 3294
          },
@@ -5365,10 +5657,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "MEK1 phosphorylates ERK-1",
             "ref" : "Reactome:109860",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 3519,
             "y" : 810
          },
@@ -5382,9 +5674,11 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "ERK1",
             "modification" : [],
-            "ref" : "MAP:UP27361_CY"
+            "ref" : "MAP:UP27361_CY",
+            "width" : 0
          },
          "id" : "MAP:UP27361_CY_Reactome:109838_0",
          "is_abstract" : 1,
@@ -5395,6 +5689,7 @@
          "data" : {
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
+            "height" : 0,
             "label" : "phospho-MEK1",
             "modification" : [
                [
@@ -5406,7 +5701,8 @@
                   "222"
                ]
             ],
-            "ref" : "MAP:UQ02750_CY_pho218pho222"
+            "ref" : "MAP:UQ02750_CY_pho218pho222",
+            "width" : 0
          },
          "id" : "MAP:UQ02750_CY_pho218pho222_Reactome:109838_0",
          "is_abstract" : 1,
@@ -5418,7 +5714,7 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 66.96,
             "label" : "MEK1:ERK-1",
             "modification" : [],
             "ref" : "Reactome:109838",
@@ -5426,7 +5722,7 @@
                "MAP:UP27361_CY_Reactome:109838_0",
                "MAP:UQ02750_CY_pho218pho222_Reactome:109838_0"
             ],
-            "width" : 1,
+            "width" : 218.16,
             "x" : 3806,
             "y" : 898
          },
@@ -5441,11 +5737,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ATP",
             "modification" : [],
             "ref" : "MAP:Cs56-65-5_CY",
-            "width" : 1,
+            "width" : 319.68,
             "x" : 3519,
             "y" : 898
          },
@@ -5460,11 +5756,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ADP",
             "modification" : [],
             "ref" : "MAP:Cb16761_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 3228,
             "y" : 722
          },
@@ -5479,11 +5775,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "phospho_MEK1",
             "modification" : [],
             "ref" : "Reactome:112340",
-            "width" : 1,
+            "width" : 310.32,
             "x" : 3186,
             "y" : 898
          },
@@ -5497,10 +5793,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Sos:Grb2 complex binds to EGF:EGFR complex",
             "ref" : "Reactome:177943",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1514,
             "y" : 2406
          },
@@ -5514,10 +5810,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Dimerisation of phospho-ERK-1",
             "ref" : "Reactome:109865",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 3261,
             "y" : 466
          },
@@ -5531,10 +5827,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Shc binds to the phospho-receptor:ligand complex",
             "ref" : "Reactome:177925",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1370,
             "y" : 2806
          },
@@ -5549,11 +5845,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "SHC",
             "modification" : [],
             "ref" : "MAP:UP29353_CY",
-            "width" : 1,
+            "width" : 310.32,
             "x" : 1370,
             "y" : 2906
          },
@@ -5567,10 +5863,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "Stabilisation of RAF by further phosphorylation",
             "ref" : "Reactome:109829",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 2080,
             "y" : 1580
          },
@@ -5585,11 +5881,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ATP",
             "modification" : [],
             "ref" : "MAP:Cs56-65-5_CY",
-            "width" : 1,
+            "width" : 319.68,
             "x" : 2080,
             "y" : 1680
          },
@@ -5604,11 +5900,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ADP",
             "modification" : [],
             "ref" : "MAP:Cb16761_CY",
-            "width" : 1,
+            "width" : 306,
             "x" : 1758,
             "y" : 1480
          },
@@ -5623,11 +5919,11 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "unidentified protein tyrosine kinase",
             "modification" : [],
             "ref" : "Reactome:163338",
-            "width" : 1,
+            "width" : 409.68,
             "x" : 2811,
             "y" : 1680
          },
@@ -5641,10 +5937,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "MEK1 binds ERK-1",
             "ref" : "Reactome:109857",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 3707,
             "y" : 986
          },
@@ -5659,11 +5955,11 @@
             "compartment" : "MAP:Cytosol",
             "compartmentidx" : 2,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "ERK1",
             "modification" : [],
             "ref" : "MAP:UP27361_CY",
-            "width" : 1,
+            "width" : 310.32,
             "x" : 3707,
             "y" : 1070
          },
@@ -5677,10 +5973,10 @@
          "data" : {
             "compartmentidx" : 0,
             "dir" : 0,
-            "height" : 1,
+            "height" : 36,
             "label" : "EGFR binds EGF ligand",
             "ref" : "Reactome:177942",
-            "width" : 1,
+            "width" : 128.16,
             "x" : 1331,
             "y" : 3382
          },
@@ -5695,11 +5991,11 @@
             "compartment" : "MAP:Extracellular",
             "compartmentidx" : 3,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "EGF",
             "modification" : [],
             "ref" : "Reactome:179863",
-            "width" : 1,
+            "width" : 360,
             "x" : 1331,
             "y" : 3466
          },
@@ -5714,11 +6010,11 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "EGFR",
             "modification" : [],
             "ref" : "Reactome:179837",
-            "width" : 1,
+            "width" : 409.68,
             "x" : 928,
             "y" : 3466
          },
@@ -5733,11 +6029,11 @@
             "compartment" : "MAP:Plasmamembrane",
             "compartmentidx" : 1,
             "dir" : 0,
-            "height" : 1,
+            "height" : 59.04,
             "label" : "Leucine-rich repeats and immunoglobulin-like domains protein 1 precursor",
             "modification" : [],
             "ref" : "Reactome:197745",
-            "width" : 1,
+            "width" : 745.92,
             "x" : 1902,
             "y" : 3466
          },

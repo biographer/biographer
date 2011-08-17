@@ -25,7 +25,7 @@ my $nidx=shift(@lines);
 while (scalar(@lines) && (!($nidx=~/^\//))){
    my $type=shift(@lines);
    my $id=shift(@lines);
-   print "$id\n";
+#   print "$id\n";
    shift(@lines);# compartment
    my $x=shift(@lines);
    my $y=shift(@lines);
@@ -34,7 +34,7 @@ while (scalar(@lines) && (!($nidx=~/^\//))){
    my $w=shift(@lines)/72; # w
    my $h=shift(@lines)/72; # h
    shift(@lines); # dir;
-   $g->add_node($id,{pos=>"$x,$y!",width=>$w,height=>$h,shape=>"rect"});
+   $g->add_node($id,{pos=>"$x,$y!",width=>$w,height=>$h,shape=>"rect",fixedsize=>"true"});
    $nodes->[$nidx]=$id;
    $nidx=shift(@lines) # next index;
 }
@@ -55,7 +55,7 @@ shift(@lines); #skip first index
 while (scalar(@lines)){
    my $type=shift(@lines);
    my $id=shift(@lines);
-   print "$id\n";
+#   print "$id\n";
    shift(@lines);# compartment
    my $x=shift(@lines);
    my $y=shift(@lines);
@@ -69,9 +69,10 @@ while (scalar(@lines)){
 }
 
 my $fn=$ARGV[0];
+$fn=$ARGV[2] if $ARGV[2]; # third argument maybe output png file
 $fn=~s/\.[^\.]*$//; # remove extension
 
-print $g->dot;
+#print $g->dot;
 #open($f,"| tee $fn.lyt.dot | neato -n -Gpad=0 -Gmargin=0 -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
 my $f;
 open($f,"| neato -n -Gpad=0 -Gmargin=0 -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
