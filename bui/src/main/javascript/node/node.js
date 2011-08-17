@@ -27,22 +27,20 @@
      */
     var positionPlaceHolder = function() {
         var privates = this._privates(identifier);
-        var htmlPosition = this.htmlTopLeft();
+        var absolutePosition = this.absolutePosition();
+        var graphHtmlPosition = this.graph().htmlTopLeft();
         var correction = bui.settings.style.placeholderCorrection.position;
-        var dimensions = this.size();
-        privates.placeholder.style.left = (htmlPosition.x +
-                correction.x) + 'px';
-        privates.placeholder.style.top = (htmlPosition.y +
-                correction.y) + 'px';
+        var scale = this.graph().scale();
+        privates.placeholder.style.left = (absolutePosition.x * scale +
+                graphHtmlPosition.x + correction.x) + 'px';
+        privates.placeholder.style.top = (absolutePosition.y * scale +
+                graphHtmlPosition.y + correction.y) + 'px';
 
         correction = bui.settings.style.placeholderCorrection.size;
-        privates.placeholder.style.width = (privates.width +
+        privates.placeholder.style.width = (privates.width * scale +
                 correction.width) + 'px';
-        privates.placeholder.style.height = (privates.height +
+        privates.placeholder.style.height = (privates.height * scale +
                 correction.height) + 'px';
-
-        this.updateJson(bui.settings.dataFormat.node.width, privates.width);
-        this.updateJson(bui.settings.dataFormat.node.height, privates.height);
     };
 
     /**
@@ -64,9 +62,6 @@
 
         this.fire(bui.Node.ListenerType.absolutePosition,
                 [this, position.x, position.y]);
-
-        this.updateJson(bui.settings.dataFormat.node.x, position.x);
-        this.updateJson(bui.settings.dataFormat.node.y, position.y);
     };
 
     /**
@@ -74,11 +69,19 @@
      */
     var placeholderDragStop = function() {
         var privates = this._privates(identifier);
+        var scale = 1 / this.graph().scale();
         var placeholderOffset = jQuery(privates.placeholder).offset();
         var x = placeholderOffset.left;
         var y = placeholderOffset.top;
 
-        var parentTopLeft = privates.parent.htmlTopLeft();
+        var graphOffset = this.graph().htmlTopLeft();
+        x -= graphOffset.x;
+        y -= graphOffset.y;
+
+        x *= scale;
+        y *= scale;
+
+        var parentTopLeft = privates.parent.absolutePosition();
         x -= parentTopLeft.x;
         y -= parentTopLeft.y;
 
@@ -105,8 +108,9 @@
      */
     var placeholderResizeStop = function() {
         var privates = this._privates(identifier);
-        var width = jQuery(privates.placeholder).width();
-        var height = jQuery(privates.placeholder).height();
+        var scale = 1 / this.graph().scale();
+        var width = jQuery(privates.placeholder).width() * scale;
+        var height = jQuery(privates.placeholder).height() * scale;
 
         var correction = bui.settings.style.placeholderCorrection.size;
 
@@ -280,6 +284,9 @@
                 positionChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Node.ListenerType.size,
+                positionPlaceHolder.createDelegate(this),
+                listenerIdentifier(this));
+        this.graph().bind(bui.Graph.ListenerType.scale,
                 positionPlaceHolder.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.classes,

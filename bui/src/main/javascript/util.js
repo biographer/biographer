@@ -402,16 +402,15 @@
             return;
         }
 
-        if (canvas === undefined) {
-            canvas = jQuery('body');
-        }
-        if (viewport === undefined) {
-            viewport = jQuery(window);
-        }
-        
         var position = node.absolutePosition(),
                 size = node.size(),
                 scale = graph.scale();
+
+        if (canvas === undefined || viewport === undefined) {
+            canvas = jQuery('body');
+            viewport = jQuery(window);
+            position = node.htmlTopLeft();
+        }
 
         var scrollLeft = position.x * scale - ((
                 viewport.width() - size.width * scale) / 2);

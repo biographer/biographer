@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Biographer-ui Test Suite</title>
+
+    <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/showcase.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.8.13.css" />
+
+	<script type="text/javascript" src="resources/js/jquery-1.6.min.js"></script>
+    <script type="text/javascript" src="resources/js/jquery.simulate.js"></script>
+	<script type="text/javascript" src="resources/js/jquery-ui-1.8.12.custom.min.js"></script>
+    <script type="text/javascript" src="resources/js/biographer-ui.js"></script>
+    <script type="text/javascript" src="resources/examples/showcase.js"></script>
+    <script type="text/javascript" src="resources/examples/showcaseDifferentPositions.js"></script>
+
+    <script type="text/javascript">
+        bui.ready(function() {
+            var canvas = document.getElementById('canvas');
+            var graph = new bui.Graph(canvas);
+            bui.importFromJSON(graph, showcaseJSON);
+
+            $('.updatePos').click(function() {
+                var jsonVariableName = $(this).data('json');
+                var json = window[jsonVariableName];
+                bui.importUpdatedNodePositionsFromJSON(graph,
+                       json, 1000);
+                return false;
+            });
+
+            $('.focusToNode').click(function() {
+                bui.util.alignCanvas(graph, $(this).data('nodeId'));
+                return false;
+            });
+
+            $('.scale').click(function() {
+                var rate = bui.util.toNumber($(this).data('rate'));
+                graph.scale(graph.scale() + rate);
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+<ul>
+    <li class='updatePos' data-json='showcaseJSON'>Load position set 1</li>
+    <li class='updatePos' data-json='showcaseDifferentPositionsJSON'>Load position set 2</li>
+    <li class='focusToNode' data-node-id='node10'>Focus on a node</li>
+    <li class='scale' data-rate='0.1'>Scale up</li>
+    <li class='scale' data-rate='-0.1'>Scale down</li>
+</ul>
+<div id="canvas">
+
+</div>
+</body>
+</html>

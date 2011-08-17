@@ -299,6 +299,7 @@
                     privates.scale = scale;
 
                     __setTransformString.call(this);
+                    this.reduceCanvasSize();
 
                     this.fire(bui.Graph.ListenerType.scale, [this, scale]);
                 }
@@ -386,10 +387,10 @@
             y += padding;
 
             privates.rootDimensions.width = x;
-            privates.root.setAttribute('width', x);
+            privates.root.setAttribute('width', x * privates.scale);
 
             privates.rootDimensions.height = y;
-            privates.root.setAttribute('height', y);
+            privates.root.setAttribute('height', y * privates.scale);
         },
 
         /**

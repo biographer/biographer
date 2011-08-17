@@ -1,0 +1,33 @@
+body {
+    margin-top: 25px;
+}
+ul {
+    margin: 0;
+    padding: 0;
+    background-color: #bebebe;
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.19, rgb(224,224,224)),
+        color-stop(0.6, rgb(204,204,204))
+    );
+    background-image: -moz-linear-gradient(
+        center bottom,
+        rgb(224,224,224) 19%,
+        rgb(204,204,204) 60%
+    );
+
+    border-bottom: 1px solid #333;
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+    font-size: 0.9em;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+}
+li {
+    display: inline-block;
+    border-right: 1px solid #333;
+    padding: 5px 15px 5px 10px;
+    cursor: pointer;
+}
