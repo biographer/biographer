@@ -8,6 +8,7 @@ body {
     background: #eee;
     border: 2px dashed #ff8c00;
     opacity: 0.5;
+    cursor: move;
 }
 
 .invisible, .hidden {

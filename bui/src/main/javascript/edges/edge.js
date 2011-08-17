@@ -169,10 +169,6 @@
     var addHandleAfter = function(node, x, y) {
         var privates = this._privates(identifier);
 
-        var graphHtmlTopLeft = this.graph().htmlTopLeft();
-        x -= graphHtmlTopLeft.x;
-        y -= graphHtmlTopLeft.y;
-
         var handle = this.graph()
                 .add(bui.EdgeHandle)
                 .positionCenter(x, y)
@@ -191,7 +187,7 @@
 
         redrawLines.call(this);
 
-        handle.startDragging(x, y);
+        return handle;
     };
 
     /**
@@ -199,7 +195,13 @@
      */
     var lineMouseDown = function(line, event) {
         if (event.ctrlKey !== true) {
-            addHandleAfter.call(this, line.source(), event.pageX, event.pageY);
+            var scale = 1 / this.graph().scale();
+            var graphHtmlTopLeft = this.graph().htmlTopLeft();
+
+            addHandleAfter.call(this, line.source(),
+                    (event.pageX - graphHtmlTopLeft.x) * scale ,
+                    (event.pageY - graphHtmlTopLeft.y) * scale)
+                    .startDragging(event.clientX, event.clientY);
         }
     };
 

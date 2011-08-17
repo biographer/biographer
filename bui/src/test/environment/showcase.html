@@ -19,7 +19,7 @@
     <script type="text/javascript">
         bui.ready(function() {
             var canvas = document.getElementById('canvas');
-            var graph = new bui.Graph(canvas);
+            graph = new bui.Graph(canvas);
             bui.importFromJSON(graph, showcaseJSON);
 
             $('.updatePos').click(function() {
@@ -50,6 +50,27 @@
     <li class='focusToNode' data-node-id='node10'>Focus on a node</li>
     <li class='scale' data-rate='0.1'>Scale up</li>
     <li class='scale' data-rate='-0.1'>Scale down</li>
+    <li class='help'>
+        Hover to show help and controls
+        <ul>
+            <li>
+                <span>CTRL + click</span> a node to show the modification
+                helper
+            </li>
+            <li>
+                Move a node by dragging the aforementioned modification helper.
+            </li>
+            <li>
+                Resize nodes by moving your mouse to the edges of the
+                modification helper. When your cursor changes, click and move
+                the mouse to change the node's size.
+            </li>
+            <li>
+                Hide the modification helper by clicking it while holding
+                the <span>CTRL</span> key.
+            </li>
+        </ul>
+    </li>
 </ul>
 <div id="canvas">
 

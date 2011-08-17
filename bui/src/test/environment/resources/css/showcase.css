@@ -1,7 +1,7 @@
 body {
     margin-top: 25px;
 }
-ul {
+body > ul {
     margin: 0;
     padding: 0;
     background-color: #bebebe;
@@ -25,9 +25,25 @@ ul {
     top: 0px;
     width: 100%;
 }
-li {
+body > ul > li {
     display: inline-block;
     border-right: 1px solid #333;
     padding: 5px 15px 5px 10px;
     cursor: pointer;
+}
+.help ul {
+    display: none;
+    position: absolute;
+    top: 20px;
+    left: 25%;
+    background-color: #fafad2;
+    border: 1px solid black;
+    padding: 10px 10px 10px 25px;
+    max-width: 400px;
+}
+.help:hover ul {
+    display: block;
+}
+li > span {
+    font-weight: bold;
 }

@@ -859,17 +859,9 @@
          *
          * @param {Number} x X-coordinate on which to start the dragging
          * @param {Number} y Y-coordinate on which to start the dragging
-         * @param {Boolean} [correctGraphHTMLOffset] Whether or not the graph's
-         *   HTML offset should be taken into account. Defaults to false.
          * @return {bui.Node} Fluent interface.
          */
-        startDragging : function(x, y, correctGraphHTMLOffset) {
-            if (correctGraphHTMLOffset === true) {
-                var htmlTopLeft = this.graph().htmlTopLeft();
-                x -= htmlTopLeft.x;
-                y -= htmlTopLeft.y;
-            }
-
+        startDragging : function(x, y) {
             this.placeholderVisible(true);
 
             var placeholder = this._privates(identifier).placeholder;
