@@ -40,6 +40,13 @@
                 graph.scale(graph.scale() + rate);
                 return false;
             });
+
+            $('.performance').click(function() {
+                var highPerformance = bui.util.toBoolean($(this).data('performance'));
+                console.log(highPerformance)
+                graph.highPerformance(highPerformance);
+                return false;
+            });
         });
     </script>
 </head>
@@ -50,6 +57,8 @@
     <li class='focusToNode' data-node-id='node10'>Focus on a node</li>
     <li class='scale' data-rate='0.1'>Scale up</li>
     <li class='scale' data-rate='-0.1'>Scale down</li>
+    <li class='performance' data-performance='true'>High performance mode</li>
+    <li class='performance' data-performance='false'>Low performance mode</li>
     <li class='help'>
         Hover to show help and controls
         <ul>
@@ -68,6 +77,15 @@
             <li>
                 Hide the modification helper by clicking it while holding
                 the <span>CTRL</span> key.
+            </li>
+            <li>
+                Add edge handles to a straight line edge by
+                <span>clicking</span> on it.
+            </li>
+            <li>
+                Enable modifications of splines by <span>holding CTRL and
+                clicking</span> on the spline. Treat the blue dots like any
+                other node, e.g. <span>CTRL + Click or drop it</span>.
             </li>
         </ul>
     </li>

@@ -165,6 +165,7 @@ def createDistribution():
             raise
 
     os.remove(os.path.join(distributionDir, 'css', 'qunit.css'))
+    os.remove(os.path.join(distributionDir, 'css', 'showcase.css'))
     os.remove(os.path.join(distributionDir, 'js', 'biographer-tests.js'))
     os.remove(os.path.join(distributionDir, 'js', 'qunit.js'))
     shutil.copy(os.path.join('target', 'biographer-ui.min.js'),
