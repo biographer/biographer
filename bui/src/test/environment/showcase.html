@@ -47,6 +47,11 @@
                 graph.highPerformance(highPerformance);
                 return false;
             });
+
+            $('.export').click(function() {
+                console.log(graph.toJSON());
+                return false;
+            });
         });
     </script>
 </head>
@@ -59,6 +64,7 @@
     <li class='scale' data-rate='-0.1'>Scale down</li>
     <li class='performance' data-performance='true'>High performance mode</li>
     <li class='performance' data-performance='false'>Low performance mode</li>
+    <li class='export'>Export to JSON (see console)</li>
     <li class='help'>
         Hover to show help and controls
         <ul>
