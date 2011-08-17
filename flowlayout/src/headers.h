@@ -14,6 +14,8 @@
 #include <queue>
 #include <set>
 #include <algorithm>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #define VI vector<int>
 #define VN vector<Node>

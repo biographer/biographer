@@ -10,6 +10,7 @@ Network::Network(){
    nodes = new VN(); nodes->clear();
    edges = new VE(); edges->clear();
    compartments = new VCP(); compartments->clear();
+   showProgress=false;
 }
 
 Network::~Network(){
@@ -184,6 +185,7 @@ void Network::read(const char* file){
       float _x,_y, _width, _height,_dir;
       FILE* old_stdin=stdin;
       printf("importing network\n");
+      infile=file;
       if (file) freopen(file,"r",stdin);
       ret=1;
       while (ret>0){ret=scanf(" #%[^\n]",s);}; // remove comment lines
@@ -193,6 +195,7 @@ void Network::read(const char* file){
          fprintf(stderr,"too many compartments %d",numc);
          abort();
       }
+      addCompartment(0,"unknown"); //first compartment is witout constraints (you can overwrite its name though)
       printf("number of compartments: %d\n",numc);
       for(i=0;i<numc;i++){
          MSCANF2(" %d %s\n",&_index,t);
@@ -202,7 +205,6 @@ void Network::read(const char* file){
          }
          addCompartment(_index,t);
       }  
-      addCompartment(0,"unknown");
       numc++;
       MSCANF(" %s\n",s); // "///"  
       MSCANF(" %d",&n); //number of nodes
@@ -250,6 +252,9 @@ void Network::read(const char* file){
          for(k=0;k<7;k++){
             if(strcmp(edgetypes[k],s)==0)break;
          }
+         if (((Edgetype)k) != product){
+            swap(p,q); // Network and layout expect reaction->reactant edge format
+         }
          addEdge(p,q,(Edgetype)k);
       }
    } catch (char* err){
@@ -257,20 +262,88 @@ void Network::read(const char* file){
       abort();
    }
 }
-
+void Network::show_progress(int &cc){
+#ifdef PROGRESSLINUX
+   if (!showProgress) return;
+   int i;
+   const int num=10; // show only every num interations
+   cc++;
+   if ((cc>1) && (cc%num)) return;
+   if (!infile) {
+      printf("no input file given; needed for progress output\n");
+      abort();
+   }
+   int n=nodes->size();
+   for(i=0;i<n;i++){ // node positions to nodes array
+      (*nodes)[i].pts.x=pos[i].x;
+      (*nodes)[i].pts.y=pos[i].y;
+      (*nodes)[i].pts.dir=mov_dir[i];
+   }
+   char outfile[30];
+   sprintf(outfile,"/tmp/progress%d.dat",getpid());
+   dumpNodes(outfile); // dump nodes to outfile
+   char pngfile[30];
+   sprintf(pngfile,"/tmp/progress%d.png",getpid());
+   //infile is Network member
+   // generating graph layout
+   int cpid;
+   if ((cpid=fork())==0) { // child process ; note, this queues up a lot of calls
+      execl("/usr/bin/perl","/usr/bin/perl","/local/home/handorf/hg/biographer-layout/perl/visLayout3.pl",infile,outfile,pngfile,NULL);
+   }
+   waitpid(cpid,NULL,0); // wait for layout to complete
+   sleep(1);
+   // forking viewer
+   if (cc==1){ // this only happens the first time
+      int cpid;
+      if (!fork()) { // child process
+         // call viewer
+         printf("calling viewer..\n");
+         execl("/usr/bin/display","/usr/bin/display","-update","1",pngfile,NULL); 
+         // this never returns
+      }
+   }
+#endif
+}
 void Network::dumpNodes(const char* file){
    Node tmp;
    int i;
+   const float inf=1e50;
+   float xmin=inf;
+   float xmax=-inf;
+   float ymin=inf;
+   float ymax=-inf;
    int n=nodes->size();
-   FILE* old_stdout=stdout;
-   if (file) freopen(file,"w",stdout);
-   for(i=0;i<n;i++){
-      printf("%d\n",i);
-      tmp = (*nodes)[i];
-      printf("%s\n",nodetypes[(int)(tmp.pts.type)]);
-      cout<<tmp.pts.name<<endl;
-      printf("%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",tmp.pts.compartment,tmp.pts.x, tmp.pts.y, tmp.pts.width, tmp.pts.height, tmp.pts.dir);
+   FILE * out;
+   if (file) {
+      out=fopen(file,"w");
+   } else {
+      out=stdout;
    }
+   for(i=0;i<n;i++){
+      fprintf(out,"%d\n",i);
+      tmp = (*nodes)[i];
+      fprintf(out,"%s\n",nodetypes[(int)(tmp.pts.type)]);
+      fprintf(out,"%s\n",tmp.pts.name.c_str());
+      fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",tmp.pts.compartment,tmp.pts.x, tmp.pts.y, tmp.pts.width, tmp.pts.height, tmp.pts.dir);
+      if (xmin>(*nodes)[i].pts.x-(*nodes)[i].pts.width/2) xmin=(*nodes)[i].pts.x-(*nodes)[i].pts.width/2;
+      if (xmax<(*nodes)[i].pts.x+(*nodes)[i].pts.width/2) xmax=(*nodes)[i].pts.x+(*nodes)[i].pts.width/2;
+      if (ymin>(*nodes)[i].pts.y-(*nodes)[i].pts.height/2) ymin=(*nodes)[i].pts.y-(*nodes)[i].pts.height/2;
+      if (ymax<(*nodes)[i].pts.y+(*nodes)[i].pts.height/2) ymax=(*nodes)[i].pts.y+(*nodes)[i].pts.height/2;
+   }
+   //do do print in output file !!! printf("bound:\n(%f,%f)-(%f,%f)\n",xmin,ymin,xmax,ymax);
+   n=compartments->size();
+   for(i=0;i<n;i++){
+      fprintf(out,"%d\n",i);
+      fprintf(out,"Compartment\n");
+      fprintf(out,"%s\n",(*compartments)[i].name.c_str());
+      fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",0,
+             max(xmin,(*compartments)[i].xmin),
+             max(ymin,(*compartments)[i].ymin),
+             min(xmax,(*compartments)[i].xmax)-max(xmin,(*compartments)[i].xmin),
+             min(ymax,(*compartments)[i].ymax)-max(ymin,(*compartments)[i].ymin),
+             0);
+   }
+   fclose(out);
 } 
 
 #ifdef USEJSON
@@ -290,6 +363,24 @@ double json_object_get_number_member(JsonObject* jobj,const gchar *name){
    }
    
 }
+
+int json_object_get_intnumber_member(JsonObject* jobj,const gchar *name){
+   JsonNode* node=json_object_get_member(jobj,name);
+   GType tp=json_node_get_value_type(node);
+   if (tp == G_TYPE_INT64){
+      return (int) json_node_get_int(node);
+   } else if (tp == G_TYPE_DOUBLE){
+      return (int) json_node_get_double(node);
+   } else if (tp == G_TYPE_STRING){
+      return atoi(json_node_get_string(node));
+   } else {
+      printf("json object member %s not a number, but a %s (%d)",name,json_node_type_name(node),tp);
+      return 0;
+   }
+   
+}
+
+
 // FIXME: check for memory leaks
 JSONcontext* Network::readJSON(const char* file){
    JsonParser *parser;
@@ -322,17 +413,18 @@ JSONcontext* Network::readJSON(const char* file){
       JsonObject *data=json_object_get_object_member(n,"data");
       const char* type=json_object_get_string_member(n,"type");
       const char* id=json_object_get_string_member(n,"id");
-      if (json_object_has_member(n,"is_abstract") && (json_object_get_boolean_member(n,"is_abstract") || json_object_get_int_member(n,"is_abstract"))){
+      if (json_object_has_member(n,"is_abstract") && (json_object_get_boolean_member(n,"is_abstract") || json_object_get_intnumber_member(n,"is_abstract"))){
          continue;
       }
       if (!json_object_has_member(n,"index")){
          g_print ("no index defined for %s %s\n",type,id);
          abort();
       }
-      int idx=json_object_get_int_member(n,"index");
+      int idx=json_object_get_intnumber_member(n,"index");
       g_print ("node %d %s id %s\n",idx,type,id);
       if(strcmp(type,"Compartment")==0){
          addCompartment(idx,id);
+         if (idx>=ctx->cpidx->size()) ctx->cpidx->resize(idx+1);
          (*(ctx->cpidx))[idx]=i;
       } else {
          double x=json_object_get_number_member(data,"x");
@@ -340,7 +432,7 @@ JSONcontext* Network::readJSON(const char* file){
          double w=json_object_get_number_member(data,"width");
          double h=json_object_get_number_member(data,"height");
          double d=json_object_get_number_member(data,"dir");
-         int c=json_object_get_int_member(data,"compartmentidx");
+         int c=json_object_get_intnumber_member(data,"compartmentidx");
          for(k=0;k<7;k++){
             if(strcmp(jnodetypes[k],type)==0)break;
          }
@@ -364,8 +456,8 @@ JSONcontext* Network::readJSON(const char* file){
       for(k=0;k<7;k++){
          if(strcmp(edgetypes[k],type)==0)break;
       }
-      int from=json_object_get_int_member(e,"sourceidx");
-      int to=json_object_get_int_member(e,"targetidx");
+      int from=json_object_get_intnumber_member(e,"sourceidx");
+      int to=json_object_get_intnumber_member(e,"targetidx");
       addEdge(from,to,(Edgetype)k);
       g_print ("edge %s %i -> %i\n",edgetypes[k],from,to);
    }
@@ -376,12 +468,8 @@ JSONcontext* Network::readJSON(const char* file){
 // FIXME: check for memory leaks
 void Network::writeJSON(JSONcontext* ctx,const char* file){
    GError *error;
-   JsonGenerator* gen;
-   gen = (JsonGenerator*) g_object_new (JSON_TYPE_GENERATOR,
-                       "pretty", TRUE,
-                       "indent", 2,
-                       NULL);
-                       
+   JsonGenerator* gen=json_generator_new ();
+   
    json_generator_set_root(gen,ctx->root);
    JsonArray* jnodes=json_object_get_array_member(json_node_get_object (ctx->root),"nodes");
 
@@ -400,9 +488,9 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
       json_object_set_double_member(data,"y",(*nodes)[i].pts.y);
       // getting overal bounds
       if (xmin>(*nodes)[i].pts.x-(*nodes)[i].pts.width/2) xmin=(*nodes)[i].pts.x-(*nodes)[i].pts.width/2;
-      if (xmax<(*nodes)[i].pts.x+(*nodes)[i].pts.width/2) xmin=(*nodes)[i].pts.x+(*nodes)[i].pts.width/2;
+      if (xmax<(*nodes)[i].pts.x+(*nodes)[i].pts.width/2) xmax=(*nodes)[i].pts.x+(*nodes)[i].pts.width/2;
       if (ymin>(*nodes)[i].pts.y-(*nodes)[i].pts.height/2) ymin=(*nodes)[i].pts.y-(*nodes)[i].pts.height/2;
-      if (ymax<(*nodes)[i].pts.y+(*nodes)[i].pts.height/2) ymin=(*nodes)[i].pts.y+(*nodes)[i].pts.height/2;
+      if (ymax<(*nodes)[i].pts.y+(*nodes)[i].pts.height/2) ymax=(*nodes)[i].pts.y+(*nodes)[i].pts.height/2;
    }
    
    n=compartments->size();

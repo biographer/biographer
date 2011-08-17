@@ -46,15 +46,17 @@ public:
    void dump();
    void read(const char * file=NULL); // read network from file
    void dumpNodes(const char* file); // write nodes with properties
-/*   
+   
 #ifdef USEJSON   
    JSONcontext* readJSON(const char * file=NULL);
    void writeJSON(JSONcontext* ctx,const char* file=NULL);
 #endif
-*/   
+   
    
    float layout(); //run the layout algorithm to obtain the coordinates of nodes.
-      
+
+   bool showProgress;
+   
 protected:
      
    float get_dij1(int i, int j); //the ideal distance between adjacent nodes;
@@ -78,7 +80,9 @@ protected:
    void brute_force_post_pro();
    void init_layout2(vector<bool>fixinit);
    float layout_update(vector<bool>fixinit);
-      
+
+   void show_progress(int &cc); // shows graphical progress during layout in extra window
+
    VP pos, mov; //positions and dispalcements of nodes.
    struct rect{
       float xmin, xmax, ymin, ymax;
@@ -91,6 +95,7 @@ protected:
    vector<float>mov_dir; //adopted for ajusting pts_dir[i].
    VI deg;  //number of edges incident on a node.
    int * above_comp;  //the compartment (index) in above.
+   const char* infile; // the filename the network is read from (only for the text input format)
 };
    
 #endif
