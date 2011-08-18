@@ -163,7 +163,9 @@
      * @private parent listener
      */
     var parentChanged = function(node, newParent, oldParent) {
-        oldParent.unbindAll(listenerIdentifier(this));
+        if (oldParent !== this.graph()) {
+            oldParent.unbindAll(listenerIdentifier(this));
+        }
 
         newParent.bind(bui.Drawable.ListenerType.remove,
                 parentRemoved.createDelegate(this),

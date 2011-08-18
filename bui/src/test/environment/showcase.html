@@ -48,7 +48,6 @@
 
             $('.performance').click(function() {
                 var highPerformance = bui.util.toBoolean($(this).data('performance'));
-                console.log(highPerformance)
                 graph.highPerformance(highPerformance);
                 return false;
             });
@@ -62,46 +61,72 @@
 </head>
 <body>
 <ul>
-    <li class='updatePos' data-json='showcaseJSON'>Load position set 1</li>
-    <li class='updatePos' data-json='showcaseDifferentPositionsJSON'>Load position set 2</li>
-    <li class='focusToNode' data-node-id='node10'>Focus on a node</li>
-    <li class='scale' data-rate='0.1'>Scale up</li>
-    <li class='scale' data-rate='-0.1'>Scale down</li>
-    <li class='fitToPage'>Fit to page</li>
-    <li class='performance' data-performance='true'>High performance mode</li>
-    <li class='performance' data-performance='false'>Low performance mode</li>
-    <li class='export'>Export to JSON (see console)</li>
-    <li class='help'>
-        Hover to show help and controls
-        <ul>
-            <li>
-                <span>CTRL + click</span> a node to show the modification
-                helper
-            </li>
-            <li>
-                Move a node by dragging the aforementioned modification helper.
-            </li>
-            <li>
-                Resize nodes by moving your mouse to the edges of the
-                modification helper. When your cursor changes, click and move
-                the mouse to change the node's size.
-            </li>
-            <li>
-                Hide the modification helper by clicking it while holding
-                the <span>CTRL</span> key.
-            </li>
-            <li>
-                Add edge handles to a straight line edge by
-                <span>clicking</span> on it.
-            </li>
-            <li>
-                Enable modifications of splines by <span>holding CTRL and
-                clicking</span> on the spline. Treat the blue dots like any
-                other node, e.g. <span>CTRL + Click or drop it</span>.
-            </li>
-        </ul>
+    <li>
+        <h1>Position sets</h1>
+        <a href='noJs.html' class='updatePos' data-json='showcaseJSON'>
+            [1]</a>
+        <a href='noJs.html' class='updatePos'
+           data-json='showcaseDifferentPositionsJSON'>[2]</a>
+    </li>
+    <li>
+        <h1>Scaling</h1>
+        <a href='noJs.html' class='scale' data-rate='0.1'>[+]</a>
+        <a href='noJs.html' class='scale' data-rate='-0.1'>[-]</a>
+        <a href='noJs.html' class='fitToPage'>[Fit to page]</a>
+    </li>
+    <li>
+        <h1>Performance</h1>
+        <a href='noJs.html' class='performance'
+           data-performance='true'>[High]</a>
+        <a href='noJs.html' class='performance'
+           data-performance='false'>[Low]</a>
+    </li>
+    <li>
+        <h1>Miscellaneous</h1>
+        <a href='noJs.html' class='focusToNode'
+           data-node-id='node10'>[Focus node]</a>
+        <a href='noJs.html' class='export'>[Export JSON (see console)]</a>
+    </li>
+    <li>
+        <h1>Help</h1>
+        <div class="help">
+            <span style="color: #4183C4;">[Hover to show help]</span>
+            <ul>
+                <li>
+                    <span>CTRL + click</span> a node to show the modification
+                    helper
+                </li>
+                <li>
+                    Move a node by dragging the aforementioned modification helper.
+                </li>
+                <li>
+                    Resize nodes by moving your mouse to the edges of the
+                    modification helper. When your cursor changes, click and move
+                    the mouse to change the node's size.
+                </li>
+                <li>
+                    Hide the modification helper by clicking it while holding
+                    the <span>CTRL</span> key.
+                </li>
+                <li>
+                    Add edge handles to a straight line edge by
+                    <span>clicking</span> on it.
+                </li>
+                <li>
+                    Enable modifications of splines by <span>holding CTRL and
+                    clicking</span> on the spline. Treat the blue dots like any
+                    other node, e.g. <span>CTRL + Click or drop it</span>.
+                </li>
+            </ul>
+        </div>
     </li>
 </ul>
+<div id='info'>
+    <span>Biographer-UI</span>
+    <a href='http://code.google.com/p/biographer/' title='The project on Google Code'>
+        http://code.google.com/p/biographer/
+    </a>
+</div>
 <div id="canvas">
 
 </div>
