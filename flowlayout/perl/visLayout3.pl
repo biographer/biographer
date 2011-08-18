@@ -39,10 +39,18 @@ while (scalar(@lines) && (!($nidx=~/^\//))){
    $nidx=shift(@lines) # next index;
 }
 
+our $arrowshapes={Product=>"normal",Substrate=>"normal",Catalyst=>"odot",Activator=>"onormal",Inhbitor=>"tee"};
+
+
+shift(@lines); #skip first index
+
 while (scalar(@lines)){
    my $l=shift(@lines);
    my ($type,$from,$to)=split(" ",$l);
-   $g->add_edge($nodes->[$from],$nodes->[$to]);
+   if ($type eq 'Product') {
+      my $h=$from;$from=$to;$to=$h;
+   }
+   $g->add_edge($nodes->[$from],$nodes->[$to],{arrowhead=>$arrowshapes->{$type}});
 }
 
 #read output format
@@ -72,7 +80,7 @@ my $fn=$ARGV[0];
 $fn=$ARGV[2] if $ARGV[2]; # third argument maybe output png file
 $fn=~s/\.[^\.]*$//; # remove extension
 
-#print $g->dot;
+print $g->dot;
 #open($f,"| tee $fn.lyt.dot | neato -n -Gpad=0 -Gmargin=0 -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
 my $f;
 open($f,"| neato -n -Gpad=0 -Gmargin=0 -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
