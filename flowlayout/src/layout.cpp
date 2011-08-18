@@ -3,12 +3,6 @@
 #define inf 1e50
 #define zero 1e-12
 #define err 1e-4
-struct comp_y{
-  //this structure is used for initializing the compartment boundaries.
-  int id;
-  int cnt;
-  float mid;
-}; 
 float Network::get_dij1(int i, int j){ 
    //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
@@ -346,8 +340,8 @@ float Network::firm_distribution(){
          j=i+1; if(j==m)j=0;
          jj=i-1; if(jj<0)jj=m-1;
 //         average=lim(lim(angle(pos[(*neighbors)[j]]-baseNode))+lim(angle(pos[(*neighbors)[jj]]-baseNode)))*0.5; //bisector of edge-(i-1) and edge-(i+1).
-         beta2=lim(angle(pos[(*neighbors)[j]]-baseNode))-lim(angle(pos[(*neighbors)[jj]]-baseNode))
-         if (beta<=0) beta2+=2*PI
+         beta2=lim(angle(pos[(*neighbors)[j]]-baseNode))-lim(angle(pos[(*neighbors)[jj]]-baseNode));
+         if (beta<=0) beta2+=2*PI;
          average=lim(lim(angle(pos[(*neighbors)[jj]]-baseNode))+beta2/2);
          beta=lim(average-lim(angle(pos[(*neighbors)[i]]-baseNode))); //angle difference (from edge-i to the bisector).
          d=dist(pos[(*neighbors)[i]],baseNode);
@@ -366,6 +360,12 @@ void Network::init_compartments(){
         2. sort the compartments in increasing order (by average y-coordinate).
         3. for each compartment-i, set its lower boundary as (ymid[i-1].mid+ymid[i].mid)/2 and its upper boundary as (ymid[i].mid+ymid[i+1].mid)/2. 
    */
+   struct comp_y{
+      //this structure is used for initializing the compartment boundaries.
+      int id; // compartment id
+      int cnt; // number of nodes
+      float mid; //accumulated y positions / average
+   }; 
    int cn=compartments->size(), n=nodes->size();
    int i,j,comp,k;
    float tem;
@@ -385,7 +385,7 @@ void Network::init_compartments(){
    }
    for(comp=0;comp<cn;comp++)ymid[comp].mid/=ymid[comp].cnt; //calculating average y-coordinates.
    
-   //sort the compartments by average y-coordinates.
+   //sort the compartments by average y-coordinates. // first compartment (0) is "unknown" i.e. no constraints
    for(i=1;i<cn;i++)
        for(j=i+1;j<cn;j++)
           if(ymid[i].mid>ymid[j].mid){
