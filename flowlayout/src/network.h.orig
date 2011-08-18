@@ -4,24 +4,6 @@
 #include "node.h"
 #include "headers.h"
 
-#ifdef USEJSON 
-#include <stdlib.h>
-#include <glib-object.h>
-#include <json-glib/json-glib.h>
-
-class JSONcontext{
-   public: 
-      JSONcontext(){
-         nodeidx=new VI();
-         cpidx=new VI();
-      }
-      JsonNode* root;
-      VI* nodeidx;
-      VI* cpidx;
-};
-
-#endif USEJSON
-
 class Network{
       
 public:
@@ -43,20 +25,11 @@ public:
    VI* getNeighbors(int nodeIndex, Edgetype type); //find a specified type (eg. substrates) of neighbor nodes of a node.
    VI* getNeighbors(int nodeIndex);  //find the neighbor nodes of a node.
 
-   void dump();
-   void read(const char * file=NULL); // read network from file
+   void read(const char * file); // read network from file
    void dumpNodes(const char* file); // write nodes with properties
    
-#ifdef USEJSON   
-   JSONcontext* readJSON(const char * file=NULL);
-   void writeJSON(JSONcontext* ctx,const char* file=NULL);
-#endif
-   
-   
    float layout(); //run the layout algorithm to obtain the coordinates of nodes.
-
-   bool showProgress;
-   
+      
 protected:
      
    float get_dij1(int i, int j); //the ideal distance between adjacent nodes;
@@ -66,7 +39,7 @@ protected:
    float calc_force_adj(); //calculating the force resulted from edges (adjacent nodes).
    float calc_force_nadj(); //calculating the force resulted from non-adjacent nodes (node-overlapping in particular).
    float calc_force_compartments(); //make sure that the nodes obey compartment rule;
-   float firm_distribution(); //firmly distribute the edges around a compound.
+   float firm_distribution(); //firmly distribute the edges around a compound (Not used in the algorithm yet).
    float post_pro(int _round); //post-processing method: to make the layout more compacted and remove node-overlapping.
    void move_nodes(); //move the nodes to a new position.
    void init_compartments(); //initialize the compartment boundaries.
@@ -78,11 +51,7 @@ protected:
    float min_edge_crossing(int deglim); //tries to minimize edge-edge crossing.
    void post_pro_dist();
    void brute_force_post_pro();
-   void init_layout2(vector<bool>fixinit);
-   float layout_update(vector<bool>fixinit);
-
-   void show_progress(int &cc); // shows graphical progress during layout in extra window
-
+      
    VP pos, mov; //positions and dispalcements of nodes.
    struct rect{
       float xmin, xmax, ymin, ymax;
@@ -95,7 +64,6 @@ protected:
    vector<float>mov_dir; //adopted for ajusting pts_dir[i].
    VI deg;  //number of edges incident on a node.
    int * above_comp;  //the compartment (index) in above.
-   const char* infile; // the filename the network is read from (only for the text input format)
 };
    
 #endif

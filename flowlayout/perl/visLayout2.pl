@@ -21,11 +21,14 @@ while (scalar(@lines)){
    my $type=shift(@lines);
    my $id=shift(@lines);
    print "$id\n";
-   my ($x,$y)=split(/\s/,shift(@lines));
+   shift(@lines);# compartment
+   my $x=shift(@lines);
+   my $y=shift(@lines);
    $x*=72;
    $y*=72;
    $g->set_attribute($id,"pos","$x,$y!");
-   shift(@lines); # w,h
+   shift(@lines); # w
+   shift(@lines); # h
    shift(@lines); # dir;
    shift(@lines) if scalar(@lines); # next index;
 }
