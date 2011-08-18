@@ -931,7 +931,7 @@ float Network::layout(){
       move_nodes();
       show_progress(progcc);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
-      if(cur_force>pre_force||cur_force==inf)inc++;
+      if(cur_force>pre_force||cur_force>=inf)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
       if(fabs(pre_force)<zero)break;
@@ -949,7 +949,7 @@ float Network::layout(){
       move_nodes();
       show_progress(progcc);
       if(fabs(pre_force-cur_force)<pre_force*err)break;
-      if(cur_force>pre_force)inc++;
+      if(cur_force>pre_force||cur_force>=inf)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
       if(fabs(pre_force)<zero)break;
@@ -1128,7 +1128,7 @@ float Network::layout_update(vector<bool>fixinit){
       cur_force+=calc_force_compartments();
       move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
-      if(cur_force>pre_force||cur_force==inf)inc++;
+      if(cur_force>pre_force||cur_force>=inf)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
    }
@@ -1144,7 +1144,7 @@ float Network::layout_update(vector<bool>fixinit){
       cur_force+=calc_force_compartments();
       move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
-      if(cur_force>pre_force)inc++;
+      if(cur_force>pre_force||cur_force>=inf)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
    } 
