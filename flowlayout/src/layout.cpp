@@ -3,6 +3,12 @@
 #define inf 1e50
 #define zero 1e-12
 #define err 1e-4
+struct comp_y{
+  //this structure is used for initializing the compartment boundaries.
+  int id;
+  int cnt;
+  float mid;
+}; 
 float Network::get_dij1(int i, int j){ 
    //ideal distance between adjacent nodes;
    float x=(*nodes)[i].pts.width * (*nodes)[i].pts.width + (*nodes)[i].pts.height * (*nodes)[i].pts.height;
@@ -163,23 +169,23 @@ float Network::calc_force_compartments(){
    for(i=0;i<n;i++){
       comp=(*nodes)[i].pts.compartment; //the compartment which node-i belongs to.
       if(comp==0)continue; //the compartment is the whole plane.
-      if(pos[i].x<(*compartments)[comp].xmin){ //if it is outside the its compartment.
-         w=(*compartments)[comp].xmin-pos[i].x; //calculate the x-displacement to its nearest point inside the compartment.
+         if(pos[i].x-(*nodes)[i].pts.width<(*compartments)[comp].xmin){ //if it is outside the its compartment.
+            w=(*compartments)[comp].xmin-pos[i].x+(*nodes)[i].pts.width; //calculate the x-displacement to its nearest point inside the compartment.
          mov[i].x+=w; //update the displacement.
          force+=(w*w); //accumulate force.
       }
-      if(pos[i].x>(*compartments)[comp].xmax){
-         w=(*compartments)[comp].xmax-pos[i].x;
+      if(pos[i].x+(*nodes)[i].pts.width>(*compartments)[comp].xmax){
+         w=(*compartments)[comp].xmax-pos[i].x-(*nodes)[i].pts.width;
          mov[i].x+=w;
          force+=(w*w);
       }
-      if(pos[i].y<(*compartments)[comp].ymin){ //if it is outside the its compartment.
-         w=(*compartments)[comp].ymin-pos[i].y; //calculate the x-displacement to its nearest point inside the compartment.
+      if(pos[i].y-(*nodes)[i].pts.height<(*compartments)[comp].ymin){ //if it is outside the its compartment.
+         w=(*compartments)[comp].ymin-pos[i].y+(*nodes)[i].pts.height; //calculate the x-displacement to its nearest point inside the compartment.
          mov[i].y+=(w+err); //update the displacement.
          force+=(w*w); //accumulate force.
       }
-      if(pos[i].y>(*compartments)[comp].ymax){
-         w=(*compartments)[comp].ymax-pos[i].y;
+      if(pos[i].y+(*nodes)[i].pts.height>(*compartments)[comp].ymax){
+         w=(*compartments)[comp].ymax-pos[i].y-(*nodes)[i].pts.height;
          mov[i].y+=(w-err);
          force+=(w*w);
       }
@@ -360,12 +366,6 @@ void Network::init_compartments(){
         2. sort the compartments in increasing order (by average y-coordinate).
         3. for each compartment-i, set its lower boundary as (ymid[i-1].mid+ymid[i].mid)/2 and its upper boundary as (ymid[i].mid+ymid[i+1].mid)/2. 
    */
-   struct comp_y{
-      //this structure is used for initializing the compartment boundaries.
-      int id; // compartment id
-      int cnt; // number of nodes
-      float mid; //accumulated y positions / average
-   }; 
    int cn=compartments->size(), n=nodes->size();
    int i,j,comp,k;
    float tem;
@@ -385,7 +385,7 @@ void Network::init_compartments(){
    }
    for(comp=0;comp<cn;comp++)ymid[comp].mid/=ymid[comp].cnt; //calculating average y-coordinates.
    
-   //sort the compartments by average y-coordinates. // first compartment (i=0) is "unknown" i.e. no constraints
+   //sort the compartments by average y-coordinates.
    for(i=1;i<cn;i++)
        for(j=i+1;j<cn;j++)
           if(ymid[i].mid>ymid[j].mid){
@@ -422,19 +422,19 @@ void Network::adjust_compartments(){
    int n=nodes->size(),cn=compartments->size();
    int i,j,comp;  
    float delta; 
-   for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane, so we starts from index-1.
+   for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane, so we starts from index 1.
       //initialization the rectangles.
       bcomp[comp].xmin=bcomp[comp].ymin=inf;
       bcomp[comp].xmax=bcomp[comp].ymax=-inf;
    }  
    for(i=0;i<n;i++){
-      //adjusting (shrinking) the rectangles.
+      //adjusting (shrinking) the rectangles; considering node sizes
       comp=(*nodes)[i].pts.compartment;
       if(comp==0)continue;
-      if(pos[i].x<bcomp[comp].xmin)bcomp[comp].xmin=pos[i].x;
-      if(pos[i].x>bcomp[comp].xmax)bcomp[comp].xmax=pos[i].x;
-      if(pos[i].y<bcomp[comp].ymin)bcomp[comp].ymin=pos[i].y;
-      if(pos[i].y>bcomp[comp].ymax)bcomp[comp].ymax=pos[i].y;
+      if(pos[i].x-(*nodes)[i].pts.width<bcomp[comp].xmin)bcomp[comp].xmin=pos[i].x-(*nodes)[i].pts.width;
+      if(pos[i].x+(*nodes)[i].pts.width>bcomp[comp].xmax)bcomp[comp].xmax=pos[i].x+(*nodes)[i].pts.width;
+      if(pos[i].y-(*nodes)[i].pts.height<bcomp[comp].ymin)bcomp[comp].ymin=pos[i].y-(*nodes)[i].pts.height;
+      if(pos[i].y+(*nodes)[i].pts.height>bcomp[comp].ymax)bcomp[comp].ymax=pos[i].y+(*nodes)[i].pts.height;
    }
    for(comp=1;comp<cn;comp++){
       //adjusting the compartments so that its tends to be the corresponding minimum rectangles.
