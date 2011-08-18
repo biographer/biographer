@@ -385,7 +385,7 @@ void Network::init_compartments(){
    }
    for(comp=0;comp<cn;comp++)ymid[comp].mid/=ymid[comp].cnt; //calculating average y-coordinates.
    
-   //sort the compartments by average y-coordinates. // first compartment (0) is "unknown" i.e. no constraints
+   //sort the compartments by average y-coordinates. // first compartment (i=0) is "unknown" i.e. no constraints
    for(i=1;i<cn;i++)
        for(j=i+1;j<cn;j++)
           if(ymid[i].mid>ymid[j].mid){
