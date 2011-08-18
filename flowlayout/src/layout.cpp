@@ -826,8 +826,9 @@ float Network::layout(){
       k++;
       cur_force=init_layout();
       show_progress(progcc);
-      if(fabs(pre_force-cur_force)<pre_force*err || cur_force==0)break; //the system force converges to a minimal.
+      if(fabs(pre_force-cur_force)<pre_force*err)break; //the system force converges to a minimal.
       pre_force=cur_force;
+      if(fabs(pre_force)<zero)break;
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
@@ -853,6 +854,7 @@ float Network::layout(){
       if(cur_force>pre_force)inc++; //number of increases.
       if(inc>log(1.0*n))break; //quit if number of increases if larger than log(n).
       pre_force=cur_force;
+      if(fabs(pre_force)<zero)break;
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
@@ -872,6 +874,7 @@ float Network::layout(){
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
+      if(fabs(pre_force)<zero)break;
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force);
@@ -895,7 +898,8 @@ float Network::layout(){
       if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
-      pre_force=cur_force;    
+      pre_force=cur_force;
+      if(fabs(pre_force)<zero)break;    
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force); 
@@ -912,6 +916,7 @@ float Network::layout(){
       if(cur_force>=pre_force)break;
       pre_force=cur_force;
       cout<<cur_force<<endl;
+      if(fabs(pre_force)<zero)break;
    }
    //step2: shrinking edges lengths (nodes must still conform to compartment rule).
    pre_force=inf;
@@ -929,6 +934,7 @@ float Network::layout(){
       if(cur_force>pre_force||cur_force==inf)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
+      if(fabs(pre_force)<zero)break;
    }
    //step3: remove node-overlapping (nodes must still obey compartment rule).
    pre_force=inf;
@@ -946,6 +952,7 @@ float Network::layout(){
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
+      if(fabs(pre_force)<zero)break;
    } 
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force); 
