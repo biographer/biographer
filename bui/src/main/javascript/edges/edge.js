@@ -209,9 +209,10 @@
      * @private line clicked listener
      */
     var lineClicked = function(line, event) {
-        if (event.ctrlKey === true) {
-            this.edgeHandlesVisible(!this.edgeHandlesVisible());
-        }
+        // deactivated functionality based on Falko's request
+//        if (event.ctrlKey === true) {
+//            this.edgeHandlesVisible(!this.edgeHandlesVisible());
+//        }
     };
 
     /**
