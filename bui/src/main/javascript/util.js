@@ -421,6 +421,52 @@
             scrollTop : scrollTop
         });
     };
+
+    /**
+     * Make all coordinates 0 thus removing negative positions.
+     * @param {Object} json The JSON data object. The coordinates will be
+     *   transformed in place.
+     */
+    bui.util.transformJSONCoordinates = function(json) {
+        var nodes = json.nodes,
+                minX = Number.MAX_VALUE,
+                minY = Number.MAX_VALUE,
+                node,
+                i;
+
+        for (i = 0; i < nodes.length; i++) {
+            node = nodes[i];
+
+            if (bui.util.propertySetAndNotNull(node,
+                ['data', 'x'], ['data', 'y'])) {
+                minX = Math.min(minX, node.data.x);
+                minY = Math.min(minY, node.data.y);
+            }
+        }
+
+        if (minX > 0) {
+            minX = 0;
+        } else {
+            minX = Math.abs(minX);
+        }
+        if (minY > 0) {
+            minY = 0;
+        } else {
+            minY = Math.abs(minY);
+        }
+
+        if (minX !== 0 && minY !== 0) {
+            for (i = 0; i < nodes.length; i++) {
+                node = nodes[i];
+
+                if (bui.util.propertySetAndNotNull(node,
+                    ['data', 'x'], ['data', 'y'])) {
+                    node.data.x += minX;
+                    node.data.y += minY;
+                }
+            }
+        }
+    };
 })(bui);
 
 /**

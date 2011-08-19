@@ -96,3 +96,33 @@ test('propertySetAndNotNull', function() {
     equal(bui.util.propertySetAndNotNull(obj, 'label', ['data', 'x'],
             ['data', 'y'], 'foo'), false);
 });
+
+test('transformJSONCoordinates', function() {
+    var json = {
+        nodes : [
+            {
+                data : {
+                    x : -20,
+                    y : -25
+                }
+            },
+            {
+                data : {
+                    x : -5,
+                    y : -5
+                }
+            }, {
+                data : {}
+            }
+        ]
+    };
+
+    bui.util.transformJSONCoordinates(json);
+
+    equal(json.nodes[0].data.x, 0);
+    equal(json.nodes[0].data.y, 0);
+    equal(json.nodes[1].data.x, 15);
+    equal(json.nodes[1].data.y, 20);
+    equal(json.nodes[2].data.x, undefined);
+    equal(json.nodes[2].data.y, undefined);
+});

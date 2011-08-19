@@ -13,7 +13,7 @@ addMapping(nodeMapping, [290], bui.Compartment);
 
 
 addMapping(nodeMapping, [375, 167], bui.Process);
-addMapping(processNodeMapping, [375], bui.Process);
+addMapping(processNodeMapping, [375, 167], bui.Process);
 
 
 addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
