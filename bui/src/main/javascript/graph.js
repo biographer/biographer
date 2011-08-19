@@ -500,7 +500,7 @@
          * 
          * @return {Object} The exported graph.
          */
-        toJSON : function() {
+        toJSON : function(useDataObject) {
             var json = {}, edges = [], nodes = [];
 
             var dataFormat = bui.settings.dataFormat;
