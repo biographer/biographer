@@ -56,7 +56,6 @@ var customExample = {
                     'node6',
                     'node7'
                 ]
-                // TODO state variable 'relaxed'
             }
         }, {
             id : 'node5',
@@ -101,7 +100,7 @@ var customExample = {
             }
         }, {
             id : 'node11',
-            sbo : 375, // TODO change to dissociation
+            sbo : 375,
             data : {
                 x : 255,
                 y : 380

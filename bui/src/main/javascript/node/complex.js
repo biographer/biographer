@@ -60,7 +60,15 @@
     };
 
     bui.Complex.prototype = {
-        // TODO document
+        /**
+         * Automatically layout child elements using a simple table layout
+         * strategy. You can change the strategy's settings through the first
+         * parameter. The structure of this object should be like
+         * bui.settings.style.complexTableLayout.
+         * @param {Object} [settings] Settings for the layout process.
+         *   Defaults to bui.settings.style.complexTableLayout when not
+         *   provided.
+         */
         tableLayout : function(settings) {
             if (settings === undefined) {
                 settings = bui.settings.style.complexTableLayout;
