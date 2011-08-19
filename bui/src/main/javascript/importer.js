@@ -280,6 +280,11 @@
                         node.childrenWithoutAuxiliaryUnits().length > 0) {
                     alignRecursively(node);
                 }
+
+                var auxUnits = node.auxiliaryUnits();
+                for(var i = 0; i < auxUnits.length; i++) {
+                    auxUnits[i].toFront();
+                }
             }
         }
 

@@ -21,7 +21,7 @@ body > ul {
 body > ul > li {
     display: inline-block;
     border-right: 1px solid #555;
-    padding: 10px 25px 10px 25px;
+    padding: 10px 10px 10px 10px;
 }
 body > ul > li:last-child {
     border: 0;

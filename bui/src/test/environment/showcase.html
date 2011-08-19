@@ -56,6 +56,11 @@
                 console.log(graph.toJSON());
                 return false;
             });
+
+            $('.removeWhitespace').click(function() {
+                graph.reduceTopLeftWhitespace(1000);
+                return false;
+            });
         });
     </script>
 </head>
@@ -86,6 +91,7 @@
         <a href='noJs.html' class='focusToNode'
            data-node-id='node10'>[Focus node]</a>
         <a href='noJs.html' class='export'>[Export JSON (see console)]</a>
+        <a href='noJs.html' class='removeWhitespace'>[Remove whitespace]</a>
     </li>
     <li>
         <h1>Help</h1>
