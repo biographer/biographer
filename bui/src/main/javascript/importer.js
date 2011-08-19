@@ -34,7 +34,11 @@
             height : standardNodeSize.height
         };
 
-        if (node.sizeBasedOnLabel !== undefined) {
+        if (bui.util.propertySetAndNotNull(nodeJSON,
+                ['data', 'width'], ['data', 'height'])) {
+            size.width = nodeJSON.data.width;
+            size.height = nodeJSON.data.height;
+        } else if (node.sizeBasedOnLabel !== undefined) {
             size = node.sizeBasedOnLabel();
 
             // some padding because of various shapes
