@@ -257,11 +257,29 @@
      *   node's ids or, if applicable, the node's ref key (node.data.ref).
      */
     var alignAccordingToNodeHierachy = function(nodes) {
+        var alignRecursively = function(node) {
+            var children = node.childrenWithoutAuxiliaryUnits();
+
+            node.toFront();
+
+            for (var i = 0; i < children.length; i++) {
+                var child = children[i];
+                alignRecursively(child);
+            }
+        };
+
         for (var id in nodes) {
             if (nodes.hasOwnProperty(id)) {
                 var node = nodes[id];
+
+                if (node.hasParent() === false &&
+                        node.childrenWithoutAuxiliaryUnits().length > 0) {
+                    alignRecursively(node);
+                }
             }
         }
+
+
     };
 
     /**
