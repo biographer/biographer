@@ -404,18 +404,18 @@
 
         var position = node.absolutePosition(),
                 size = node.size(),
-                scale = graph.scale();
+                scale = graph.scale(),
+                graphOffset = graph.htmlTopLeft();
 
         if (canvas === undefined || viewport === undefined) {
             canvas = jQuery('body');
             viewport = jQuery(window);
-            position = node.htmlTopLeft();
         }
 
         var scrollLeft = position.x * scale - ((
-                viewport.width() - size.width * scale) / 2);
+                viewport.width() - size.width * scale) / 2) + graphOffset.x;
         var scrollTop = position.y * scale - ((
-                viewport.height() - size.height * scale) / 2);
+                viewport.height() - size.height * scale) / 2) + graphOffset.y;
         canvas.animate({
             scrollLeft : scrollLeft,
             scrollTop : scrollTop
