@@ -5,10 +5,10 @@ WINDOWS USERS
 DOWNLOADS
   For windows users, please download the executable file (biolayout-1.0.exe) from our download section: http://code.google.com/p/biographer/downloads/list
   These softwares may be needed to download from the internet (just use Google to find them and then download) and install: 
-    1.Dev-Cpp, the C++ IDE which we use to build the project. Other C++ IDE such as Eclipse and Visual Studio are also suitable (only for building from sources).
-    2.TortoiseHg, the software we use to clone local copies of codes from the repository.(only for building from sources)
-    3.Active-Perl, the software we use to run Perl scripts.
-    4.Graphviz 
+    1.Dev-Cpp, the C++ IDE used to build the project. Other C++ IDE such as Eclipse and Visual Studio are also suitable (only for building from sources).
+    2.TortoiseHg, the software used to clone local copies of codes from the repository.(only for building from sources)
+    3.Active-Perl, the software used to run Perl scripts.
+    4.Graphviz, for visualization.
   For windows users who do not wish to extend the codes, they can directly use biolayout-1.0.exe they downloaded. 
 
 CLONE THE REPOSITORY
@@ -36,7 +36,11 @@ EXECUTION
 VISUALIZATION
   Visualization is done using a Perl script file named ¡°vislayout3.pl¡±, which is also called by command line. The Perl scripts files are in the ¡°perl¡± subdirectory of D:\biographer\biographer. In order to do visualization, users need to copy the same input and output files as those in the execution step to D:\biographer\biographer\perl. Then use the command line format below to visualize:
     perl vislayout3.pl <input_file> <output_file>
-
+  There is another visulization Perl script file named "vislayout2.pl". The command line statements to do visualization using vislayout2.pl is:
+    perl vislayout2.pl <dot_file> <output_file>
+  <dot_file> and <output_file> must be copied to D:\biographer\biographer\perl subdirectory. <dot_file> is a file named "*.dot", which corresponds to the <input_file>.
+  "vislayout2.pl" may visualize a better layout picture.
+  
 
 
 LINUX USERS
