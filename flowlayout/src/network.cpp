@@ -299,6 +299,7 @@ void Network::show_progress(int &cc){
          // call viewer
          printf("calling viewer..\n");
          execl("/usr/bin/display","/usr/bin/display","-update","1",pngfile,NULL); 
+         printf("displaying %s\n",pngfile);
          // this never returns
       }
    }

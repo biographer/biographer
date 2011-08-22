@@ -3,6 +3,7 @@
 #define inf 1e50
 #define zero 1e-12
 #define err 1e-4
+#define stop 1
 struct comp_y{
   //this structure is used for initializing the compartment boundaries.
   int id;
@@ -24,7 +25,16 @@ float Network::get_dij2(int i, int j){
    float y=(*nodes)[j].pts.width * (*nodes)[j].pts.width + (*nodes)[j].pts.height * (*nodes)[j].pts.height;
    return 1.8*(sqrt(x)+sqrt(y));
 }
-
+float Network::avg_sizes(){
+   int i,n;
+   n=nodes->size();
+   float size=0;
+   for(i=0;i<n;i++){
+      size+=(*nodes)[i].pts.width;
+      size+=(*nodes)[i].pts.height;
+   }
+   return size/(2*n);
+}
 bool Network::edge_cross(int i, int j){ 
    /* whether edge-i and edge-j cross each other.
       a1,a2 are two ends of edge-i, and b1,b2 are two ends of edge-j.
@@ -137,19 +147,28 @@ float Network::calc_force_nadj(){
          i_d=dij2[n1][n2]; //the minimum distance.
          d=dist(pos[n1],pos[n2]); //the distance between node-n1 and node-n2.
          if(d>=i_d)continue; //include force and move nodes only if they are too close to each other;
-         force+=((i_d-d)*(i_d-d)*0.1); //distantal force;
+         force+=((i_d-d)*(i_d-d)); //distantal force;
          
-         vec=pos[n1]-pos[n2]; //the vector from node-n1 to node-n1.
-         if(fabs(d)<zero){
+         vec=pos[n2]-pos[n1]; //the vector from node-n1 to node-n2.
+/*         if(fabs(d)<zero){
             vec.x=1.0;
             vec.y=0.0;
          }
          else{
             vec.x/=d;vec.x*=2; //x-displacement greater than y-displacement, since width is greater than height for almost all the nodes.
             vec.y/=d;
+         }*/
+         if (d!=0){
+            vec.x*=((1/(d/i_d))-1)/d;
+            vec.y*=((1/(d/i_d))-1)/d;
          }
-         mov[n1].x+=(vec.x/n);mov[n1].y+=(vec.y/n); //two nodes repel each other, along the line connecting them.
-         mov[n2].x-=(vec.x/n);mov[n2].y-=(vec.y/n); //two nodes repel each other, along the line connecting them.
+         mov[n1].x-=vec.x;
+         mov[n1].y-=vec.y;
+         mov[n2].x+=vec.x;
+         mov[n2].y+=vec.y;
+         
+/*         mov[n1].x+=(vec.x/n);mov[n1].y+=(vec.y/n); //two nodes repel each other, along the line connecting them.
+         mov[n2].x-=(vec.x/n);mov[n2].y-=(vec.y/n); //two nodes repel each other, along the line connecting them.*/
       }
    return force;
 }
@@ -199,10 +218,18 @@ void Network::move_nodes(){
    */
    int n=nodes->size();
    for(int i=0;i<n;i++){
+      if (mov[i].x>avgsize) mov[i].x=avgsize; // limit movement
+      if (mov[i].x<-avgsize) mov[i].x=-avgsize;
+      if (mov[i].y>avgsize) mov[i].y=avgsize;
+      if (mov[i].y<-avgsize) mov[i].y=-avgsize;
+      
       pos[i].x+=mov[i].x; //update position
       pos[i].y+=mov[i].y; //update position
       mov[i].x=mov[i].y=0.0; //set to zero.
-      pts_dir[i]=lim(pts_dir[i]+mov_dir[i]/n); //adjustes default direaction.
+
+      if (mov_dir[i]>0.25*PI) mov_dir[i]=0.25*PI;  // limit rotation
+      if (mov_dir[i]<-0.25*PI) mov_dir[i]=-0.25*PI;
+      pts_dir[i]=lim(pts_dir[i]+mov_dir[i]); //adjustes default direaction.
       mov_dir[i]=0.0; //set to zero.
    }
 }
@@ -524,7 +551,7 @@ float Network::init_layout(){
          if (sz>1) step=2*left/(sz-1);
          mov[n1].y+=(pos[n2].y+dij1[i]);
          mov[n2].y+=(pos[n1].y-dij1[i]);
-         mov[n1].x+=pos[n2].x+left+idx*step;// postioning nodes left and right of reaction depending on how many products
+         mov[n1].x+=pos[n2].x+left-idx*step;// postioning nodes left and right of reaction depending on how many products
          mov[n2].x+=pos[n1].x-left+idx*step;
       }
       else if(_type==substrate){
@@ -539,7 +566,7 @@ float Network::init_layout(){
          if (sz>1) step=2*left/(sz-1);
          mov[n1].y+=(pos[n2].y-dij1[i]);
          mov[n2].y+=(pos[n1].y+dij1[i]);
-         mov[n1].x+=pos[n2].x+left+idx*step; // postioning nodes left and right of reaction depending on how many substrates
+         mov[n1].x+=pos[n2].x+left-idx*step; // postioning nodes left and right of reaction depending on how many substrates
          mov[n2].x+=pos[n1].x-left+idx*step;
       }
       else{
@@ -549,9 +576,16 @@ float Network::init_layout(){
          cost2=fabs((pos[n1].x+dij1[i])-mov[n2].x/deg[n2]);*/
          cost1=fabs((pos[n1].x-dij1[i])-pos[n2].x);
          cost2=fabs((pos[n1].x+dij1[i])-pos[n2].x);
-         if(cost1<cost2)mov[n2].x+=(pos[n1].x-dij1[i]);
-         else mov[n2].x+=(pos[n1].x+dij1[i]);
+         if(cost1<cost2){
+            mov[n2].x+=(pos[n1].x-dij1[i]);
+            mov[n1].x+=(pos[n2].x+dij1[i]);
+         }
+         else {
+            mov[n2].x+=(pos[n1].x+dij1[i]);
+            mov[n1].x+=(pos[n2].x-dij1[i]);
+         }
          mov[n2].y+=pos[n1].y;
+         mov[n1].y+=pos[n2].y;
          //here we do not move reaction node.
       }         
    }
@@ -561,8 +595,8 @@ float Network::init_layout(){
       d=dist(mov[i],pos[i]); //length of displacement
       force+=(d*d); //accumulating force.
       // mode towards expected positon
-      pos[i].x+=(mov[i].x-pos[i].x)/5; 
-      pos[i].y+=(mov[i].y-pos[i].y)/5;
+      pos[i].x+=(mov[i].x-pos[i].x)/2; 
+      pos[i].y+=(mov[i].y-pos[i].y)/2;
       mov[i].x=mov[i].y=0.0;
    }
    return force;
@@ -816,6 +850,7 @@ float Network::layout(){
    
    get_ideal_distance(); //the ideal lengths and minimum distances.
 
+   avgsize=avg_sizes();
    float cur_force,pre_force=inf;  //current system force, and previous system force.
    int k, inc;
  
@@ -826,38 +861,41 @@ float Network::layout(){
       k++;
       cur_force=init_layout();
       show_progress(progcc);
+      printf("%f\n",cur_force);fflush(stdout);
       if(fabs(pre_force-cur_force)<pre_force*err)break; //the system force converges to a minimal.
+      if (cur_force<stop) break; //absolute breaking condition
       pre_force=cur_force;
       if(fabs(pre_force)<zero)break;
    }
    printf("number of iteration: %d\n",k);    
-   printf("Total force = %0.3f\n",cur_force);
+   printf("Total force = %0.3f\n",cur_force);fflush(stdout);
    //step2: doing node-swapping to optimize the initial layout.
-   bool flag=true;
+/*   bool flag=true;
    k=0;
    while(flag){
       flag=swap_node();
       if(k<10)near_swap();
       k++;
       if(k>n)break;
-   }
+   }*/
    //step3: get the adjacent nodes located in correct relative positions.
-   k=inc=0;
-   pre_force=inf;
-   while(true){
-      k++;
-      cur_force=calc_force_adj();
-      if(k>300)cur_force+=firm_distribution();
-      move_nodes();
-      show_progress(progcc);
-      if(fabs(pre_force-cur_force)<pre_force*err)break;
-      if(cur_force>pre_force)inc++; //number of increases.
-      if(inc>log(1.0*n))break; //quit if number of increases if larger than log(n).
-      pre_force=cur_force;
-      if(fabs(pre_force)<zero)break;
-   }
-   printf("number of iteration: %d\n",k);    
-   printf("Total force = %0.3f\n",cur_force);
+//    k=inc=0;
+//    pre_force=inf;
+//    while(true){
+//       k++;
+//       cur_force=calc_force_adj();
+//       printf("%f\n",cur_force);fflush(stdout);
+//       if(k>300)cur_force+=firm_distribution();
+//       move_nodes();
+//       show_progress(progcc);
+//       if(fabs(pre_force-cur_force)<pre_force*err)break;
+//       if(cur_force>pre_force)inc++; //number of increases.
+//       if(inc>log(1.0*n))break; //quit if number of increases if larger than log(n).
+//       pre_force=cur_force;
+//       if(fabs(pre_force)<zero)break;
+//    }
+//    printf("number of iteration: %d\n",k);    
+//    printf("Total force = %0.3f\n",cur_force);
 
    //phase 2: considering the adjacent nodes and nonadjacent nodes. Make the layout spread out.
    k=inc=0;
@@ -868,6 +906,7 @@ float Network::layout(){
       if(300<k)cur_force+=firm_distribution(); //firmly ditribute edges about a compound;
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
+      printf("%f\n",cur_force);fflush(stdout);
       move_nodes();
       show_progress(progcc);
       if(fabs(pre_force-cur_force)<pre_force*err)break;

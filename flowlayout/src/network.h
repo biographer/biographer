@@ -80,7 +80,8 @@ protected:
    void brute_force_post_pro();
    void init_layout2(vector<bool>fixinit);
    float layout_update(vector<bool>fixinit);
-
+   float avg_sizes();
+   
    void show_progress(int &cc); // shows graphical progress during layout in extra window
 
    VP pos, mov; //positions and dispalcements of nodes.
@@ -96,6 +97,7 @@ protected:
    VI deg;  //number of edges incident on a node.
    int * above_comp;  //the compartment (index) in above.
    const char* infile; // the filename the network is read from (only for the text input format)
+   float avgsize;
 };
    
 #endif
