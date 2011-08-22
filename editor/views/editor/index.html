@@ -1,0 +1,234 @@
+{{extend 'layout.html'}}
+    <script type="text/javascript" src="{{=URL(request.application, 'static/js', 'biographer-ui.js')}}"></script>
+<table>
+	<tr>
+		<td>
+			<div id="canvas" class='droppable'></div>
+		</td>
+		<td>
+			<div id="message"></div>
+			<table>
+				<tr>
+					<th>Import</th>
+					<td>
+						<table>
+							<tr>
+								<td>
+									From File: 
+								</td>
+								<td>
+									<form id='import_form' method="post" enctype="multipart/form-data">
+										<input type="file" name="json_file" id="json_file">	
+									</form>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									From String: 
+								</td>
+								<td>
+									<input type="text" placeholder='{"nodes":[{"id":"node0","visible":true,"sbo":240,"data":{"x":50,"y":53,"width":61,"height":61,"label":"ATP"}}],"edges":[]}' id='json_string' /> <button id="load_json_string">load</button>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<th>Export</th>
+					<td>
+						<button id='export_json'>JSON</button>
+						<button id='export_svg'>SVG</button>
+						<form action="{{=URL('export')}}" id='export_form' style='display: none;'></form>
+					</td>
+				</tr>
+				<tr>
+					<th>Save</th>
+					<td>
+						<button id='save'>save to session</button>
+					</td>
+				</tr>
+				<tr>
+					<th>Edit</th>
+					<td>
+						<button id="edit_node">edit node</button>
+						<br />
+						<table id="edit_node_table">
+							<tr>
+								<th>Label</th>
+								<td> <input type="text" placeholder="new label" id='edit_label' /> </td>
+							</tr>
+							<tr>
+								<th>Unit of Information</th>
+								<td> <input type="text" placeholder="mt:prot" id='unit_of_information' /> </td>
+							</tr>
+							<tr>
+								<th>Color</th>
+								<td> 
+									<div class="colorbox"><input type="radio" name="node_color" value="none" checked/></div>
+									<div class="colorbox Silver"><input type="radio" name="node_color" value="Silver"/></div>
+									<div class="colorbox Gray"><input type="radio" name="node_color" value="Gray"/></div>
+									<div class="colorbox Red"><input type="radio" name="node_color" value="Red"/></div>
+									<div class="colorbox Maroon"><input type="radio" name="node_color" value="Maroon"/></div>
+									<div class="colorbox Yellow"><input type="radio" name="node_color" value="Yellow"/></div>
+									<div class="colorbox Olive"><input type="radio" name="node_color" value="Olive"/></div>
+									<div class="colorbox Lime"><input type="radio" name="node_color" value="Lime"/></div>
+									<br />
+									<div class="colorbox Green"><input type="radio" name="node_color" value="Green"/></div>
+									<div class="colorbox Aqua"><input type="radio" name="node_color" value="Aqua"/></div>
+									<div class="colorbox Teal"><input type="radio" name="node_color" value="Teal"/></div>
+									<div class="colorbox Blue"><input type="radio" name="node_color" value="Blue"/></div>
+									<div class="colorbox Navy"><input type="radio" name="node_color" value="Navy"/></div>
+									<div class="colorbox Fuchsia"><input type="radio" name="node_color" value="Fuchsia"/></div>
+									<div class="colorbox Purple"><input type="radio" name="node_color" value="Purple"/></div>
+								</td>
+							</tr>
+						</table>
+						<div> clear text <input type="checkbox" id="autoclear"> </div>
+						<br />
+						<br />
+						<div id="edit_message"></div>
+					</td>
+				</tr>
+				<tr>
+					<th>Remove</th>
+					<td> 
+						<button id="del_node">remove node</button> 
+						<!-- button id="del_edge" disabled>remove edge</button --> 
+					</td>
+				</tr>
+				<tr>
+					<th>Editable</th>
+					<td>
+						<button id='edit_all_nodes'>all nodes</button>
+						<button id='edit_no_nodes'>no nodes</button>
+					</td>
+				</tr>
+			</table>
+			<table>
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Drag This</th>
+						<th>Label</th>
+					</tr>
+				</thead>
+				<tr>
+					<td>SimpleChemical</td>
+					<td> <div class="symbol_box editor_draggable" id='SimpleChemical'></div> </td>
+					<td> <input type="text" placeholder="ATP" class='label' /> clear text<input type="checkbox" class="autoclear"></td>
+						
+				</tr>
+				<tr>
+					<td>Macromolecule</td>
+					<td> <div class="symbol_box editor_draggable" id='Macromolecule'></div> </td>
+					<td> <input type="text" placeholder="Hexokinase" class='label' /> clear text<input type="checkbox" class="autoclear"></td>
+				</tr>
+				<tr>
+					<td>NucleicAcidFeature</td>
+					<td> <div class="symbol_box editor_draggable" id='NucleicAcidFeature'></div> </td>
+					<td> <input type="text" placeholder="ENA1" class='label' /> clear text<input type="checkbox" class="autoclear"></td>
+				</tr>
+				<tr>
+					<td>UnspecifiedEntity</td>
+					<td> <div class="symbol_box editor_draggable" id='UnspecifiedEntity'></div> </td>
+					<td> <input type="text" placeholder="something" class='label' /> clear text<input type="checkbox" class="autoclear"></td>
+				</tr>
+				<tr>
+					<td>Compartment</td>
+					<td> <div class="symbol_box editor_draggable no_drop_complex" id='Compartment'></div> </td>
+					<td> <input type="text" placeholder="Cytosol" class='label' /> clear text<input type="checkbox" class="autoclear"></td>
+				</tr>
+				<tr>
+					<td>Complex</td>
+					<td> <div class="symbol_box editor_draggable" id='Complex'></div> </td>
+					<td> </td>
+				</tr>
+				<tr>
+					<td>Process</td>
+					<td> <div class="symbol_box editor_draggable no_drop_complex" id='Process'></div> </td>
+					<td> <input type="text" placeholder="Cytosol" class='label' /> clear text<input type="checkbox" class="autoclear"></td>
+				</tr>
+				<tr>
+					<td>Spline/Edge</td>
+					<td colspan='2'>  <button id="draw_edge_spline">Draw Edge/Spline</button>
+						<br />
+						<table>
+							<tr>
+								<th> Type </th>
+								<td>
+									<select id="select_edge_spline">
+										<option>Spline</option>
+										<option>Edge</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th>End Marker</th>
+								<td>
+									<select id="edge_marker">
+										<option>none</option>
+										<option>modulation</option>
+										<option>inhibition</option>
+										<option>necessaryStimulation</option>
+										<option>catalysis</option>
+									</select>
+								</td>
+							</tr>
+						</table>
+					<div id="edge_message"></div> </td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<br />
+<script type="text/javascript">
+//-------------------------------------------
+//-------------------------------------------
+var graphData =  {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
+   nodes : [
+      {
+         "data" : {
+            "label" : "ATP",
+            "modification" : [],
+            "x" : 50,
+            "y" : 50
+         },
+         "id" : "Reactome:29358",
+         "is_abstract" : false,
+         "sbo" : 247,
+         "type" : "SimpleCompound"
+      },
+   ],
+   edges : []
+   }{{pass}};
+bui.ready(function() {
+    bui.settings.css.stylesheetUrl = '{{=URL(request.application, 'static/css', 'visualization-svg.css')}}'
+    graph = new bui.Graph($('#canvas')[0]);
+    bui.importFromJSON(graph, graphData);
+    //=========================
+    doHeartBeat();
+    //=========================
+    //add edge select listner to all nodes 
+    all_drawables = graph.drawables(); 
+    for (var key in all_drawables) {
+	    var drawable = all_drawables[key];
+	    //alert(drawable.identifier());
+	    if (drawable.drawableType()=='node'){
+		drawable.bind(bui.Node.ListenerType.click, nodeSelect, 'node_select');
+	    }
+    }
+    $('#canvas').droppable({ 
+	hoverClass: 'drop_hover',
+	drop: function(event, ui){drop_fkt(event, ui, this);},
+    });
+    $('.Complex, .Compartment').droppable({ 
+	hoverClass: 'drop_hover',
+	over : function(){$('#canvas').droppable("disable");},
+	out : function(){$('#canvas').droppable("enable");},
+	drop: function(event, ui){drop_fkt(event, ui, this);},
+    });
+});
+//-------------------------------------------
+//-------------------------------------------
+</script>

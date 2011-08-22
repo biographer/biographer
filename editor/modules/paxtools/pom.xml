@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.biopax.paxtools</groupId>
+    <artifactId>paxtools</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+
+    <name>PaxTools</name>
+    <packaging>pom</packaging>
+    <description>Paxtools is a Java library that allows software to read, write, analyze and manipulate BioPAX models. Paxtools provide a consistent, fully implemented, validating BioPAX API that significantly reduces development time of oftware  that require programmatic access to BioPAX. Paxtools is modular, lightweight and platform independent to be easily embedded into applications.</description>
+    <url>http://www.biopax.org/paxtools</url>
+
+    <modules>
+        <module>paxtools-core</module>
+        <module>paxtools-jena-io</module>
+        <module>sif-converter</module>
+        <module>gsea-converter</module>
+        <module>pathwaycommons-client</module>
+        <module>biopax-converter</module>
+        <module>psimi-converter</module>
+        <module>sbgn-converter</module>
+        <module>paxtools-console</module>
+        <module>paxtools-query</module>
+        <module>paxtools-scripting</module>
+    </modules>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+    <developers>
+        <developer>
+            <id>emekdemir</id>
+            <name>Emek Demir</name>
+            <organization>CBIO MSKCC</organization>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>rodche</id>
+            <name>Igor Rodchenkov</name>
+            <organization>University of Toronto</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>ozgunbabur</id>
+            <name>Ozgun Babur</name>
+            <organization>CBIO MSKCC</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>kenichirofukuda</id>
+            <name>Ken-Ichiro Fukuda</name>
+            <organization />
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>armanaksoy</id>
+            <name>Arman Aksoy</name>
+            <organization />
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>benjamingross</id>
+            <name>Benjamin Gross</name>
+            <organization>CBIO MSKCC</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+   <mailingLists>
+     <mailingList>
+       <name>BioPAX Discussion Group</name>
+       <!-- 
+       <subscribe></subscribe>
+       <unsubscribe></unsubscribe>
+       -->
+      <post>biopax-discuss@googlegroups.com</post>
+      <!--
+      <archive>http://www.biopax.org/mailman/listinfo/biopax-discuss</archive>
+      -->
+     </mailingList>
+   </mailingLists>
+
+	<licenses>
+		<license>
+			<name>LGPL 2.0 license</name>
+			<url>http://www.opensource.org/licenses/lgpl-2.0.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<issueManagement>
+		<system>SF</system>
+		<url>https://sourceforge.net/tracker/?group_id=85345</url>
+	</issueManagement>
+
+	<profiles>
+		<profile>
+			<id>rodche</id>
+			<!-- used by maven-release-plugin during 
+				"mvn release:prepare -Prodche", 
+				"mvn release:perform -Prodche";
+			${local.biopax.m2repo}, ${local.biopax.site} must 
+			be defined in the local ~/.m2/settings.xml, profiles...
+			-->
+			<properties>
+				<scm.username>rodche</scm.username>
+			</properties>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>biopax.snapshots</id>
+					<name>Local BioPAX Snapshots Repository</name>
+					<url>${local.biopax.m2repo}/snapshots</url>
+				</snapshotRepository>
+				<repository>
+					<id>biopax.releases</id>
+					<name>Local BioPAX Repository</name>
+					<url>${local.biopax.m2repo}/releases</url>
+				</repository>
+				<site>
+					<id>biopax.sf.net</id>
+					<name>BioPAX Sourceforge site</name>
+					<url>${local.biopax.site}/paxtools</url>
+				</site>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>emekdemir</id>
+			<properties>
+				<scm.username>emekdemir</scm.username>
+			</properties>
+		</profile>
+	</profiles>
+
+    <scm>
+        <connection>scm:hg:http://biopax.hg.sourceforge.net:8000/hgroot/biopax/paxtools</connection>
+        <developerConnection>
+            scm:hg:ssh://${scm.username}@biopax.hg.sourceforge.net/hgroot/biopax/paxtools
+        </developerConnection>
+        <url>http://biopax.hg.sourceforge.net/hgweb/biopax/paxtools</url>
+    </scm>
+
+	<!-- In order to deploy or site:deploy this project:
+	1) have login/pw configured in their local (~/.m2/) settings.xml, i.e:
+	<servers>
+      <server>
+      	<id>biopax.sf.net</id>
+      	<username>USERID,biopax</username>
+      	<password>PASSWD</password>
+      </server>
+      <server>
+    	<id>biopax.releases</id>
+    	<username>USERID,biopax</username>
+    	<password>PASSWD</password>
+      </server>
+      <server>
+    	<id>biopax.snapshots</id>
+    	<username>USERID,biopax</username>
+    	<password>PASSWD</password>
+      </server>
+  	</servers>
+  	(alternatively, one can define developer's profile in this pom.xml 
+  	with a <distributionManagement /> inside, and use username explicitely, e.g., 
+  	<url>scp://USERID@shell.sourceforge.net/home/project-web/biopax/htdocs/paxtools</url>)
+  	2) [Important!] CREATE the remote shell first (before using "mvn deploy"):
+  		- from terminal do: "ssh -t USERID,biopax@shell.sourceforge.net create", wait...
+  		- once it's up, - exit (now you can login as "ssh USERID,biopax@shell.sourceforge.net", 
+  		but, after several minutes, the shell will expire due to inactivity; 
+  		see also: http://sourceforge.net/apps/trac/sourceforge/wiki/Shell%20service)
+  	3) now you can do "mvn deploy" or "mvn site:deploy" (do site:site first, for speed)!
+  	
+  	Alternative approach:
+  	- configure to use local <site> and <repository> locations in your <profile>,
+  	- do site, deploy normally (it now goes not ot tthe BioPAX@Sourceforge but to a local dir) 
+  	- setup/use RSYNC (outside maven stuff) to upload the releases and docs from that locations to @sf.net
+	-->
+	
+	<distributionManagement>
+		<site>
+			<id>biopax.sf.net</id>
+			<name>BioPAX Sourceforge site</name>
+			<url>scp://shell.sourceforge.net/home/project-web/biopax/htdocs/paxtools</url>
+		</site>
+		<snapshotRepository>
+			<id>biopax.snapshots</id>
+			<name>BioPAX Snapshots Repository</name>
+			<url>scp://shell.sourceforge.net/home/project-web/biopax/htdocs/m2repo/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>biopax.releases</id>
+			<name>BioPAX Releases Repository</name>
+			<url>scp://shell.sourceforge.net/home/project-web/biopax/htdocs/m2repo/releases</url>
+		</repository>
+	</distributionManagement>
+
+    <organization>
+        <name>BioPAX</name>
+        <url>http://www.biopax.org</url>
+    </organization>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    
+    <dependencies>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.13</version>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+      
+    <repositories>
+        <repository>
+            <id>JBoss Repo</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+            <name>JBoss Repo</name>
+        </repository>
+        <repository>
+			<id>biopax.snapshots</id>
+			<name>BioPAX Snapshots Repository at Sourceforge</name>
+			<url>http://biopax.sourceforge.net/m2repo/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>biopax.releases</id>
+			<name>BioPAX Repository at Sourceforge</name>
+			<url>http://biopax.sourceforge.net/m2repo/releases/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+    </repositories>
+	
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jxr-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.0.1</version>
+			</plugin>
+		</plugins>
+	</reporting>
+</project>
+

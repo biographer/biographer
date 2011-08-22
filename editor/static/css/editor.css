@@ -1,0 +1,74 @@
+th {
+	text-align: left;
+}
+#canvas {
+    width: 500px;
+    height: 500px;
+    border: solid 1px #ddd;
+}
+.symbol_box{
+    border: solid 2px black;
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+    background-color:#eee;
+    opacity: 0.5;
+
+}
+.drop_hover {
+    background-color: #FFFFF0;
+}
+.placeholder.drop_hover{
+    background-color: red;
+}
+input [type="text"]{
+    width: 50px;
+    height: 13px;
+}
+.colorbox{
+	width: 15px;
+	height: 15px;
+	display: inline-block;
+}
+.Silver {
+	background-color: #C0C0C0;
+}
+.Gray {
+	background-color: #808080;
+}
+.Red {
+	background-color: #FF0000;
+}
+.Maroon {
+	background-color: #800000;
+}
+.Yellow {
+	background-color: #FFFFF0;
+}
+.Olive {
+	background-color: #808000;
+}
+.Lime {
+	background-color: #00FF00;
+}
+.Green {
+	background-color: #008000;
+}
+.Aqua {
+	background-color: #00FFFF;
+}
+.Teal {
+	background-color: #008080;
+}
+.Blue {
+	background-color: #0000FF;
+}
+.Navy {
+	background-color: #000080;
+}
+.Fuchsia {
+	background-color: #FF00FF;
+}
+.Purple {
+	background-color: #800080;
+}
