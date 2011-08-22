@@ -30,7 +30,7 @@ def Console():
 
 def JSON():
 	if session.bioGraph is None:
-		return dict( JSON='network = ;'+EmptyNet )
+		return dict( JSON='network = '+EmptyNet+";" )
 	else:
 		return dict( JSON="network = "+session.bioGraph.exportJSON()+";" )
 
@@ -38,7 +38,7 @@ def Layout():
 	if session.bioGraph is None:
 		return dict( Layout=NoModel )
 	else:
-		return dict( Layout=session.bioGraph.export_to_Layouter() )
+		return dict( Layout=session.bioGraph.exportLayout() )
 
 def Editor():							# Node: add / delete / rename, Edge: create / remove
 	if session.bioGraph is None:

@@ -58,15 +58,15 @@ def SBML():									# import SBML
 		return redirect( URL(r=request, c='Workbench',f='index') )
 	
 def BioModels():								# import from BioModels.net
-	def BioModel_to_Database():
+	def UpdateDatabase(SBML, ID):
 		key = 'name="'
-		p = session.SBML.find(key)
+		p = SBML.find(key)
 		if p > -1:
 			p += len(key)
-			q = session.SBML.find('"',p)
-			name = session.SBML[p:q].replace("_"," ")
-			if len( db( db.BioModels.BIOMD == session.BioModelsID ).select() ) == 0:
-				db.BioModels.insert( BIOMD=session.BioModelsID, Title=name )
+			q = SBML.find('"',p)
+			title = SBML[p:q].replace("_"," ")
+			if len( db( db.BioModels.BIOMD == ID ).select() ) == 0:
+				db.BioModels.insert( BIOMD=ID, Title=title )
 
 	if (request.env.request_method == "POST") or (request.vars.BioModelsID is not None):	# allows direct call to import via e.g. /biographer/Import//BioModel?BioModelsID=1
 		session.JSON = None
@@ -79,12 +79,13 @@ def BioModels():								# import from BioModels.net
 		if not os.path.exists( cachefolder ):
 			os.mkdir( cachefolder )
 		cachename = os.path.join( cachefolder, session.BioModelsID+".sbml" )
+		print cachename
 
 		if os.path.exists( cachename ):
 			session.SBML = open(cachename).read()
 			session.bioGraph.importSBML( session.SBML )
-			BioModel_to_Database()
-			session.flash = "BioModel.net SBML loaded from cache"
+			UpdateDatabase( session.SBML, session.BioModelsID )
+			session.flash = "BioModel Pathway loaded from cache"
 		else:
 			connection = httplib.HTTPConnection("www.ebi.ac.uk")
 			connection.request("GET", "/biomodels-main/download?mid=BIOMD"+session.BioModelsID)
@@ -92,12 +93,12 @@ def BioModels():								# import from BioModels.net
 			connection.close()
 			if session.SBML.find("There is no model associated") > -1:
 				session.SBML = None
-				session.flash = "Sorry: No BioModel with ID "+session.BioModelsID
+				session.flash = "Error: Invalid BioModel ID !"
 			else:
 				open(cachename,'w').write( session.SBML )
 				session.bioGraph.importSBML( session.SBML )
-				BioModel_to_Database()
-				session.flash = "BioModel.net SBML retrieved successfully"
+				UpdateDatabase( session.SBML, session.BioModelsID )
+				session.flash = "BioModel Pathway downloaded successfully"
 
 		if type(request.vars.returnto) == type([]):			# some strand error, I don't fully understand,
 			returnto = str(request.vars.returnto[0])		# where two returnto parameters are provided as a list
@@ -121,6 +122,16 @@ def BioModels():								# import from BioModels.net
 		return dict( returnto=request.vars.returnto )
 
 def Reactome():									# import from Reactome
+	def UpdateDatabase(SBML, ID):
+		key = 'name="'
+		p = SBML.find(key)
+		if p > -1: # do we have a title in this SBML?
+			p += len(key)
+			q = SBML.find('"',p)
+			title = SBML[p:q].replace("_"," ") # what is the title?
+			if len( db( db.Reactome.ST_ID == ID ).select() ) == 0: # do we know the title already?
+				db.Reactome.insert( ST_ID=ID, Title=title ) # no! then save it to database
+
 	if request.env.request_method == "GET":
 		return dict()
 
@@ -130,31 +141,33 @@ def Reactome():									# import from Reactome
 		if session.bioGraph is None:
 			session.bioGraph = biographer.Graph()
 
-		session.RSI = request.vars.RSI
-		cachename = os.path.join( request.folder, "static/Reactome", session.RSI+".sbml" )
+		session.ST_ID = request.vars.ST_ID
+		cachename = os.path.join( request.folder, "static/Reactome/"+session.ST_ID+".sbml" )
+		print cachename
 
 		if os.path.exists( cachename ):
 			session.SBML = open(cachename).read()
-			session.flash = "SBML loaded from cache"
 			session.bioGraph.importSBML( session.SBML )
+			UpdateDatabase( session.SBML, session.ST_ID )
+			session.flash = "Reactome Pathway loaded from cache"
 		else:
 			connection = httplib.HTTPConnection("www.reactome.org")					# retrieve page for Reactome ID
-			 #"/cgi-bin/eventbrowser_st_id?ST_ID="+str(session.RSI))
-			connection.request("GET", "/cgi-bin/eventbrowser?DB=gk_current&ID=168254&ZOOM=2&CLASSIC=1")
+			connection.request("GET", "/cgi-bin/eventbrowser_st_id?ST_ID="+str(session.ST_ID) )	#"/cgi-bin/eventbrowser?DB=gk_current&ID=168254&ZOOM=2&CLASSIC=1")
 			page = connection.getresponse().read()
 			if page.lower().find("internal error") > -1:						# page not found
-				session.flash = "Error: Invalid Reactome stable identifier"			# -> invalid ID
+				session.flash = "Error: Invalid Reactome ID !"					# -> invalid ID
 			else:	
 				p = page.find('/cgi-bin/sbml_export?')						# find SBML export link
 				q = page.find('"', p)
 				if p > -1:
 					connection.request("GET", page[p:q])					# download SBML
 					session.SBML		= connection.getresponse().read()
-					session.flash		= "SBML retrieved successfully"
 					open(cachename,'w').write( session.SBML )
 					session.bioGraph.importSBML( session.SBML )
+					UpdateDatabase( session.SBML, session.ST_ID )
+					session.flash		= "Reactome Pathway downloaded successfully"
 				else:										# link not found
-					session.flash		= "Sorry: SBML for this pathway not found"
+					session.flash		= "Error: Reactome Pathway could not be retrieved !"
 			connection.close()
 	
 		return redirect( URL(r=request, c='Workbench', f='index') )

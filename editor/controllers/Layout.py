@@ -16,7 +16,7 @@ def choose():
 		return dict( returnto=str(request.vars.returnto) )
 
 	elif request.env.request_method == "POST":
-		if type(request.vars.returnto) == type([]):			# some strand error, I don't fully understand,
+		if type(request.vars.returnto) == type([]):			# some strange error, I don't fully understand,
 			returnto = str(request.vars.returnto[0])		# where two returnto parameters are provided as a list
 		else:								# same, as in Import.py
 			returnto = str(request.vars.returnto)
@@ -35,7 +35,7 @@ def biographer():
 		session.flash = "Unable to layout: No graph is loaded. Import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="biographer") )
 
-	session.bioGraph.doBioLayout( os.path.join(request.folder, "static/Layouter/build/layout") )
+	session.bioGraph.Layout( os.path.join(request.folder, "static/Layouter/build/layout") )
 
 	if request.vars.returnto is not None:
 		return redirect(str(request.vars.returnto))

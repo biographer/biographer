@@ -70,14 +70,16 @@ def keyOf(dictionary, value):					# return the first key, having the given value
 	return None
 
 def getSBO(term):						# return SBO of text SBO term
-	result = 285 #Unspecified				# default SBO, if nothing matches
 	if term in NodeSBO.values():
 		result = keyOf(NodeSBO, term)			# Node SBO
 	elif term in EdgeSBO.values():
 		result = keyOf(EdgeSBO, term)			# Edge SBO
 	elif term in ModificationSBO.values():
 		result = keyOf(ModificationSBO, term)		# Modification SBO
+	elif term == -1 or term == "-1":
+		result = 285 # Unspecified
 	else:
+		result = 285 # Unspecified			# default SBO, if nothing matches
 		print "Error: Unknown SBO term '"+str(term)+"' !"
 	return str(result)
 
