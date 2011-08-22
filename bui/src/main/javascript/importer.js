@@ -18,6 +18,8 @@
             }
         }
 
+        nodeJSON.data = nodeJSON.data || {};
+
         if (bui.util.propertySetAndNotNull(nodeJSON,
                 ['data', 'x'], ['data', 'y'])) {
             nodeJSON.data.x = bui.util.toNumber(nodeJSON.data.x);
@@ -32,7 +34,11 @@
             height : standardNodeSize.height
         };
 
-        if (node.sizeBasedOnLabel !== undefined) {
+        if (bui.util.propertySetAndNotNull(nodeJSON,
+                ['data', 'width'], ['data', 'height'])) {
+            size.width = nodeJSON.data.width;
+            size.height = nodeJSON.data.height;
+        } else if (node.sizeBasedOnLabel !== undefined) {
             size = node.sizeBasedOnLabel();
 
             // some padding because of various shapes
@@ -43,6 +49,9 @@
 
         node.size(size.width, size.height)
                 .visible(true);
+
+        nodeJSON.data.width = size.width;
+        nodeJSON.data.height = size.height;
 
         if (bui.util.propertySetAndNotNull(nodeJSON,
                 ['data', 'modification'])) {
@@ -134,7 +143,7 @@
                         if (subNode !== undefined) {
                             subNode.parent(node);
                         } else {
-                            log('Broken sub node reference to sub' +
+                            log('Warning: Broken sub node reference to sub' +
                                     ' node id: ' + subNodeId);
                         }
                     }
@@ -159,6 +168,11 @@
                 if (node instanceof bui.Complex &&
                         node.parent() instanceof bui.Complex === false) {
                     node.tableLayout();
+
+                    var size = node.size();
+                    var json = node.json();
+                    json.data.width = size.width;
+                    json.data.height = size.height;
                 }
             }
         }
@@ -240,6 +254,44 @@
     };
 
     /**
+     * Align nodes according to their parent-child relationships. Childs
+     * should end up on top of their parents.
+     *
+     * @param {Object} All the generated nodes. Keys of this object are the
+     *   node's ids or, if applicable, the node's ref key (node.data.ref).
+     */
+    var alignAccordingToNodeHierachy = function(nodes) {
+        var alignRecursively = function(node) {
+            var children = node.childrenWithoutAuxiliaryUnits();
+
+            node.toFront();
+
+            for (var i = 0; i < children.length; i++) {
+                var child = children[i];
+                alignRecursively(child);
+            }
+        };
+
+        for (var id in nodes) {
+            if (nodes.hasOwnProperty(id)) {
+                var node = nodes[id];
+
+                if (node.hasParent() === false &&
+                        node.childrenWithoutAuxiliaryUnits().length > 0) {
+                    alignRecursively(node);
+                }
+
+                var auxUnits = node.auxiliaryUnits();
+                for(var i = 0; i < auxUnits.length; i++) {
+                    auxUnits[i].toFront();
+                }
+            }
+        }
+
+
+    };
+
+    /**
      * Import nodes and edges from JSON using this function.
      *
      * @param {bui.Graph} graph The target graph to which the nodes and edges
@@ -258,6 +310,9 @@
 
         log('## Layout auxiliary units');
         positionAuxiliaryUnits(generatedNodes);
+
+        log('## Aligning nodes according to parent-child relationships');
+        alignAccordingToNodeHierachy(generatedNodes);
 
         log('## Adding all edges');
         addAllEdges(graph, data, generatedNodes);

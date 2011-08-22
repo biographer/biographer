@@ -4,7 +4,7 @@
  * export.
  */
 
-addMapping(nodeMapping, [285, 167], bui.UnspecifiedEntity);
+addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
 addMapping(nodeMapping, [247, 240], bui.SimpleChemical);
 addMapping(nodeMapping, [245, 252], bui.Macromolecule);
 addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
@@ -12,8 +12,8 @@ addMapping(nodeMapping, [253], bui.Complex);
 addMapping(nodeMapping, [290], bui.Compartment);
 
 
-addMapping(nodeMapping, [375], bui.Process);
-addMapping(processNodeMapping, [375], bui.Process);
+addMapping(nodeMapping, [375, 167], bui.Process);
+addMapping(processNodeMapping, [375, 167], bui.Process);
 
 
 addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);

@@ -951,6 +951,31 @@
             }
 
             return json;
+        },
+
+        /**
+         * Move the node to the front so that no other nodes may be positioned
+         * in front of them.
+         *
+         * @return {bui.Node} Fluent interface.
+         */
+        toFront : function() {
+            var nodeGroup = this._privates(identifier).nodeGroup;
+            nodeGroup.parentNode.appendChild(nodeGroup);
+            return this;
+        },
+
+        /**
+         * Move the node to the back so that all nodes may be positioned in
+         * front of this node.
+         *
+         * @return {bui.Node} Fluent interface.
+         */
+        toBack : function() {
+            var nodeGroup = this._privates(identifier).nodeGroup,
+                    parent = nodeGroup.parentNode;
+            parent.insertBefore(nodeGroup, parent.firstChild);
+            return this;
         }
     };
 

@@ -86,7 +86,7 @@
 
         privates.connectingArcs = {};
 
-        for(var i in bui.connectingArcs) {
+        for (var i in bui.connectingArcs) {
             if (bui.connectingArcs.hasOwnProperty(i)) {
                 var ca = bui.connectingArcs[i]();
                 var id = bui.connectingArcs[i].id;
@@ -114,7 +114,7 @@
             privates.root.setAttribute('width', bottomRight.x);
         }
 
-         if (bottomRight.y > privates.rootDimensions.height) {
+        if (bottomRight.y > privates.rootDimensions.height) {
             privates.rootDimensions.height = bottomRight.y;
             privates.root.setAttribute('height', bottomRight.y);
         }
@@ -206,7 +206,7 @@
          * @description
          * Retrieve the container which was provided to this object during
          * the creation.
-         * 
+         *
          * @return {HTMLElement} The container of this graph
          */
         container : function() {
@@ -319,14 +319,14 @@
          */
         fitToPage : function() {
             var dimensions = this._privates(identifier).rootDimensions;
-            
+
             var viewportWidth = $(window).width();
             var viewportHeight = $(window).height();
 
             var scale = Math.min(viewportWidth / dimensions.width,
                     viewportHeight / dimensions.height);
             this.scale(scale);
-            
+
             return this;
         },
 
@@ -387,30 +387,31 @@
         reduceCanvasSize : function() {
             var privates = this._privates(identifier);
 
-            var x = Number.MIN_VALUE, y = Number.MIN_VALUE;
+            var maxX = Number.MIN_VALUE,
+                    maxY = Number.MIN_VALUE;
 
-            for(var i in privates.drawables) {
+            for (var i in privates.drawables) {
                 if (privates.drawables.hasOwnProperty(i)) {
                     var drawable = privates.drawables[i];
 
                     if (drawable.bottomRight !== undefined) {
                         var bottomRight = drawable.absoluteBottomRight();
 
-                        x = Math.max(x, bottomRight.x);
-                        y = Math.max(y, bottomRight.y);
+                        maxX = Math.max(maxX, bottomRight.x);
+                        maxY = Math.max(maxY, bottomRight.y);
                     }
                 }
             }
 
             var padding = bui.settings.style.graphReduceCanvasPadding;
-            x += padding;
-            y += padding;
+            maxX += padding;
+            maxY += padding;
 
-            privates.rootDimensions.width = x;
-            privates.root.setAttribute('width', x * privates.scale);
+            privates.rootDimensions.width = maxX;
+            privates.root.setAttribute('width', maxX * privates.scale);
 
-            privates.rootDimensions.height = y;
-            privates.root.setAttribute('height', y * privates.scale);
+            privates.rootDimensions.height = maxY;
+            privates.root.setAttribute('height', maxY * privates.scale);
         },
 
         /**
@@ -443,14 +444,14 @@
             var inner = this._privates(identifier).root.parentNode.innerHTML;
 
             var css = '';
-            
+
             jQuery.ajax({
-                url : bui.settings.css.stylesheetUrl,
-                async : false,
-                success : function(data) {
-                    css = data;
-                }
-            });
+                        url : bui.settings.css.stylesheetUrl,
+                        async : false,
+                        success : function(data) {
+                            css = data;
+                        }
+                    });
 
             inner = inner.replace(__getStylesheetContents(), css);
 
@@ -497,10 +498,10 @@
 
         /**
          * Export the whole graph to JSON.
-         * 
+         *
          * @return {Object} The exported graph.
          */
-        toJSON : function() {
+        toJSON : function(useDataObject) {
             var json = {}, edges = [], nodes = [];
 
             var dataFormat = bui.settings.dataFormat;
@@ -523,6 +524,60 @@
             }
 
             return json;
+        },
+
+        /**
+         * Reduce the whitespace on top and left hand side of the graph. This
+         * isn't done automatically through the
+         * {@link bui.Graph#reduceCanvasSize} method as this would probably
+         * confuse the user.
+         *
+         * @param {Boolean} [duration] Pass a duration in milliseconds to
+         *   animate the whitespace reduction. Defaults to no animation.
+         * @return {bui.Graph} Fluent interface
+         */
+        reduceTopLeftWhitespace : function(duration) {
+            duration = duration || 0;
+            var padding = bui.settings.style.graphReduceCanvasPadding,
+                    privates = this._privates(identifier),
+                    minX = Number.MAX_VALUE,
+                    minY = Number.MAX_VALUE,
+                    i,
+                    drawable,
+                    topLeft;
+
+            for (i in privates.drawables) {
+                if (privates.drawables.hasOwnProperty(i)) {
+                    drawable = privates.drawables[i];
+
+                    if (drawable.bottomRight !== undefined) {
+                        topLeft = drawable.absolutePosition();
+
+                        minX = Math.min(minX, topLeft.x);
+                        minY = Math.min(minY, topLeft.y);
+                    }
+                }
+            }
+
+            minX = Math.max(minX - padding, 0) * -1;
+            minY = Math.max(minY - padding, 0) * -1;
+
+            if (minX !== 0 || minY !== 0) {
+                for (i in privates.drawables) {
+                    if (privates.drawables.hasOwnProperty(i)) {
+                        drawable = privates.drawables[i];
+
+                        if (drawable.bottomRight !== undefined &&
+                                drawable.hasParent() === false) {
+                            topLeft = drawable.position();
+
+                            drawable.move(minX, minY, duration);
+                        }
+                    }
+                }
+            }
+
+            return this;
         }
     };
 
