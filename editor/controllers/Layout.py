@@ -35,7 +35,13 @@ def biographer():
 		session.flash = "Unable to layout: No graph is loaded. Import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="biographer") )
 
-	session.bioGraph.Layout( os.path.join(request.folder, "static/Layouter/build/layout") )
+	executable = os.path.join(request.folder, "static/Layouter/build/layout")
+
+	if os.path.exists(executable):
+		session.bioGraph.Layout( executable )
+	else:
+		session.flash = "Layouter not installed."
+		return redirect( URL(r=request, c="Workbench", f="index") )
 
 	if request.vars.returnto is not None:
 		return redirect(str(request.vars.returnto))
