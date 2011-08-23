@@ -68,9 +68,9 @@ protected:
    float calc_force_compartments(); //make sure that the nodes obey compartment rule;
    float firm_distribution(); //firmly distribute the edges around a compound.
    float post_pro(int _round); //post-processing method: to make the layout more compacted and remove node-overlapping.
-   void move_nodes(); //move the nodes to a new position.
+   float move_nodes(); //move the nodes to a new position.
    void init_compartments(); //initialize the compartment boundaries.
-   void adjust_compartments(); //adjusting the boundaries of compartments.
+   float adjust_compartments(); //adjusting the boundaries of compartments.
    bool swap_node(); //swap two compounds if: they are connected to the same reaction and the swapping reduces system force. 
    bool near_swap(); //swap two nodes if: they are close to each other and the swapping reduces system force.
    float swap_force(int p1, int p2); //the force reduced afer placing node-p1 at node-p2's position.
@@ -98,6 +98,7 @@ protected:
    int * above_comp;  //the compartment (index) in above.
    const char* infile; // the filename the network is read from (only for the text input format)
    float avgsize;
+   int progress_step;
 };
    
 #endif

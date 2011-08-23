@@ -11,6 +11,7 @@ Network::Network(){
    edges = new VE(); edges->clear();
    compartments = new VCP(); compartments->clear();
    showProgress=false;
+   progress_step=10;
 }
 
 Network::~Network(){
@@ -266,7 +267,7 @@ void Network::show_progress(int &cc){
 #ifdef PROGRESSLINUX
    if (!showProgress) return;
    int i;
-   const int num=10; // show only every num interations
+   const int num=progress_step; // show only every num interations
    cc++;
    if ((cc>1) && (cc%num)) return;
    if (!infile) {
@@ -277,7 +278,7 @@ void Network::show_progress(int &cc){
    for(i=0;i<n;i++){ // node positions to nodes array
       (*nodes)[i].pts.x=pos[i].x;
       (*nodes)[i].pts.y=pos[i].y;
-      (*nodes)[i].pts.dir=mov_dir[i];
+      (*nodes)[i].pts.dir=pts_dir[i];
    }
    char outfile[30];
    sprintf(outfile,"/tmp/progress%d.dat",getpid());

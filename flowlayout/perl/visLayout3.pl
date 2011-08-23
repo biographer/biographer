@@ -15,7 +15,12 @@ open($fh,"<",$ARGV[0]);
 my @lines=split(/\n/,join('',<$fh>));
 close $fh;
 my $l='';
-while (!($l=~/^\//)) {$l=shift(@lines)} #skip compartments
+while (!($l=~/^\//)) {
+   $l=shift(@lines); #compartments
+   my ($idx,$cp)=split(/ /,$l);
+   next unless $cp;
+   $g->add_node($cp,{shape=>"rect",fixedsize=>"true",color=>$compcol->[$idx]});
+}
 
 shift(@lines); # number of nodes;
 
@@ -59,8 +64,8 @@ open($fh,"<",$ARGV[1]);
 @lines=split(/\n/,join('',<$fh>));
 close $fh;
 
-shift(@lines); #skip first index
 while (scalar(@lines)){
+   my $idx=shift(@lines); #index
    my $type=shift(@lines);
    my $id=shift(@lines);
 #   print "$id\n";
@@ -69,11 +74,23 @@ while (scalar(@lines)){
    my $y=shift(@lines);
 #   $x*=72;
 #   $y*=72;
-   $g->set_attribute($id,"pos","$x,$y!");
-   shift(@lines); # w
-   shift(@lines); # h
-   shift(@lines); # dir;
-   shift(@lines) if scalar(@lines); # next index;
+   my $w=shift(@lines); # w
+   my $h=shift(@lines); # h
+   my $d=shift(@lines)*180/3.14152; # dir;
+   if ($type eq 'Compartment'){
+       $x+=$w/2;
+       $y+=$h/2;
+      $g->set_attribute($id,"pos","$x,$y!");
+      $g->set_attribute($id,"width",$w/72);
+      $g->set_attribute($id,"height",$h/72);
+      print "Compartment $id: $x,$y,$w,$h\n";
+      
+   } else {
+      $g->set_attribute($id,"pos","$x,$y!");
+      $x-=$w/2;
+      $y-=$h/2;
+      $g->set_attribute($id,"label",sprintf("%s (%d)\\n(%d,%d,%d,%d,%d°)",$id,$idx,$x,$y,$w,$h,$d));
+   }
 }
 
 my $fn=$ARGV[0];

@@ -5,10 +5,12 @@
 #define err 1e-4
 #define stop 1
 struct comp_y{
-  //this structure is used for initializing the compartment boundaries.
+  //this structure is used for initializing the compartment boundaries.(just y direction!)
   int id;
   int cnt;
   float mid;
+  float min;
+  float max;
 }; 
 float Network::get_dij1(int i, int j){ 
    //ideal distance between adjacent nodes;
@@ -116,14 +118,19 @@ float Network::calc_force_adj(){
       else{ 
          //other compounds, rotating to the nearer side.
          i_alpha=pts_dir[n1]; beta=lim(i_alpha-alpha);
-         float i_alpha1=PI+pts_dir[n1], beta1=lim(i_alpha-alpha);
+         float i_alpha1=PI+pts_dir[n1], beta1=lim(i_alpha1-alpha);
          if(fabs(beta)>fabs(beta1)){
             beta=beta1;
             i_alpha=i_alpha1;
          }
       }
+      // adding some noise for large angles; this results in nodes turning around in reverse direction (especially for large betas)
+      if (rand() % (360^2) < (fabs(beta) *180 / PI)^2){ // for beta==PI -> 25:75
+         if (beta<0) beta+=2*PI;
+         if (beta>0) beta-=2*PI;
+      }
       force+=(d*d*sin(0.5*fabs(beta))*0.1); //angular force;
-      mov[n2]=mov[n2]+(to_left(vec,0.1*beta/n)-vec); //angular movement; 
+      mov[n2]=mov[n2]+(to_left(vec,0.1*beta)-vec); //angular movement; 
       mov_dir[n1]-=(0.1*beta); //adjust the default direction of the reaction a little bit (to the opposite direaction).
    }
    
@@ -199,24 +206,25 @@ float Network::calc_force_compartments(){
          force+=(w*w);
       }
       if(pos[i].y-(*nodes)[i].pts.height<(*compartments)[comp].ymin){ //if it is outside the its compartment.
-         w=(*compartments)[comp].ymin-pos[i].y+(*nodes)[i].pts.height; //calculate the x-displacement to its nearest point inside the compartment.
-         mov[i].y+=(w+err); //update the displacement.
+         w=(*compartments)[comp].ymin-pos[i].y+(*nodes)[i].pts.height; //calculate the y-displacement to its nearest point inside the compartment.
+         mov[i].y+=(w); //update the displacement.
          force+=(w*w); //accumulate force.
       }
       if(pos[i].y+(*nodes)[i].pts.height>(*compartments)[comp].ymax){
          w=(*compartments)[comp].ymax-pos[i].y-(*nodes)[i].pts.height;
-         mov[i].y+=(w-err);
+         mov[i].y+=(w);
          force+=(w*w);
       }
    }
    return force;
 }      
          
-void Network::move_nodes(){
+float Network::move_nodes(){
    /*The function moves the nodes to a new position according the the movements (dispalcement vectors)computed, and then set all displacement vectors to 0.
      It also adjustes the default direction of reaction nodes.
    */
    int n=nodes->size();
+   float force=0.0;
    for(int i=0;i<n;i++){
       if (mov[i].x>avgsize) mov[i].x=avgsize; // limit movement
       if (mov[i].x<-avgsize) mov[i].x=-avgsize;
@@ -225,13 +233,16 @@ void Network::move_nodes(){
       
       pos[i].x+=mov[i].x; //update position
       pos[i].y+=mov[i].y; //update position
+      force+=fabs(mov[i].y*mov[i].y);
       mov[i].x=mov[i].y=0.0; //set to zero.
 
       if (mov_dir[i]>0.25*PI) mov_dir[i]=0.25*PI;  // limit rotation
       if (mov_dir[i]<-0.25*PI) mov_dir[i]=-0.25*PI;
+      force+=fabs(mov_dir[i]*2*PI*avgsize);
       pts_dir[i]=lim(pts_dir[i]+mov_dir[i]); //adjustes default direaction.
       mov_dir[i]=0.0; //set to zero.
    }
+   return force;
 }
 
 float Network::swap_force(int p1, int p2){
@@ -397,32 +408,39 @@ void Network::init_compartments(){
    int i,j,comp,k;
    float tem;
    vector<comp_y>ymid; //average y-coordinates for compartments.
+   comp_y h;
    ymid.resize(cn);
    above_comp=(int *)malloc(sizeof(int)*cn); //the first compartment above compartment-i.
    for(comp=0;comp<cn;comp++){
       ymid[comp].id=comp;
       ymid[comp].cnt=0;
       ymid[comp].mid=0.0;
+      ymid[comp].min=inf;
+      ymid[comp].max=-inf;
    }
    for(i=0;i<n;i++){
       comp=(*nodes)[i].pts.compartment;
       if(comp==0)continue;
       ymid[comp].cnt++; //accumulating number of nodes in the compartments.
       ymid[comp].mid+=pos[i].y; //accumulating y-coordinates.
+      if (ymid[comp].min>pos[i].y-(*nodes)[i].pts.height/2) ymid[comp].min=pos[i].y-(*nodes)[i].pts.height/2;
+      if (ymid[comp].max<pos[i].y+(*nodes)[i].pts.height/2) ymid[comp].max=pos[i].y+(*nodes)[i].pts.height/2;
    }
    for(comp=0;comp<cn;comp++)ymid[comp].mid/=ymid[comp].cnt; //calculating average y-coordinates.
    
    //sort the compartments by average y-coordinates.
-   for(i=1;i<cn;i++)
-       for(j=i+1;j<cn;j++)
+   for(i=1;i<cn;i++){
+       for(j=i+1;j<cn;j++){
           if(ymid[i].mid>ymid[j].mid){
-             k=ymid[i].id;ymid[i].id=ymid[j].id;ymid[j].id=k;
+             h=ymid[i];ymid[i]=ymid[j];ymid[j]=h;
+/*             k=ymid[i].id;ymid[i].id=ymid[j].id;ymid[j].id=k;
              k=ymid[i].cnt;ymid[i].cnt=ymid[j].cnt;ymid[j].cnt=k;
-             tem=ymid[i].mid;ymid[i].mid=ymid[j].mid;ymid[j].mid=tem;
+             tem=ymid[i].mid;ymid[i].mid=ymid[j].mid;ymid[j].mid=tem;*/
           }
-          
+       }
+   }
    //initializing the compartments (ymin and ymax);
-   (*compartments)[ymid[1].id].ymin=-inf;
+/*   (*compartments)[ymid[1].id].ymin=-inf;
    for(i=1;i<cn-1;i++){
       (*compartments)[ymid[i].id].ymax
       =(*compartments)[ymid[i+1].id].ymin
@@ -430,8 +448,16 @@ void Network::init_compartments(){
       above_comp[ymid[i].id]=ymid[i+1].id;
    }
    (*compartments)[ymid[cn-1].id].ymax=inf;
+   above_comp[ymid[cn-1].id]=0;*/
+   for(i=1;i<cn-1;i++){
+      above_comp[ymid[i].id]=ymid[i+1].id;
+      (*compartments)[ymid[i].id].ymax=ymid[i].max;
+      (*compartments)[ymid[i].id].ymin=ymid[i].min;
+      }
    above_comp[ymid[cn-1].id]=0;
-   
+   (*compartments)[ymid[cn-1].id].ymax=ymid[cn-1].max;
+   (*compartments)[ymid[cn-1].id].ymin=ymid[cn-1].min;
+
    //xmin,xmax (we have not considered the x-boundaries of compartments yet).
    for(i=1;i<cn;i++){
       (*compartments)[i].xmin=-inf;
@@ -440,7 +466,7 @@ void Network::init_compartments(){
    ymid.clear(); //release memory.
 }   
    
-void Network::adjust_compartments(){
+float Network::adjust_compartments(){
    /* This procedure adjusts the boundaries of compartments, so that it tends the minimum rectangle contains all the nodes belongs to it.
          1. find the minimum reactangles that contains all the nodes belongs to the corresponding compartments.
          2. adjust the compartments such that they tend to become the corresponding minimum rectangles.
@@ -449,6 +475,7 @@ void Network::adjust_compartments(){
    int n=nodes->size(),cn=compartments->size();
    int i,j,comp;  
    float delta; 
+   float force=0.0;
    for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane, so we starts from index 1.
       //initialization the rectangles.
       bcomp[comp].xmin=bcomp[comp].ymin=inf;
@@ -479,7 +506,9 @@ void Network::adjust_compartments(){
      delta/=2;
      (*compartments)[i].ymax-=delta;
      (*compartments)[j].ymin+=delta;
+     force+=(delta*delta/4);
    }
+   return force;
 }
 
 void Network::get_ideal_distance(){
@@ -850,6 +879,7 @@ float Network::layout(){
    
    get_ideal_distance(); //the ideal lengths and minimum distances.
 
+   progress_step=10;
    avgsize=avg_sizes();
    float cur_force,pre_force=inf;  //current system force, and previous system force.
    int k, inc;
@@ -898,7 +928,7 @@ float Network::layout(){
 //    printf("Total force = %0.3f\n",cur_force);
 
    //phase 2: considering the adjacent nodes and nonadjacent nodes. Make the layout spread out.
-   k=inc=0;
+/*   k=inc=0;
    pre_force=inf;
    while(true){     
       k++;
@@ -916,29 +946,55 @@ float Network::layout(){
       if(fabs(pre_force)<zero)break;
    }
    printf("number of iteration: %d\n",k);    
-   printf("Total force = %0.3f\n",cur_force);
+   printf("Total force = %0.3f\n",cur_force);*/
   
    //phase 3: constrained layout: bring in compartments into consideration, and re-layout the nodes such that they obeys compartment rule.
+   progress_step=1;
    
    init_compartments(); //step1: initilizing compartments using the coordinates generated from phase2.
+   show_progress(progcc);
    
+   pre_force=inf;  // compartments, no non-adjacent
+   k=inc=0;
+   while(true){
+      k++;
+      cur_force=0.0;
+      cur_force+=adjust_compartments();
+      cur_force+=calc_force_compartments();
+      cur_force+=calc_force_adj();
+      //cur_force+=calc_force_nadj();
+      cur_force=move_nodes(); // only use this force
+      printf("%f\n",cur_force);fflush(stdout);     
+      show_progress(progcc);
+ //     if(fabs(pre_force-cur_force)<pre_force*err)break;
+//      if(cur_force>pre_force)inc++;
+//      if(inc>log(1.0*n))break;
+      if (cur_force<n*avgsize/50) break;
+      pre_force=cur_force;
+//      if(fabs(pre_force)<zero)break;    
+   }
+   printf("number of iteration: %d\n",k);    
+   printf("Total force = %0.3f\n",cur_force); 
+
    //step2: compartment-constrained layout.
    pre_force=inf;
    k=inc=0;
    while(true){
       k++;
       cur_force=0.0;
-      adjust_compartments();
+      cur_force+=adjust_compartments();
       cur_force+=calc_force_compartments();
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
-      move_nodes();
+      cur_force=move_nodes();
+      printf("%f\n",cur_force);fflush(stdout);
       show_progress(progcc);
-      if(fabs(pre_force-cur_force)<pre_force*err)break;
+/*      if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
       if(inc>log(1.0*n))break;
       pre_force=cur_force;
-      if(fabs(pre_force)<zero)break;    
+      if(fabs(pre_force)<zero)break;    */
+      if (cur_force<n*avgsize/500) break;
    }
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force); 
@@ -965,7 +1021,7 @@ float Network::layout(){
       near_swap();
       cur_force=post_pro(1); //shrink edge lengths.
       move_nodes();
-      adjust_compartments();
+      cur_force+=adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
       show_progress(progcc);
@@ -983,7 +1039,7 @@ float Network::layout(){
       near_swap();
       cur_force=post_pro(2); //try to remove node-overlapping.
       move_nodes();
-      adjust_compartments();
+      cur_force+=adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
       show_progress(progcc);
@@ -1130,7 +1186,7 @@ float Network::layout_update(vector<bool>fixinit){
    while(true){
       k++;
       cur_force=0.0;
-      adjust_compartments();
+      cur_force+=adjust_compartments();
       cur_force+=calc_force_compartments();
       cur_force+=calc_force_adj();
       cur_force+=calc_force_nadj();
@@ -1163,7 +1219,7 @@ float Network::layout_update(vector<bool>fixinit){
       near_swap();
       cur_force=post_pro(1); //shrink edge lengths.
       move_nodes();
-      adjust_compartments();
+      cur_force+=adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
@@ -1179,7 +1235,7 @@ float Network::layout_update(vector<bool>fixinit){
       near_swap();
       cur_force=post_pro(2); //try to remove node-overlapping.
       move_nodes();
-      adjust_compartments();
+      cur_force+=adjust_compartments();
       cur_force+=calc_force_compartments();
       move_nodes();
       if(fabs(pre_force-cur_force)<pre_force*err)break;
