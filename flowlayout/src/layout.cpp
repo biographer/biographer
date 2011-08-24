@@ -52,7 +52,9 @@ bool Network::edge_cross(int i, int j){
    if((pos[a1]-pos[b1])*(pos[a2]-pos[b1])<0 && (pos[a1]-pos[b2])*(pos[a2]-pos[b2])<0)return true;
    return false;
 }
-
+#define MOVINC(coord,index,expr) {mov[index].coord+=(expr);movadd[index]+=fabs(expr);}
+#define MOVDEC(coord,index,expr) {mov[index].coord-=(expr);movadd[index]+=fabs(expr);}
+#define MOVINCBOTH(index,expr) {Point dummy=(expr);mov[index]=mov[index]+dummy;movadd[index]+=dummy.x+dummy.y;}
 float Network::calc_force_adj(){
    /* This function calculates the force induced by edges (or adjacent nodes), and updates the displacements (movements) of nodes accordingly.
       And this force is composed of two parts: distant part and angular part. 
@@ -86,23 +88,25 @@ float Network::calc_force_adj(){
       
       //distantal movements;
       if(fabs(d)<zero){
-         if(_type==substrate)mov[n2].y+=(i_d/n); //substrates at top;
-         else if(_type==product)mov[n2].y-=(i_d/n);  //products at bottom;
+//         if(_type==substrate)mov[n2].y+=(i_d/n); //substrates at top;
+         if(_type==substrate){MOVINC(y,n2,i_d/n);} //substrates at top;
+         else if(_type==product){MOVDEC(y,n2,(i_d/n));}  //products at bottom;
          else{
             //others on two sides.
-            if(_left)mov[n2].x-=(i_d/n);
-            else mov[n2].x+=(i_d/n);
+            if(_left){MOVDEC(x,n2,(i_d/n));}
+            else MOVINC(x,n2,(i_d/n));
             _left=!_left;
          }
       }
       else{
          //move the nodes along the edge so as to adjusting the edge to its ideal length.
-         mov[n2].x+=(vec.x/d*(i_d-d)/n);
-         mov[n2].y+=(vec.y/d*(i_d-d)/n);
-         mov[n1].x-=(vec.x/d*(i_d-d)/n);
-         mov[n1].y-=(vec.y/d*(i_d-d)/n);
+         
+         //mov[n2].x+=(vec.x/d*(i_d-d)/n);
+         MOVINC(x,n2,vec.x/d*(i_d-d)/n);
+         MOVINC(y,n2,(vec.y/d*(i_d-d)/n));
+         MOVDEC(x,n1,(vec.x/d*(i_d-d)/n));
+         MOVDEC(y,n1,(vec.y/d*(i_d-d)/n));
       }
-      
       //angular force;
       alpha=angle(vec); //angle of the edge w.r.t. the +x axis. i_alpha is the corresponding ideal angle.
       if(_type==substrate){
@@ -125,12 +129,22 @@ float Network::calc_force_adj(){
          }
       }
       // adding some noise for large angles; this results in nodes turning around in reverse direction (especially for large betas)
-      if (rand() % (360^2) < (fabs(beta) *180 / PI)^2){ // for beta==PI -> 25:75
+/*      if (rand() % (360^2) < (fabs(beta) *180 / PI)^2){ // for beta==PI -> 25:75
          if (beta<0) beta+=2*PI;
          if (beta>0) beta-=2*PI;
+      }*/
+      if (fabs(beta)>PI/2 && tension[n2] && rand()%10==1){ // node is locked and cannot turn around -> mirror node on desiored direction. + invert beta
+         float delta;
+         if (beta<0) delta=beta+PI;
+         if (beta>0) delta=PI-beta;
+         pos[n2]=pos[n1]+to_left(vec,-2*delta);
+         mov[n2].x=0; // reset accumulated force;
+         mov[n2].y=0;
+         beta=-beta;
       }
       force+=(d*d*sin(0.5*fabs(beta))*0.1); //angular force;
-      mov[n2]=mov[n2]+(to_left(vec,0.1*beta)-vec); //angular movement; 
+      MOVINCBOTH(n2,to_left(vec,0.1*beta)-vec); //angular movement; 
+//      mov[n2]+=(to_left(vec,0.1*beta)-vec); //angular movement; 
       mov_dir[n1]-=(0.1*beta); //adjust the default direction of the reaction a little bit (to the opposite direaction).
    }
    
@@ -169,10 +183,10 @@ float Network::calc_force_nadj(){
             vec.x*=((1/(d/i_d))-1)/d;
             vec.y*=((1/(d/i_d))-1)/d;
          }
-         mov[n1].x-=vec.x;
-         mov[n1].y-=vec.y;
-         mov[n2].x+=vec.x;
-         mov[n2].y+=vec.y;
+         MOVDEC(x,n1,vec.x);
+         MOVDEC(y,n1,vec.y);
+         MOVINC(x,n2,vec.x);
+         MOVINC(y,n2,vec.y);
          
 /*         mov[n1].x+=(vec.x/n);mov[n1].y+=(vec.y/n); //two nodes repel each other, along the line connecting them.
          mov[n2].x-=(vec.x/n);mov[n2].y-=(vec.y/n); //two nodes repel each other, along the line connecting them.*/
@@ -197,22 +211,22 @@ float Network::calc_force_compartments(){
       if(comp==0)continue; //the compartment is the whole plane.
          if(pos[i].x-(*nodes)[i].pts.width<(*compartments)[comp].xmin){ //if it is outside the its compartment.
             w=(*compartments)[comp].xmin-pos[i].x+(*nodes)[i].pts.width; //calculate the x-displacement to its nearest point inside the compartment.
-         mov[i].x+=w; //update the displacement.
+         MOVINC(x,i,w); //update the displacement.
          force+=(w*w); //accumulate force.
       }
       if(pos[i].x+(*nodes)[i].pts.width>(*compartments)[comp].xmax){
          w=(*compartments)[comp].xmax-pos[i].x-(*nodes)[i].pts.width;
-         mov[i].x+=w;
+         MOVINC(x,i,w);
          force+=(w*w);
       }
       if(pos[i].y-(*nodes)[i].pts.height<(*compartments)[comp].ymin){ //if it is outside the its compartment.
          w=(*compartments)[comp].ymin-pos[i].y+(*nodes)[i].pts.height; //calculate the y-displacement to its nearest point inside the compartment.
-         mov[i].y+=(w); //update the displacement.
+         MOVINC(y,i,(w)); //update the displacement.
          force+=(w*w); //accumulate force.
       }
       if(pos[i].y+(*nodes)[i].pts.height>(*compartments)[comp].ymax){
          w=(*compartments)[comp].ymax-pos[i].y-(*nodes)[i].pts.height;
-         mov[i].y+=(w);
+         MOVINC(y,i,(w));
          force+=(w*w);
       }
    }
@@ -225,7 +239,17 @@ float Network::move_nodes(){
    */
    int n=nodes->size();
    float force=0.0;
+   float maxforce=0.0;
    for(int i=0;i<n;i++){
+      if (maxforce<movadd[i]) maxforce=movadd[i];
+   }
+   for(int i=0;i<n;i++){
+      tension[i]=false;
+      if (movadd[i]>0.8*maxforce){ // high relative force on node
+         if ((fabs(mov[i].x)+fabs(mov[i].y))/movadd[i]<0.1){ // effective force is low compared to added up force (force equilibrium)
+            tension[i]=true;
+         }
+      }
       if (mov[i].x>avgsize) mov[i].x=avgsize; // limit movement
       if (mov[i].x<-avgsize) mov[i].x=-avgsize;
       if (mov[i].y>avgsize) mov[i].y=avgsize;
@@ -864,8 +888,10 @@ float Network::layout(){
    int progcc=0; // counter for show_progress
    pos.resize(n);
    mov.resize(n);
+   movadd.resize(n);
    pts_dir.resize(n);
    mov_dir.resize(n);
+   tension.resize(n);
    deg.resize(n);
    for(i=0;i<n;i++){
       pos[i].x=(*nodes)[i].pts.x;
@@ -874,6 +900,8 @@ float Network::layout(){
       pts_dir[i]=(*nodes)[i].pts.dir;
       mov_dir[i]=0.0;
       deg[i]=((*nodes)[i].neighbors)->size();
+      movadd[i]=0.0;
+      tension[i]=false;
    }   
    bcomp.resize(compartments->size());
    
@@ -949,7 +977,7 @@ float Network::layout(){
    printf("Total force = %0.3f\n",cur_force);*/
   
    //phase 3: constrained layout: bring in compartments into consideration, and re-layout the nodes such that they obeys compartment rule.
-   progress_step=1;
+//   progress_step=1;
    
    init_compartments(); //step1: initilizing compartments using the coordinates generated from phase2.
    show_progress(progcc);
@@ -967,9 +995,11 @@ float Network::layout(){
       printf("%f\n",cur_force);fflush(stdout);     
       show_progress(progcc);
  //     if(fabs(pre_force-cur_force)<pre_force*err)break;
-//      if(cur_force>pre_force)inc++;
+      if(cur_force>pre_force)inc++;
+      if(inc>10*log(1.0*n))break;
 //      if(inc>log(1.0*n))break;
       if (cur_force<n*avgsize/50) break;
+      if (k>300) break;
       pre_force=cur_force;
 //      if(fabs(pre_force)<zero)break;    
    }
@@ -989,11 +1019,12 @@ float Network::layout(){
       cur_force=move_nodes();
       printf("%f\n",cur_force);fflush(stdout);
       show_progress(progcc);
-/*      if(fabs(pre_force-cur_force)<pre_force*err)break;
+//      if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
-      if(inc>log(1.0*n))break;
+      if(inc>10*log(1.0*n))break;
+//      if(inc>log(1.0*n))break;
       pre_force=cur_force;
-      if(fabs(pre_force)<zero)break;    */
+//      if(fabs(pre_force)<zero)break;    
       if (cur_force<n*avgsize/500) break;
    }
    printf("number of iteration: %d\n",k);    
