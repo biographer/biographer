@@ -1,4 +1,5 @@
 (function(bui) {
+    var identifier = 'bui.Process';
     /**
      * @class
      * Process node "process"
@@ -14,6 +15,9 @@
     };
 
     bui.Process.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         _enableResizing : false,
         _minWidth : bui.settings.style.processNodeMinSize.width,
         _minHeight : bui.settings.style.processNodeMinSize.height

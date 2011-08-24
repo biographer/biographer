@@ -1,6 +1,5 @@
 (function(bui) {
     var identifier = 'bui.Compartment';
-
     /**
      * @private
      * Function used for the generation of listener identifiers
@@ -66,6 +65,11 @@
     };
 
     bui.Compartment.prototype = {
+        identifier : function() {
+            return 'Compartment';
+        },
+        _minWidth : 90,
+        _minHeight : 90,
         /**
          * Set or retrieve this node's label. The function call will be
          * delegated to {@link bui.Labelable#label}. Therefore, please refer

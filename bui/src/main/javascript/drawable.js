@@ -275,6 +275,10 @@
             } else {
                 return 'edge';
             }
+        },
+
+        identifier : function() {
+            return this.identifier;
         }
     };
 

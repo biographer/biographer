@@ -49,6 +49,11 @@
     };
 
     bui.SimpleChemical.prototype = {
+        identifier : function() {
+            return identifier;
+        },
+        _minWidth : 60,
+        _minHeight : 60,
         _forceRectangular : true,
         _calculationHook : circularShapeLineEndCalculationHook
     };

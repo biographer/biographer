@@ -60,6 +60,11 @@
     };
 
     bui.Complex.prototype = {
+        identifier : function() {
+            return 'Complex';
+        },
+        _minWidth : 90,
+        _minHeight : 90,
         /**
          * Automatically layout child elements using a simple table layout
          * strategy. You can change the strategy's settings through the first

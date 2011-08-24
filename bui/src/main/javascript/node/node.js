@@ -41,6 +41,9 @@
                 correction.width) + 'px';
         privates.placeholder.style.height = (privates.height * scale +
                 correction.height) + 'px';
+
+        this.updateJson(bui.settings.dataFormat.node.width, privates.width);
+        this.updateJson(bui.settings.dataFormat.node.height, privates.height);
     };
 
     /**
@@ -62,6 +65,9 @@
 
         this.fire(bui.Node.ListenerType.absolutePosition,
                 [this, position.x, position.y]);
+
+        this.updateJson(bui.settings.dataFormat.node.x, position.x);
+        this.updateJson(bui.settings.dataFormat.node.y, position.y);
     };
 
     /**
@@ -218,7 +224,9 @@
 
         privates.placeholder = document.createElement('div');
         privates.placeholder.setAttribute('class',
-                placeholderClass(false));
+                placeholderClass(false)+' '+this.identifier());
+        privates.placeholder.setAttribute('id',
+                'placeholder_'+this.id());
         this.graph().placeholderContainer().appendChild(privates.placeholder);
 
         positionPlaceHolder.call(this);
@@ -286,9 +294,6 @@
                 positionChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Node.ListenerType.size,
-                positionPlaceHolder.createDelegate(this),
-                listenerIdentifier(this));
-        this.graph().bind(bui.Graph.ListenerType.scale,
                 positionPlaceHolder.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.classes,
@@ -861,6 +866,8 @@
          *
          * @param {Number} x X-coordinate on which to start the dragging
          * @param {Number} y Y-coordinate on which to start the dragging
+         * @param {Boolean} [correctGraphHTMLOffset] Whether or not the graph's
+         *   HTML offset should be taken into account. Defaults to false.
          * @return {bui.Node} Fluent interface.
          */
         startDragging : function(x, y) {
