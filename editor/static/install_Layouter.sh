@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # cleanup
-rm Layouter -R
+rm Layouter -fR
 
 # download
 hg clone https://code.google.com/p/biographer.layout/ Layouter
@@ -12,4 +12,5 @@ rm pictures -fR
 rm .hg* -fR
 
 # build
+apt-get install gcc make libjson-glib-dev --yes
 make

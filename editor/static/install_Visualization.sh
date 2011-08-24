@@ -11,4 +11,5 @@ ln biographer.visualization/target/distribution Visualization -s
 # build
 cd biographer.visualization
 rm .hg* -fR
+apt-get install libnode-uglify nodejs
 python src/build/python/manage.py clean build test jslint jsdoc compress createDistribution
