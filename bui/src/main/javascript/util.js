@@ -439,6 +439,8 @@
 
             if (bui.util.propertySetAndNotNull(node,
                 ['data', 'x'], ['data', 'y'])) {
+                node.data.x = bui.util.toNumber(node.data.x);
+                node.data.y = bui.util.toNumber(node.data.y);
                 minX = Math.min(minX, node.data.x);
                 minY = Math.min(minY, node.data.y);
             }
