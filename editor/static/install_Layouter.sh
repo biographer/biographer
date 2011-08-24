@@ -1,11 +1,15 @@
 #!/bin/bash
 
-#hg remove Layouter
+# cleanup
 rm Layouter -R
-hg clone https://code.google.com/p/biographer.layout/ Layouter
-cd Layouter
-rm pictures -R
-rm .hg* -R
-#hg add *
-make
 
+# download
+hg clone https://code.google.com/p/biographer.layout/ Layouter
+
+# we don't need pictures
+cd Layouter
+rm pictures -fR
+rm .hg* -fR
+
+# build
+make
