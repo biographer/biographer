@@ -453,7 +453,7 @@ JSONcontext* Network::readJSON(const char* file){
       const char* type=json_object_get_string_member(e,"type");
       if ((!json_object_has_member(e,"sourceidx")) || (!json_object_has_member(e,"targetidx"))){
          g_print ("no source/targetindex defined for edge %s %i",type,i);
-         abort;
+         abort();
       }
       for(k=0;k<7;k++){
          if(strcmp(edgetypes[k],type)==0)break;
@@ -514,4 +514,4 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
    
    
 }
-#endif USEJSON
+#endif

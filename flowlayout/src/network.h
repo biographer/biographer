@@ -20,7 +20,7 @@ class JSONcontext{
       VI* cpidx;
 };
 
-#endif USEJSON
+#endif
 
 class Network{
       
@@ -85,6 +85,7 @@ protected:
    void show_progress(int &cc); // shows graphical progress during layout in extra window
 
    VP pos, mov; //positions and dispalcements of nodes.
+   vector<float> movadd;
    struct rect{
       float xmin, xmax, ymin, ymax;
    };
@@ -99,6 +100,7 @@ protected:
    const char* infile; // the filename the network is read from (only for the text input format)
    float avgsize;
    int progress_step;
+   vector<bool> tension;
 };
    
 #endif
