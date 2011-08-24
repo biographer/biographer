@@ -376,7 +376,10 @@
                     ['data', 'x'], ['data', 'y']) === false) {
                 continue;
             } else if (node.hasParent() === true) {
-                continue;
+               if (!(node.parent() instanceof bui.Compartment)){
+                  continue;
+               }
+               
             }
 
             var x = nodeJSON.data.x,
