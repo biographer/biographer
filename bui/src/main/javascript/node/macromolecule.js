@@ -18,7 +18,7 @@
             return identifier;
         },
         _minWidth : 60,
-        _minHeight : 60,
+        _minHeight : 60
     };
 
     bui.util.setSuperClass(bui.Macromolecule, bui.RectangularNode);

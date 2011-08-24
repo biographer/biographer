@@ -261,31 +261,43 @@
      *   node's ids or, if applicable, the node's ref key (node.data.ref).
      */
     var alignAccordingToNodeHierachy = function(nodes) {
+        var id;
+        var node;
         var alignRecursively = function(node) {
             var children = node.childrenWithoutAuxiliaryUnits();
-
+            var i;
             node.toFront();
 
-            for (var i = 0; i < children.length; i++) {
+            for (i = 0; i < children.length; i++) {
                 var child = children[i];
                 alignRecursively(child);
             }
+
+            var auxUnits = node.auxiliaryUnits();
+            for(i = 0; i < auxUnits.length; i++) {
+               auxUnits[i].toFront();
+            }
         };
 
-        for (var id in nodes) {
+        for (id in nodes) { //align compartments and its members
             if (nodes.hasOwnProperty(id)) {
-                var node = nodes[id];
+                node = nodes[id];
 
                 if (node.hasParent() === false &&
-                        node.childrenWithoutAuxiliaryUnits().length > 0) {
-                    alignRecursively(node);
+                   (node instanceof(bui.Compartment))){
+                   alignRecursively(node);
                 }
 
-                var auxUnits = node.auxiliaryUnits();
-                for(var i = 0; i < auxUnits.length; i++) {
-                    auxUnits[i].toFront();
-                }
             }
+        }
+        for (id in nodes) { // bring non-compartment members to front
+           if (nodes.hasOwnProperty(id)) {
+              node = nodes[id];
+              if (node.hasParent() === false &&
+                 (!(node instanceof(bui.Compartment)))){
+                    alignRecursively(node);
+              }
+           }
         }
 
 
