@@ -64,7 +64,8 @@ bui.settings = {
         drawable : {
             id : 'id',
             visible : 'visible',
-            sbo : 'sbo'
+            sbo : 'sbo',
+            cssClasses : ['data', 'cssClasses']
         },
         node : {
             label : ['data', 'label'],

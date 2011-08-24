@@ -153,17 +153,29 @@
 
         /**
          * @description
-         * Add a class to this drawable
+         * Add a class to this drawable. This method accepts one or more
+         * classes (var args).
          *
          * @param {String} klass the class which you want to add
          * @return {bui.Drawable} Fluent interface
          */
         addClass : function(klass) {
             var classes = this._privates(identifier).classes;
-            if (classes.indexOf(klass) == -1) {
-                classes.push(klass);
+
+            var changed = false;
+
+            for (var i = 0; i < arguments.length; i++) {
+                klass = arguments[i];
+
+                if (classes.indexOf(klass) == -1) {
+                    classes.push(klass);
+                    changed = true;
+                }
+            }
+
+            if (changed === true) {
                 this.fire(bui.Drawable.ListenerType.classes, [this,
-                    this.classString()]);
+                        this.classString()]);
             }
 
             return this;
@@ -259,6 +271,7 @@
 
             updateJson(json, dataFormat.id, privates.id);
             updateJson(json, dataFormat.visible, privates.visible);
+            updateJson(json, dataFormat.cssClasses, privates.classes);
 
             return json;
         },

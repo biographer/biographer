@@ -47,6 +47,11 @@
             size.height += padding.vertical;
         }
 
+        if (bui.util.propertySetAndNotNull(nodeJSON,
+                ['data', 'cssClasses'])) {
+            node.addClass(nodeJSON.data.cssClasses);
+        }
+
         node.size(size.width, size.height)
                 .visible(true);
 
