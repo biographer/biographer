@@ -83,6 +83,7 @@ while (scalar(@lines)){
       $g->set_attribute($id,"pos","$x,$y!");
       $g->set_attribute($id,"width",$w/72);
       $g->set_attribute($id,"height",$h/72);
+      $g->set_attribute($id,"label",sprintf("%s (%d)\\n(%d,%d,%d,%d)",$id,$idx,$x-$w/2,$y-$h/2,$w,$h));
       print "Compartment $id: $x,$y,$w,$h\n";
       
    } else {
