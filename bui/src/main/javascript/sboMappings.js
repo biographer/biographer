@@ -10,10 +10,11 @@ addMapping(nodeMapping, [245, 252], bui.Macromolecule);
 addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
 addMapping(nodeMapping, [253], bui.Complex);
 addMapping(nodeMapping, [290], bui.Compartment);
+addMapping(nodeMapping, [167], bui.RectangularNode);
+addMapping(nodeMapping, [375], bui.Process);
 
 
-addMapping(nodeMapping, [375, 167], bui.Process);
-addMapping(processNodeMapping, [375, 167], bui.Process);
+addMapping(processNodeMapping, [375], bui.Process);
 
 
 addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
@@ -22,6 +23,7 @@ addMapping(edgeMarkerMapping, [459, 15, 11], bui.connectingArcs.stimulation.id);
 addMapping(edgeMarkerMapping, [461],
         bui.connectingArcs.necessaryStimulation.id);
 addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
+
 
 addModificationMapping([215], 'acetylation', 'A');
 addModificationMapping([111101], 'active', 'active');
