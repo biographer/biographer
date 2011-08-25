@@ -41,9 +41,6 @@
                 correction.width) + 'px';
         privates.placeholder.style.height = (privates.height * scale +
                 correction.height) + 'px';
-
-        this.updateJson(bui.settings.dataFormat.node.width, privates.width);
-        this.updateJson(bui.settings.dataFormat.node.height, privates.height);
     };
 
     /**
@@ -65,9 +62,6 @@
 
         this.fire(bui.Node.ListenerType.absolutePosition,
                 [this, position.x, position.y]);
-
-        this.updateJson(bui.settings.dataFormat.node.x, position.x);
-        this.updateJson(bui.settings.dataFormat.node.y, position.y);
     };
 
     /**
