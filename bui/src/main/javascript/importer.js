@@ -271,7 +271,9 @@
         var alignRecursively = function(node) {
             var children = node.childrenWithoutAuxiliaryUnits();
             var i;
-            node.toFront();
+            if (!(node instanceof(bui.Compartment))) {
+               node.toFront();
+            }
 
             for (i = 0; i < children.length; i++) {
                 var child = children[i];
