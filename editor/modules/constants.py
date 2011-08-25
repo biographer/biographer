@@ -83,7 +83,7 @@ def getSBO(term):						# return SBO of text SBO term
 		print "Error: Unknown SBO term '"+str(term)+"' !"
 	return str(result)
 
-NodeTypes = { "Entitiy Pool Node":0, "Auxiliary Unit":1, "Compartment Node":2, "Container Node":3, "Process Node":4, "Reference Node":5 }
+NodeTypes = { "Entitiy Pool Node":"reaction", "Auxiliary Unit":"simple_species", "Compartment Node":"compartment", "Container Node":"complex_species", "Process Node":"reaction", "Reference Node":"info" }
 
 def getNodeType(text):
 	if text in NodeTypes.keys():
