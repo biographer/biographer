@@ -38,7 +38,7 @@
                 ['data', 'width'], ['data', 'height'])) {
             size.width = nodeJSON.data.width;
             size.height = nodeJSON.data.height;
-        } else if (node.sizeBasedOnLabel !== undefined) {
+        } else if (node.sizeBasedOnLabel !== undefined && (!(node._ignLabelSize))) {
             size = node.sizeBasedOnLabel();
 
             // some padding because of various shapes
@@ -271,7 +271,9 @@
         var alignRecursively = function(node) {
             var children = node.childrenWithoutAuxiliaryUnits();
             var i;
-            node.toFront();
+            if (!(node instanceof(bui.Compartment))) {
+               node.toFront();
+            }
 
             for (i = 0; i < children.length; i++) {
                 var child = children[i];

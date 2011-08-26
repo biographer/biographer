@@ -147,6 +147,7 @@
         _label : '',
         _adaptSizeToLabel : false,
         _svgClasses : '',
+        _ignLabelSize : false,
         _calculationClasses :
                 [bui.settings.css.classes.textDimensionCalculation.standard],
 

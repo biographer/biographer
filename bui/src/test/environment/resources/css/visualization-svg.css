@@ -20,7 +20,7 @@ text.small {
     font-size: 13px;
 }
 
-ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect {
+ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect, g.process > rect{
     fill: white;
     stroke-width: 2px;
     stroke: black

@@ -99,6 +99,7 @@ bui.settings = {
             rectangle : 'rect',
             complex : 'complex',
             compartment : 'compartment',
+            process : 'process',
             smallText : 'small',
             textDimensionCalculation : {
                 generic : 'textDimensionCalculation',
