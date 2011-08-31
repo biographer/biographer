@@ -86,13 +86,13 @@ def importBioModel( BioModelID ):
 	reset_current_session()								# reset session
 
 	session.BioModelsID = BioModelID.rjust(10, "0")					# adjust BioModel's ID
-	print "ID: "+session.BioModelsID
+	print "BioModel requested: ID "+session.BioModelsID
 
 	cachefolder = os.path.join( request.folder, "static/BioModels.net" )
 	if not os.path.exists( cachefolder ):
 		os.mkdir( cachefolder )
 	cachename = os.path.join( cachefolder, session.BioModelsID+".sbml" )		# what's the cache filename ?
-	print "cachename: "+cachename
+	print "BioModel cache filename: "+cachename
 
 	def UpdateDatabase(SBML, ID):							# in case we find a model, store meta info in the database
 		global db
@@ -174,10 +174,10 @@ def importReactome( ReactomeStableIdentifier ):
 				db.Reactome.insert( ST_ID=ID, Title=title )	# No, save it
 
 	session.ST_ID = ReactomeStableIdentifier
-	print "RSI: "+session.ST_ID								# RSI
+	print "Request for RSI:"+session.ST_ID							# RSI
 
 	cachename = os.path.join( request.folder, "static/Reactome/"+session.ST_ID+".sbml" )	# cachename
-	print "cachename: "+cachename
+	print "Reactome cache filename: "+cachename
 
 	if os.path.exists( cachename ):						# exists in cache
 		session.SBML = open(cachename).read()
@@ -192,9 +192,9 @@ def importReactome( ReactomeStableIdentifier ):
 
 		if page.lower().find("internal error") > -1:						# page not found
 			session.flash = "Error: Invalid Reactome Stable Identifier"
-			print "Model not found for RSI:"+session.ST_ID
+			print "www.reactome.org has no model for RSI:"+session.ST_ID
 		else:											# page found
-			print "Reactome page found for RSI:"+session.ST_ID
+			print "www.reactome.org confirmed a valid model for RSI:"+session.ST_ID
 			p = page.find('/cgi-bin/sbml_export?')						# find SBML export link!
 			q = page.find('"', p)
 			if p > -1:
@@ -206,8 +206,11 @@ def importReactome( ReactomeStableIdentifier ):
 				session.flash = "Reactome Pathway downloaded successfully"
 				print "Reactome pathway "+session.ST_ID+" downloaded successfully"
 			else:										# SBML export link not found
-				session.flash = "Error: Reactome Pathway could not be retrieved !"
+				session.flash = "Sorry: Reactome Pathway seems not to offer SBML export"
 				print "Could not find SBML export link for Reactome pathway "+session.ST_ID
+				debugname = cachename.replace(".sbml",".html")
+				open(debugname, "w").write(page)
+				print "Reactome response saved for debugging: "+debugname
 
 		connection.close()
 
