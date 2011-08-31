@@ -7,48 +7,68 @@ if not hardcoded in sys.path:
 	sys.path.append(hardcoded)
 import biographer
 
-def JSON():									# import JSON
+
+def reset_current_session():
+	global session
+	session.JSON = None							# drop imported stuff
+	session.SBML = None
+	session.BioPAX = None
+	if session.bioGraph is not None:					# delete old Graph
+		del session.bioGraph
+	session.bioGraph = biographer.Graph()					# initialize new Graph
+
+
+#################### JSON ####################
+
+def importJSON( JSONstring ):
+	global session
+	reset_current_session()
+	session.bioGraph.importJSON( JSONstring )
+
+def JSON():									# function: import JSON
 	if request.env.request_method == "GET":
 		return dict()
 
 	if request.env.request_method == "POST":
-		session.SBML = ""
-		session.BioPAX = ""
-		if request.vars.File != "":
+		if request.vars.File != "":					# a file was uploaded
 			session.JSON = request.vars.File.file.read()
 			session.flash = request.vars.File.filename+" retrieved and parsed."
-		else:
+		else:								# the example JSON was requested
 			session.JSON = open( os.path.join(request.folder, "static/examples/example.json") ).read()
 			session.flash = "Example JSON loaded."
 
-		if session.bioGraph is None:
-			session.bioGraph = biographer.Graph()
-		session.bioGraph.importJSON( session.JSON )
+		importJSON( session.JSON )					# import JSON
 
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
-def JSONdebug():								# show JSON details
+def JSONdebug():								# function: show JSON details
 	return dict()
 
-def SBML():									# import SBML
+
+#################### SBML ####################
+
+def importSBML( SBMLstring ):
+	global session
+	reset_current_session()
+	session.bioGraph.importSBML( SBMLstring )
+
+def SBML():									# function: import SBML
 	if request.env.request_method == "GET":
 		return dict()
 
 	if request.env.request_method == "POST":
 		session.JSON = ""
 		session.BioPAX = ""
-		if request.vars.File != "":
+		if request.vars.File != "":					# a file was uploaded
 			session.SBML = request.vars.File.file.read()
 			session.flash = "SBML uploaded."
-		else:
+		else:								# the example was requested
 			session.SBML = open( os.path.join(request.folder, "static/examples/reactome.sbml") ).read()
 			session.flash = "Example SBML loaded."
 
-		if session.bioGraph is None:
-			session.bioGraph = biographer.Graph()
-		session.bioGraph.importSBML( session.SBML )
+		importSBML( session.SBML )					# import SBML
 
-		Layouter = request.vars.Layouter
+		Layouter = request.vars.Layouter				# goto selected Layouter page
 		if Layouter == "Ask":
 			return redirect( URL(r=request,c='Layout',f='choose')+"?returnto="+URL(r=request,c='Workbench',f='index') )
 		if Layouter == "biographer":
@@ -56,9 +76,26 @@ def SBML():									# import SBML
 		if Layouter == "graphviz":
 			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
 		return redirect( URL(r=request, c='Workbench',f='index') )
-	
-def BioModels():								# import from BioModels.net
-	def UpdateDatabase(SBML, ID):
+
+
+#################### BioModels ####################
+
+def importBioModel( BioModelID ):
+	global session, request, db
+
+	reset_current_session()								# reset session
+
+	session.BioModelsID = BioModelID.rjust(10, "0")					# adjust BioModel's ID
+	print "ID: "+session.BioModelsID
+
+	cachefolder = os.path.join( request.folder, "static/BioModels.net" )
+	if not os.path.exists( cachefolder ):
+		os.mkdir( cachefolder )
+	cachename = os.path.join( cachefolder, session.BioModelsID+".sbml" )		# what's the cache filename ?
+	print "cachename: "+cachename
+
+	def UpdateDatabase(SBML, ID):							# in case we find a model, store meta info in the database
+		global db
 		key = 'name="'
 		p = SBML.find(key)
 		if p > -1:
@@ -68,40 +105,36 @@ def BioModels():								# import from BioModels.net
 			if len( db( db.BioModels.BIOMD == ID ).select() ) == 0:
 				db.BioModels.insert( BIOMD=ID, Title=title )
 
-	if (request.env.request_method == "POST") or (request.vars.BioModelsID is not None):	# allows direct call to import via e.g. /biographer/Import//BioModel?BioModelsID=1
-		session.JSON = None
-		session.BioPAX = None
-		if session.bioGraph is None:
-			session.bioGraph = biographer.Graph()
+	if os.path.exists( cachename ):							# BioModel in cache ?
+		session.SBML = open(cachename).read()
+		session.bioGraph.importSBML( session.SBML )				# import
+		UpdateDatabase( session.SBML, session.BioModelsID )			# DB update
+		session.flash = "BioModel loaded from cache"
+		print "BioModel "+session.BioModelsID+" loaded from cache"
+	else:										# No, download it from EBI
+		connection = httplib.HTTPConnection("www.ebi.ac.uk")
+		connection.request("GET", "/biomodels-main/download?mid=BIOMD"+session.BioModelsID)
+		session.SBML = connection.getresponse().read()
+		connection.close()
+		if session.SBML.find("There is no model associated") > -1:		# error: no such model
+			session.SBML = None						# drop downloaded content
+			session.flash = "Error: No such BioModel"
+			print "No such BioModel: "+session.BioModelsID
+		else:									# SBML downloaded successfully
+			open(cachename,'w').write( session.SBML )
+			session.bioGraph.importSBML( session.SBML )			# import
+			UpdateDatabase( session.SBML, session.BioModelsID )		# DB update
+			session.flash = "BioModel imported successfully"
+			print "BioModel "+session.BioModelsID+" downloaded and imported"
 
-		session.BioModelsID = request.vars.BioModelsID.rjust(10, "0")
-		cachefolder = os.path.join( request.folder, "static/BioModels.net" )
-		if not os.path.exists( cachefolder ):
-			os.mkdir( cachefolder )
-		cachename = os.path.join( cachefolder, session.BioModelsID+".sbml" )
-		print cachename
+def BioModels():		# import from BioModels.net
 
-		if os.path.exists( cachename ):
-			session.SBML = open(cachename).read()
-			session.bioGraph.importSBML( session.SBML )
-			UpdateDatabase( session.SBML, session.BioModelsID )
-			session.flash = "BioModel Pathway loaded from cache"
-		else:
-			connection = httplib.HTTPConnection("www.ebi.ac.uk")
-			connection.request("GET", "/biomodels-main/download?mid=BIOMD"+session.BioModelsID)
-			session.SBML = connection.getresponse().read()
-			connection.close()
-			if session.SBML.find("There is no model associated") > -1:
-				session.SBML = None
-				session.flash = "Error: Invalid BioModel ID !"
-			else:
-				open(cachename,'w').write( session.SBML )
-				session.bioGraph.importSBML( session.SBML )
-				UpdateDatabase( session.SBML, session.BioModelsID )
-				session.flash = "BioModel Pathway downloaded successfully"
+	if (request.env.request_method == "POST") or (request.vars.BioModelsID is not None):	# allows direct calls in the way /biographer/Import/BioModel?BioModelsID=8
 
-		if type(request.vars.returnto) == type([]):			# some strand error, I don't fully understand,
-			returnto = str(request.vars.returnto[0])		# where two returnto parameters are provided as a list
+		importBioModel( request.vars.BioModelsID )			# import
+
+		if type(request.vars.returnto) == type([]):			# evaluate returnto parameters
+			returnto = str(request.vars.returnto[0])
 		else:
 			returnto = str(request.vars.returnto)
 		if (returnto is not None) and (returnto != ""):			# explicit redirection
@@ -121,56 +154,75 @@ def BioModels():								# import from BioModels.net
 		session.PreviousBioModels = db( db.BioModels.Title != None ).select()
 		return dict( returnto=request.vars.returnto )
 
-def Reactome():									# import from Reactome
-	def UpdateDatabase(SBML, ID):
+
+#################### Reactome ####################
+
+def importReactome( ReactomeStableIdentifier ):
+	global session, request, db
+
+	reset_current_session()
+
+	def UpdateDatabase(SBML, ID):						# function: in case we find a SBML, update database
+		global db
 		key = 'name="'
 		p = SBML.find(key)
-		if p > -1: # do we have a title in this SBML?
+		if p > -1: 							# is there a title in this SBML?
 			p += len(key)
 			q = SBML.find('"',p)
-			title = SBML[p:q].replace("_"," ") # what is the title?
-			if len( db( db.Reactome.ST_ID == ID ).select() ) == 0: # do we know the title already?
-				db.Reactome.insert( ST_ID=ID, Title=title ) # no! then save it to database
+			title = SBML[p:q].replace("_"," ")			# what is the title?
+			if len( db( db.Reactome.ST_ID == ID ).select() ) == 0:	# do we know it already?
+				db.Reactome.insert( ST_ID=ID, Title=title )	# No, save it
 
+	session.ST_ID = ReactomeStableIdentifier
+	print "RSI: "+session.ST_ID								# RSI
+
+	cachename = os.path.join( request.folder, "static/Reactome/"+session.ST_ID+".sbml" )	# cachename
+	print "cachename: "+cachename
+
+	if os.path.exists( cachename ):						# exists in cache
+		session.SBML = open(cachename).read()
+		session.bioGraph.importSBML( session.SBML )
+		UpdateDatabase( session.SBML, session.ST_ID )
+		session.flash = "Reactome Pathway loaded from cache"
+		print "Reactome pathway "+session.ST_ID+" loaded from cache"
+	else:									# does not exist in cache, request it from reactome.org
+		connection = httplib.HTTPConnection("www.reactome.org")
+		connection.request("GET", "/cgi-bin/eventbrowser_st_id?ST_ID="+str(session.ST_ID) )
+		page = connection.getresponse().read()
+
+		if page.lower().find("internal error") > -1:						# page not found
+			session.flash = "Error: Invalid Reactome Stable Identifier"
+			print "Model not found for RSI:"+session.ST_ID
+		else:											# page found
+			print "Reactome page found for RSI:"+session.ST_ID
+			p = page.find('/cgi-bin/sbml_export?')						# find SBML export link!
+			q = page.find('"', p)
+			if p > -1:
+				connection.request("GET", page[p:q])					# download SBML
+				session.SBML = connection.getresponse().read()
+				open(cachename,'w').write( session.SBML )
+				session.bioGraph.importSBML( session.SBML )
+				UpdateDatabase( session.SBML, session.ST_ID )
+				session.flash = "Reactome Pathway downloaded successfully"
+				print "Reactome pathway "+session.ST_ID+" downloaded successfully"
+			else:										# SBML export link not found
+				session.flash = "Error: Reactome Pathway could not be retrieved !"
+				print "Could not find SBML export link for Reactome pathway "+session.ST_ID
+
+		connection.close()
+
+def Reactome():									# function: import Reactome
 	if request.env.request_method == "GET":
 		return dict()
 
 	if request.env.request_method == "POST":
-		session.JSON = ""
-		session.BioPAX = ""
-		if session.bioGraph is None:
-			session.bioGraph = biographer.Graph()
 
-		session.ST_ID = request.vars.ST_ID
-		cachename = os.path.join( request.folder, "static/Reactome/"+session.ST_ID+".sbml" )
-		print cachename
+		importReactome( request.vars.ST_ID )				# import Reactome
 
-		if os.path.exists( cachename ):
-			session.SBML = open(cachename).read()
-			session.bioGraph.importSBML( session.SBML )
-			UpdateDatabase( session.SBML, session.ST_ID )
-			session.flash = "Reactome Pathway loaded from cache"
-		else:
-			connection = httplib.HTTPConnection("www.reactome.org")					# retrieve page for Reactome ID
-			connection.request("GET", "/cgi-bin/eventbrowser_st_id?ST_ID="+str(session.ST_ID) )	#"/cgi-bin/eventbrowser?DB=gk_current&ID=168254&ZOOM=2&CLASSIC=1")
-			page = connection.getresponse().read()
-			if page.lower().find("internal error") > -1:						# page not found
-				session.flash = "Error: Invalid Reactome ID !"					# -> invalid ID
-			else:	
-				p = page.find('/cgi-bin/sbml_export?')						# find SBML export link
-				q = page.find('"', p)
-				if p > -1:
-					connection.request("GET", page[p:q])					# download SBML
-					session.SBML		= connection.getresponse().read()
-					open(cachename,'w').write( session.SBML )
-					session.bioGraph.importSBML( session.SBML )
-					UpdateDatabase( session.SBML, session.ST_ID )
-					session.flash		= "Reactome Pathway downloaded successfully"
-				else:										# link not found
-					session.flash		= "Error: Reactome Pathway could not be retrieved !"
-			connection.close()
-	
 		return redirect( URL(r=request, c='Workbench', f='index') )
+
+
+#################### unstable stuff ####################
 
 def BioPAX():									# import a file in BioPAX format
 	if request.env.request_method == "GET":
