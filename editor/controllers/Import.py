@@ -190,27 +190,27 @@ def importReactome( ReactomeStableIdentifier ):
 		connection.request("GET", "/cgi-bin/eventbrowser_st_id?ST_ID="+str(session.ST_ID) )
 		page = connection.getresponse().read()
 
-		if page.lower().find("internal error") > -1:						# page not found
-			session.flash = "Error: Invalid Reactome Stable Identifier"
-			print "www.reactome.org has no model for RSI:"+session.ST_ID
-		else:											# page found
-			print "www.reactome.org confirmed a valid model for RSI:"+session.ST_ID
-			p = page.find('/cgi-bin/sbml_export?')						# find SBML export link!
-			q = page.find('"', p)
-			if p > -1:
-				connection.request("GET", page[p:q])					# download SBML
-				session.SBML = connection.getresponse().read()
-				open(cachename,'w').write( session.SBML )
-				session.bioGraph.importSBML( session.SBML )
-				UpdateDatabase( session.SBML, session.ST_ID )
-				session.flash = "Reactome Pathway downloaded successfully"
-				print "Reactome pathway "+session.ST_ID+" downloaded successfully"
-			else:										# SBML export link not found
-				session.flash = "Sorry: Reactome Pathway seems not to offer SBML export"
-				print "Could not find SBML export link for Reactome pathway "+session.ST_ID
-				debugname = cachename.replace(".sbml",".html")
-				open(debugname, "w").write(page)
-				print "Reactome response saved for debugging: "+debugname
+#		if page.lower().find("internal error") > -1:						# page not found
+#			session.flash = "Error: Invalid Reactome Stable Identifier"
+#			print "www.reactome.org has no model for RSI:"+session.ST_ID
+#		else:											# page found
+
+		p = page.find('/cgi-bin/sbml_export?')						# search SBML export link
+		q = page.find('"', p)
+		if p > -1:
+			connection.request("GET", page[p:q])					# download SBML
+			session.SBML = connection.getresponse().read()
+			open(cachename,'w').write( session.SBML )
+			session.bioGraph.importSBML( session.SBML )
+			UpdateDatabase( session.SBML, session.ST_ID )
+			session.flash = "Reactome Pathway downloaded successfully"
+			print "Reactome pathway "+session.ST_ID+" downloaded successfully"
+		else:										# SBML export link not found
+			session.flash = "Internal Error. Check web2py console output."
+			print "Could not find SBML export link for Reactome pathway "+session.ST_ID
+			debugname = cachename.replace(".sbml",".html")
+			open(debugname, "w").write(page)
+			print "Reactome response saved for debugging: "+debugname
 
 		connection.close()
 
