@@ -1,0 +1,226 @@
+# -*- coding: utf-8 -*-
+
+import os, sys, httplib
+
+hardcoded = request.folder + "/modules"
+if not hardcoded in sys.path:
+	sys.path.append(hardcoded)
+import biographer
+
+def JSON():									# import JSON
+	if request.env.request_method == "GET":
+		return dict()
+
+	if request.env.request_method == "POST":
+		session.SBML = ""
+		session.BioPAX = ""
+		if request.vars.File != "":
+			session.JSON = request.vars.File.file.read()
+			session.flash = request.vars.File.filename+" retrieved and parsed."
+		else:
+			session.JSON = open( os.path.join(request.folder, "static/examples/example.json") ).read()
+			session.flash = "Example JSON loaded."
+
+		if session.bioGraph is None:
+			session.bioGraph = biographer.Graph()
+		session.bioGraph.importJSON( session.JSON )
+
+		return redirect( URL(r=request, c="Workbench", f="index") )
+
+def JSONdebug():								# show JSON details
+	return dict()
+
+def SBML():									# import SBML
+	if request.env.request_method == "GET":
+		return dict()
+
+	if request.env.request_method == "POST":
+		session.JSON = ""
+		session.BioPAX = ""
+		if request.vars.File != "":
+			session.SBML = request.vars.File.file.read()
+			session.flash = "SBML uploaded."
+		else:
+			session.SBML = open( os.path.join(request.folder, "static/examples/reactome.sbml") ).read()
+			session.flash = "Example SBML loaded."
+
+		if session.bioGraph is None:
+			session.bioGraph = biographer.Graph()
+		session.bioGraph.importSBML( session.SBML )
+
+		Layouter = request.vars.Layouter
+		if Layouter == "Ask":
+			return redirect( URL(r=request,c='Layout',f='choose')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "biographer":
+			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "graphviz":
+			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		return redirect( URL(r=request, c='Workbench',f='index') )
+	
+def BioModels():								# import from BioModels.net
+	def UpdateDatabase(SBML, ID):
+		key = 'name="'
+		p = SBML.find(key)
+		if p > -1:
+			p += len(key)
+			q = SBML.find('"',p)
+			title = SBML[p:q].replace("_"," ")
+			if len( db( db.BioModels.BIOMD == ID ).select() ) == 0:
+				db.BioModels.insert( BIOMD=ID, Title=title )
+
+	if (request.env.request_method == "POST") or (request.vars.BioModelsID is not None):	# allows direct call to import via e.g. /biographer/Import//BioModel?BioModelsID=1
+		session.JSON = None
+		session.BioPAX = None
+		if session.bioGraph is None:
+			session.bioGraph = biographer.Graph()
+
+		session.BioModelsID = request.vars.BioModelsID.rjust(10, "0")
+		cachefolder = os.path.join( request.folder, "static/BioModels.net" )
+		if not os.path.exists( cachefolder ):
+			os.mkdir( cachefolder )
+		cachename = os.path.join( cachefolder, session.BioModelsID+".sbml" )
+		print cachename
+
+		if os.path.exists( cachename ):
+			session.SBML = open(cachename).read()
+			session.bioGraph.importSBML( session.SBML )
+			UpdateDatabase( session.SBML, session.BioModelsID )
+			session.flash = "BioModel Pathway loaded from cache"
+		else:
+			connection = httplib.HTTPConnection("www.ebi.ac.uk")
+			connection.request("GET", "/biomodels-main/download?mid=BIOMD"+session.BioModelsID)
+			session.SBML = connection.getresponse().read()
+			connection.close()
+			if session.SBML.find("There is no model associated") > -1:
+				session.SBML = None
+				session.flash = "Error: Invalid BioModel ID !"
+			else:
+				open(cachename,'w').write( session.SBML )
+				session.bioGraph.importSBML( session.SBML )
+				UpdateDatabase( session.SBML, session.BioModelsID )
+				session.flash = "BioModel Pathway downloaded successfully"
+
+		if type(request.vars.returnto) == type([]):			# some strand error, I don't fully understand,
+			returnto = str(request.vars.returnto[0])		# where two returnto parameters are provided as a list
+		else:
+			returnto = str(request.vars.returnto)
+		if (returnto is not None) and (returnto != ""):			# explicit redirection
+			return redirect( returnto )
+
+		Layouter = request.vars.Layouter				# implicit redirection: a Layouter was chosen
+		if Layouter == "Ask":
+			return redirect( URL(r=request,c='Layout',f='choose')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "biographer":
+			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "graphviz":
+			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+
+		return redirect( URL(r=request, c='Workbench', f='index') )	# else: goto Workbench
+
+	if request.env.request_method == "GET":
+		session.PreviousBioModels = db( db.BioModels.Title != None ).select()
+		return dict( returnto=request.vars.returnto )
+
+def Reactome():									# import from Reactome
+	def UpdateDatabase(SBML, ID):
+		key = 'name="'
+		p = SBML.find(key)
+		if p > -1: # do we have a title in this SBML?
+			p += len(key)
+			q = SBML.find('"',p)
+			title = SBML[p:q].replace("_"," ") # what is the title?
+			if len( db( db.Reactome.ST_ID == ID ).select() ) == 0: # do we know the title already?
+				db.Reactome.insert( ST_ID=ID, Title=title ) # no! then save it to database
+
+	if request.env.request_method == "GET":
+		return dict()
+
+	if request.env.request_method == "POST":
+		session.JSON = ""
+		session.BioPAX = ""
+		if session.bioGraph is None:
+			session.bioGraph = biographer.Graph()
+
+		session.ST_ID = request.vars.ST_ID
+		cachename = os.path.join( request.folder, "static/Reactome/"+session.ST_ID+".sbml" )
+		print cachename
+
+		if os.path.exists( cachename ):
+			session.SBML = open(cachename).read()
+			session.bioGraph.importSBML( session.SBML )
+			UpdateDatabase( session.SBML, session.ST_ID )
+			session.flash = "Reactome Pathway loaded from cache"
+		else:
+			connection = httplib.HTTPConnection("www.reactome.org")					# retrieve page for Reactome ID
+			connection.request("GET", "/cgi-bin/eventbrowser_st_id?ST_ID="+str(session.ST_ID) )	#"/cgi-bin/eventbrowser?DB=gk_current&ID=168254&ZOOM=2&CLASSIC=1")
+			page = connection.getresponse().read()
+			if page.lower().find("internal error") > -1:						# page not found
+				session.flash = "Error: Invalid Reactome ID !"					# -> invalid ID
+			else:	
+				p = page.find('/cgi-bin/sbml_export?')						# find SBML export link
+				q = page.find('"', p)
+				if p > -1:
+					connection.request("GET", page[p:q])					# download SBML
+					session.SBML		= connection.getresponse().read()
+					open(cachename,'w').write( session.SBML )
+					session.bioGraph.importSBML( session.SBML )
+					UpdateDatabase( session.SBML, session.ST_ID )
+					session.flash		= "Reactome Pathway downloaded successfully"
+				else:										# link not found
+					session.flash		= "Error: Reactome Pathway could not be retrieved !"
+			connection.close()
+	
+		return redirect( URL(r=request, c='Workbench', f='index') )
+
+def BioPAX():									# import a file in BioPAX format
+	if request.env.request_method == "GET":
+		return dict()
+
+	if request.env.request_method == "POST":
+		session.JSON = ""
+		session.SBML = ""
+		# ... magic, that doesn't work right now
+		return dict()
+
+def PID():									# import from Pathway Interaction Database
+	if request.env.request_method == "GET":
+		return dict()
+
+	if request.env.request_method == "POST":
+		connection = httplib.HTTPConnection("pid.nci.nih.gov")			# retrieve page for specified Pathway ID
+		connection.request("GET", "/search/pathway_landing.shtml?source=NCI-Nature%20curated&what=graphic&jpg=on&ppage=1&pathway_id="+request.vars.PIDPID)
+		page = connection.getresponse().read()
+		URL = ""
+		p = page.find('<a class="button-style" href="')				# find BioPAX link
+		while p > -1:
+			q = page.find('</a>', p)
+			partial = page[p:q]
+			if partial.find("BioPAX") > -1:
+				r = partial.find('href="')+6
+				s = partial.find('"', r)
+				URL = partial[r:s]
+				break
+			p = page.find('<a class="button-style" href="', q)
+		if URL != "":
+			connection.request("GET", URL)					# download BioPAX
+			biopax = connection.getresponse().read()
+			if session.bioGraph is None:
+				session.bioGraph = biographer.Graph()
+			session.bioGraph.importBioPAX( biopax )				# load bioGraph from BioPAX
+			session.flash = "BioPAX loaded successfully"
+		else:									# BioPAX link not found
+			session.flash = "Error: BioPAX for this pathway could not be downloaded"
+		connection.close()
+		return redirect( URL(r=request, c='Workbench', f='index') )
+
+def ODP():									# import graph from OpenOffice
+	if request.env.request_method == "GET":
+		return dict()
+
+	if request.env.request_method == "POST":
+		example = "/var/www/web2py/applications/biographer/doc/demograph/demograph.odp"	# hardcoded example
+		if session.bioGraph is None:
+			session.bioGraph = biographer.Graph()
+		session.bioGraph.importfile( example )
+		return redirect( URL(r=request, c='Workbench', f='index') )
+
