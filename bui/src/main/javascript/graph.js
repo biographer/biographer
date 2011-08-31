@@ -33,7 +33,7 @@
      * rawSVG in order to replace it for the export process.
      */
     var __getStylesheetContents = function() {
-        return '@import url(\'' + bui.settings.css.stylesheetUrl + '\');';
+        return '@import url("' + bui.settings.css.stylesheetUrl + '\");';
     };
 
     /**

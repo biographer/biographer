@@ -203,6 +203,9 @@
             this.fire(bui.Node.ListenerType.click, [this, event]);
         }
     };
+    var dblclick = function(event) {
+            this.placeholderVisible(!this.placeholderVisible());
+    };
 
     /**
      * @private
@@ -230,7 +233,8 @@
 
             jQuery(privates.nodeGroup)
                     .add(privates.placeholder)
-                    .click(mouseClick.createDelegate(this));
+                    .click(mouseClick.createDelegate(this))
+                    .dblclick(dblclick.createDelegate(this));
 
             if (this._enableDragging === true) {
                 jQuery(privates.placeholder).draggable({
