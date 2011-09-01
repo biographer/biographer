@@ -50,13 +50,14 @@ float norm(const Point p){
 
 float angle(const Point p){
    // angle of a vector (w.r.t +x axis), within range [0.5PI, 1.5PI].
-   if(p.x==0){
+   return atan2(p.y,p.x);
+/*   if(p.x==0){
       if(p.y>=0)return 0.5*PI;
-      else return 1.5*PI;
+      else return -0.5*PI;
    }
    float alpha=atan(p.y/p.x);
    if(p.x<0)alpha+=PI; //make sure it fit in range [0.5PI, 1.5PI].
-   return alpha;
+   return alpha;*/
 }
 
 float dist(const Point p1, const Point p2){
@@ -66,8 +67,12 @@ float dist(const Point p1, const Point p2){
 
 float lim(float beta){
    //make an angle to fit in range [-PI, PI].
-   if(beta<-PI)beta+=(2*PI);
-   if(beta>PI)beta-=(2*PI);
+   while (beta<-PI) {
+      beta+=(2*PI);
+   }
+   while (beta>PI) {
+      beta-=(2*PI);
+   }
    return beta;
 }
 
