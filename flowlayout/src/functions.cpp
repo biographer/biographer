@@ -21,6 +21,18 @@ float operator*(const Point p1, const Point p2){
    //vector product of two vectors
    return p1.x*p2.y-p1.y*p2.x;
 }
+Point operator*(const Point p1, const float scalar){
+   //scale vector
+   Point p;
+   p.x=p1.x*scalar;
+   p.y=p1.y*scalar;
+   return p;
+}
+Point unit(const Point p1){
+   float len=norm(p1);
+   Point p=p1;
+   return p*(1/len);
+}
 
 Point to_left(const Point p0, const float beta){
    //rotating the vector "p0" "beta" degrees to the left.
