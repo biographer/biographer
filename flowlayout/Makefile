@@ -19,3 +19,6 @@ functions.o: functions.cpp functions.h headers.h
 	$(CC) -o $(BDIR)functions.o $(CCFLAGS) -c $<	
 test: layout_test.cpp network.o layout.o functions.o
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)test $<
+
+firm-dist: test_firm_dist.cpp default
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)test_firm_dist $<
