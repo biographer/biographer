@@ -434,6 +434,7 @@ float Network::firm_distribution(){
          jj=i-1; if(jj<0)jj=m-1;
 //         average=lim(lim(angle(pos[(*neighbors)[j]]-baseNode))+lim(angle(pos[(*neighbors)[jj]]-baseNode)))*0.5; //bisector of edge-(i-1) and edge-(i+1).
          vec=pos[(*neighbors)[i]]-baseNode;
+         if (vec.x == 0 && vec.y==0) continue;
          beta2=lim(angle(pos[(*neighbors)[j]]-baseNode))-lim(angle(pos[(*neighbors)[jj]]-baseNode));;
          if (beta2<=0) beta2+=2*PI;
          average=lim(lim(angle(pos[(*neighbors)[jj]]-baseNode))+beta2/2);
