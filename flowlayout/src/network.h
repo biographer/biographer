@@ -42,9 +42,10 @@ public:
    void addReaction(int index, const VI* substrates, const VI* products, const VI* catalysts, const VI* activators, const VI* inhibitors); //add in a reaction. (implemented yet not used in the algorithm).  
    VI* getNeighbors(int nodeIndex, Edgetype type); //find a specified type (eg. substrates) of neighbor nodes of a node.
    VI* getNeighbors(int nodeIndex);  //find the neighbor nodes of a node.
-
+   int degree(int nodeIndex);
    void dump();
    void read(const char * file=NULL); // read network from file
+   void write(const char * file=NULL);
    void dumpNodes(const char* file); // write nodes with properties
    
 #ifdef USEJSON   
@@ -54,7 +55,8 @@ public:
    
    
    float layout(); //run the layout algorithm to obtain the coordinates of nodes.
-
+   void test_firm_dist();
+   
    bool showProgress;
    
 protected:
@@ -66,6 +68,7 @@ protected:
    float calc_force_adj(); //calculating the force resulted from edges (adjacent nodes).
    float calc_force_nadj(); //calculating the force resulted from non-adjacent nodes (node-overlapping in particular).
    float calc_force_compartments(); //make sure that the nodes obey compartment rule;
+   float calc_separate_nodes(); //strongly remove overlap
    float firm_distribution(); //firmly distribute the edges around a compound.
    float post_pro(int _round); //post-processing method: to make the layout more compacted and remove node-overlapping.
    float move_nodes(); //move the nodes to a new position.
@@ -81,7 +84,6 @@ protected:
    void init_layout2(vector<bool>fixinit);
    float layout_update(vector<bool>fixinit);
    float avg_sizes();
-   
    void show_progress(int &cc); // shows graphical progress during layout in extra window
 
    VP pos, mov; //positions and dispalcements of nodes.
@@ -97,7 +99,7 @@ protected:
    vector<float>mov_dir; //adopted for ajusting pts_dir[i].
    VI deg;  //number of edges incident on a node.
    int * above_comp;  //the compartment (index) in above.
-   const char* infile; // the filename the network is read from (only for the text input format)
+   char* infile; // the filename the network is read from (only for the text input format)
    float avgsize;
    int progress_step;
    vector<bool> tension;
