@@ -679,7 +679,7 @@ class Graph:
 			n = Node( defaults=True )
 			n.id			= species.getId()
 			n.sbo			= getSBO( species.getSBOTerm() )
-			n.type			= getNodeType("Entitiy Pool Node")
+			n.type			= 'simple species'#getNodeType("Entitiy Pool Node")
 			n.data.label		= species.getName()
 			n.data.compartment	= species.getCompartment()
 			self.Nodes.append(n)
@@ -689,8 +689,8 @@ class Graph:
 		for reaction in model.getListOfReactions():			# create a process node
 			n			= Node( defaults=True )
 			n.id			= reaction.getId()
-			n.sbo			= getSBO("Unspecified")
-		        n.type         		= getNodeType('Process Node')
+			n.sbo			= '-1'#getSBO("Unspecified")
+		        n.type         		= 'reaction'#getNodeType('Process Node')
 			n.data.label		= reaction.getName()
 			self.Nodes.append(n)
 			self.IDmapNodes[ n.id ]	= len(self.Nodes)-1
@@ -699,7 +699,7 @@ class Graph:
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
 				e.sbo           = getSBO('Reactant')
-				e.type		= getEdgeType(e.sbo)
+				e.type		= 'Substrate'#getEdgeType(e.sbo)
 				e.source        = reactant.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
@@ -708,7 +708,7 @@ class Graph:
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
 				e.sbo           = getSBO('Production')
-				e.type		= getEdgeType(e.sbo)
+				e.type		= 'Product'#getEdgeType(e.sbo)
 				e.source        = n.id
 				e.target	= product.getSpecies()
 				self.Edges.append(e)
@@ -716,8 +716,11 @@ class Graph:
 			for modifier in reaction.getListOfModifiers():
 				e		= Edge( defaults=True )
 				e.id		= self.newID()
-				e.sbo		= getSBO( modifier.getSBOTerm() )
-				e.type		= getEdgeType(e.sbo)
+				#e.sbo		= getSBO( modifier.getSBOTerm() )
+				e.sbo		= "19"
+				if modifier.isSetSBOTerm():
+					e.sbo	= getSBO( modifier.getSBOTerm() )
+				e.type		= 'Modifier'#getEdgeType(e.sbo)
 				e.source        = modifier.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
