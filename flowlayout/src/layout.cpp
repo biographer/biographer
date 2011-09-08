@@ -207,15 +207,14 @@ float Network::calc_separate_nodes(){
          dw=((*nodes)[n1].pts.width+(*nodes)[n2].pts.width)/2;
          dh=((*nodes)[n1].pts.height+(*nodes)[n2].pts.height)/2;
          vec=pos[n2]-pos[n1];
+         if (!norm(vec)) vec.x=0.001; // just separate them a little bit;
          if (fabs(vec.x)>dw+0.1*avgsize) continue;
          if (fabs(vec.y)>dh+0.1*avgsize) continue;
          dw=(dw<fabs(vec.x) ? (1-(fabs(vec.x)-dw)/(0.1*avgsize))*10000 : 10000); //lin. incr. force from distance 0.1*avgsize to 0; 1000000 if touching
          dh=(dh<fabs(vec.x) ? (1-(fabs(vec.y)-dh)/(0.1*avgsize))*10000 : 10000);
          force+=dw+dh;
-         if (norm(vec)){
-            MOVDECBOTH(n1,unit(vec)*(dw+dh));
-            MOVINCBOTH(n2,unit(vec)*(dw+dh));
-         }
+         MOVDECBOTH(n1,unit(vec)*(dw+dh));
+         MOVINCBOTH(n2,unit(vec)*(dw+dh));
       }
    }
    return force;
