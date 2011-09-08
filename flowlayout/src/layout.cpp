@@ -183,6 +183,8 @@ float Network::calc_force_nadj(){
          if (d!=0){
             vec.x*=((1/(d/i_d))-1)/d;
             vec.y*=((1/(d/i_d))-1)/d;
+         } else {
+            vec.x=0.001; // just displace the two a little bit;
          }
          MOVDEC(x,n1,vec.x);
          MOVDEC(y,n1,vec.y);
@@ -210,8 +212,10 @@ float Network::calc_separate_nodes(){
          dw=(dw<fabs(vec.x) ? (1-(fabs(vec.x)-dw)/(0.1*avgsize))*10000 : 10000); //lin. incr. force from distance 0.1*avgsize to 0; 1000000 if touching
          dh=(dh<fabs(vec.x) ? (1-(fabs(vec.y)-dh)/(0.1*avgsize))*10000 : 10000);
          force+=dw+dh;
-         MOVDECBOTH(n1,unit(vec)*(dw+dh));
-         MOVINCBOTH(n2,unit(vec)*(dw+dh));
+         if (norm(vec)){
+            MOVDECBOTH(n1,unit(vec)*(dw+dh));
+            MOVINCBOTH(n2,unit(vec)*(dw+dh));
+         }
       }
    }
    return force;
