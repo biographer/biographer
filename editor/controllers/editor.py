@@ -11,10 +11,9 @@ def index():
     response.files.append(URL(request.application, 'editor', 'script.js'))
     if request.vars.json_file != None and request.vars.json_file != '':
         file_content = request.vars.json_file.file.read().strip()
+        action,graph,json_string = None,None,None
         if file_content.startswith('{') and file_content.endswith('}'):#basic check
-            if session.editor_histroy_undo == None:
-                session.editor_histroy_undo = []
-            session.editor_histroy_redo = []
+            json_string = file_content
             try:
                 graph = simplejson.loads(file_content)
             except simplejson.JSONDecodeError:
@@ -22,12 +21,63 @@ def index():
                 graph = dict(nodes = [], edges = [])
             else:
                 action = 'loaded %s'%request.vars.json_file.filename
+        elif file_content.startswith('<?xml'):
+            import biographer
+            bioGraph = biographer.Graph()
+            bioGraph.importSBML( file_content )
+            json_string = bioGraph.exportJSON()
+            print 'sbml2json: ',json_string
+            graph = simplejson.loads(json_string)
+            action = 'loaded %s'%request.vars.json_file.filename
+        if action and graph and json_string:
+            if session.editor_histroy_undo == None:
+                session.editor_histroy_undo = []
+            session.editor_histroy_redo = []
             session.editor_histroy_undo.append( dict(action = action, graph = graph) )
-            session.editor_autosave = file_content
+            session.editor_autosave = json_string
     return dict()
 
 def script():
     return dict()
+
+def layout():
+    if not request.vars.layout:
+        raise HTTP(500, 'not layout algorithm specified')
+    #-------------------
+    import biographer
+    import os
+    import subprocess
+    reload(biographer)#TODO remove in production mode
+    bioGraph = biographer.Graph()
+    bioGraph.importJSON( session.editor_autosave )
+    #-------------------
+    if request.vars.layout == "biographer":
+        executable = os.path.join(request.folder, "static","layout")
+        infile = os.path.join(request.folder, "static","tmp.bgin")
+        outfile = os.path.join(request.folder, "static","tmp.bgout")
+        open(infile, 'w').write(bioGraph.exportLayout())
+        return bioGraph.exportLayout()
+        executable = os.path.join(request.folder, "static","layout")
+        p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        p.communicate()
+
+        bioGraph.importLayout( open(outfile, 'r').read() )					# import STDOUT
+
+    elif request.vars.layout == 'graphviz':
+        pass
+        bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
+    #-------------------
+    json_string = bioGraph.exportJSON()
+    graph = simplejson.loads(json_string)
+    if session.editor_histroy_undo == None:
+        session.editor_histroy_undo = []
+    session.editor_histroy_redo = []
+    action = 'applied automatic biographer layout'
+    item = dict(action = action, graph = graph)
+    session.editor_histroy_undo.append( item )
+    session.editor_autosave = json_string
+    #-------------------
+    return item
 
 def clear():
     session.editor_autosave = None

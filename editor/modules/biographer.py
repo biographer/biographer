@@ -548,7 +548,7 @@ class Graph:
 	def getNodeIndex(self, node):						# get the array index of a specified Node
 		if not node in self.Nodes:
 			return 0						# not found
-		return self.Nodes.index(node)+1					# counting starts with 1...
+		return self.Nodes.index(node)					# counting starts with 0...
 
 	def getCompartmentIndex(self, node):					# get the array index of a specified Node
 		if not node in self.Compartments:

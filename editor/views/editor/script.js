@@ -4,6 +4,7 @@
 var url_undo_push = '{{=URL("undo_push")}}';
 var url_undo = '{{=URL('undo.json')}}';
 var url_redo = '{{=URL('redo.json')}}';
+var url_layout = '{{=URL('layout.json')}}';
 
 //-------------------------------------------
 //-------------------------------------------
@@ -301,11 +302,27 @@ function dropFkt(event, ui, element){
         $('#canvas').droppable("enable");
     }
 }
+function layout(algorithm){
+    $.getJSON(url_layout+'?layout='+algorithm, function(data) {
+        history_undo.push(data.action);
+        showUndoRedo();
+        bui.importUpdatedNodePositionsFromJSON(graph, data.graph, 300)
+        //redrawGraph(data.graph);
+    });
+}
 //-------------------------------------------
 $(document).ready(function() {
     showUndoRedo();
     //=========================
     $('#canvas').resizable();
+    //=========================
+    $('#layout_grahviz').click(function(){
+        layout('graphviz');
+    });
+    //=========================
+    $('#layout_biographer').click(function(){
+        layout('biographer');
+    });
     //=========================
     $('#undo').click(function(){
         undo();
