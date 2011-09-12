@@ -669,18 +669,19 @@ class Graph:
 			n = Node( defaults=True )
 			n.id			= compartment.getId()
 			n.sbo			= getSBO("Compartment")
-			n.type                  = getNodeType("Compartment")
-			n.data.label		= compartment.getName()
+			n.type                  = getNodeType("Compartment Node")
+			n.data.label		= compartment.getName() if compartment.isSetName() else compartment.getId()
 			if compartment.isSetOutside():
 				n.data.compartment	= compartment.getOutside()
 			self.Nodes.append(n)
+			#self.Compartments.append(n)
 
 		for species in model.getListOfSpecies():
 			n = Node( defaults=True )
 			n.id			= species.getId()
 			n.sbo			= getSBO( species.getSBOTerm() )
 			n.type			= 'simple species'#getNodeType("Entitiy Pool Node")
-			n.data.label		= species.getName()
+			n.data.label		= species.getName() if species.isSetName() else species.getId()
 			n.data.compartment	= species.getCompartment()
 			self.Nodes.append(n)
 
@@ -691,7 +692,7 @@ class Graph:
 			n.id			= reaction.getId()
 			n.sbo			= '375'#getSBO("Unspecified")
 		        n.type         		= 'reaction'#getNodeType('Process Node')
-			n.data.label		= reaction.getName()
+			n.data.label		= reaction.getName() if reaction.isSetName() else reaction.getId()
 			n.data.width		= 26
 			n.data.height		= 26
 			self.Nodes.append(n)
@@ -762,16 +763,25 @@ class Graph:
 		G = pygraphviz.AGraph(directed=True)
 
 		changes = False
+		# !!!!!!!!!!!!!!!!!!!!!!!!!!
+		# Compartments have to be added as
+		# SG = G.add_subgraph(name='bla')
+		# !!!!!!!!!!!!!!!!!!!!!!!!!!
 		for node in self.Nodes:
-			if (not node.is_abstract) and (self.EdgeCount(node) > 0):
-				G.add_node( 	str(node.id),
-						label = node.data.label if node.data.owns("label") else str(node.id),
-						shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
-						)
-			elif updateNodeProperties:
-				self.Nodes.pop( self.Nodes.index(node) )
-				changes = True
-				self.log("Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.")
+			# !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			# This rule actually removes compartments!!!!!!
+			# Come up with something different!
+			# !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			#if (not node.is_abstract) and (self.EdgeCount(node) > 0):
+			G.add_node( 	str(node.id),
+					label = node.data.label if node.data.owns("label") else str(node.id),
+					shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
+					)
+			#
+			#elif updateNodeProperties:
+			#	self.Nodes.pop( self.Nodes.index(node) )
+			#	changes = True
+			#	self.log("Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.")
 		if changes:
 			self.initialize()	# e.g. ID map won't fit anymore, because we deleted Nodes
 
