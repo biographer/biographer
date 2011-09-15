@@ -85,7 +85,8 @@ bui.settings = {
         drawable : {
             id : 'id',
             visible : 'visible',
-            sbo : 'sbo'
+            sbo : 'sbo',
+            cssClasses : ['data', 'cssClasses']
         },
         node : {
             label : ['data', 'label'],
@@ -119,6 +120,7 @@ bui.settings = {
             rectangle : 'rect',
             complex : 'complex',
             compartment : 'compartment',
+            process : 'process',
             smallText : 'small',
             textDimensionCalculation : {
                 generic : 'textDimensionCalculation',
@@ -758,6 +760,8 @@ var circularShapeLineEndCalculationHookWithoutPadding =
 
             if (bui.util.propertySetAndNotNull(node,
                 ['data', 'x'], ['data', 'y'])) {
+                node.data.x = bui.util.toNumber(node.data.x);
+                node.data.y = bui.util.toNumber(node.data.y);
                 minX = Math.min(minX, node.data.x);
                 minY = Math.min(minY, node.data.y);
             }
@@ -2084,17 +2088,29 @@ var getSBOForMarkerId = function(id) {
 
         /**
          * @description
-         * Add a class to this drawable
+         * Add a class to this drawable. This method accepts one or more
+         * classes (var args).
          *
          * @param {String} klass the class which you want to add
          * @return {bui.Drawable} Fluent interface
          */
         addClass : function(klass) {
             var classes = this._privates(identifier).classes;
-            if (classes.indexOf(klass) == -1) {
-                classes.push(klass);
+
+            var changed = false;
+
+            for (var i = 0; i < arguments.length; i++) {
+                klass = arguments[i];
+
+                if (classes.indexOf(klass) == -1) {
+                    classes.push(klass);
+                    changed = true;
+                }
+            }
+
+            if (changed === true) {
                 this.fire(bui.Drawable.ListenerType.classes, [this,
-                    this.classString()]);
+                        this.classString()]);
             }
 
             return this;
@@ -2190,6 +2206,7 @@ var getSBOForMarkerId = function(id) {
 
             updateJson(json, dataFormat.id, privates.id);
             updateJson(json, dataFormat.visible, privates.visible);
+            updateJson(json, dataFormat.cssClasses, privates.classes);
 
             return json;
         },
@@ -2274,9 +2291,6 @@ var getSBOForMarkerId = function(id) {
                 correction.width) + 'px';
         privates.placeholder.style.height = (privates.height * scale +
                 correction.height) + 'px';
-
-        this.updateJson(bui.settings.dataFormat.node.width, privates.width);
-        this.updateJson(bui.settings.dataFormat.node.height, privates.height);
     };
 
     /**
@@ -2298,9 +2312,6 @@ var getSBOForMarkerId = function(id) {
 
         this.fire(bui.Node.ListenerType.absolutePosition,
                 [this, position.x, position.y]);
-
-        this.updateJson(bui.settings.dataFormat.node.x, position.x);
-        this.updateJson(bui.settings.dataFormat.node.y, position.y);
     };
 
     /**
@@ -2538,6 +2549,9 @@ var getSBOForMarkerId = function(id) {
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.select,
                 selectChanged.createDelegate(this),
+                listenerIdentifier(this));
+        this.graph().bind(bui.Graph.ListenerType.scale,
+                positionPlaceHolder.createDelegate(this),
                 listenerIdentifier(this));
 
         initialPaint.call(this);
@@ -3385,6 +3399,7 @@ var getSBOForMarkerId = function(id) {
         _label : '',
         _adaptSizeToLabel : false,
         _svgClasses : '',
+        _ignLabelSize : false,
         _calculationClasses :
                 [bui.settings.css.classes.textDimensionCalculation.standard],
 
@@ -3861,7 +3876,7 @@ var getSBOForMarkerId = function(id) {
             return identifier;
         },
         _minWidth : 60,
-        _minHeight : 60,
+        _minHeight : 60
     };
 
     bui.util.setSuperClass(bui.Macromolecule, bui.RectangularNode);
@@ -4180,7 +4195,7 @@ var getSBOForMarkerId = function(id) {
             return identifier;
         },
         _minWidth : 60,
-        _minHeight : 60,
+        _minHeight : 60
     };
 
     bui.util.setSuperClass(bui.NucleicAcidFeature, bui.RectangularNode);
@@ -4395,8 +4410,16 @@ var getSBOForMarkerId = function(id) {
         initialPaint.call(this);
     };
 
+    bui.UnspecifiedEntity.prototype = {
+        identifier : function() {
+            return identifier;
+        },
+        _minWidth : 70,
+        _minHeight : 50,
+    }
     bui.util.setSuperClass(bui.UnspecifiedEntity, bui.Labelable);
 })(bui);
+
 (function(bui) {
     var identifier = 'bui.Process';
     /**
@@ -4411,6 +4434,8 @@ var getSBOForMarkerId = function(id) {
 
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
+        this.addClass(bui.settings.css.classes.process);
+                
     };
 
     bui.Process.prototype = {
@@ -4419,7 +4444,8 @@ var getSBOForMarkerId = function(id) {
         },
         _enableResizing : false,
         _minWidth : bui.settings.style.processNodeMinSize.width,
-        _minHeight : bui.settings.style.processNodeMinSize.height
+        _minHeight : bui.settings.style.processNodeMinSize.height,
+        _ignLabelSize : true
     };
 
     bui.util.setSuperClass(bui.Process, bui.RectangularNode);
@@ -5690,18 +5716,19 @@ addMapping(nodeMapping, [245, 252], bui.Macromolecule);
 addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
 addMapping(nodeMapping, [253], bui.Complex);
 addMapping(nodeMapping, [290], bui.Compartment);
-
-
 addMapping(nodeMapping, [375, 167], bui.Process);
+
+
 addMapping(processNodeMapping, [375, 167], bui.Process);
 
 
 addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
 addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
-addMapping(edgeMarkerMapping, [459, 15, 11], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [459, 15, 11, 10], bui.connectingArcs.stimulation.id);
 addMapping(edgeMarkerMapping, [461],
         bui.connectingArcs.necessaryStimulation.id);
 addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
+
 
 addModificationMapping([215], 'acetylation', 'A');
 addModificationMapping([111101], 'active', 'active');
@@ -5722,6 +5749,7 @@ addModificationMapping([111100], 'geranylgeranylation', 'GER');
 addModificationMapping([111100], 'PTM_glycosaminoglycan', 'GA');
 addModificationMapping([111100], 'PTM_oxidation', '0');
 addModificationMapping([111100], 'PTM_sumoylation', 'S');
+
 (function(bui) {
 
     /**
@@ -5762,13 +5790,18 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 ['data', 'width'], ['data', 'height'])) {
             size.width = nodeJSON.data.width;
             size.height = nodeJSON.data.height;
-        } else if (node.sizeBasedOnLabel !== undefined) {
+        } else if (node.sizeBasedOnLabel !== undefined && (!(node._ignLabelSize))) {
             size = node.sizeBasedOnLabel();
 
             // some padding because of various shapes
             var padding = bui.settings.style.importer.sizeBasedOnLabelPassing;
             size.width += padding.horizontal;
             size.height += padding.vertical;
+        }
+
+        if (bui.util.propertySetAndNotNull(nodeJSON,
+                ['data', 'cssClasses'])) {
+            node.addClass(nodeJSON.data.cssClasses);
         }
 
         node.size(size.width, size.height)
@@ -5985,31 +6018,45 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
      *   node's ids or, if applicable, the node's ref key (node.data.ref).
      */
     var alignAccordingToNodeHierachy = function(nodes) {
+        var id;
+        var node;
         var alignRecursively = function(node) {
             var children = node.childrenWithoutAuxiliaryUnits();
+            var i;
+            if (!(node instanceof(bui.Compartment))) {
+               node.toFront();
+            }
 
-            node.toFront();
-
-            for (var i = 0; i < children.length; i++) {
+            for (i = 0; i < children.length; i++) {
                 var child = children[i];
                 alignRecursively(child);
             }
+
+            var auxUnits = node.auxiliaryUnits();
+            for(i = 0; i < auxUnits.length; i++) {
+               auxUnits[i].toFront();
+            }
         };
 
-        for (var id in nodes) {
+        for (id in nodes) { //align compartments and its members
             if (nodes.hasOwnProperty(id)) {
-                var node = nodes[id];
+                node = nodes[id];
 
                 if (node.hasParent() === false &&
-                        node.childrenWithoutAuxiliaryUnits().length > 0) {
-                    alignRecursively(node);
+                   (node instanceof(bui.Compartment))){
+                   alignRecursively(node);
                 }
 
-                var auxUnits = node.auxiliaryUnits();
-                for(var i = 0; i < auxUnits.length; i++) {
-                    auxUnits[i].toFront();
-                }
             }
+        }
+        for (id in nodes) { // bring non-compartment members to front
+           if (nodes.hasOwnProperty(id)) {
+              node = nodes[id];
+              if (node.hasParent() === false &&
+                 (!(node instanceof(bui.Compartment)))){
+                    alignRecursively(node);
+              }
+           }
         }
 
 
@@ -6088,7 +6135,10 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                     ['data', 'x'], ['data', 'y']) === false) {
                 continue;
             } else if (node.hasParent() === true) {
-                continue;
+               if (!(node.parent() instanceof bui.Compartment)){
+                  continue;
+               }
+               
             }
 
             var x = nodeJSON.data.x,

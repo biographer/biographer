@@ -5,17 +5,18 @@ var url_undo_push = '{{=URL("undo_push")}}';
 var url_undo = '{{=URL('undo.json')}}';
 var url_redo = '{{=URL('redo.json')}}';
 var url_layout = '{{=URL('layout.json')}}';
+var url_import = '{{=URL('import_graph.json')}}';
 
 //-------------------------------------------
 //-------------------------------------------
 function save(action) {
-	if (action == 'manual' || action == 'auto'){
-		var now = new Date();
-		var pretty_date = [ now.getFullYear(), '-', now.getMonth() + 1, '-', now.getDate(), ' ', now.getHours(), ':', now.getMinutes(), ':', now.getSeconds() ].join('');
-		undoPush(action+' save '+pretty_date);
-	}else if (action != undefined){
-		undoPush(action);
-	}
+    if (action == 'manual' || action == 'auto'){
+        var now = new Date();
+        var pretty_date = [ now.getFullYear(), '-', now.getMonth() + 1, '-', now.getDate(), ' ', now.getHours(), ':', now.getMinutes(), ':', now.getSeconds() ].join('');
+        undoPush(action+' save '+pretty_date);
+    }else if (action != undefined){
+        undoPush(action);
+    }
 }
 var t;
 var timer_is_on=0;
@@ -23,8 +24,8 @@ var intervall = 60000;//every 60 seconds
 var last_save = '';
 function autosaveHeartBeat(no_save) {
     if (no_save != true){
-	    //autosave json graph if graph was modified
-	    save('auto');
+        //autosave json graph if graph was modified
+        save('auto');
     }
     t=setTimeout("autosaveHeartBeat()",intervall);
 }
@@ -67,26 +68,29 @@ function showUndoRedo(){
 }
 //-------------------------------------------
 function undoPush(action){
-	var jsong = JSON.stringify(graph.toJSON());
-	if (jsong == last_save){
-		$('.flash').html('Saved: nothing changed, woooah').fadeIn().delay(800).fadeOut();
-		return false;
-	}
-	$.ajax({
-		url: url_undo_push,
-		data : {
-			graph: jsong,
-			action: action,
-		},
-		success: function( data ) {
-			$('.flash').html('Saved '+action).fadeIn().delay(800).fadeOut();
-			history_undo.push(action)
-			history_redo = [];
-			showUndoRedo();
-			last_save = jsong
-			return true;
-		}
-	});
+    var jsong = JSON.stringify(graph.toJSON());
+    if (jsong == last_save){
+        $('.flash').html('Saved: nothing changed, woooah').fadeIn().delay(800).fadeOut();
+        return false;
+    }
+    $.ajax({
+        url: url_undo_push,
+        data : {
+            graph: jsong,
+            action: action,
+        },
+        success: function( data ) {
+            $('.flash').html('Saved '+action).fadeIn().delay(800).fadeOut();
+            undoRegister(action, jsong)
+            return true;
+        }
+    });
+}
+function undoRegister(action, graph){
+    history_undo.push(action)
+    history_redo = [];
+    showUndoRedo();
+    last_save = graph
 }
 //-------------------------------------------
 function undo(){
@@ -116,13 +120,13 @@ function setMode(mode){
     $('.active').removeClass('active');
     var mode2id = {'del':'cross', 'edit':'wrench', 'Edge':'edge', 'Spline':'spline', 'focus':'focus'}
     if ((mode == 'del')||(mode == 'edit')||(mode == 'Edge')||(mode == 'Spline')||(mode == 'focus')){
-    	$('#'+mode).addClass('active');
+        $('#'+mode).addClass('active');
         $('#follow_'+mode2id[mode]).show();
         $("#canvas").mousemove(function(e){
             $('#follow_'+mode2id[mode]).css('top', e.clientY+15).css('left', e.clientX+15);
         });
     }else if (mode == false){
-    	$('#cursor').addClass('active');
+        $('#cursor').addClass('active');
     }
 }
 //-------------------------------------------
@@ -131,7 +135,7 @@ function drawableSelect(drawable, select_status) {
     //alert('drawableSelect');
     if ((cur_mode == 'Edge')||(cur_mode == 'Spline')){
         if(drawable.drawableType()=='node') selected_nodes.push(drawable);
-	    if (selected_nodes.length>=2){
+        if (selected_nodes.length>=2){
             //draw edge now
             //new_edge = graph.add(bui[$('#select_edge_spline').val()])
             new_edge = graph.add(bui[cur_mode])
@@ -143,8 +147,8 @@ function drawableSelect(drawable, select_status) {
                 {x:selected_nodes[1].position().x-10,y:selected_nodes[1].position().y-20}
                 ], 300);
             //set click listener on new edge
-	    //FIXME this crashes, but it should work?
-	    //script.js:137Uncaught TypeError: Cannot read property 'ListenerType' of undefined
+        //FIXME this crashes, but it should work?
+        //script.js:137Uncaught TypeError: Cannot read property 'ListenerType' of undefined
             //new_node.bind(bui.abstractLine.ListenerType.click, drawableSelect);
 
             edgeModal(new_edge, 'created '+cur_mode);
@@ -159,7 +163,7 @@ function drawableSelect(drawable, select_status) {
             nodeModal(drawable, 'edited node '+label);
         } 
     } else if (cur_mode == 'del'){
-	    drawable.remove();
+        drawable.remove();
         undoPush('deleted '+drawable.drawableType());
     } else if (cur_mode == 'focus'){
         if(drawable.drawableType()=='node') bui.util.alignCanvas(graph, drawable.id());
@@ -178,34 +182,34 @@ function nodeModal (drawable, action) {
     //-----------------
     $('.current_id').attr('id', drawable.id());
     $("#node_modal_input").modal({
-	    overlayClose:true,
-	    opacity:20,
-	    onClose: function(){
-		    if(drawable.identifier()!='Complex'){
-			    if ( $('#node_label').val() != '' ) drawable.label($('#node_label').val()).adaptSizeToLabel();
-		    }
-		    $('.unit_of_information').each(function(){
-			    if($(this).val()){
-				    graph.add(bui.UnitOfInformation)
-				    //.position(-10, -10)//TODO do we need this
-				    .parent(drawable)
-				    .label($(this).val())
-				    .adaptSizeToLabel(true)
-				    .visible(true);
-			    }
-		    }); 
-		    if(($('input[name="node_color"]:checked').val() != 'none')&&($('input[name="node_color"]:checked').val() != undefined)){
-			    drawable.removeClass();
-			    drawable.addClass($('input[name="node_color"]:checked').val());
-		    }
-		    save($('#action').html());
-		    $.modal.close();
-	    }
+        overlayClose:true,
+        opacity:20,
+        onClose: function(){
+            if(drawable.identifier()!='Complex'){
+                if ( $('#node_label').val() != '' ) drawable.label($('#node_label').val()).adaptSizeToLabel();
+            }
+            $('.unit_of_information').each(function(){
+                if($(this).val()){
+                    graph.add(bui.UnitOfInformation)
+                    //.position(-10, -10)//TODO do we need this
+                    .parent(drawable)
+                    .label($(this).val())
+                    .adaptSizeToLabel(true)
+                    .visible(true);
+                }
+            }); 
+            if(($('input[name="node_color"]:checked').val() != 'none')&&($('input[name="node_color"]:checked').val() != undefined)){
+                drawable.removeClass();
+                drawable.addClass($('input[name="node_color"]:checked').val());
+            }
+            save($('#action').html());
+            $.modal.close();
+        }
     });
     //=========================
     $('#node_modal_input').keydown(function(event){
         if(event.keyCode == 13){
-	    $.modal.close();
+        $.modal.close();
             event.preventDefault();
             return false;
         }
@@ -219,22 +223,22 @@ function edgeModal (drawable, action) {
     //-----------------
     $('.current_id').attr('id', drawable.id());
     $("#edge_modal_input").modal({
-	    overlayClose:true,
-	    opacity:20,
-	    onClose: function(){
-		    if($('#marker_type').html() != ''){
-			    if($('#edge_marker').val() !='none'){
-				    drawable.marker(bui.connectingArcs[$('#marker_type').html()].id);
-			    }
-		    }
-		    save($('#action').html());
-		    $.modal.close();
-	    }
+        overlayClose:true,
+        opacity:20,
+        onClose: function(){
+            if($('#marker_type').html() != ''){
+                if($('#edge_marker').val() !='none'){
+                    drawable.marker(bui.connectingArcs[$('#marker_type').html()].id);
+                }
+            }
+            save($('#action').html());
+            $.modal.close();
+        }
     });
     //=========================
     /*$('#edge_modal_input').keydown(function(event){
         if(event.keyCode == 13){
-		$.modal.close();
+        $.modal.close();
             event.preventDefault();
             return false;
         }
@@ -337,7 +341,26 @@ $(document).ready(function() {
         $('#simplemodal-container').css('height', parseInt($('#simplemodal-container').css('height'))+20);
     });
     //=========================
-    $("#json_file").change(function(){
+    $('.load').click(function(){
+        $.ajax({
+            url: url_import,
+            type: 'POST',
+            dataType: 'json',
+            data : {
+                type : $(this).attr('id'), 
+                identifier : $('#'+$(this).attr('id')+'_input').val()
+            },
+            success: function( data ) {
+                undoRegister(data.action, data.graph)
+                redrawGraph(data.graph)
+                $.modal.close()
+                return true;
+            }
+        });
+
+    });
+    //=========================
+    $("#import_file_input").change(function(){
         $('#import_form').submit();
     });
     //===
@@ -349,7 +372,8 @@ $(document).ready(function() {
     });
     //=========================
     $('#load_json_string').click(function(){
-        redrawGraph(JSON.parse($('#json_string').val()));
+        redrawGraph();
+        undoPush('loaded graph from JSON string');
         $.modal.close()
     });
     //===
@@ -367,7 +391,7 @@ $(document).ready(function() {
     });
     //=========================
     $('#scale1').click(function() {
-    	graph.scale(1);
+        graph.scale(1);
     });
     //=========================
     $('#fit_to_screen').click(function() {
@@ -398,8 +422,8 @@ $(document).ready(function() {
     });
     //=========================
     $('.marker_select').click(function(){
-    	$('#marker_type').html($(this).attr('id'))
-	$.modal.close();
+        $('#marker_type').html($(this).attr('id'))
+    $.modal.close();
     });
     //=========================
     $('#close_modal_input').click(function(){
@@ -407,36 +431,36 @@ $(document).ready(function() {
     });
     //=========================
     $('#save_to_session').click(function(){
-	    save('manual');
+        save('manual');
     });
     //=========================
     $('#export_json').click(function(){
         //alert(JSON.stringify(graph.toJSON()));
-    	$('#export_form').html('<input type="hidden" name="json" value=\''+JSON.stringify(graph.toJSON())+'\' />').submit();
+        $('#export_form').html('<input type="hidden" name="json" value=\''+JSON.stringify(graph.toJSON())+'\' />').submit();
     });
     //=========================
     $('#export_svg').click(function(){
         //alert($('#canvas svg').parent().html());
-    	$('#export_form').html('<input type="hidden" name="svg" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
+        $('#export_form').html('<input type="hidden" name="svg" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
     });
     canvaspos = $('#canvas').position();
     $('.node').draggable({
-	zIndex: 2,
-	//revert: true, 
-	//grid: [ 20,20 ],//does not work, need aling functions
-	helper: function() {return '<img src="/{{=request.application}}/static/images/editor/'+$(this).attr('id')+'_helper.png" id="'+$(this).attr('id')+'" class="node_helper"/>'},
-	start: function() {
-		setMode(false);
-		//make all drawables placeholders visible
-		var all_drawables = graph.drawables();
-		for (var key in all_drawables) {
-		    drawable = all_drawables[key]
-		    if (((drawable.identifier()=='Complex')&& !$(this).hasClass('no_drop_complex'))||(drawable.identifier()=='Compartment')){
-			drawable.placeholderVisible(true);
-		    }else if (drawable.drawableType()=='node'){
-			drawable.placeholderVisible(false);
-		    }
-		}
-	    }, 
+    zIndex: 2,
+    //revert: true, 
+    //grid: [ 20,20 ],//does not work, need aling functions
+    helper: function() {return '<img src="/{{=request.application}}/static/images/editor/'+$(this).attr('id')+'_helper.png" id="'+$(this).attr('id')+'" class="node_helper"/>'},
+    start: function() {
+        setMode(false);
+        //make all drawables placeholders visible
+        var all_drawables = graph.drawables();
+        for (var key in all_drawables) {
+            drawable = all_drawables[key]
+            if (((drawable.identifier()=='Complex')&& !$(this).hasClass('no_drop_complex'))||(drawable.identifier()=='Compartment')){
+            drawable.placeholderVisible(true);
+            }else if (drawable.drawableType()=='node'){
+            drawable.placeholderVisible(false);
+            }
+        }
+        }, 
     });
 });

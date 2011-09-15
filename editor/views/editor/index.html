@@ -180,29 +180,33 @@
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
 <div id="import_file_modal_input" class="modal_input">
-	<form id='import_form' method="post" enctype="multipart/form-data">
 		<table>
 			<tr>
 				<th> JSON / SBML File </th>
-				<td> <input type="file" name="json_file" id="json_file"></td>
+                <td>
+                    <form id='import_form' method="post" enctype="multipart/form-data">
+                        <input type="file" id="import_file_input">
+                    </form>
+                </td>
 			</tr>
 			<tr>
 				<th> <a href="http://www.ebi.ac.uk/biomodels-main/"> BioModels.net </th> </a> <td>
-					<select id="biomodel" name="">
+					<select id="biomodel_input">
 						{{for i in range(1,255):}} <option value="{{=i}}">BIOMD{{='%.10d'%i}}</option> {{pass}}
 					</select>
-					<button id="load_biomodel">load</button>
+					<button class="load" id="biomodel">load</button>
 				</td>
 			</tr>
 			<tr>
-				<th> <a href="http://www.reactome.org/">Reactome</a> </th>
-				<td> <input type="text" name="reactome_id" id="reactome_id"> stable identifier</td>
+                <th> <a href="http://www.reactome.org/">Reactome</a> <br /> stable identifier </th>
+                <td> <input type="text" id="reactome_id_input" placeholder="REACT_6167.3"> 
+                    <button class="load" id="reactome_id">load</button>
+                </td>
 			</tr>
 		</table>
 		<br />
 		<br />
 		<button class='sc_but' id='cancel_modal_input'>cancel</button> or press <b>ESC</b>
-	</form>
 </div>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->

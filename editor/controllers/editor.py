@@ -1,5 +1,14 @@
 from gluon.contrib import simplejson
 
+def undoRegister(action, graph, json_string):
+    if session.editor_histroy_undo == None:
+        session.editor_histroy_undo = []
+    item = dict(action = action, graph = graph)
+    session.editor_histroy_redo = []
+    session.editor_histroy_undo.append( item )
+    session.editor_autosave = json_string
+    return item
+
 def index():
     response.files.append(URL(request.application, 'static/css', 'visualization-html.css'))
     response.files.append(URL(request.application, 'static/css', 'editor.css'))
@@ -9,36 +18,51 @@ def index():
     response.files.append(URL(request.application, 'static/js', 'jquery.simplemodal.1.4.1.min.js'))
     #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))
     response.files.append(URL(request.application, 'editor', 'script.js'))
-    if request.vars.json_file != None and request.vars.json_file != '':
-        file_content = request.vars.json_file.file.read().strip()
+    if request.vars.import_file != None and request.vars.import_file != '':
         action,graph,json_string = None,None,None
+        file_content = request.vars.import_file.file.read().strip()
         if file_content.startswith('{') and file_content.endswith('}'):#basic check
             json_string = file_content
             try:
                 graph = simplejson.loads(file_content)
             except simplejson.JSONDecodeError:
-                action = 'loaded %s but could not parse json'%request.vars.json_file.filename
+                action = 'loaded %s but could not parse json'%request.vars.import_file.filename
                 graph = dict(nodes = [], edges = [])
             else:
-                action = 'loaded %s'%request.vars.json_file.filename
+                action = 'loaded %s'%request.vars.import_file.filename
         elif file_content.startswith('<?xml'):
             import biographer
             bioGraph = biographer.Graph()
             bioGraph.importSBML( file_content )
             json_string = bioGraph.exportJSON()
-            print 'sbml2json: ',json_string
+            #print 'sbml2json: ',json_string
             graph = simplejson.loads(json_string)
-            action = 'loaded %s'%request.vars.json_file.filename
+            action = 'loaded %s'%request.vars.import_file.filename
         if action and graph and json_string:
-            if session.editor_histroy_undo == None:
-                session.editor_histroy_undo = []
-            session.editor_histroy_redo = []
-            session.editor_histroy_undo.append( dict(action = action, graph = graph) )
-            session.editor_autosave = json_string
+            undoRegister(action, graph, json_string)
     return dict()
 
 def script():
     return dict()
+
+def import_graph():
+    action,graph,json_string = None,None,None
+    print 'import graph ', request.vars
+    if request.vars.type=='biomodel':
+        importBioModel( request.vars.identifier )
+        json_string = session.bioGraph.exportJSON()
+        graph = simplejson.loads(json_string)
+        action = 'Imported BioModel: %s'%request.vars.identifier
+    elif request.vars.type == 'reactome_id':
+        importReactome( request.vars.identifier )
+        json_string = session.bioGraph.exportJSON()
+        graph = simplejson.loads(json_string)
+        action = 'Imported Reactome Id: %s'%request.vars.identifier
+        print 'reactome_id xxx ',action, json_string
+
+    if action and graph and json_string:
+        return undoRegister(action, graph, json_string)
+    raise HTTP(500, 'could not import')
 
 def layout():
     if not request.vars.layout:
@@ -56,10 +80,11 @@ def layout():
         infile = os.path.join(request.folder, "static","tmp.bgin")
         outfile = os.path.join(request.folder, "static","tmp.bgout")
         open(infile, 'w').write(bioGraph.exportLayout())
-        return bioGraph.exportLayout()
+        #return bioGraph.exportLayout()
         executable = os.path.join(request.folder, "static","layout")
         p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         p.communicate()
+        print 'exit'
 
         bioGraph.importLayout( open(outfile, 'r').read() )					# import STDOUT
 
@@ -69,15 +94,9 @@ def layout():
     #-------------------
     json_string = bioGraph.exportJSON()
     graph = simplejson.loads(json_string)
-    if session.editor_histroy_undo == None:
-        session.editor_histroy_undo = []
-    session.editor_histroy_redo = []
     action = 'applied automatic biographer layout'
-    item = dict(action = action, graph = graph)
-    session.editor_histroy_undo.append( item )
-    session.editor_autosave = json_string
+    return undoRegister(action, graph, json_string)
     #-------------------
-    return item
 
 def clear():
     session.editor_autosave = None
