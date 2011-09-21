@@ -885,7 +885,28 @@ class Graph:
 
 	def importLayout(self, layout):
 		self.log("Importing Layout ...")
-		# deleted... will change drastically anyway, makes no sense to develop now
+		lines = layout.split("\n")
+
+		# Compartments are ignored
+
+		while lines[0] != "///":
+			lines.pop()
+		lines.pop()		# ///
+		lines.pop()		# number of nodes
+
+		for node in self.Nodes:
+			lines.pop()			# node index
+			lines.pop()			# node type
+			lines.pop()			# node id
+			lines.pop()			# node compartment
+			node.data.x = lines.pop()
+			node.data.y = lines.pop()
+			node.data.width = lines.pop()
+			node.data.height = lines.pop()
+			lines.pop()			# node direction
+
+		# Edges are ignored		
+
 		self.initialize()
 
 	def Layout(self, Layouter):
