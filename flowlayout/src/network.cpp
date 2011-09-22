@@ -383,6 +383,21 @@ void Network::dumpNodes(const char* file){
    }
    //do do print in output file !!! printf("bound:\n(%f,%f)-(%f,%f)\n",xmin,ymin,xmax,ymax);
    n=compartments->size();
+   float cpminy=inf;
+   float cpmaxy=-inf;
+   int cpmin,cpmax;
+   for(i=0;i<n;i++){
+      if ((*compartments)[i].ymin<cpminy){
+         cpmin=i;
+         cpminy=(*compartments)[i].ymin;
+      }
+      if ((*compartments)[i].ymax>cpmaxy){
+         cpmax=i;
+         cpmaxy=(*compartments)[i].ymax;
+      }
+   }
+   (*compartments)[cpmin].ymin=ymin;
+   (*compartments)[cpmax].ymax=ymax;
    for(i=0;i<n;i++){
       fprintf(out,"%d\n",i);
       fprintf(out,"Compartment\n");
