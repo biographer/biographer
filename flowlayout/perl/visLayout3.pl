@@ -84,7 +84,7 @@ while (scalar(@lines)){
       $g->set_attribute($id,"width",$w/72);
       $g->set_attribute($id,"height",$h/72);
       $g->set_attribute($id,"label",sprintf("%s (%d)\\n(%d,%d,%d,%d)",$id,$idx,$x-$w/2,$y-$h/2,$w,$h));
-      print "Compartment $id: $x,$y,$w,$h\n";
+#      print "Compartment $id: $x,$y,$w,$h\n";
       
    } else {
       $g->set_attribute($id,"pos","$x,$y!");
@@ -101,6 +101,6 @@ $fn=~s/\.[^\.]*$//; # remove extension
 #print $g->dot;
 #open($f,"| tee $fn.lyt.dot | neato -n -Gpad=0 -Gmargin=0 -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
 my $f;
-open($f,"| neato -n -Gpad=0 -Gmargin=0 -Gsplines=true -Gdpi=56 -Tpng -o $fn.png");
+open($f,"| neato -n -Gpad=0 -Gmargin=0 -Gsplines=true -Gdpi=56 -Tpng -o $fn.png 2>&1 | grep -v Warning");
 print $f $g->dot;
 close $f;
