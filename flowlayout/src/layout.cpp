@@ -521,7 +521,7 @@ void Network::init_compartments(){
    ymid.clear(); //release memory.
 }   
    
-float Network::adjust_compartments(){
+float Network::adjust_compartments(float strength){
    /* This procedure adjusts the boundaries of compartments, so that it tends the minimum rectangle contains all the nodes belongs to it.
          1. find the minimum reactangles that contains all the nodes belongs to the corresponding compartments.
          2. adjust the compartments such that they tend to become the corresponding minimum rectangles.
@@ -559,8 +559,8 @@ float Network::adjust_compartments(){
      if(j==0)continue;
      delta=(*compartments)[i].ymax-(*compartments)[j].ymin;
      delta/=2;
-     (*compartments)[i].ymax-=delta*0.25;
-     (*compartments)[j].ymin+=delta*0.25;
+     (*compartments)[i].ymax-=delta*strength;
+     (*compartments)[j].ymin+=delta*strength;
      force+=(delta*delta/4);
    }
    return force;
@@ -945,12 +945,13 @@ float Network::layout(){
  
    //phase 1. initialization
    //step1: a quick initial layout: generate the coordinates according to the edges.
+   printf("init layout\n");    
    k=inc=0;
    while(true){
       k++;
       cur_force=init_layout();
       show_progress(progcc);
-      printf("%f\n",cur_force);fflush(stdout);
+      printf("%f\r",cur_force);fflush(stdout);
       if(fabs(pre_force-cur_force)<pre_force*err)break; //the system force converges to a minimal.
       if (cur_force<stop) break; //absolute breaking condition
       pre_force=cur_force;
@@ -1008,9 +1009,10 @@ float Network::layout(){
    printf("Total force = %0.3f\n",cur_force);*/
   
    //phase 3: constrained layout: bring in compartments into consideration, and re-layout the nodes such that they obeys compartment rule.
-   progress_step=1;
+   progress_step=10;
    
    pre_force=inf;  // no compartments, no non-adjacent
+   printf("no compartments, no non-adjacent\n");    
    k=inc=0;
    while(true){
       k++;
@@ -1021,6 +1023,7 @@ float Network::layout(){
       printf("%f\n",cur_force);fflush(stdout);     
       show_progress(progcc);
       //     if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if (cur_force!=cur_force) break; // check for nan
       if(cur_force>pre_force)inc++;
       if(inc>10*log(1.0*n))break;
       //      if(inc>log(1.0*n))break;
@@ -1034,6 +1037,7 @@ float Network::layout(){
 
    pre_force=inf;  // no compartments, non-adjacent
    k=inc=0;
+   printf("no compartments, non-adjacent\n");    
    while(true){
       k++;
       cur_force=0.0;
@@ -1059,6 +1063,7 @@ float Network::layout(){
    show_progress(progcc);
    
    pre_force=inf;  // compartments, no non-adjacent
+   printf("compartments, no non-adjacent\n");    
    k=inc=0;
    while(true){
       k++;
@@ -1070,6 +1075,9 @@ float Network::layout(){
       //cur_force+=calc_force_nadj();
       cur_force=move_nodes(); // only use this force
       printf("%f\n",cur_force);fflush(stdout);     
+      if (cur_force!=cur_force) break; // check for nan
+      if (cur_force>=inf) break;
+      
       show_progress(progcc);
  //     if(fabs(pre_force-cur_force)<pre_force*err)break;
       if(cur_force>pre_force)inc++;
@@ -1083,10 +1091,10 @@ float Network::layout(){
    printf("number of iteration: %d\n",k);    
    printf("Total force = %0.3f\n",cur_force); 
 
-   //step2: compartment-constrained layout.
-   pre_force=inf;
-   min_force=inf;
+   show_progress(progcc);
    
+   pre_force=inf;  // compartments, no non-adjacent
+   printf("compartments, non-adjacent\n");    
    k=inc=0;
    while(true){
       k++;
@@ -1094,14 +1102,50 @@ float Network::layout(){
       cur_force+=adjust_compartments();
       cur_force+=calc_force_compartments();
       cur_force+=calc_force_adj();
-//      cur_force+=firm_distribution();
+      cur_force+=firm_distribution();
       cur_force+=calc_force_nadj();
+      cur_force=move_nodes(); // only use this force
+      if (cur_force!=cur_force) break; // check for nan
+         if (cur_force>=inf) break;
+      
+      printf("%f\n",cur_force);fflush(stdout);     
+      show_progress(progcc);
+      //     if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if(cur_force>pre_force)inc++;
+      if(inc>10*log(1.0*n))break;
+      //      if(inc>log(1.0*n))break;
+      if (cur_force<n*avgsize/50) break;
+      if (k>300) break;
+      pre_force=cur_force;
+      //      if(fabs(pre_force)<zero)break;    
+   }
+   printf("number of iteration: %d\n",k);    
+   printf("Total force = %0.3f\n",cur_force); 
+   //step2: compartment-constrained layout.
+   pre_force=inf;
+   min_force=inf;
+   
+   printf("separate nodes, compartments\n");    
+   k=inc=0;
+   while(true){
+      k++;
+      cur_force=0.0;
+      cur_force+=calc_force_compartments();
+      cur_force+=adjust_compartments(1);
+//      cur_force+=calc_force_adj();
+//      cur_force+=firm_distribution();
+//      cur_force+=calc_force_nadj();
       cur_force+=calc_separate_nodes();
 //      cur_force+=min_edge_crossing(1);
       cur_force=move_nodes();
       printf("%f\n",cur_force);fflush(stdout);
       show_progress(progcc);
 //      if(fabs(pre_force-cur_force)<pre_force*err)break;
+      if (cur_force!=cur_force) break; // check for nan
+      if (cur_force>=inf) break;
+      if (cur_force<100) break;
+      if (k<100) continue;
+
       if(cur_force>pre_force)inc++;
       if(inc>10*log(1.0*n))break;
 //      if(inc>log(1.0*n))break;
@@ -1109,7 +1153,7 @@ float Network::layout(){
       if (min_force>cur_force) min_force=cur_force;
 //      if(fabs(pre_force)<zero)break;    
       if (cur_force<n*avgsize/500) break;
-      if (cur_force>3*min_force) break;
+//      if (cur_force>3*min_force) break;
       avgsize-=1.0;
    }
    printf("number of iteration: %d\n",k);    

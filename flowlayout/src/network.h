@@ -73,7 +73,7 @@ protected:
    float post_pro(int _round); //post-processing method: to make the layout more compacted and remove node-overlapping.
    float move_nodes(); //move the nodes to a new position.
    void init_compartments(); //initialize the compartment boundaries.
-   float adjust_compartments(); //adjusting the boundaries of compartments.
+   float adjust_compartments(float strength=0.25); //adjusting the boundaries of compartments.
    bool swap_node(); //swap two compounds if: they are connected to the same reaction and the swapping reduces system force. 
    bool near_swap(); //swap two nodes if: they are close to each other and the swapping reduces system force.
    float swap_force(int p1, int p2); //the force reduced afer placing node-p1 at node-p2's position.
