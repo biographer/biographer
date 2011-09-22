@@ -1093,7 +1093,7 @@ float Network::layout(){
 
    show_progress(progcc);
    
-   pre_force=inf;  // compartments, no non-adjacent
+/*   pre_force=inf;  // compartments, non-adjacent
    printf("compartments, non-adjacent\n");    
    k=inc=0;
    while(true){
@@ -1120,7 +1120,7 @@ float Network::layout(){
       //      if(fabs(pre_force)<zero)break;    
    }
    printf("number of iteration: %d\n",k);    
-   printf("Total force = %0.3f\n",cur_force); 
+   printf("Total force = %0.3f\n",cur_force); */
    //step2: compartment-constrained layout.
    pre_force=inf;
    min_force=inf;
