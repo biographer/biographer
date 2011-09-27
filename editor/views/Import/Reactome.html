@@ -1,0 +1,30 @@
+{{extend 'layout.html'}}
+
+<form name=main method=POST enctype="multipart/form-data">
+
+<a href="http://www.reactome.org/"><img src="{{=URL(r=request, c="static", f="images")}}/Reactome.png" style="vertical-align:middle;"/></a>
+<br/>
+
+<script>
+	function Example() {
+		document.main.ST_ID.value = 'REACT_6167.3';
+		document.main.submit();
+		}
+</script>
+
+<br/>
+Stable identifier: <input type=text name="ST_ID" /> <input type=submit value="Load this Pathway"/>
+
+<br/><br/>
+
+Example pathway: 
+<a href="http://www.reactome.org/cgi-bin/eventbrowser_st_id?ST_ID=REACT_6167.3">Influenza Infection [Homo sapiens, Influenza A virus]</a>
+
+<input type=button value="Load Example Pathway" onClick="Example();"/>
+
+<hr/>
+
+For more information on the Reactome Pathway Database, please visit <a href="http://www.reactome.org/">http://www.reactome.org/</a>.
+
+</form>
+
