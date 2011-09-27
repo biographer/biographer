@@ -46,8 +46,8 @@ def script():
     return dict()
 
 def import_graph():
+    response.generic_patterns = ['json']
     action,graph,json_string = None,None,None
-    print 'import graph ', request.vars
     if request.vars.type=='biomodel':
         importBioModel( request.vars.identifier )
         json_string = session.bioGraph.exportJSON()
@@ -64,7 +64,9 @@ def import_graph():
         return undoRegister(action, graph, json_string)
     raise HTTP(500, 'could not import')
 
+
 def layout():
+    response.generic_patterns = ['html','json']
     if not request.vars.layout:
         raise HTTP(500, 'not layout algorithm specified')
     #-------------------
@@ -84,16 +86,20 @@ def layout():
         executable = os.path.join(request.folder, "static","layout")
         p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         p.communicate()
-        print 'exit'
-
-        bioGraph.importLayout( open(outfile, 'r').read() )					# import STDOUT
+        layout_output = open(outfile, 'r').readlines()
+        graph = simplejson.loads(bioGraph.exportJSON())
+        importLayout(graph, layout_output)
+        json_string = simplejson.dumps(graph)
+        #return PRE(XML(simplejson.dumps(graph)))
+        #print 'exit'
+        #bioGraph.importLayout( open(outfile, 'r').read() )					# import STDOUT
 
     elif request.vars.layout == 'graphviz':
         pass
         bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
-    #-------------------
-    json_string = bioGraph.exportJSON()
-    graph = simplejson.loads(json_string)
+        #-------------------
+        json_string = bioGraph.exportJSON()
+        graph = simplejson.loads(json_string)
     action = 'applied automatic biographer layout'
     return undoRegister(action, graph, json_string)
     #-------------------
@@ -119,6 +125,7 @@ def undo_push():
     session.editor_histroy_undo.append( dict(action = request.vars.action, graph = simplejson.loads(request.vars.graph)) )
 
 def undo():
+    response.generic_patterns = ['json']
     if session.editor_histroy_undo:
         item = session.editor_histroy_undo.pop()
         session.editor_histroy_redo.append(item)
@@ -130,6 +137,7 @@ def undo():
     return last_graph
 
 def redo():
+    response.generic_patterns = ['json']
     item = session.editor_histroy_redo.pop()
     session.editor_histroy_undo.append(item)
     session.editor_autosave = simplejson.dumps(item['graph'])
@@ -152,6 +160,6 @@ def export():
         return ''
     response.headers['Content-Type'] = gluon.contenttype.contenttype(".%s"%file_type)
     filename = "%s.%s" % ('graph', file_type)
-    response.headers['Content-disposition'] = "attachment; filename=\"%s\"" % filename
+    response.headers['Content-disposition'] = "attachment filename=\"%s\"" % filename
     return out
     response.write(out,escape=False)

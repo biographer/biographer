@@ -1,10 +1,37 @@
-
+#editor-header {
+	width: 100%;
+	background-color: #2a3942;
+	margin-bottom: 5px;
+	padding-left: 10px;
+	font-size: 12px; 
+	color: white;/*#3C3C3D;*/
+	text-shadow: 1px 1px 0 #999; 
+	font-weight: bold;
+    	box-shadow: 0px 1px 2px #ccc;
+}
+#editor-header ul {
+	display: inline-block;
+	list-style: none;
+	text-shadow: none;
+	font-weight: normal;
+}
+#editor-header li {
+	float: left;
+	width: 100px;
+	text-align: center;
+	color: #b3b3b3;
+}
+#editor-header li:hover {
+	background-color: #fff;
+	color: black;
+}
+/**********************************/
 th {
 	text-align: left;
 }
 #canvas {
     width: 92%;
-    height: 92%;
+    height: 90%;
     border: solid 1px #ddd;
 }
 /**********************************/
