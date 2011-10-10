@@ -1,7 +1,7 @@
 #include "functions.h"
 #define zero 1e-12
 
-Point operator+(const Point p1, const Point p2){
+Point operator+(const Point& p1, const Point& p2){
    //addition of two vectors
    Point p;
    p.x=p1.x+p2.x;
@@ -9,32 +9,45 @@ Point operator+(const Point p1, const Point p2){
    return p;
 }
 
-Point operator-(const Point p1, const Point p2){
+Point operator-(const Point& p1, const Point& p2){
    //vector p1 minus vector p2
    Point p;
    p.x=p1.x-p2.x;
    p.y=p1.y-p2.y;
    return p;   
 }
+Point& operator+=(Point& p1, const Point& p2){
+   //vector p1 plus vector p2 (inplace)
+   p1.x+=p2.x;
+   p1.y+=p2.y;
+   return p1;   
+}
+Point& operator-=(Point& p1, const Point& p2){
+   //vector p1 minus vector p2 (inplace)
+   p1.x-=p2.x;
+   p1.y-=p2.y;
+   return p1;   
+}
 
-double operator*(const Point p1, const Point p2){
+
+double operator*(const Point& p1, const Point& p2){
    //vector product of two vectors
    return p1.x*p2.y-p1.y*p2.x;
 }
-Point operator*(const Point p1, const double scalar){
+Point operator*(const Point& p1, const double scalar){
    //scale vector
    Point p;
    p.x=p1.x*scalar;
    p.y=p1.y*scalar;
    return p;
 }
-Point unit(const Point p1){
+Point unit(const Point& p1){
    double len=norm(p1);
    Point p=p1;
    return p*(1/len);
 }
 
-Point to_left(const Point p0, const double beta){
+Point to_left(const Point& p0, const double beta){
    //rotating the vector "p0" "beta" degrees to the left.
    double alpha=angle(p0), d=norm(p0);
    Point p;
@@ -43,12 +56,12 @@ Point to_left(const Point p0, const double beta){
    return p;
 }
 
-double norm(const Point p){
+double norm(const Point& p){
    //norm (length) of a vector.
    return sqrt(p.x*p.x+p.y*p.y);
 }
 
-double angle(const Point p){
+double angle(const Point& p){
    // angle of a vector (w.r.t +x axis), within range [0.5PI, 1.5PI].
    return atan2(p.y,p.x);
 /*   if(p.x==0){
@@ -60,7 +73,7 @@ double angle(const Point p){
    return alpha;*/
 }
 
-double dist(const Point p1, const Point p2){
+double dist(const Point& p1, const Point& p2){
    //the distance between point p1 and p2.
    return norm(p1-p2);
 }
@@ -76,7 +89,7 @@ double lim(double beta){
    return beta;
 }
 
-int p_compare(const Point p1, const Point p2){
+int p_compare(const Point& p1, const Point& p2){
    //comparing two points (y-dominated).
    if(fabs(p1.y-p2.y)>zero){
       if(p1.y>p2.y)return 1;
