@@ -1,74 +1,19 @@
 #include "network.h"
 #include "functions.h"
-#define inf 1e50
-#define zero 1e-12
-#define err 1e-4
-#define stop 1
-enum plugins {
-   init=1<<0,init_swap=1<<1,init_wComp=1<<2,adjForce=1<<3,nadjForc=1<<4,adjTorque=1<<5,checkCompartment=1<<6,adjustCompartment=1<<7,avoidOverlap=1<<8
-};
-enum conditions{
-   iteration=1<<0
-};
-struct comp_y{
-  //this structure is used for initializing the compartment boundaries.(just y direction!)
-  int id;
-  int cnt;
-  double mid;
-  double min;
-  double max;
-}; 
-class Layouter;
-typedef double (*plugin_func_ptr)(Layouter &state,VP &mov,int round,double temp);
-struct plugin{
-   plugin_func_ptr pfunc;
-   VP last;
-   void* persist;
-};
-struct step{
-   VF actplugins;
-   conditions end;
-   int c_iterations;
-   
-};
+#include "layout.h"
 
-class Plugins{
-   public:
-      Plugins(int _num):num(_num){} // expects number of nodes in network
-      void registerPlugin(unsigned long pgn, plugin_func_ptr pfunc){
-         int idx=bitpos(pgn);
-         if ((int) pluginlist.size()<idx+1) pluginlist.resize(idx+1);
-         pluginlist[idx].pfunc=pfunc;
-         pluginlist[idx].last.resize(num);
-      }
-      size_t size(){
-         return pluginlist.size();
-      }
-      plugin& get(int idx){
-         return pluginlist[idx];
-      }
-   private:
-      int num;
-      vector<plugin> pluginlist;
-};
-class Layouter{
-   public:
-      Layouter(Network& _nw):nw(_nw), plugins(Plugins(_nw.nodes.size())){
-         mov.resize(nw.nodes.size());
-         movadd.resize(nw.nodes.size());
-         avgsize=avg_sizes(nw);
-      }
-      void setStep(int step,unsigned long bitplugins);
-      void setEndCondition(int step, conditions cond, double param);
-      Network& nw;
-      VP mov;
-      VF movadd;
-      double avgsize;
-      Plugins plugins;
-   protected:
-      void initStep(int step);
-      vector<step> program;
-};
+void Plugins::registerPlugin(unsigned long pgn, plugin_func_ptr pfunc){
+   int idx=bitpos(pgn);
+   if ((int) pluginlist.size()<idx+1) pluginlist.resize(idx+1);
+   pluginlist[idx].pfunc=pfunc;
+   pluginlist[idx].last.resize(num);
+}
+size_t Plugins::size(){
+   return pluginlist.size();
+}
+plugin& Plugins::get(int idx){
+   return pluginlist[idx];
+}
 
 void Layouter::setStep(int step,unsigned long bitplugins){
    initStep(step);
