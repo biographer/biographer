@@ -7,24 +7,11 @@ const char jnodetypes[][20]={"None", "Reaction", "Compound","SimpleCompound","Co
 const Nodetype inodetypes[]={none,reaction,compound,compound,compound,compound,other}; // convertion of different node types from json nodetypes
 Network::Network(){
    //default network constructor.
-   nodes = new VN(); nodes->clear();
-   edges = new VE(); edges->clear();
-   compartments = new VCP(); compartments->clear();
    showProgress=false;
    progress_step=10;
    infile=NULL;
 }
 
-Network::~Network(){
-   //default network destructor.
-   int i,n=nodes->size();
-   for(i=0;i<n;i++)(*nodes)[i].neighbors->clear();
-   nodes->clear();
-   edges->clear();
-   compartments->clear();
-   delete nodes;
-   delete edges;
-}
 
 VI * Network::getNeighbors(int nodeIndex, Edgetype type){
    /*
@@ -34,14 +21,16 @@ VI * Network::getNeighbors(int nodeIndex, Edgetype type){
    */
    
    VI *arr=new VI();
-   arr->clear();
-   int i,n=(*nodes)[nodeIndex].neighbors->size();
-   for(i=0;i<n;i++)
-      if((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].type==type){
-         if((*nodes)[nodeIndex].type==reaction)
-            arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
-         else arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].from);
+   int i,n=nodes[nodeIndex].neighbors.size();
+   for(i=0;i<n;i++){
+      if(edges[(nodes[nodeIndex].neighbors)[i]].type==type){
+         if (edges[(nodes[nodeIndex].neighbors)[i]].to==nodeIndex){
+            arr->push_back(edges[(nodes[nodeIndex].neighbors)[i]].from);
+         } else {
+            arr->push_back(edges[(nodes[nodeIndex].neighbors)[i]].to);
+         }
       }
+   }
    return arr;//take care: must delete the pointer in the calling methods.
 }
 
@@ -52,59 +41,60 @@ VI * Network::getNeighbors(int nodeIndex){
      otherwise, its neighbors are at the "from"side.
    */
    VI *arr=new VI();
-   arr->clear();
-   int i,n=(*nodes)[nodeIndex].neighbors->size();
+   int i,n=nodes[nodeIndex].neighbors.size();
    for(i=0;i<n;i++){
-      if((*nodes)[nodeIndex].type==reaction)
-         arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
-      else arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].from);
+      if (edges[(nodes[nodeIndex].neighbors)[i]].to==nodeIndex){
+         arr->push_back(edges[(nodes[nodeIndex].neighbors)[i]].from);
+      } else {
+         arr->push_back(edges[(nodes[nodeIndex].neighbors)[i]].to);
+      }
    }
    return arr;//take care: must delte the pointer in the calling methods.
 }
 int Network::degree(int nodeIndex){
-   return (*nodes)[nodeIndex].neighbors->size();
+   return nodes[nodeIndex].neighbors.size();
 }
 void Network::addEdge(int from, int to , Edgetype type){
    //add in an edge into the network.
-   edges->push_back(Edge(from, to, type)); //add in this edge.
-   int index=edges->size()-1; //index of the edge added.
-   (*nodes)[from].neighbors->push_back(index); //add this edge into the neighbors of the reaction.
-   (*nodes)[to].neighbors->push_back(index); //add this edge into te neighbors of the compound.
+   edges.push_back(Edge(from, to, type)); //add in this edge.
+   int index=edges.size()-1; //index of the edge added.
+   nodes[from].neighbors.push_back(index); //add this edge into the neighbors of the reaction.
+   nodes[to].neighbors.push_back(index); //add this edge into te neighbors of the compound.
 }
 
 void Network::addNode(int index){
    //add in a node into the network (with only index specified).
-   if(index>=nodes->size())nodes->resize(index+1);
-   (*nodes)[index]=Node();
+   if((size_t) index>=nodes.size())nodes.resize(index+1);
+   nodes[index]=Node();
 }
 
 void Network::addNode(int index, Nodetype _type){
    //add in a node into the network with only index and Nodetype specified.
-   if(index>=nodes->size())nodes->resize(index+1);
-   (*nodes)[index]=Node(_type);
+   if((size_t) index>=nodes.size())nodes.resize(index+1);
+   nodes[index]=Node(_type);
 }
 
 void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir){
-   if(index>=nodes->size())nodes->resize(index+1);
-   (*nodes)[index]=Node(_type, _name, _width, _height, _x, _y, _dir);
+   if((size_t) index>=nodes.size())nodes.resize(index+1);
+   nodes[index]=Node(_type, _name, _width, _height, _x, _y, _dir);
 }
 
 void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir, int _comp){
    //add in a node with all node properties specified (prefered in the algorithms).
-   if(index>=nodes->size())nodes->resize(index+1);
-   (*nodes)[index]=Node(_type, _name, _width, _height, _x, _y, _dir, _comp);
+   if((size_t) index>=nodes.size())nodes.resize(index+1);
+   nodes[index]=Node(_type, _name, _width, _height, _x, _y, _dir, _comp);
 }
 
 void Network::addCompartment(int index, string _name){
    //add in a compartment with _name specified (prefered in the algorithms).
-   if(index>=compartments->size())compartments->resize(index+1);
-   (*compartments)[index]=(Compartment(_name));
+   if((size_t) index>=compartments.size())compartments.resize(index+1);
+   compartments[index]=(Compartment(_name));
 }
 
-void Network::addCompartment(int index, double _xmin, double _xmax, double _ymin, double _ymax, string _name){
+void Network::addCompartment(int index, double _xmin, double _ymin, double _xmax, double _ymax, string _name){
    //add in a compartment with all attributes specified.
-   if(index>=compartments->size())compartments->resize(index+1);
-   (*compartments)[index]=(Compartment(_xmin,_xmax,_ymin,_ymax,_name));
+   if((size_t) index>=compartments.size())compartments.resize(index+1);
+   compartments[index]=(Compartment(_xmin,_ymin,_xmax,_ymax,_name));
 }
 
 void Network::addReaction(int index, const VI* substrates,const VI* products, const VI* catalysts, const VI* activators, const VI* inhibitors){
@@ -146,28 +136,28 @@ void Network::dump(){
    Edge* e;
    Compartment* c;
    int i,j;
-   int n=nodes->size();
+   int n=nodes.size();
    printf("nodes:\n");
    for(i=0;i<n;i++){
-      tmp = &((*nodes)[i]);
+      tmp = &(nodes[i]);
       cout<<i<<' '<<nodetypes[tmp->type]<<' '<<tmp->name<<endl;
       printf("(%0.3f,%0.3f)+(%0.3f,%0.3f) dir %0.3f, comp %d\n",tmp->x, tmp->y, tmp->width, tmp->height, tmp->dir, tmp->compartment);
       printf("--edges: ");
-      for (j=0;j<tmp->neighbors->size();j++){
-         printf("%d ",(*tmp->neighbors)[j]);
+      for (j=0;j<(int) tmp->neighbors.size();j++){
+         printf("%d ",tmp->neighbors[j]);
       }
       printf("\n");
    }
-   n=edges->size();
+   n=edges.size();
    printf("edges:\n");
    for(i=0;i<n;i++){
-      e = &((*edges)[i]);
+      e = &(edges[i]);
       printf("%s %d -> %d\n",edgetypes[(int)(e->type)],e->from,e->to);
    }
-   n=compartments->size();
+   n=compartments.size();
    printf("compartments:\n");
    for(i=0;i<n;i++){
-      c = &((*compartments)[i]);
+      c = &(compartments[i]);
       cout<<i<<' '<<c->name<<endl;
       printf("(%0.3f,%0.3f)-(%0.3f,%0.3f)",c->xmin, c->ymin, c->xmax, c->ymax);
       
@@ -269,7 +259,6 @@ void Network::read(const char* file){
 void Network::show_progress(int &cc){
 #ifdef PROGRESSLINUX
    if (!showProgress) return;
-   int i;
    const int num=progress_step; // show only every num interations
    bool delinfile=false;
    cc++;
@@ -279,12 +268,12 @@ void Network::show_progress(int &cc){
       sprintf(infile,"/tmp/progress%di.dat",getpid());
       write(infile);
    }
-   int n=nodes->size();
+   /*    int n=nodes.size();
    for(i=0;i<n;i++){ // node positions to nodes array
-      (*nodes)[i].x=pos[i].x;
-      (*nodes)[i].y=pos[i].y;
-      (*nodes)[i].dir=pts_dir[i];
-   }
+      nodes[i].x=pos[i].x;
+      nodes[i].y=pos[i].y;
+      nodes[i].dir=pts_dir[i];
+   }*/
    char outfile[30];
    sprintf(outfile,"/tmp/progress%d.dat",getpid());
    dumpNodes(outfile); // dump nodes to outfile
@@ -304,7 +293,6 @@ void Network::show_progress(int &cc){
       infile=NULL;
    }
    if (cc==1){ // this only happens the first time
-      int cpid;
       if (!fork()) { // child process
          // call viewer
          printf("calling viewer..\n");
@@ -318,14 +306,9 @@ void Network::show_progress(int &cc){
 void Network::write(const char* file){
    Node tmp;
    int i;
-   const double inf=1e50;
-   double xmin=inf;
-   double xmax=-inf;
-   double ymin=inf;
-   double ymax=-inf;
-   int c=compartments->size();
-   int n=nodes->size();
-   int e=edges->size();
+   int c=compartments.size();
+   int n=nodes.size();
+   int e=edges.size();
    FILE * out;
    if (file) {
       out=fopen(file,"w");
@@ -334,12 +317,12 @@ void Network::write(const char* file){
    }
    fprintf(out,"%d\n",c-1);
    for(i=0;i<c-1;i++){// ignore first compartment
-      fprintf(out,"%d %s\n",i,(*compartments)[i].name.c_str());
+      fprintf(out,"%d %s\n",i,compartments[i].name.c_str());
    }
    fprintf(out,"///\n%d\n",n);
    for(i=0;i<n;i++){
       fprintf(out,"%d\n",i);
-      tmp = (*nodes)[i];
+      tmp = nodes[i];
       fprintf(out,"%s\n",nodetypes[(int)(tmp.type)]);
       fprintf(out,"%s\n",tmp.name.c_str());
       fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%f\n",tmp.compartment,tmp.x, tmp.y, tmp.width, tmp.height, tmp.dir);
@@ -347,7 +330,7 @@ void Network::write(const char* file){
    fprintf(out,"///\n%d\n",e);
    Edge* ed;
    for(i=0;i<e;i++){
-      ed = &((*edges)[i]);
+      ed = &(edges[i]);
       int p=ed->from;
       int q=ed->to;
       if (ed->type != product) swap(p,q); // note: if you change this here also change in read
@@ -363,7 +346,7 @@ void Network::dumpNodes(const char* file){
    double xmax=-inf;
    double ymin=inf;
    double ymax=-inf;
-   int n=nodes->size();
+   int n=nodes.size();
    FILE * out;
    if (file) {
       out=fopen(file,"w");
@@ -372,41 +355,41 @@ void Network::dumpNodes(const char* file){
    }
    for(i=0;i<n;i++){
       fprintf(out,"%d\n",i);
-      tmp = (*nodes)[i];
+      tmp = nodes[i];
       fprintf(out,"%s\n",nodetypes[(int)(tmp.type)]);
       fprintf(out,"%s\n",tmp.name.c_str());
       fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",tmp.compartment,tmp.x, tmp.y, tmp.width, tmp.height, tmp.dir);
-      if (xmin>(*nodes)[i].x-(*nodes)[i].width/2) xmin=(*nodes)[i].x-(*nodes)[i].width/2;
-      if (xmax<(*nodes)[i].x+(*nodes)[i].width/2) xmax=(*nodes)[i].x+(*nodes)[i].width/2;
-      if (ymin>(*nodes)[i].y-(*nodes)[i].height/2) ymin=(*nodes)[i].y-(*nodes)[i].height/2;
-      if (ymax<(*nodes)[i].y+(*nodes)[i].height/2) ymax=(*nodes)[i].y+(*nodes)[i].height/2;
+      if (xmin>nodes[i].x-nodes[i].width/2) xmin=nodes[i].x-nodes[i].width/2;
+      if (xmax<nodes[i].x+nodes[i].width/2) xmax=nodes[i].x+nodes[i].width/2;
+      if (ymin>nodes[i].y-nodes[i].height/2) ymin=nodes[i].y-nodes[i].height/2;
+      if (ymax<nodes[i].y+nodes[i].height/2) ymax=nodes[i].y+nodes[i].height/2;
    }
    //do do print in output file !!! printf("bound:\n(%f,%f)-(%f,%f)\n",xmin,ymin,xmax,ymax);
-   n=compartments->size();
+   n=compartments.size();
    double cpminy=inf;
    double cpmaxy=-inf;
    int cpmin,cpmax;
    for(i=0;i<n;i++){
-      if ((*compartments)[i].ymin<cpminy){
+      if (compartments[i].ymin<cpminy){
          cpmin=i;
-         cpminy=(*compartments)[i].ymin;
+         cpminy=compartments[i].ymin;
       }
-      if ((*compartments)[i].ymax>cpmaxy){
+      if (compartments[i].ymax>cpmaxy){
          cpmax=i;
-         cpmaxy=(*compartments)[i].ymax;
+         cpmaxy=compartments[i].ymax;
       }
    }
-   (*compartments)[cpmin].ymin=ymin;
-   (*compartments)[cpmax].ymax=ymax;
+   compartments[cpmin].ymin=ymin;
+   compartments[cpmax].ymax=ymax;
    for(i=0;i<n;i++){
       fprintf(out,"%d\n",i);
       fprintf(out,"Compartment\n");
-      fprintf(out,"%s\n",(*compartments)[i].name.c_str());
+      fprintf(out,"%s\n",compartments[i].name.c_str());
       fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",0,
-             max(xmin,(*compartments)[i].xmin),
-             max(ymin,(*compartments)[i].ymin),
-             min(xmax,(*compartments)[i].xmax)-max(xmin,(*compartments)[i].xmin),
-             min(ymax,(*compartments)[i].ymax)-max(ymin,(*compartments)[i].ymin),
+             max(xmin,compartments[i].xmin),
+             max(ymin,compartments[i].ymin),
+             min(xmax,compartments[i].xmax)-max(xmin,compartments[i].xmin),
+             min(ymax,compartments[i].ymax)-max(ymin,compartments[i].ymin),
              0.0);
    }
    fclose(out);
@@ -541,7 +524,7 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
 
    const double inf=1e50;
    int i;
-   int n=nodes->size();
+   int n=nodes.size();
    double xmin=inf;
    double xmax=-inf;
    double ymin=inf;
@@ -550,23 +533,23 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
    for(i=0;i<n;i++){ // add x,y position to json object
       JsonObject *node=json_array_get_object_element(jnodes,(*(ctx->nodeidx))[i]); //get corresponding json node using nodeidx
       JsonObject *data=json_object_get_object_member(node,"data");
-      json_object_set_double_member(data,"x",(*nodes)[i].x);
-      json_object_set_double_member(data,"y",(*nodes)[i].y);
+      json_object_set_double_member(data,"x",nodes[i].x);
+      json_object_set_double_member(data,"y",nodes[i].y);
       // getting overal bounds
-      if (xmin>(*nodes)[i].x-(*nodes)[i].width/2) xmin=(*nodes)[i].x-(*nodes)[i].width/2;
-      if (xmax<(*nodes)[i].x+(*nodes)[i].width/2) xmax=(*nodes)[i].x+(*nodes)[i].width/2;
-      if (ymin>(*nodes)[i].y-(*nodes)[i].height/2) ymin=(*nodes)[i].y-(*nodes)[i].height/2;
-      if (ymax<(*nodes)[i].y+(*nodes)[i].height/2) ymax=(*nodes)[i].y+(*nodes)[i].height/2;
+      if (xmin>nodes[i].x-nodes[i].width/2) xmin=nodes[i].x-nodes[i].width/2;
+      if (xmax<nodes[i].x+nodes[i].width/2) xmax=nodes[i].x+nodes[i].width/2;
+      if (ymin>nodes[i].y-nodes[i].height/2) ymin=nodes[i].y-nodes[i].height/2;
+      if (ymax<nodes[i].y+nodes[i].height/2) ymax=nodes[i].y+nodes[i].height/2;
    }
    
-   n=compartments->size();
+   n=compartments.size();
    for(i=0;i<n;i++){ // add x,y position to json object
       JsonObject *node=json_array_get_object_element(jnodes,(*(ctx->cpidx))[i]); //get corresponding json node using nodeidx
       JsonObject *data=json_object_get_object_member(node,"data");
-      json_object_set_double_member(data,"x",max(xmin,(*compartments)[i].xmin));
-      json_object_set_double_member(data,"y",max(ymin,(*compartments)[i].ymin));
-      json_object_set_double_member(data,"width",min(xmax,(*compartments)[i].xmax)-max(xmin,(*compartments)[i].xmin));
-      json_object_set_double_member(data,"height",min(ymax,(*compartments)[i].ymax)-max(ymin,(*compartments)[i].ymin));
+      json_object_set_double_member(data,"x",max(xmin,compartments[i].xmin));
+      json_object_set_double_member(data,"y",max(ymin,compartments[i].ymin));
+      json_object_set_double_member(data,"width",min(xmax,compartments[i].xmax)-max(xmin,compartments[i].xmin));
+      json_object_set_double_member(data,"height",min(ymax,compartments[i].ymax)-max(ymin,compartments[i].ymin));
    }
    
    gsize length;

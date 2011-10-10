@@ -24,11 +24,10 @@ class Network{
       
 public:
    Network();
-   ~Network();
    
-   VN * nodes;
-   VE * edges;
-   VCP * compartments;
+   VN nodes;
+   VE edges;
+   VCP compartments;
      
    void addEdge(int from, int to, Edgetype type); //add in an edge "from"-->"to" of type "type".
    void addNode(int index); //add in a Node.

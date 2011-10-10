@@ -47,9 +47,9 @@ class Point{
 };
 class Rect{
    public:
-      Rect():  xmin(0), xmax(0), ymin(0), ymax(0){}
+      Rect():  xmin(0), ymin(0), xmax(0), ymax(0){}
       Rect(double _xmin, double _ymin, double _xmax, double _ymax):  xmin(_xmin), ymin(_ymin), xmax(_xmax), ymax(_ymax){}
-      double xmin, xmax, ymin, ymax;
+      double xmin, ymin, xmax, ymax;
 
 };
 
@@ -84,20 +84,20 @@ class Edge {
 };
 class Node: public Point{
    public:
-      Node():neighbors(new VI()), type(none){
+      Node():type(none){
          //default node constructor.
       }
-      Node(Nodetype _type):type(_type), neighbors(new VI()){
+      Node(Nodetype _type):type(_type){
          //node constructor with a specified node type.
       }
-      Node(Nodetype _type, string _name, float _width, float _height, float _x, float _y, float _dir):Point(_x,_y), neighbors(new VI()), type(_type), width(_width), height(_height), dir(_dir), name(_name), compartment(0){
+      Node(Nodetype _type, string _name, float _width, float _height, float _x, float _y, float _dir):Point(_x,_y), type(_type), name(_name), width(_width), height(_height), dir(_dir), compartment(0){
          
       }
-      Node(Nodetype _type, string _name, float _width, float _height, float _x, float _y, float _dir, int _comp):Point(_x,_y), neighbors(new VI()), type(_type), width(_width), height(_height), dir(_dir), name(_name), compartment(_comp){
+      Node(Nodetype _type, string _name, float _width, float _height, float _x, float _y, float _dir, int _comp):Point(_x,_y), type(_type), name(_name), width(_width), height(_height), dir(_dir), compartment(_comp){
          //constructing a node with all node properties given (preferred in the algorithm).
       }       
       
-      VI* neighbors; //the edges incident on the node.
+      VI neighbors; //the edges incident on the node.
       Nodetype type; //type of node.
       string name; //name of the node.
       double width, height;  //horizontal and vertical sizes of the node.
