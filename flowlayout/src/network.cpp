@@ -84,12 +84,12 @@ void Network::addNode(int index, Nodetype _type){
    (*nodes)[index]=Node(_type);
 }
 
-void Network::addNode(int index, Nodetype _type, string _name, float _width, float _height, float _x, float _y, float _dir){
+void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir){
    if(index>=nodes->size())nodes->resize(index+1);
    (*nodes)[index]=Node(_type, _name, _width, _height, _x, _y, _dir);
 }
 
-void Network::addNode(int index, Nodetype _type, string _name, float _width, float _height, float _x, float _y, float _dir, int _comp){
+void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir, int _comp){
    //add in a node with all node properties specified (prefered in the algorithms).
    if(index>=nodes->size())nodes->resize(index+1);
    (*nodes)[index]=Node(_type, _name, _width, _height, _x, _y, _dir, _comp);
@@ -101,7 +101,7 @@ void Network::addCompartment(int index, string _name){
    (*compartments)[index]=(Compartment(_name));
 }
 
-void Network::addCompartment(int index, float _xmin, float _xmax, float _ymin, float _ymax, string _name){
+void Network::addCompartment(int index, double _xmin, double _xmax, double _ymin, double _ymax, string _name){
    //add in a compartment with all attributes specified.
    if(index>=compartments->size())compartments->resize(index+1);
    (*compartments)[index]=(Compartment(_xmin,_xmax,_ymin,_ymax,_name));
@@ -186,7 +186,7 @@ void Network::read(const char* file){
       int ret;
       Nodetype _type;
       char s[100],t[100];
-      float _x,_y, _width, _height,_dir;
+      double _x,_y, _width, _height,_dir;
       FILE* old_stdin=stdin;
       printf("importing network\n");
       infile=(char *) file;
@@ -318,11 +318,11 @@ void Network::show_progress(int &cc){
 void Network::write(const char* file){
    Node tmp;
    int i;
-   const float inf=1e50;
-   float xmin=inf;
-   float xmax=-inf;
-   float ymin=inf;
-   float ymax=-inf;
+   const double inf=1e50;
+   double xmin=inf;
+   double xmax=-inf;
+   double ymin=inf;
+   double ymax=-inf;
    int c=compartments->size();
    int n=nodes->size();
    int e=edges->size();
@@ -358,11 +358,11 @@ void Network::write(const char* file){
 void Network::dumpNodes(const char* file){
    Node tmp;
    int i;
-   const float inf=1e50;
-   float xmin=inf;
-   float xmax=-inf;
-   float ymin=inf;
-   float ymax=-inf;
+   const double inf=1e50;
+   double xmin=inf;
+   double xmax=-inf;
+   double ymin=inf;
+   double ymax=-inf;
    int n=nodes->size();
    FILE * out;
    if (file) {
@@ -383,8 +383,8 @@ void Network::dumpNodes(const char* file){
    }
    //do do print in output file !!! printf("bound:\n(%f,%f)-(%f,%f)\n",xmin,ymin,xmax,ymax);
    n=compartments->size();
-   float cpminy=inf;
-   float cpmaxy=-inf;
+   double cpminy=inf;
+   double cpmaxy=-inf;
    int cpmin,cpmax;
    for(i=0;i<n;i++){
       if ((*compartments)[i].ymin<cpminy){
@@ -539,13 +539,13 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
    json_generator_set_root(gen,ctx->root);
    JsonArray* jnodes=json_object_get_array_member(json_node_get_object (ctx->root),"nodes");
 
-   const float inf=1e50;
+   const double inf=1e50;
    int i;
    int n=nodes->size();
-   float xmin=inf;
-   float xmax=-inf;
-   float ymin=inf;
-   float ymax=-inf;
+   double xmin=inf;
+   double xmax=-inf;
+   double ymin=inf;
+   double ymax=-inf;
    
    for(i=0;i<n;i++){ // add x,y position to json object
       JsonObject *node=json_array_get_object_element(jnodes,(*(ctx->nodeidx))[i]); //get corresponding json node using nodeidx
