@@ -37,8 +37,8 @@ VI * Network::getNeighbors(int nodeIndex, Edgetype type){
    arr->clear();
    int i,n=(*nodes)[nodeIndex].neighbors->size();
    for(i=0;i<n;i++)
-      if((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].pts.type==type){
-         if((*nodes)[nodeIndex].pts.type==reaction)
+      if((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].type==type){
+         if((*nodes)[nodeIndex].type==reaction)
             arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
          else arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].from);
       }
@@ -55,7 +55,7 @@ VI * Network::getNeighbors(int nodeIndex){
    arr->clear();
    int i,n=(*nodes)[nodeIndex].neighbors->size();
    for(i=0;i<n;i++){
-      if((*nodes)[nodeIndex].pts.type==reaction)
+      if((*nodes)[nodeIndex].type==reaction)
          arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].to);
       else arr->push_back((*edges)[(*(*nodes)[nodeIndex].neighbors)[i]].from);
    }
@@ -150,8 +150,8 @@ void Network::dump(){
    printf("nodes:\n");
    for(i=0;i<n;i++){
       tmp = &((*nodes)[i]);
-      cout<<i<<' '<<nodetypes[tmp->pts.type]<<' '<<tmp->pts.name<<endl;
-      printf("(%0.3f,%0.3f)+(%0.3f,%0.3f) dir %0.3f, comp %d\n",tmp->pts.x, tmp->pts.y, tmp->pts.width, tmp->pts.height, tmp->pts.dir, tmp->pts.compartment);
+      cout<<i<<' '<<nodetypes[tmp->type]<<' '<<tmp->name<<endl;
+      printf("(%0.3f,%0.3f)+(%0.3f,%0.3f) dir %0.3f, comp %d\n",tmp->x, tmp->y, tmp->width, tmp->height, tmp->dir, tmp->compartment);
       printf("--edges: ");
       for (j=0;j<tmp->neighbors->size();j++){
          printf("%d ",(*tmp->neighbors)[j]);
@@ -162,7 +162,7 @@ void Network::dump(){
    printf("edges:\n");
    for(i=0;i<n;i++){
       e = &((*edges)[i]);
-      printf("%s %d -> %d\n",edgetypes[(int)(e->pts.type)],e->from,e->to);
+      printf("%s %d -> %d\n",edgetypes[(int)(e->type)],e->from,e->to);
    }
    n=compartments->size();
    printf("compartments:\n");
@@ -281,9 +281,9 @@ void Network::show_progress(int &cc){
    }
    int n=nodes->size();
    for(i=0;i<n;i++){ // node positions to nodes array
-      (*nodes)[i].pts.x=pos[i].x;
-      (*nodes)[i].pts.y=pos[i].y;
-      (*nodes)[i].pts.dir=pts_dir[i];
+      (*nodes)[i].x=pos[i].x;
+      (*nodes)[i].y=pos[i].y;
+      (*nodes)[i].dir=pts_dir[i];
    }
    char outfile[30];
    sprintf(outfile,"/tmp/progress%d.dat",getpid());
@@ -340,9 +340,9 @@ void Network::write(const char* file){
    for(i=0;i<n;i++){
       fprintf(out,"%d\n",i);
       tmp = (*nodes)[i];
-      fprintf(out,"%s\n",nodetypes[(int)(tmp.pts.type)]);
-      fprintf(out,"%s\n",tmp.pts.name.c_str());
-      fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%f\n",tmp.pts.compartment,tmp.pts.x, tmp.pts.y, tmp.pts.width, tmp.pts.height, tmp.pts.dir);
+      fprintf(out,"%s\n",nodetypes[(int)(tmp.type)]);
+      fprintf(out,"%s\n",tmp.name.c_str());
+      fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%f\n",tmp.compartment,tmp.x, tmp.y, tmp.width, tmp.height, tmp.dir);
    }
    fprintf(out,"///\n%d\n",e);
    Edge* ed;
@@ -350,8 +350,8 @@ void Network::write(const char* file){
       ed = &((*edges)[i]);
       int p=ed->from;
       int q=ed->to;
-      if (ed->pts.type != product) swap(p,q); // note: if you change this here also change in read
-         fprintf(out,"%s %d %d\n",edgetypes[(int)(ed->pts.type)],p,q);
+      if (ed->type != product) swap(p,q); // note: if you change this here also change in read
+         fprintf(out,"%s %d %d\n",edgetypes[(int)(ed->type)],p,q);
    }
    fclose(out);
 } 
@@ -373,13 +373,13 @@ void Network::dumpNodes(const char* file){
    for(i=0;i<n;i++){
       fprintf(out,"%d\n",i);
       tmp = (*nodes)[i];
-      fprintf(out,"%s\n",nodetypes[(int)(tmp.pts.type)]);
-      fprintf(out,"%s\n",tmp.pts.name.c_str());
-      fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",tmp.pts.compartment,tmp.pts.x, tmp.pts.y, tmp.pts.width, tmp.pts.height, tmp.pts.dir);
-      if (xmin>(*nodes)[i].pts.x-(*nodes)[i].pts.width/2) xmin=(*nodes)[i].pts.x-(*nodes)[i].pts.width/2;
-      if (xmax<(*nodes)[i].pts.x+(*nodes)[i].pts.width/2) xmax=(*nodes)[i].pts.x+(*nodes)[i].pts.width/2;
-      if (ymin>(*nodes)[i].pts.y-(*nodes)[i].pts.height/2) ymin=(*nodes)[i].pts.y-(*nodes)[i].pts.height/2;
-      if (ymax<(*nodes)[i].pts.y+(*nodes)[i].pts.height/2) ymax=(*nodes)[i].pts.y+(*nodes)[i].pts.height/2;
+      fprintf(out,"%s\n",nodetypes[(int)(tmp.type)]);
+      fprintf(out,"%s\n",tmp.name.c_str());
+      fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n",tmp.compartment,tmp.x, tmp.y, tmp.width, tmp.height, tmp.dir);
+      if (xmin>(*nodes)[i].x-(*nodes)[i].width/2) xmin=(*nodes)[i].x-(*nodes)[i].width/2;
+      if (xmax<(*nodes)[i].x+(*nodes)[i].width/2) xmax=(*nodes)[i].x+(*nodes)[i].width/2;
+      if (ymin>(*nodes)[i].y-(*nodes)[i].height/2) ymin=(*nodes)[i].y-(*nodes)[i].height/2;
+      if (ymax<(*nodes)[i].y+(*nodes)[i].height/2) ymax=(*nodes)[i].y+(*nodes)[i].height/2;
    }
    //do do print in output file !!! printf("bound:\n(%f,%f)-(%f,%f)\n",xmin,ymin,xmax,ymax);
    n=compartments->size();
@@ -550,13 +550,13 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
    for(i=0;i<n;i++){ // add x,y position to json object
       JsonObject *node=json_array_get_object_element(jnodes,(*(ctx->nodeidx))[i]); //get corresponding json node using nodeidx
       JsonObject *data=json_object_get_object_member(node,"data");
-      json_object_set_double_member(data,"x",(*nodes)[i].pts.x);
-      json_object_set_double_member(data,"y",(*nodes)[i].pts.y);
+      json_object_set_double_member(data,"x",(*nodes)[i].x);
+      json_object_set_double_member(data,"y",(*nodes)[i].y);
       // getting overal bounds
-      if (xmin>(*nodes)[i].pts.x-(*nodes)[i].pts.width/2) xmin=(*nodes)[i].pts.x-(*nodes)[i].pts.width/2;
-      if (xmax<(*nodes)[i].pts.x+(*nodes)[i].pts.width/2) xmax=(*nodes)[i].pts.x+(*nodes)[i].pts.width/2;
-      if (ymin>(*nodes)[i].pts.y-(*nodes)[i].pts.height/2) ymin=(*nodes)[i].pts.y-(*nodes)[i].pts.height/2;
-      if (ymax<(*nodes)[i].pts.y+(*nodes)[i].pts.height/2) ymax=(*nodes)[i].pts.y+(*nodes)[i].pts.height/2;
+      if (xmin>(*nodes)[i].x-(*nodes)[i].width/2) xmin=(*nodes)[i].x-(*nodes)[i].width/2;
+      if (xmax<(*nodes)[i].x+(*nodes)[i].width/2) xmax=(*nodes)[i].x+(*nodes)[i].width/2;
+      if (ymin>(*nodes)[i].y-(*nodes)[i].height/2) ymin=(*nodes)[i].y-(*nodes)[i].height/2;
+      if (ymax<(*nodes)[i].y+(*nodes)[i].height/2) ymax=(*nodes)[i].y+(*nodes)[i].height/2;
    }
    
    n=compartments->size();
