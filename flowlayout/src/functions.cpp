@@ -98,4 +98,53 @@ int min_four(int a1,int a2,int a3,int a4){
 }
       
   
+int bitpos(unsigned long val){
+   int scan=1;
+   int pos=0;
+   while (val & scan==0){
+      pos++;
+      scan=scan<<1;
+   }
+   return pos;
+}
+double get_dij1(Network &nw,int i, int j){ 
+   //ideal distance between adjacent nodes;
+   double x=nw.nodes[i].width * nw.nodes[i].width + nw.nodes[i].height * nw.nodes[i].height;
+   double y=nw.nodes[j].width * nw.nodes[j].width + nw.nodes[j].height * nw.nodes[j].height;
+   return (sqrt(x)+sqrt(y))*0.3*log(1+degree(i)+degree(j));
+}
+
+double get_dij2(Network &nw,int i, int j){ 
+   /*minimum distance between non-adjacent nw.nodes.
+   it should be much larger than the distance between adjacent nw.nodes.
+   */
+   double x=nw.nodes[i].width * nw.nodes[i].width + nw.nodes[i].height * nw.nodes[i].height;
+   double y=nw.nodes[j].width * nw.nodes[j].width + nw.nodes[j].height * nw.nodes[j].height;
+   return 1.8*(sqrt(x)+sqrt(y));
+}
+double avg_sizes(Network &nw){
+   int i,n;
+   n=nw.nodes->size();
+   double size=0;
+   for(i=0;i<n;i++){
+      size+=nw.nodes[i].width;
+      size+=nw.nodes[i].height;
+   }
+   return size/(2*n);
+}
+bool edge_cross(layout_state &state, int i, int j){ 
+   /* whether edge-i and edge-j cross each other.
+   a1,a2 are two ends of edge-i, and b1,b2 are two ends of edge-j.
+   edge-i and edge-j cross each other only if: 
+   1. a1 and a2 are on different sides of b1, which can be judged using vector-products.
+   2. a1 and a2 are on different sides of b2.
+   */
+   int a1,a2,b1,b2;
+   a1=state.nw.edges[i].from;
+   a2=state.nw.edges[i].to;
+   b1=state.nw.edges[j].from;
+   b2=state.nw.edges[j].to;
+   if((state.pos[a1]-state.pos[b1])*(state.pos[a2]-state.pos[b1])<0 && (state.pos[a1]-state.pos[b2])*(state.pos[a2]-state.pos[b2])<0)return true;
+   return false;
+}
   
