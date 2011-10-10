@@ -43,9 +43,10 @@ struct Point{
    double x,y;
 };
 class Rect{
-   Rect():  xmin(0), xmax(0), ymin(0), ymax(0){}
-   Rect(double _xmin, double _ymin, double _xmax, double _ymax):  xmin(_xmin), ymin(_ymin), xmax(_xmax), ymax(_ymax){}
-   double xmin, xmax, ymin, ymax;
+   public:
+      Rect():  xmin(0), xmax(0), ymin(0), ymax(0){}
+      Rect(double _xmin, double _ymin, double _xmax, double _ymax):  xmin(_xmin), ymin(_ymin), xmax(_xmax), ymax(_ymax){}
+      double xmin, xmax, ymin, ymax;
 
 };
 
@@ -55,7 +56,7 @@ struct Edgeproperties{
 
 class Compartment : public Rect{
 public:
-   Compartment():name(String()){
+   Compartment():name(string()){
       //default compartment constructor.            
    }
    Compartment(string _name):name(_name){

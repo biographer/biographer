@@ -1,8 +1,6 @@
 #ifndef th_network_h
 #define th_network_h
-#include "edge.h"
-#include "node.h"
-#include "headers.h"
+#include "types.h"
 
 #ifdef USEJSON 
 #include <stdlib.h>
@@ -47,20 +45,17 @@ public:
    void read(const char * file=NULL); // read network from file
    void write(const char * file=NULL);
    void dumpNodes(const char* file); // write nodes with properties
+   void show_progress(int &cc); // shows graphical progress during layout in extra window
    
 #ifdef USEJSON   
    JSONcontext* readJSON(const char * file=NULL);
    void writeJSON(JSONcontext* ctx,const char* file=NULL);
 #endif
    
-   
-   
-   void show_progress(int &cc); // shows graphical progress during layout in extra window
-   bool showProgress;
-   
 protected:
-   
-
+   char* infile; // the filename the network is read from (only for the text input format)
+   int progress_step;
+   bool showProgress;
 };
    
 #endif

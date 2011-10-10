@@ -186,7 +186,7 @@ void Network::read(const char* file){
       int ret;
       Nodetype _type;
       char s[100],t[100];
-      double _x,_y, _width, _height,_dir;
+      float _x,_y, _width, _height,_dir;
       FILE* old_stdin=stdin;
       printf("importing network\n");
       infile=(char *) file;
@@ -230,7 +230,7 @@ void Network::read(const char* file){
          else _type=none;
          MSCANF("%s\n",s);
          MSCANF("%d\n",&ci); 
-         MSCANF2("%f%f",& _x,& _y);
+         MSCANF2("%f%f",&_x,&_y);
          MSCANF3("%f%f%f",& _width,& _height,& _dir);      
          addNode(_index, _type, s, _width, _height, _x, _y, _dir,ci);
          printf("added %s %s %i\n",t,s,_index);
@@ -351,7 +351,7 @@ void Network::write(const char* file){
       int p=ed->from;
       int q=ed->to;
       if (ed->pts.type != product) swap(p,q); // note: if you change this here also change in read
-         fprintf(out,"%d %d %d %s\n",edgetypes[(int)(ed->pts.type)],p,q);
+         fprintf(out,"%s %d %d\n",edgetypes[(int)(ed->pts.type)],p,q);
    }
    fclose(out);
 } 
@@ -407,7 +407,7 @@ void Network::dumpNodes(const char* file){
              max(ymin,(*compartments)[i].ymin),
              min(xmax,(*compartments)[i].xmax)-max(xmin,(*compartments)[i].xmin),
              min(ymax,(*compartments)[i].ymax)-max(ymin,(*compartments)[i].ymin),
-             0);
+             0.0);
    }
    fclose(out);
 } 
