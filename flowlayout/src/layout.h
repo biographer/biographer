@@ -4,10 +4,11 @@ enum plugins {
    init=1<<0,init_swap=1<<1,init_wComp=1<<2,adjForce=1<<3,nadjForc=1<<4,adjTorque=1<<5,checkCompartment=1<<6,adjustCompartment=1<<7,avoidOverlap=1<<8
 };
 enum conditions{
-   iteration=1<<0
+   iterations=1<<0,relForceDiff=1<<1
 };
 class Layouter;
-typedef double (*plugin_func_ptr)(Layouter &state,VP &mov,int round,double temp);
+struct plugin;
+typedef double (*plugin_func_ptr)(Layouter &state,plugin& pg, VP &mov,int round,double temp);
 struct plugin{
    plugin_func_ptr pfunc;
    VP last;
@@ -25,9 +26,9 @@ class Plugins{
 };
 struct step{
    VF actplugins;
-   conditions end;
+   unsigned long end;
    int c_iterations;
-   
+   int c_relForceDiff;
 };
 
 class Layouter{
@@ -38,15 +39,19 @@ class Layouter{
          avgsize=avg_sizes(nw);
       }
       void setStep(int step,unsigned long bitplugins);
-      void setEndCondition(int step, conditions cond, double param);
+      void addEndCondition(int step, conditions cond, double param);
       void execute();
       Network& nw;
       VP mov;
       VF movadd;
+      VF rot;
+      vector<bool> tension;
       double avgsize;
-      Plugins plugins;
    protected:
+      Plugins plugins;
       void initStep(int step);
+      void moveNodes();
+      double maxForce;
       vector<step> program;
 };
 #endif
