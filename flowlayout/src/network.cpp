@@ -11,6 +11,8 @@ Network::Network(){
    edges = new VE(); edges->clear();
    compartments = new VCP(); compartments->clear();
    showProgress=false;
+   progress_step=10;
+   infile=NULL;
 }
 
 Network::~Network(){
@@ -59,7 +61,9 @@ VI * Network::getNeighbors(int nodeIndex){
    }
    return arr;//take care: must delte the pointer in the calling methods.
 }
-
+int Network::degree(int nodeIndex){
+   return (*nodes)[nodeIndex].neighbors->size();
+}
 void Network::addEdge(int from, int to , Edgetype type){
    //add in an edge into the network.
    edges->push_back(Edge(from, to, type)); //add in this edge.
@@ -185,7 +189,7 @@ void Network::read(const char* file){
       float _x,_y, _width, _height,_dir;
       FILE* old_stdin=stdin;
       printf("importing network\n");
-      infile=file;
+      infile=(char *) file;
       if (file) freopen(file,"r",stdin);
       ret=1;
       while (ret>0){ret=scanf(" #%[^\n]",s);}; // remove comment lines
@@ -252,7 +256,7 @@ void Network::read(const char* file){
          for(k=0;k<7;k++){
             if(strcmp(edgetypes[k],s)==0)break;
          }
-         if (((Edgetype)k) != product){
+         if (((Edgetype)k) != product){// note: if you change this here also change in write!!!!
             swap(p,q); // Network and layout expect reaction->reactant edge format
          }
          addEdge(p,q,(Edgetype)k);
@@ -266,18 +270,20 @@ void Network::show_progress(int &cc){
 #ifdef PROGRESSLINUX
    if (!showProgress) return;
    int i;
-   const int num=10; // show only every num interations
+   const int num=progress_step; // show only every num interations
+   bool delinfile=false;
    cc++;
    if ((cc>1) && (cc%num)) return;
    if (!infile) {
-      printf("no input file given; needed for progress output\n");
-      abort();
+      infile=(char*) malloc(30);
+      sprintf(infile,"/tmp/progress%di.dat",getpid());
+      write(infile);
    }
    int n=nodes->size();
    for(i=0;i<n;i++){ // node positions to nodes array
       (*nodes)[i].pts.x=pos[i].x;
       (*nodes)[i].pts.y=pos[i].y;
-      (*nodes)[i].pts.dir=mov_dir[i];
+      (*nodes)[i].pts.dir=pts_dir[i];
    }
    char outfile[30];
    sprintf(outfile,"/tmp/progress%d.dat",getpid());
@@ -293,17 +299,62 @@ void Network::show_progress(int &cc){
    waitpid(cpid,NULL,0); // wait for layout to complete
    sleep(1);
    // forking viewer
+   if (delinfile){
+      free(infile);
+      infile=NULL;
+   }
    if (cc==1){ // this only happens the first time
       int cpid;
       if (!fork()) { // child process
          // call viewer
          printf("calling viewer..\n");
          execl("/usr/bin/display","/usr/bin/display","-update","1",pngfile,NULL); 
+         printf("displaying %s\n",pngfile);
          // this never returns
       }
    }
 #endif
 }
+void Network::write(const char* file){
+   Node tmp;
+   int i;
+   const float inf=1e50;
+   float xmin=inf;
+   float xmax=-inf;
+   float ymin=inf;
+   float ymax=-inf;
+   int c=compartments->size();
+   int n=nodes->size();
+   int e=edges->size();
+   FILE * out;
+   if (file) {
+      out=fopen(file,"w");
+   } else {
+      out=stdout;
+   }
+   fprintf(out,"%d\n",c-1);
+   for(i=0;i<c-1;i++){// ignore first compartment
+      fprintf(out,"%d %s\n",i,(*compartments)[i].name.c_str());
+   }
+   fprintf(out,"///\n%d\n",n);
+   for(i=0;i<n;i++){
+      fprintf(out,"%d\n",i);
+      tmp = (*nodes)[i];
+      fprintf(out,"%s\n",nodetypes[(int)(tmp.pts.type)]);
+      fprintf(out,"%s\n",tmp.pts.name.c_str());
+      fprintf(out,"%d\n%0.3f\n%0.3f\n%0.3f\n%0.3f\n%f\n",tmp.pts.compartment,tmp.pts.x, tmp.pts.y, tmp.pts.width, tmp.pts.height, tmp.pts.dir);
+   }
+   fprintf(out,"///\n%d\n",e);
+   Edge* ed;
+   for(i=0;i<e;i++){
+      ed = &((*edges)[i]);
+      int p=ed->from;
+      int q=ed->to;
+      if (ed->pts.type != product) swap(p,q); // note: if you change this here also change in read
+         fprintf(out,"%d %d %d %s\n",edgetypes[(int)(ed->pts.type)],p,q);
+   }
+   fclose(out);
+} 
 void Network::dumpNodes(const char* file){
    Node tmp;
    int i;
@@ -332,6 +383,21 @@ void Network::dumpNodes(const char* file){
    }
    //do do print in output file !!! printf("bound:\n(%f,%f)-(%f,%f)\n",xmin,ymin,xmax,ymax);
    n=compartments->size();
+   float cpminy=inf;
+   float cpmaxy=-inf;
+   int cpmin,cpmax;
+   for(i=0;i<n;i++){
+      if ((*compartments)[i].ymin<cpminy){
+         cpmin=i;
+         cpminy=(*compartments)[i].ymin;
+      }
+      if ((*compartments)[i].ymax>cpmaxy){
+         cpmax=i;
+         cpmaxy=(*compartments)[i].ymax;
+      }
+   }
+   (*compartments)[cpmin].ymin=ymin;
+   (*compartments)[cpmax].ymax=ymax;
    for(i=0;i<n;i++){
       fprintf(out,"%d\n",i);
       fprintf(out,"Compartment\n");
@@ -451,7 +517,7 @@ JSONcontext* Network::readJSON(const char* file){
       const char* type=json_object_get_string_member(e,"type");
       if ((!json_object_has_member(e,"sourceidx")) || (!json_object_has_member(e,"targetidx"))){
          g_print ("no source/targetindex defined for edge %s %i",type,i);
-         abort;
+         abort();
       }
       for(k=0;k<7;k++){
          if(strcmp(edgetypes[k],type)==0)break;
@@ -512,4 +578,4 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
    
    
 }
-#endif USEJSON
+#endif
