@@ -256,53 +256,6 @@ void Network::read(const char* file){
       abort();
    }
 }
-void Network::show_progress(int &cc){
-#ifdef PROGRESSLINUX
-   if (!showProgress) return;
-   const int num=progress_step; // show only every num interations
-   bool delinfile=false;
-   cc++;
-   if ((cc>1) && (cc%num)) return;
-   if (!infile) {
-      infile=(char*) malloc(30);
-      sprintf(infile,"/tmp/progress%di.dat",getpid());
-      write(infile);
-   }
-   /*    int n=nodes.size();
-   for(i=0;i<n;i++){ // node positions to nodes array
-      nodes[i].x=pos[i].x;
-      nodes[i].y=pos[i].y;
-      nodes[i].dir=pts_dir[i];
-   }*/
-   char outfile[30];
-   sprintf(outfile,"/tmp/progress%d.dat",getpid());
-   dumpNodes(outfile); // dump nodes to outfile
-   char pngfile[30];
-   sprintf(pngfile,"/tmp/progress%d.png",getpid());
-   //infile is Network member
-   // generating graph layout
-   int cpid;
-   if ((cpid=fork())==0) { // child process ; note, this queues up a lot of calls
-      execl("/usr/bin/perl","/usr/bin/perl","/local/home/handorf/hg/biographer-layout/perl/visLayout3.pl",infile,outfile,pngfile,NULL);
-   }
-   waitpid(cpid,NULL,0); // wait for layout to complete
-   sleep(1);
-   // forking viewer
-   if (delinfile){
-      free(infile);
-      infile=NULL;
-   }
-   if (cc==1){ // this only happens the first time
-      if (!fork()) { // child process
-         // call viewer
-         printf("calling viewer..\n");
-         execl("/usr/bin/display","/usr/bin/display","-update","1",pngfile,NULL); 
-         printf("displaying %s\n",pngfile);
-         // this never returns
-      }
-   }
-#endif
-}
 void Network::write(const char* file){
    Node tmp;
    int i;

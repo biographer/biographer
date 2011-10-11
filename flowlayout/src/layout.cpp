@@ -78,6 +78,7 @@ void Layouter::execute(){
          if (program[s].end & relForceDiff) end=(fabs(lastForce-force)/force<program[s].c_relForceDiff);
          lastForce=force;
          moveNodes();
+         if (show_progress && (cc>0 | s>0)) showProgress(cc);
          cc++;
       }
    }
@@ -104,6 +105,41 @@ void Layouter::moveNodes(){
    
 }
 
+void Layouter::showProgress(int cc){ // this is certainly highly system dependent!!!!
+#ifdef PROGRESSLINUX
+   if (!show_progress) return;
+   if (cc%progress_step) return; // show only every progress_step iterations
+   char[30] infile
+   sprintf(infile,"/tmp/progress%di.dat",getpid());
+   nw.write(infile);
+   char outfile[30];
+   sprintf(outfile,"/tmp/progress%d.dat",getpid());
+   nw.dumpNodes(outfile); // dump nodes to outfile
+   char pngfile[30];
+   sprintf(pngfile,"/tmp/progress%d.png",getpid());
+   //infile is Network member
+   // generating graph layout
+   int cpid;
+   if ((cpid=fork())==0) { // child process ; note, this queues up a lot of calls
+      execl("/usr/bin/perl","/usr/bin/perl","/local/home/handorf/hg/biographer-layout/perl/visLayout3.pl",infile,outfile,pngfile,NULL);
+   }
+   waitpid(cpid,NULL,0); // wait for layout to complete
+   // forking viewer
+
+   sleep(1); // SLOW DOWN!!!
+
+   if (!forked_viewer){ // this only happens the first time
+      forked_viewer=true;
+      if (!fork()) { // child process
+         // call viewer
+         printf("calling viewer..\n");
+         execl("/usr/bin/display","/usr/bin/display","-update","1",pngfile,NULL); 
+         printf("displaying %s\n",pngfile);
+         // this never returns
+      }
+   }
+#endif
+}
 
    
   

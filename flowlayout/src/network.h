@@ -44,7 +44,6 @@ public:
    void read(const char * file=NULL); // read network from file
    void write(const char * file=NULL);
    void dumpNodes(const char* file); // write nodes with properties
-   void show_progress(int &cc); // shows graphical progress during layout in extra window
    
 #ifdef USEJSON   
    JSONcontext* readJSON(const char * file=NULL);
@@ -53,8 +52,6 @@ public:
    
 protected:
    char* infile; // the filename the network is read from (only for the text input format)
-   int progress_step;
-   bool showProgress;
 };
    
 #endif
