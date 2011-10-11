@@ -2,6 +2,7 @@
 #include "layout.h"
 Plugins glob_pgs;
 Plugins& register_plugins(){
+   if (glob_pgs.size()) return glob_pgs; // already initialized
    glob_pgs.registerPlugin(P_force_adj,force_adj);
    glob_pgs.registerPlugin(P_torque_adj,torque_adj,true,true);
    glob_pgs.registerPlugin(P_force_nadj,force_nadj);
