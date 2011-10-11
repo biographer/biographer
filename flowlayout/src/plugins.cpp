@@ -1,5 +1,33 @@
 #include "plugins.h"
+#include "layout.h"
+Plugins glob_pgs;
+Plugins& register_plugins(){
+   glob_pgs.registerPlugin(P_force_adj,force_adj);
+   glob_pgs.registerPlugin(P_torque_adj,torque_adj,true,true);
+   glob_pgs.registerPlugin(P_force_nadj,force_nadj);
+   glob_pgs.registerPlugin(P_separate_nodes,separate_nodes);
+   glob_pgs.registerPlugin(P_force_compartments,force_compartments);
+   glob_pgs.registerPlugin(P_distribute_edges,distribute_edges);
+   glob_pgs.registerPlugin(P_adjust_compartments,adjust_compartments);
+   glob_pgs.registerPlugin(P_init_layout,init_layout);
+   return glob_pgs;
+}
+void Plugins::registerPlugin(enumP pgn, plugin_func_ptr pfunc, bool mod_mov, bool mod_rot, void* persist){
+   int idx=(int) pgn;
+   if ((int) pluginlist.size()<idx+1) pluginlist.resize(idx+1);
+   pluginlist[idx].pfunc=pfunc;
+   pluginlist[idx].mod_mov=mod_mov;
+   pluginlist[idx].mod_rot=mod_rot;
+   pluginlist[idx].persist=persist;
+}
+size_t Plugins::size(){
+   return pluginlist.size();
+}
+plugin& Plugins::get(int idx){
+   return pluginlist[idx];
+}
 
+// Plugin definitions
 void force_adj(Layouter &state,plugin& pg, VP &mov, VF &rot,int round,double temp){
    /* This function calculates the force induced by edges (or adjacent nodes), and updates the displacements (movements) of nodes accordingly.
       the force induced by an edge at its ideal length is 0. Otherwise, force=(ideal_length-length)^2.

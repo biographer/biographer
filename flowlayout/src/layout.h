@@ -3,31 +3,8 @@
 #include "network.h"
 #include "functions.h"
 #include "plugins.h"
-enum enumP {
-//   init=1<<0,init_swap=1<<1,init_wComp=1<<2,adjForce=1<<3,nadjForc=1<<4,adjTorque=1<<5,checkCompartment=1<<6,adjustCompartment=1<<7,avoidOverlap=1<<8
-   init=1,init_swap,init_wComp,adjForce,nadjForc,adjTorque,checkCompartment,adjustCompartment,avoidOverlap
-};
 enum conditions{
    iterations=1<<0,relForceDiff=1<<1
-};
-class Layouter;
-
-struct plugin;
-typedef void (*plugin_func_ptr)(Layouter &state,plugin& pg, VP &mov, VF &rot,int round,double temp);
-struct plugin{
-   plugin_func_ptr pfunc;
-//   VP last;
-   void* persist;
-   bool mod_mov,mod_rot;
-};
-class Plugins{
-   public:
-      Plugins(){} // expects number of nodes in network
-      void registerPlugin(enumP pgn, plugin_func_ptr pfunc, bool mod_mov=true, bool mod_rot=false, void* persist=NULL);
-      size_t size();
-      plugin& get(int idx);
-   private:
-      vector<plugin> pluginlist;
 };
 
 struct step{

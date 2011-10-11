@@ -1,20 +1,5 @@
 #include "layout.h"
 
-void Plugins::registerPlugin(enumP pgn, plugin_func_ptr pfunc, bool mod_mov, bool mod_rot, void* persist){
-   int idx=(int) pgn;
-   if ((int) pluginlist.size()<idx+1) pluginlist.resize(idx+1);
-   pluginlist[idx].pfunc=pfunc;
-   pluginlist[idx].mod_mov=mod_mov;
-   pluginlist[idx].mod_rot=mod_rot;
-   pluginlist[idx].persist=persist;
-}
-size_t Plugins::size(){
-   return pluginlist.size();
-}
-plugin& Plugins::get(int idx){
-   return pluginlist[idx];
-}
-
 void Layouter::stepAddPlugin(int step,enumP pg, double scale){
    initStep(step);
    program[step].actplugins.push_back((int)pg);
