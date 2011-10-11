@@ -78,7 +78,7 @@ void Layouter::execute(){
          if (program[s].end & relForceDiff) end=(fabs(lastForce-force)/force<program[s].c_relForceDiff);
          lastForce=force;
          moveNodes();
-         if (show_progress && (cc>0 | s>0)) showProgress(cc);
+         if (show_progress && (cc>0 || s>0)) showProgress(cc);
          cc++;
       }
    }
@@ -109,7 +109,7 @@ void Layouter::showProgress(int cc){ // this is certainly highly system dependen
 #ifdef PROGRESSLINUX
    if (!show_progress) return;
    if (cc%progress_step) return; // show only every progress_step iterations
-   char[30] infile
+   char infile[30];
    sprintf(infile,"/tmp/progress%di.dat",getpid());
    nw.write(infile);
    char outfile[30];
@@ -142,4 +142,44 @@ void Layouter::showProgress(int cc){ // this is certainly highly system dependen
 }
 
    
+double get_dij(Network &nw,int i, int j){ 
+   //ideal distance between adjacent nodes;
+   double x=nw.nodes[i].width * nw.nodes[i].width + nw.nodes[i].height * nw.nodes[i].height;
+   double y=nw.nodes[j].width * nw.nodes[j].width + nw.nodes[j].height * nw.nodes[j].height;
+   return (sqrt(x)+sqrt(y))*0.3*log(1+nw.degree(i)+nw.degree(j));
+}
+void get_ideal_distances(Network &nw,VF &dij){
+   /* This procedure computes the ideal lengths of edges (the ideal distances between adjacent nodes): dij[i],
+   */
+   int m=nw.edges.size(), i,n1,n2;
+   dij.resize(m);
+   
+   for(i=0;i<m;i++){
+      //ideal length of edge-i.
+      n1=nw.edges[i].from;
+      n2=nw.edges[i].to;
+      dij[i]=get_dij(nw,n1,n2);
+   }
+   
+}
+void get_degrees(Network &nw,VI &deg){
+   int n=nw.nodes.size(),i;
+   deg.resize(n);
+   
+   for(i=0;i<n;i++){
+      deg[i]=nw.degree(i);
+   }
+      
+}
+double avg_sizes(Network &nw){
+   int i,n;
+   n=nw.nodes.size();
+   double size=0;
+   for(i=0;i<n;i++){
+      size+=nw.nodes[i].width;
+      size+=nw.nodes[i].height;
+   }
+   return size/(2*n);
+}
+  
   
