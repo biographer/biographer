@@ -104,6 +104,8 @@ void Layouter::execute(){
          if (show_progress && (cc>0 || s>0)) showProgress(cc);
          cc++;
       }
+      if (show_progress) showProgress(0);
+      
    }
 }
 
