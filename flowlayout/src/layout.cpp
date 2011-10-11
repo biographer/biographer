@@ -32,8 +32,15 @@ void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg
 }
 void Layouter::initStep(int step){
    if ((int) program.size()<step+1) program.resize(step+1);
+   program[step].end=0;
+   program[step].limit_mov=true;
+   
 }
-void Layouter::addEndCondition(int step, conditions cond, double param){ // warning: cond should code for only one condition
+void Layouter::stepLimitMov(int step,bool limit){
+   program[step].limit_mov=limit;
+}
+
+void Layouter::stepAddEndCondition(int step, conditions cond, double param){ // warning: cond should code for only one condition
    initStep(step);
    program[step].end=program[step].end | cond;
    if (cond==iterations){
@@ -45,11 +52,13 @@ void Layouter::addEndCondition(int step, conditions cond, double param){ // warn
 void Layouter::execute(){
    int i,s,p;
    int num=nw.nodes.size();
-   VP pg_mov;
-   VF pg_rot;
+   VP pg_mov;pg_mov.resize(num);
+   VF pg_rot;pg_rot  .resize(num);
    double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
    double force,lastForce=-1;
    mov.resize(num);
+   rot.resize(num);
+   tension.resize(num);
    int prs=program.size();
    for (s=0;s<prs;s++){
       int cc=0;
@@ -59,16 +68,17 @@ void Layouter::execute(){
          for (p=0;p<pls;p++){
             int pidx=program[s].actplugins[p];
             plugin &pg=plugins.get(pidx);
-            pg_mov.assign(num,Point(0,0));
+            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
+            if (pg.mod_rot) pg_rot.assign(num,0.0);
             pg.pfunc(*this,pg,pg_mov,pg_rot,cc,temp);
             for (i=0;i<num;i++){
                if (pg.mod_mov) {
-                  mov[i]+=pg_mov[i]*program[s].actplugins[pidx];
-                  movadd[i]+=fabs(pg_mov[i].x*program[s].actplugins[pidx]);
-                  movadd[i]+=fabs(pg_mov[i].y*program[s].actplugins[pidx]);
+                  mov[i]+=pg_mov[i]*program[s].scales[p];
+                  movadd[i]+=fabs(pg_mov[i].x*program[s].scales[p]);
+                  movadd[i]+=fabs(pg_mov[i].y*program[s].scales[p]);
                   if (maxForce<movadd[i]) maxForce=movadd[i];
                }
-               if (pg.mod_rot) rot[i]+=pg_rot[i]*program[s].actplugins[pidx];
+               if (pg.mod_rot) rot[i]+=pg_rot[i]*program[s].scales[p];
             }
             
          }
@@ -83,27 +93,28 @@ void Layouter::execute(){
                }
             }
          }
+         printf("\rforce: %0.4f\n",force);
          if (lastForce<0) lastForce=2*force; //workaround for first loop where lastForce is not yet defined
          if (force!=force) break; // emergency break
          if (force==0) break; // immidiate break
          if (program[s].end & iterations) end=(cc>=program[s].c_iterations);
          if (program[s].end & relForceDiff) end=(fabs(lastForce-force)/force<program[s].c_relForceDiff);
          lastForce=force;
-         moveNodes();
+         moveNodes(program[s].limit_mov);
          if (show_progress && (cc>0 || s>0)) showProgress(cc);
          cc++;
       }
    }
 }
 
-void Layouter::moveNodes(){
+void Layouter::moveNodes(bool limit){
    /*The function moves the nodes to a new position according the the movements (dispalcement vectors)computed, and then set all displacement vectors to 0.
    It also adjustes the default direction of reaction nodes.
    */
    int n=nw.nodes.size();
    for(int i=0;i<n;i++){
       double length=norm(mov[i]);
-      if (length>avgsize) mov[i]=mov[i]*(avgsize/length); // limit movement to average node size
+      if (limit && length>avgsize) mov[i]=mov[i]*(avgsize/length); // limit movement to average node size
          
       nw.nodes[i].x+=mov[i].x; //update position
       nw.nodes[i].y+=mov[i].y; //update position

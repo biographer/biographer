@@ -12,7 +12,8 @@ struct step{
    VF scales;
    unsigned long end;
    int c_iterations;
-   int c_relForceDiff;
+   double c_relForceDiff;
+   bool limit_mov;
 };
 
 class Layouter{
@@ -20,7 +21,8 @@ class Layouter{
       Layouter(Network& _nw,Plugins& _pgs);
       void stepAddPlugins(int step,enumP pg, enumP pg2=(enumP)0, enumP pg3=(enumP)0, enumP pg4=(enumP)0, enumP pg5=(enumP)0, enumP pg6=(enumP)0, enumP pg7=(enumP)0, enumP pg8=(enumP)0, enumP pg9=(enumP)0, enumP pg10=(enumP)0);
       void stepAddPlugin(int step,enumP pg, double scale=1.0);
-      void addEndCondition(int step, conditions cond, double param);
+      void stepAddEndCondition(int step, conditions cond, double param);
+      void stepLimitMov(int step, bool limit);
       void execute();
       Network& nw;
       VP mov;
@@ -35,7 +37,7 @@ class Layouter{
    protected:
       Plugins& plugins;
       void initStep(int step);
-      void moveNodes();
+      void moveNodes(bool limit);
       double maxForce;
       vector<step> program;
       bool forked_viewer;
