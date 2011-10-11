@@ -19,9 +19,5 @@ double lim(double beta); //make an angle to fit in range [-PI, PI]
 
 int p_compare(const Point& p1, const Point& p2);//comparing two points (y-dominated).
 int min_four(int a1,int a2,int a3,int a4); //get the minimum among four integers.
-int bitpos(unsigned long val);
-double avg_sizes(Network &nw);
-void get_ideal_distances(Network &nw,VF &dij);
-void get_degrees(Network &nw,VI &deg);
 #endif
 
