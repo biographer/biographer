@@ -32,7 +32,6 @@ void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg
 }
 void Layouter::initStep(int step){
    if ((int) program.size()<step+1) program.resize(step+1);
-   if (program[step].actplugins.size()<plugins.size()) program[step].actplugins.resize(plugins.size());
 }
 void Layouter::addEndCondition(int step, conditions cond, double param){ // warning: cond should code for only one condition
    initStep(step);
