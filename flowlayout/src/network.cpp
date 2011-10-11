@@ -7,8 +7,6 @@ const char jnodetypes[][20]={"None", "Reaction", "Compound","SimpleCompound","Co
 const Nodetype inodetypes[]={none,reaction,compound,compound,compound,compound,other}; // convertion of different node types from json nodetypes
 Network::Network(){
    //default network constructor.
-   showProgress=false;
-   progress_step=10;
    infile=NULL;
 }
 
