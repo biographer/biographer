@@ -41,6 +41,13 @@ Point operator*(const Point& p1, const double scalar){
    p.y=p1.y*scalar;
    return p;
 }
+Point operator/(const Point& p1, const double scalar){
+   //scale vector
+   Point p;
+   p.x=p1.x/scalar;
+   p.y=p1.y/scalar;
+   return p;
+}
 Point unit(const Point& p1){
    double len=norm(p1);
    Point p=p1;
@@ -120,13 +127,35 @@ int bitpos(unsigned long val){
    }
    return pos;
 }
-double get_dij1(Network &nw,int i, int j){ 
+double get_dij(Network &nw,int i, int j){ 
    //ideal distance between adjacent nodes;
    double x=nw.nodes[i].width * nw.nodes[i].width + nw.nodes[i].height * nw.nodes[i].height;
    double y=nw.nodes[j].width * nw.nodes[j].width + nw.nodes[j].height * nw.nodes[j].height;
    return (sqrt(x)+sqrt(y))*0.3*log(1+degree(i)+degree(j));
 }
-
+void get_ideal_distances(Network &nw,VF &dij){
+   /* This procedure computes the ideal lengths of edges (the ideal distances between adjacent nodes): dij[i],
+   */
+   int n=nw.nodes.size(), m=nw.edges.size(), i,n1,n2;
+   dij.resize(m);
+   
+   for(i=0;i<m;i++){
+      //ideal length of edge-i.
+      n1=nw.edges[i].from;
+      n2=nw.edges[i].to;
+      dij[i]=get_dij(n1,n2);
+   }
+   
+}
+void get_degrees(Network &nw,VI &deg){
+   int n=nw.nodes.size(),i;
+   dij.resize(n);
+   
+   for(i=0;i<n;i++){
+      deg[i]=nw.degree(i);
+   }
+      
+}
 double get_dij2(Network &nw,int i, int j){ 
    /*minimum distance between non-adjacent nw.nodes.
    it should be much larger than the distance between adjacent nw.nodes.
