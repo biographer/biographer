@@ -34,7 +34,7 @@ void force_adj(Layouter &state,plugin& pg, VP &mov, VF &rot,int round,double tem
       the force induced by an edge at its ideal length is 0. Otherwise, force=(ideal_length-length)^2.
       we move both the compounds and the reaction along the edge such that the edge tends to its ideal length.
    */
-   double d,ideal,alpha,i_alpha,beta;
+   double d,ideal;
    Point vec; //vector from state.nw.nodes[n1] to state.nw.nodes[n2];
    int n1,n2,m,n,i;
    Edgetype _type;
@@ -90,7 +90,6 @@ void torque_adj(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double t
    Edgetype _type;
    m=state.nw.edges.size();
    n=state.nw.nodes.size();
-   bool _left=true;
    for(i=0;i<m;i++){
       //angular force;
       n1=state.nw.edges[i].from; //reaction
@@ -186,7 +185,7 @@ void force_nadj(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double t
 void separate_nodes(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double temp){
    /* similar to force_nadj, but much more agressive */
    int n1,n2,n=state.nw.nodes.size();
-   double dw,dh,ideal;
+   double dw,dh;
    Point vec;
    
    for(n1=0;n1<n;n1++){
@@ -244,7 +243,7 @@ void distribute_edges(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,do
          1. sorting the edges in increasing order (by angle).
          2. for each edge-i, we tried to rotate it to the bisector of edge-(i-1) and edge-(i+1).
    */
-   int i,j,jj,k,m,n=state.nw.nodes.size(),tem,lnk;
+   int i,j,jj,k,m,n=state.nw.nodes.size(),tem;
    double strength=0.2; 
    double strength_rea=0.05; //this should not be a major force for reactions , so we make it small.
    VI *neighbors;
@@ -355,7 +354,7 @@ void init_layout(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double 
    That is, for each reaction, we try to place subtrates in above, products in below and others on sides.
    The eventual position of a node is an average: sum of expected positions divided by number of occurrences.
    */
-   double force=0.0,d,cost1,cost2;
+   double d,cost1,cost2;
    int n=state.nw.nodes.size(), m=state.nw.edges.size();
    int i, n1, n2;
    VI* nd;
@@ -1334,6 +1333,21 @@ void test_firm_dist(){
       show_progress(progcc);
    }
 }
-     
+bool edge_cross(layout_state &state, int i, int j){ 
+   /* whether edge-i and edge-j cross each other.
+   a1,a2 are two ends of edge-i, and b1,b2 are two ends of edge-j.
+   edge-i and edge-j cross each other only if: 
+   1. a1 and a2 are on different sides of b1, which can be judged using vector-products.
+   2. a1 and a2 are on different sides of b2.
+   */
+   int a1,a2,b1,b2;
+   a1=state.nw.edges[i].from;
+   a2=state.nw.edges[i].to;
+   b1=state.nw.edges[j].from;
+   b2=state.nw.edges[j].to;
+   if((state.pos[a1]-state.pos[b1])*(state.pos[a2]-state.pos[b1])<0 && (state.pos[a1]-state.pos[b2])*(state.pos[a2]-state.pos[b2])<0)return true;
+   return false;
+}
+
      #endif
      
