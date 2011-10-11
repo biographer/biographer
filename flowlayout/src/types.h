@@ -49,6 +49,12 @@ class Rect{
    public:
       Rect():  xmin(0), ymin(0), xmax(0), ymax(0){}
       Rect(double _xmin, double _ymin, double _xmax, double _ymax):  xmin(_xmin), ymin(_ymin), xmax(_xmax), ymax(_ymax){}
+      void translate(double x,double y){
+         xmin+=x;
+         xmax+=x;
+         ymin+=y;
+         ymax+=y;
+      }
       double xmin, ymin, xmax, ymax;
 
 };
@@ -96,7 +102,10 @@ class Node: public Point{
       Node(Nodetype _type, string _name, float _width, float _height, float _x, float _y, float _dir, int _comp):Point(_x,_y), type(_type), name(_name), width(_width), height(_height), dir(_dir), compartment(_comp){
          //constructing a node with all node properties given (preferred in the algorithm).
       }       
-      
+      void setPoint(const Point& pt){
+         x=pt.x;
+         y=pt.y;
+      }
       VI neighbors; //the edges incident on the node.
       Nodetype type; //type of node.
       string name; //name of the node.
