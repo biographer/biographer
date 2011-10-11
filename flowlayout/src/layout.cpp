@@ -1,4 +1,17 @@
 #include "layout.h"
+double avg_sizes(Network &nw);
+void get_ideal_distances(Network &nw,VF &dij);
+void get_degrees(Network &nw,VI &deg);
+Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
+   mov.resize(nw.nodes.size());
+   movadd.resize(nw.nodes.size());
+   avgsize=avg_sizes(nw);
+   get_ideal_distances(nw,dij);
+   get_degrees(nw,deg);
+   show_progress=false;
+   progress_step=1;
+   forked_viewer=false;
+}
 
 void Layouter::stepAddPlugin(int step,enumP pg, double scale){
    initStep(step);
