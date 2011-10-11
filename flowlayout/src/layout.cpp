@@ -1,9 +1,12 @@
 #include "layout.h"
 
-void Plugins::registerPlugin(unsigned long pgn, plugin_func_ptr pfunc){
-   int idx=bitpos(pgn);
+void Plugins::registerPlugin(enumP pgn, plugin_func_ptr pfunc, bool mod_mov, bool mod_rot, void* persist){
+   int idx=(int) pgn;
    if ((int) pluginlist.size()<idx+1) pluginlist.resize(idx+1);
    pluginlist[idx].pfunc=pfunc;
+   pluginlist[idx].mod_mov=mod_mov;
+   pluginlist[idx].mod_rot=mod_rot;
+   pluginlist[idx].persist=persist;
 }
 size_t Plugins::size(){
    return pluginlist.size();
@@ -12,14 +15,22 @@ plugin& Plugins::get(int idx){
    return pluginlist[idx];
 }
 
-void Layouter::setStep(int step,unsigned long bitplugins){
+void Layouter::stepAddPlugin(int step,enumP pg, double scale){
    initStep(step);
-   int i;
-   for (i=0;i<(int) plugins.size();i++){
-      if (bitplugins & (1<<i)){
-         program[step].actplugins[i]=1.0;
-      }
-   }
+   program[step].actplugins.push_back((int)pg);
+   program[step].scales.push_back(scale);
+}
+void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg4, enumP pg5, enumP pg6, enumP pg7, enumP pg8, enumP pg9, enumP pg10){ // this provides a way to add up to 10 enumP at once
+   if (pg1) stepAddPlugin(step,pg1);
+   if (pg2) stepAddPlugin(step,pg2);
+   if (pg3) stepAddPlugin(step,pg3);
+   if (pg4) stepAddPlugin(step,pg4);
+   if (pg5) stepAddPlugin(step,pg5);
+   if (pg6) stepAddPlugin(step,pg6);
+   if (pg7) stepAddPlugin(step,pg7);
+   if (pg8) stepAddPlugin(step,pg8);
+   if (pg9) stepAddPlugin(step,pg9);
+   if (pg10) stepAddPlugin(step,pg10);
 }
 void Layouter::initStep(int step){
    if ((int) program.size()<step+1) program.resize(step+1);
@@ -42,27 +53,32 @@ void Layouter::execute(){
    double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
    double force,lastForce=-1;
    mov.resize(num);
-   int prs=program.size(),pls=plugins.size();
+   int prs=program.size();
    for (s=0;s<prs;s++){
       int cc=0;
       bool end=false;
+      int pls=program[s].actplugins.size();
       while (!end){
          for (p=0;p<pls;p++){
+            int pidx=program[s].actplugins[p];
+            plugin &pg=plugins.get(pidx);
             pg_mov.assign(num,Point(0,0));
-            if (program[s].actplugins[p]==0.0) continue;
-            plugins.get(p).pfunc(*this,plugins.get(p),pg_mov,pg_rot,cc,temp);
+            pg.pfunc(*this,pg,pg_mov,pg_rot,cc,temp);
             for (i=0;i<num;i++){
-               mov[i]+=pg_mov[i]*program[s].actplugins[p];
-               rot[i]+=pg_rot[i]*program[s].actplugins[p];
-               movadd[i]+=fabs(pg_mov[i].x*program[s].actplugins[p]);
-               movadd[i]+=fabs(pg_mov[i].y*program[s].actplugins[p]);
-               if (maxForce<movadd[i]) maxForce=movadd[i];
+               if (pg.mod_mov) {
+                  mov[i]+=pg_mov[i]*program[s].actplugins[pidx];
+                  movadd[i]+=fabs(pg_mov[i].x*program[s].actplugins[pidx]);
+                  movadd[i]+=fabs(pg_mov[i].y*program[s].actplugins[pidx]);
+                  if (maxForce<movadd[i]) maxForce=movadd[i];
+               }
+               if (pg.mod_rot) rot[i]+=pg_rot[i]*program[s].actplugins[pidx];
             }
             
          }
          force=0.0;
          for (i=0;i<num;i++){
             force+=(fabs(mov[i].x)+fabs(mov[i].y));
+            force+=rot[i];
             tension[i]=false;
             if (movadd[i]>0.8*maxForce){ // high relative force on node
                if ((fabs(mov[i].x)+fabs(mov[i].y))/movadd[i]<0.1){ // effective force is low compared to added up force (force equilibrium)
@@ -77,6 +93,7 @@ void Layouter::execute(){
          if (program[s].end & relForceDiff) end=(fabs(lastForce-force)/force<program[s].c_relForceDiff);
          lastForce=force;
          moveNodes();
+         cc++;
       }
    }
 }
