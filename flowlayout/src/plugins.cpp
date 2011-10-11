@@ -354,7 +354,7 @@ void init_layout(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double 
    That is, for each reaction, we try to place subtrates in above, products in below and others on sides.
    The eventual position of a node is an average: sum of expected positions divided by number of occurrences.
    */
-   double d,cost1,cost2;
+   double cost1,cost2;
    int n=state.nw.nodes.size(), m=state.nw.edges.size();
    int i, n1, n2;
    VI* nd;
@@ -418,11 +418,11 @@ void init_layout(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double 
    for(i=0;i<n;i++){
       if(state.deg[i]==0)continue; //seperate nodes (should this happen?)
       mov[i].x/=state.deg[i]; mov[i].y/=state.deg[i]; //it is an average.
-      d=dist(mov[i],state.nw.nodes[i]); //length of displacement
-      // move node towards expected positon
+      mov[i]-=state.nw.nodes[i]; // how much to move from current positions
+/*      // move node towards expected positon
       state.nw.nodes[i].x+=(mov[i].x-state.nw.nodes[i].x)/2; 
       state.nw.nodes[i].y+=(mov[i].y-state.nw.nodes[i].y)/2;
-      mov[i].x=mov[i].y=0.0;
+      mov[i].x=mov[i].y=0.0;*/
    }
 }
 
