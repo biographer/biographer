@@ -78,7 +78,7 @@ def layout():
     bioGraph.importJSON( session.editor_autosave )
     #-------------------
     if request.vars.layout == "biographer":
-        executable = os.path.join(request.folder, "static","layout")
+        executable = os.path.join(request.folder, "static/Layouter/build", "layout")
         infile = os.path.join(request.folder, "static","tmp.bgin")
         outfile = os.path.join(request.folder, "static","tmp.bgout")
         open(infile, 'w').write(bioGraph.exportLayout())
