@@ -146,16 +146,30 @@ def redo():
 def export():
     import gluon.contenttype
     file_type = False
+    def fix_svg(svg_data):
+        import re
+        import os
+        stylesheet_contents = open(os.path.join(request.folder, 'static' , 'css', 'visualization-svg.css'), 'r').read()
+        out = re.sub('@import url[^<]*', stylesheet_contents, svg_data)
+        return '<?xml version="1.0" encoding="UTF-8"?>\n%s'%out
     if request.vars.json:
         file_type = 'json'
         out = request.vars.json
-    if request.vars.svg:
-        import re
-        import os
+    elif request.vars.svg:
         file_type = 'svg'
-        stylesheet_contents = open(os.path.join(request.folder, 'static' , 'css', 'visualization-svg.css'), 'r').read()
-        out = re.sub('@import url[^<]*', stylesheet_contents, request.vars.svg)
-        out = '<?xml version="1.0" encoding="UTF-8"?>\n%s'%out
+        out = fix_svg(request.vars.svg)
+    elif request.vars.format in 'png jpg pdf tiff'.split():
+        file_type = request.vars.format
+        java = "/usr/bin/java"  # FIXME java executable, this should be configurable shomewhere
+        import os
+        from subprocess import Popen, PIPE
+        from shlex import split
+        jar = os.path.join( request.folder, "static","Exporter","svg-export-0.2.jar" )
+        applet = java+" -jar "+jar+" -si -so -f "+request.vars.format
+        result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(fix_svg(request.vars.svg_data))      # call Ben's Java Exporter Applet
+        out = result[0] # stdout
+        print "image export errors: ",result[1]	# stderr
+
     if not file_type:
         return ''
     response.headers['Content-Type'] = gluon.contenttype.contenttype(".%s"%file_type)

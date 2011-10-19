@@ -36,7 +36,7 @@ def Layout():
 def Picture():
 	formats_supported = ['jpeg', 'png', 'pdf', 'svg', 'tiff', 'eps']
 
-	print "Hi!"
+    #print "Hi!"
 
 #	if session.bioGraph is None:
 #		session.flash = "Unable to export: No Model is loaded !"

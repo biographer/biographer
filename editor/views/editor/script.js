@@ -448,6 +448,20 @@ $(document).ready(function() {
         //alert($('#canvas svg').parent().html());
         $('#export_form').html('<input type="hidden" name="svg" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
     });
+    //=========================
+    $('#export_other').click(function() {
+        modal = $("#export_file_modal_input").modal({
+            overlayClose:true,
+            opacity:20,
+        });
+    });
+    //===
+    $("#export_format_select").change(function(){
+    	if($('#export_format_select').val() != '... choose'){
+        	$('#export_form').html('<input type="hidden" name="format" value=\''+$('#export_format_select').val()+'\' /><input type="hidden" name="svg_data" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
+	}
+    });
+    //=========================
     canvaspos = $('#canvas').position();
     $('.node').draggable({
     zIndex: 2,

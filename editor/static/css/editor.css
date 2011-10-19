@@ -28,7 +28,13 @@ div.flash {
 	color: white;/*#3C3C3D;*/
 	text-shadow: 1px 1px 0 #999; 
 	font-weight: bold;
-    	box-shadow: 0px 1px 2px #ccc;
+   	box-shadow: 0px 1px 2px #ccc;
+    height: 25px;
+    position: relative;
+}
+#editor-header #logo{
+    display: inline-block;
+    vertical-align: top;
 }
 #editor-header ul {
 	display: inline-block;
@@ -40,7 +46,12 @@ div.flash {
 	float: left;
 	width: 100px;
 	text-align: center;
+    height: 25px;
+    line-hight: 25px;
+}
+#editor-header li a {
 	color: #b3b3b3;
+    text-decoration: none;
 }
 #editor-header li:hover {
 	background-color: #fff;

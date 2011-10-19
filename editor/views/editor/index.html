@@ -1,9 +1,10 @@
 {{extend 'layout_editor.html'}}
 <script type="text/javascript" src="{{=URL(request.application, 'static/js', 'biographer-ui.js')}}"></script>
-<div id="editor-header">BioGrapher 
+<div id="editor-header">
+	<div id="logo"> BioGrapher </div>
 	<UL>
-		<li>About</li>
-		<li>Souce Code</li>
+		<li><a href="http://code.google.com/p/biographer/">About</a></li>
+		<li><a href="http://code.google.com/p/biographer/source/browse/?repo=server">Souce Code</a></li>
 	</UL>
 </div>
 <table>
@@ -49,6 +50,12 @@
 				<li id="export_json"> 
 				<div>export current graph as JSON</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'export_json.png')}}"/> 
+				&nbsp;
+				</li>
+				</li>
+				<li id="export_other"> 
+				<div>export current graph as: png,jpeg,pdf,tiff</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'export.png')}}"/> 
 				&nbsp;
 				</li>
 				<!-- ---------------------------------------------------------------- -->
@@ -182,7 +189,7 @@
 </table>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
-<form action="{{=URL('export')}}" id='export_form' style='display: none;'></form>
+<form action="{{=URL('export')}}" id='export_form' style='display: none;' method="POST"></form>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
 <div id="import_file_modal_input" class="modal_input">
@@ -308,6 +315,24 @@
 	</table>
 	<button class='sc_but' id='close_modal_input'>close</button> or press <b>ESC</b>
 	</div>
+</div>
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<div id="export_file_modal_input" class="modal_input">
+	<table>
+		<tr>
+			<th>Choose Export Format</th>
+			<td>
+				<select id="export_format_select">
+					<option value="">... choose</option>
+					{{for frmt in 'png jpg pdf tiff'.split():}} <option>{{=frmt}}</option> {{pass}}
+				</select>
+			</td>
+		</tr>
+	</table>
+	<br />
+	<br />
+	<button class='sc_but' id='cancel_modal_input'>cancel</button> or press <b>ESC</b>
 </div>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->

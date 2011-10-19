@@ -14,7 +14,7 @@ def index():
     example action using the internationalization operator T and flash
     rendered by views/default/index.html or views/generic.html
     """
-    return redirect( URL(r=request, c='Workbench', f='index') )
+    return redirect( URL(r=request, c='editor', f='index') )
 
 def user():
     """
