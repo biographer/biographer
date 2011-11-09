@@ -18,26 +18,31 @@ def index():
     response.files.append(URL(request.application, 'static/js', 'jquery.simplemodal.1.4.1.min.js'))
     #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))
     response.files.append(URL(request.application, 'editor', 'script.js'))
-    if request.vars.import_file != None and request.vars.import_file != '':
+    if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph:
         action,graph,json_string = None,None,None
-        file_content = request.vars.import_file.file.read().strip()
-        if file_content.startswith('{') and file_content.endswith('}'):#basic check
-            json_string = file_content
-            try:
-                graph = simplejson.loads(file_content)
-            except simplejson.JSONDecodeError:
-                action = 'loaded %s but could not parse json'%request.vars.import_file.filename
-                graph = dict(nodes = [], edges = [])
-            else:
-                action = 'loaded %s'%request.vars.import_file.filename
-        elif file_content.startswith('<?xml'):
-            import biographer
-            bioGraph = biographer.Graph()
-            bioGraph.importSBML( file_content )
-            json_string = bioGraph.exportJSON()
-            #print 'sbml2json: ',json_string
+        if request.vars.jgraph:
+            json_string = request.vars.jgraph
             graph = simplejson.loads(json_string)
-            action = 'loaded %s'%request.vars.import_file.filename
+            action = 'Imported JSON graph'
+        else:
+            file_content = request.vars.import_file.file.read().strip()
+            if file_content.startswith('{') and file_content.endswith('}'):#basic check
+                json_string = file_content
+                try:
+                    graph = simplejson.loads(file_content)
+                except simplejson.JSONDecodeError:
+                    action = 'loaded %s but could not parse json'%request.vars.import_file.filename
+                    graph = dict(nodes = [], edges = [])
+                else:
+                    action = 'loaded %s'%request.vars.import_file.filename
+            elif file_content.startswith('<?xml'):
+                import biographer
+                bioGraph = biographer.Graph()
+                bioGraph.importSBML( file_content )
+                json_string = bioGraph.exportJSON()
+                #print 'sbml2json: ',json_string
+                graph = simplejson.loads(json_string)
+                action = 'loaded %s'%request.vars.import_file.filename
         if action and graph and json_string:
             undoRegister(action, graph, json_string)
     return dict()

@@ -138,7 +138,8 @@ bui.settings = {
                 stimulation : 'stimulation',
                 catalysis : 'catalysis',
                 modulation : 'modulation',
-                necessaryStimulation : 'necessaryStimulation'
+                necessaryStimulation : 'necessaryStimulation',
+                absoluteInhibition : 'absoluteInhibition'
             },
             splineEdgeHandle : 'splineEdgeHandle',
             splineAutoEdgeHandle : 'autoAlign',
@@ -216,6 +217,7 @@ bui.settings = {
         markerWidthCorrection : 0.25 // (1 / .lineHover#stroke-width) (see CSS)
     }
 };
+
 (function(bui) {
 
     var readyFunctions = [];
@@ -1272,6 +1274,26 @@ var getSBOForMarkerId = function(id) {
      */
     bui.connectingArcs.inhibition.id = 'inhibition';
 
+    /**
+     * Generator for a absolute inhibition connecting arc.
+     *
+     * This generates an inhibition with an additional line.
+     *
+     * @return {Object} An object with id and element properties. The id
+     *   property holds the id of the marker and the element property the
+     *   generated element.
+     */
+    bui.connectingArcs.absoluteInhibition = function() {
+        return createPathWithData('M0,0 V25 M10,0 V25Z', 10, 12, 10, 26,
+            //bui.settings.css.classes.connectingArcs.absoluteInhibition);
+            bui.settings.css.classes.connectingArcs.necessaryStimulation);
+	    //);
+    };
+
+    /**
+     * @field Identifier for this connecting arc type.
+     */
+    bui.connectingArcs.absoluteInhibition.id = 'absoluteInhibition';
     
     /**
      * Generator for a catalysis connecting arc.
@@ -1327,7 +1349,8 @@ var getSBOForMarkerId = function(id) {
      *   generated element.
      */
     bui.connectingArcs.necessaryStimulation = function() {
-        return createPathWithData('M0,0V20 M5,0L25,10L5,20Z', 25, 10, 26, 26,
+        return createPathWithData('M0,0 V20 M10,0 L25,10L10,20Z', 25, 10, 26, 26,
+        //return createPathWithData('M0,0 V25 M10,0 V25Z', 10, 12, 10, 26,
             bui.settings.css.classes.connectingArcs.necessaryStimulation);
     };
 
@@ -1336,6 +1359,7 @@ var getSBOForMarkerId = function(id) {
      */
     bui.connectingArcs.necessaryStimulation.id = 'necessaryStimulation';
 })(bui);
+
 (function(bui) {
     // used to identify and compare the graph instances
     var graphCounter = 0;
