@@ -382,11 +382,19 @@
             } else if (bui.util.propertySetAndNotNull(nodeJSON,
                     ['data', 'x'], ['data', 'y']) === false) {
                 continue;
-            } else if (node.hasParent() === true) {
-               if (!(node.parent() instanceof bui.Compartment)){
+            } else if (node.hasParent() === true) { // this ensures complex members are not moved
+               if (!(node.parent() instanceof bui.Compartment)){  // allow members of compartments to be moved
                   continue;
+               } 
+            }
+            if (node instanceof bui.Compartment){
+               // animate size for compartments
+               var w=nodeJSON.data.width,
+                     h=nodeJSON.data.height;
+               if (w && h){
+                  node.resize(w,h,duration);
                }
-               
+            
             }
 
             var x = nodeJSON.data.x,
