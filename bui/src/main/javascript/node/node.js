@@ -199,7 +199,7 @@
     var mouseClick = function(event) {
         if (event.ctrlKey === true) {
             this.placeholderVisible(!this.placeholderVisible());
-        } else {
+        } else if (!this.placeholderVisible()) {
             this.fire(bui.Node.ListenerType.click, [this, event]);
         }
     };
