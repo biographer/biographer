@@ -197,16 +197,18 @@
     };
 
     var mouseClick = function(event) {
-        if (event.ctrlKey === true) {
-            this.placeholderVisible(!this.placeholderVisible());
-        } else if (!this.placeholderVisible()) {
-            this.fire(bui.Node.ListenerType.click, [this, event]);
-        }
+       if (event.ctrlKey === true && (bui.settings.enableModificationSupport === true)) {
+          this.placeholderVisible(!this.placeholderVisible());
+       } else if (!this.placeholderVisible()) {
+          this.fire(bui.Node.ListenerType.click, [this, event]);
+       }
     };
     var dblclick = function(event) {
-            this.placeholderVisible(!this.placeholderVisible());
+       if (bui.settings.enableModificationSupport === true){
+          this.placeholderVisible(!this.placeholderVisible());
+       }
     };
-
+    
     /**
      * @private
      * Initial paint of the placeholder node and group node
@@ -232,9 +234,7 @@
         if (bui.settings.enableModificationSupport === true) {
 
             jQuery(privates.nodeGroup)
-                    .add(privates.placeholder)
-                    .click(mouseClick.createDelegate(this))
-                    .dblclick(dblclick.createDelegate(this));
+                    .add(privates.placeholder);
 
             if (this._enableDragging === true) {
                 jQuery(privates.placeholder).draggable({
@@ -251,6 +251,11 @@
                         });
             }
         }
+        
+        jQuery(privates.nodeGroup)
+            .click(mouseClick.createDelegate(this))
+            .dblclick(dblclick.createDelegate(this));
+        
     };
 
     /**
