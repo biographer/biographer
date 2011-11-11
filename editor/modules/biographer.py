@@ -608,7 +608,7 @@ class Graph:
 					quoter = False			
 				if JSON[p] == ",":				# definition completed, quotation restarted
 					quoter = True
-				if quoter:
+				if False and quoter:
 					if JSON[p] == '"' or JSON[p] == "'":	# quote found, quotation stopped
 						quoter = False
 					elif ord(JSON[p]) in alphabet:		# next byte is a character, not a quote !
@@ -637,8 +637,8 @@ class Graph:
 		#except ValueError as e:
 		#	self.log(str(e.__dict__))
 		#	return
-		except:
-			self.log("Fatal: JSON parser raised an exception!")
+		except Exception, err:
+			self.log("Fatal: JSON parser raised an exception! %s"%err)
 			return
 		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
 		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
