@@ -255,6 +255,7 @@
          *   {@link bui.Graph#unsuspendRedraw} to enable redrawing.
          */
         suspendRedraw : function(duration) {
+            if (bui.settings.staticSVG) return 0; 
             return this._privates(identifier).root.suspendRedraw(duration);
         },
 
@@ -269,6 +270,7 @@
          * @return {bui.Graph} Fluent interface
          */
         unsuspendRedraw : function(handle) {
+            if (bui.settings.staticSVG) return; 
             if (handle !== undefined) {
                 this._privates(identifier).root.unsuspendRedraw(handle);
             } else {
