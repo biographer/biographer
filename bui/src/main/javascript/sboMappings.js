@@ -18,7 +18,9 @@ addMapping(processNodeMapping, [375, 167], bui.Process);
 
 addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
 addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
-addMapping(edgeMarkerMapping, [459, 15, 11], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [459,462], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [15], bui.connectingArcs.substrate.id);
+addMapping(edgeMarkerMapping, [11], bui.connectingArcs.product.id);
 addMapping(edgeMarkerMapping, [461],
         bui.connectingArcs.necessaryStimulation.id);
 addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);

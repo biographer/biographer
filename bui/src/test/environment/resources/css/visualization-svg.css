@@ -36,7 +36,7 @@ line {
     stroke: #000;
 }
 
-.stimulation, .catalysis, .modulation, .necessaryStimulation {
+.stimulation, .catalysis, .modulation, .necessaryStimulation, .substrate {
     fill: white;
     stroke: black;
 }
