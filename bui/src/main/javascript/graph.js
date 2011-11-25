@@ -386,6 +386,20 @@
          *
          * @return {bui.Graph} Fluent interface
          */
+        
+        clear : function() {
+           var privates = this._privates(identifier);
+           for (var i in privates.drawables){
+              privates.drawables[i].remove();
+           }
+           //privates.idCounter=0;
+        },
+ 
+        /**
+         * Reduce the Canvas size to the minimum requirement
+         *
+         * @return {bui.Graph} Fluent interface
+         */
         reduceCanvasSize : function() {
             var privates = this._privates(identifier);
 
@@ -459,7 +473,22 @@
 
             return inner;
         },
-
+ 
+ 
+         /**
+         * replace the css import directive in svg by an actual css code and return SVG.
+         *
+         *
+         * @return {String} The raw SVG as it can be used to save / export it.
+         */
+         cssSVG : function(css) {
+            var inner = this._privates(identifier).root.parentNode.innerHTML;
+            
+            inner = inner.replace(__getStylesheetContents(), css);
+            
+            return inner;
+         },
+ 
         /**
          * A graph supports a high and low performance mode. This has
          * implications on the way dragging and resizing is realized. When in
