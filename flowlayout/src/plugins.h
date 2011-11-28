@@ -15,7 +15,7 @@ enum enumP {
 class Layouter;
 
 struct plugin;
-typedef void (*plugin_func_ptr)(Layouter &state,plugin& pg, VP &mov, VF &rot,int round,double temp); // for callback of the plugins
+typedef void (*plugin_func_ptr)(Layouter &state,plugin& pg, double scale, int iter, double temp); // for callback of the plugins
 struct plugin{
    plugin_func_ptr pfunc;
    //   VP last;
@@ -25,7 +25,7 @@ struct plugin{
 class Plugins{
    public:
       Plugins(){} 
-      void registerPlugin(enumP pgn, plugin_func_ptr pfunc, bool mod_mov=true, bool mod_rot=false, void* persist=NULL);
+      void registerPlugin(enumP pgn, plugin_func_ptr pfunc, void* persist=NULL);
       size_t size();
       plugin& get(int idx);
    private:
@@ -33,13 +33,13 @@ class Plugins{
 };
 
 Plugins& register_plugins();
-void force_adj(Layouter &state,plugin& pg, VP &mov, VF &rot,int round,double temp);
-void torque_adj(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double temp);
-void force_nadj(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double temp);
-void separate_nodes(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double temp);
-void force_compartments(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double temp);
-void distribute_edges(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double temp);
-void adjust_compartments(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double temp);
-void init_layout(Layouter &state,plugin& pg, VP &mov, VF &rot, int round,double temp);
+void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp);
+void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp);
+void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp);
+void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double temp);
+void force_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp);
+void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double temp);
+void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp);
+void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp);
 
 #endif

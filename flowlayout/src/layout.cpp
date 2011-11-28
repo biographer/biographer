@@ -3,6 +3,7 @@ double avg_sizes(Network &nw);
 void get_ideal_distances(Network &nw,VF &dij);
 void get_degrees(Network &nw,VI &deg);
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
+   /* create a Layouter object */
    mov.resize(nw.nodes.size());
    movadd.resize(nw.nodes.size());
    avgsize=avg_sizes(nw);
@@ -14,11 +15,13 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
 }
 
 void Layouter::stepAddPlugin(int step,enumP pg, double scale){
+   /* adds a plugin to a step of the layout algorithm */
    initStep(step);
    program[step].actplugins.push_back((int)pg);
    program[step].scales.push_back(scale);
 }
 void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg4, enumP pg5, enumP pg6, enumP pg7, enumP pg8, enumP pg9, enumP pg10){ // this provides a way to add up to 10 enumP at once
+   /* can add several plugins at once (if no scale parameter is needed */
    if (pg1) stepAddPlugin(step,pg1);
    if (pg2) stepAddPlugin(step,pg2);
    if (pg3) stepAddPlugin(step,pg3);
@@ -31,29 +34,40 @@ void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg
    if (pg10) stepAddPlugin(step,pg10);
 }
 void Layouter::initStep(int step){
+   /* initializes data structure for new step */
    if ((int) program.size()<step+1) program.resize(step+1);
    program[step].end=0;
    program[step].limit_mov=true;
    
 }
 void Layouter::stepLimitMov(int step,bool limit){
+   /* set movement limitation of nodes per iteration in step */
    program[step].limit_mov=limit;
 }
 
-void Layouter::stepAddEndCondition(int step, conditions cond, double param){ // warning: cond should code for only one condition
+void Layouter::stepAddEndCondition(int step, conditions cond, double param, double param2){ // warning: cond should code for only one condition
+   /* adds an end condition for a algorithm step */
    initStep(step);
    program[step].end=program[step].end | cond;
-   if (cond==iterations){
+   if (cond==iterations){ // end condition for a constant number of iterations
       program[step].c_iterations=(int) param;
-   } else if (cond==relForceDiff){
+   } else if (cond==relForceDiff){ // end condition for a certain relative force
       program[step].c_relForceDiff=param;
+   } else if (cond==temp){ // end condition "temperature" dependent
+      // if relForce is below the limit, temp is increased until step liomit is reached
+      program[step].c_tempRelForce=param;
+      program[step].c_tempSteps=(int) param2;
    }
 }
 void Layouter::execute(){
+   /* executes the layout algorithm 
+      all defined steps are executed in sequential order
+      each step is iterated until one of its end conditions is fulfilled
+   */
    int i,s,p;
    int num=nw.nodes.size();
-   VP pg_mov;pg_mov.resize(num);
-   VF pg_rot;pg_rot  .resize(num);
+/*   VP pg_mov;pg_mov.resize(num);
+   VF pg_rot;pg_rot  .resize(num);*/
    double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
    double force,lastForce=-1;
    mov.resize(num);
@@ -68,10 +82,10 @@ void Layouter::execute(){
          for (p=0;p<pls;p++){
             int pidx=program[s].actplugins[p];
             plugin &pg=plugins.get(pidx);
-            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
-            if (pg.mod_rot) pg_rot.assign(num,0.0);
-            pg.pfunc(*this,pg,pg_mov,pg_rot,cc,temp);
-            for (i=0;i<num;i++){
+/*            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
+            if (pg.mod_rot) pg_rot.assign(num,0.0);*/
+            pg.pfunc(*this,pg,program[s].scales[p],cc,temp);
+/*            for (i=0;i<num;i++){
                if (pg.mod_mov) {
                   mov[i]+=pg_mov[i]*program[s].scales[p];
                   movadd[i]+=fabs(pg_mov[i].x*program[s].scales[p]);
@@ -79,7 +93,7 @@ void Layouter::execute(){
                   if (maxForce<movadd[i]) maxForce=movadd[i];
                }
                if (pg.mod_rot) rot[i]+=pg_rot[i]*program[s].scales[p];
-            }
+            }*/
             
          }
          force=0.0;
