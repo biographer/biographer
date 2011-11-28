@@ -39,7 +39,8 @@ while (scalar(@lines) && (!($nidx=~/^\//))){
    my $w=shift(@lines)/72; # w
    my $h=shift(@lines)/72; # h
    shift(@lines); # dir;
-   $g->add_node($id,{pos=>"$x,$y!",width=>$w,height=>$h,shape=>"rect",fixedsize=>"true",fillcolor=>$compcol->[$cp],style=>"filled"});
+#   $g->add_node($id,{pos=>"$x,$y!",width=>$w,height=>$h,shape=>"rect",fixedsize=>"true",fillcolor=>$compcol->[$cp],style=>"filled"});
+   $g->add_node($id,{pos=>"$x,$y!",width=>$w,height=>$h,shape=>"rect",fixedsize=>"true"});
    $nodes->[$nidx]=$id;
    $nidx=shift(@lines) # next index;
 }
