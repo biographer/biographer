@@ -41,5 +41,5 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
 void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double temp);
 void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp);
 void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp);
-
+void swap_reactants(Layouter &state,plugin& pg, double scale, int iter, double temp);
 #endif

@@ -45,4 +45,5 @@ class Layouter{
       bool forked_viewer;
       void showProgress(int cc);
 };
+double get_dij(Network &nw,int i, int j);
 #endif

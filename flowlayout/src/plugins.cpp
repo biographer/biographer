@@ -415,6 +415,82 @@ void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, dou
       }
    }
 }
+template <typename T>void vassign(vector<T>& v,const vector<T>& v2){
+   v.assign(v2.begin(),v2.end());
+}
+template <typename T>void vappend(vector<T>& v,const vector<T>& v2){
+   v.insert(v.end(),v2.begin(),v2.end());
+}
+
+void swap_reactants(Layouter &state,plugin& pg, double scale, int iter, double temp){
+   /* this plugin swaps substrates, products or modulators among each other if this reduces the force on these nodes
+   */
+   int i,j,k,s,e,es,m;
+   int n=state.nw.nodes.size();
+   VI neigh[2];
+   double f1,f2,d;
+   for(k=0;k<n;k++){
+      if (state.nw.nodes[k].type!=reaction) continue;
+      vassign(neigh[0],*(state.nw.getNeighbors(k,substrate))); //substrates
+      vassign(neigh[1],*(state.nw.getNeighbors(k,product))); // products
+      vassign(neigh[2],*(state.nw.getNeighbors(k,catalyst))); // modulators
+      vappend(neigh[2],*(state.nw.getNeighbors(k,inhibitor))); // modulators
+      vappend(neigh[2],*(state.nw.getNeighbors(k,activator))); // modulators
+      for (m=0;m<2;m++){ // for all three classes of neighbors:
+         s=neigh[m].size();
+         for (i=0;i<s;i++){
+            for (j=i+1;j<s;j++){
+               // calc force of the two nodes
+               {
+                  VI& edges=state.nw.nodes[i].neighbors;
+                  es=edges.size();
+                  f1=0.0;
+                  for (e=0;e<es;e++){
+                     d=dist(state.nw.nodes[state.nw.edges[edges[e]].from],state.nw.nodes[state.nw.edges[edges[e]].to]); //length of edge edges[e].
+                     f1+=fabs(d-state.dij[edges[e]]);
+                  }
+                  edges=state.nw.nodes[j].neighbors;
+                  es=edges.size();
+                  for (e=0;e<es;e++){
+                     d=dist(state.nw.nodes[state.nw.edges[edges[e]].from],state.nw.nodes[state.nw.edges[edges[e]].to]); //length of edge edges[e].
+                     f1+=fabs(d-state.dij[edges[e]]);
+                  }
+               }
+               // swap node positions
+               Point h=state.nw.nodes[i];
+               state.nw.nodes[i].setPoint(state.nw.nodes[j]);
+               state.nw.nodes[j].setPoint(h);
+               // calc force of the two nodes
+               {
+                  VI& edges=state.nw.nodes[i].neighbors;
+                  es=edges.size();
+                  f2=0.0;
+                  for (e=0;e<es;e++){
+                     d=dist(state.nw.nodes[state.nw.edges[edges[e]].from],state.nw.nodes[state.nw.edges[edges[e]].to]); //length of edge edges[e].
+                     f2+=fabs(d-state.dij[edges[e]]);
+                  }
+                  edges=state.nw.nodes[j].neighbors;
+                  es=edges.size();
+                  for (e=0;e<es;e++){
+                     d=dist(state.nw.nodes[state.nw.edges[edges[e]].from],state.nw.nodes[state.nw.edges[edges[e]].to]); //length of edge edges[e].
+                     f2+=fabs(d-state.dij[edges[e]]);
+                  }
+               }
+               if (f2>=f1){ // swap back
+                  Point h=state.nw.nodes[i];
+                  state.nw.nodes[i].setPoint(state.nw.nodes[j]);
+                  state.nw.nodes[j].setPoint(h);
+               } else {
+                  // positions have changed; start all over again
+                  i=0;
+                  j=0;
+               }
+            }
+         }
+      }
+   }      
+}
+// helpers
 int _find(VI* nd,int idx){
    int n=nd->size();
    int i;
