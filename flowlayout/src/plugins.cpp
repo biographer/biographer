@@ -29,6 +29,86 @@ plugin& Plugins::get(int idx){
 }
 
 // Plugin definitions
+int _find(VI* nd,int idx);
+double _getwidths(Network &nw,VI* nd);
+void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp){
+   /* This function quickly generates an initial layout, using the edge information.
+   That is, for each reaction, we try to place subtrates in above, products in below and others on sides.
+   The eventual position of a node is an average: sum of expected positions divided by number of occurrences.
+   */
+   double cost1,cost2;
+   int n=state.nw.nodes.size(), m=state.nw.edges.size();
+   int i, n1, n2;
+   VI* nd;
+   Edgetype _type;
+   for(i=0;i<m;i++){
+      _type=state.nw.edges[i].type;
+      n1=state.nw.edges[i].from; //reaction.
+      n2=state.nw.edges[i].to; //compound.
+      if(_type==product){
+         //product should be below the reaction.
+         //accumulating sum of expected positions (movements).
+         nd=state.nw.getNeighbors(n1,product);
+         int sz=nd->size();
+         int idx=_find(nd,n2); // get position of product in product list
+         double width=_getwidths(state.nw,nd); // sum of width of all products
+         double left=width*(sz-1)/sz;
+         double step=0;
+         if (sz>1) step=2*left/(sz-1);
+         state.mov[n1].y+=(state.nw.nodes[n2].y+state.dij[i]);
+         state.mov[n2].y+=(state.nw.nodes[n1].y-state.dij[i]);
+         state.mov[n1].x+=state.nw.nodes[n2].x+left-idx*step;// postioning nodes left and right of reaction depending on how many products
+         state.mov[n2].x+=state.nw.nodes[n1].x-left+idx*step;
+         delete nd;
+      }
+      else if(_type==substrate){
+         //substrate should be above the reaction.
+         //accumulating sum of expected positions (movements).
+         nd=state.nw.getNeighbors(n1,substrate);
+         int sz=nd->size();
+         int idx=_find(nd,n2); // get position of substrate in product list
+         double width=_getwidths(state.nw,nd); // sum of width of all substrates
+         double left=width*(sz-1)/sz;
+         double step=0;
+         if (sz>1) step=2*left/(sz-1);
+         state.mov[n1].y+=(state.nw.nodes[n2].y-state.dij[i]);
+         state.mov[n2].y+=(state.nw.nodes[n1].y+state.dij[i]);
+         state.mov[n1].x+=state.nw.nodes[n2].x+left-idx*step; // postioning nodes left and right of reaction depending on how many substrates
+         state.mov[n2].x+=state.nw.nodes[n1].x-left+idx*step;
+         delete nd;
+      }
+      else{
+         //others on sides (the nearer side)
+         //accumulating sum of expected positions (movements).
+         /*         cost1=fabs((state.nw.nodes[n1].x-state.dij[i])-state.mov[n2].x/state.deg[n2]);  // this assumes that mon has been completely accumulated
+         cost2=fabs((state.nw.nodes[n1].x+state.dij[i])-state.mov[n2].x/state.deg[n2]);*/
+         cost1=fabs((state.nw.nodes[n1].x-state.dij[i])-state.nw.nodes[n2].x);
+         cost2=fabs((state.nw.nodes[n1].x+state.dij[i])-state.nw.nodes[n2].x);
+         if(cost1<cost2){
+            state.mov[n2].x+=(state.nw.nodes[n1].x-state.dij[i]);
+            state.mov[n1].x+=(state.nw.nodes[n2].x+state.dij[i]);
+         }
+         else {
+            state.mov[n2].x+=(state.nw.nodes[n1].x+state.dij[i]);
+            state.mov[n1].x+=(state.nw.nodes[n2].x-state.dij[i]);
+         }
+         state.mov[n2].y+=state.nw.nodes[n1].y;
+         state.mov[n1].y+=state.nw.nodes[n2].y;
+         //here we do not move reaction node.
+      }         
+   }
+   for(i=0;i<n;i++){
+      if(state.deg[i]==0)continue; //seperate nodes (should this happen?)
+         state.mov[i].x/=state.deg[i]; state.mov[i].y/=state.deg[i]; //it is an average.
+         state.mov[i]-=state.nw.nodes[i]; // how much to move from current positions
+         /*      // move node towards expected positon
+         state.nw.nodes[i].x+=(state.mov[i].x-state.nw.nodes[i].x)/2; 
+      state.nw.nodes[i].y+=(state.mov[i].y-state.nw.nodes[i].y)/2;
+      state.mov[i].x=state.mov[i].y=0.0;*/
+   }
+}
+
+
 void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp){
    /* This function calculates the force induced by edges (or adjacent nodes), and updates the displacements (movements) of nodes accordingly.
       the force induced by an edge at its ideal length is 0. Otherwise, force=(ideal_length-length)^2.
@@ -351,83 +431,6 @@ double _getwidths(Network &nw,VI* nd){
       width+=nw.nodes[(*nd)[i]].width;
    }
    return width;
-}
-
-void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp){
-   /* This function quickly generates an initial layout, using the edge information.
-   That is, for each reaction, we try to place subtrates in above, products in below and others on sides.
-   The eventual position of a node is an average: sum of expected positions divided by number of occurrences.
-   */
-   double cost1,cost2;
-   int n=state.nw.nodes.size(), m=state.nw.edges.size();
-   int i, n1, n2;
-   VI* nd;
-   Edgetype _type;
-   for(i=0;i<m;i++){
-      _type=state.nw.edges[i].type;
-      n1=state.nw.edges[i].from; //reaction.
-      n2=state.nw.edges[i].to; //compound.
-      if(_type==product){
-         //product should be below the reaction.
-         //accumulating sum of expected positions (movements).
-         nd=state.nw.getNeighbors(n1,product);
-         int sz=nd->size();
-         int idx=_find(nd,n2); // get position of product in product list
-         double width=_getwidths(state.nw,nd); // sum of width of all products
-         double left=width*(sz-1)/sz;
-         double step=0;
-         if (sz>1) step=2*left/(sz-1);
-         state.mov[n1].y+=(state.nw.nodes[n2].y+state.dij[i]);
-         state.mov[n2].y+=(state.nw.nodes[n1].y-state.dij[i]);
-         state.mov[n1].x+=state.nw.nodes[n2].x+left-idx*step;// postioning nodes left and right of reaction depending on how many products
-         state.mov[n2].x+=state.nw.nodes[n1].x-left+idx*step;
-         delete nd;
-      }
-      else if(_type==substrate){
-         //substrate should be above the reaction.
-         //accumulating sum of expected positions (movements).
-         nd=state.nw.getNeighbors(n1,substrate);
-         int sz=nd->size();
-         int idx=_find(nd,n2); // get position of substrate in product list
-         double width=_getwidths(state.nw,nd); // sum of width of all substrates
-         double left=width*(sz-1)/sz;
-         double step=0;
-         if (sz>1) step=2*left/(sz-1);
-         state.mov[n1].y+=(state.nw.nodes[n2].y-state.dij[i]);
-         state.mov[n2].y+=(state.nw.nodes[n1].y+state.dij[i]);
-         state.mov[n1].x+=state.nw.nodes[n2].x+left-idx*step; // postioning nodes left and right of reaction depending on how many substrates
-         state.mov[n2].x+=state.nw.nodes[n1].x-left+idx*step;
-         delete nd;
-      }
-      else{
-         //others on sides (the nearer side)
-         //accumulating sum of expected positions (movements).
-         /*         cost1=fabs((state.nw.nodes[n1].x-state.dij[i])-state.mov[n2].x/state.deg[n2]);  // this assumes that mon has been completely accumulated
-         cost2=fabs((state.nw.nodes[n1].x+state.dij[i])-state.mov[n2].x/state.deg[n2]);*/
-         cost1=fabs((state.nw.nodes[n1].x-state.dij[i])-state.nw.nodes[n2].x);
-         cost2=fabs((state.nw.nodes[n1].x+state.dij[i])-state.nw.nodes[n2].x);
-         if(cost1<cost2){
-            state.mov[n2].x+=(state.nw.nodes[n1].x-state.dij[i]);
-            state.mov[n1].x+=(state.nw.nodes[n2].x+state.dij[i]);
-         }
-         else {
-            state.mov[n2].x+=(state.nw.nodes[n1].x+state.dij[i]);
-            state.mov[n1].x+=(state.nw.nodes[n2].x-state.dij[i]);
-         }
-         state.mov[n2].y+=state.nw.nodes[n1].y;
-         state.mov[n1].y+=state.nw.nodes[n2].y;
-         //here we do not move reaction node.
-      }         
-   }
-   for(i=0;i<n;i++){
-      if(state.deg[i]==0)continue; //seperate nodes (should this happen?)
-      state.mov[i].x/=state.deg[i]; state.mov[i].y/=state.deg[i]; //it is an average.
-      state.mov[i]-=state.nw.nodes[i]; // how much to move from current positions
-/*      // move node towards expected positon
-      state.nw.nodes[i].x+=(state.mov[i].x-state.nw.nodes[i].x)/2; 
-      state.nw.nodes[i].y+=(state.mov[i].y-state.nw.nodes[i].y)/2;
-      state.mov[i].x=state.mov[i].y=0.0;*/
-   }
 }
 
 
