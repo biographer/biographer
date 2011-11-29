@@ -1,6 +1,6 @@
 #include "network.h"
 #include "reactionlayout.cpp"
-
+#include "netdisplay.h"
 int main(int argc,char *argv[]){
    clock_t start_time, end_time;
    start_time=clock();

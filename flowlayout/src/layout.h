@@ -3,6 +3,9 @@
 #include "network.h"
 #include "functions.h"
 #include "plugins.h"
+#ifdef SHOWPROGRESS
+#include "netdisplay.h"
+#endif
 enum conditions{
    iterations=1<<0,relForceDiff=1<<1,temp=1<<2
 };
@@ -44,6 +47,10 @@ class Layouter{
       vector<step> program;
       bool forked_viewer;
       void showProgress(int cc);
+#ifdef SHOWPROGRESS
+      NetDisplay nd;
+      
+#endif
 };
 double get_dij(Network &nw,int i, int j);
 #endif

@@ -4,8 +4,12 @@
 double avg_sizes(Network &nw);
 void get_ideal_distances(Network &nw,VF &dij);
 void get_degrees(Network &nw,VI &deg);
+#ifdef SHOWPROGRESS
+Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs), nd(NetDisplay(_nw)){
+#else
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
-   /* create a Layouter object */
+#endif
+/* create a Layouter object */
    mov.resize(nw.nodes.size());
    movadd.resize(nw.nodes.size());
    avgsize=avg_sizes(nw);
@@ -14,6 +18,9 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
    show_progress=false;
    progress_step=1;
    forked_viewer=false;
+#ifdef SHOWPROGRESS
+   nd.waitKeyPress=true;
+#endif
 }
 
 void Layouter::stepAddPlugin(int step,enumP pg, double scale){
@@ -118,6 +125,9 @@ void Layouter::execute(){
          lastForce=force;
          moveNodes(program[s].limit_mov);
          if (show_progress && (cc>0 || s>0)) showProgress(cc);
+#ifdef SHOWPROGRESS
+         nd.show();
+#endif
          cc++;
       }
       if (show_progress) showProgress(0);
