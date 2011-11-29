@@ -24,7 +24,6 @@
 #define VR vector<Rect>
 #define VCP vector<Compartment>
 #define VF vector<double>
-#define PI 3.14159265
 
 using namespace std;
 

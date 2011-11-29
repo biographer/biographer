@@ -1,4 +1,6 @@
 #include "layout.h"
+#include "defines.h"
+
 double avg_sizes(Network &nw);
 void get_ideal_distances(Network &nw,VF &dij);
 void get_degrees(Network &nw,VI &deg);

@@ -1,5 +1,5 @@
 #include "functions.h"
-#define zero 1e-12
+#include "defines.h"
 
 Point operator+(const Point& p1, const Point& p2){
    //addition of two vectors

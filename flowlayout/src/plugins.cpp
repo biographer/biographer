@@ -1,5 +1,6 @@
 #include "plugins.h"
 #include "layout.h"
+#include "defines.h"
 Plugins glob_pgs;
 Plugins& register_plugins(){
    if (glob_pgs.size()) return glob_pgs; // already initialized

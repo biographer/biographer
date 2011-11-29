@@ -2,11 +2,6 @@
 #define th_plugins_h
 #include "types.h"
 
-#define inf 1e50
-#define zero 1e-12
-#define err 1e-4
-#define stop 1
-#define factor (1/10)
 enum enumP {
    //   init=1<<0,init_swap=1<<1,init_wComp=1<<2,adjForce=1<<3,nadjForc=1<<4,adjTorque=1<<5,checkCompartment=1<<6,adjustCompartment=1<<7,avoidOverlap=1<<8
    P_force_adj=1, P_torque_adj, P_force_nadj, P_separate_nodes, P_force_compartments, P_distribute_edges, P_adjust_compartments, P_init_layout
