@@ -28,6 +28,18 @@ Point& operator-=(Point& p1, const Point& p2){
    p1.y-=p2.y;
    return p1;   
 }
+Point& operator*=(Point& p1, const double scalar){
+   //vector p1 minus vector p2 (inplace)
+   p1.x*=scalar;
+   p1.y*=scalar;
+   return p1;   
+}
+Point& operator/=(Point& p1, const double scalar){
+   //vector p1 minus vector p2 (inplace)
+   p1.x/=scalar;
+   p1.y/=scalar;
+   return p1;   
+}
 
 
 double operator*(const Point& p1, const Point& p2){
