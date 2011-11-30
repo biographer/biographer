@@ -9,6 +9,9 @@ Point& operator-=(Point& p1, const Point& p2);  //substration of two vectors (in
 double operator*(const Point& p1, const Point& p2);  //cross-product (vector product) of two vectors.
 Point operator*(const Point& p1, const double scalar); //scale vector
 Point operator/(const Point& p1, const double scalar); //scale vector
+Point& operator*=(Point& p1, const double scalar);
+Point& operator/=(Point& p1, const double scalar);
+
 Point unit(const Point& p1); // unit vector
 Point to_left(const Point& p0, const double beta);  //rotating the vector "p0" "beta" degrees to the left.
 
