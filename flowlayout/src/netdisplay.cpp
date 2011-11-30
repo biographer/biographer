@@ -25,6 +25,8 @@ NetDisplay::~NetDisplay(){
 }
 void NetDisplay::processEvents(){
    XEvent e;
+   //if (!waitKeyPress) usleep(100000);
+   //XFlush(dpy);
    while(waitKeyPress || XCheckWindowEvent(dpy,win,0,&e)) {
       if (waitKeyPress) XNextEvent(dpy, &e);
       if(e.type==Expose && e.xexpose.count<1) {
@@ -37,7 +39,11 @@ void NetDisplay::processEvents(){
             sizeY=sy;
             cairo_xlib_surface_set_size( cs , sx , sy );
          }
-      } else if(e.type==ButtonPress) break;
+      } else if(e.type==ButtonPress) {
+         if (e.xbutton.button==Button2 || e.xbutton.button==Button3) waitKeyPress=!waitKeyPress;
+         break;
+      }
+      //XFlush(dpy);
    }
 }
 const unsigned short ccols[10][3]={{0,0,255},{0,255,0},{255,0,0},{255,255,0},{0,255,255},{255,0,255},{128,0,255},{0,128,255},{255,128,0},{0,255,128}};
@@ -55,13 +61,13 @@ void NetDisplay::show(){
 	cairo_set_source_rgb (c, 255, 255, 255); 
 	cairo_paint (c); // clear screen
    // calculate bbox
-/*   for (i=0;i<sc;i++){
+   for (i=1;i<sc;i++){
       const Compartment &cp=net.compartments[i];
       if (xmin>cp.xmin) xmin=cp.xmin;
       if (ymin>cp.ymin) ymin=cp.ymin;
       if (xmax<cp.xmax) xmax=cp.xmax;
       if (ymax<cp.ymax) ymax=cp.ymax;
-   }*/
+   }
    for (i=0;i<sn;i++){
       const Node &n=net.nodes[i];
       if (xmin>n.x-n.width/2) xmin=n.x-n.width/2;
@@ -78,10 +84,10 @@ void NetDisplay::show(){
    cairo_scale(c,scale,scale);
    cairo_translate(c,-xmin,-ymin);
    // draw compartments
-   for (i=0;i<sc;i++){
+   for (i=1;i<sc;i++){
       const Compartment &cp=net.compartments[i];
       if (i<10) cairo_set_source_rgb(c,ccols[i][0],ccols[i][1],ccols[i][2]);
-      cairo_rectangle(c,cp.xmin,cp.ymin,cp.xmax,cp.ymax);
+      cairo_rectangle(c,cp.xmin,cp.ymin,cp.xmax-cp.xmin,cp.ymax-cp.ymin);
       cairo_stroke(c);
    }
    // draw nodes
@@ -130,6 +136,7 @@ void NetDisplay::show(){
       }
    }
    cairo_show_page(c);
+   cairo_surface_flush(cs);
    cairo_destroy(c);
    processEvents();
 }
