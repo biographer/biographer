@@ -30,7 +30,7 @@ void NetDisplay::processEvents(){
    while(waitKeyPress || XCheckWindowEvent(dpy,win,0,&e)) {
       if (waitKeyPress) XNextEvent(dpy, &e);
       if(e.type==Expose && e.xexpose.count<1) {
-         show();
+         draw();
       } else if (e.type==ConfigureNotify){
          int sx=e.xconfigure.width;
          int sy=e.xconfigure.height;
@@ -46,8 +46,12 @@ void NetDisplay::processEvents(){
       //XFlush(dpy);
    }
 }
-const unsigned short ccols[10][3]={{0,0,255},{0,255,0},{255,0,0},{255,255,0},{0,255,255},{255,0,255},{128,0,255},{0,128,255},{255,128,0},{0,255,128}};
 void NetDisplay::show(){
+   draw();
+   processEvents();
+}
+const unsigned short ccols[10][3]={{0,0,255},{0,255,0},{255,0,0},{255,255,0},{0,255,255},{255,0,255},{128,0,255},{0,128,255},{255,128,0},{0,255,128}};
+void NetDisplay::draw(){
    cairo_t *c;
    int i;
    int sc=net.compartments.size();
@@ -138,5 +142,4 @@ void NetDisplay::show(){
    cairo_show_page(c);
    cairo_surface_flush(cs);
    cairo_destroy(c);
-   processEvents();
 }

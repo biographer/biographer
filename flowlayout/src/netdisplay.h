@@ -26,6 +26,6 @@ class NetDisplay{
       int sizeX,sizeY;
       cairo_surface_t *cs;
       void processEvents();
-      
+      void draw();
 };
 #endif
