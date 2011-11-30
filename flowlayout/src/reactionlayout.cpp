@@ -4,7 +4,7 @@
 
 void reactionlayout(Layouter& l){
    l.stepAddPlugin(0,P_init_layout);
-   l.stepAddEndCondition(0,C_relForceDiff,0.0005);
+   l.stepAddEndCondition(0,C_relMovLimit,0.05);
    l.stepLimitMov(0,false);
 
    l.stepAddPlugin(1,P_adjust_compartments);
