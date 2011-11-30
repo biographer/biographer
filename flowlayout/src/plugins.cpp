@@ -104,6 +104,7 @@ void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp
       if(state.deg[i]==0)continue; //seperate nodes (should this happen?)
          state.mov[i].x/=state.deg[i]; state.mov[i].y/=state.deg[i]; //it is an average.
          state.mov[i]-=state.nw.nodes[i]; // how much to move from current positions
+         state.mov[i]/=2;
          /*      // move node towards expected positon
          state.nw.nodes[i].x+=(state.mov[i].x-state.nw.nodes[i].x)/2; 
       state.nw.nodes[i].y+=(state.mov[i].y-state.nw.nodes[i].y)/2;
