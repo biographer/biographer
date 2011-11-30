@@ -16,6 +16,7 @@ Point unit(const Point& p1); // unit vector
 Point to_left(const Point& p0, const double beta);  //rotating the vector "p0" "beta" degrees to the left.
 
 double norm(const Point& p); //norm (length) of a vector.
+double manh(const Point& p);
 double angle(const Point& p); // angle of a vector (w.r.t +x axis), within range [0.5PI, 1.5PI].
 double dist(const Point& p1, const Point& p2); //the distance between point p1 and p2.
 double lim(double beta); //make an angle to fit in range [-PI, PI]

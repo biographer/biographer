@@ -79,6 +79,10 @@ double norm(const Point& p){
    //norm (length) of a vector.
    return sqrt(p.x*p.x+p.y*p.y);
 }
+double manh(const Point& p){
+   // manhattan norm of p
+   return fabs(p.x)+fabs(p.y);
+}
 
 double angle(const Point& p){
    // angle of a vector (w.r.t +x axis), within range [0.5PI, 1.5PI].
