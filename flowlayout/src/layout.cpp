@@ -58,14 +58,16 @@ void Layouter::stepAddEndCondition(int step, conditions cond, double param, doub
    /* adds an end condition for a algorithm step */
    initStep(step);
    program[step].end=program[step].end | cond;
-   if (cond==iterations){ // end condition for a constant number of iterations
+   if (cond==C_iterations){ // end condition for a constant number of iterations
       program[step].c_iterations=(int) param;
-   } else if (cond==relForceDiff){ // end condition for a certain relative force
+   } else if (cond==C_relForceDiff){ // end condition for a certain relative change in total force
       program[step].c_relForceDiff=param;
-   } else if (cond==temp){ // end condition "temperature" dependent
-      // if relForce is below the limit, temp is increased until step liomit is reached
-      program[step].c_tempRelForce=param;
-      program[step].c_tempSteps=(int) param2;
+   } else if (cond==C_relMovLimit){ // end condition for avg movement smaller than avg node size * param1
+      program[step].c_relMovLimit=param;
+   } else if (cond==C_temp){ // end condition "temperature" dependent
+      // needs also other end conditions!!!
+      // if one of the other conditions is fullfilled temp is decreased until step limit is reached
+      program[step].c_tempSteps=(int) param;
    }
 }
 void Layouter::execute(){
@@ -116,14 +118,25 @@ void Layouter::execute(){
                }
             }
          }
-         printf("\rforce: %0.4f\n",force);
-         if (lastForce<0) lastForce=2*force; //workaround for first loop where lastForce is not yet defined
-         if (force!=force) break; // emergency break
-         if (force==0) break; // immidiate break
-         if (program[s].end & iterations) end=(cc>=program[s].c_iterations);
-         if (program[s].end & relForceDiff) end=(fabs(lastForce-force)/force<program[s].c_relForceDiff);
-         lastForce=force;
+         printf("\rtotal force: %0.4f\n",totalForce);
+         if (lastForce<0) lastForce=2*totalForce; //workaround for first loop where lastForce is not yet defined
+         if (totalForce!=totalForce) break; // emergency break (nan)
+         if (totalMov!=totalMov) break; // emergency break (nan)
+         if (totalForce==0) break; // immidiate break
+         if (totalMov==0) break; // immidiate break
+
          moveNodes(program[s].limit_mov);
+                     
+         if (program[s].end & C_iterations) end=(cc>=program[s].c_iterations); // limited number of iterations
+         if (program[s].end & C_relForceDiff) end=(fabs(lastForce-totalForce)/totalForce<program[s].c_relForceDiff); // relative change in total force
+         if (program[s].end & C_relMovLimit) end=(totalMov/num/avgsize<program[s].c_relMovLimit); //avg movement compared to avg size
+
+         if (end && program[s].end & C_temp){
+            temp-=1/program[s].c_tempSteps;// decrease temperature if one of the other conditions is fullfilled
+            lastForce=-1; // reset 
+            if (temp>0) end=false;
+         }
+         lastForce=totalForce;
          if (show_progress && (cc>0 || s>0)) showProgress(cc);
 #ifdef SHOWPROGRESS
          nd.show();

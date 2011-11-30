@@ -7,7 +7,7 @@
 #include "netdisplay.h"
 #endif
 enum conditions{
-   iterations=1<<0,relForceDiff=1<<1,temp=1<<2
+   C_iterations=1<<0,C_relForceDiff=1<<1,C_temp=1<<2,C_relMovLimit=1<<3
 };
 
 struct step{
@@ -16,8 +16,8 @@ struct step{
    unsigned long end;
    int c_iterations;
    double c_relForceDiff;
-   double c_tempRelForce;
    int c_tempSteps;
+   double c_relMovLimit;
    bool limit_mov;
 };
 
