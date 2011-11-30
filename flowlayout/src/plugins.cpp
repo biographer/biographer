@@ -151,8 +151,11 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp){
          //move the nodes along the edge so as to adjusting the edge to its ideal length.
          
          //state.mov[n2].x+=(vec.x/d*(ideal-d)/n);
-         state.mov[n2]+=vec/d*(ideal-d)*factor*scale;
-         state.mov[n1]-=vec/d*(ideal-d)*factor*scale;
+         Point mv=vec/d*(ideal-d)*factor*scale;
+         state.mov[n2]+=mv;
+         state.mov[n1]-=mv;
+         state.force[n1]+=manh(mv);
+         state.force[n2]+=manh(mv);
       }
    }
 }
@@ -214,8 +217,10 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp)
          state.mov[n2].y=0;
          beta=-beta;
       } else {
-         state.mov[n2]+=to_left(vec,factor*scale*beta)-vec;//angular movement; 
+         Point mv=to_left(vec,factor*scale*beta)-vec;
+         state.mov[n2]+=mv;//angular movement; 
          state.rot[n1]-=(factor*scale*beta); //adjust the default direction of the reaction a little bit (to the opposite direaction).
+         state.force[n2]+=manh(mv);
       }
    }
    
@@ -259,6 +264,8 @@ void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp)
          }
          state.mov[n1]-=vec*factor*scale;
          state.mov[n2]+=vec*factor*scale;
+         state.force[n1]+=manh(vec*factor*scale);
+         state.force[n2]+=manh(vec*factor*scale);
          
 /*         state.mov[n1].x+=(vec.x/n);state.mov[n1].y+=(vec.y/n); //two nodes repel each other, along the line connecting them.
          state.mov[n2].x-=(vec.x/n);state.mov[n2].y-=(vec.y/n); //two nodes repel each other, along the line connecting them.*/
@@ -282,8 +289,11 @@ void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double t
          if (fabs(vec.y)>dh+0.1*state.avgsize) continue;
          dw=(dw<fabs(vec.x) ? (1-(fabs(vec.x)-dw)/(0.1*state.avgsize))*10000 : 10000); //lin. incr. force from distance 0.1*state.avgsize to 0; 1000000 if touching
          dh=(dh<fabs(vec.x) ? (1-(fabs(vec.y)-dh)/(0.1*state.avgsize))*10000 : 10000);
-         state.mov[n1]-=unit(vec)*(dw+dh)*scale;
-         state.mov[n2]+=unit(vec)*(dw+dh)*scale;
+         Point mv=unit(vec)*(dw+dh)*scale;
+         state.mov[n1]-=mv;
+         state.mov[n2]+=mv;
+         state.force[n1]+=manh(mv);
+         state.force[n2]+=manh(mv);
       }
    }
 }
@@ -305,18 +315,22 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
       if(state.nw.nodes[i].x-state.nw.nodes[i].width<state.nw.compartments[comp].xmin){ //if it is outside the its compartment.
          w=state.nw.compartments[comp].xmin-state.nw.nodes[i].x+state.nw.nodes[i].width; //calculate the x-displacement to its nearest point inside the compartment.
          state.mov[i].x+=w*scale*factor*(1+9*(1-temp)); // for lower temperatures (temp=0..1) forces increase
+         state.force[i]+=w*scale*factor*(1+9*(1-temp));
       }
       if(state.nw.nodes[i].x+state.nw.nodes[i].width>state.nw.compartments[comp].xmax){
          w=state.nw.compartments[comp].xmax-state.nw.nodes[i].x-state.nw.nodes[i].width;
          state.mov[i].x+=w*scale*factor*(1+9*(1-temp));
+         state.force[i]+=w*scale*factor*(1+9*(1-temp));
       }
       if(state.nw.nodes[i].y-state.nw.nodes[i].height<state.nw.compartments[comp].ymin){ //if it is outside the its compartment.
          w=state.nw.compartments[comp].ymin-state.nw.nodes[i].y+state.nw.nodes[i].height; //calculate the y-displacement to its nearest point inside the compartment.
          state.mov[i].y+=w*scale*factor*(1+9*(1-temp));
+         state.force[i]+=w*scale*factor*(1+9*(1-temp));
       }
       if(state.nw.nodes[i].y+state.nw.nodes[i].height>state.nw.compartments[comp].ymax){
          w=state.nw.compartments[comp].ymax-state.nw.nodes[i].y-state.nw.nodes[i].height;
          state.mov[i].y+=w*scale*factor*(1+9*(1-temp));
+         state.force[i]+=w*scale*factor*(1+9*(1-temp));
       }
    }
 }      
@@ -355,13 +369,16 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
          average=lim(lim(angle(state.nw.nodes[(*neighbors)[jj]]-baseNode))+beta2/2);
          beta=lim(average-lim(angle(vec))); //angle difference (from edge-i to the bisector).
          d=dist(state.nw.nodes[(*neighbors)[i]],baseNode);
+         Point mv;
          if (state.nw.nodes[k].type==reaction){
             // we don't do this for reactions at the moment
 //            state.mov[(*neighbors)[i]]+=(to_left(vec,beta*strength_rea)-vec)*(state.avgsize/norm(vec));
-            state.mov[(*neighbors)[i]]+=(to_left(vec,beta*factor*scale*strength_rea)-vec);
+            mv=(to_left(vec,beta*factor*scale*strength_rea)-vec);
          } else {
-            state.mov[(*neighbors)[i]]+=(to_left(vec,beta*factor*scale)-vec);
+            mv=(to_left(vec,beta*factor*scale)-vec);
          }
+         state.mov[(*neighbors)[i]]+=mv;
+         state.force[(*neighbors)[i]]+=manh(mv);
       }
       delete neighbors; // we should delete neighbors in the loop as it is generated in each iteration.
    }
