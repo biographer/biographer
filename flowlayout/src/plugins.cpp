@@ -4,23 +4,25 @@
 Plugins glob_pgs;
 Plugins& register_plugins(){
    if (glob_pgs.size()) return glob_pgs; // already initialized
-   glob_pgs.registerPlugin(P_force_adj,force_adj);
-   glob_pgs.registerPlugin(P_torque_adj,torque_adj);
-   glob_pgs.registerPlugin(P_force_nadj,force_nadj);
-   glob_pgs.registerPlugin(P_separate_nodes,separate_nodes);
-   glob_pgs.registerPlugin(P_force_compartments,force_compartments);
-   glob_pgs.registerPlugin(P_distribute_edges,distribute_edges);
-   glob_pgs.registerPlugin(P_adjust_compartments,adjust_compartments);
-   glob_pgs.registerPlugin(P_init_layout,init_layout);
+   glob_pgs.registerPlugin(P_force_adj,"force_adj",force_adj);
+   glob_pgs.registerPlugin(P_torque_adj,"torque_adj",torque_adj);
+   glob_pgs.registerPlugin(P_force_nadj,"force_nadj",force_nadj);
+   glob_pgs.registerPlugin(P_separate_nodes,"separate_nodes",separate_nodes);
+   glob_pgs.registerPlugin(P_force_compartments,"force_compartments",force_compartments);
+   glob_pgs.registerPlugin(P_distribute_edges,"distribute_edges",distribute_edges);
+   glob_pgs.registerPlugin(P_adjust_compartments,"adjust_compartments",adjust_compartments);
+   glob_pgs.registerPlugin(P_init_layout,"init_layout",init_layout);
    return glob_pgs;
 }
-void Plugins::registerPlugin(enumP pgn, plugin_func_ptr pfunc, void* persist){
+void Plugins::registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, bool modpos, void* persist){
    int idx=(int) pgn;
    if ((int) pluginlist.size()<idx+1) pluginlist.resize(idx+1);
    pluginlist[idx].pfunc=pfunc;
 /*   pluginlist[idx].mod_mov=mod_mov;
    pluginlist[idx].mod_rot=mod_rot;*/
    pluginlist[idx].persist=persist;
+   pluginlist[idx].modpos=modpos;
+   pluginlist[idx].name=name;
 }
 size_t Plugins::size(){
    return pluginlist.size();

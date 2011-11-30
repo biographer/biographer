@@ -15,12 +15,13 @@ struct plugin{
    plugin_func_ptr pfunc;
    //   VP last;
    void* persist;
-   bool mod_mov,mod_rot;
+   bool modpos;
+   string name;
 };
 class Plugins{
    public:
       Plugins(){} 
-      void registerPlugin(enumP pgn, plugin_func_ptr pfunc, void* persist=NULL);
+      void registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, bool modpos=false, void* persist=NULL);
       size_t size();
       plugin& get(int idx);
    private:
