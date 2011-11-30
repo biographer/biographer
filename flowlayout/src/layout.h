@@ -31,7 +31,7 @@ class Layouter{
       void execute();
       Network& nw;
       VP mov;
-      VF movadd;
+      VF force;
       VF rot;
       VF dij;
       VI deg;
@@ -43,7 +43,6 @@ class Layouter{
       Plugins& plugins;
       void initStep(int step);
       void moveNodes(bool limit);
-      double maxForce;
       vector<step> program;
       bool forked_viewer;
       void showProgress(int cc);

@@ -11,7 +11,7 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
 #endif
 /* create a Layouter object */
    mov.resize(nw.nodes.size());
-   movadd.resize(nw.nodes.size());
+   force.resize(nw.nodes.size());
    avgsize=avg_sizes(nw);
    get_ideal_distances(nw,dij);
    get_degrees(nw,deg);
@@ -80,7 +80,7 @@ void Layouter::execute(){
 /*   VP pg_mov;pg_mov.resize(num);
    VF pg_rot;pg_rot  .resize(num);*/
    double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
-   double force,lastForce=-1;
+   double maxForce,totalForce,totalMov,lastForce=-1;
    mov.resize(num);
    rot.resize(num);
    tension.resize(num);
@@ -89,6 +89,11 @@ void Layouter::execute(){
       int cc=0;
       bool end=false;
       int pls=program[s].actplugins.size();
+      printf("step %d\n",s);
+      for (p=0;p<pls;p++){
+         printf("%s ",plugins.get(program[s].actplugins[p]).name.c_str());
+      }
+      printf("\n");
       while (!end){
          for (p=0;p<pls;p++){
             int pidx=program[s].actplugins[p];
@@ -97,32 +102,34 @@ void Layouter::execute(){
             if (pg.mod_rot) pg_rot.assign(num,0.0);*/
             pg.pfunc(*this,pg,program[s].scales[p],cc,temp);
 /*            for (i=0;i<num;i++){
-               if (pg.mod_mov) {
-                  mov[i]+=pg_mov[i]*program[s].scales[p];
-                  movadd[i]+=fabs(pg_mov[i].x*program[s].scales[p]);
-                  movadd[i]+=fabs(pg_mov[i].y*program[s].scales[p]);
-                  if (maxForce<movadd[i]) maxForce=movadd[i];
-               }
-               if (pg.mod_rot) rot[i]+=pg_rot[i]*program[s].scales[p];
+               mov[i]+=pg_mov[i]*program[s].scales[p];
+               force[i]+=fabs(pg_mov[i].x*program[s].scales[p]);
+               force[i]+=fabs(pg_mov[i].y*program[s].scales[p]);
+//               if (pg.mod_rot) rot[i]+=pg_rot[i]*program[s].scales[p];
             }*/
             
          }
-         force=0.0;
+         totalForce=0.0;
+         totalMov=0.0;
+         maxForce=0.0;
          for (i=0;i<num;i++){
-            force+=(fabs(mov[i].x)+fabs(mov[i].y));
-            force+=rot[i];
+            if (maxForce<force[i]) maxForce=force[i];
+         }
+         for (i=0;i<num;i++){ // calculated tension
+            totalForce+=force[i];
+            totalMov+=manh(mov[i]);
             tension[i]=false;
-            if (movadd[i]>0.8*maxForce){ // high relative force on node
-               if ((fabs(mov[i].x)+fabs(mov[i].y))/movadd[i]<0.1){ // effective force is low compared to added up force (force equilibrium)
+            if (force[i]>0.8*maxForce){ // high relative force on node
+               if (manh(mov[i])/force[i]<0.1){ // effective force is low compared to added up force (force equilibrium)
                   tension[i]=true;
                }
             }
          }
-         printf("\rtotal force: %0.4f\n",totalForce);
+         printf("\rtotal force: %0.4f, total move: %0.4f\n",totalForce,totalMov);
          if (lastForce<0) lastForce=2*totalForce; //workaround for first loop where lastForce is not yet defined
          if (totalForce!=totalForce) break; // emergency break (nan)
          if (totalMov!=totalMov) break; // emergency break (nan)
-         if (totalForce==0) break; // immidiate break
+         if (lastForce>0 && totalForce==0) break; // immidiate break ( there exist plugins which do not use force at all -> check lastForce)
          if (totalMov==0) break; // immidiate break
 
          moveNodes(program[s].limit_mov);
