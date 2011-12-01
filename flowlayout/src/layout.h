@@ -7,18 +7,23 @@
 #include "netdisplay.h"
 #endif
 enum conditions{
-   C_iterations=1<<0,C_relForceDiff=1<<1,C_temp=1<<2,C_relMovLimit=1<<3
+   C_iterations=1<<0,C_relForceDiff=1<<1,C_temp=1<<2,C_relMovLimit=1<<3,C_maxMovLimit=1<<4,C_totForceInc=1<<5
 };
 
-struct step{
-   VI actplugins;
-   VF scales;
-   unsigned long end;
-   int c_iterations;
-   double c_relForceDiff;
-   int c_tempSteps;
-   double c_relMovLimit;
-   bool limit_mov;
+class step{
+   public:
+      step():endc(0),limit_mov(true){}
+      VI actplugins;
+      VF scales;
+      unsigned long endc;
+      int c_iterations;
+      double c_relForceDiff;
+      int c_tempSteps;
+      double c_relMovLimit;
+      double c_maxMovLimit;
+      int c_totForceInc;
+      int c_totForceIncCC;
+      bool limit_mov;
 };
 
 class Layouter{
@@ -32,7 +37,6 @@ class Layouter{
       Network& nw;
       VP mov;
       VF force;
-      VF rot;
       VF dij;
       VI deg;
       vector<bool> tension;

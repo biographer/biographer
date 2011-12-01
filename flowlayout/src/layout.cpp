@@ -18,7 +18,7 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
 #endif
 }
 void Layouter::init(){
-   rot.resize(nw.nodes.size());
+//   rot.resize(nw.nodes.size());
    tension.resize(nw.nodes.size());
    mov.resize(nw.nodes.size());
    force.resize(nw.nodes.size());
@@ -50,25 +50,29 @@ void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg
 void Layouter::initStep(int step){
    /* initializes data structure for new step */
    if ((int) program.size()<step+1) program.resize(step+1);
-   program[step].end=0;
-   program[step].limit_mov=true;
    
 }
 void Layouter::stepLimitMov(int step,bool limit){
    /* set movement limitation of nodes per iteration in step */
+   initStep(step);
    program[step].limit_mov=limit;
 }
 
 void Layouter::stepAddEndCondition(int step, conditions cond, double param, double param2){ // warning: cond should code for only one condition
    /* adds an end condition for a algorithm step */
    initStep(step);
-   program[step].end=program[step].end | cond;
+   program[step].endc=program[step].endc | cond;
    if (cond==C_iterations){ // end condition for a constant number of iterations
       program[step].c_iterations=(int) param;
    } else if (cond==C_relForceDiff){ // end condition for a certain relative change in total force
       program[step].c_relForceDiff=param;
    } else if (cond==C_relMovLimit){ // end condition for avg movement smaller than avg node size * param1
       program[step].c_relMovLimit=param;
+   } else if (cond==C_maxMovLimit){ // end condition for max movement smaller than avg node size * param1
+      program[step].c_maxMovLimit=param;
+   } else if (cond==C_totForceInc){ // 
+      program[step].c_totForceInc=3*(int) param;
+      program[step].c_totForceIncCC=3*(int) param;
    } else if (cond==C_temp){ // end condition "temperature" dependent
       // needs also other end conditions!!!
       // if one of the other conditions is fullfilled temp is decreased until step limit is reached
@@ -85,7 +89,7 @@ void Layouter::execute(){
 /*   VP pg_mov;pg_mov.resize(num);
    VF pg_rot;pg_rot  .resize(num);*/
    double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
-   double maxForce,totalForce,totalMov,lastForce=-1;
+   double maxForce,totalForce,maxMov,totalMov,lastForce=-1;
    init();
    int prs=program.size();
    for (s=0;s<prs;s++){
@@ -115,12 +119,15 @@ void Layouter::execute(){
          totalForce=0.0;
          totalMov=0.0;
          maxForce=0.0;
+         maxMov=0.0;
          for (i=0;i<num;i++){
             if (maxForce<force[i]) maxForce=force[i];
          }
          for (i=0;i<num;i++){ // calculated tension
             totalForce+=force[i];
-            totalMov+=manh(mov[i]);
+            double mv=manh(mov[i]);
+            totalMov+=mv;
+            if (mv>maxMov) maxMov=mv;
             tension[i]=false;
             if (force[i]>0.8*maxForce){ // high relative force on node
                if (manh(mov[i])/force[i]<0.1){ // effective force is low compared to added up force (force equilibrium)
@@ -128,7 +135,7 @@ void Layouter::execute(){
                }
             }
          }
-         printf("\rtotal force: %0.4f, total move: %0.4f\n",totalForce,totalMov);
+         printf("\rtot.force: %0.4f, tot.mov: %0.4f, temp: %0.4f, max.force: %0.4f, max.mov: %0.4f, forceIncCC: %d",totalForce,totalMov,temp,maxForce,maxMov,program[s].c_totForceIncCC);fflush(stdout);
          if (lastForce<0) lastForce=2*totalForce; //workaround for first loop where lastForce is not yet defined
          if (totalForce!=totalForce) break; // emergency break (nan)
          if (totalMov!=totalMov) break; // emergency break (nan)
@@ -137,13 +144,24 @@ void Layouter::execute(){
 
          moveNodes(program[s].limit_mov);
                      
-         if (program[s].end & C_iterations) end=(cc>=program[s].c_iterations); // limited number of iterations
-         if (program[s].end & C_relForceDiff) end=(fabs(lastForce-totalForce)/totalForce<program[s].c_relForceDiff); // relative change in total force
-         if (program[s].end & C_relMovLimit) end=(totalMov/num/avgsize<program[s].c_relMovLimit); //avg movement compared to avg size
-
-         if (end && program[s].end & C_temp){
-            temp-=1/program[s].c_tempSteps;// decrease temperature if one of the other conditions is fullfilled
+         if (program[s].endc & C_iterations) end|=(cc>=program[s].c_iterations); // limited number of iterations
+         if (program[s].endc & C_totForceInc) {
+            if (lastForce<totalForce){
+               program[s].c_totForceIncCC-=3;
+            } else {
+               program[s].c_totForceIncCC++;
+               if (program[s].c_totForceIncCC>program[s].c_totForceInc) program[s].c_totForceIncCC=program[s].c_totForceInc;
+            }
+            end|=(program[s].c_totForceIncCC<=0);
+         }
+         if (program[s].endc & C_relForceDiff) end|=(fabs(lastForce-totalForce)/totalForce<program[s].c_relForceDiff); // relative change in total force
+         if (program[s].endc & C_relMovLimit) end|=(totalMov/num/avgsize<program[s].c_relMovLimit); //avg movement compared to avg size
+         if (program[s].endc & C_maxMovLimit) end|=(maxMov/avgsize<program[s].c_maxMovLimit); //avg movement compared to avg size
+               
+         if (end && program[s].endc & C_temp){
+            temp-=1.0/(double)program[s].c_tempSteps;// decrease temperature if one of the other conditions is fullfilled
             lastForce=-1; // reset 
+            program[s].c_totForceIncCC=program[s].c_totForceInc; // reset
             if (temp>0) end=false;
          }
          lastForce=totalForce;
@@ -153,6 +171,7 @@ void Layouter::execute(){
 #endif
          cc++;
       }
+      printf("\n");
       if (show_progress) showProgress(0);
       
    }
@@ -171,10 +190,12 @@ void Layouter::moveNodes(bool limit){
       nw.nodes[i].y+=mov[i].y; //update position
       mov[i].x=mov[i].y=0.0; //set to zero.
       
-      if (rot[i]>0.25*PI) rot[i]=0.25*PI;  // limit rotation
-      if (rot[i]<-0.25*PI) rot[i]=-0.25*PI;
-      nw.nodes[i].dir=lim(nw.nodes[i].dir+rot[i]); //adjustes default direction.
-      rot[i]=0.0; //set to zero.
+//      if (rot[i]>0.25*PI) rot[i]=0.25*PI;  // limit rotation
+//      if (rot[i]<-0.25*PI) rot[i]=-0.25*PI;
+//      nw.nodes[i].dir=lim(nw.nodes[i].dir+rot[i]); //adjustes default direction.
+//      rot[i]=0.0; //set to zero.
+      
+      force[i]=0.0;
    }
    
 }
