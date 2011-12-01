@@ -34,6 +34,7 @@ plugin& Plugins::get(int idx){
 // Plugin definitions
 int _find(VI* nd,int idx);
 double _getwidths(Network &nw,VI* nd);
+double sign(double x);
 void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp){
    /* This function quickly generates an initial layout, using the edge information.
    That is, for each reaction, we try to place subtrates in above, products in below and others on sides.
@@ -154,7 +155,9 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp){
          //move the nodes along the edge so as to adjusting the edge to its ideal length.
          
          //state.mov[n2].x+=(vec.x/d*(ideal-d)/n);
-         Point mv=vec/d*(ideal-d)*factor*scale;
+/*         double nonlin=(ideal-d)/ideal*10;
+         nonlin*=nonlin;*/
+         Point mv=vec/d*(ideal-d)*factor*scale;//*nonlin;
          state.mov[n2]+=mv;
          state.mov[n1]-=mv;
          state.force[n1]+=manh(mv);
@@ -171,36 +174,57 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp)
    2. angular movement: we rotate the compound around the reaction such that the edge tends to be at the expected angle. 
    Then we also adjust the default direction of the reaction a little bit.      
    */
-   double d,alpha,i_alpha,beta;
-   Point vec; //vector from state.nw.nodes[n1] to state.nw.nodes[n2];
-   int n1,n2,m,n,i;
-   Edgetype _type;
+   int m,n,i,j;
    m=state.nw.edges.size();
    n=state.nw.nodes.size();
+   for (i=0;i<n;i++){ // set direction of reactions
+      if (state.nw.nodes[i].type!=reaction) continue;
+      const VI &nb=state.nw.nodes[i].neighbors;
+      int s=nb.size();
+      double alpha=0;
+      int cc=0;
+      for (j=0;j<s;j++){
+         Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+         int n2=state.nw.edges[nb[j]].to; // reactant index
+         Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+         if (_type==substrate) {
+            alpha+=lim(angle(vec)-0.5*PI);
+            cc++;
+         } else if (_type==product) {
+            alpha+=lim(angle(vec)+0.5*PI);
+            cc++;
+         } else {
+            // ignoring modulators (as we don't know which side is better)
+         }
+      }
+      state.nw.nodes[i].dir=alpha/cc; // WARNING never use lim on alpha (the lim for the product above is ok)
+   }
    for(i=0;i<m;i++){
       //angular force;
-      n1=state.nw.edges[i].from; //reaction
-      n2=state.nw.edges[i].to; //compound;
-      _type=state.nw.edges[i].type; //edge type.
+      int n1=state.nw.edges[i].from; //reaction
+      int n2=state.nw.edges[i].to; //compound;
+      Edgetype _type=state.nw.edges[i].type; //edge type.
       
-      vec=state.nw.nodes[n2]-state.nw.nodes[n1];
-      d=dist(state.nw.nodes[n1],state.nw.nodes[n2]); //length of edge-i.
+      Point vec=state.nw.nodes[n2]-state.nw.nodes[n1];//vector from state.nw.nodes[n1] to state.nw.nodes[n2];
+      double d=dist(state.nw.nodes[n1],state.nw.nodes[n2]); //length of edge-i.
 
-      alpha=angle(vec); //angle of the edge w.r.t. the +x axis. i_alpha is the corresponding ideal angle.
+      double alpha=angle(vec); //angle of the edge w.r.t. the +x axis. i_alpha is the corresponding ideal angle.
+      double i_alpha;
+      double beta;
       if(_type==substrate){
          //substates in above.
-         i_alpha=0.5*PI+state.rot[n1];
+         i_alpha=0.5*PI+state.nw.nodes[n1].dir;
          beta=lim(i_alpha-alpha);
       }         
       else if(_type==product){
          //products in below.
-         i_alpha=1.5*PI+state.rot[n1];
+         i_alpha=1.5*PI+state.nw.nodes[n1].dir;
          beta=lim(i_alpha-alpha);
       }
       else{ 
          //other compounds, rotating to the nearer side.
-         i_alpha=state.rot[n1]; beta=lim(i_alpha-alpha);
-         double i_alpha1=PI+state.rot[n1], beta1=lim(i_alpha1-alpha);
+         i_alpha=state.nw.nodes[n1].dir; beta=lim(i_alpha-alpha);
+         double i_alpha1=PI+state.nw.nodes[n1].dir, beta1=lim(i_alpha1-alpha);
          if(fabs(beta)>fabs(beta1)){
             beta=beta1;
             i_alpha=i_alpha1;
@@ -222,7 +246,7 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp)
       } else {
          Point mv=to_left(vec,factor*scale*beta)-vec;
          state.mov[n2]+=mv;//angular movement; 
-         state.rot[n1]-=(factor*scale*beta); //adjust the default direction of the reaction a little bit (to the opposite direaction).
+//         state.rot[n1]-=(factor*scale*beta); //adjust the default direction of the reaction a little bit (to the opposite direaction).
          state.force[n2]+=manh(mv);
       }
    }
@@ -312,26 +336,27 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
    int i,comp;
    int n=state.nw.nodes.size();
    double w;
+   double d=state.avgsize/10;
    for(i=0;i<n;i++){
       comp=state.nw.nodes[i].compartment; //the compartment which node-i belongs to.
       if(comp==0)continue; //the compartment is the whole plane.
-      if(state.nw.nodes[i].x-state.nw.nodes[i].width<state.nw.compartments[comp].xmin){ //if it is outside the its compartment.
-         w=state.nw.compartments[comp].xmin-state.nw.nodes[i].x+state.nw.nodes[i].width; //calculate the x-displacement to its nearest point inside the compartment.
+      if(state.nw.nodes[i].x-state.nw.nodes[i].width/2-d<state.nw.compartments[comp].xmin){ //if it is outside the its compartment.
+         w=state.nw.compartments[comp].xmin-state.nw.nodes[i].x+state.nw.nodes[i].width/2+d; //calculate the x-displacement to its nearest point inside the compartment.
          state.mov[i].x+=w*scale*factor*(1+9*(1-temp)); // for lower temperatures (temp=0..1) forces increase
          state.force[i]+=w*scale*factor*(1+9*(1-temp));
       }
-      if(state.nw.nodes[i].x+state.nw.nodes[i].width>state.nw.compartments[comp].xmax){
-         w=state.nw.compartments[comp].xmax-state.nw.nodes[i].x-state.nw.nodes[i].width;
+      if(state.nw.nodes[i].x+state.nw.nodes[i].width/2+d>state.nw.compartments[comp].xmax){
+         w=state.nw.compartments[comp].xmax-state.nw.nodes[i].x-state.nw.nodes[i].width/2-d;
          state.mov[i].x+=w*scale*factor*(1+9*(1-temp));
          state.force[i]+=w*scale*factor*(1+9*(1-temp));
       }
-      if(state.nw.nodes[i].y-state.nw.nodes[i].height<state.nw.compartments[comp].ymin){ //if it is outside the its compartment.
-         w=state.nw.compartments[comp].ymin-state.nw.nodes[i].y+state.nw.nodes[i].height; //calculate the y-displacement to its nearest point inside the compartment.
+      if(state.nw.nodes[i].y-state.nw.nodes[i].height/2-d<state.nw.compartments[comp].ymin){ //if it is outside the its compartment.
+         w=state.nw.compartments[comp].ymin-state.nw.nodes[i].y+state.nw.nodes[i].height/2+d; //calculate the y-displacement to its nearest point inside the compartment.
          state.mov[i].y+=w*scale*factor*(1+9*(1-temp));
          state.force[i]+=w*scale*factor*(1+9*(1-temp));
       }
-      if(state.nw.nodes[i].y+state.nw.nodes[i].height>state.nw.compartments[comp].ymax){
-         w=state.nw.compartments[comp].ymax-state.nw.nodes[i].y-state.nw.nodes[i].height;
+      if(state.nw.nodes[i].y+state.nw.nodes[i].height/2+d>state.nw.compartments[comp].ymax){
+         w=state.nw.compartments[comp].ymax-state.nw.nodes[i].y-state.nw.nodes[i].height/2-d;
          state.mov[i].y+=w*scale*factor*(1+9*(1-temp));
          state.force[i]+=w*scale*factor*(1+9*(1-temp));
       }
@@ -395,20 +420,20 @@ void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, dou
    */
    int n=state.nw.nodes.size(),cn=state.nw.compartments.size();
    int i,j,comp;  
-   double xdelta,ydelta; 
    for(comp=1;comp<cn;comp++){ //the 0-th compartment is the infinite plane, so we start from index 1.
       //initialization the rectangles.
       state.nw.compartments[comp].xmin=state.nw.compartments[comp].ymin=inf;
       state.nw.compartments[comp].xmax=state.nw.compartments[comp].ymax=-inf;
-   }  
+   }
+   double d=state.avgsize/10; // minimum distance to node boundaries
    for(i=0;i<n;i++){
       //adjusting the compartments to bbox of containing nodes; considering node sizes
       comp=state.nw.nodes[i].compartment;
       if(comp==0)continue;
-      if(state.nw.nodes[i].x-state.nw.nodes[i].width<state.nw.compartments[comp].xmin) state.nw.compartments[comp].xmin=state.nw.nodes[i].x-state.nw.nodes[i].width;
-      if(state.nw.nodes[i].x+state.nw.nodes[i].width>state.nw.compartments[comp].xmax) state.nw.compartments[comp].xmax=state.nw.nodes[i].x+state.nw.nodes[i].width;
-      if(state.nw.nodes[i].y-state.nw.nodes[i].height<state.nw.compartments[comp].ymin) state.nw.compartments[comp].ymin=state.nw.nodes[i].y-state.nw.nodes[i].height;
-      if(state.nw.nodes[i].y+state.nw.nodes[i].height>state.nw.compartments[comp].ymax) state.nw.compartments[comp].ymax=state.nw.nodes[i].y+state.nw.nodes[i].height;
+      if(state.nw.nodes[i].x-state.nw.nodes[i].width/2-d<state.nw.compartments[comp].xmin) state.nw.compartments[comp].xmin=state.nw.nodes[i].x-state.nw.nodes[i].width/2-d;
+      if(state.nw.nodes[i].x+state.nw.nodes[i].width/2+d>state.nw.compartments[comp].xmax) state.nw.compartments[comp].xmax=state.nw.nodes[i].x+state.nw.nodes[i].width/2+d;
+      if(state.nw.nodes[i].y-state.nw.nodes[i].height/2-d<state.nw.compartments[comp].ymin) state.nw.compartments[comp].ymin=state.nw.nodes[i].y-state.nw.nodes[i].height/2-d;
+      if(state.nw.nodes[i].y+state.nw.nodes[i].height/2+d>state.nw.compartments[comp].ymax) state.nw.compartments[comp].ymax=state.nw.nodes[i].y+state.nw.nodes[i].height/2+d;
    }
 /*   for(comp=1;comp<cn;comp++){
       //changed ----> adjusting the compartments so that its tends to be the corresponding minimum rectangles.
@@ -423,17 +448,22 @@ void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, dou
       for (j=i+1;j<cn;j++){
       //adjusting the compartments so that there is no gap between adjacent ones.
       // Note: there is no force to bring compartments together if they don't overlap. this force should come from the connections between the compartments
-         xdelta=0.0;
-         ydelta=0.0;
-         if (state.nw.compartments[i].xmax>state.nw.compartments[j].xmin) xdelta=state.nw.compartments[i].xmax-state.nw.compartments[j].xmin;
-         if (state.nw.compartments[j].xmax>state.nw.compartments[i].xmin) xdelta=-(state.nw.compartments[j].xmax-state.nw.compartments[i].xmin);
-         if (state.nw.compartments[i].ymax>state.nw.compartments[j].ymin) ydelta=state.nw.compartments[i].ymax-state.nw.compartments[j].ymin;
-         if (state.nw.compartments[j].ymax>state.nw.compartments[i].ymin) ydelta=-(state.nw.compartments[j].ymax-state.nw.compartments[i].ymin);
-         if (xdelta*ydelta==0) continue; // no overlap
-         xdelta*=0.5*(1+(factor*scale-1)*temp);// each compartment should go half way (for temp==0);
-         ydelta*=0.5*(1+(factor*scale-1)*temp);// each compartment should go half way (for temp==0);
-         state.nw.compartments[i].translate(-xdelta,-ydelta);
-         state.nw.compartments[i].translate(-xdelta,-ydelta);
+         const Compartment &cpi=state.nw.compartments[i];
+         const Compartment &cpj=state.nw.compartments[j];
+         Point vec=cpj.center()-cpi.center();
+         if (2*fabs(vec.x)<cpi.size().x+cpj.size().x && 2*fabs(vec.y)<cpi.size().y+cpj.size().y){ // the 2 compartments overlap
+            if (fabs(vec.x)>fabs(vec.y)){ // move in x direction
+               double d=sign(vec.x)*((cpi.size().x+cpj.size().x)/2-vec.x);
+               d*=0.5*(1+(factor*scale-1)*temp);// each compartment should go half way (for temp==0);
+               state.nw.compartments[i].translate(-d,0);
+               state.nw.compartments[j].translate(d,0);
+            } else {
+               double d=sign(vec.y)*((cpi.size().y+cpj.size().y)/2-vec.y);
+               d*=0.5*(1+(factor*scale-1)*temp);// each compartment should go half way (for temp==0);
+               state.nw.compartments[i].translate(0,-d);
+               state.nw.compartments[j].translate(0,d);
+            }
+         }
       }
    }
 }
@@ -530,8 +560,9 @@ double _getwidths(Network &nw,VI* nd){
    }
    return width;
 }
-
-
+inline double sign(double x){
+   return (x < 0) ? -1 : (x > 0);
+}
 #ifdef old
 
 double swap_force(int p1, int p2){
