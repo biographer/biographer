@@ -84,16 +84,8 @@ double manh(const Point& p){
    return fabs(p.x)+fabs(p.y);
 }
 
-double angle(const Point& p){
-   // angle of a vector (w.r.t +x axis), within range [0.5PI, 1.5PI].
-   return atan2(p.y,p.x);
-/*   if(p.x==0){
-      if(p.y>=0)return 0.5*PI;
-      else return -0.5*PI;
-   }
-   double alpha=atan(p.y/p.x);
-   if(p.x<0)alpha+=PI; //make sure it fit in range [0.5PI, 1.5PI].
-   return alpha;*/
+double angle(const Point& p){ // angle of vector p 0 is x-axis
+   return atan2(p.y,p.x); //in range [-PI, PI].
 }
 
 double dist(const Point& p1, const Point& p2){
