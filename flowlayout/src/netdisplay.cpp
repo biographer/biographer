@@ -59,8 +59,8 @@ void NetDisplay::draw(){
    int se=net.edges.size();
    double xmin=DBL_MAX;
    double ymin=DBL_MAX;
-   double xmax=DBL_MIN;
-   double ymax=DBL_MIN;
+   double xmax=-DBL_MAX;
+   double ymax=-DBL_MAX;
    c=cairo_create(cs); // cairo context
 	cairo_set_source_rgb (c, 255, 255, 255); 
 	cairo_paint (c); // clear screen
