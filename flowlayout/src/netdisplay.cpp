@@ -79,11 +79,11 @@ void NetDisplay::draw(){
       if (xmax<n.x+n.width/2) xmax=n.x+n.width/2;
       if (ymax<n.y+n.height/2) ymax=n.y+n.height/2;
    }
-   printf("bbox (%f,%f) - (%f,%f)\n",xmin,ymin,xmax,ymax);
+//   printf("bbox (%f,%f) - (%f,%f)\n",xmin,ymin,xmax,ymax);
    // set tranforms according to bbox
    double scale= ((double) sizeX)/(xmax-xmin);
    if (((double) sizeY)/(ymax-ymin)<scale) scale=((double) sizeY)/(ymax-ymin);
-   printf("dpy: (%d,%d); user: (%f,%f); scale %f\n",sizeX,sizeY,xmax-xmin,ymax-ymin,scale);
+//   printf("dpy: (%d,%d); user: (%f,%f); scale %f\n",sizeX,sizeY,xmax-xmin,ymax-ymin,scale);
    cairo_set_line_width (c, 1/scale);
    cairo_scale(c,scale,scale);
    cairo_translate(c,-xmin,-ymin);
@@ -93,20 +93,26 @@ void NetDisplay::draw(){
       if (i<10) cairo_set_source_rgb(c,ccols[i][0],ccols[i][1],ccols[i][2]);
       cairo_rectangle(c,cp.xmin,cp.ymin,cp.xmax-cp.xmin,cp.ymax-cp.ymin);
       cairo_stroke(c);
+//      printf("Compartment %s: (%f,%f - %f,%f) (org)\n",cp.name.c_str(),cp.xmin,cp.ymin,cp.xmax,cp.ymax);
    }
    // draw nodes
-   cairo_set_source_rgb (c, 0,0,0); 
    for (i=0;i<sn;i++){
       const Node &n=net.nodes[i];
       double x=n.x;
       double y=n.y;
       cairo_user_to_device(c,&x,&y);
-      printf("Node %s: %f,%f (%f,%f) -> %f,%f\n",n.name.c_str(),n.x,n.y,n.width,n.height,x,y);
+//      printf("Node %s: %f,%f (%f,%f) -> %f,%f\n",n.name.c_str(),n.x,n.y,n.width,n.height,x,y);
+      cairo_set_source_rgb (c, 0,0,0); 
       cairo_rectangle(c,n.x-n.width/2,n.y-n.height/2,n.width,n.height);
       cairo_stroke(c);
       cairo_move_to(c,n.x-n.width/2,n.y-n.height/2);
       cairo_show_text(c,n.name.c_str());
+      cairo_set_source_rgb (c, 255,0,0); 
+      cairo_move_to(c,n.x,n.y);
+      cairo_line_to(c,n.x+n.width/2*cos(n.dir),n.y+n.width/2*sin(n.dir));
+      cairo_stroke(c);
    }
+   cairo_set_source_rgb (c, 0,0,0); 
    for (i=0;i<se;i++){
       const Edge &e=net.edges[i];
       const Node &n1=net.nodes[e.from];
@@ -128,7 +134,7 @@ void NetDisplay::draw(){
       alpha_h=fabs(n2.height/(2*dy));
       if (alpha_h<alpha2) alpha2=alpha_h;
       if (alpha1+alpha2>=1.0){
-         printf("edge completely covered\n");
+//         printf("edge completely covered\n");
       } else {
          x1+=dx*alpha1;
          y1+=dy*alpha1;
