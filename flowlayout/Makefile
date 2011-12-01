@@ -25,5 +25,7 @@ netdisplay.o: netdisplay.cpp netdisplay.h network.h types.h
 #test: layout_test.cpp network.o layout.o functions.o
 #	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)test $<
 #
-dist-edges: test_dist_edges.cpp default
+dist_edges: test_dist_edges.cpp default
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_dist_edges $<
+rea_torque: test_rea_torque.cpp default
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_rea_torque $<
