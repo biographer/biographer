@@ -357,7 +357,7 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
       baseNode=state.nw.nodes[k];
       for(i=0;i<m-1;i++) //1. sorting the edges in increasing order (by angle).
          for(j=i+1;j<m;j++)
-            if(lim(angle(state.nw.nodes[(*neighbors)[j]]-baseNode)+state.rot[k])<lim(angle(state.nw.nodes[(*neighbors)[i]]-baseNode)+state.rot[k])){
+            if(lim(angle(state.nw.nodes[(*neighbors)[j]]-baseNode))<lim(angle(state.nw.nodes[(*neighbors)[i]]-baseNode))){
                tem=(*neighbors)[i];(*neighbors)[i]=(*neighbors)[j];(*neighbors)[j]=tem;
             }               
       for(i=0;i<m;i++){
@@ -381,7 +381,8 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
             mv=(to_left(vec,beta*factor*scale)-vec);
          }
          state.mov[(*neighbors)[i]]+=mv;
-         state.force[(*neighbors)[i]]+=manh(mv);
+         state.mov[k]-=mv;
+         state.force[(*neighbors)[i]]+=2*manh(mv);
       }
       delete neighbors; // we should delete neighbors in the loop as it is generated in each iteration.
    }
