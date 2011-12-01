@@ -175,7 +175,7 @@ void Network::read(const char* file){
       Nodetype _type;
       char s[100],t[100];
       float _x,_y, _width, _height,_dir;
-      FILE* old_stdin=stdin;
+//      FILE* old_stdin=stdin;
       printf("importing network\n");
       infile=(char *) file;
       if (file) freopen(file,"r",stdin);
@@ -249,6 +249,7 @@ void Network::read(const char* file){
          }
          addEdge(p,q,(Edgetype)k);
       }
+      freopen("/dev/tty","r",stdin);
    } catch (char* err){
       cout << err <<endl;
       abort();
