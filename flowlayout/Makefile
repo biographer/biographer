@@ -25,5 +25,5 @@ netdisplay.o: netdisplay.cpp netdisplay.h network.h types.h
 #test: layout_test.cpp network.o layout.o functions.o
 #	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)test $<
 #
-#firm-dist: test_firm_dist.cpp default
-#	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)test_firm_dist $<
+dist-edges: test_dist_edges.cpp default
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_dist_edges $<
