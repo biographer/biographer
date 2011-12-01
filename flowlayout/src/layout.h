@@ -43,9 +43,11 @@ class Layouter{
       Plugins& plugins;
       void initStep(int step);
       void moveNodes(bool limit);
+      void init();
       vector<step> program;
       bool forked_viewer;
       void showProgress(int cc);
+      
 #ifdef SHOWPROGRESS
       NetDisplay nd;
       

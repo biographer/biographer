@@ -10,11 +10,6 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs), nd(NetDis
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
 #endif
 /* create a Layouter object */
-   mov.resize(nw.nodes.size());
-   force.resize(nw.nodes.size());
-   avgsize=avg_sizes(nw);
-   get_ideal_distances(nw,dij);
-   get_degrees(nw,deg);
    show_progress=false;
    progress_step=1;
    forked_viewer=false;
@@ -22,6 +17,16 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
    nd.waitKeyPress=true;
 #endif
 }
+void Layouter::init(){
+   rot.resize(nw.nodes.size());
+   tension.resize(nw.nodes.size());
+   mov.resize(nw.nodes.size());
+   force.resize(nw.nodes.size());
+   avgsize=avg_sizes(nw);
+   get_ideal_distances(nw,dij);
+   get_degrees(nw,deg);
+}
+
 
 void Layouter::stepAddPlugin(int step,enumP pg, double scale){
    /* adds a plugin to a step of the layout algorithm */
@@ -81,9 +86,7 @@ void Layouter::execute(){
    VF pg_rot;pg_rot  .resize(num);*/
    double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
    double maxForce,totalForce,totalMov,lastForce=-1;
-   mov.resize(num);
-   rot.resize(num);
-   tension.resize(num);
+   init();
    int prs=program.size();
    for (s=0;s<prs;s++){
       int cc=0;
