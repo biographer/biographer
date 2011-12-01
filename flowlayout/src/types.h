@@ -54,6 +54,12 @@ class Rect{
          ymin+=y;
          ymax+=y;
       }
+      Point center() const{
+         return Point((xmax+xmin)/2,(ymax+ymin)/2);
+      }
+      Point size() const{
+         return Point(fabs(xmax-xmin),fabs(ymax-ymin));
+      }
       double xmin, ymin, xmax, ymax;
 
 };
