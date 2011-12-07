@@ -1,6 +1,7 @@
 #include "plugins.h"
 #include "layout.h"
 #include "defines.h"
+#include "paramedge.cpp"
 Plugins glob_pgs;
 Plugins& register_plugins(){
    if (glob_pgs.size()) return glob_pgs; // already initialized
@@ -12,6 +13,7 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_distribute_edges,"distribute_edges",distribute_edges);
    glob_pgs.registerPlugin(P_adjust_compartments,"adjust_compartments",adjust_compartments);
    glob_pgs.registerPlugin(P_init_layout,"init_layout",init_layout);
+   glob_pgs.registerPlugin(P_min_edge_crossing,"min_edge_crossing",min_edge_crossing);
    return glob_pgs;
 }
 void Plugins::registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, bool modpos, void* persist){
@@ -542,6 +544,65 @@ void swap_reactants(Layouter &state,plugin& pg, double scale, int iter, double t
       }
    }      
 }
+
+void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, double temp){
+   int m=state.nw.edges.size();
+   int i,j;
+   for (i=0;i<m;i++){
+      for (j=i+1;j<m;j++){
+         int ni1=state.nw.edges[i].from;
+         int ni2=state.nw.edges[i].to;
+         int nj1=state.nw.edges[j].from;
+         int nj2=state.nw.edges[j].to;
+         if (ni1==nj1 || ni1==nj2 || ni2==nj1 || ni2==nj2) continue; // ignore adjacent edges
+         ParamEdge pi=ParamEdge(state.nw.nodes[ni1],state.nw.nodes[ni2]);
+         ParamEdge pj=ParamEdge(state.nw.nodes[nj1],state.nw.nodes[nj2]);
+         pi.extend((state.nw.nodes[ni1].width+state.nw.nodes[ni1].height)/2,(state.nw.nodes[ni2].width+state.nw.nodes[ni2].height)/2); // entend edges a bit to consider nodes sizes
+         pj.extend((state.nw.nodes[nj1].width+state.nw.nodes[nj1].height)/2,(state.nw.nodes[nj2].width+state.nw.nodes[nj2].height)/2);
+         if (pi.cross(pj)){
+            if (state.deg[ni1]==1){
+               double p=pi.cross_param(pj);
+               Point vec=pi.unit()*p*factor*scale;
+               state.mov[ni1]+=vec;
+               state.force[ni1]+=manh(vec);
+               state.mov[nj1]-=vec/2;
+               state.force[nj1]+=manh(vec)/2;
+               state.mov[nj2]-=vec/2;
+               state.force[nj2]+=manh(vec)/2;
+            } else if (state.deg[ni2]==1){
+               double p=pi.length()-pi.cross_param(pj);
+               Point vec=-pi.unit()*p*factor*scale;
+               state.mov[ni1]+=vec;
+               state.force[ni1]+=manh(vec);
+               state.mov[nj1]+=vec/2;
+               state.force[nj1]+=manh(vec)/2;
+               state.mov[nj2]+=vec/2;
+               state.force[nj2]+=manh(vec)/2;
+            }
+            if (state.deg[nj1]==1){
+               double p=pj.cross_param(pi);
+               Point vec=pj.unit()*p*factor*scale;
+               state.mov[nj1]+=vec;
+               state.force[nj1]+=manh(vec);
+               state.mov[ni1]-=vec/2;
+               state.force[ni1]+=manh(vec)/2;
+               state.mov[ni2]-=vec/2;
+               state.force[ni2]+=manh(vec)/2;
+            } else if (state.deg[nj2]==1){
+               double p=pj.length()-pj.cross_param(pi);
+               Point vec=-pj.unit()*p*factor*scale;
+               state.mov[nj1]+=vec;
+               state.force[nj1]+=manh(vec);
+               state.mov[ni1]+=vec/2;
+               state.force[ni1]+=manh(vec)/2;
+               state.mov[ni2]+=vec/2;
+               state.force[ni2]+=manh(vec)/2;
+            }
+         }
+      }
+   }
+}
+   
 // helpers
 int _find(VI* nd,int idx){
    int n=nd->size();
