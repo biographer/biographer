@@ -281,18 +281,18 @@ void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp)
             vec.y/=d;
          }*/
          if (d!=0){
-            vec.x*=(ideal-d)/d;
-            vec.x*=(ideal-d)/d;
+            vec.x*=(ideal-d)/d*factor*scale;
+            vec.y*=(ideal-d)/d*factor*scale;
 /*            vec.x*=((1/(d/ideal))-1)/d;
             vec.y*=((1/(d/ideal))-1)/d;*/
          } else {
-            vec.x=0.001*state.avgsize; // just displace the two a little bit;
-            vec.y=0.001*state.avgsize; // just displace the two a little bit;
+            vec.x=0.001*state.avgsize*factor*scale; // just displace the two a little bit;
+            vec.y=0.001*state.avgsize*factor*scale; // just displace the two a little bit;
          }
-         state.mov[n1]-=vec*factor*scale;
-         state.mov[n2]+=vec*factor*scale;
-         state.force[n1]+=manh(vec*factor*scale);
-         state.force[n2]+=manh(vec*factor*scale);
+         state.mov[n1]-=vec;
+         state.mov[n2]+=vec;
+         state.force[n1]+=manh(vec);
+         state.force[n2]+=manh(vec);
          
 /*         state.mov[n1].x+=(vec.x/n);state.mov[n1].y+=(vec.y/n); //two nodes repel each other, along the line connecting them.
          state.mov[n2].x-=(vec.x/n);state.mov[n2].y-=(vec.y/n); //two nodes repel each other, along the line connecting them.*/
