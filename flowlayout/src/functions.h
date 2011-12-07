@@ -4,6 +4,7 @@
 
 Point operator+(const Point& p1, const Point& p2);  //addition of two vectors.
 Point operator-(const Point& p1, const Point& p2);  //vector p1 minus p2.
+Point operator-(const Point& p1);
 Point& operator+=(Point& p1, const Point& p2);  //addition of two vectors (inplace).
 Point& operator-=(Point& p1, const Point& p2);  //substration of two vectors (inplace).
 double operator*(const Point& p1, const Point& p2);  //cross-product (vector product) of two vectors.

@@ -16,6 +16,11 @@ Point operator-(const Point& p1, const Point& p2){
    p.y=p1.y-p2.y;
    return p;   
 }
+Point operator-(const Point& p1){
+   //vector -p1
+   return Point(-p1.x,-p1.y);
+}
+
 Point& operator+=(Point& p1, const Point& p2){
    //vector p1 plus vector p2 (inplace)
    p1.x+=p2.x;
