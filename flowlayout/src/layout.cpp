@@ -241,7 +241,7 @@ double get_dij(Network &nw,int i, int j){
    //ideal distance between adjacent nodes;
    double x=nw.nodes[i].width * nw.nodes[i].width + nw.nodes[i].height * nw.nodes[i].height;
    double y=nw.nodes[j].width * nw.nodes[j].width + nw.nodes[j].height * nw.nodes[j].height;
-   return (sqrt(x)+sqrt(y))*0.3*log(1+nw.degree(i)+nw.degree(j));
+   return (sqrt(x)+sqrt(y))*0.6*log(1+nw.degree(i)+nw.degree(j));
 }
 void get_ideal_distances(Network &nw,VF &dij){
    /* This procedure computes the ideal lengths of edges (the ideal distances between adjacent nodes): dij[i],
