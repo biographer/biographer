@@ -26,13 +26,21 @@ void Layouter::init(){
    get_ideal_distances(nw,dij);
    get_degrees(nw,deg);
 }
-
-
+void Layouter::addStep(){ // adds one more step to the program
+   initStep(program.size());
+}
+void Layouter::stepAddPlugin(enumP pg, double scale){
+   stepAddPlugin(program.size()-1,pg,scale);
+}
 void Layouter::stepAddPlugin(int step,enumP pg, double scale){
    /* adds a plugin to a step of the layout algorithm */
    initStep(step);
    program[step].actplugins.push_back((int)pg);
    program[step].scales.push_back(scale);
+}
+void Layouter::stepAddPlugins(enumP pg1, enumP pg2, enumP pg3, enumP pg4, enumP pg5, enumP pg6, enumP pg7, enumP pg8, enumP pg9, 
+enumP pg10){ // this provides a way to add up to 10 enumP at once
+   stepAddPlugins(program.size()-1,pg1,pg2,pg3,pg4,pg5,pg6,pg7,pg8,pg9,pg10); 
 }
 void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg4, enumP pg5, enumP pg6, enumP pg7, enumP pg8, enumP pg9, enumP pg10){ // this provides a way to add up to 10 enumP at once
    /* can add several plugins at once (if no scale parameter is needed */
@@ -52,12 +60,17 @@ void Layouter::initStep(int step){
    if ((int) program.size()<step+1) program.resize(step+1);
    
 }
+void Layouter::stepLimitMov(bool limit){
+   stepLimitMov(program.size()-1,limit);
+}
 void Layouter::stepLimitMov(int step,bool limit){
    /* set movement limitation of nodes per iteration in step */
    initStep(step);
    program[step].limit_mov=limit;
 }
-
+void Layouter::stepAddEndCondition(conditions cond, double param, double param2){ // warning: cond should code for only one condition
+   stepAddEndCondition(program.size()-1,cond,param,param2);
+}
 void Layouter::stepAddEndCondition(int step, conditions cond, double param, double param2){ // warning: cond should code for only one condition
    /* adds an end condition for a algorithm step */
    initStep(step);

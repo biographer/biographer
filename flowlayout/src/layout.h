@@ -30,9 +30,14 @@ class Layouter{
    public:
       Layouter(Network& _nw,Plugins& _pgs);
       void stepAddPlugins(int step,enumP pg, enumP pg2=(enumP)0, enumP pg3=(enumP)0, enumP pg4=(enumP)0, enumP pg5=(enumP)0, enumP pg6=(enumP)0, enumP pg7=(enumP)0, enumP pg8=(enumP)0, enumP pg9=(enumP)0, enumP pg10=(enumP)0);
+      void stepAddPlugins(enumP pg, enumP pg2=(enumP)0, enumP pg3=(enumP)0, enumP pg4=(enumP)0, enumP pg5=(enumP)0, enumP pg6=(enumP)0, enumP pg7=(enumP)0, enumP pg8=(enumP)0, enumP pg9=(enumP)0, enumP pg10=(enumP)0);
       void stepAddPlugin(int step,enumP pg, double scale=1.0);
+      void stepAddPlugin(enumP pg, double scale=1.0);
       void stepAddEndCondition(int step, conditions cond, double param=NULL, double param2=NULL);
+      void stepAddEndCondition(conditions cond, double param=NULL, double param2=NULL);
       void stepLimitMov(int step, bool limit);
+      void stepLimitMov(bool limit);
+      void addStep();
       void execute();
       Network& nw;
       VP mov;
