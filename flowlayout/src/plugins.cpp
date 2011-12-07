@@ -208,7 +208,7 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp)
       Edgetype _type=state.nw.edges[i].type; //edge type.
       
       Point vec=state.nw.nodes[n2]-state.nw.nodes[n1];//vector from state.nw.nodes[n1] to state.nw.nodes[n2];
-      double d=dist(state.nw.nodes[n1],state.nw.nodes[n2]); //length of edge-i.
+//      double d=dist(state.nw.nodes[n1],state.nw.nodes[n2]); //length of edge-i.
 
       double alpha=angle(vec); //angle of the edge w.r.t. the +x axis. i_alpha is the corresponding ideal angle.
       double i_alpha;
