@@ -1,7 +1,9 @@
 #include "plugins.h"
 #include "layout.h"
 #include "defines.h"
+#include "netdisplay.h"
 #include "paramedge.cpp"
+
 Plugins glob_pgs;
 Plugins& register_plugins(){
    if (glob_pgs.size()) return glob_pgs; // already initialized
@@ -37,7 +39,7 @@ plugin& Plugins::get(int idx){
 int _find(VI* nd,int idx);
 double _getwidths(Network &nw,VI* nd);
 double sign(double x);
-void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function quickly generates an initial layout, using the edge information.
    That is, for each reaction, we try to place subtrates in above, products in below and others on sides.
    The eventual position of a node is an average: sum of expected positions divided by number of occurrences.
@@ -116,7 +118,7 @@ void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp
 }
 
 
-void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function calculates the force induced by edges (or adjacent nodes), and updates the displacements (movements) of nodes accordingly.
       the force induced by an edge at its ideal length is 0. Otherwise, force=(ideal_length-length)^2.
       we move both the compounds and the reaction along the edge such that the edge tends to its ideal length.
@@ -152,6 +154,7 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp){
             }
             _left=!_left;
          }
+         printf("force_adj: distance too small; nodes separated\n");
       }
       else{
          //move the nodes along the edge so as to adjusting the edge to its ideal length.
@@ -167,7 +170,7 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp){
       }
    }
 }
-void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function calculates the force induced by edges (or adjacent nodes), and updates the displacements (movements) of nodes accordingly.
    And this force is composed of two parts: distant part and angular part. 
    2. angular force: for a reaction, we expect that its substrates in above (+0.5PI direction), products in below (-0.5PI direaction),
@@ -248,14 +251,16 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp)
       } else {
          Point mv=to_left(vec,factor*scale*beta)-vec;
          state.mov[n2]+=mv;//angular movement; 
+         state.mov[n1]-=mv;
 //         state.rot[n1]-=(factor*scale*beta); //adjust the default direction of the reaction a little bit (to the opposite direaction).
          state.force[n2]+=manh(mv);
+         state.force[n1]+=manh(mv);
       }
    }
    
 }
 
-void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function computes the force induced by non-adjacent nodes, and updates the movements of nodes.
       The force is calculated in this manner:
         1. If the distance between node-n1 and node-n2 (d) is larger than or equal to the the minimum distance (dij2[n1][n2]), then the force is 0; else
@@ -302,7 +307,7 @@ void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp)
 }
 
 
-void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* similar to force_nadj, but much more agressive */
    int n1,n2,n=state.nw.nodes.size();
    double dw,dh;
@@ -327,7 +332,7 @@ void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double t
    }
 }
 
-void force_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void force_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function computes the force induced by compartments, and updates the movements of nodes.
       Compartments are boxes which constrain the nodes belonging to it inside.
       A node experiences force if it is outside its compartment: force=d*d, where d is the shortest distance between the node and its compartment.
@@ -365,7 +370,7 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
    }
 }      
          
-void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This procedure tries to distribute the edges incident on a node firmly: the angles btween them tends to be the same.
       This is done by:
          1. sorting the edges in increasing order (by angle).
@@ -414,7 +419,7 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
       delete neighbors; // we should delete neighbors in the loop as it is generated in each iteration.
    }
 }
-void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This procedure adjusts the boundaries of compartments, so that it tends the minimum rectangle contains all the nodes belongs to it.
    1. find the minimum reactangles that contains all the nodes belongs to the corresponding compartments.
    2. adjust the compartments such that they tend to become the corresponding minimum rectangles.
@@ -476,7 +481,7 @@ template <typename T>void vappend(vector<T>& v,const vector<T>& v2){
    v.insert(v.end(),v2.begin(),v2.end());
 }
 
-void swap_reactants(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void swap_reactants(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* this plugin swaps substrates, products or modulators among each other if this reduces the force on these nodes
    */
    int i,j,k,s,e,es,m;
@@ -545,7 +550,7 @@ void swap_reactants(Layouter &state,plugin& pg, double scale, int iter, double t
    }      
 }
 
-void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, double temp){
+void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int m=state.nw.edges.size();
    int i,j;
    for (i=0;i<m;i++){
@@ -557,8 +562,8 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
          if (ni1==nj1 || ni1==nj2 || ni2==nj1 || ni2==nj2) continue; // ignore adjacent edges
          ParamEdge pi=ParamEdge(state.nw.nodes[ni1],state.nw.nodes[ni2]);
          ParamEdge pj=ParamEdge(state.nw.nodes[nj1],state.nw.nodes[nj2]);
-         pi.extend((state.nw.nodes[ni1].width+state.nw.nodes[ni1].height)/2,(state.nw.nodes[ni2].width+state.nw.nodes[ni2].height)/2); // entend edges a bit to consider nodes sizes
-         pj.extend((state.nw.nodes[nj1].width+state.nw.nodes[nj1].height)/2,(state.nw.nodes[nj2].width+state.nw.nodes[nj2].height)/2);
+         pi.extend((state.nw.nodes[ni1].width+state.nw.nodes[ni1].height)/4,(state.nw.nodes[ni2].width+state.nw.nodes[ni2].height)/4); // entend edges a bit to consider nodes sizes
+         pj.extend((state.nw.nodes[nj1].width+state.nw.nodes[nj1].height)/4,(state.nw.nodes[nj2].width+state.nw.nodes[nj2].height)/4);
          if (pi.cross(pj)){
             if (state.deg[ni1]==1){
                double p=pi.cross_param(pj);
@@ -569,15 +574,25 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
                state.force[nj1]+=manh(vec)/2;
                state.mov[nj2]-=vec/2;
                state.force[nj2]+=manh(vec)/2;
+#ifdef SHOWPROGRESS
+               state.debug[ni1].push_back(forcevec(vec,debug));
+               state.debug[nj1].push_back(forcevec(-vec/2,debug));
+               state.debug[nj2].push_back(forcevec(-vec/2,debug));
+#endif
             } else if (state.deg[ni2]==1){
                double p=pi.length()-pi.cross_param(pj);
                Point vec=-pi.unit()*p*factor*scale;
                state.mov[ni1]+=vec;
                state.force[ni1]+=manh(vec);
-               state.mov[nj1]+=vec/2;
+               state.mov[nj1]-=vec/2;
                state.force[nj1]+=manh(vec)/2;
-               state.mov[nj2]+=vec/2;
+               state.mov[nj2]-=vec/2;
                state.force[nj2]+=manh(vec)/2;
+#ifdef SHOWPROGRESS
+               state.debug[ni2].push_back(forcevec(vec,debug));
+               state.debug[nj1].push_back(forcevec(-vec/2,debug));
+               state.debug[nj2].push_back(forcevec(-vec/2,debug));
+#endif
             }
             if (state.deg[nj1]==1){
                double p=pj.cross_param(pi);
@@ -588,15 +603,25 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
                state.force[ni1]+=manh(vec)/2;
                state.mov[ni2]-=vec/2;
                state.force[ni2]+=manh(vec)/2;
+#ifdef SHOWPROGRESS
+               state.debug[nj1].push_back(forcevec(vec,debug));
+               state.debug[ni1].push_back(forcevec(-vec/2,debug));
+               state.debug[ni2].push_back(forcevec(-vec/2,debug));
+#endif
             } else if (state.deg[nj2]==1){
                double p=pj.length()-pj.cross_param(pi);
                Point vec=-pj.unit()*p*factor*scale;
                state.mov[nj1]+=vec;
                state.force[nj1]+=manh(vec);
-               state.mov[ni1]+=vec/2;
+               state.mov[ni1]-=vec/2;
                state.force[ni1]+=manh(vec)/2;
-               state.mov[ni2]+=vec/2;
+               state.mov[ni2]-=vec/2;
                state.force[ni2]+=manh(vec)/2;
+#ifdef SHOWPROGRESS
+               state.debug[nj2].push_back(forcevec(vec,debug));
+               state.debug[ni1].push_back(forcevec(-vec/2,debug));
+               state.debug[ni2].push_back(forcevec(-vec/2,debug));
+#endif
             }
          }
       }

@@ -10,7 +10,7 @@ enum enumP {
 class Layouter;
 
 struct plugin;
-typedef void (*plugin_func_ptr)(Layouter &state,plugin& pg, double scale, int iter, double temp); // for callback of the plugins
+typedef void (*plugin_func_ptr)(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug); // for callback of the plugins
 struct plugin{
    plugin_func_ptr pfunc;
    //   VP last;
@@ -29,14 +29,14 @@ class Plugins{
 };
 
 Plugins& register_plugins();
-void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp);
-void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp);
-void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp);
-void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double temp);
-void force_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp);
-void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double temp);
-void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp);
-void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp);
-void swap_reactants(Layouter &state,plugin& pg, double scale, int iter, double temp);
-void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, double temp);
+void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void force_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void swap_reactants(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
 #endif

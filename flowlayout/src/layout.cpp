@@ -5,7 +5,7 @@ double avg_sizes(Network &nw);
 void get_ideal_distances(Network &nw,VF &dij);
 void get_degrees(Network &nw,VI &deg);
 #ifdef SHOWPROGRESS
-Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs), nd(NetDisplay(_nw)){
+Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs), nd(NetDisplay(_nw,debug)){
 #else
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
 #endif
@@ -22,6 +22,7 @@ void Layouter::init(){
    tension.resize(nw.nodes.size());
    mov.resize(nw.nodes.size());
    force.resize(nw.nodes.size());
+   debug.resize(nw.nodes.size());
    avgsize=avg_sizes(nw);
    get_ideal_distances(nw,dij);
    get_degrees(nw,deg);
@@ -121,7 +122,7 @@ void Layouter::execute(){
             plugin &pg=plugins.get(pidx);
 /*            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
             if (pg.mod_rot) pg_rot.assign(num,0.0);*/
-            pg.pfunc(*this,pg,program[s].scales[p],cc,temp);
+            pg.pfunc(*this,pg,program[s].scales[p],cc,temp,pidx);
 /*            for (i=0;i<num;i++){
                mov[i]+=pg_mov[i]*program[s].scales[p];
                force[i]+=fabs(pg_mov[i].x*program[s].scales[p]);
@@ -149,7 +150,7 @@ void Layouter::execute(){
                }
             }
          }
-         printf("\rtot.force: %0.4f, tot.mov: %0.4f, temp: %0.4f, max.force: %0.4f, max.mov: %0.4f, forceIncCC: %d",totalForce,totalMov,temp,maxForce,maxMov,program[s].c_totForceIncCC);fflush(stdout);
+         printf("\rstep: %i, it: %i, tot.force: %0.4f, tot.mov: %0.4f, temp: %0.4f, max.force: %0.4f, max.mov: %0.4f, forceIncCC: %d",s,cc,totalForce,totalMov,temp,maxForce,maxMov,program[s].c_totForceIncCC);fflush(stdout);
          if (lastForce<0) lastForce=2*totalForce; //workaround for first loop where lastForce is not yet defined
          if (totalForce!=totalForce) break; // emergency break (nan)
          if (totalMov!=totalMov) break; // emergency break (nan)
@@ -183,6 +184,9 @@ void Layouter::execute(){
 #ifdef SHOWPROGRESS
          if (--skip<=0) {
             skip=nd.show();
+         }
+         for (i=0;i<num;i++){
+            debug[i].clear();
          }
 #endif
          cc++;

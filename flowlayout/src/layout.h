@@ -25,7 +25,6 @@ class step{
       int c_totForceIncCC;
       bool limit_mov;
 };
-
 class Layouter{
    public:
       Layouter(Network& _nw,Plugins& _pgs);
@@ -45,6 +44,9 @@ class Layouter{
       VF dij;
       VI deg;
       vector<bool> tension;
+#ifdef SHOWPROGRESS
+      vector<vector<forcevec> > debug;
+#endif
       double avgsize;
       bool show_progress;
       int progress_step;

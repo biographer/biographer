@@ -2,21 +2,28 @@
 #include "netdisplay.h"
 #define SIZEX 640
 #define SIZEY 480
-NetDisplay::NetDisplay(const Network &n): waitKeyPress(false), net(n),sizeX(SIZEX),sizeY(SIZEY){
-	if(!(dpy=XOpenDisplay(NULL))) {
-		fprintf(stderr, "ERROR: Could not open display\n");
-		exit(1);
-	}
-	scr=DefaultScreen(dpy);
-	rootwin=RootWindow(dpy, scr);
+const vector<vector<forcevec> > dummy;
+NetDisplay::NetDisplay(const Network &n): waitKeyPress(false), net(n),sizeX(SIZEX),sizeY(SIZEY),forces(dummy),hasforces(false){
+   init();
+}
+NetDisplay::NetDisplay(const Network &n, vector<vector<forcevec> > &f): waitKeyPress(false), net(n),sizeX(SIZEX),sizeY(SIZEY),forces(f),hasforces(true){
+   init();
+}
+void NetDisplay::init(){
+   if(!(dpy=XOpenDisplay(NULL))) {
+      fprintf(stderr, "ERROR: Could not open display\n");
+      exit(1);
+   }
+   scr=DefaultScreen(dpy);
+   rootwin=RootWindow(dpy, scr);
 
-	win=XCreateSimpleWindow(dpy, rootwin, 1, 1, sizeX, sizeY, 0, 
-			BlackPixel(dpy, scr), BlackPixel(dpy, scr));
+   win=XCreateSimpleWindow(dpy, rootwin, 1, 1, sizeX, sizeY, 0, 
+         BlackPixel(dpy, scr), BlackPixel(dpy, scr));
 
-	XStoreName(dpy, win, "biographer-layout");
+   XStoreName(dpy, win, "biographer-layout");
    XSelectInput(dpy, win, ExposureMask|ButtonPressMask|KeyPressMask|StructureNotifyMask);
-	XMapWindow(dpy, win);
-	cs=cairo_xlib_surface_create(dpy, win, DefaultVisual(dpy, 0), sizeX, sizeY);
+   XMapWindow(dpy, win);
+   cs=cairo_xlib_surface_create(dpy, win, DefaultVisual(dpy, 0), sizeX, sizeY);
    processEvents();
 }
 NetDisplay::~NetDisplay(){
@@ -65,7 +72,7 @@ int NetDisplay::show(){
 const unsigned short ccols[10][3]={{0,0,255},{0,255,0},{255,0,0},{255,255,0},{0,255,255},{255,0,255},{128,0,255},{0,128,255},{255,128,0},{0,255,128}};
 void NetDisplay::draw(){
    cairo_t *c;
-   int i;
+   int i,j;
    int sc=net.compartments.size();
    int sn=net.nodes.size();
    int se=net.edges.size();
@@ -123,6 +130,16 @@ void NetDisplay::draw(){
       cairo_move_to(c,n.x,n.y);
       cairo_line_to(c,n.x+n.width/2*cos(n.dir),n.y+n.width/2*sin(n.dir));
       cairo_stroke(c);
+      if (hasforces){
+         for (j=0;j<forces[i].size();j++){
+            int col=forces[i][j].col;
+            const Point &v=forces[i][j].vec;
+            cairo_set_source_rgb(c,ccols[col][0],ccols[col][1],ccols[col][2]);
+            cairo_move_to(c,n.x,n.y);
+            cairo_line_to(c,n.x+v.x,n.y+v.y);
+            cairo_stroke(c);
+         }
+      }
    }
    cairo_set_source_rgb (c, 0,0,0); 
    for (i=0;i<se;i++){
