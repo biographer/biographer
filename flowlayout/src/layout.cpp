@@ -92,6 +92,7 @@ void Layouter::execute(){
    double maxForce,totalForce,maxMov,totalMov,lastForce=-1;
    init();
    int prs=program.size();
+   int skip=1;
    for (s=0;s<prs;s++){
       int cc=0;
       bool end=false;
@@ -167,7 +168,9 @@ void Layouter::execute(){
          lastForce=totalForce;
          if (show_progress && (cc>0 || s>0)) showProgress(cc);
 #ifdef SHOWPROGRESS
-         nd.show();
+         if (--skip<=0) {
+            skip=nd.show();
+         }
 #endif
          cc++;
       }

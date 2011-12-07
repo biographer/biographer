@@ -14,7 +14,7 @@ NetDisplay::NetDisplay(const Network &n): waitKeyPress(false), net(n),sizeX(SIZE
 			BlackPixel(dpy, scr), BlackPixel(dpy, scr));
 
 	XStoreName(dpy, win, "biographer-layout");
-   XSelectInput(dpy, win, ExposureMask|ButtonPressMask|StructureNotifyMask);
+   XSelectInput(dpy, win, ExposureMask|ButtonPressMask|KeyPressMask|StructureNotifyMask);
 	XMapWindow(dpy, win);
 	cs=cairo_xlib_surface_create(dpy, win, DefaultVisual(dpy, 0), sizeX, sizeY);
    processEvents();
@@ -27,6 +27,7 @@ void NetDisplay::processEvents(){
    XEvent e;
    //if (!waitKeyPress) usleep(100000);
    //XFlush(dpy);
+   stepnum=-1;
    while(waitKeyPress || XCheckWindowEvent(dpy,win,0,&e)) {
       if (waitKeyPress) XNextEvent(dpy, &e);
       if(e.type==Expose && e.xexpose.count<1) {
@@ -42,13 +43,24 @@ void NetDisplay::processEvents(){
       } else if(e.type==ButtonPress) {
          if (e.xbutton.button==Button2 || e.xbutton.button==Button3) waitKeyPress=!waitKeyPress;
          break;
+      } else if(e.type==KeyPress){
+         char* key=(XKeysymToString(XLookupKeysym(&e.xkey,0)));
+         //printf("key pressed: %c\n",key[0]);
+         if ((key[0]>='0') && (key[0]<='9')){
+            stepnum=atoi(key);
+            if (stepnum==0) stepnum=10;
+            if (stepnum>1) printf("progressing %i steps\n",stepnum);
+            break;
+         }
       }
       //XFlush(dpy);
    }
 }
-void NetDisplay::show(){
+int NetDisplay::show(){
    draw();
    processEvents();
+   if (stepnum<0) return 1;
+   return stepnum;
 }
 const unsigned short ccols[10][3]={{0,0,255},{0,255,0},{255,0,0},{255,255,0},{0,255,255},{255,0,255},{128,0,255},{0,128,255},{255,128,0},{0,255,128}};
 void NetDisplay::draw(){

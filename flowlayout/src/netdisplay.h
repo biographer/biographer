@@ -14,7 +14,7 @@ class NetDisplay{
    public:
       NetDisplay(const Network &n);
       ~NetDisplay();
-      void show();
+      int show();
       bool waitKeyPress;
    protected:
       const Network &net;
@@ -22,6 +22,7 @@ class NetDisplay{
       Window rootwin;
       Window win;
       XEvent e;
+      int stepnum;
       int scr;
       int sizeX,sizeY;
       cairo_surface_t *cs;
