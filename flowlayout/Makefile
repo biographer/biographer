@@ -29,3 +29,5 @@ dist_edges: test_dist_edges.cpp default
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_dist_edges $<
 rea_torque: test_rea_torque.cpp default
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_rea_torque $<
+min_cross: test_min_cross.cpp default
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_min_cross $<
