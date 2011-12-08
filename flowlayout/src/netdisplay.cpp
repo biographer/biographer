@@ -124,6 +124,9 @@ void NetDisplay::draw(){
       cairo_set_source_rgb (c, 0,0,0); 
       cairo_rectangle(c,n.x-n.width/2,n.y-n.height/2,n.width,n.height);
       cairo_stroke(c);
+      cairo_set_source_rgb(c,ccols[(int) n.type][0],ccols[(int) n.type][1],ccols[(int) n.type][2]);
+      cairo_rectangle(c,n.x-n.width/2+1,n.y-n.height/2+1,n.width-2,n.height-2);
+      cairo_stroke(c);
       cairo_move_to(c,n.x-n.width/2,n.y-n.height/2);
       cairo_show_text(c,n.name.c_str());
       cairo_set_source_rgb (c, 255,0,0); 
