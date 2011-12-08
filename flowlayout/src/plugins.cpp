@@ -362,26 +362,29 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
    for(i=0;i<n;i++){
       comp=state.nw.nodes[i].compartment; //the compartment which node-i belongs to.
       if(comp==0)continue; //the compartment is the whole plane.
+      Point vec(0,0);
       if(state.nw.nodes[i].x-state.nw.nodes[i].width/2-d<state.nw.compartments[comp].xmin){ //if it is outside the its compartment.
          w=state.nw.compartments[comp].xmin-state.nw.nodes[i].x+state.nw.nodes[i].width/2+d; //calculate the x-displacement to its nearest point inside the compartment.
-         state.mov[i].x+=w*scale*factor*(1+9*(1-temp)); // for lower temperatures (temp=0..1) forces increase
-         state.force[i]+=w*scale*factor*(1+9*(1-temp));
+         vec.x+=w*scale*factor*(1+9*(1-temp)); // for lower temperatures (temp=0..1) forces increase
       }
       if(state.nw.nodes[i].x+state.nw.nodes[i].width/2+d>state.nw.compartments[comp].xmax){
          w=state.nw.compartments[comp].xmax-state.nw.nodes[i].x-state.nw.nodes[i].width/2-d;
-         state.mov[i].x+=w*scale*factor*(1+9*(1-temp));
-         state.force[i]+=w*scale*factor*(1+9*(1-temp));
+         vec.x+=w*scale*factor*(1+9*(1-temp));
       }
       if(state.nw.nodes[i].y-state.nw.nodes[i].height/2-d<state.nw.compartments[comp].ymin){ //if it is outside the its compartment.
          w=state.nw.compartments[comp].ymin-state.nw.nodes[i].y+state.nw.nodes[i].height/2+d; //calculate the y-displacement to its nearest point inside the compartment.
-         state.mov[i].y+=w*scale*factor*(1+9*(1-temp));
-         state.force[i]+=w*scale*factor*(1+9*(1-temp));
+         vec.y+=w*scale*factor*(1+9*(1-temp));
       }
       if(state.nw.nodes[i].y+state.nw.nodes[i].height/2+d>state.nw.compartments[comp].ymax){
          w=state.nw.compartments[comp].ymax-state.nw.nodes[i].y-state.nw.nodes[i].height/2-d;
-         state.mov[i].y+=w*scale*factor*(1+9*(1-temp));
-         state.force[i]+=w*scale*factor*(1+9*(1-temp));
+         vec.y+=w*scale*factor*(1+9*(1-temp));
       }
+      state.mov[i]+=vec;
+      state.force[i]+=manh(vec);
+#ifdef SHOWPROGRESS
+      if (debug) state.debug[i].push_back(forcevec(vec,debug));
+#endif
+      
    }
 }      
          
