@@ -17,7 +17,7 @@ layout.o: layout.cpp plugins.h layout.h functions.h network.h types.h defines.h
 	$(CC) -o $(BDIR)layout.o $(CCFLAGS) -c $<
 functions.o: functions.cpp functions.h types.h defines.h
 	$(CC) -o $(BDIR)functions.o $(CCFLAGS) -c $<	
-plugins.o: plugins.cpp plugins.h layout.h functions.h network.h types.h defines.h
+plugins.o: plugins.cpp paramedge.cpp plugins.h layout.h functions.h network.h types.h defines.h
 	$(CC) -o $(BDIR)plugins.o $(CCFLAGS) -c $<
 netdisplay.o: netdisplay.cpp netdisplay.h network.h types.h
 	$(CC) -o $(BDIR)netdisplay.o $(CCFLAGS) -c $<
