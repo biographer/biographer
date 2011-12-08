@@ -15,6 +15,10 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
    forked_viewer=false;
 #ifdef SHOWPROGRESS
    nd.waitKeyPress=true;
+   int i;
+   for (i=0;i<P_count-1;i++){
+      dodebug[i]=true;
+   }
 #endif
 }
 void Layouter::init(){
@@ -122,7 +126,7 @@ void Layouter::execute(){
             plugin &pg=plugins.get(pidx);
 /*            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
             if (pg.mod_rot) pg_rot.assign(num,0.0);*/
-            pg.pfunc(*this,pg,program[s].scales[p],cc,temp,pidx);
+            pg.pfunc(*this,pg,program[s].scales[p],cc,temp,(dodebug[pidx]? pidx:0));
 /*            for (i=0;i<num;i++){
                mov[i]+=pg_mov[i]*program[s].scales[p];
                force[i]+=fabs(pg_mov[i].x*program[s].scales[p]);
@@ -157,6 +161,14 @@ void Layouter::execute(){
          if (lastForce>0 && totalForce==0) break; // immidiate break ( there exist plugins which do not use force at all -> check lastForce)
          if (totalMov==0) break; // immidiate break
 
+#ifdef SHOWPROGRESS
+         if (--skip<=0) {
+            skip=nd.show();
+         }
+         for (i=0;i<num;i++){
+            debug[i].clear();
+         }
+#endif
          moveNodes(program[s].limit_mov);
                      
          if (program[s].endc & C_iterations) end|=(cc>=program[s].c_iterations); // limited number of iterations
@@ -181,14 +193,6 @@ void Layouter::execute(){
          }
          lastForce=totalForce;
          if (show_progress && (cc>0 || s>0)) showProgress(cc);
-#ifdef SHOWPROGRESS
-         if (--skip<=0) {
-            skip=nd.show();
-         }
-         for (i=0;i<num;i++){
-            debug[i].clear();
-         }
-#endif
          cc++;
       }
       printf("\n");
