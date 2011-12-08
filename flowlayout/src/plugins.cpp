@@ -202,7 +202,22 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
             // ignoring modulators (as we don't know which side is better)
          }
       }
-      state.nw.nodes[i].dir=alpha/cc; // WARNING never use lim on alpha (the lim for the product above is ok)
+      for (j=0;j<s;j++){ // now do the modulators as we now can decide which side is better (based on what we know from substrates and products)
+         Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+         int n2=state.nw.edges[nb[j]].to; // reactant index
+         Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+         if (_type==catalyst || _type==activator || _type==inhibitor){
+            double diff=fabs(angle(vec)-alpha/cc);
+            if (diff>PI) diff=2*PI-diff; // take smaller difference
+            if (diff<PI/2){
+               alpha+=angle(vec);
+            } else {
+               alpha+=lim(angle(vec)+PI);
+            }
+            cc++;
+         }
+      }
+      state.nw.nodes[i].dir=alpha/cc; // WARNING never use lim() on alpha (the lim for the single contributions above is ok)
    }
    for(i=0;i<m;i++){
       //angular force;
