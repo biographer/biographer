@@ -412,7 +412,7 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
       baseNode=state.nw.nodes[k];
       for(i=0;i<m-1;i++) //1. sorting the edges in increasing order (by angle).
          for(j=i+1;j<m;j++)
-            if(lim(angle(state.nw.nodes[(*neighbors)[j]]-baseNode))<lim(angle(state.nw.nodes[(*neighbors)[i]]-baseNode))){
+            if(angle(state.nw.nodes[(*neighbors)[j]]-baseNode)<angle(state.nw.nodes[(*neighbors)[i]]-baseNode)){
                tem=(*neighbors)[i];(*neighbors)[i]=(*neighbors)[j];(*neighbors)[j]=tem;
             }               
       for(i=0;i<m;i++){
@@ -422,10 +422,13 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
 //         average=lim(lim(angle(state.nw.nodes[(*neighbors)[j]]-baseNode))+lim(angle(state.nw.nodes[(*neighbors)[jj]]-baseNode)))*0.5; //bisector of edge-(i-1) and edge-(i+1).
          vec=state.nw.nodes[(*neighbors)[i]]-baseNode;
          if (vec.x == 0 && vec.y==0) continue;
-         beta2=lim(angle(state.nw.nodes[(*neighbors)[j]]-baseNode))-lim(angle(state.nw.nodes[(*neighbors)[jj]]-baseNode));;
+         beta2=angle(state.nw.nodes[(*neighbors)[j]]-baseNode)-angle(state.nw.nodes[(*neighbors)[jj]]-baseNode);
          if (beta2<=0) beta2+=2*PI;
-         average=lim(lim(angle(state.nw.nodes[(*neighbors)[jj]]-baseNode))+beta2/2);
+         average=lim(angle(state.nw.nodes[(*neighbors)[jj]]-baseNode)+beta2/2);
+         Point avgvec=to_left(Point(state.avgsize,0),average);
+//         debugline(baseNode.x,baseNode.y,baseNode.x+avgvec.x,baseNode.y+avgvec.y,0,155,255);
          beta=lim(average-lim(angle(vec))); //angle difference (from edge-i to the bisector).
+         if (beta==PI) beta=0; // don't know in which directions; may cause problems in some cases so silently ignored
          d=dist(state.nw.nodes[(*neighbors)[i]],baseNode);
          Point mv;
          if (state.nw.nodes[k].type==reaction){
@@ -437,7 +440,13 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
          }
          state.mov[(*neighbors)[i]]+=mv;
          state.mov[k]-=mv;
-         state.force[(*neighbors)[i]]+=2*manh(mv);
+         state.force[(*neighbors)[i]]+=manh(mv);
+         state.force[k]+=manh(mv);
+#ifdef SHOWPROGRESS
+         if (debug) state.debug[k].push_back(forcevec(-mv,debug));
+         if (debug) state.debug[(*neighbors)[i]].push_back(forcevec(mv,debug));
+#endif
+
       }
       delete neighbors; // we should delete neighbors in the loop as it is generated in each iteration.
    }
