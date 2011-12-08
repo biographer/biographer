@@ -255,7 +255,7 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
          if (beta<0) beta+=2*PI;
          if (beta>0) beta-=2*PI;
       }*/
-      if (fabs(beta)>PI/2 && state.tension[n2] && rand()%10==1){ // node is locked and cannot turn around -> mirror node on desired direction. + invert beta
+/*      if (fabs(beta)>PI/2 && state.tension[n2] && rand()%10==1){ // node is locked and cannot turn around -> mirror node on desired direction. + invert beta
          double delta;
          if (beta<0) delta=beta+PI;
          if (beta>0) delta=PI-beta;
@@ -263,14 +263,19 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
          state.mov[n2].x=0; // reset accumulated force;
          state.mov[n2].y=0;
          beta=-beta;
-      } else {
+      } else {*/
          Point mv=to_left(vec,factor*scale*beta)-vec;
          state.mov[n2]+=mv;//angular movement; 
          state.mov[n1]-=mv;
 //         state.rot[n1]-=(factor*scale*beta); //adjust the default direction of the reaction a little bit (to the opposite direaction).
          state.force[n2]+=manh(mv);
          state.force[n1]+=manh(mv);
-      }
+#ifdef SHOWPROGRESS
+         if (debug) state.debug[n2].push_back(forcevec(mv,debug));
+         if (debug) state.debug[n1].push_back(forcevec(-mv,debug));
+#endif
+         
+//      }
    }
    
 }
