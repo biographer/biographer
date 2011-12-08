@@ -3,8 +3,8 @@
 #include "types.h"
 
 enum enumP {
-   //   init=1<<0,init_swap=1<<1,init_wComp=1<<2,adjForce=1<<3,nadjForc=1<<4,adjTorque=1<<5,checkCompartment=1<<6,adjustCompartment=1<<7,avoidOverlap=1<<8
-   P_force_adj=1, P_torque_adj, P_force_nadj, P_separate_nodes, P_force_compartments, P_distribute_edges, P_adjust_compartments, P_init_layout, P_min_edge_crossing
+   P_force_adj=1, P_torque_adj, P_force_nadj, P_separate_nodes, P_force_compartments, P_distribute_edges, P_adjust_compartments, P_init_layout, P_min_edge_crossing, 
+   P_count // Note: P_count is just for retrieving the number of plugins; must be the last one
 };
 
 class Layouter;
