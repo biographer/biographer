@@ -99,8 +99,8 @@ double dist(const Point& p1, const Point& p2){
 }
 
 double lim(double beta){
-   //make an angle to fit in range [-PI, PI].
-   while (beta<-PI) {
+   //make an angle to fit in range (-PI, PI].
+   while (beta<=-PI) {
       beta+=(2*PI);
    }
    while (beta>PI) {
