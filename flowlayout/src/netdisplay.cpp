@@ -2,7 +2,20 @@
 #include "netdisplay.h"
 #define SIZEX 640
 #define SIZEY 480
-const vector<vector<forcevec> > dummy;
+static const vector<vector<forcevec> > dummy;
+class dbgline{
+   public:
+      dbgline(double _x1,double _y1, double _x2, double _y2, int _r, int _g, int _b):x1(_x1),y1(_y1),x2(_x2),y2(_y2),r(_r),g(_g),b(_b){};
+      double x1,y1,x2,y2;
+      int r,g,b;
+};
+static vector<dbgline> dbglines;
+
+void debugline(double x1,double y1, double x2, double y2, int r, int g, int b){
+   dbglines.push_back(dbgline(x1,y1,x2,y2,r,g,b));
+}
+
+
 NetDisplay::NetDisplay(const Network &n): waitKeyPress(false), net(n),sizeX(SIZEX),sizeY(SIZEY),forces(dummy),hasforces(false){
    init();
 }
@@ -66,10 +79,12 @@ void NetDisplay::processEvents(){
 int NetDisplay::show(){
    draw();
    processEvents();
+   dbglines.clear();
    if (stepnum<0) return 1;
    return stepnum;
 }
-const unsigned short ccols[10][3]={{0,0,255},{0,255,0},{255,0,0},{255,255,0},{0,255,255},{255,0,255},{128,0,255},{0,128,255},{255,128,0},{0,255,128}};
+const unsigned short ccols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0,0.5,1},{1,0.5,0},{0,1,0.5}};
+const unsigned short fcols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0,0.5,1},{1,0.5,0},{0,1,0.5}};
 void NetDisplay::draw(){
    cairo_t *c;
    int i,j;
@@ -129,15 +144,17 @@ void NetDisplay::draw(){
       cairo_stroke(c);
       cairo_move_to(c,n.x-n.width/2,n.y-n.height/2);
       cairo_show_text(c,n.name.c_str());
-      cairo_set_source_rgb (c, 255,0,0); 
+      cairo_set_source_rgb (c, 0,0,0); 
+      cairo_set_dash (c,(double[2]){3/scale,3/scale},2,0);
       cairo_move_to(c,n.x,n.y);
       cairo_line_to(c,n.x+n.width/2*cos(n.dir),n.y+n.width/2*sin(n.dir));
       cairo_stroke(c);
+      cairo_set_dash (c,NULL,0,0);
       if (hasforces){
          for (j=0;j<forces[i].size();j++){
             int col=forces[i][j].col;
             const Point &v=forces[i][j].vec;
-            cairo_set_source_rgb(c,ccols[col][0],ccols[col][1],ccols[col][2]);
+            cairo_set_source_rgb(c,fcols[col][0],fcols[col][1],fcols[col][2]);
             cairo_move_to(c,n.x,n.y);
             cairo_line_to(c,n.x+v.x,n.y+v.y);
             cairo_stroke(c);
@@ -149,7 +166,8 @@ void NetDisplay::draw(){
       const Edge &e=net.edges[i];
       const Node &n1=net.nodes[e.from];
       const Node &n2=net.nodes[e.to];
-      
+      cairo_set_dash (c,NULL,0,0);
+      if (e.type==catalyst || e.type==activator || e.type==inhibitor) cairo_set_dash (c,(double[2]){3/scale,3/scale},2,0);
       double x1=n1.x;
       double y1=n1.y;
       double x2=n2.x;
@@ -176,6 +194,13 @@ void NetDisplay::draw(){
          cairo_line_to(c,x2,y2);
          cairo_stroke(c);
       }
+   }
+   for (i=0;i<dbglines.size();i++){
+      dbgline &d=dbglines[i];
+      cairo_set_source_rgb(c,(double)d.r/255,(double)d.g/255,(double)d.b/255);
+      cairo_move_to(c,d.x1,d.y1);
+      cairo_line_to(c,d.x2,d.y2);
+      cairo_stroke(c);
    }
    cairo_show_page(c);
    cairo_surface_flush(cs);
