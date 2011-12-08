@@ -167,6 +167,11 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, 
          state.mov[n1]-=mv;
          state.force[n1]+=manh(mv);
          state.force[n2]+=manh(mv);
+#ifdef SHOWPROGRESS
+         if (debug) state.debug[n2].push_back(forcevec(mv,debug));
+         if (debug) state.debug[n1].push_back(forcevec(-mv,debug));
+#endif
+         
       }
    }
 }
@@ -320,6 +325,10 @@ void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp,
          state.mov[n2]+=vec;
          state.force[n1]+=manh(vec);
          state.force[n2]+=manh(vec);
+#ifdef SHOWPROGRESS
+         if (debug) state.debug[n1].push_back(forcevec(-vec,debug));
+         if (debug) state.debug[n2].push_back(forcevec(vec,debug));
+#endif
          
 /*         state.mov[n1].x+=(vec.x/n);state.mov[n1].y+=(vec.y/n); //two nodes repel each other, along the line connecting them.
          state.mov[n2].x-=(vec.x/n);state.mov[n2].y-=(vec.y/n); //two nodes repel each other, along the line connecting them.*/
@@ -348,6 +357,10 @@ void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double t
          state.mov[n2]+=mv;
          state.force[n1]+=manh(mv);
          state.force[n2]+=manh(mv);
+#ifdef SHOWPROGRESS
+         if (debug) state.debug[n2].push_back(forcevec(mv,debug));
+         if (debug) state.debug[n1].push_back(forcevec(-mv,debug));
+#endif
       }
    }
 }
@@ -607,9 +620,9 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
                state.mov[nj2]-=vec/2;
                state.force[nj2]+=manh(vec)/2;
 #ifdef SHOWPROGRESS
-               state.debug[ni1].push_back(forcevec(vec,debug));
-               state.debug[nj1].push_back(forcevec(-vec/2,debug));
-               state.debug[nj2].push_back(forcevec(-vec/2,debug));
+               if (debug) state.debug[ni1].push_back(forcevec(vec,debug));
+               if (debug) state.debug[nj1].push_back(forcevec(-vec/2,debug));
+               if (debug) state.debug[nj2].push_back(forcevec(-vec/2,debug));
 #endif
             } else if (state.deg[ni2]==1){
                double p=pi.length()-pi.cross_param(pj)+pi.start;
@@ -621,9 +634,9 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
                state.mov[nj2]-=vec/2;
                state.force[nj2]+=manh(vec)/2;
 #ifdef SHOWPROGRESS
-               state.debug[ni2].push_back(forcevec(vec,debug));
-               state.debug[nj1].push_back(forcevec(-vec/2,debug));
-               state.debug[nj2].push_back(forcevec(-vec/2,debug));
+               if (debug) state.debug[ni2].push_back(forcevec(vec,debug));
+               if (debug) state.debug[nj1].push_back(forcevec(-vec/2,debug));
+               if (debug) state.debug[nj2].push_back(forcevec(-vec/2,debug));
 #endif
             }
 /*            if (state.deg[nj1]==1){
@@ -636,9 +649,9 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
                state.mov[ni2]-=vec/2;
                state.force[ni2]+=manh(vec)/2;
 #ifdef SHOWPROGRESS
-               state.debug[nj1].push_back(forcevec(vec,debug));
-               state.debug[ni1].push_back(forcevec(-vec/2,debug));
-               state.debug[ni2].push_back(forcevec(-vec/2,debug));
+               if (debug) state.debug[nj1].push_back(forcevec(vec,debug));
+               if (debug) state.debug[ni1].push_back(forcevec(-vec/2,debug));
+               if (debug) state.debug[ni2].push_back(forcevec(-vec/2,debug));
 #endif
             } else if (state.deg[nj2]==1){
                double p=pj.length()-pj.cross_param(pi);
@@ -650,9 +663,9 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
                state.mov[ni2]-=vec/2;
                state.force[ni2]+=manh(vec)/2;
 #ifdef SHOWPROGRESS
-               state.debug[nj2].push_back(forcevec(vec,debug));
-               state.debug[ni1].push_back(forcevec(-vec/2,debug));
-               state.debug[ni2].push_back(forcevec(-vec/2,debug));
+               if (debug) state.debug[nj2].push_back(forcevec(vec,debug));
+               if (debug) state.debug[ni1].push_back(forcevec(-vec/2,debug));
+               if (debug) state.debug[ni2].push_back(forcevec(-vec/2,debug));
 #endif
             }*/
          }
