@@ -554,7 +554,7 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
    int m=state.nw.edges.size();
    int i,j;
    for (i=0;i<m;i++){
-      for (j=i+1;j<m;j++){
+      for (j=0;j<m;j++){
          int ni1=state.nw.edges[i].from;
          int ni2=state.nw.edges[i].to;
          int nj1=state.nw.edges[j].from;
@@ -563,10 +563,10 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
          ParamEdge pi=ParamEdge(state.nw.nodes[ni1],state.nw.nodes[ni2]);
          ParamEdge pj=ParamEdge(state.nw.nodes[nj1],state.nw.nodes[nj2]);
          pi.extend((state.nw.nodes[ni1].width+state.nw.nodes[ni1].height)/4,(state.nw.nodes[ni2].width+state.nw.nodes[ni2].height)/4); // entend edges a bit to consider nodes sizes
-         pj.extend((state.nw.nodes[nj1].width+state.nw.nodes[nj1].height)/4,(state.nw.nodes[nj2].width+state.nw.nodes[nj2].height)/4);
+//         pj.extend((state.nw.nodes[nj1].width+state.nw.nodes[nj1].height)/4,(state.nw.nodes[nj2].width+state.nw.nodes[nj2].height)/4);
          if (pi.cross(pj)){
             if (state.deg[ni1]==1){
-               double p=pi.cross_param(pj);
+               double p=pi.cross_param(pj)-pi.start;
                Point vec=pi.unit()*p*factor*scale;
                state.mov[ni1]+=vec;
                state.force[ni1]+=manh(vec);
@@ -580,7 +580,7 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
                state.debug[nj2].push_back(forcevec(-vec/2,debug));
 #endif
             } else if (state.deg[ni2]==1){
-               double p=pi.length()-pi.cross_param(pj);
+               double p=pi.length()-pi.cross_param(pj)+pi.start;
                Point vec=-pi.unit()*p*factor*scale;
                state.mov[ni1]+=vec;
                state.force[ni1]+=manh(vec);
@@ -594,7 +594,7 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
                state.debug[nj2].push_back(forcevec(-vec/2,debug));
 #endif
             }
-            if (state.deg[nj1]==1){
+/*            if (state.deg[nj1]==1){
                double p=pj.cross_param(pi);
                Point vec=pj.unit()*p*factor*scale;
                state.mov[nj1]+=vec;
@@ -622,7 +622,7 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
                state.debug[ni1].push_back(forcevec(-vec/2,debug));
                state.debug[ni2].push_back(forcevec(-vec/2,debug));
 #endif
-            }
+            }*/
          }
       }
    }
