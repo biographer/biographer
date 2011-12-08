@@ -18,17 +18,18 @@ class ParamEdge {
          const Point &ref2=e2.ref;
          if (dx2*dy==dx*dy2) return false; // parallel
          double p=(dy2*ref.x-dy2*ref2.x-dx2*ref.y+dx2*ref2.y)/(dx2*dy-dx*dy2); // cut point in parametric form
-         if (p>start && p < end) return true;
+         double p2=(dy*ref2.x-dy*ref.x-dx*ref2.y+dx*ref.y)/(dx*dy2-dx2*dy); // cut point in parametric form
+         if (p>start && p < end && p2>e2.start && p2 < e2.end) return true;
          return false;
       }
-      double cross_param(const ParamEdge &e2){
+      double cross_param(const ParamEdge &e2){ // does not check start and end points of edges
          const double &dx2=e2.dx;
          const double &dy2=e2.dy;
          const Point &ref2=e2.ref;
          if (dx2*dy==dx*dy2) return DBL_MAX; // parallel
          return (dy2*ref.x-dy2*ref2.x-dx2*ref.y+dx2*ref2.y)/(dx2*dy-dx*dy2); // cut point in parametric form
       }
-      Point cross_point(const ParamEdge &e2){
+      Point cross_point(const ParamEdge &e2){ // does not check start and end points of edges
          double p=cross_param(e2);
          return Point(ref.x+dx*p,ref.y+dy*p);
       }
