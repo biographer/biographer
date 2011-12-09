@@ -167,7 +167,9 @@ void NetDisplay::draw(){
       const Node &n1=net.nodes[e.from];
       const Node &n2=net.nodes[e.to];
       cairo_set_dash (c,NULL,0,0);
+      cairo_set_line_width(c,1/scale);
       if (e.type==catalyst || e.type==activator || e.type==inhibitor) cairo_set_dash (c,(double[2]){3/scale,3/scale},2,0);
+      if (e.type==substrate) cairo_set_line_width(c,2/scale);
       double x1=n1.x;
       double y1=n1.y;
       double x2=n2.x;
