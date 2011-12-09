@@ -3,11 +3,19 @@
 #include <float.h>
 #include "types.h"
 #include "functions.h"
+#include "network.h"
 class ParamEdge {
    public:
       ParamEdge(const Point &_p1, const Point &_p2):ref(_p1), start(0){
          dx=_p2.x-_p1.x;
          dy=_p2.y-_p1.y;
+         end=sqrt(dx*dx+dy*dy);
+         dx/=end; // make unit vector;
+         dy/=end;
+      }
+      ParamEdge(Network &nw,Edge &e):ref(nw.nodes[e.from]),start(0){
+         dx=nw.nodes[e.to].x-ref.x;
+         dy=nw.nodes[e.to].y-ref.y;
          end=sqrt(dx*dx+dy*dy);
          dx/=end; // make unit vector;
          dy/=end;
@@ -44,6 +52,9 @@ class ParamEdge {
             end=start;
          }
       }
+      Point dist_vec(Point &p){ // points from p to nearst point on line defined by edge
+         return (ref-p)-(unit()*scalar(ref-p,unit()));
+      }
       inline Point p(double p){ // Point on edge by parameter p
          return ref+Point(dx,dy)*p;
       }
@@ -61,6 +72,6 @@ class ParamEdge {
       }
       const Point ref;
       double dx,dy;
-      double start,end,;
+      double start,end;
 };
 #endif
