@@ -455,11 +455,22 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
       m=neighbors->size();
       if(m<2)continue;
       baseNode=state.nw.nodes[k];
-      for(i=0;i<m-1;i++) //1. sorting the edges in increasing order (by angle).
-         for(j=i+1;j<m;j++)
-            if(angle(state.nw.nodes[(*neighbors)[j]]-baseNode)<angle(state.nw.nodes[(*neighbors)[i]]-baseNode)){
+      for(i=0;i<m-1;i++){ //sort out duplicates
+         for(j=i+1;j<m;j++){
+            if ((*neighbors)[j]==(*neighbors)[i]){ // i.e. more than one edge to a single neighbor
+               tem=(*neighbors)[j];(*neighbors)[j]=(*neighbors)[m-1];(*neighbors)[m-1]=tem; // put duplicate to the end;
+               m--;
+            }
+         }
+      }
+      if(m<2)continue;
+      for(i=0;i<m-1;i++){ // sorting the edges in increasing order (by angle).
+         for(j=i+1;j<m;j++){
+            if (angle(state.nw.nodes[(*neighbors)[j]]-baseNode)<angle(state.nw.nodes[(*neighbors)[i]]-baseNode)){
                tem=(*neighbors)[i];(*neighbors)[i]=(*neighbors)[j];(*neighbors)[j]=tem;
-            }               
+            }            
+         }
+      }
       for(i=0;i<m;i++){
          //2. for each edge-i, we tried to rotate it to the bisector of edge-(i-1) and edge-(i+1).
          j=i+1; if(j==m)j=0;
@@ -473,7 +484,7 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
          Point avgvec=to_left(Point(state.avgsize,0),average);
 //         debugline(baseNode.x,baseNode.y,baseNode.x+avgvec.x,baseNode.y+avgvec.y,0,155,255);
          beta=lim(average-lim(angle(vec))); //angle difference (from edge-i to the bisector).
-         if (beta==PI) beta=0; // don't know in which directions; may cause problems in some cases so silently ignored
+//         if (beta==PI) beta=0; // don't know in which directions; may cause problems in some cases so silently ignored
          d=dist(state.nw.nodes[(*neighbors)[i]],baseNode);
          Point mv;
          if (state.nw.nodes[k].type==reaction){
