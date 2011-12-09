@@ -1,9 +1,9 @@
 #include "layout.h"
 #include "defines.h"
 
-double avg_sizes(Network &nw);
-void get_ideal_distances(Network &nw,VF &dij);
-void get_degrees(Network &nw,VI &deg);
+double avg_sizes(Layouter &l);
+void get_ideal_distances(Layouter &l,VF &dij);
+void get_degrees(Layouter &l,VI &deg);
 #ifdef SHOWPROGRESS
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs), nd(NetDisplay(_nw,debug)){
 #else
@@ -27,9 +27,9 @@ void Layouter::init(){
    mov.resize(nw.nodes.size());
    force.resize(nw.nodes.size());
    debug.resize(nw.nodes.size());
-   avgsize=avg_sizes(nw);
-   get_ideal_distances(nw,dij);
-   get_degrees(nw,deg);
+   avgsize=avg_sizes(*this);
+   get_ideal_distances(*this,dij);
+   get_degrees(*this,deg);
 }
 void Layouter::addStep(){ // adds one more step to the program
    initStep(program.size());
@@ -261,42 +261,42 @@ void Layouter::showProgress(int cc){ // this is certainly highly system dependen
 }
 
    
-double get_dij(Network &nw,int i, int j){ 
+double get_dij(Layouter &l,int i, int j){ 
    //ideal distance between adjacent nodes;
-   double x=nw.nodes[i].width * nw.nodes[i].width + nw.nodes[i].height * nw.nodes[i].height;
-   double y=nw.nodes[j].width * nw.nodes[j].width + nw.nodes[j].height * nw.nodes[j].height;
-   return (sqrt(x)+sqrt(y))*0.6*log(1+nw.degree(i)+nw.degree(j));
+   double x=l.nw.nodes[i].width * l.nw.nodes[i].width + l.nw.nodes[i].height * l.nw.nodes[i].height;
+   double y=l.nw.nodes[j].width * l.nw.nodes[j].width + l.nw.nodes[j].height * l.nw.nodes[j].height;
+   return (sqrt(x)+sqrt(y))*0.6+l.avgsize/2*(log(1+l.nw.degree(i)+l.nw.degree(j))-log(3));
 }
-void get_ideal_distances(Network &nw,VF &dij){
+void get_ideal_distances(Layouter &l,VF &dij){
    /* This procedure computes the ideal lengths of edges (the ideal distances between adjacent nodes): dij[i],
    */
-   int m=nw.edges.size(), i,n1,n2;
+   int m=l.nw.edges.size(), i,n1,n2;
    dij.resize(m);
    
    for(i=0;i<m;i++){
       //ideal length of edge-i.
-      n1=nw.edges[i].from;
-      n2=nw.edges[i].to;
-      dij[i]=get_dij(nw,n1,n2);
+      n1=l.nw.edges[i].from;
+      n2=l.nw.edges[i].to;
+      dij[i]=get_dij(l,n1,n2);
    }
    
 }
-void get_degrees(Network &nw,VI &deg){
-   int n=nw.nodes.size(),i;
+void get_degrees(Layouter &l,VI &deg){
+   int n=l.nw.nodes.size(),i;
    deg.resize(n);
    
    for(i=0;i<n;i++){
-      deg[i]=nw.degree(i);
+      deg[i]=l.nw.degree(i);
    }
       
 }
-double avg_sizes(Network &nw){
+double avg_sizes(Layouter &l){
    int i,n;
-   n=nw.nodes.size();
+   n=l.nw.nodes.size();
    double size=0;
    for(i=0;i<n;i++){
-      size+=nw.nodes[i].width;
-      size+=nw.nodes[i].height;
+      size+=l.nw.nodes[i].width;
+      size+=l.nw.nodes[i].height;
    }
    return size/(2*n);
 }
