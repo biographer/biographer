@@ -7,11 +7,12 @@ Point operator-(const Point& p1, const Point& p2);  //vector p1 minus p2.
 Point operator-(const Point& p1);
 Point& operator+=(Point& p1, const Point& p2);  //addition of two vectors (inplace).
 Point& operator-=(Point& p1, const Point& p2);  //substration of two vectors (inplace).
-double operator*(const Point& p1, const Point& p2);  //cross-product (vector product) of two vectors.
+//double operator*(const Point& p1, const Point& p2);  //cross-product (vector product) of two vectors.
 Point operator*(const Point& p1, const double scalar); //scale vector
 Point operator/(const Point& p1, const double scalar); //scale vector
 Point& operator*=(Point& p1, const double scalar);
 Point& operator/=(Point& p1, const double scalar);
+double scalar(const Point& p1, const Point& p2); // scalar product
 
 Point unit(const Point& p1); // unit vector
 Point to_left(const Point& p0, const double beta);  //rotating the vector "p0" "beta" degrees to the left.
