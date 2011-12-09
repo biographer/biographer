@@ -23,6 +23,8 @@ int main(int argc,char *argv[]){
    l.stepAddEndCondition(0,C_totForceInc,3);
    l.stepAddPlugins(1,P_min_edge_crossing, P_force_adj, P_force_nadj);
    l.stepAddEndCondition(1,C_relForceDiff,0.0005);
+   l.stepAddPlugins(2,P_min_edge_crossing, P_force_adj, P_force_nadj,P_distribute_edges);
+   l.stepAddEndCondition(2,C_iterations,500);
    l.execute();
    printf("finished. [press key]\n");
    getc(stdin);

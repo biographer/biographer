@@ -20,8 +20,8 @@ int main(int argc,char *argv[]){
    nw.dump();
    Plugins& pgs=register_plugins();
    Layouter l(nw,pgs);
-   l.stepAddPlugins(0,P_force_adj,  P_torque_adj, P_force_nadj);
-   l.stepAddEndCondition(0,C_relForceDiff,0.0005);
+   l.stepAddPlugins(0,P_force_adj,  P_torque_adj, P_distribute_edges, P_min_edge_crossing);
+   l.stepAddEndCondition(0,C_relForceDiff,0.000005);
    l.execute();
    printf("finished. [press key]\n");
    getc(stdin);

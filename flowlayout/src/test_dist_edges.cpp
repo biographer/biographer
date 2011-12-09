@@ -6,11 +6,14 @@
 int main(int argc,char *argv[]){
    Network nw=Network();
    nw.addCompartment(0,"unknown");
-   nw.addNode(00, compound , "c1", 100 , 100 , 00, 00 , 00,00);     
-   nw.addNode(1, compound , "c2", 100 , 100 , 300, 00 , 00,00);     
-   nw.addNode(2, compound , "c3", 100 , 100 , 300, 300 , 00,00);     
-   nw.addEdge(0,1,undirected);
-   nw.addEdge(2,1,undirected);
+   nw.addNode(00, reaction , "R", 100 , 100 , 00, 00 , 00,00);     
+   nw.addNode(1, compound , "c1", 100 , 100 , 300, 00 , 00,00);     
+   nw.addNode(2, compound , "c2", 100 , 100 , 300, 300 , 00,00);     
+   nw.addNode(3, compound , "c3", 100 , 100 , 300, 300 , 00,00);     
+   nw.addEdge(0,1,substrate);
+   nw.addEdge(0,1,catalyst);
+   nw.addEdge(0,2,product);
+   nw.addEdge(0,3,product);
    nw.dump();
    Plugins& pgs=register_plugins();
    Layouter l(nw,pgs);
