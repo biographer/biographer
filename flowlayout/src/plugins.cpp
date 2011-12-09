@@ -191,6 +191,38 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
       if (state.nw.nodes[i].type!=reaction) continue;
       const VI &nb=state.nw.nodes[i].neighbors;
       int s=nb.size();
+      Point dvec(0,0);
+      int cc=0;
+      for (j=0;j<s;j++){
+         Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+         int n2=state.nw.edges[nb[j]].to; // reactant index
+         Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+         if (_type==substrate) {
+            dvec+=to_left(vec,-0.5*PI); // could be unit vector, but we just try with full vector (preferres longer edges)
+         } else if (_type==product) {
+            dvec+=to_left(vec,+0.5*PI);
+         } else {
+            // ignoring modulators (as we don't know which side is better)
+         }
+      }
+      for (j=0;j<s;j++){ // now do the modulators as we now can decide which side is better (based on what we know from substrates and products)
+         Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+         int n2=state.nw.edges[nb[j]].to; // reactant index
+         Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+         if (_type==catalyst || _type==activator || _type==inhibitor){
+            if (scalar(vec,dvec)>=0){
+               dvec+=vec;
+            } else {
+               dvec-=vec;
+            }
+         }
+      }
+      state.nw.nodes[i].dir=angle(dvec);
+   }
+/*   for (i=0;i<n;i++){ // set direction of reactions
+      if (state.nw.nodes[i].type!=reaction) continue;
+      const VI &nb=state.nw.nodes[i].neighbors;
+      int s=nb.size();
       double alpha=0;
       int cc=0;
       for (j=0;j<s;j++){
@@ -214,16 +246,16 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
          if (_type==catalyst || _type==activator || _type==inhibitor){
             double diff=fabs(angle(vec)-alpha/cc);
             if (diff>PI) diff=2*PI-diff; // take smaller difference
-            if (diff<PI/2){
-               alpha+=angle(vec);
-            } else {
-               alpha+=lim(angle(vec)+PI);
-            }
-            cc++;
+               if (diff<PI/2){
+                  alpha+=angle(vec);
+               } else {
+                  alpha+=lim(angle(vec)+PI);
+               }
+               cc++;
          }
       }
       state.nw.nodes[i].dir=alpha/cc; // WARNING never use lim() on alpha (the lim for the single contributions above is ok)
-   }
+   }*/
    for(i=0;i<m;i++){
       //angular force;
       int n1=state.nw.edges[i].from; //reaction
