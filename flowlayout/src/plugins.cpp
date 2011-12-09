@@ -16,6 +16,7 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_adjust_compartments,"adjust_compartments",adjust_compartments);
    glob_pgs.registerPlugin(P_init_layout,"init_layout",init_layout);
    glob_pgs.registerPlugin(P_min_edge_crossing,"min_edge_crossing",min_edge_crossing);
+   glob_pgs.registerPlugin(P_min_edge_crossing_multi,"min_edge_crossing_multi",min_edge_crossing_multi);
    return glob_pgs;
 }
 void Plugins::registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, bool modpos, void* persist){
@@ -715,7 +716,42 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
       }
    }
 }
-   
+void min_edge_crossing_multi(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   //moves a node over an edge if all its neighbors lay on the other side
+   int n=state.nw.nodes.size();
+   int m=state.nw.edges.size();
+   int i,j,q;
+   for (i=0;i<n;i++){ // nodes
+      for (j=0;j<m;j++){ // edges;
+         ParamEdge pj=ParamEdge(state.nw,state.nw.edges[j]);
+         const VI &nb=state.nw.nodes[i].neighbors; // neighboring edges
+         bool one_crosses=false; //at least one edge q really crosses edge j
+         bool all_cross_line=true; // all edges q cross straight line given by edge j
+         int s=nb.size();
+         if (s<2) continue; // single connected nodes are dealt with by min_edge_crossing
+         for (q=0;q<s;q++){
+            if (state.nw.edges[nb[q]].from==state.nw.edges[j].from ||
+               state.nw.edges[nb[q]].from==state.nw.edges[j].to ||
+               state.nw.edges[nb[q]].to==state.nw.edges[j].from ||
+               state.nw.edges[nb[q]].to==state.nw.edges[j].to) continue; // this one does not count as it is adjacent to edge j
+            ParamEdge pq=ParamEdge(state.nw,state.nw.edges[nb[q]]);
+            double kj=pj.cross_param(pq);
+            if (kj>pj.start && kj<pj.end) one_crosses=true;
+            double kq=pq.cross_param(pj);
+            if (kq<pj.start || kq>pj.end) all_cross_line=false;
+         }
+         if (one_crosses && all_cross_line) { // move point i over edge j
+            Point vec=pj.dist_vec(state.nw.nodes[i])*factor*scale;
+            state.mov[i]+=vec;
+            state.force[i]+=manh(vec);
+#ifdef SHOWPROGRESS
+            if (debug) state.debug[i].push_back(forcevec(vec,debug));
+#endif            
+         }
+      }
+   }
+}
+         
 // helpers
 int _find(VI* nd,int idx){
    int n=nd->size();
