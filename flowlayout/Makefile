@@ -6,8 +6,9 @@ CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DPROGRESSLINUX -DSHOWPROGRESS `pkg
 SRC=src/
 BDIR=build/
 VPATH=$(SRC):$(BDIR)
+OBJS=network.o layout.o functions.o plugins.o netdisplay.o
 
-default: dolayout.cpp reactionlayout.cpp network.o layout.o functions.o plugins.o netdisplay.o
+layout: dolayout.cpp reactionlayout.cpp $(OBJS)
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)layout $<
 #json:	layout_json.cpp network.o layout.o functions.o
 #	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)layoutJson $<
@@ -25,9 +26,13 @@ netdisplay.o: netdisplay.cpp netdisplay.h network.h types.h
 #test: layout_test.cpp network.o layout.o functions.o
 #	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)test $<
 #
-dist_edges: test_dist_edges.cpp default
+testlayout: testlayout.cpp $(OBJS)
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)testlayout $<
+test_dist_edges: test_dist_edges.cpp $(OBJS)
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_dist_edges $<
-rea_torque: test_rea_torque.cpp default
+test_rea_torque: test_rea_torque.cpp $(OBJS)
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_rea_torque $<
-min_cross: test_min_cross.cpp default
+test_min_cross: test_min_cross.cpp $(OBJS)
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_min_cross $<
+test_min_cross_multi: test_min_cross_multi.cpp $(OBJS)
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_min_cross_multi $<
