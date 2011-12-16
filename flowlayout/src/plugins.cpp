@@ -193,7 +193,6 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
       const VI &nb=state.nw.nodes[i].neighbors;
       int s=nb.size();
       Point dvec(0,0);
-      int cc=0;
       for (j=0;j<s;j++){
          Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
          int n2=state.nw.edges[nb[j]].to; // reactant index
