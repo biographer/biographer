@@ -38,6 +38,7 @@ void NetDisplay::init(){
    XMapWindow(dpy, win);
    cs=cairo_xlib_surface_create(dpy, win, DefaultVisual(dpy, 0), sizeX, sizeY);
    processEvents();
+   stepnum=1;
 }
 NetDisplay::~NetDisplay(){
 	cairo_surface_destroy(cs);
@@ -47,9 +48,10 @@ void NetDisplay::processEvents(){
    XEvent e;
    //if (!waitKeyPress) usleep(100000);
    //XFlush(dpy);
-   stepnum=-1;
-   while(waitKeyPress || XCheckWindowEvent(dpy,win,0,&e)) {
-      if (waitKeyPress) XNextEvent(dpy, &e);
+   XSync(dpy,false);
+   bool cont=false;
+   while((!cont && waitKeyPress) || XCheckWindowEvent(dpy,win,ExposureMask|ButtonPressMask|KeyPressMask|StructureNotifyMask,&e)) {
+      if (!cont && waitKeyPress) XNextEvent(dpy, &e);
       if(e.type==Expose && e.xexpose.count<1) {
          draw();
       } else if (e.type==ConfigureNotify){
@@ -62,25 +64,24 @@ void NetDisplay::processEvents(){
          }
       } else if(e.type==ButtonPress) {
          if (e.xbutton.button==Button2 || e.xbutton.button==Button3) waitKeyPress=!waitKeyPress;
-         break;
+         cont=true;
       } else if(e.type==KeyPress){
          char* key=(XKeysymToString(XLookupKeysym(&e.xkey,0)));
          //printf("key pressed: %c\n",key[0]);
          if ((key[0]>='0') && (key[0]<='9')){
             stepnum=atoi(key);
             if (stepnum==0) stepnum=10;
-            if (stepnum>1) printf("progressing %i steps\n",stepnum);
-            break;
+            cont=true;
          }
       }
-      //XFlush(dpy);
    }
+//   XSync(dpy,true);
 }
 int NetDisplay::show(){
    draw();
    processEvents();
    dbglines.clear();
-   if (stepnum<0) return 1;
+   if (stepnum>1) printf("progressing %i steps\n",stepnum);
    return stepnum;
 }
 const unsigned short ccols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0,0.5,1},{1,0.5,0},{0,1,0.5}};
