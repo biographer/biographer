@@ -36,6 +36,8 @@ class Layouter{
       void stepAddEndCondition(conditions cond, double param=NULL, double param2=NULL);
       void stepLimitMov(int step, bool limit);
       void stepLimitMov(bool limit);
+      void stepPluginScale(int step, enumP pg,double scale);
+      void stepPluginScale(enumP pg,double scale);
       void addStep();
       void execute();
       Network& nw;

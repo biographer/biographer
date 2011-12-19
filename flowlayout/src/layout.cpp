@@ -73,6 +73,14 @@ void Layouter::stepLimitMov(int step,bool limit){
    initStep(step);
    program[step].limit_mov=limit;
 }
+void Layouter::stepPluginScale(enumP pg,double scale){
+   stepPluginScale(program.size()-1,pg,scale);
+}
+void Layouter::stepPluginScale(int step, enumP pg,double scale){
+   initStep(step);
+   const VI &pgns=program[step].actplugins;
+   program[step].scales[find(pgns.begin(),pgns.end(),pg)-pgns.begin()]=scale; // does only find the first plugin (but each one should there only be once)
+}
 void Layouter::stepAddEndCondition(conditions cond, double param, double param2){ // warning: cond should code for only one condition
    stepAddEndCondition(program.size()-1,cond,param,param2);
 }
