@@ -415,7 +415,7 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
          Point &mov1=state.mov[n1];
          Point &mov2=state.mov[n2];
          Point vec2=state.nw.nodes[n2]+mov2-state.nw.nodes[n1]-mov1;
-         if ((fabs(vec.x)>dw || fabs(vec.y)>dh) // no overlap on old position
+         if ((fabs(vec.x)>=dw || fabs(vec.y)>=dh) // no overlap on old position
             && fabs(vec2.x)<dw && fabs(vec2.y)<dh){ // overlap on new position
             double maxq=0;
             double q=(dw-vec.x)/(mov2.x-mov1.x);
@@ -427,8 +427,8 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
             q=(-vec.y-dh)/(mov2.y-mov1.y);
             if (q>0 && q<1 && q>maxq) maxq=q;
             if (maxq>0){
-               mov1*=maxq;
-               mov2*=maxq;
+               mov1*=maxq*0.9;
+               mov2*=maxq*0.9;
             }
          }
       }
