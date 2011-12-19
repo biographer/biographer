@@ -548,12 +548,12 @@ void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, dou
          Point vec=cpj.center()-cpi.center();
          if (2*fabs(vec.x)<cpi.size().x+cpj.size().x && 2*fabs(vec.y)<cpi.size().y+cpj.size().y){ // the 2 compartments overlap
             if (fabs(vec.x)>fabs(vec.y)){ // move in x direction
-               double d=sign(vec.x)*((cpi.size().x+cpj.size().x)/2-vec.x);
+               double d=sign(vec.x)*((cpi.size().x+cpj.size().x)/2-fabs(vec.x));
                d*=0.5*(1+(factor*scale-1)*temp);// each compartment should go half way (for temp==0);
                state.nw.compartments[i].translate(-d,0);
                state.nw.compartments[j].translate(d,0);
             } else {
-               double d=sign(vec.y)*((cpi.size().y+cpj.size().y)/2-vec.y);
+               double d=sign(vec.y)*((cpi.size().y+cpj.size().y)/2-fabs(vec.y));
                d*=0.5*(1+(factor*scale-1)*temp);// each compartment should go half way (for temp==0);
                state.nw.compartments[i].translate(0,-d);
                state.nw.compartments[j].translate(0,d);
