@@ -5,7 +5,7 @@ double avg_sizes(Layouter &l);
 void get_ideal_distances(Layouter &l,VF &dij);
 void get_degrees(Layouter &l,VI &deg);
 #ifdef SHOWPROGRESS
-Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs), nd(NetDisplay(_nw,debug)){
+Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), debug(vector<vector<forcevec> >(nw.nodes.size())), plugins(_pgs), nd(NetDisplay(_nw,debug)){
 #else
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
 #endif
