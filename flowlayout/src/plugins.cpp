@@ -399,21 +399,22 @@ void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double t
    }
 }
 void limit_mov(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
-   int n=nw.nodes.size();
+   int n=state.nw.nodes.size();
    for(int i=0;i<n;i++){
       double length=norm(state.mov[i]);
-      if (limit && length>avgsize) state.mov[i]=state.mov[i]*(avgsize/length); // limit movement to average node size
+      if (length>state.avgsize) state.mov[i]=state.mov[i]*(state.avgsize/length); // limit movement to average node size
    }
 }
 void node_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int n=state.nw.nodes.size(),n1,n2;
    for(n1=0;n1<n;n1++){
       for(n2=n1+1;n2<n;n2++){
-         dw=(state.nw.nodes[n1].width+state.nw.nodes[n2].width)/2;
-         dh=(state.nw.nodes[n1].height+state.nw.nodes[n2].height)/2;
-         vec=state.nw.nodes[n2]-state.nw.nodes[n1];
-         double &mov1=state.mov[n1];
-         double &mov2=state.mov[n2];
-         vec2=state.nw.nodes[n2]+mov2-state.nw.nodes[n1]-mov1;
+         double dw=(state.nw.nodes[n1].width+state.nw.nodes[n2].width)/2;
+         double dh=(state.nw.nodes[n1].height+state.nw.nodes[n2].height)/2;
+         Point vec=state.nw.nodes[n2]-state.nw.nodes[n1];
+         Point &mov1=state.mov[n1];
+         Point &mov2=state.mov[n2];
+         Point vec2=state.nw.nodes[n2]+mov2-state.nw.nodes[n1]-mov1;
          if ((fabs(vec.x)>dw || fabs(vec.y)>dh) // no overlap on old position
             && fabs(vec2.x)<dw && fabs(vec2.y)<dh){ // overlap on new position
             double maxq=0;
