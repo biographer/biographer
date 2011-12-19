@@ -3,6 +3,7 @@
 #define SIZEX 640
 #define SIZEY 480
 static const vector<vector<forcevec> > dummy;
+static const double fstretch=2;
 class dbgline{
    public:
       dbgline(double _x1,double _y1, double _x2, double _y2, int _r, int _g, int _b):x1(_x1),y1(_y1),x2(_x2),y2(_y2),r(_r),g(_g),b(_b){};
@@ -37,8 +38,9 @@ void NetDisplay::init(){
    XSelectInput(dpy, win, ExposureMask|ButtonPressMask|KeyPressMask|StructureNotifyMask);
    XMapWindow(dpy, win);
    cs=cairo_xlib_surface_create(dpy, win, DefaultVisual(dpy, 0), sizeX, sizeY);
-   processEvents();
    stepnum=1;
+   grid=0;
+   processEvents();
 }
 NetDisplay::~NetDisplay(){
 	cairo_surface_destroy(cs);
@@ -87,6 +89,7 @@ int NetDisplay::show(){
 const unsigned short ccols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0,0.5,1},{1,0.5,0},{0,1,0.5}};
 const unsigned short fcols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0,0.5,1},{1,0.5,0},{0,1,0.5}};
 void NetDisplay::draw(){
+   printf(".");
    cairo_t *c;
    int i,j;
    int sc=net.compartments.size();
@@ -119,9 +122,37 @@ void NetDisplay::draw(){
    double scale= ((double) sizeX)/(xmax-xmin);
    if (((double) sizeY)/(ymax-ymin)<scale) scale=((double) sizeY)/(ymax-ymin);
 //   printf("dpy: (%d,%d); user: (%f,%f); scale %f\n",sizeX,sizeY,xmax-xmin,ymax-ymin,scale);
-   cairo_set_line_width (c, 1/scale);
    cairo_scale(c,scale,scale);
    cairo_translate(c,-xmin,-ymin);
+   //draw grid
+   double ngrid=(xmax-xmin)/10;
+   if (ngrid<(ymax-ymin)/10) ngrid=(ymax-ymin)/10;
+   ngrid=round(ngrid/5)*5;
+   if (grid==0) grid=ngrid;
+   if (grid>=5*ngrid) grid/=5; // auto grid scaling
+   if (grid<=ngrid/5) grid*=5;// auto grid scaling
+   cairo_set_source_rgb (c, 0.5,0.5,0.5); 
+   cairo_set_line_width(c,0.5/scale);
+   cairo_set_dash (c,(double[2]){3/scale,3/scale},2,0);
+   double l=grid*floor(xmin/grid);
+   while (l<=xmax){
+      cairo_set_source_rgb (c, 0.5,0.5,0.5); 
+      if (l==0) cairo_set_source_rgb (c, 0,0,0); 
+      cairo_move_to(c,l,ymin);
+      cairo_line_to(c,l,ymax);
+      l+=grid;
+   }
+   l=grid*floor(ymin/grid);
+   while (l<=ymax){
+      cairo_set_source_rgb (c, 0.5,0.5,0.5); 
+      if (l==0) cairo_set_source_rgb (c, 0,0,0); 
+      cairo_move_to(c,xmin,l);
+      cairo_line_to(c,xmax,l);
+      l+=grid;
+   }
+   cairo_stroke(c);
+   cairo_set_dash (c,NULL,0,0);
+   cairo_set_line_width (c, 1/scale);
    // draw compartments
    for (i=1;i<sc;i++){
       const Compartment &cp=net.compartments[i];
@@ -157,7 +188,7 @@ void NetDisplay::draw(){
             const Point &v=forces[i][j].vec;
             cairo_set_source_rgb(c,fcols[col][0],fcols[col][1],fcols[col][2]);
             cairo_move_to(c,n.x,n.y);
-            cairo_line_to(c,n.x+v.x,n.y+v.y);
+            cairo_line_to(c,n.x+v.x*fstretch,n.y+v.y*fstretch);
             cairo_stroke(c);
          }
       }

@@ -37,6 +37,7 @@ class NetDisplay{
       const vector<vector<forcevec> > &forces;
       bool hasforces;
       cairo_surface_t *cs;
+      double grid;
       void init();
       void processEvents();
       void draw();
