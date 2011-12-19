@@ -129,9 +129,11 @@ void Layouter::execute(){
       }
       printf("\n");
       while (!end){
+         // apply mov plugins
          for (p=0;p<pls;p++){
             int pidx=program[s].actplugins[p];
             plugin &pg=plugins.get(pidx);
+            if (pg.type!=T_mov) continue;
 /*            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
             if (pg.mod_rot) pg_rot.assign(num,0.0);*/
             pg.pfunc(*this,pg,program[s].scales[p],cc,temp,(dodebug[pidx]? pidx:0));
@@ -169,6 +171,14 @@ void Layouter::execute(){
          if (lastForce>0 && totalForce==0) break; // immidiate break ( there exist plugins which do not use force at all -> check lastForce)
          if (totalMov==0) break; // immidiate break
 
+         // apply limiting plugins   
+         for (p=0;p<pls;p++){
+            int pidx=program[s].actplugins[p];
+            plugin &pg=plugins.get(pidx);
+            if (pg.type!=T_limit) continue;
+            pg.pfunc(*this,pg,program[s].scales[p],cc,temp,(dodebug[pidx]? pidx:0));
+         }
+
 #ifdef SHOWPROGRESS
          if (--skip<=0) {
             skip=nd.show();
@@ -178,6 +188,15 @@ void Layouter::execute(){
          }
 #endif
          moveNodes(program[s].limit_mov);
+         
+         // apply position changing plugins
+         for (p=0;p<pls;p++){
+            int pidx=program[s].actplugins[p];
+            plugin &pg=plugins.get(pidx);
+            if (pg.type!=T_pos) continue;
+            pg.pfunc(*this,pg,program[s].scales[p],cc,temp,(dodebug[pidx]? pidx:0));
+         }
+         
                      
          if (program[s].endc & C_iterations) end|=(cc>=program[s].c_iterations); // limited number of iterations
          if (program[s].endc & C_totForceInc) {
