@@ -12,7 +12,7 @@ enum conditions{
 
 class step{
    public:
-      step():endc(0),limit_mov(true){}
+      step():endc(0){}
       VI actplugins;
       VF scales;
       unsigned long endc;
@@ -23,7 +23,6 @@ class step{
       double c_maxMovLimit;
       int c_totForceInc;
       int c_totForceIncCC;
-      bool limit_mov;
 };
 class Layouter{
    public:
@@ -34,8 +33,6 @@ class Layouter{
       void stepAddPlugin(enumP pg, double scale=1.0);
       void stepAddEndCondition(int step, conditions cond, double param=NULL, double param2=NULL);
       void stepAddEndCondition(conditions cond, double param=NULL, double param2=NULL);
-      void stepLimitMov(int step, bool limit);
-      void stepLimitMov(bool limit);
       void stepPluginScale(int step, enumP pg,double scale);
       void stepPluginScale(enumP pg,double scale);
       void addStep();
@@ -56,7 +53,7 @@ class Layouter{
    protected:
       Plugins& plugins;
       void initStep(int step);
-      void moveNodes(bool limit);
+      void moveNodes();
       void init();
       vector<step> program;
       bool forked_viewer;

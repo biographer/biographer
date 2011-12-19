@@ -65,14 +65,6 @@ void Layouter::initStep(int step){
    if ((int) program.size()<step+1) program.resize(step+1);
    
 }
-void Layouter::stepLimitMov(bool limit){
-   stepLimitMov(program.size()-1,limit);
-}
-void Layouter::stepLimitMov(int step,bool limit){
-   /* set movement limitation of nodes per iteration in step */
-   initStep(step);
-   program[step].limit_mov=limit;
-}
 void Layouter::stepPluginScale(enumP pg,double scale){
    stepPluginScale(program.size()-1,pg,scale);
 }
@@ -187,7 +179,7 @@ void Layouter::execute(){
             debug[i].clear();
          }
 #endif
-         moveNodes(program[s].limit_mov);
+         moveNodes();
          
          // apply position changing plugins
          for (p=0;p<pls;p++){
@@ -228,14 +220,14 @@ void Layouter::execute(){
    }
 }
 
-void Layouter::moveNodes(bool limit){
+void Layouter::moveNodes(){
    /*The function moves the nodes to a new position according the the movements (dispalcement vectors)computed, and then set all displacement vectors to 0.
    It also adjustes the default direction of reaction nodes.
    */
    int n=nw.nodes.size();
    for(int i=0;i<n;i++){
-      double length=norm(mov[i]);
-      if (limit && length>avgsize) mov[i]=mov[i]*(avgsize/length); // limit movement to average node size
+//      double length=norm(mov[i]);
+//      if (limit && length>avgsize) mov[i]=mov[i]*(avgsize/length); // limit movement to average node size
          
       nw.nodes[i].x+=mov[i].x; //update position
       nw.nodes[i].y+=mov[i].y; //update position
