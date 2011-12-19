@@ -36,3 +36,6 @@ test_min_cross: test_min_cross.cpp $(OBJS)
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_min_cross $<
 test_min_cross_multi: test_min_cross_multi.cpp $(OBJS)
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_min_cross_multi $<
+test_compartments: test_compartments.cpp $(OBJS)
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_compartments $<
+	
