@@ -24,26 +24,42 @@ int main(int argc,char *argv[]){
    Layouter l(nw,pgs);
 
    l.addStep();
-   l.stepAddPlugin(P_init_layout);
+   l.stepAddPlugins(P_init_layout, P_limit_mov);
    l.stepAddEndCondition(C_maxMovLimit,0.005);
-   l.stepLimitMov(false);
 
-   l.addStep();
-//   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges);
+/*   l.addStep();
    l.stepAddPlugins(P_force_adj, P_distribute_edges);
-   //   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_adjust_compartments,P_force_compartments);
-/*   l.stepAddEndCondition(C_maxMovLimit,0.005);
-   l.stepAddEndCondition(C_totForceInc,10);*/
-   l.stepAddEndCondition(C_iterations,5550); // just one iteration to initialize compartments
-   //   l.stepAddEndCondition(C_relForceDiff,0.0005);
+   l.stepAddEndCondition(C_iterations,5550); // just one iteration to initialize compartments*/
    
    l.addStep();
-   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges);
-   l.stepAddEndCondition(C_iterations,5550); // just one iteration to initialize compartments
+   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_limit_mov);
+   l.stepAddEndCondition(C_iterations,1550); // just one iteration to initialize compartments
 
    l.addStep();
-   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_min_edge_crossing);
-   l.stepAddEndCondition(C_iterations,5550); // just one iteration to initialize compartments
+   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_min_edge_crossing, P_min_edge_crossing_multi, P_limit_mov);
+   l.stepPluginScale(P_min_edge_crossing, 0.1);
+   l.stepPluginScale(P_min_edge_crossing_multi, 0.1);
+   l.stepAddEndCondition(C_iterations,1550); // just one iteration to initialize compartments
+
+   
+   l.addStep();
+   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_min_edge_crossing, P_min_edge_crossing_multi, P_force_nadj, P_limit_mov);
+   l.stepPluginScale(P_min_edge_crossing, 0.1);
+   l.stepPluginScale(P_min_edge_crossing_multi, 0.1);
+   l.stepAddEndCondition(C_iterations,1550); // just one iteration to initialize compartments
+   
+   l.addStep();
+   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_min_edge_crossing, P_min_edge_crossing_multi, P_separate_nodes, P_limit_mov, P_node_collision);
+   l.stepPluginScale(P_min_edge_crossing, 0.1);
+   l.stepPluginScale(P_min_edge_crossing_multi, 0.1);
+   l.stepAddEndCondition(C_iterations,1550); // just one iteration to initialize compartments
+
+   l.addStep();
+   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_min_edge_crossing, P_min_edge_crossing_multi, P_limit_mov, P_node_collision);
+   l.stepPluginScale(P_min_edge_crossing, 0.1);
+   l.stepPluginScale(P_min_edge_crossing_multi, 0.1);
+   l.stepAddEndCondition(C_iterations,1550); // just one iteration to initialize compartments
+
    /*   l.addStep();
    l.stepAddPlugin(P_adjust_compartments);
    l.stepAddEndCondition(C_iterations,1); // just one iteration to initialize compartments
