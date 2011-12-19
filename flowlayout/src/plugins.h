@@ -4,10 +4,13 @@
 
 enum enumP {
    P_force_adj=1, P_torque_adj, P_force_nadj, P_separate_nodes, P_force_compartments, P_distribute_edges, 
-   P_adjust_compartments, P_init_layout, P_min_edge_crossing, P_min_edge_crossing_multi,
+   P_adjust_compartments, P_init_layout, P_min_edge_crossing, P_min_edge_crossing_multi, P_limit_mov, P_node_collision
    P_count // Note: P_count is just for retrieving the number of plugins; must be the last one
 };
-
+enum enumPT {
+   T_mov=1, T_pos, T_limit,
+   T_count
+}
 class Layouter;
 
 struct plugin;
@@ -16,13 +19,13 @@ struct plugin{
    plugin_func_ptr pfunc;
    //   VP last;
    void* persist;
-   bool modpos;
+   enumPT type;
    string name;
 };
 class Plugins{
    public:
       Plugins(){} 
-      void registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, bool modpos=false, void* persist=NULL);
+      void registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, enumPT type=T_mov, void* persist=NULL);
       size_t size();
       plugin& get(int idx);
    private:

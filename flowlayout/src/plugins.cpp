@@ -17,16 +17,18 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_init_layout,"init_layout",init_layout);
    glob_pgs.registerPlugin(P_min_edge_crossing,"min_edge_crossing",min_edge_crossing);
    glob_pgs.registerPlugin(P_min_edge_crossing_multi,"min_edge_crossing_multi",min_edge_crossing_multi);
+   glob_pgs.registerPlugin(P_limit_mov,"limit_mov",limit_mov,T_limit);
+   glob_pgs.registerPlugin(P_node_collision,"node_collision",node_collision,T_limit);
    return glob_pgs;
 }
-void Plugins::registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, bool modpos, void* persist){
+void Plugins::registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, enumPT type, void* persist){
    int idx=(int) pgn;
    if ((int) pluginlist.size()<idx+1) pluginlist.resize(idx+1);
    pluginlist[idx].pfunc=pfunc;
 /*   pluginlist[idx].mod_mov=mod_mov;
    pluginlist[idx].mod_rot=mod_rot;*/
    pluginlist[idx].persist=persist;
-   pluginlist[idx].modpos=modpos;
+   pluginlist[idx].type=type;
    pluginlist[idx].name=name;
 }
 size_t Plugins::size(){
@@ -396,7 +398,43 @@ void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double t
       }
    }
 }
-
+void limit_mov(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int n=nw.nodes.size();
+   for(int i=0;i<n;i++){
+      double length=norm(state.mov[i]);
+      if (limit && length>avgsize) state.mov[i]=state.mov[i]*(avgsize/length); // limit movement to average node size
+   }
+}
+void node_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   for(n1=0;n1<n;n1++){
+      for(n2=n1+1;n2<n;n2++){
+         dw=(state.nw.nodes[n1].width+state.nw.nodes[n2].width)/2;
+         dh=(state.nw.nodes[n1].height+state.nw.nodes[n2].height)/2;
+         vec=state.nw.nodes[n2]-state.nw.nodes[n1];
+         double &mov1=state.mov[n1];
+         double &mov2=state.mov[n2];
+         vec2=state.nw.nodes[n2]+mov2-state.nw.nodes[n1]-mov1;
+         if ((fabs(vec.x)>dw || fabs(vec.y)>dh) // no overlap on old position
+            && fabs(vec2.x)<dw && fabs(vec2.y)<dh){ // overlap on new position
+            double maxq=0;
+            double q=(dw-vec.x)/(mov2.x-mov1.x);
+            if (q>0 && q<1 && q>maxq) maxq=q;
+            q=(-vec.x-dw)/(mov2.x-mov1.x);
+            if (q>0 && q<1 && q>maxq) maxq=q;
+            q=(dh-vec.y)/(mov2.y-mov1.y);
+            if (q>0 && q<1 && q>maxq) maxq=q;
+            q=(-vec.y-dh)/(mov2.y-mov1.y);
+            if (q>0 && q<1 && q>maxq) maxq=q;
+            if (maxq>0){
+               mov1*=maxq;
+               mov2*=maxq;
+            }
+         }
+      }
+   }
+            
+   
+}
 void force_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function computes the force induced by compartments, and updates the movements of nodes.
       Compartments are boxes which constrain the nodes belonging to it inside.
