@@ -106,12 +106,14 @@ void Layouter::execute(){
    int num=nw.nodes.size();
 /*   VP pg_mov;pg_mov.resize(num);
    VF pg_rot;pg_rot  .resize(num);*/
-   double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
-   double maxForce,totalForce,maxMov,totalMov,lastForce=-1;
+   
    init();
    int prs=program.size();
    int skip=1;
    for (s=0;s<prs;s++){
+      double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
+      double maxForce,totalForce,maxMov,totalMov,lastForce=-1;
+      
       int cc=0;
       bool end=false;
       int pls=program[s].actplugins.size();
@@ -161,7 +163,7 @@ void Layouter::execute(){
          if (totalForce!=totalForce) break; // emergency break (nan)
          if (totalMov!=totalMov) break; // emergency break (nan)
          if (lastForce>0 && totalForce==0) break; // immidiate break ( there exist plugins which do not use force at all -> check lastForce)
-         if (totalMov==0) break; // immidiate break
+         if (totalMov==0 && !(program[s].endc & C_iterations)) break; // immidiate break
 
          // apply limiting plugins   
          for (p=0;p<pls;p++){
