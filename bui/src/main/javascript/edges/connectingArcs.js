@@ -160,6 +160,46 @@
 
 
     /**
+    * Generator for a product connecting arc.
+    *
+    * This generates a simple triangle.
+    *
+    * @return {Object} An object with id and element properties. The id
+    *   property holds the id of the marker and the element property the
+    *   generated element.
+    */
+    bui.connectingArcs.product = function() {
+       return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
+                                 bui.settings.css.classes.connectingArcs.product);
+    };
+    
+    /**
+    * @field Identifier for this connecting arc type.
+    */
+    bui.connectingArcs.product.id = 'product';
+    
+    
+    /**
+    * Generator for a substrate connecting arc.
+    *
+    * This generates nothing.
+    *
+    * @return {Object} An object with id and element properties. The id
+    *   property holds the id of the marker and the element property the
+    *   generated element.
+    */
+    bui.connectingArcs.substrate = function() {
+       return createPathWithData('', 20, 10, 20, 20,
+                                 bui.settings.css.classes.connectingArcs.substrate);
+    };
+    
+    /**
+    * @field Identifier for this connecting arc type.
+    */
+    bui.connectingArcs.substrate.id = 'substrate';
+    
+    
+    /**
      * Generator for an inhibition connecting arc.
      *
      * This generates a simple line.

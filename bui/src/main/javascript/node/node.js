@@ -197,16 +197,18 @@
     };
 
     var mouseClick = function(event) {
-        if (event.ctrlKey === true) {
-            this.placeholderVisible(!this.placeholderVisible());
-        } else {
-            this.fire(bui.Node.ListenerType.click, [this, event]);
-        }
+       if (event.ctrlKey === true && (bui.settings.enableModificationSupport === true)) {
+          this.placeholderVisible(!this.placeholderVisible());
+       } else if (!this.placeholderVisible()) {
+          this.fire(bui.Node.ListenerType.click, [this, event]);
+       }
     };
     var dblclick = function(event) {
-            this.placeholderVisible(!this.placeholderVisible());
+       if (bui.settings.enableModificationSupport === true){
+          this.placeholderVisible(!this.placeholderVisible());
+       }
     };
-
+    
     /**
      * @private
      * Initial paint of the placeholder node and group node
@@ -232,9 +234,7 @@
         if (bui.settings.enableModificationSupport === true) {
 
             jQuery(privates.nodeGroup)
-                    .add(privates.placeholder)
-                    .click(mouseClick.createDelegate(this))
-                    .dblclick(dblclick.createDelegate(this));
+                    .add(privates.placeholder);
 
             if (this._enableDragging === true) {
                 jQuery(privates.placeholder).draggable({
@@ -251,6 +251,11 @@
                         });
             }
         }
+        
+        jQuery(privates.nodeGroup)
+            .click(mouseClick.createDelegate(this))
+            .dblclick(dblclick.createDelegate(this));
+        
     };
 
     /**
@@ -586,6 +591,45 @@
             return this;
         },
 
+        /**
+         * @description
+         * Use this function to move the node relative to its current position.
+         *
+         * @param {Number} w new width
+         * @param {Number} h new height
+         * @param {Number} [duration] Whether this movement should be animated
+         *   and how long this animation should run in milliseconds. When
+         *   omitted or a value <= 0 is passed the movement will be executed
+         *   immediately.
+         * @return {bui.Node} Fluent interface.
+         */
+        resize : function(w, h, duration) {
+            var privates = this._privates(identifier);
+
+            if (duration === undefined || duration <= 0) {
+                this.size(w, h);
+            } else {
+                var node = this,
+                        // 1000 milliseconds / x fps
+                        timeOffset = 1000 / bui.settings.animationFPS,
+                        remainingCalls = Math.floor(duration / timeOffset),
+                        diffw=(w-privates.width)/remainingCalls,
+                        diffh=(h-privates.height)/remainingCalls;
+
+                (function() {
+                    node.size(w-remainingCalls*diffw, h-remainingCalls*diffh);
+
+                    remainingCalls--;
+
+                    if (remainingCalls >= 1) {
+                        setTimeout(arguments.callee, timeOffset);
+                    }
+                })();
+            }
+
+            return this;
+        },
+ 
         /**
          * @description
          * Use this function to move the node.

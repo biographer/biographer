@@ -542,6 +542,14 @@ var addMapping = function(mapping, keys, klass, generator) {
 var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {},
         modificationMapping = {};
 
+(function(bui){
+   bui.nodeMapping = nodeMapping;
+   bui.processNodeMapping = processNodeMapping;
+   bui.modificationMapping = modificationMapping;
+   bui.edgeMarkerMapping = edgeMarkerMapping;
+})(bui);
+        
+        
 /**
  * Add mappings to the mappings object.
  *
