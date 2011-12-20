@@ -26,6 +26,11 @@ int main(int argc,char *argv[]){
    l.stepAddPlugins(0,P_force_adj,  P_torque_adj, P_distribute_edges, P_adjust_compartments, P_force_compartments);
    l.stepAddEndCondition(0,C_relForceDiff,0.0005);
    l.stepAddEndCondition(0,C_temp,10);
+   l.stepAddPlugins(1,P_fix_compartments);
+   l.stepAddEndCondition(1,C_iterations,1);
+   l.stepAddPlugins(2,P_force_adj,  P_torque_adj,P_force_nadj, P_distribute_edges, P_adjust_compartments_fixed, P_force_compartments);
+   l.stepAddEndCondition(2,C_relForceDiff,0.0005);
+   l.stepAddEndCondition(2,C_temp,10);
    l.execute();
    printf("finished. [press key]\n");
    getc(stdin);
