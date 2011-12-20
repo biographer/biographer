@@ -43,9 +43,9 @@ class Layouter{
       VF dij;
       VI deg;
       vector<bool> tension;
+      bool dodebug[P_count-1];
 #ifdef SHOWPROGRESS
       vector<vector<forcevec> > debug;
-      bool dodebug[P_count-1];
 #endif
       double avgsize;
       bool show_progress;

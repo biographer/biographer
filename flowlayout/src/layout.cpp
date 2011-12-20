@@ -13,11 +13,15 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
    show_progress=false;
    progress_step=1;
    forked_viewer=false;
+   int i;
 #ifdef SHOWPROGRESS
    nd.waitKeyPress=true;
-   int i;
    for (i=0;i<P_count-1;i++){
       dodebug[i]=true;
+   }
+#else
+   for (i=0;i<P_count-1;i++){
+      dodebug[i]=false;
    }
 #endif
 }
@@ -26,7 +30,9 @@ void Layouter::init(){
    tension.resize(nw.nodes.size());
    mov.resize(nw.nodes.size());
    force.resize(nw.nodes.size());
+#ifdef SHOWPROGRESS
    debug.resize(nw.nodes.size());
+#endif 
    avgsize=avg_sizes(*this);
    get_ideal_distances(*this,dij);
    get_degrees(*this,deg);
@@ -109,7 +115,9 @@ void Layouter::execute(){
    
    init();
    int prs=program.size();
+#ifdef SHOWPROGRESS
    int skip=1;
+#endif
    for (s=0;s<prs;s++){
       double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
       double maxForce,totalForce,maxMov,totalMov,lastForce=-1;

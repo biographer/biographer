@@ -4,56 +4,45 @@
 
 void reactionlayout(Layouter& l){
    l.addStep();
-   l.stepAddPlugin(P_init_layout);
+   l.stepAddPlugins(P_init_layout, P_limit_mov);
    l.stepAddEndCondition(C_maxMovLimit,0.005);
-   l.stepLimitMov(false);
-
-   //l.addStep();
-//   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges);
-   //l.stepAddPlugins(P_force_adj, P_distribute_edges);
-   //   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_adjust_compartments,P_force_compartments);
-/*   l.stepAddEndCondition(C_maxMovLimit,0.005);
-   l.stepAddEndCondition(C_totForceInc,10);*/
-   //l.stepAddEndCondition(C_iterations,5550); // just one iteration to initialize compartments
-   //   l.stepAddEndCondition(C_relForceDiff,0.0005);
+   
+   /*   l.addStep();
+   l.stepAddPlugins(P_force_adj, P_distribute_edges);
+   l.stepAddEndCondition(C_iterations,5550); // just one iteration to initialize compartments*/
    
    l.addStep();
-   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges);
-   l.stepAddEndCondition(C_iterations,1550); // just one iteration to initialize compartments
-
-   l.addStep();
-   l.stepAddPlugin(P_adjust_compartments);
-   l.stepAddEndCondition(C_iterations,1); // just one iteration to initialize compartments
-
-   l.addStep();
-   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_adjust_compartments,P_force_compartments);
-   l.stepAddEndCondition(C_iterations,2550); // just one iteration to initialize compartments
-   
-   
-/*   l.addStep();
-   l.stepAddPlugins(P_force_adj, P_torque_adj, P_min_edge_crossing);*/
-//   l.stepAddPlugins(P_force_adj, P_torque_adj, P_adjust_compartments,P_force_compartments, P_min_edge_crossing);
-//   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_adjust_compartments,P_force_compartments);
-/*   l.stepAddEndCondition(C_relForceDiff,0.0005);
-   l.stepAddEndCondition(C_temp,10);*/
-   //   l.stepAddEndCondition(C_totForceInc,3);
+   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_limit_mov);
+   l.stepAddEndCondition(C_iterations,1550);
    
    l.addStep();
-   l.stepAddPlugins(P_force_adj, P_torque_adj, P_adjust_compartments,P_force_compartments, P_separate_nodes, P_min_edge_crossing);
-   l.stepAddPlugin(P_distribute_edges, 0.25);
-   //   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_adjust_compartments,P_force_compartments);
-   l.stepAddEndCondition(C_relForceDiff,0.0005);
-   l.stepAddEndCondition(C_totForceInc,3);
+   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_min_edge_crossing, P_min_edge_crossing_multi, P_limit_mov);
+   l.stepPluginScale(P_min_edge_crossing, 0.1);
+   l.stepPluginScale(P_min_edge_crossing_multi, 0.1);
+   l.stepAddEndCondition(C_iterations,1550);
+   
+   l.addStep();
+   l.stepAddPlugins(P_force_adj, P_adjust_compartments, P_force_compartments, P_limit_mov);
+   l.stepAddEndCondition(C_relForceDiff,0.005);
    l.stepAddEndCondition(C_temp,10);
    
-   //l.addStep();
-   /*   l.stepAddPlugins(P_force_adj, P_torque_adj, P_force_nadj, P_adjust_compartments,P_force_compartments, P_separate_nodes);
-   l.stepAddPlugin(P_distribute_edges, 0.25);
-   //   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_adjust_compartments,P_force_compartments);
-   l.stepAddEndCondition(C_relForceDiff,0.005);
-   l.stepAddEndCondition(C_totForceInc,3);
-   l.stepAddEndCondition(C_temp,10);*/
-
+   l.addStep();
+   l.stepAddPlugins(P_fix_compartments);
+   l.stepAddEndCondition(C_iterations,1);
+   
+   l.addStep();
+   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_min_edge_crossing, P_min_edge_crossing_multi, P_adjust_compartments_fixed, P_force_compartments, P_limit_mov);
+   l.stepPluginScale(P_min_edge_crossing, 0.1);
+   l.stepPluginScale(P_min_edge_crossing_multi, 0.1);
+   l.stepAddEndCondition(C_iterations,1550);
+   
+   l.addStep();
+   l.stepAddPlugins(P_force_adj, P_torque_adj, P_distribute_edges, P_min_edge_crossing, P_min_edge_crossing_multi, P_adjust_compartments_fixed, 
+                    P_force_compartments, P_separate_nodes, P_limit_mov, P_node_collision);
+   l.stepPluginScale(P_min_edge_crossing, 0.1);
+   l.stepPluginScale(P_min_edge_crossing_multi, 0.1);
+   l.stepAddEndCondition(C_iterations,1550);
+                    
    l.execute();
    
 }

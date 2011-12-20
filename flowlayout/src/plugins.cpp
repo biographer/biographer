@@ -1,7 +1,9 @@
 #include "plugins.h"
 #include "layout.h"
 #include "defines.h"
+#ifdef SHOWPROGRESS
 #include "netdisplay.h"
+#endif
 #include "paramedge.cpp"
 
 Plugins glob_pgs;
