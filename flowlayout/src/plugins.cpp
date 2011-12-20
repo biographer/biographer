@@ -14,6 +14,8 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_force_compartments,"force_compartments",force_compartments);
    glob_pgs.registerPlugin(P_distribute_edges,"distribute_edges",distribute_edges);
    glob_pgs.registerPlugin(P_adjust_compartments,"adjust_compartments",adjust_compartments);
+   glob_pgs.registerPlugin(P_adjust_compartments_fixed,"adjust_compartments_fixed",adjust_compartments_fixed);
+   glob_pgs.registerPlugin(P_fix_compartments,"fix_compartments",fix_compartments);
    glob_pgs.registerPlugin(P_init_layout,"init_layout",init_layout);
    glob_pgs.registerPlugin(P_min_edge_crossing,"min_edge_crossing",min_edge_crossing);
    glob_pgs.registerPlugin(P_min_edge_crossing_multi,"min_edge_crossing_multi",min_edge_crossing_multi);
@@ -437,9 +439,7 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
             }
          }
       }
-   }
-            
-   
+   }   
 }
 void force_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function computes the force induced by compartments, and updates the movements of nodes.
@@ -604,6 +604,159 @@ void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, dou
             }
          }
       }
+   }
+}
+void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int cn=state.nw.compartments.size();
+   int i,j;  
+   for(i=1;i<cn;i++){
+      for (j=i+1;j<cn;j++){
+         //adjusting the compartments so that there is no gap between adjacent ones.
+         // Note: there is no force to bring compartments together if they don't overlap. this force should come from the connections between the compartments
+         const Compartment &cpi=state.nw.compartments[i];
+         const Compartment &cpj=state.nw.compartments[j];
+         Point vec=cpj.center()-cpi.center();
+         if (2*fabs(vec.x)<cpi.size().x+cpj.size().x && 2*fabs(vec.y)<cpi.size().y+cpj.size().y){ // the 2 compartments overlap
+            if (cpi.size().x+cpj.size().x-2*fabs(vec.x)<cpi.size().y+cpj.size().y-2*fabs(vec.y)){ // move in x direction (if x-overlap is smaller)
+               double d=sign(vec.x)*((cpi.size().x+cpj.size().x)/2-fabs(vec.x));
+               if (d>0){
+                  double pos=state.nw.compartments[i].xmax-d/2;
+                  state.nw.compartments[i].xmax=pos;
+                  state.nw.compartments[j].xmin=pos;
+               } else {
+                  double pos=state.nw.compartments[i].xmin-d/2;
+                  state.nw.compartments[i].xmax=pos;
+                  state.nw.compartments[j].xmin=pos;
+               }
+            } else {
+               double d=sign(vec.y)*((cpi.size().y+cpj.size().y)/2-fabs(vec.y));
+               if (d>0){
+                  double pos=state.nw.compartments[i].ymax-d/2;
+                  state.nw.compartments[i].ymax=pos;
+                  state.nw.compartments[j].ymin=pos;
+               } else {
+                  double pos=state.nw.compartments[i].ymin-d/2;
+                  state.nw.compartments[i].ymax=pos;
+                  state.nw.compartments[j].ymin=pos;
+               }
+            }
+         }
+      }
+   }
+   // expanding compartments as much as possible
+   double xmin=DBL_MAX,xmax=-DBL_MAX,ymin=DBL_MAX,ymax=-DBL_MAX;
+   for(i=1;i<cn;i++){
+      const Compartment &cpi=state.nw.compartments[i];
+      if (cpi.xmax>xmax) xmax=cpi.xmax;
+      if (cpi.ymax>ymax) ymax=cpi.ymax;
+      if (cpi.xmin<xmin) xmin=cpi.xmin;
+      if (cpi.ymin<ymin) ymin=cpi.ymin;
+   }
+   for(i=1;i<cn;i++){
+      Compartment &cpi=state.nw.compartments[i];
+      double where=xmin;
+      for (j=1;j<cn;j++){
+         if (i==j) continue;
+         const Compartment &cpj=state.nw.compartments[j];
+         if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if exapnding
+            if (cpj.xmin<cpi.xmax && cpj.xmax>where) where=cpj.xmax;
+         }
+      }
+      if (where<cpi.xmin) cpi.xmin=where; // move to left
+      where=xmax;
+      for (j=1;j<cn;j++){
+         if (i==j) continue;
+         const Compartment &cpj=state.nw.compartments[j];
+         if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if exapnding
+            if (cpj.xmax>cpi.xmin && cpj.xmin<where) where=cpj.xmin;
+         }
+      }
+      if (where>cpi.xmax) cpi.xmax=where; // move to right
+      where=ymin;
+      for (j=1;j<cn;j++){
+         if (i==j) continue;
+         const Compartment &cpj=state.nw.compartments[j];
+         if (cpj.xmax>cpi.xmin && cpj.xmin<cpi.xmax){ // could collide if exapnding
+            if (cpj.ymin<cpi.ymax && cpj.ymax>where) where=cpj.ymax;
+         }
+      }
+      if (where<cpi.ymin) cpi.ymin=where; // move to left
+      where=ymax;
+      for (j=1;j<cn;j++){
+         if (i==j) continue;
+         const Compartment &cpj=state.nw.compartments[j];
+         if (cpj.xmax>cpi.xmin && cpj.xmin<cpi.xmax){ // could collide if exapnding
+            if (cpj.ymax>cpi.ymin && cpj.ymin<where) where=cpj.ymin;
+         }
+      }
+      if (where>cpi.ymax) cpi.ymax=where; // move to right
+   }
+}
+enum __dir {
+   dir_LR,dir_TB
+};
+void __move(Layouter &state, double pos, double d, __dir what){
+   // moves compartment borders within a certain range of pos by d in the direction of what
+   int i;
+   int cn=state.nw.compartments.size();
+   VF ps; // all positions
+   for(i=1;i<cn;i++){
+      if (what==dir_LR) ps.push_back(state.nw.compartments[i].xmin);
+      if (what==dir_LR) ps.push_back(state.nw.compartments[i].xmax);
+      if (what==dir_TB) ps.push_back(state.nw.compartments[i].ymin);
+      if (what==dir_TB) ps.push_back(state.nw.compartments[i].ymax);
+   }
+   sort(ps.begin(),ps.end());
+   i=0;
+   while (i<ps.size() && ps[i]<pos) i++;
+   double pos2=pos+d;
+   if (d<0){
+      i--;
+      while (i>=0 && ps[i]>pos2) { // find all lines in range pos-|d| .. pos; if found, extend range to ps[i]-|d| .. pos
+         pos2=ps[i]+d;
+         i--;
+      }
+   } else {
+      while (i<ps.size() && ps[i]<pos2) { // same for range pos .. pos +|d|
+         pos2=ps[i]+d;
+         i++;
+      }
+   }
+   if (pos>pos2) swap(pos,pos2);
+   for(i=1;i<cn;i++){ //the 0-th compartment is the infinite plane, so we start from index 1.
+      Compartment &cp=state.nw.compartments[i];
+      if (what==dir_LR && cp.xmin>=pos && cp.xmin<=pos2) cp.xmin+=d;
+      if (what==dir_LR && cp.xmax>=pos && cp.xmax<=pos2) cp.xmax+=d;
+      if (what==dir_TB && cp.ymin>=pos && cp.ymin<=pos2) cp.ymin+=d;
+      if (what==dir_TB && cp.ymax>=pos && cp.ymax<=pos2) cp.ymax+=d;
+   }
+}
+void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int n=state.nw.nodes.size(),cn=state.nw.compartments.size();
+   int i,c;  
+   VCP newpos(cn);
+   double d=state.avgsize/10; // minimum distance to node boundaries
+   for(c=1;c<cn;c++){ //the 0-th compartment is the infinite plane, so we start from index 1.
+      //initialization the rectangles.
+      newpos[c].xmin=newpos[c].ymin=DBL_MAX;
+      newpos[c].xmax=newpos[c].ymax=-DBL_MAX;
+   }
+   for(i=0;i<n;i++){
+      //getting bbox of contained nodes; considering node sizes
+      c=state.nw.nodes[i].compartment;
+      if(c==0)continue;
+      if(state.nw.nodes[i].x-state.nw.nodes[i].width/2-d<newpos[c].xmin) newpos[c].xmin=state.nw.nodes[i].x-state.nw.nodes[i].width/2-d;
+      if(state.nw.nodes[i].x+state.nw.nodes[i].width/2+d>newpos[c].xmax) newpos[c].xmax=state.nw.nodes[i].x+state.nw.nodes[i].width/2+d;
+      if(state.nw.nodes[i].y-state.nw.nodes[i].height/2-d<newpos[c].ymin) newpos[c].ymin=state.nw.nodes[i].y-state.nw.nodes[i].height/2-d;
+      if(state.nw.nodes[i].y+state.nw.nodes[i].height/2+d>newpos[c].ymax) newpos[c].ymax=state.nw.nodes[i].y+state.nw.nodes[i].height/2+d;
+   }
+   for(c=1;c<cn;c++){
+      Compartment &cpo=state.nw.compartments[c];
+      Compartment &cpn=newpos[c];
+      if (cpo.xmin>cpn.xmin) __move(state, cpo.xmin,(cpn.xmin-cpo.xmin)*factor*scale,dir_LR);
+      if (cpo.xmax<cpn.xmax) __move(state, cpo.xmax,(cpn.xmax-cpo.xmax)*factor*scale,dir_LR);
+      if (cpo.ymin>cpn.ymin) __move(state, cpo.ymin,(cpn.ymin-cpo.ymin)*factor*scale,dir_TB);
+      if (cpo.ymax<cpn.ymax) __move(state, cpo.ymax,(cpn.ymax-cpo.ymax)*factor*scale,dir_TB);
    }
 }
 template <typename T>void vassign(vector<T>& v,const vector<T>& v2){
