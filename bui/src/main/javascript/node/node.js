@@ -838,6 +838,9 @@
             var deltaX = otherPosition.x - position.x,
                     deltaY = otherPosition.y - position.y;
 
+            if (deltaX==0 && deltaY==0){
+               return this.center();
+            }
             var hitAngle = Math.abs(Math.atan(deltaY / deltaX));
             var sideHitAngle = Math.atan(heightWithPadding / widthWithPadding);
 
