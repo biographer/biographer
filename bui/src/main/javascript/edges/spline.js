@@ -76,11 +76,14 @@
         _initialPaint : function() {
             var privates = this._privates(identifier);
             privates.layoutElementsVisible = true;
+            privates.points=[];
+            privates.sourceSplineHandlePos={x:0,y:0};
+            privates.targetSplineHandlePos={x:0,y:0};
             this._line = document.createElementNS(bui.svgns, 'path');
             this.graph().edgeGroup().appendChild(this._line);
             this.addClass(bui.settings.css.classes.invisible);
 
-            var listener = this._sourceOrTargetDimensionChanged
+            var listener = this._splineHandleChanged
                     .createDelegate(this);
             privates.sourceSplineHandle = this.graph()
                     .add(bui.SplineEdgeHandle)
@@ -111,7 +114,52 @@
 
             jQuery(this._line).click(lineMouseClick.createDelegate(this));
         },
-
+        /**
+         * @private spline handle position changed; update control point vectors
+         */
+        _splineHandleChanged : function() {
+           var privates = this._privates(identifier);
+           if (privates.positioningSplineHandles) return;
+              privates.sourceSplineHandlePos.x=privates.sourceSplineHandle.absoluteCenter().x-this.source().absoluteCenter().x;
+              privates.sourceSplineHandlePos.y=privates.sourceSplineHandle.absoluteCenter().y-this.source().absoluteCenter().y;
+           for (var i=0;i<privates.points.length;i++){
+                 privates.points[i].x=privates.points[i].splineHandle.absoluteCenter().x-privates.points[i].point.absoluteCenter().x;
+                 privates.points[i].y=privates.points[i].splineHandle.absoluteCenter().y-privates.points[i].point.absoluteCenter().y;
+           }
+              privates.targetSplineHandlePos.x=privates.targetSplineHandle.absoluteCenter().x-this.target().absoluteCenter().x;
+              privates.targetSplineHandlePos.y=privates.targetSplineHandle.absoluteCenter().y-this.target().absoluteCenter().y;
+           this._sourceOrTargetDimensionChanged();
+           /*           var changed=false;
+           if (privates.sourceSplineHandlePos.x!=privates.sourceSplineHandle.absoluteCenter().x-this.source().absoluteCenter().x){
+              privates.sourceSplineHandlePos.x=privates.sourceSplineHandle.absoluteCenter().x-this.source().absoluteCenter().x;
+              changed=true;
+           }
+           if (privates.sourceSplineHandlePos.y!=privates.sourceSplineHandle.absoluteCenter().y-this.source().absoluteCenter().y){
+              privates.sourceSplineHandlePos.y=privates.sourceSplineHandle.absoluteCenter().y-this.source().absoluteCenter().y;
+              changed=true;
+           }
+           for (var i=0;i<privates.points.length;i++){
+              if (privates.points[i].x!=privates.points[i].SplineHandle.absoluteCenter().x-privates.points[i].point.absoluteCenter().x){
+                  privates.points[i].x=privates.points[i].SplineHandle.absoluteCenter().x-privates.points[i].point.absoluteCenter().x;
+                  changed=true;
+              }
+              if (privates.points[i].y!=privates.points[i].SplineHandle.absoluteCenter().y-privates.points[i].point.absoluteCenter().y){
+                  privates.points[i].y=privates.points[i].SplineHandle.absoluteCenter().y-privates.points[i].point.absoluteCenter().y;
+                  changed=true;
+              }
+           }
+           if (privates.targetSplineHandlePos.x!=privates.targetSplineHandle.absoluteCenter().x-this.target().absoluteCenter().x){
+               privates.targetSplineHandlePos.x=privates.targetSplineHandle.absoluteCenter().x-this.target().absoluteCenter().x;
+               changed=true;
+           }
+           if (privates.targetSplineHandlePos.y!=privates.targetSplineHandle.absoluteCenter().y-this.target().absoluteCenter().y){
+               privates.targetSplineHandlePos.y=privates.targetSplineHandle.absoluteCenter().y-this.target().absoluteCenter().y;
+               changed=true;
+           }
+           if (changed) { // this detects whether SplineHandle is changed external (not via _sourceOrTargetDimensionChanged itself)
+              this._sourceOrTargetDimensionChanged();
+           }*/
+        },
         /**
          * @private Source / target position and size listener
          */
@@ -122,6 +170,17 @@
             if (target !== null && source !== null) {
 
                 var privates = this._privates(identifier);
+                privates.positioningSplineHandles=true;
+                privates.sourceSplineHandle.absolutePositionCenter(source.absoluteCenter().x+privates.sourceSplineHandlePos.x,
+                                                         source.absoluteCenter().y+privates.sourceSplineHandlePos.y);
+                for (var i=0;i<privates.points.length;i++){
+                    privates.points[i].splineHandle.absolutePositionCenter(privates.points[i].point.absoluteCenter().x+privates.points[i].x,
+                                                                           privates.points[i].point.absoluteCenter().y+privates.points[i].y)
+                }
+                privates.targetSplineHandle.absolutePositionCenter(target.absoluteCenter().x+privates.targetSplineHandlePos.x,
+                                                    target.absoluteCenter().y+privates.targetSplineHandlePos.y);
+                privates.positioningSplineHandles=false;
+                                                    
                 var sourceSplineHandle = privates.sourceSplineHandle,
                         targetSplineHandle = privates.targetSplineHandle;
 
@@ -134,19 +193,27 @@
                         targetSplineHandlePosition = targetSplineHandle
                                 .absoluteCenter();
                 
-                var data = ['M',
+                var data = ['M' ,
                         sourcePosition.x,
                         sourcePosition.y,
                         'C',
                         sourceSplineHandlePosition.x,
-                        sourceSplineHandlePosition.y,
-                        targetSplineHandlePosition.x,
+                        sourceSplineHandlePosition.y]
+                for (var i=0;i<privates.points.length;i++){
+                   var p=privates.points[i];
+                   data.push.apply(data,[p.point.absoluteCenter().x+p.x,
+                               p.point.absoluteCenter().y+p.y,
+                               p.point.absoluteCenter().x,
+                               p.point.absoluteCenter().y,
+                               'S']);
+                }
+                data.push.apply(data,[targetSplineHandlePosition.x,
                         targetSplineHandlePosition.y,
                         targetPosition.x,
-                        targetPosition.y].join(' ');
+                        targetPosition.y]);
 
 
-                this._line.setAttributeNS(null, 'd', data);
+                this._line.setAttributeNS(null, 'd', data.join(' '));
             }
         },
 
@@ -169,6 +236,11 @@
 
                 privates.sourceSplineHandle.visible(visible);
                 privates.targetSplineHandle.visible(visible);
+                for (var i=0;i<privates.points.length;i++){
+                   privates.points[i].splineHandle.visible(visible);
+                   privates.points[i].helperLine.visible(visible);
+                   privates.points[i].point.visible(visible);
+                }
                 privates.sourceHelperLine.visible(visible);
                 privates.targetHelperLine.visible(visible);
 
@@ -179,11 +251,63 @@
         },
 
         /**
+         * Set the additional spline point positions and optionally animate them.
+         * 
+         * @param {Object[]} positions An array of positions, i.e. [x1,y1,x2,y2,...]
+         *   contains the spline point coordinates except source and target positions (these are directly taken form source and target)
+         * @param {Number} [duration] Optional duration for an animation. The
+         *   default value assumes no animation. Refer to {@link bui.Node#move}
+         *   for additional information about this parameter.
+         * @return {bui.Spline} Fluent interface
+         */
+        setSplinePoints : function(positions, duration) {
+           var privates = this._privates(identifier);
+           var dl=positions.length/2-privates.points.length;
+           if (dl<0){
+              for (var i=privates.points.length-dl;i<privates.points.length;i++){
+                 privates.points[i].splineHandle.delete();
+                 privates.points[i].helperLine.delete();
+                 privates.points[i].point.delete();
+              }
+           }
+           if (dl>0){
+              var listener = this._sourceOrTargetDimensionChanged
+              .createDelegate(this);
+              var listener2 = this._splineHandleChanged
+              .createDelegate(this);
+              for (var i=privates.points.length;i<positions.length/2;i++){
+                 privates.points[i]={x:0,y:0};
+                  privates.points[i].splineHandle=this.graph()
+                     .add(bui.SplineEdgeHandle)
+                     .bind(bui.Node.ListenerType.absolutePosition,
+                       listener2,
+                       listenerIdentifier(this))
+                       .visible(privates.layoutElementsVisible);
+                  privates.points[i].point=this.graph()
+                     .add(bui.EdgeHandle)
+                     .bind(bui.Node.ListenerType.absolutePosition,
+                       listener,
+                       listenerIdentifier(this))
+                       .visible(privates.layoutElementsVisible);
+                  privates.points[i].helperLine=this.graph()
+                       .add(bui.StraightLine)
+                       .lineStyle(bui.AbstractLine.Style.dotted)
+                       .hoverEffect(false)
+                       .source(privates.points[i].splineHandle)
+                       .target(privates.points[i].point)
+                       .visible(privates.layoutElementsVisible);
+              }
+           }
+           for (var i=0;i<positions.length;i+=2){
+              var n=i/2;
+              privates.points[n].point.moveAbsolute(positions[i],positions[i+1],duration);
+           }
+        },
+        /**
          * Set the spline handle positions and optionally animate them.
          * 
-         * @param {Object[]} positions An array of positions, i.e. an array
-         *   of objects where each object has an x and y property which
-         *   resembles the spline handle coordinates.
+         * @param {Object[]} positions An array of positions, i.e. [x1,y1,x2,y2,...]
+         *   contains the spline handle coordinates relative to the spline points.
          * @param {Number} [duration] Optional duration for an animation. The
          *   default value assumes no animation. Refer to {@link bui.Node#move}
          *   for additional information about this parameter.
@@ -191,16 +315,22 @@
          */
         setSplineHandlePositions : function(positions, duration) {
             var privates = this._privates(identifier);
-
-            if (positions.length >= 1) {
-                privates.sourceSplineHandle.moveAbsolute(positions[0].x,
-                        positions[0].y, duration);
+            var target = this.target(),
+                    source = this.source();
+            privates.sourceSplineHandlePos.x=positions[0];
+            privates.sourceSplineHandlePos.y=positions[1];
+            for (var i=2;i<positions.length-2;i+=2){
+               var n=(i-2)/2;
+               if (privates.points[n]){
+                  privates.points[n].x=positions[i];
+                  privates.points[n].y=positions[i+1];
+               } else {
+                  throw "not enough spline points set for spline handles"
+               }
             }
-            if (positions.length >= 2) {
-                privates.targetSplineHandle.moveAbsolute(positions[1].x,
-                        positions[1].y, duration);
-            }
-
+            privates.targetSplineHandlePos.x=positions[i];
+            privates.targetSplineHandlePos.y=positions[i+1];
+            this._sourceOrTargetDimensionChanged();
             return this;
         },
 
