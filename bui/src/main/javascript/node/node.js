@@ -407,6 +407,23 @@
             return this;
         },
 
+         /**
+         * Position the node's center on the given coordinate (SVG absolute).
+         *
+         * The positioning is done relatively.
+         *
+         * @param {Number} x Position on x-coordinate.
+         * @param {Number} y Position on y-coordinate.
+         * @return {bui.Node} Fluent interface
+         */
+        absolutePositionCenter : function(x, y) {
+            var size = this.size();
+
+            this.absolutePosition(x - size.width / 2, y - size.height / 2);
+
+            return this;
+        },
+
         /**
          * Retrieve the absolute position of this node in the HTML document.
          *
