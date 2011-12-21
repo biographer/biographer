@@ -227,18 +227,23 @@
             // ensuring that the data property exists
             edgeJSON.data = edgeJSON.data || {};
 
-            if (edgeJSON.data.type !== 'curve') {
-                edge = graph.add(bui.Edge);
-            } else {
-                edge = graph.add(bui.Spline)
-                        .layoutElementsVisible(false);
+            if (edgeJSON.data.handles !== undefined && edgeJSON.data.handles.length>=4) {
+               edge = graph.add(bui.Spline)
+               .layoutElementsVisible(false);
 
-                if (edgeJSON.data.handles !== undefined) {
-                    edge.setSplineHandlePositions(edgeJSON.data.handles);
-                }
+               edge.json(edgeJSON).source(source).target(target);
+               
+               if (edgeJSON.data.points !== undefined) {
+                  edge.setSplinePoints(edgeJSON.data.points);
+               }
+               if (edgeJSON.data.handles !== undefined) {
+                  edge.setSplineHandlePositions(edgeJSON.data.handles);
+               }
+            } else {
+               edge = graph.add(bui.Edge);
+               edge.json(edgeJSON).source(source).target(target);
             }
 
-            edge.json(edgeJSON).source(source).target(target);
 
             if (edgeJSON.sbo !== undefined) {
                 try {
