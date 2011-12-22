@@ -88,7 +88,8 @@ bui.settings = {
             target : 'target',
             style : ['data', 'style'],
             type : ['data', 'type'],
-            handles : ['data', 'handles']
+            handles : ['data', 'handles'],
+            points : ['data', 'points']
         }
 
     },

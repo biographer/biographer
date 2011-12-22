@@ -340,14 +340,17 @@
                     dataFormat = bui.settings.dataFormat,
                     privates = this._privates(identifier);
 
-            var sourcePosition =
-                    privates.sourceSplineHandle.absoluteCenter(),
-                    targetPosition =
-                    privates.targetSplineHandle.absoluteCenter();
-
-            updateJson(json, dataFormat.edge.handles, [sourcePosition,
-                targetPosition]);
-            updateJson(json, dataFormat.edge.type, 'curve');
+            var handles = [privates.sourceSplineHandlePos.x,privates.sourceSplineHandlePos.y];
+            var points = [];
+            for (var i=0;i<privates.points.length;i++){
+               var pos=privates.points[i].point.absoluteCenter()
+               points.push.apply(points,[pos.x,pos.y]);
+               handles.push.apply(handles,[privates.points[i].x,privates.points[i].y]);
+            }
+            handles.push.apply(handles,[privates.targetSplineHandlePos.x,privates.targetSplineHandlePos.y]);
+            updateJson(json, dataFormat.edge.handles, handles);
+            updateJson(json, dataFormat.edge.points, points);
+            //updateJson(json, dataFormat.edge.type, 'curve');
 
             return json;
         }
