@@ -665,6 +665,24 @@
         },
 
         /**
+         * @description
+         * Use this function to move the node.
+         *
+         * @param {Number} x Absolute center position on the x-axis.
+         * @param {Number} y Absolute center position on the y-axis.
+         * @param {Number} [duration] Whether this movement should be animated
+         *   and how long this animation should run in milliseconds. When
+         *   omitted or a value <= 0 is passed the movement will be executed
+         *   immediately.
+         * @return {bui.Node} Fluent interface.
+         */
+        moveAbsoluteCenter : function(x, y, duration) {
+            var size = this.size();
+            
+            this.moveAbsolute(x - size.width / 2, y - size.height / 2);
+            
+        },
+        /**
          * Retrieve the current parent or set it
          *
          * @param {bui.Graph|bui.Node} [parent] The new parameter or

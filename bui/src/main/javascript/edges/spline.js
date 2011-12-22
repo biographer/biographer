@@ -300,7 +300,7 @@
            }
            for (var i=0;i<positions.length;i+=2){
               var n=i/2;
-              privates.points[n].point.moveAbsolute(positions[i],positions[i+1],duration);
+              privates.points[n].point.moveAbsoluteCenter(positions[i],positions[i+1],duration);
            }
         },
         /**
