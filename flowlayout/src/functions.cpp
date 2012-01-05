@@ -49,10 +49,10 @@ Point& operator/=(Point& p1, const double scalar){
 double scalar(const Point& p1, const Point& p2){
    return p1.x*p2.x+p1.y*p2.y;
 }
-/*double operator*(const Point& p1, const Point& p2){
+double prod(const Point& p1, const Point& p2){
    //vector product of two vectors
    return p1.x*p2.y-p1.y*p2.x;
-}*/
+}
 Point operator*(const Point& p1, const double scalar){
    //scale vector
    Point p;
@@ -66,6 +66,9 @@ Point operator/(const Point& p1, const double scalar){
    p.x=p1.x/scalar;
    p.y=p1.y/scalar;
    return p;
+}
+bool operator==(const Point& p1, const Point& p2){
+   return (p1.x==p2.x && p1.y==p2.y);
 }
 Point unit(const Point& p1){
    double len=norm(p1);

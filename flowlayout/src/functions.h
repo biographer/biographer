@@ -12,8 +12,9 @@ Point operator*(const Point& p1, const double scalar); //scale vector
 Point operator/(const Point& p1, const double scalar); //scale vector
 Point& operator*=(Point& p1, const double scalar);
 Point& operator/=(Point& p1, const double scalar);
+bool operator==(const Point& p1, const Point& p2);
 double scalar(const Point& p1, const Point& p2); // scalar product
-
+double prod(const Point& p1, const Point& p2); // vector product 2d
 Point unit(const Point& p1); // unit vector
 Point to_left(const Point& p0, const double beta);  //rotating the vector "p0" "beta" degrees to the left.
 
