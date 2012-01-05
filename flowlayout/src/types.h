@@ -40,6 +40,8 @@ class Point{
    public: 
       Point():x(0), y(0){}
       Point(double _x, double _y):x(_x), y(_y){}
+      Point(double alpha):x(cos(alpha)), y(sin(alpha)){}
+      bool is_null(){return x==0 && y==0;}
       //A point or a vector in a 2-dimensional plane.
       double x,y;
 };
