@@ -117,6 +117,12 @@ class Edge {
          to=_to;
          type=_type;
       }       
+      Edge(int _from, int _to, Edgetype _type, double length){   
+         from=_from;
+         to=_to;
+         type=_type;
+         len=length;
+      }       
       int from,to; //the "from" attribute is a reaction node, and the "to" attribute is a compound node.
       Edgetype type;
 };
