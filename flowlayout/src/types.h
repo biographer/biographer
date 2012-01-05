@@ -63,6 +63,30 @@ class Rect{
       Point size() const{
          return Point(fabs(xmax-xmin),fabs(ymax-ymin));
       }
+      void extend(double val){
+         extend(val,val,val,val);
+      }
+      void extend(double x, double y){
+         extend(x,y,x,y);
+      }
+      void extend(double _xmin, double _ymin, double _xmax, double _ymax){
+         xmin-=_xmin;
+         ymin-=_ymin;
+         xmax+=_xmax;
+         ymax+=_ymax;
+      }
+      inline Point TL(){
+         return Point(xmin,ymin);
+      }
+      inline Point TR(){
+         return Point(xmax,ymin);
+      }
+      inline Point BL(){
+         return Point(xmin,ymax);
+      }
+      inline Point BR(){
+         return Point(xmax,ymax);
+      }
       double xmin, ymin, xmax, ymax;
 
 };
