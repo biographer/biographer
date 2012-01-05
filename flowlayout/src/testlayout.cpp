@@ -97,8 +97,14 @@ int main(int argc,char *argv[]){
    l.stepAddEndCondition(C_totForceInc,3);
    l.stepAddEndCondition(C_temp,10);*/
 
+   l.addStep();
+   l.stepAddPlugins(P_route_edges);
+   l.stepAddEndCondition(C_iterations,1);
+   
    l.execute();
-
+   l.show_network();
+   l.show_network(true);
+   
    printf("finished. [press key]\n");
    getc(stdin);
    
