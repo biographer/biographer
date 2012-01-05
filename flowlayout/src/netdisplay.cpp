@@ -204,37 +204,81 @@ void NetDisplay::draw(){
    cairo_set_source_rgb (c, 0,0,0); 
    for (i=0;i<se;i++){
       const Edge &e=net.edges[i];
-      const Node &n1=net.nodes[e.from];
-      const Node &n2=net.nodes[e.to];
+      const Node &n1=net.nodes[(e.type==catalyst || e.type==activator || e.type==inhibitor || e.type==substrate ? e.to : e.from)];
+      const Node &n2=net.nodes[(e.type==catalyst || e.type==activator || e.type==inhibitor || e.type==substrate ? e.from : e.to)];;
       cairo_set_dash (c,NULL,0,0);
       cairo_set_line_width(c,1/scale);
       if (e.type==catalyst || e.type==activator || e.type==inhibitor) cairo_set_dash (c,(double[2]){3/scale,3/scale},2,0);
       if (e.type==substrate) cairo_set_line_width(c,2/scale);
-      double x1=n1.x;
-      double y1=n1.y;
-      double x2=n2.x;
-      double y2=n2.y;
-      double dx=x2-x1;
-      double dy=y2-y1;
-      double alpha1; // fraction of the line which is covered by node 1
-      double alpha2; // fraction of the line which is covered by node 2
-      double alpha_h;
-      alpha1=fabs(n1.width/(2*dx));
-      alpha_h=fabs(n1.height/(2*dy));
-      if (alpha_h<alpha1) alpha1=alpha_h;
-      alpha2=fabs(n2.width/(2*dx));
-      alpha_h=fabs(n2.height/(2*dy));
-      if (alpha_h<alpha2) alpha2=alpha_h;
-      if (alpha1+alpha2>=1.0){
-//         printf("edge completely covered\n");
-      } else {
+      if (e.splinehandles.size()){ // spline edge
+         // calc first point of edge on boundary of first node
+         double x1=n1.x;
+         double y1=n1.y;
+         double dx=e.splinehandles[0].x;
+         double dy=e.splinehandles[0].y;
+         double alpha1=fabs(n1.width/(2*dx));
+         double alpha_h=fabs(n1.height/(2*dy));
+         if (alpha_h<alpha1) alpha1=alpha_h;
          x1+=dx*alpha1;
          y1+=dy*alpha1;
-         x2-=dx*alpha2;
-         y2-=dy*alpha2;
+         // calc last point of edge on boundary of second node
+         double x2=n2.x;
+         double y2=n2.y;
+         dx=e.splinehandles.back().x;
+         dy=e.splinehandles.back().y;
+         alpha1=fabs(n2.width/(2*dx));
+         alpha_h=fabs(n2.height/(2*dy));
+         if (alpha_h<alpha1) alpha1=alpha_h;
+         x2+=dx*alpha1;
+         y2+=dy*alpha1;
+         double x_2,y_2;
+         // is last point of first spline segment a spline point or the second node of edge?
+         if (e.splinepoints.size()){
+            x_2=e.splinepoints[0].x;
+            y_2=e.splinepoints[0].y;
+         } else {
+            x_2=x2;
+            y_2=y2;
+         }
+         // draw first spline segment
          cairo_move_to(c,x1,y1);
-         cairo_line_to(c,x2,y2);
+         cairo_curve_to(c,x1+e.splinehandles[0].x,y1+e.splinehandles[0].y,x_2+e.splinehandles[1].x,y_2+e.splinehandles[1].y,x_2,y_2);
+         // all other segments (if any)
+         for (int j=0,jl=e.splinepoints.size();j<jl;j++){
+            const Point &fst=e.splinepoints[j];
+            const Point &lst=(j+1<jl ? e.splinepoints[j+1] : Point(x2,y2));
+            Point h1=-e.splinehandles[j+1];
+            const Point &h2=e.splinehandles[j+2];
+            cairo_curve_to(c,fst.x+h1.x,fst.y+h1.y,lst.x+h2.x,lst.y+h2.y,lst.x,lst.y);
+         }
          cairo_stroke(c);
+      } else { // straight edge
+         double x1=n1.x;
+         double y1=n1.y;
+         double x2=n2.x;
+         double y2=n2.y;
+         double dx=x2-x1;
+         double dy=y2-y1;
+         double alpha1; // fraction of the line which is covered by node 1
+         double alpha2; // fraction of the line which is covered by node 2
+         double alpha_h;
+         alpha1=fabs(n1.width/(2*dx));
+         alpha_h=fabs(n1.height/(2*dy));
+         if (alpha_h<alpha1) alpha1=alpha_h;
+         alpha2=fabs(n2.width/(2*dx));
+         alpha_h=fabs(n2.height/(2*dy));
+         if (alpha_h<alpha2) alpha2=alpha_h;
+         if (alpha1+alpha2>=1.0){
+   //         printf("edge completely covered\n");
+         } else {
+            x1+=dx*alpha1;
+            y1+=dy*alpha1;
+            x2-=dx*alpha2;
+            y2-=dy*alpha2;
+            cairo_move_to(c,x1,y1);
+            cairo_line_to(c,x2,y2);
+            cairo_stroke(c);
+         }
       }
    }
    for (i=0;i<dbglines.size();i++){
