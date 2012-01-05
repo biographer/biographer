@@ -103,6 +103,11 @@ void Layouter::stepAddEndCondition(int step, conditions cond, double param, doub
       program[step].c_tempSteps=(int) param;
    }
 }
+void Layouter::show_network(bool wait){
+   if (wait) nd.waitKeyPress=true;
+   nd.show();
+}
+
 void Layouter::execute(){
    /* executes the layout algorithm 
       all defined steps are executed in sequential order

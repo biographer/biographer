@@ -37,6 +37,7 @@ class Layouter{
       void stepPluginScale(enumP pg,double scale);
       void addStep();
       void execute();
+      void show_network(bool wait=false);
       Network& nw;
       VP mov;
       VF force;
