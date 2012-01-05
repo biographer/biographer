@@ -1,7 +1,7 @@
 #ifndef th_network_h
 #define th_network_h
 #include "types.h"
-
+#include "functions.h"
 #ifdef USEJSON 
 #include <stdlib.h>
 #include <glib-object.h>
@@ -44,7 +44,8 @@ public:
    void read(const char * file=NULL); // read network from file
    void write(const char * file=NULL);
    void dumpNodes(const char* file); // write nodes with properties
-   
+   Rect getBB(bool includeCompartments=false); // get bounding box
+   void calcEdgeLengths();
 #ifdef USEJSON   
    JSONcontext* readJSON(const char * file=NULL);
    void writeJSON(JSONcontext* ctx,const char* file=NULL);

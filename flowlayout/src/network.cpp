@@ -129,6 +129,13 @@ void Network::addReaction(int index, const VI* substrates,const VI* products, co
       addEdge(index, (*inhibitors)[i], inhibitor);
    }
 }
+void Network::calcEdgeLengths(){
+   int i,m=edges.size();
+   for (i=0;i<m;i++){
+      Edge &e=edges[i];
+      e.len=dist(nodes[e.to],nodes[e.from]);
+   }
+}
 void Network::dump(){
    Node* tmp;
    Edge* e;
@@ -346,7 +353,28 @@ void Network::dumpNodes(const char* file){
    }
    fclose(out);
 } 
-
+Rect Network::getBB(bool includeCompartments){
+   int cn=compartments.size();
+   int n=nodes.size();
+   int i;
+   double xmin=DBL_MAX,xmax=-DBL_MAX,ymin=DBL_MAX,ymax=-DBL_MAX;
+   if (includeCompartments){
+      for(i=1;i<cn;i++){
+         const Compartment &cpi=compartments[i];
+         if (cpi.xmax>xmax) xmax=cpi.xmax;
+         if (cpi.ymax>ymax) ymax=cpi.ymax;
+         if (cpi.xmin<xmin) xmin=cpi.xmin;
+         if (cpi.ymin<ymin) ymin=cpi.ymin;
+      }
+   }
+   for(i=0;i<n;i++){
+      if(nodes[i].x-nodes[i].width/2<xmin) xmin=nodes[i].x-nodes[i].width/2;
+      if(nodes[i].x+nodes[i].width/2>xmax) xmax=nodes[i].x+nodes[i].width/2;
+      if(nodes[i].y-nodes[i].height/2<ymin) ymin=nodes[i].y-nodes[i].height/2;
+      if(nodes[i].y+nodes[i].height/2>ymax) ymax=nodes[i].y+nodes[i].height/2;
+   }
+   return Rect(xmin,ymin,xmax,ymax);
+}
 #ifdef USEJSON
 
 double json_object_get_number_member(JsonObject* jobj,const gchar *name){
