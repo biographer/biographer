@@ -1,6 +1,5 @@
 #ifndef th_paramedge_h
 #define th_paramedge_h
-#include <float.h>
 #include "types.h"
 #include "functions.h"
 #include "network.h"
@@ -52,6 +51,9 @@ class ParamEdge {
             end=start;
          }
       }
+      void re_ref(const Point &p){
+         ref=p;
+      }
       Point dist_vec(Point &p){ // points from p to nearst point on line defined by edge
          return (ref-p)-(unit()*scalar(ref-p,unit()));
       }
@@ -70,7 +72,7 @@ class ParamEdge {
       inline Point vec(){
          return unit()*length();
       }
-      const Point ref;
+      Point ref;
       double dx,dy;
       double start,end;
 };
