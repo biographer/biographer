@@ -6,14 +6,18 @@ static const vector<vector<forcevec> > dummy;
 static const double fstretch=2;
 class dbgline{
    public:
-      dbgline(double _x1,double _y1, double _x2, double _y2, int _r, int _g, int _b):x1(_x1),y1(_y1),x2(_x2),y2(_y2),r(_r),g(_g),b(_b){};
+      dbgline(double _x1,double _y1, double _x2, double _y2, int _r, int _g, int _b, int _d):x1(_x1),y1(_y1),x2(_x2),y2(_y2),r(_r),g(_g),b(_b),dotted(_d){};
       double x1,y1,x2,y2;
       int r,g,b;
+      bool dotted;
 };
 static vector<dbgline> dbglines;
 
-void debugline(double x1,double y1, double x2, double y2, int r, int g, int b){
-   dbglines.push_back(dbgline(x1,y1,x2,y2,r,g,b));
+void debugline(double x1,double y1, double x2, double y2, int r, int g, int b, bool dotted){
+   dbglines.push_back(dbgline(x1,y1,x2,y2,r,g,b,dotted));
+}
+void debugline(Point p1, Point p2, int r, int g, int b, bool dotted){
+   dbglines.push_back(dbgline(p1.x,p1.y,p2.x,p2.y,r,g,b,dotted));
 }
 
 
@@ -231,6 +235,8 @@ void NetDisplay::draw(){
    }
    for (i=0;i<dbglines.size();i++){
       dbgline &d=dbglines[i];
+      cairo_set_dash (c,NULL,0,0);
+      if (d.dotted) cairo_set_dash (c,(double[6]){2/scale,2/scale,4/scale,4/scale,6/scale,6/scale},6,0);
       cairo_set_source_rgb(c,(double)d.r/255,(double)d.g/255,(double)d.b/255);
       cairo_move_to(c,d.x1,d.y1);
       cairo_line_to(c,d.x2,d.y2);

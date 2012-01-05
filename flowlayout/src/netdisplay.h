@@ -42,5 +42,6 @@ class NetDisplay{
       void processEvents();
       void draw();
 };
-void debugline(double x1,double y1, double x2, double y2, int r, int g, int b);
+void debugline(double x1,double y1, double x2, double y2, int r, int g, int b, bool dotted=false);
+void debugline(Point p1, Point p2, int r, int g, int b, bool dotted=false);
 #endif
