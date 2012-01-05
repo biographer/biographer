@@ -125,6 +125,9 @@ class Edge {
       }       
       int from,to; //the "from" attribute is a reaction node, and the "to" attribute is a compound node.
       Edgetype type;
+      double len;
+      VP splinehandles;
+      VP splinepoints;
 };
 class Node: public Point{
    public:

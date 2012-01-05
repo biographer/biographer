@@ -5,6 +5,7 @@
 enum enumP {
    P_force_adj=1, P_torque_adj, P_force_nadj, P_separate_nodes, P_force_compartments, P_fix_compartments, P_distribute_edges, 
    P_adjust_compartments, P_adjust_compartments_fixed, P_init_layout, P_min_edge_crossing, P_min_edge_crossing_multi, P_limit_mov, P_node_collision,
+   P_route_edges,
    P_count // Note: P_count is just for retrieving the number of plugins; must be the last one
 };
 enum enumPT {
@@ -48,4 +49,5 @@ void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, doubl
 void min_edge_crossing_multi(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
 void limit_mov(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
 void node_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
 #endif

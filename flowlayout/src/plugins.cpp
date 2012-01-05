@@ -5,6 +5,7 @@
 #include "netdisplay.h"
 #endif
 #include "paramedge.cpp"
+#include "edgerouting.cpp"
 
 Plugins glob_pgs;
 Plugins& register_plugins(){
@@ -23,6 +24,7 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_min_edge_crossing_multi,"min_edge_crossing_multi",min_edge_crossing_multi);
    glob_pgs.registerPlugin(P_limit_mov,"limit_mov",limit_mov,T_limit);
    glob_pgs.registerPlugin(P_node_collision,"node_collision",node_collision,T_limit);
+   glob_pgs.registerPlugin(P_route_edges,"route_edges",route_edges,T_pos);
    return glob_pgs;
 }
 void Plugins::registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, enumPT type, void* persist){
@@ -967,9 +969,6 @@ double _getwidths(Network &nw,VI* nd){
       width+=nw.nodes[(*nd)[i]].width;
    }
    return width;
-}
-inline double sign(double x){
-   return (x < 0) ? -1 : (x > 0);
 }
 #ifdef old
 
