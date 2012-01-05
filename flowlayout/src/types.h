@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
@@ -11,21 +12,19 @@
 #include <algorithm>
 #include <vector>
 #include <string>
+#include <map>
 #include <queue>
 #include <set>
 #include <algorithm>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <float.h>
 
-#define VI vector<int>
-#define VN vector<Node>
-#define VE vector<Edge>
-#define VP vector<Point>
-#define VR vector<Rect>
-#define VCP vector<Compartment>
-#define VF vector<double>
 
 using namespace std;
+
+typedef vector<int> VI; 
+typedef vector<double> VF;
 
 enum Edgetype{
      //five types of edges.
@@ -44,6 +43,8 @@ class Point{
       //A point or a vector in a 2-dimensional plane.
       double x,y;
 };
+typedef vector<Point> VP;
+
 class Rect{
    public:
       Rect():  xmin(0), ymin(0), xmax(0), ymax(0){}
@@ -118,5 +119,12 @@ class Node: public Point{
       double dir; // default direction of node (in particular for reactions) - direction in which substrates should point to
       int compartment; //the compartment that the node belongs to (eg. Cytosol).
 };
+typedef vector<Node> VN;
+typedef vector<Edge> VE;
+typedef vector<Rect> VR;
+typedef vector<Compartment> VCP;
+inline double sign(double x){
+   return (x < 0) ? -1 : (x > 0);
+}
 
 #endif
