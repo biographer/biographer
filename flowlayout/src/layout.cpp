@@ -120,10 +120,11 @@ void Layouter::execute(){
    
    init();
    int prs=program.size();
-#ifdef SHOWPROGRESS
-   int skip=1;
-#endif
    for (s=0;s<prs;s++){
+      #ifdef SHOWPROGRESS
+      int skip=1;
+      nd.waitKeyPress=true;
+      #endif
       double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
       double maxForce,totalForce,maxMov,totalMov,lastForce=-1;
       
