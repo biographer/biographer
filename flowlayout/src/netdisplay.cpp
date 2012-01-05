@@ -121,7 +121,11 @@ void NetDisplay::draw(){
       if (xmax<n.x+n.width/2) xmax=n.x+n.width/2;
       if (ymax<n.y+n.height/2) ymax=n.y+n.height/2;
    }
-//   printf("bbox (%f,%f) - (%f,%f)\n",xmin,ymin,xmax,ymax);
+   xmin-=(xmax-xmin)*0.05;
+   xmax+=(xmax-xmin)*0.05;
+   ymin-=(ymax-ymin)*0.05;
+   ymax+=(ymax-ymin)*0.05;
+   //   printf("bbox (%f,%f) - (%f,%f)\n",xmin,ymin,xmax,ymax);
    // set tranforms according to bbox
    double scale= ((double) sizeX)/(xmax-xmin);
    if (((double) sizeY)/(ymax-ymin)<scale) scale=((double) sizeY)/(ymax-ymin);
