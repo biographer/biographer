@@ -138,6 +138,9 @@ class Node: public Point{
          x=pt.x;
          y=pt.y;
       }
+      Rect rect(){
+         return Rect(x-width/2,y-height/2,x+width/2,y+width/2);
+      }
       VI neighbors; //the edges incident on the node.
       Nodetype type; //type of node.
       string name; //name of the node.
