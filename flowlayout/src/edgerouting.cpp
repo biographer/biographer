@@ -173,7 +173,7 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
       }
    }
    printf("finding shortest path through network for each original edge\n");
-   
+   nv.calcEdgeLengths();
    int m=state.nw.edges.size();
    for (i=0;i<m;i++){
       printf(".");fflush(stdout);
