@@ -15,6 +15,7 @@ class step{
       step():endc(0){}
       VI actplugins;
       VF scales;
+      VF temps;
       unsigned long endc;
       int c_iterations;
       double c_relForceDiff;
@@ -35,9 +36,10 @@ class Layouter{
       void stepAddEndCondition(conditions cond, double param=NULL, double param2=NULL);
       void stepPluginScale(int step, enumP pg,double scale);
       void stepPluginScale(enumP pg,double scale);
+      void stepFixPluginTemp(enumP pg,double temp);
+      void stepFixPluginTemp(int step, enumP pg,double temp);
       void addStep();
       void execute();
-      void show_network(bool wait=false);
       Network& nw;
       VP mov;
       VF force;
@@ -47,10 +49,11 @@ class Layouter{
       bool dodebug[P_count-1];
 #ifdef SHOWPROGRESS
       vector<vector<forcevec> > debug;
+      void show_network(bool wait=false);
 #endif
       double avgsize;
-      bool show_progress;
       int progress_step;
+      bool show_progress;
    protected:
       Plugins& plugins;
       void initStep(int step);

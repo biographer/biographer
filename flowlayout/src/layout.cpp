@@ -48,6 +48,8 @@ void Layouter::stepAddPlugin(int step,enumP pg, double scale){
    initStep(step);
    program[step].actplugins.push_back((int)pg);
    program[step].scales.push_back(scale);
+   program[step].temps.push_back(-1);
+   
 }
 void Layouter::stepAddPlugins(enumP pg1, enumP pg2, enumP pg3, enumP pg4, enumP pg5, enumP pg6, enumP pg7, enumP pg8, enumP pg9, 
 enumP pg10){ // this provides a way to add up to 10 enumP at once
@@ -79,6 +81,14 @@ void Layouter::stepPluginScale(int step, enumP pg,double scale){
    const VI &pgns=program[step].actplugins;
    program[step].scales[find(pgns.begin(),pgns.end(),pg)-pgns.begin()]=scale; // does only find the first plugin (but each one should there only be once)
 }
+void Layouter::stepFixPluginTemp(enumP pg,double temp){
+   stepFixPluginTemp(program.size()-1,pg,temp);
+}
+void Layouter::stepFixPluginTemp(int step, enumP pg,double temp){
+   initStep(step);
+   const VI &pgns=program[step].actplugins;
+   program[step].temps[find(pgns.begin(),pgns.end(),pg)-pgns.begin()]=temp; // does only find the first plugin (but each one should there only be once)
+}
 void Layouter::stepAddEndCondition(conditions cond, double param, double param2){ // warning: cond should code for only one condition
    stepAddEndCondition(program.size()-1,cond,param,param2);
 }
@@ -103,11 +113,12 @@ void Layouter::stepAddEndCondition(int step, conditions cond, double param, doub
       program[step].c_tempSteps=(int) param;
    }
 }
+#ifdef SHOWPROGRESS
 void Layouter::show_network(bool wait){
    if (wait) nd.waitKeyPress=true;
    nd.show();
 }
-
+#endif
 void Layouter::execute(){
    /* executes the layout algorithm 
       all defined steps are executed in sequential order
@@ -144,7 +155,8 @@ void Layouter::execute(){
             if (pg.type!=T_mov) continue;
 /*            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
             if (pg.mod_rot) pg_rot.assign(num,0.0);*/
-            pg.pfunc(*this,pg,program[s].scales[p],cc,temp,(dodebug[pidx]? pidx:0));
+            double ttemp=(program[s].temps[p]>0 ? program[s].temps[p] : temp);
+            pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
 /*            for (i=0;i<num;i++){
                mov[i]+=pg_mov[i]*program[s].scales[p];
                force[i]+=fabs(pg_mov[i].x*program[s].scales[p]);
@@ -184,7 +196,8 @@ void Layouter::execute(){
             int pidx=program[s].actplugins[p];
             plugin &pg=plugins.get(pidx);
             if (pg.type!=T_limit) continue;
-            pg.pfunc(*this,pg,program[s].scales[p],cc,temp,(dodebug[pidx]? pidx:0));
+            double ttemp=(program[s].temps[p]>0 ? program[s].temps[p] : temp);
+            pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
          }
 
 #ifdef SHOWPROGRESS
@@ -202,7 +215,8 @@ void Layouter::execute(){
             int pidx=program[s].actplugins[p];
             plugin &pg=plugins.get(pidx);
             if (pg.type!=T_pos) continue;
-            pg.pfunc(*this,pg,program[s].scales[p],cc,temp,(dodebug[pidx]? pidx:0));
+            double ttemp=(program[s].temps[p]>0 ? program[s].temps[p] : temp);
+            pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
          }
          
                      
