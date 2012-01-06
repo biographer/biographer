@@ -1,5 +1,11 @@
 #include "bfs.cpp"
-
+#ifndef SHOWPROGRESS
+// dummy functions
+void debugline(double x1,double y1, double x2, double y2, int r, int g, int b, bool dotted=false){
+}
+void debugline(Point p1, Point p2, int r, int g, int b, bool dotted=false){
+}
+#endif
 class NodeLinePair{
    public:
    NodeLinePair(const int nidx,const ParamEdge &_line): node(nidx), line(_line){}
