@@ -49,6 +49,18 @@ VI * Network::getNeighbors(int nodeIndex){
    }
    return arr;//take care: must delte the pointer in the calling methods.
 }
+bool Network::isNeighbor(int node1,int node2){
+   /*
+   find all the neighbors nodes of a node.
+   if this node is a reaction node, its neighbors should be at the "to" side,
+      otherwise, its neighbors are at the "from"side.
+      */
+   int i,n=nodes[node1].neighbors.size();
+   for(i=0;i<n;i++){
+      if (edges[(nodes[node1].neighbors)[i]].to==node2 || edges[(nodes[node1].neighbors)[i]].from==node2) return true;
+   }
+   return false;
+}
 int Network::degree(int nodeIndex){
    return nodes[nodeIndex].neighbors.size();
 }

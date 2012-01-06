@@ -39,6 +39,7 @@ public:
    void addReaction(int index, const VI* substrates, const VI* products, const VI* catalysts, const VI* activators, const VI* inhibitors); //add in a reaction. (implemented yet not used in the algorithm).  
    VI* getNeighbors(int nodeIndex, Edgetype type); //find a specified type (eg. substrates) of neighbor nodes of a node.
    VI* getNeighbors(int nodeIndex);  //find the neighbor nodes of a node.
+   bool isNeighbor(int node1, int node2);
    int degree(int nodeIndex);
    void dump();
    void read(const char * file=NULL); // read network from file
