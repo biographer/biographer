@@ -13,6 +13,7 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_force_adj,"force_adj",force_adj);
    glob_pgs.registerPlugin(P_torque_adj,"torque_adj",torque_adj);
    glob_pgs.registerPlugin(P_force_nadj,"force_nadj",force_nadj);
+   glob_pgs.registerPlugin(P_expand,"expand",expand);
    glob_pgs.registerPlugin(P_separate_nodes,"separate_nodes",separate_nodes);
    glob_pgs.registerPlugin(P_force_compartments,"force_compartments",force_compartments);
    glob_pgs.registerPlugin(P_distribute_edges,"distribute_edges",distribute_edges);
@@ -375,7 +376,30 @@ void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp,
       }
 }
 
-
+void expand(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int n1,n2,n=state.nw.nodes.size();
+   double d,ideal;
+   Point vec;
+   
+   for(n1=0;n1<n;n1++){
+      for(n2=n1+1;n2<n;n2++){
+         if (state.nw.isNeighbor(n1,n2)) continue;
+         double thr=state.avgsize*2;
+         vec=state.nw.nodes[n2]-state.nw.nodes[n1]; //the vector from node-n1 to node-n2.
+         d=norm(vec);
+         if (d<thr) continue; //expansion only for distant nodes
+         vec=unit(vec)*min(state.avgsize,norm(vec)-thr)*scale;
+         state.mov[n1]-=vec;
+         state.mov[n2]+=vec;
+         state.force[n1]+=manh(vec);
+         state.force[n2]+=manh(vec);
+         #ifdef SHOWPROGRESS
+         if (debug) state.debug[n1].push_back(forcevec(-vec,debug));
+         if (debug) state.debug[n2].push_back(forcevec(vec,debug));
+         #endif
+      }
+   }
+}
 void separate_nodes(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* similar to force_nadj, but much more agressive */
    int n1,n2,n=state.nw.nodes.size();
