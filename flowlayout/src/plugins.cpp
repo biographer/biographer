@@ -408,7 +408,7 @@ void limit_mov(Layouter &state,plugin& pg, double scale, int iter, double temp, 
    int n=state.nw.nodes.size();
    for(int i=0;i<n;i++){
       double length=norm(state.mov[i]);
-      if (length>state.avgsize) state.mov[i]=state.mov[i]*(state.avgsize/length); // limit movement to average node size
+      if (length>state.avgsize*scale) state.mov[i]=state.mov[i]*(state.avgsize*scale/length); // limit movement to average node size
    }
 }
 void node_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
