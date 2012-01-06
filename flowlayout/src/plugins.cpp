@@ -620,28 +620,28 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          const Compartment &cpi=state.nw.compartments[i];
          const Compartment &cpj=state.nw.compartments[j];
          Point vec=cpj.center()-cpi.center();
-         if (2*fabs(vec.x)<cpi.size().x+cpj.size().x && 2*fabs(vec.y)<cpi.size().y+cpj.size().y){ // the 2 compartments overlap
+         if (2*fabs(vec.x)-1e-12<cpi.size().x+cpj.size().x && 2*fabs(vec.y)-1e-12<cpi.size().y+cpj.size().y){ // the 2 compartments overlap
             if (cpi.size().x+cpj.size().x-2*fabs(vec.x)<cpi.size().y+cpj.size().y-2*fabs(vec.y)){ // move in x direction (if x-overlap is smaller)
                double d=sign(vec.x)*((cpi.size().x+cpj.size().x)/2-fabs(vec.x));
-               if (d>0){
+               if (vec.x>0){
                   double pos=state.nw.compartments[i].xmax-d/2;
                   state.nw.compartments[i].xmax=pos;
                   state.nw.compartments[j].xmin=pos;
                } else {
                   double pos=state.nw.compartments[i].xmin-d/2;
-                  state.nw.compartments[i].xmax=pos;
-                  state.nw.compartments[j].xmin=pos;
+                  state.nw.compartments[i].xmin=pos;
+                  state.nw.compartments[j].xmax=pos;
                }
             } else {
                double d=sign(vec.y)*((cpi.size().y+cpj.size().y)/2-fabs(vec.y));
-               if (d>0){
+               if (vec.y>0){
                   double pos=state.nw.compartments[i].ymax-d/2;
                   state.nw.compartments[i].ymax=pos;
                   state.nw.compartments[j].ymin=pos;
                } else {
                   double pos=state.nw.compartments[i].ymin-d/2;
-                  state.nw.compartments[i].ymax=pos;
-                  state.nw.compartments[j].ymin=pos;
+                  state.nw.compartments[i].ymin=pos;
+                  state.nw.compartments[j].ymax=pos;
                }
             }
          }
