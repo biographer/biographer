@@ -40,7 +40,7 @@ void Layouter::init(){
 void Layouter::addStep(){ // adds one more step to the program
    initStep(program.size());
 }
-void Layouter::stepAddPlugin(enumP pg, double scale){
+void Layouter::addPlugin(enumP pg, double scale){
    stepAddPlugin(program.size()-1,pg,scale);
 }
 void Layouter::stepAddPlugin(int step,enumP pg, double scale){
@@ -51,11 +51,11 @@ void Layouter::stepAddPlugin(int step,enumP pg, double scale){
    program[step].temps.push_back(-1);
    
 }
-void Layouter::stepAddPlugins(enumP pg1, enumP pg2, enumP pg3, enumP pg4, enumP pg5, enumP pg6, enumP pg7, enumP pg8, enumP pg9, 
-enumP pg10){ // this provides a way to add up to 10 enumP at once
-   stepAddPlugins(program.size()-1,pg1,pg2,pg3,pg4,pg5,pg6,pg7,pg8,pg9,pg10); 
+void Layouter::addPlugins(enumP pg1, enumP pg2, enumP pg3, enumP pg4, enumP pg5, enumP pg6, enumP pg7, enumP pg8, enumP pg9, 
+                          enumP pg10, enumP pg11, enumP pg12, enumP pg13, enumP pg14, enumP pg15){ // this provides a way to add up to 10 enumP at once
+stepAddPlugins(program.size()-1,pg1,pg2,pg3,pg4,pg5,pg6,pg7,pg8,pg9,pg10, pg11, pg12, pg13, pg14, pg15); 
 }
-void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg4, enumP pg5, enumP pg6, enumP pg7, enumP pg8, enumP pg9, enumP pg10){ // this provides a way to add up to 10 enumP at once
+void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg4, enumP pg5, enumP pg6, enumP pg7, enumP pg8, enumP pg9, enumP pg10, enumP pg11, enumP pg12, enumP pg13, enumP pg14, enumP pg15){ // this provides a way to add up to 10 enumP at once
    /* can add several plugins at once (if no scale parameter is needed */
    if (pg1) stepAddPlugin(step,pg1);
    if (pg2) stepAddPlugin(step,pg2);
@@ -67,13 +67,18 @@ void Layouter::stepAddPlugins(int step,enumP pg1, enumP pg2, enumP pg3, enumP pg
    if (pg8) stepAddPlugin(step,pg8);
    if (pg9) stepAddPlugin(step,pg9);
    if (pg10) stepAddPlugin(step,pg10);
+   if (pg11) stepAddPlugin(step,pg11);
+   if (pg12) stepAddPlugin(step,pg12);
+   if (pg13) stepAddPlugin(step,pg13);
+   if (pg14) stepAddPlugin(step,pg14);
+   if (pg15) stepAddPlugin(step,pg15);
 }
 void Layouter::initStep(int step){
    /* initializes data structure for new step */
    if ((int) program.size()<step+1) program.resize(step+1);
    
 }
-void Layouter::stepPluginScale(enumP pg,double scale){
+void Layouter::pluginScale(enumP pg,double scale){
    stepPluginScale(program.size()-1,pg,scale);
 }
 void Layouter::stepPluginScale(int step, enumP pg,double scale){
@@ -81,7 +86,7 @@ void Layouter::stepPluginScale(int step, enumP pg,double scale){
    const VI &pgns=program[step].actplugins;
    program[step].scales[find(pgns.begin(),pgns.end(),pg)-pgns.begin()]=scale; // does only find the first plugin (but each one should there only be once)
 }
-void Layouter::stepFixPluginTemp(enumP pg,double temp){
+void Layouter::fixPluginTemp(enumP pg,double temp){
    stepFixPluginTemp(program.size()-1,pg,temp);
 }
 void Layouter::stepFixPluginTemp(int step, enumP pg,double temp){
@@ -89,7 +94,7 @@ void Layouter::stepFixPluginTemp(int step, enumP pg,double temp){
    const VI &pgns=program[step].actplugins;
    program[step].temps[find(pgns.begin(),pgns.end(),pg)-pgns.begin()]=temp; // does only find the first plugin (but each one should there only be once)
 }
-void Layouter::stepAddEndCondition(conditions cond, double param, double param2){ // warning: cond should code for only one condition
+void Layouter::addEndCondition(conditions cond, double param, double param2){ // warning: cond should code for only one condition
    stepAddEndCondition(program.size()-1,cond,param,param2);
 }
 void Layouter::stepAddEndCondition(int step, conditions cond, double param, double param2){ // warning: cond should code for only one condition
