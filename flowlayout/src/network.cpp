@@ -1,8 +1,6 @@
 #include "network.h"
 
 
-const char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"}; //for the convenience of input and output.
-const char nodetypes[][20]={"None", "Reaction", "Compound","Other"}; //for the convenience of input and output in order of enum Nodetype.
 const char jnodetypes[][20]={"None", "Reaction", "Compound","SimpleCompound","Complex","Protein","Other"}; //json node types
 const Nodetype inodetypes[]={none,reaction,compound,compound,compound,compound,other}; // convertion of different node types from json nodetypes
 Network::Network(){
@@ -309,7 +307,7 @@ void Network::write(const char* file){
    }
    fclose(out);
 } 
-void Network::dumpNodes(const char* file){
+void Network::dumpNodes(FILE* out){
    Node tmp;
    int i;
    const double inf=1e50;
@@ -318,12 +316,12 @@ void Network::dumpNodes(const char* file){
    double ymin=inf;
    double ymax=-inf;
    int n=nodes.size();
-   FILE * out;
+/*   FILE * out;
    if (file) {
       out=fopen(file,"w");
    } else {
       out=stdout;
-   }
+   }*/
    for(i=0;i<n;i++){
       fprintf(out,"%d\n",i);
       tmp = nodes[i];
@@ -363,8 +361,27 @@ void Network::dumpNodes(const char* file){
              min(ymax,compartments[i].ymax)-max(ymin,compartments[i].ymin),
              0.0);
    }
-   fclose(out);
+   //fclose(out);
 } 
+void Network::dumpEdges(FILE* out){
+   for (int i=0,m=edges.size();i<m;i++){
+      Edge &e=edges[i];
+      int src=e.from;
+      int tgt=e.to;
+      if (e.type==substrate || e.type==catalyst || e.type==activator || e.type==inhibitor) swap(src,tgt);
+      fprintf(out,"%s %d %d ",edgetypes[e.type],src,tgt);
+      for (int j=0,js=e.splinehandles.size();j<js;j++){
+         fprintf(out,"%0.3f,%0.3f",e.splinehandles[j].x,e.splinehandles[j].y);
+         if (j<js-1) fprintf(out,",");
+      }
+      fprintf(out," ");
+      for (int j=0,js=e.splinepoints.size();j<js;j++){
+         fprintf(out,"%0.3f,%0.3f",e.splinepoints[j].x,e.splinepoints[j].y);
+         if (j<js-1) fprintf(out,",");
+      }
+      fprintf(out,"\n");
+   }
+}
 Rect Network::getBB(bool includeCompartments){
    int cn=compartments.size();
    int n=nodes.size();

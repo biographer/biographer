@@ -29,14 +29,19 @@ int main(int argc,char *argv[]){
    end_time=clock();
    double dif=difftime(end_time,start_time);
    printf("time used: %0.3lf seconds\n\n",dif/1000);
-   if (argc>=3+shiftcmd){
+   FILE * out=(argc>=3+shiftcmd ? fopen(argv[2+shiftcmd],"w") : stdout);
+   nw.dumpNodes(out);
+   fprintf(out,"///\n");
+   nw.dumpEdges(out);
+   fclose(out);
+   /*   if (argc>=3+shiftcmd){
       nw.dumpNodes(argv[2+shiftcmd]);
    } else {
       nw.dumpNodes("summary.txt");
       nw.dumpNodes((char*) 0 );
-   }
-   printf("finished. [press key]\n");
-   getc(stdin);
+   }*/
+//   printf("finished. [press key]\n");
+//   getc(stdin);
    
    return 0;
 }

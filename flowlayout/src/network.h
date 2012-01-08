@@ -44,7 +44,8 @@ public:
    void dump();
    void read(const char * file=NULL); // read network from file
    void write(const char * file=NULL);
-   void dumpNodes(const char* file); // write nodes with properties
+   void dumpNodes(FILE * out); // write nodes with properties
+   void dumpEdges(FILE * out); // write nodes with properties
    Rect getBB(bool includeCompartments=false); // get bounding box
    void calcEdgeLengths();
 #ifdef USEJSON   

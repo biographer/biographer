@@ -30,11 +30,13 @@ enum Edgetype{
      //five types of edges.
      directed,undirected,substrate,product,catalyst,activator,inhibitor
 };
+const char edgetypes[][20]={"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"}; //for the convenience of input and output.
 
 enum Nodetype {
      //four types of nodes.
      none,reaction,compound,other
 };
+const char nodetypes[][20]={"None", "Reaction", "Compound","Other"}; //for the convenience of input and output in order of enum Nodetype.
 
 class Point{
    public: 
