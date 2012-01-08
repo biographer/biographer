@@ -97,8 +97,8 @@ int NetDisplay::show(){
    if (stepnum>1) printf("progressing %i steps\n",stepnum);
    return stepnum;
 }
-const unsigned short ccols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0,0.5,1},{1,0.5,0},{0,1,0.5}};
-const unsigned short fcols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0,0.5,1},{1,0.5,0},{0,1,0.5}};
+const unsigned short ccols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0.5,0.5,0},{0,0.5,1},{0,1,0.5}};
+const unsigned short fcols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0.5,0.5,0},{0,0.5,1},{0,1,0.5}};
 void NetDisplay::draw(){
    printf(".");
    cairo_t *c;
@@ -171,9 +171,9 @@ void NetDisplay::draw(){
    // draw compartments
    for (i=1;i<sc;i++){
       const Compartment &cp=net.compartments[i];
-      if (i<10) cairo_set_source_rgb(c,ccols[i][0],ccols[i][1],ccols[i][2]);
+      if (i<10) cairo_set_source_rgba(c,ccols[i][0],ccols[i][1],ccols[i][2],0.2);
       cairo_rectangle(c,cp.xmin,cp.ymin,cp.xmax-cp.xmin,cp.ymax-cp.ymin);
-      cairo_stroke(c);
+      cairo_fill(c);
 //      printf("Compartment %s: (%f,%f - %f,%f) (org)\n",cp.name.c_str(),cp.xmin,cp.ymin,cp.xmax,cp.ymax);
    }
    // draw nodes
