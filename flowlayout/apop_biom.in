@@ -1,0 +1,696 @@
+4
+1 MAN:L4
+2 MAN:L3
+3 MAN:L2
+4 MAN:L1
+///
+68
+0
+Reaction
+MAN:R12
+0
+0
+0
+70
+70
+0
+1
+Compound
+MAN:C21
+1
+0
+0
+82
+49
+0
+2
+Compound
+CLONE:M8
+2
+0
+0
+82
+49
+0
+3
+Compound
+MAN:C17
+1
+0
+0
+210
+161
+0
+4
+Reaction
+MAN:R14
+0
+0
+0
+70
+70
+0
+5
+Compound
+MAN:C23
+2
+0
+0
+70
+49
+0
+6
+Compound
+MAN:C24
+2
+0
+0
+182
+90
+0
+7
+Reaction
+CLONE:M23
+0
+0
+0
+70
+70
+0
+8
+Compound
+MAN:C5
+2
+0
+0
+50
+49
+0
+9
+Compound
+MAN:C9
+2
+0
+0
+188
+90
+0
+10
+Compound
+CLONE:M22
+2
+0
+0
+198
+90
+0
+11
+Reaction
+MAN:R10
+0
+0
+0
+70
+70
+0
+12
+Compound
+MAN:C16
+1
+0
+0
+174
+90
+0
+13
+Reaction
+MAN:R19
+0
+0
+0
+70
+70
+0
+14
+Compound
+MAN:C30
+2
+0
+0
+69
+49
+0
+15
+Compound
+CLONE:M24
+2
+0
+0
+79
+49
+0
+16
+Compound
+CLONE:M14
+2
+0
+0
+198
+90
+0
+17
+Reaction
+MAN:R13
+0
+0
+0
+70
+70
+0
+18
+Compound
+MAN:C22
+1
+0
+0
+75
+49
+0
+19
+Compound
+CLONE:M9
+2
+0
+0
+75
+49
+0
+20
+Reaction
+MAN:R15
+0
+0
+0
+70
+70
+0
+21
+Compound
+MAN:C25
+2
+0
+0
+50
+49
+0
+22
+Compound
+MAN:C26
+2
+0
+0
+186
+161
+0
+23
+Reaction
+MAN:R2
+0
+0
+0
+70
+70
+0
+24
+Compound
+MAN:C4
+2
+0
+0
+72
+49
+0
+25
+Compound
+MAN:C3
+3
+0
+0
+165
+90
+0
+26
+Compound
+MAN:C6
+3
+0
+0
+192
+161
+0
+27
+Reaction
+MAN:R17
+0
+0
+0
+70
+70
+0
+28
+Compound
+MAN:C27
+2
+0
+0
+67
+49
+0
+29
+Compound
+MAN:C28
+2
+0
+0
+277.7
+191
+0
+30
+Reaction
+CLONE:M17
+0
+0
+0
+70
+70
+0
+31
+Compound
+CLONE:M16
+2
+0
+0
+172
+90
+0
+32
+Reaction
+MAN:R3
+0
+0
+0
+70
+70
+0
+33
+Reaction
+MAN:R9
+0
+0
+0
+70
+70
+0
+34
+Compound
+CLONE:M3
+1
+0
+0
+72
+49
+0
+35
+Reaction
+CLONE:M15
+0
+0
+0
+70
+70
+0
+36
+Compound
+CLONE:M11
+2
+0
+0
+50
+49
+0
+37
+Reaction
+MAN:R5
+0
+0
+0
+70
+70
+0
+38
+Compound
+MAN:C12
+2
+0
+0
+56
+49
+0
+39
+Compound
+CLONE:M1
+2
+0
+0
+63
+49
+0
+40
+Reaction
+MAN:R16
+0
+0
+0
+70
+70
+0
+41
+Reaction
+CLONE:M7
+0
+0
+0
+70
+70
+0
+42
+Compound
+MAN:C18
+1
+0
+0
+76
+49
+0
+43
+Compound
+CLONE:M6
+1
+0
+0
+278.7
+221
+0
+44
+Reaction
+MAN:R4
+0
+0
+0
+70
+70
+0
+45
+Compound
+MAN:C10
+2
+0
+0
+63
+49
+0
+46
+Compound
+MAN:C11
+3
+0
+0
+256.7
+191
+0
+47
+Reaction
+MAN:R8
+0
+0
+0
+70
+70
+0
+48
+Compound
+CLONE:M2
+2
+0
+0
+72
+49
+0
+49
+Reaction
+MAN:R1
+0
+0
+0
+70
+70
+0
+50
+Compound
+MAN:C2
+4
+0
+0
+75
+49
+0
+51
+Compound
+MAN:C1
+3
+0
+0
+39
+49
+0
+52
+Reaction
+MAN:R20
+0
+0
+0
+70
+70
+0
+53
+Compound
+MAN:C31
+2
+0
+0
+60
+49
+0
+54
+Compound
+MAN:C32
+2
+0
+0
+183
+161
+0
+55
+Reaction
+CLONE:M5
+0
+0
+0
+70
+70
+0
+56
+Compound
+CLONE:M4
+1
+0
+0
+196
+161
+0
+57
+Reaction
+MAN:R6
+0
+0
+0
+70
+70
+0
+58
+Compound
+MAN:C13
+2
+0
+0
+72
+49
+0
+59
+Compound
+MAN:C14
+2
+0
+0
+165
+90
+0
+60
+Reaction
+MAN:R7
+0
+0
+0
+70
+70
+0
+61
+Compound
+MAN:C15
+2
+0
+0
+61
+49
+0
+62
+Reaction
+CLONE:M19
+0
+0
+0
+70
+70
+0
+63
+Compound
+CLONE:M18
+2
+0
+0
+195
+161
+0
+64
+Reaction
+MAN:R11
+0
+0
+0
+70
+70
+0
+65
+Compound
+MAN:C20
+1
+0
+0
+178
+90
+0
+66
+Reaction
+MAN:R18
+0
+0
+0
+70
+70
+0
+67
+Compound
+MAN:C29
+2
+0
+0
+50
+49
+0
+///
+75
+Substrate 1 0
+Product 0 2
+Catalyst 3 0
+Substrate 2 4
+Substrate 5 4
+Product 4 6
+Substrate 8 7
+Product 7 9
+Catalyst 10 7
+Substrate 12 11
+Product 11 3
+Substrate 14 13
+Product 13 15
+Catalyst 16 13
+Substrate 18 17
+Product 17 19
+Catalyst 3 17
+Substrate 21 20
+Substrate 6 20
+Product 20 22
+Substrate 24 23
+Substrate 25 23
+Product 23 26
+Substrate 22 27
+Substrate 28 27
+Product 27 29
+Substrate 19 30
+Substrate 28 30
+Product 30 31
+Substrate 8 32
+Product 32 9
+Catalyst 26 32
+Substrate 34 33
+Product 33 12
+Substrate 36 35
+Product 35 16
+Catalyst 9 35
+Substrate 38 37
+Product 37 39
+Catalyst 9 37
+Substrate 36 40
+Product 40 16
+Catalyst 22 40
+Substrate 42 41
+Substrate 3 41
+Product 41 43
+Substrate 26 44
+Substrate 45 44
+Product 44 46
+Substrate 48 47
+Product 47 34
+Substrate 50 49
+Substrate 51 49
+Product 49 25
+Substrate 9 52
+Substrate 53 52
+Product 52 54
+Substrate 42 55
+Substrate 12 55
+Product 55 56
+Substrate 39 57
+Substrate 58 57
+Product 57 59
+Substrate 61 60
+Product 60 48
+Catalyst 39 60
+Substrate 16 62
+Substrate 28 62
+Product 62 63
+Substrate 42 64
+Substrate 34 64
+Product 64 65
+Substrate 67 66
+Product 66 10
+Catalyst 16 66
