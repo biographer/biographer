@@ -818,6 +818,7 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
       newpos[c].xmin=newpos[c].ymin=DBL_MAX;
       newpos[c].xmax=newpos[c].ymax=-DBL_MAX;
    }
+   double xmin=DBL_MAX,ymin=DBL_MAX,xmax=-DBL_MAX,ymax=-DBL_MAX;
    for(i=0;i<n;i++){
       //getting bbox of contained nodes; considering node sizes
       c=state.nw.nodes[i].compartment;
@@ -826,6 +827,10 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
       if(state.nw.nodes[i].x+state.nw.nodes[i].width/2+d>newpos[c].xmax) newpos[c].xmax=state.nw.nodes[i].x+state.nw.nodes[i].width/2+d;
       if(state.nw.nodes[i].y-state.nw.nodes[i].height/2-d<newpos[c].ymin) newpos[c].ymin=state.nw.nodes[i].y-state.nw.nodes[i].height/2-d;
       if(state.nw.nodes[i].y+state.nw.nodes[i].height/2+d>newpos[c].ymax) newpos[c].ymax=state.nw.nodes[i].y+state.nw.nodes[i].height/2+d;
+      if (newpos[c].xmin<xmin) xmin=newpos[c].xmin;
+      if (newpos[c].ymin<ymin) ymin=newpos[c].ymin;
+      if (newpos[c].xmax>xmax) xmax=newpos[c].xmax;
+      if (newpos[c].ymax>ymax) ymax=newpos[c].ymax;
    }
    for(c=1;c<cn;c++){
       Compartment &cpo=state.nw.compartments[c];
@@ -835,6 +840,15 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
       if (cpo.ymin>cpn.ymin) __move(state, cpo.ymin,(cpn.ymin-cpo.ymin)*factor*scale,dir_TB);
       if (cpo.ymax<cpn.ymax) __move(state, cpo.ymax,(cpn.ymax-cpo.ymax)*factor*scale,dir_TB);
    }
+   // clip all compartments to networks bbox
+/*   for(c=1;c<cn;c++){
+      Compartment &cp=state.nw.compartments[c];
+      if (cp.xmin<xmin) cp.xmin=xmin;
+      if (cp.ymin<ymin) cp.ymin=ymin;
+      if (cp.xmax>xmax) cp.xmax=xmax;
+      if (cp.ymax>ymax) cp.ymax=ymax;
+   }*/
+   fix_compartments(state,pg,scale,iter,temp,debug); // FIXME this is just a hotfix
 }
 template <typename T>void vassign(vector<T>& v,const vector<T>& v2){
    v.assign(v2.begin(),v2.end());
