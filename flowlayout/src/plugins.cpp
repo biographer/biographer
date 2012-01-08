@@ -454,24 +454,35 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
             Point vec2=state.nw.nodes[n2]+mov2-state.nw.nodes[n1]-mov1;
             if ((fabs(vec.x)>=dw || fabs(vec.y)>=dh) // no overlap on old position
                && fabs(vec2.x)<dw && fabs(vec2.y)<dh){ // overlap on new position
-               double maxq=0;
-               double q=(dw-vec.x)/(mov2.x-mov1.x);
-               if (q>0 && q<1 && q>maxq) maxq=q;
-               q=(-vec.x-dw)/(mov2.x-mov1.x);
-               if (q>0 && q<1 && q>maxq) maxq=q;
-               q=(dh-vec.y)/(mov2.y-mov1.y);
-               if (q>0 && q<1 && q>maxq) maxq=q;
-               q=(-vec.y-dh)/(mov2.y-mov1.y);
-               if (q>0 && q<1 && q>maxq) maxq=q;
-               if (maxq>0){
-                  mov1*=maxq*0.9;
-                  mov2*=maxq*0.9;
-                  repeat=true;
+               double qx=(fabs(vec.x)-dw)/fabs(mov2.x-mov1.x);
+               double qy=(fabs(vec.y)-dh)/fabs(mov2.y-mov1.y);
+               if (qx>qy){ // note : the second direction that hits is the one that has to be cut; the other direction will "glide"
+                  mov1.x*=qx;
+                  mov2.x*=qx;
+               } else {
+                  mov1.y*=qy;
+                  mov2.y*=qy;
                }
+               printf("avoided collision %d %d %f %f \n",n1,n2,qx,qy);
+            } else if ((fabs(vec.x)<dw && fabs(vec.y)<dh) // overlap on old position and
+               && fabs(vec2.x)<dw && fabs(vec2.y)<dh){ // overlap on new position
+               // we base calculation on old positions
+               if (dw-fabs(vec.x) > dh-fabs(vec.y)){ // x-overlap larger? -> remove smaller overlap
+                  double sgn=sign(vec.y);
+                  if (sgn==0) sgn=1;
+                  mov1.y=-sgn*(dh-fabs(vec.y))/2;
+                  mov2.y=+sgn*(dh-fabs(vec.y))/2;
+               } else {
+                  double sgn=sign(vec.x);
+                  if (sgn==0) sgn=1;
+                  mov1.x=-sgn*(dw-fabs(vec.x))/2;
+                  mov2.x=+sgn*(dw-fabs(vec.x))/2;
+               }
+               printf("removed collision %d %d\n",n1,n2);
             }
          }
       }
-   }   
+   //}   
 }
 void force_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function computes the force induced by compartments, and updates the movements of nodes.
