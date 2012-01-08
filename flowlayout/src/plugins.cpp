@@ -446,8 +446,8 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
       repeat=false;*/
       for(n1=0;n1<n;n1++){
          for(n2=n1+1;n2<n;n2++){
-            double dw=(state.nw.nodes[n1].width+state.nw.nodes[n2].width)/2;
-            double dh=(state.nw.nodes[n1].height+state.nw.nodes[n2].height)/2;
+            double dw=(state.nw.nodes[n1].width+state.nw.nodes[n2].width)/2+d;
+            double dh=(state.nw.nodes[n1].height+state.nw.nodes[n2].height)/2+d;
             Point vec=state.nw.nodes[n2]-state.nw.nodes[n1];
             Point &mov1=state.mov[n1];
             Point &mov2=state.mov[n2];
@@ -793,7 +793,7 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
    int n=state.nw.nodes.size(),cn=state.nw.compartments.size();
    int i,c;  
    VCP newpos(cn);
-   double d=state.avgsize/10; // minimum distance to node boundaries
+   double d=MARGIN; // minimum distance to node boundaries
    for(c=1;c<cn;c++){ //the 0-th compartment is the infinite plane, so we start from index 1.
       //initialization the rectangles.
       newpos[c].xmin=newpos[c].ymin=DBL_MAX;
