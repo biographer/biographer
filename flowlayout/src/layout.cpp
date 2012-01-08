@@ -160,7 +160,7 @@ void Layouter::execute(){
             if (pg.type!=T_mov) continue;
 /*            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
             if (pg.mod_rot) pg_rot.assign(num,0.0);*/
-            double ttemp=(program[s].temps[p]>0 ? program[s].temps[p] : temp);
+            double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
             pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
 /*            for (i=0;i<num;i++){
                mov[i]+=pg_mov[i]*program[s].scales[p];
@@ -201,7 +201,7 @@ void Layouter::execute(){
             int pidx=program[s].actplugins[p];
             plugin &pg=plugins.get(pidx);
             if (pg.type!=T_limit) continue;
-            double ttemp=(program[s].temps[p]>0 ? program[s].temps[p] : temp);
+            double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
             pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
          }
 
@@ -220,7 +220,7 @@ void Layouter::execute(){
             int pidx=program[s].actplugins[p];
             plugin &pg=plugins.get(pidx);
             if (pg.type!=T_pos) continue;
-            double ttemp=(program[s].temps[p]>0 ? program[s].temps[p] : temp);
+            double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
             pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
          }
          
