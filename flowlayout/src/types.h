@@ -150,7 +150,7 @@ class Node: public Point{
          y=pt.y;
       }
       Rect rect(){
-         return Rect(x-width/2,y-height/2,x+width/2,y+width/2);
+         return Rect(x-width/2,y-height/2,x+width/2,y+height/2);
       }
       VI neighbors; //the edges incident on the node.
       Nodetype type; //type of node.
