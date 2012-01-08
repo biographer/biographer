@@ -594,8 +594,8 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
          beta2=angle(state.nw.nodes[(*neighbors)[j]]-baseNode)-angle(state.nw.nodes[(*neighbors)[jj]]-baseNode);
          if (beta2<=0) beta2+=2*PI;
          average=lim(angle(state.nw.nodes[(*neighbors)[jj]]-baseNode)+beta2/2);
-         Point avgvec=to_left(Point(state.avgsize,0),average);
-//         debugline(baseNode.x,baseNode.y,baseNode.x+avgvec.x,baseNode.y+avgvec.y,0,155,255);
+/*         Point avgvec=to_left(Point(state.avgsize,0),average);
+         debugline(baseNode.x,baseNode.y,baseNode.x+avgvec.x,baseNode.y+avgvec.y,0,155,255);*/
          beta=lim(average-lim(angle(vec))); //angle difference (from edge-i to the bisector).
 //         if (beta==PI) beta=0; // don't know in which directions; may cause problems in some cases so silently ignored
          d=dist(state.nw.nodes[(*neighbors)[i]],baseNode);
@@ -609,6 +609,7 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
          }
          state.mov[(*neighbors)[i]]+=mv;
          state.mov[k]-=mv;
+         // FIXME force has to be delivered to at least the two neighboring nodes to avoid overall torque on network
          state.force[(*neighbors)[i]]+=manh(mv);
          state.force[k]+=manh(mv);
 #ifdef SHOWPROGRESS
