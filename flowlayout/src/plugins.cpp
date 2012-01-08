@@ -7,6 +7,8 @@
 #include "paramedge.cpp"
 #include "edgerouting.cpp"
 
+#define MARGIN state.avgsize/2
+
 Plugins glob_pgs;
 Plugins& register_plugins(){
    if (glob_pgs.size()) return glob_pgs; // already initialized
@@ -439,8 +441,9 @@ void limit_mov(Layouter &state,plugin& pg, double scale, int iter, double temp, 
 void node_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int n=state.nw.nodes.size(),n1,n2;
    bool repeat=true;
-   while (repeat){
-      repeat=false;
+   double d=MARGIN;
+/*   while (repeat){
+      repeat=false;*/
       for(n1=0;n1<n;n1++){
          for(n2=n1+1;n2<n;n2++){
             double dw=(state.nw.nodes[n1].width+state.nw.nodes[n2].width)/2;
@@ -481,7 +484,7 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
    int i,comp;
    int n=state.nw.nodes.size();
    double w;
-   double d=state.avgsize/10;
+   double d=MARGIN;
    for(i=0;i<n;i++){
       comp=state.nw.nodes[i].compartment; //the compartment which node-i belongs to.
       if(comp==0)continue; //the compartment is the whole plane.
@@ -619,7 +622,7 @@ void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, dou
       state.nw.compartments[comp].xmin=state.nw.compartments[comp].ymin=inf;
       state.nw.compartments[comp].xmax=state.nw.compartments[comp].ymax=-inf;
    }
-   double d=state.avgsize/10; // minimum distance to node boundaries
+   double d=MARGIN; // minimum distance to node boundaries
    for(i=0;i<n;i++){
       //adjusting the compartments to bbox of containing nodes; considering node sizes
       comp=state.nw.nodes[i].compartment;
