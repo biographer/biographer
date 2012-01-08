@@ -19,8 +19,15 @@ void debugline(double x1,double y1, double x2, double y2, int r, int g, int b, b
 void debugline(Point p1, Point p2, int r, int g, int b, bool dotted){
    dbglines.push_back(dbgline(p1.x,p1.y,p2.x,p2.y,r,g,b,dotted));
 }
-
-
+void debugrect(Rect re, int r, int g, int b, bool dotted){
+   dbglines.push_back(dbgline(re.xmin,re.ymin,re.xmax,re.ymin,r,g,b,dotted));
+   dbglines.push_back(dbgline(re.xmax,re.ymin,re.xmax,re.ymax,r,g,b,dotted));
+   dbglines.push_back(dbgline(re.xmax,re.ymax,re.xmin,re.ymax,r,g,b,dotted));
+   dbglines.push_back(dbgline(re.xmin,re.ymax,re.xmin,re.ymin,r,g,b,dotted));
+}
+void debugpoint(Point p, double size,int r, int g, int b, bool dotted){
+   debugrect(Rect(p.x-size/2,p.y-size/2,p.x+size/2,p.y+size/2),r,g,b,dotted);
+}
 NetDisplay::NetDisplay(const Network &n): waitKeyPress(false), net(n),sizeX(SIZEX),sizeY(SIZEY),forces(dummy),hasforces(false){
    init();
 }
