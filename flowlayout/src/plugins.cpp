@@ -25,6 +25,7 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_min_edge_crossing_multi,"min_edge_crossing_multi",min_edge_crossing_multi);
    glob_pgs.registerPlugin(P_limit_mov,"limit_mov",limit_mov,T_limit);
    glob_pgs.registerPlugin(P_node_collision,"node_collision",node_collision,T_limit);
+   glob_pgs.registerPlugin(P_compartment_collision,"compartment_collision",compartment_collision,T_limit);
    glob_pgs.registerPlugin(P_route_edges,"route_edges",route_edges,T_pos);
    return glob_pgs;
 }
@@ -509,7 +510,33 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
       
    }
 }      
-         
+   
+void compartment_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int i,comp;
+   int n=state.nw.nodes.size();
+   double w;
+   double d=MARGIN;
+   for(i=0;i<n;i++){
+      comp=state.nw.nodes[i].compartment; //the compartment which node-i belongs to.
+      if(comp==0)continue; //the compartment is the whole plane.
+      Point tgt=state.nw.nodes[i]+state.mov[i];
+      Point vec(0,0);
+      if(tgt.x-state.nw.nodes[i].width/2-d<state.nw.compartments[comp].xmin){ //if it is outside the its compartment.
+         vec.x+=state.nw.compartments[comp].xmin-tgt.x+state.nw.nodes[i].width/2+d; //calculate the x-displacement to its nearest point inside the compartment.
+      }
+      if(tgt.x+state.nw.nodes[i].width/2+d>state.nw.compartments[comp].xmax){
+         vec.x+=state.nw.compartments[comp].xmax-tgt.x-state.nw.nodes[i].width/2-d;
+      }
+      if(tgt.y-state.nw.nodes[i].height/2-d<state.nw.compartments[comp].ymin){ //if it is outside the its compartment.
+         vec.y+=state.nw.compartments[comp].ymin-tgt.y+state.nw.nodes[i].height/2+d; //calculate the y-displacement to its nearest point inside the compartment.
+      }
+      if(tgt.y+state.nw.nodes[i].height/2+d>state.nw.compartments[comp].ymax){
+         vec.y+=state.nw.compartments[comp].ymax-tgt.y-state.nw.nodes[i].height/2-d;
+      }
+      state.mov[i]+=vec;
+   }
+}      
+   
 void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This procedure tries to distribute the edges incident on a node firmly: the angles btween them tends to be the same.
       This is done by:
