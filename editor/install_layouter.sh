@@ -1,17 +1,20 @@
 #!/bin/bash
 
 # cleanup
-rm Layouter -fR
+rm layout -fR
 
 # clone
-hg clone https://code.google.com/p/biographer.layout/ --rev experimental Layouter
-cp Layouter.Makefile Layouter/Makefile
+hg clone https://code.google.com/p/biographer.layout/ --rev experimental layout
 
-# we don't need the pictures
-cd Layouter
-rm pictures -fR
+# we need only the layout sources
+cd layout
+rm article example_networks perl pictures -fR
 rm .hg* -fR
 
+# resolve dependencies
+apt-get update
+apt-get install gcc make libjson-glib-dev libcairo2-dev --yes
+
 # build
-apt-get install gcc make libjson-glib-dev --yes
 make
+

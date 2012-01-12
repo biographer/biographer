@@ -1,15 +1,20 @@
 #!/bin/bash
 
 # remove old installation
+cd static
 rm Visualization -f
 rm biographer.visualization -fR
 
 # download
 hg clone https://code.google.com/p/biographer.visualization/
 ln biographer.visualization/target/distribution Visualization -s
-
-# build
 cd biographer.visualization
 rm .hg* -fR
-apt-get install libnode-uglify nodejs
+
+# resolve dependencies
+apt-get update
+apt-get install libnode-uglify nodejs --yes
+
+# build
 python src/build/python/manage.py clean build test jslint jsdoc compress createDistribution
+
