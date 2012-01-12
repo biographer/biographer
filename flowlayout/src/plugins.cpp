@@ -579,12 +579,11 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
    double strength_rea=0.2; //this should not be a major force for reactions , so we make it small.
    VI *neighbors;
    double average,beta,beta2,d;
-   Point baseNode,vec;
    for(k=0;k<n;k++){
       neighbors=state.nw.getNeighbors(k);
       m=neighbors->size();
       if(m<2)continue;
-      baseNode=state.nw.nodes[k];
+      Point baseNode=state.nw.nodes[k];
       for(i=0;i<m-1;i++){ //sort out duplicates
          for(j=i+1;j<m;j++){
             if ((*neighbors)[j]==(*neighbors)[i]){ // i.e. more than one edge to a single neighbor
@@ -606,7 +605,9 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
          j=i+1; if(j==m)j=0;
          jj=i-1; if(jj<0)jj=m-1;
 //         average=lim(lim(angle(state.nw.nodes[(*neighbors)[j]]-baseNode))+lim(angle(state.nw.nodes[(*neighbors)[jj]]-baseNode)))*0.5; //bisector of edge-(i-1) and edge-(i+1).
-         vec=state.nw.nodes[(*neighbors)[i]]-baseNode;
+         Point vec=state.nw.nodes[(*neighbors)[i]]-baseNode;
+//         Point vecj=state.nw.nodes[(*neighbors)[j]]-baseNode;
+//         Point vecjj=state.nw.nodes[(*neighbors)[jj]]-baseNode;
          if (vec.x == 0 && vec.y==0) continue;
          beta2=angle(state.nw.nodes[(*neighbors)[j]]-baseNode)-angle(state.nw.nodes[(*neighbors)[jj]]-baseNode);
          if (beta2<=0) beta2+=2*PI;
@@ -616,23 +617,29 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
          beta=lim(average-lim(angle(vec))); //angle difference (from edge-i to the bisector).
 //         if (beta==PI) beta=0; // don't know in which directions; may cause problems in some cases so silently ignored
          d=dist(state.nw.nodes[(*neighbors)[i]],baseNode);
-         Point mv;
-         if (state.nw.nodes[k].type==reaction){
-            // we don't do this for reactions at the moment
-//            state.mov[(*neighbors)[i]]+=(to_left(vec,beta*strength_rea)-vec)*(state.avgsize/norm(vec));
-            mv=(to_left(vec,beta*factor*scale*strength_rea)-vec);
-         } else {
-            mv=(to_left(vec,beta*factor*scale)-vec);
-         }
+         if (state.nw.nodes[k].type==reaction) beta*=strength_rea;
+         Point mv=(to_left(vec,beta*factor*scale)-vec);
+//         Point mvj=(to_left(vecj,-beta*factor*scale)-vecj)/2;
+//         Point mvjj=(to_left(vecjj,-beta*factor*scale)-vecjj)/2;
          state.mov[(*neighbors)[i]]+=mv;
          state.mov[k]-=mv;
-         // FIXME force has to be delivered to at least the two neighboring nodes to avoid overall torque on network
+//         state.mov[k]-=mv+mvj+mvjj;
+         // force has to be delivered to the two neighboring nodes to avoid overall torque on network
+         // FIXME this still creates an overal torque
+         //state.mov[(*neighbors)[j]]+=mvj;
+         //state.mov[(*neighbors)[jj]]+=mvjj;
          state.force[(*neighbors)[i]]+=manh(mv);
+         //state.force[(*neighbors)[j]]+=manh(mvj);
+         //state.force[(*neighbors)[jj]]+=manh(mvjj);
+         //state.force[k]+=manh(mv+mvj+mvjj);
          state.force[k]+=manh(mv);
 #ifdef SHOWPROGRESS
+         //if (debug) state.debug[k].push_back(forcevec(-mv-mvj-mvjj,debug));
          if (debug) state.debug[k].push_back(forcevec(-mv,debug));
          if (debug) state.debug[(*neighbors)[i]].push_back(forcevec(mv,debug));
-#endif
+//         if (debug) state.debug[(*neighbors)[j]].push_back(forcevec(mvj,debug));
+//         if (debug) state.debug[(*neighbors)[jj]].push_back(forcevec(mvjj,debug));
+         #endif
 
       }
       delete neighbors; // we should delete neighbors in the loop as it is generated in each iteration.
