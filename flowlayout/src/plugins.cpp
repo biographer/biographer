@@ -51,7 +51,17 @@ plugin& Plugins::get(int idx){
 // Plugin definitions
 int _find(VI* nd,int idx);
 double _getwidths(Network &nw,VI* nd);
+double _getheights(Network &nw,VI* nd);
 double sign(double x);
+#ifdef STACKX
+#define M_INIDIM _getheights
+#define M_INIDIR1 y
+#define M_INIDIR2 x
+#else
+#define M_INIDIM _getwidths
+#define M_INIDIR1 x
+#define M_INIDIR2 y
+#endif
 void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function quickly generates an initial layout, using the edge information.
    That is, for each reaction, we try to place subtrates in above, products in below and others on sides.
@@ -72,14 +82,14 @@ void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp
          nd=state.nw.getNeighbors(n1,product);
          int sz=nd->size();
          int idx=_find(nd,n2); // get position of product in product list
-         double width=_getwidths(state.nw,nd); // sum of width of all products
+         double width=M_INIDIM(state.nw,nd); // sum of width of all products
          double left=width*(sz-1)/sz;
          double step=0;
          if (sz>1) step=2*left/(sz-1);
-         state.mov[n1].y+=(state.nw.nodes[n2].y+state.dij[i]);
-         state.mov[n2].y+=(state.nw.nodes[n1].y-state.dij[i]);
-         state.mov[n1].x+=state.nw.nodes[n2].x+left-idx*step;// postioning nodes left and right of reaction depending on how many products
-         state.mov[n2].x+=state.nw.nodes[n1].x-left+idx*step;
+         state.mov[n1].M_INIDIR2+=(state.nw.nodes[n2].M_INIDIR2-state.dij[i]);
+         state.mov[n2].M_INIDIR2+=(state.nw.nodes[n1].M_INIDIR2+state.dij[i]);
+         state.mov[n1].M_INIDIR1+=state.nw.nodes[n2].M_INIDIR1+left-idx*step;// postioning nodes left and right of reaction depending on how many products
+         state.mov[n2].M_INIDIR1+=state.nw.nodes[n1].M_INIDIR1-left+idx*step;
          delete nd;
       }
       else if(_type==substrate){
@@ -88,38 +98,38 @@ void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp
          nd=state.nw.getNeighbors(n1,substrate);
          int sz=nd->size();
          int idx=_find(nd,n2); // get position of substrate in product list
-         double width=_getwidths(state.nw,nd); // sum of width of all substrates
+         double width=M_INIDIM(state.nw,nd); // sum of width of all substrates
          double left=width*(sz-1)/sz;
          double step=0;
          if (sz>1) step=2*left/(sz-1);
-         state.mov[n1].y+=(state.nw.nodes[n2].y-state.dij[i]);
-         state.mov[n2].y+=(state.nw.nodes[n1].y+state.dij[i]);
-         state.mov[n1].x+=state.nw.nodes[n2].x+left-idx*step; // postioning nodes left and right of reaction depending on how many substrates
-         state.mov[n2].x+=state.nw.nodes[n1].x-left+idx*step;
+         state.mov[n1].M_INIDIR2+=(state.nw.nodes[n2].M_INIDIR2+state.dij[i]);
+         state.mov[n2].M_INIDIR2+=(state.nw.nodes[n1].M_INIDIR2-state.dij[i]);
+         state.mov[n1].M_INIDIR1+=state.nw.nodes[n2].M_INIDIR1+left-idx*step; // postioning nodes left and right of reaction depending on how many substrates
+         state.mov[n2].M_INIDIR1+=state.nw.nodes[n1].M_INIDIR1-left+idx*step;
          delete nd;
       }
       else{
          //others on sides (the nearer side)
          //accumulating sum of expected positions (movements).
-         /*         cost1=fabs((state.nw.nodes[n1].x-state.dij[i])-state.mov[n2].x/state.deg[n2]);  // this assumes that mon has been completely accumulated
-         cost2=fabs((state.nw.nodes[n1].x+state.dij[i])-state.mov[n2].x/state.deg[n2]);*/
-         cost1=fabs((state.nw.nodes[n1].x-state.dij[i])-state.nw.nodes[n2].x);
-         cost2=fabs((state.nw.nodes[n1].x+state.dij[i])-state.nw.nodes[n2].x);
+         /*         cost1=fabs((state.nw.nodes[n1].M_INIDIR1-state.dij[i])-state.mov[n2].M_INIDIR1/state.deg[n2]);  // this assumes that mon has been completely accumulated
+         cost2=fabs((state.nw.nodes[n1].M_INIDIR1+state.dij[i])-state.mov[n2].M_INIDIR1/state.deg[n2]);*/
+         cost1=fabs((state.nw.nodes[n1].M_INIDIR1-state.dij[i])-state.nw.nodes[n2].M_INIDIR1);
+         cost2=fabs((state.nw.nodes[n1].M_INIDIR1+state.dij[i])-state.nw.nodes[n2].M_INIDIR1);
          if(cost1<cost2){
-            state.mov[n2].x+=(state.nw.nodes[n1].x-state.dij[i]);
-            state.mov[n1].x+=(state.nw.nodes[n2].x+state.dij[i]);
+            state.mov[n2].M_INIDIR1+=(state.nw.nodes[n1].M_INIDIR1-state.dij[i]);
+            state.mov[n1].M_INIDIR1+=(state.nw.nodes[n2].M_INIDIR1+state.dij[i]);
          }
          else {
-            state.mov[n2].x+=(state.nw.nodes[n1].x+state.dij[i]);
-            state.mov[n1].x+=(state.nw.nodes[n2].x-state.dij[i]);
+            state.mov[n2].M_INIDIR1+=(state.nw.nodes[n1].M_INIDIR1+state.dij[i]);
+            state.mov[n1].M_INIDIR1+=(state.nw.nodes[n2].M_INIDIR1-state.dij[i]);
          }
-         state.mov[n2].y+=state.nw.nodes[n1].y;
-         state.mov[n1].y+=state.nw.nodes[n2].y;
+         state.mov[n2].M_INIDIR2+=state.nw.nodes[n1].M_INIDIR2;
+         state.mov[n1].M_INIDIR2+=state.nw.nodes[n2].M_INIDIR2;
          //here we do not move reaction node.
       }         
    }
    for(i=0;i<n;i++){
-      if(state.deg[i]==0)continue; //seperate nodes (should this happen?)
+      if(state.deg[i]==0)continue; //isolated nodes (should this happen?)
          state.mov[i].x/=state.deg[i]; state.mov[i].y/=state.deg[i]; //it is an average.
          state.mov[i]-=state.nw.nodes[i]; // how much to move from current positions
          state.mov[i]/=2;
@@ -1056,6 +1066,15 @@ double _getwidths(Network &nw,VI* nd){
       width+=nw.nodes[(*nd)[i]].width;
    }
    return width;
+}
+double _getheights(Network &nw,VI* nd){
+   int n=nd->size();
+   int i;
+   double height=0;
+   for (i=0;i<n;i++){
+      height+=nw.nodes[(*nd)[i]].height;
+   }
+   return height;
 }
 #ifdef old
 
