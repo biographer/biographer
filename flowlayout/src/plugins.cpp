@@ -28,6 +28,8 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_limit_mov,"limit_mov",limit_mov,T_limit);
    glob_pgs.registerPlugin(P_node_collision,"node_collision",node_collision,T_limit);
    glob_pgs.registerPlugin(P_compartment_collision,"compartment_collision",compartment_collision,T_limit);
+   glob_pgs.registerPlugin(P_rotate,"rotate",rotate,T_pos);
+   glob_pgs.registerPlugin(P_stack_rotate,"stack_rotate",stack_rotate,T_pos);
    glob_pgs.registerPlugin(P_route_edges,"route_edges",route_edges,T_pos);
    return glob_pgs;
 }
@@ -501,6 +503,63 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
       }
    //}   
 }
+void rotate(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int n=state.nw.nodes.size();
+   Point com(0,0); // center of mass
+   Point avgdir(0,0);
+   for (int i=0;i<n;i++){
+      com+=state.nw.nodes[i];
+   }
+   for (int i=0;i<n;i++){
+      if (state.nw.nodes[i].type == reaction){
+         //avgdir+=Point(state.nw.nodes[i].dir)*norm(state.nw.nodes[i]-com); // prefer nodes at edge of network
+         avgdir+=Point(state.nw.nodes[i].dir);
+      }
+   }
+   com/=(double) n;
+   if (norm(avgdir)){
+      #ifdef STACKX
+      double dangle=PI/2-angle(avgdir);
+      #else
+      double dangle=PI-angle(avgdir);
+      #endif
+      for (int i=0;i<n;i++){
+         state.nw.nodes[i].setPoint(to_left(state.nw.nodes[i]-com,dangle)+com);
+         if (state.nw.nodes[i].type == reaction){
+            state.nw.nodes[i].dir=lim(state.nw.nodes[i].dir+dangle);
+         }
+      }
+   }
+}
+void stack_rotate(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int n=state.nw.compartments.size();
+   Point com(0,0); // center of mass
+   Point avgdir(0,0);
+   double xmin=DBL_MAX,xmax=-DBL_MAX,ymin=DBL_MAX,ymax=-DBL_MAX;
+   for (int i=0;i<n;i++){
+      Point c=state.nw.compartments[i].center();
+      if (c.x<xmin) xmin=c.x;
+      if (c.y<ymin) ymin=c.y;
+      if (c.x>xmax) xmax=c.x;
+      if (c.y>ymax) ymax=c.y;
+   }
+   #ifdef STACKX
+   double dangle=(xmax-xmin>ymax-ymin ? 0 : -PI/2);
+   #elif STACKY
+   double dangle=(xmax-xmin<ymax-ymin ? 0 : -PI/2);
+   #else
+   double dangle=0;
+   #endif
+   if (dangle!=0){
+      for (int i=0;i<n;i++){
+         state.nw.nodes[i].setPoint(to_left(state.nw.nodes[i]-com,dangle)+com);
+         if (state.nw.nodes[i].type == reaction){
+            state.nw.nodes[i].dir=lim(state.nw.nodes[i].dir+dangle);
+         }
+      }
+   }
+}
+
 void force_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function computes the force induced by compartments, and updates the movements of nodes.
       Compartments are boxes which constrain the nodes belonging to it inside.
