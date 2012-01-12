@@ -468,13 +468,19 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
                double qx=(fabs(vec.x)-dw)/fabs(mov2.x-mov1.x);
                double qy=(fabs(vec.y)-dh)/fabs(mov2.y-mov1.y);
                if (qx>qy){ // note : the second direction that hits is the one that has to be cut; the other direction will "glide"
+                  double rmom=(mov1.x+mov2.x)*(1-qx)/2; // remaining momentum after hit (i.e. should the two nodes move together)
                   mov1.x*=qx;
+                  mov1.x+=rmom;
                   mov2.x*=qx;
+                  mov2.x+=rmom;
                } else {
+                  double rmom=(mov1.y+mov2.y)*(1-qy)/2;
                   mov1.y*=qy;
+                  mov1.y+=rmom;
                   mov2.y*=qy;
+                  mov2.y+=rmom;
                }
-               printf("avoided collision %d %d %f %f \n",n1,n2,qx,qy);
+               //printf("avoided collision %d %d %f %f \n",n1,n2,qx,qy);
             } else if ((fabs(vec.x)<dw && fabs(vec.y)<dh) // overlap on old position and
                && fabs(vec2.x)<dw && fabs(vec2.y)<dh){ // overlap on new position
                // we base calculation on old positions
@@ -489,7 +495,7 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
                   mov1.x=-sgn*(dw-fabs(vec.x))/2;
                   mov2.x=+sgn*(dw-fabs(vec.x))/2;
                }
-               printf("removed collision %d %d\n",n1,n2);
+               //printf("removed collision %d %d\n",n1,n2);
             }
          }
       }
