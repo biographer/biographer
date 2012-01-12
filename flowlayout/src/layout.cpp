@@ -84,7 +84,9 @@ void Layouter::pluginScale(enumP pg,double scale){
 void Layouter::stepPluginScale(int step, enumP pg,double scale){
    initStep(step);
    const VI &pgns=program[step].actplugins;
-   program[step].scales[find(pgns.begin(),pgns.end(),pg)-pgns.begin()]=scale; // does only find the first plugin (but each one should there only be once)
+   int pos=find(pgns.begin(),pgns.end(),pg)-pgns.begin();
+   if (pos==pgns.size()) throw "plugin not found";
+   program[step].scales[pos]=scale; // does only find the first plugin (but each one should there only be once)
 }
 void Layouter::fixPluginTemp(enumP pg,double temp){
    stepFixPluginTemp(program.size()-1,pg,temp);
@@ -92,7 +94,9 @@ void Layouter::fixPluginTemp(enumP pg,double temp){
 void Layouter::stepFixPluginTemp(int step, enumP pg,double temp){
    initStep(step);
    const VI &pgns=program[step].actplugins;
-   program[step].temps[find(pgns.begin(),pgns.end(),pg)-pgns.begin()]=temp; // does only find the first plugin (but each one should there only be once)
+   int pos=find(pgns.begin(),pgns.end(),pg)-pgns.begin();
+   if (pos==pgns.size()) throw "plugin not found";
+   program[step].temps[pos]=temp; // does only find the first plugin (but each one should there only be once)
 }
 void Layouter::addEndCondition(conditions cond, double param, double param2){ // warning: cond should code for only one condition
    stepAddEndCondition(program.size()-1,cond,param,param2);
