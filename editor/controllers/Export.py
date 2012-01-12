@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
-from subprocess import Popen, PIPE
-from shlex import split
-
 def index():
 	return redirect(URL(r=request, c="Export", f="JSON"))				# default behaviour: export JSON
 
@@ -34,20 +30,22 @@ def Layout():
 	return redirect(URL(r=request, c="static", f="Export")+"/"+filename)		# pass the file to the client
 
 def Picture():
-	formats_supported = ['jpeg', 'png', 'pdf', 'svg', 'tiff', 'eps']
+	import os
+	from subprocess import Popen, PIPE
+	from shlex import split
 
-    #print "Hi!"
+	formats_supported = ['jpeg', 'png', 'pdf', 'svg', 'tiff', 'eps']
 
 #	if session.bioGraph is None:
 #		session.flash = "Unable to export: No Model is loaded !"
 #		return redirect( URL(r=request, c="Workbench", f="index") )
 
 	if not request.vars.format in formats_supported:				# Error: format not specified
-		session.flash = "No export format specified or format not supported !"
+		session.flash = "Error: No export format specified or format not supported"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
 	if request.vars.svg is None or request.vars.svg == "":				# Error: no input
-		session.flash = "Unable to export: No SVG input provided !"
+		session.flash = "Error: No SVG input provided"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
 	if request.vars.format == "svg":
@@ -70,7 +68,7 @@ def Picture():
 		return redirect(URL(r=request, c="static", f="Exporter")+"/"+filename)		# pass file to the client
 
 	else:
-		session.flash = "Exporter failed: No output !"					# no content? what happened?
+		session.flash = "Exporter failed: No output"					# no content? what happened?
 		return redirect(URL(r=request, c="Workbench", f="index"))
 
 

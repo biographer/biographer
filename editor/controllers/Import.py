@@ -2,12 +2,12 @@
 
 import os, sys, httplib
 
-hardcoded = request.folder + "/modules"
-if not hardcoded in sys.path:
-	sys.path.append(hardcoded)
+# QUICKFIX
+#hardcoded = request.folder + "/modules"
+#if not hardcoded in sys.path:
+#	sys.path.append(hardcoded)
+
 import biographer
-
-
 
 
 #################### JSON ####################
@@ -50,7 +50,6 @@ def SBML():									# function: import SBML
 
 	if request.env.request_method == "POST":
 		session.JSON = ""
-		session.BioPAX = ""
 		if request.vars.File != "":					# a file was uploaded
 			session.SBML = request.vars.File.file.read()
 			session.flash = "SBML uploaded."
@@ -71,7 +70,6 @@ def SBML():									# function: import SBML
 
 
 #################### BioModels ####################
-
 
 def BioModels():		# import from BioModels.net
 
@@ -103,67 +101,11 @@ def BioModels():		# import from BioModels.net
 
 #################### Reactome ####################
 
-
 def Reactome():									# function: import Reactome
 	if request.env.request_method == "GET":
 		return dict()
 
 	if request.env.request_method == "POST":
 		importReactome( request.vars.ST_ID )				# import Reactome
-		return redirect( URL(r=request, c='Workbench', f='index') )
-
-
-#################### unstable stuff ####################
-
-def BioPAX():									# import a file in BioPAX format
-	if request.env.request_method == "GET":
-		return dict()
-
-	if request.env.request_method == "POST":
-		session.JSON = ""
-		session.SBML = ""
-		# ... magic, that doesn't work right now
-		return dict()
-
-def PID():									# import from Pathway Interaction Database
-	if request.env.request_method == "GET":
-		return dict()
-
-	if request.env.request_method == "POST":
-		connection = httplib.HTTPConnection("pid.nci.nih.gov")			# retrieve page for specified Pathway ID
-		connection.request("GET", "/search/pathway_landing.shtml?source=NCI-Nature%20curated&what=graphic&jpg=on&ppage=1&pathway_id="+request.vars.PIDPID)
-		page = connection.getresponse().read()
-		URL = ""
-		p = page.find('<a class="button-style" href="')				# find BioPAX link
-		while p > -1:
-			q = page.find('</a>', p)
-			partial = page[p:q]
-			if partial.find("BioPAX") > -1:
-				r = partial.find('href="')+6
-				s = partial.find('"', r)
-				URL = partial[r:s]
-				break
-			p = page.find('<a class="button-style" href="', q)
-		if URL != "":
-			connection.request("GET", URL)					# download BioPAX
-			biopax = connection.getresponse().read()
-			if session.bioGraph is None:
-				session.bioGraph = biographer.Graph()
-			session.bioGraph.importBioPAX( biopax )				# load bioGraph from BioPAX
-			session.flash = "BioPAX loaded successfully"
-		else:									# BioPAX link not found
-			session.flash = "Error: BioPAX for this pathway could not be downloaded"
-		connection.close()
-		return redirect( URL(r=request, c='Workbench', f='index') )
-
-def ODP():									# import graph from OpenOffice
-	if request.env.request_method == "GET":
-		return dict()
-
-	if request.env.request_method == "POST":
-		example = "/var/www/web2py/applications/biographer/doc/demograph/demograph.odp"	# hardcoded example
-		if session.bioGraph is None:
-			session.bioGraph = biographer.Graph()
-		session.bioGraph.importfile( example )
 		return redirect( URL(r=request, c='Workbench', f='index') )
 
