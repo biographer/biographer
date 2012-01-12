@@ -423,12 +423,12 @@ class Graph:
 		self.status()
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
-		G = pygraphviz.AGraph(directed=True)
+		graphviz_model = pygraphviz.AGraph(directed=True)
 
 		changes = False
 		# !!!!!!!!!!!!!!!!!!!!!!!!!!
 		# Compartments have to be added as
-		# SG = G.add_subgraph(name='bla')
+		# SG = graphviz_model.add_subgraph(name='bla')
 		# !!!!!!!!!!!!!!!!!!!!!!!!!!
 		for node in self.Nodes:
 			# !!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -436,21 +436,23 @@ class Graph:
 			# Come up with something different!
 			# !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			#if (not node.is_abstract) and (self.EdgeCount(node) > 0):
-			G.add_node( 	str(node.id),
-					label = node.data.label if node.data.owns("label") else str(node.id),
-					shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
-					)
+			graphviz_model.add_node( 	str(node.id),
+							label = node.data.label if node.data.owns("label") else str(node.id),
+							shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
+						)
 			#
 			#elif updateNodeProperties:
 			#	self.Nodes.pop( self.Nodes.index(node) )
 			#	changes = True
 			#	self.log("Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.")
 		if changes:
-			self.initialize()	# e.g. ID map won't fit anymore, because we deleted Nodes
+			self.initialize()	# necessary; e.g. ID map may not fit anymore, because we deleted Nodes
 
 		for edge in self.Edges:
-			G.add_edge( str(edge.source), str(edge.target),
-				    arrowhead='normal' if edge.sbo in [ getSBO('Consumption'), getSBO('Production') ] else 'tee' )
+			graphviz_model.add_edge(	str(edge.source),
+							str(edge.target),
+							arrowhead='normal' if edge.sbo in [ getSBO('Consumption'), getSBO('Production') ] else 'tee'
+						)
 
 		png = self.MD5+".png"
 		dot = self.MD5+".dot"
@@ -463,10 +465,10 @@ class Graph:
 			self.dot = open(dotpath).read()
 		else:
 			cached = False
-			G.dpi = 70;
-			G.layout( prog='dot' )
-			G.draw( pngpath )
-			self.dot = G.string()
+			graphviz_model.dpi = 70;
+			graphviz_model.layout( prog='dot' )
+			graphviz_model.draw( pngpath )
+			self.dot = graphviz_model.string()
 			open(dotpath,'w').write(self.dot)
 
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
@@ -486,9 +488,16 @@ class Graph:
 
 		return self.dot, png, cached, None
 
-	### biographer Layout ###
 
-	# http://code.google.com/p/biographer/wiki/LayoutInputFormat
+	### main model layouting section ###
+	### invoking the layout subproject, that is seperately developed ###
+
+	### here: http://code.google.com/p/biographer/source/browse?repo=layout ###
+
+
+	# Exchange Format:
+
+	# as defined here: http://code.google.com/p/biographer/wiki/LayoutInputFormat
 
 	# number of compartments
 	# node index " " node name     (note: 0 is unknown)
@@ -572,31 +581,37 @@ class Graph:
 
 		self.initialize()
 
-	def execute_Layouter(self, Layouter):
-		timeout = 10
+	def execute_Layouter(self, path_to_layout_binary, execution_path='/tmp'):
+
+		infile = os.path.join(execution_path, 'layout.infile')
+		outfile = os.path.join(execution_path, 'layout.outfile')
+
+		self.log("Now executing the Layouter: "+path_to_layout_binary)
+		self.log("in "+execution_path+" ...")
+
+		open(infile, 'w').write( self.export_to_Layouter() )
+		os.path.delete(outfile)
+
+		timeout = 30
 		start = time()									# start a timer
+		process = Popen( split(path_to_layout_binary) )					# run layout binary
+		runtime = 0
+		while (layouter.poll is None) and (runtime < timeout):				# wait until timeout
+			print "Layouter runtime is now: "+str(runtime)+" ... Waiting for process to complete ..."
+			sleep(2)
+			runtime = time()-start
 
-		self.LayouterInput = self.export_to_Layouter()
-		self.LayouterOutput = ""
+		if runtime < timeout:
+			self.log(path_to_layout_binary+" finished.")
+		else:
+			self.log("Sorry, process timed out. Timeout was "+str(timeout)+"s.")
+			return False
 
-		self.log("Executing "+Layouter+" ...")						# Input ...
-		layouter = Popen( split(Layouter), stdin=PIPE, stdout=PIPE )			# execute "layout"
-		layouter.communicate( input=self.LayouterInput )				# stdin, stdout
-		self.LayouterRuntime = 0
-		while layouter.poll is None and self.LayouterRuntime < timeout:			# wait until timeout
-			sleep(1)
-			self.LayouterRuntime = time()-start
-			print str(self.LayouterRuntime)
+		self.import_from_Layouter( open(outfile).read() )
+		os.path.delete(outfile)
+		os.path.delete(infile)
 
-		if self.LayouterRuntime >= timeout:						# process timed out !
-			self.log("Error: Process timed out !")
-			return
-
-		self.LayouterOutput = layouter.communicate( input=self.LayouterInput )[0]	# Output ...
-		layouter.stdin.close()
-		self.import_from_Layouter( self.LayouterOutput )				# import STDOUT
-
-		self.log("Executable finished.")
+		self.log("Layouting completed successfully.")
 
 
 	### basic functions on Graph properties ###
