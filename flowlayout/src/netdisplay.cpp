@@ -1,7 +1,7 @@
 #include <float.h>
 #include "netdisplay.h"
-#define SIZEX 640
-#define SIZEY 480
+#define SIZEX 1280
+#define SIZEY 720
 static const vector<vector<forcevec> > dummy;
 static const double fstretch=2;
 class dbgline{
@@ -138,6 +138,10 @@ void NetDisplay::draw(){
    if (((double) sizeY)/(ymax-ymin)<scale) scale=((double) sizeY)/(ymax-ymin);
 //   printf("dpy: (%d,%d); user: (%f,%f); scale %f\n",sizeX,sizeY,xmax-xmin,ymax-ymin,scale);
    cairo_scale(c,scale,scale);
+   xmin+=((xmax-xmin)-((double) sizeX)/scale)/2; // expand to full surface size
+   ymin+=((ymax-ymin)-((double) sizeY)/scale)/2;
+   xmax-=((xmax-xmin)-((double) sizeX)/scale);
+   ymax-=((ymax-ymin)-((double) sizeY)/scale);
    cairo_translate(c,-xmin,-ymin);
    //draw grid
    double ngrid=(xmax-xmin)/10;
@@ -183,19 +187,29 @@ void NetDisplay::draw(){
       double y=n.y;
       cairo_user_to_device(c,&x,&y);
 //      printf("Node %s: %f,%f (%f,%f) -> %f,%f\n",n.name.c_str(),n.x,n.y,n.width,n.height,x,y);
-      cairo_set_source_rgb (c, 0,0,0); 
+      //cairo_set_source_rgb(c,ccols[(int) n.type][0],ccols[(int) n.type][1],ccols[(int) n.type][2]);
+      if (n.type==reaction){
+         cairo_set_source_rgba(c,0.2,0.2,0.2,0.4);
+      } else {
+         cairo_set_source_rgba(c,0.5,0.5,0.5,0.4);
+      }
+      cairo_rectangle(c,n.x-n.width/2,n.y-n.height/2,n.width,n.height);
+      cairo_fill(c);
+      if (n.type==reaction){
+         cairo_set_line_width(c,2/scale);
+      } else {
+         cairo_set_line_width(c,1/scale);
+      }
+      cairo_set_source_rgb(c,0,0,0);
       cairo_rectangle(c,n.x-n.width/2,n.y-n.height/2,n.width,n.height);
       cairo_stroke(c);
-      cairo_set_source_rgb(c,ccols[(int) n.type][0],ccols[(int) n.type][1],ccols[(int) n.type][2]);
-      cairo_rectangle(c,n.x-n.width/2+1,n.y-n.height/2+1,n.width-2,n.height-2);
-      cairo_stroke(c);
-      cairo_move_to(c,n.x-n.width/2,n.y-n.height/2);
-      cairo_show_text(c,n.name.c_str());
-      cairo_set_source_rgb (c, 0,0,0); 
+/*      cairo_move_to(c,n.x-n.width/2,n.y-n.height/2);
+      cairo_show_text(c,n.name.c_str());*/
+/*      cairo_set_source_rgb (c, 0,0,0); 
       cairo_set_dash (c,(double[2]){3/scale,3/scale},2,0);
       cairo_move_to(c,n.x,n.y);
       cairo_line_to(c,n.x+n.width/2*cos(n.dir),n.y+n.width/2*sin(n.dir));
-      cairo_stroke(c);
+      cairo_stroke(c);*/
       cairo_set_dash (c,NULL,0,0);
       if (hasforces){
          for (j=0;j<forces[i].size();j++){
@@ -249,14 +263,15 @@ void NetDisplay::draw(){
          }
          // draw first spline segment
          cairo_move_to(c,x1,y1);
-         cairo_curve_to(c,x1+e.splinehandles[0].x,y1+e.splinehandles[0].y,x_2+e.splinehandles[1].x,y_2+e.splinehandles[1].y,x_2,y_2);
+         cairo_curve_to(c,n1.x+e.splinehandles[0].x,n1.y+e.splinehandles[0].y,x_2+e.splinehandles[1].x,y_2+e.splinehandles[1].y,x_2,y_2);
          // all other segments (if any)
          for (int j=0,jl=e.splinepoints.size();j<jl;j++){
             const Point &fst=e.splinepoints[j];
             const Point &lst=(j+1<jl ? e.splinepoints[j+1] : Point(x2,y2));
+            const Point &lst_real=(j+1<jl ? e.splinepoints[j+1] : n2);
             Point h1=-e.splinehandles[j+1];
             const Point &h2=e.splinehandles[j+2];
-            cairo_curve_to(c,fst.x+h1.x,fst.y+h1.y,lst.x+h2.x,lst.y+h2.y,lst.x,lst.y);
+            cairo_curve_to(c,fst.x+h1.x,fst.y+h1.y,lst_real.x+h2.x,lst_real.y+h2.y,lst.x,lst.y);
          }
          cairo_stroke(c);
       } else { // straight edge
