@@ -7,7 +7,7 @@
 #include "netdisplay.h"
 #endif
 enum conditions{
-   C_iterations=1<<0,C_relForceDiff=1<<1,C_temp=1<<2,C_relMovLimit=1<<3,C_maxMovLimit=1<<4,C_totForceInc=1<<5
+   C_iterations=1<<0,C_relForceDiff=1<<1,C_temp=1<<2,C_avgMovLimit=1<<3,C_maxMovLimit=1<<4,C_totForceInc=1<<5
 };
 
 class step{
@@ -20,7 +20,7 @@ class step{
       int c_iterations;
       double c_relForceDiff;
       int c_tempSteps;
-      double c_relMovLimit;
+      double c_avgMovLimit;
       double c_maxMovLimit;
       int c_totForceInc;
       int c_totForceIncCC;
