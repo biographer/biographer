@@ -56,7 +56,7 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
       double w=state.nw.nodes[i].width;
       double h=state.nw.nodes[i].height;
       Rect ri=state.nw.nodes[i].rect();
-      if (i==iter) debugrect(ri,0,0,255);
+      //if (i==iter) debugrect(ri,0,0,255);
       gs.push_back(NodeLinePair(n,ParamEdge(Point(x,bb.ymin),bb.TL()))); // boundary lines (should point to left); adds virtual nodes n ... n+3
       gs.push_back(NodeLinePair(n+1,ParamEdge(Point(bb.xmin,y),bb.BL())));
       gs.push_back(NodeLinePair(n+2,ParamEdge(Point(x,bb.ymax),bb.BR())));
@@ -80,7 +80,7 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
          Point m(mx,my);
          double gx=dy; // line sould point perpendicular to distance vector; points to left
          double gy=-dx;
-         if (i==iter) debugline(m.x,m.y,m.x+gx,m.y+gy,200,100,100,true);
+         //if (i==iter) debugline(m.x,m.y,m.x+gx,m.y+gy,200,100,100,true);
 //         if (i==iter) debugline(x,y,x2,y2,100,100,200,true);
          
          double ord_angles[4]; 
@@ -135,7 +135,7 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
             dclosest=norm(pclosest);
             iclosest=gs.size()-1;
          }
-         if (i==iter) debugline(ge.from(),ge.p(state.avgsize*4),100,100,100,true);
+         //if (i==iter) debugline(ge.from(),ge.p(state.avgsize*4),100,100,100,true);
       }
       
       //find  set of voronoi lines which minimally surround node i
@@ -169,9 +169,9 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
          }
          used[minidx]=1;
          Point cp=cur.cross_point(gs[minidx].line);
-         if (i==iter) debugpoint(cp,state.avgsize/10,0,255,0);
+         //if (i==iter) debugpoint(cp,state.avgsize/10,0,255,0);
          gs[minidx].line.re_ref(cp); // setting ref point of next line to the current cross point
-         if (i==iter) debugline(gs[minidx].line.from(),gs[minidx].line.p(state.avgsize),255,0,255);
+         //if (i==iter) debugline(gs[minidx].line.from(),gs[minidx].line.p(state.avgsize),255,0,255);
          int newnode=nv.nodes.size(); 
          nv.addNode(newnode,other,"",1,1,cp.x,cp.y,0);
          edge_crossings[min(i,gs[curidx].node)][max(i,gs[curidx].node)].push_back(newnode); // add the new node to the two veronoi lines it belongs to
@@ -180,7 +180,7 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
          lastidx=curidx;
          curidx=minidx;
          first=false;
-         if (i==iter) debugline(cur.from(),cp,0,0,0);
+         //if (i==iter) debugline(cur.from(),cp,0,0,0);
       }
    }
    printf("finding relevant cross points on seperator lines and building network\n");
@@ -198,81 +198,97 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
             if (k==edge_crossings[i][j].size()-1) break; // for the last crosspoint we do not create an edge
             int n2=edge_crossings[i][j][k+1];
             nv.addEdge(n1,n2,undirected);
-            //debugline(nv.nodes[n1].x,nv.nodes[n1].y,nv.nodes[n2].x,nv.nodes[n2].y,0,0,0,true);
+            if (iter<=1) debugline(nv.nodes[n1].x,nv.nodes[n1].y,nv.nodes[n2].x,nv.nodes[n2].y,0,0,0,true);
          }
       }
    }
    printf("finding shortest path through network for each original edge\n");
-   nv.calcEdgeLengths();
-   int m=state.nw.edges.size();
-   for (i=0;i<m;i++){
-      printf(".");fflush(stdout);
-      Edge &e=state.nw.edges[i];
-      int n1=e.from;
-      int n2=e.to;
-      BFS bfs(nv,nodemap[n1]);
-      int nn=bfs.next();
-      while (nn>=0 && find(nodemap[n2].begin(),nodemap[n2].end(),nn)==nodemap[n2].end()){
-         nn=bfs.next();
-      }
-      if (nn<0) printf("Ups, no route for edge\n");
-      VI path=bfs.path();
-      smooth_path(nv,path,state.avgsize/4);
-      e.splinepoints.clear();
-      e.splinehandles.clear();
-      double alpha,beta;
-      Point vec;
-      double d1=max(state.nw.nodes[n1].width,state.nw.nodes[n1].height)/2+state.avgsize/2;
-      double d2=max(state.nw.nodes[n2].width,state.nw.nodes[n2].height)/2+state.avgsize/2;
-      switch(e.type){
-         case substrate:
-            reverse(path.begin(),path.end());
-            swap(n1,n2);
-            swap(d1,d2);
-            e.splinehandles.push_back(unit(state.nw.nodes[n2]-state.nw.nodes[n1])*d1);
-            e.splinehandles.push_back(Point(state.nw.nodes[n2].dir+PI/2)*d2);
-            break;
-         case product:
-            e.splinehandles.push_back(Point(state.nw.nodes[n1].dir-PI/2)*d1);
-            e.splinehandles.push_back(unit(state.nw.nodes[n1]-state.nw.nodes[n2])*d2);
-            break;
-         case activator:
-         case inhibitor:
-         case catalyst:
-            reverse(path.begin(),path.end());
-            swap(n1,n2);
-            swap(d1,d2);
-            vec=state.nw.nodes[n1]-state.nw.nodes[n2]; // vector pointing from n2 (reaction) to n1 (catalyst,etc)
-            beta=0;
-            if (scalar(vec,Point(state.nw.nodes[n2].dir+PI))>scalar(vec,Point(state.nw.nodes[n2].dir))) beta=PI;
-            e.splinehandles.push_back(unit(state.nw.nodes[n2]-state.nw.nodes[n1])*d1);
-            e.splinehandles.push_back(Point(state.nw.nodes[n2].dir+beta)*d2);
-            break;
-         default:
-            e.splinehandles.push_back(unit(state.nw.nodes[n2]-state.nw.nodes[n1])*d1);
-            e.splinehandles.push_back(unit(state.nw.nodes[n1]-state.nw.nodes[n2])*d2);
-      }
-      if (path.size()>1){
-         //debugline(state.nw.nodes[n1].x,state.nw.nodes[n1].y,nv.nodes[path.front()].x,nv.nodes[path.front()].y,255,100,100);
-         for (j=0;j<path.size();j++){
-            Point before=(j==0 ? state.nw.nodes[n1] : nv.nodes[path[j-1]]);
-            Point &after=(j==path.size()-1 ? state.nw.nodes[n2] : nv.nodes[path[j+1]]);
-            Point &cur=nv.nodes[path[j]];
-            if (after==cur) continue;
-            if (before==cur) {
-               if (j-1<0) continue;
-               before=(j-1==0 ? state.nw.nodes[n1] : nv.nodes[path[j-2]]);
-            }
-            Point d=unit(before-cur)+unit(after-cur);
-            if (d.is_null()) continue;
-            d=unit(d)*state.avgsize/4;
-            e.splinehandles.insert(--e.splinehandles.end(),to_left(d,PI/2)*sign(scalar(to_left(d,PI/2),before-cur)));
-            e.splinepoints.push_back(cur+d);
-            //debugline(cur+d,cur+d+to_left(d,PI/2)*sign(scalar(to_left(d,PI/2),before-cur)),0,0,255,true);
-            if (j<path.size()-1) debugline(nv.nodes[path[j]].x,nv.nodes[path[j]].y,nv.nodes[path[j+1]].x,nv.nodes[path[j+1]].y,255,100,100);
+   if (iter>=1){ // this is just for showing 1 step show only veronoi lines, 2nd show splines
+      nv.calcEdgeLengths();
+      int m=state.nw.edges.size();
+      for (i=0;i<m;i++){
+         printf(".");fflush(stdout);
+         Edge &e=state.nw.edges[i];
+         int n1=e.from;
+         int n2=e.to;
+         BFS bfs(nv,nodemap[n1]);
+         int nn=bfs.next();
+         while (nn>=0 && find(nodemap[n2].begin(),nodemap[n2].end(),nn)==nodemap[n2].end()){
+            nn=bfs.next();
          }
-         //debugline(nv.nodes[path.back()].x,nv.nodes[path.back()].y,state.nw.nodes[n2].x,state.nw.nodes[n2].y,255,100,100);
-         
+         if (nn<0) printf("Ups, no route for edge\n");
+         VI path=bfs.path();
+         smooth_path(nv,path,state.avgsize/4);
+         e.splinepoints.clear();
+         e.splinehandles.clear();
+         double alpha,beta;
+         Point vec;
+         double dd1=(path.size()>1 ? 
+            (norm(nv.nodes[path[0]]-state.nw.nodes[n1])-max(state.nw.nodes[n1].width,state.nw.nodes[n1].height)/2)/2 :
+            (norm(state.nw.nodes[n2]-state.nw.nodes[n1])-max(state.nw.nodes[n1].width,state.nw.nodes[n1].height)/2-max(state.nw.nodes[n2].width,state.nw.nodes[n2].height)/2)/2);
+         dd1=min(dd1,state.avgsize/2);
+         double d1=max(state.nw.nodes[n1].width,state.nw.nodes[n1].height)/2+dd1;
+         double dd2=(path.size()>1 ? 
+         (norm(nv.nodes[path.back()]-state.nw.nodes[n2])-max(state.nw.nodes[n2].width,state.nw.nodes[n2].height)/2)/2 :
+         (norm(state.nw.nodes[n2]-state.nw.nodes[n1])-max(state.nw.nodes[n1].width,state.nw.nodes[n1].height)/2-max(state.nw.nodes[n2].width,state.nw.nodes[n2].height)/2)/2);
+         dd2=min(dd2,state.avgsize/2);
+         double d2=max(state.nw.nodes[n2].width,state.nw.nodes[n2].height)/2+state.avgsize/2;
+         Point sp1,sp2;
+         switch(e.type){
+            case substrate:
+               reverse(path.begin(),path.end());
+               swap(n1,n2);
+               swap(d1,d2);
+               sp1=(path.size()>1 ? nv.nodes[path[0]] : state.nw.nodes[n2]);
+               e.splinehandles.push_back(unit(sp1-state.nw.nodes[n1])*d1);
+               e.splinehandles.push_back(Point(state.nw.nodes[n2].dir+PI/2)*d2);
+               break;
+            case product:
+               e.splinehandles.push_back(Point(state.nw.nodes[n1].dir-PI/2)*d1);
+               sp2=(path.size()>1 ? nv.nodes[path.back()] : state.nw.nodes[n1]);
+               e.splinehandles.push_back(unit(sp2-state.nw.nodes[n2])*d2);
+               break;
+            case activator:
+            case inhibitor:
+            case catalyst:
+               reverse(path.begin(),path.end());
+               swap(n1,n2);
+               swap(d1,d2);
+               vec=state.nw.nodes[n1]-state.nw.nodes[n2]; // vector pointing from n2 (reaction) to n1 (catalyst,etc)
+               beta=0;
+               if (scalar(vec,Point(state.nw.nodes[n2].dir+PI))>scalar(vec,Point(state.nw.nodes[n2].dir))) beta=PI;
+               sp1=(path.size()>1 ? nv.nodes[path[0]] : state.nw.nodes[n2]);
+               e.splinehandles.push_back(unit(sp1-state.nw.nodes[n1])*d1);
+               e.splinehandles.push_back(Point(state.nw.nodes[n2].dir+beta)*d2);
+               break;
+            default:
+               sp1=(path.size()>1 ? nv.nodes[path[0]] : state.nw.nodes[n2]);
+               e.splinehandles.push_back(unit(sp1-state.nw.nodes[n1])*d1);
+               sp2=(path.size()>1 ? nv.nodes[path.back()] : state.nw.nodes[n1]);
+               e.splinehandles.push_back(unit(sp2-state.nw.nodes[n2])*d2);
+         }
+         if (path.size()>1){
+            //debugline(state.nw.nodes[n1].x,state.nw.nodes[n1].y,nv.nodes[path.front()].x,nv.nodes[path.front()].y,255,100,100);
+            for (j=0;j<path.size();j++){
+               Point before=(j==0 ? state.nw.nodes[n1] : nv.nodes[path[j-1]]);
+               Point &after=(j==path.size()-1 ? state.nw.nodes[n2] : nv.nodes[path[j+1]]);
+               Point &cur=nv.nodes[path[j]];
+               if (after==cur) continue;
+               if (before==cur) {
+                  if (j-1<0) continue;
+                  before=(j-1==0 ? state.nw.nodes[n1] : nv.nodes[path[j-2]]);
+               }
+               Point d=unit(before-cur)+unit(after-cur);
+               if (d.is_null()) continue;
+               d=unit(d)*min(min(norm(before-cur),norm(after-cur))/2,state.avgsize/2);
+               e.splinehandles.insert(--e.splinehandles.end(),to_left(d,PI/2)*sign(scalar(to_left(d,PI/2),before-cur)));
+               e.splinepoints.push_back(cur+d);
+               //debugline(cur+d,cur+d+to_left(d,PI/2)*sign(scalar(to_left(d,PI/2),before-cur)),0,0,255,true);
+               //if (j<path.size()-1) debugline(nv.nodes[path[j]].x,nv.nodes[path[j]].y,nv.nodes[path[j+1]].x,nv.nodes[path[j+1]].y,255,100,100);
+            }
+            //debugline(nv.nodes[path.back()].x,nv.nodes[path.back()].y,state.nw.nodes[n2].x,state.nw.nodes[n2].y,255,100,100);
+            
+         }
       }
    }
    /*   NetDisplay nd(nv);
