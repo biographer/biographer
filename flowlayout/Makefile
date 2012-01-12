@@ -2,8 +2,8 @@ CC=g++
 XINC=-Isrc
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DPROGRESSLINUX -DUSEJSON `pkg-config --cflags glib-2.0 json-glib-1.0` -lglib-2.0 -ljson-glib-1.0
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DUSEJSON `pkg-config --cflags glib-2.0`  -lglib-2.0 -rpath=/local/home/handorf/lib -I/local/home/handorf/hg/biographer-layout/json-glib-0.12.6/ -L/local/home/handorf/lib -ljson-glib-1.0
-CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKY
-#CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo
+#CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX
+CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX -DSHOWPROGRESS -DOUTPNG `pkg-config --cflags cairo` -lcairo
 SRC=src/
 BDIR=build/
 VPATH=$(SRC):$(BDIR)
@@ -45,5 +45,7 @@ test_node_collision: test_node_collision.cpp $(OBJS)
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_node_collision $<
 test_route_edges: test_route_edges.cpp $(OBJS)
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_route_edges $<
-	
+test_rotate: test_rotate.cpp $(OBJS)
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_rotate $<
+
 	

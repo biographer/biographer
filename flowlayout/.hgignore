@@ -7,3 +7,4 @@ syntax: glob
 *.old
 build/*
 json-glib*
+ani*
