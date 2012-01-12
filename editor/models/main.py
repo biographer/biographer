@@ -32,7 +32,6 @@ def import_SBML( SBMLstring ):
 
 
 def import_BioModel( BioModelsID ):
-	import os
 	global session, request, db
 
 	BioModelsID = BioModelsID.rjust(10, "0")			# adjust BioModel's ID
@@ -61,7 +60,30 @@ def import_BioModel( BioModelsID ):
 
 
 def import_Reactome( ReactomeStableIdentifier ):
-	...
+	global session, request, db
+
+	print "Request for RSI:"+ReactomeStableIdentifier
+
+	model = Reactome_from_cache( ReactomeStableIdentifier )
+	if model is None:
+		model = download_Reactome( ReactomeStableIdentifier )
+		if model is None:
+			print "Error: Reactome download failed"
+			session.flash = "Error: Reactome download failed"
+			return False
+		else:
+			print "Reactome model downloaded"
+			session.flash = "Reactome model downloaded"
+			Reactome_to_cache( model, ReactomeStableIdentifier )
+	else:
+		print "Reactome model loaded from cache"
+		session.flash = "Reactome model loaded from cache"
+
+	reset_current_session()
+	session.ST_ID = ReactomeStableIdentifier
+	session.SBML = model
+	session.bioGraph.importSBML( session.SBML )
+	return model
 
 
 def import_Layout(graph, lines):

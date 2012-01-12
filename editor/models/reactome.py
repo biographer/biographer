@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
-def download_Reactome_model( ReactomeStableIdentifier ):
+def download_Reactome( ReactomeStableIdentifier ):
 
 	import httplib
 
