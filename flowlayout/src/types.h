@@ -77,6 +77,9 @@ class Rect{
          xmax+=_xmax;
          ymax+=_ymax;
       }
+      double r(){ // radius of the smallest surrounding circle
+         return sqrt((xmax-xmin)*(xmax-xmin)+(ymax-ymin)*(ymax-ymin));
+      }
       inline Point TL(){
          return Point(xmin,ymin);
       }
