@@ -174,6 +174,15 @@ void Layouter::execute(){
             }*/
             
          }
+         // apply limiting plugins   
+         for (p=0;p<pls;p++){
+            int pidx=program[s].actplugins[p];
+            plugin &pg=plugins.get(pidx);
+            if (pg.type!=T_limit) continue;
+            double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
+            pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
+         }
+         
          totalForce=0.0;
          totalMov=0.0;
          maxForce=0.0;
@@ -200,14 +209,6 @@ void Layouter::execute(){
          if (lastForce>0 && totalForce==0) break; // immidiate break ( there exist plugins which do not use force at all -> check lastForce)
          if (totalMov==0 && !(program[s].endc & C_iterations)) break; // immidiate break
 
-         // apply limiting plugins   
-         for (p=0;p<pls;p++){
-            int pidx=program[s].actplugins[p];
-            plugin &pg=plugins.get(pidx);
-            if (pg.type!=T_limit) continue;
-            double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
-            pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
-         }
 
 #ifdef SHOWPROGRESS
          if (--skip<=0) {
