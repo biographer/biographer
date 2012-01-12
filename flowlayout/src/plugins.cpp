@@ -401,7 +401,8 @@ void expand(Layouter &state,plugin& pg, double scale, int iter, double temp, int
          vec=state.nw.nodes[n2]-state.nw.nodes[n1]; //the vector from node-n1 to node-n2.
          d=norm(vec);
          if (d<thr) continue; //expansion only for distant nodes
-         vec=unit(vec)*min(state.avgsize,norm(vec)-thr)*scale;
+         //vec=unit(vec)*max(0.0,min(norm(vec)/thr,1-(norm(vec)-thr)/4))*state.avgsize*scale;
+         vec=(unit(vec)*min(state.avgsize,norm(vec)-thr)+(1-temp)*state.avgsize)*scale;
          state.mov[n1]-=vec;
          state.mov[n2]+=vec;
          state.force[n1]+=manh(vec);
