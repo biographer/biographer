@@ -1,11 +1,16 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
+from cache import *
+from biomodels import *
+from reactome import *
+
 def reset_current_session():
 	global session
 
 	session.JSON = None				# reset
 	session.SBML = None
+	session.BioModelsID = None
 
 	if session.bioGraph is not None:		# delete old graph
 		del session.bioGraph
@@ -26,8 +31,33 @@ def import_SBML( SBMLstring ):
 	session.bioGraph.importSBML( SBMLstring )
 
 
-def import_BioModel( BioModelID ):
-	...
+def import_BioModel( BioModelsID ):
+	import os
+	global session, request, db
+
+	BioModelsID = BioModelsID.rjust(10, "0")			# adjust BioModel's ID
+	print "BioModel requested: BIOMD"+BioModelsID
+
+	model = BioModel_from_cache( BioModelsID )
+	if model is None:
+		model = download_BioModel( BioModelsID )
+		if model is None:
+			print "Error: BioModel download failed"
+			session.flash = "Error: BioModel download failed"
+			return False
+		else:
+			print "BioModel downloaded"
+			session.flash = "BioModel downloaded"
+			BioModel_to_cache( model, BioModelsID )
+	else:
+		print "BioModel loaded from cache"
+		session.flash = "BioModel loaded from cache"
+	
+	reset_current_session()
+	session.BioModelsID = BioModelsID
+	session.SBML = model
+	session.bioGraph.importSBML( session.SBML )
+	return model
 
 
 def import_Reactome( ReactomeStableIdentifier ):
