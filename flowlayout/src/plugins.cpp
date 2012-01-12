@@ -1040,24 +1040,39 @@ void min_edge_crossing_multi(Layouter &state,plugin& pg, double scale, int iter,
          bool all_cross_line=true; // all edges q cross straight line given by edge j
          int s=nb.size();
          if (s<2) continue; // single connected nodes are dealt with by min_edge_crossing
+         Point ext_edge_end;
          for (q=0;q<s;q++){
             if (state.nw.edges[nb[q]].from==state.nw.edges[j].from ||
                state.nw.edges[nb[q]].from==state.nw.edges[j].to ||
                state.nw.edges[nb[q]].to==state.nw.edges[j].from ||
                state.nw.edges[nb[q]].to==state.nw.edges[j].to) continue; // this one does not count as it is adjacent to edge j
             ParamEdge pq=ParamEdge(state.nw,state.nw.edges[nb[q]]);
+            pq.extend(state.nw.nodes[state.nw.edges[nb[q]].from].rect().r(),state.nw.nodes[state.nw.edges[nb[q]].to].rect().r()); // extend edge to accomodate extension of nodes
             double kj=pj.cross_param(pq);
-            if (kj>pj.start && kj<pj.end) one_crosses=true;
             double kq=pq.cross_param(pj);
-            if (kq<pj.start || kq>pj.end) all_cross_line=false;
+            if (kj>pj.start && kj<pj.end && kq>pq.start && kq<pq.end){
+               one_crosses=true;
+               if (i==state.nw.edges[nb[q]].from){
+                  ext_edge_end=pq.from();
+               } else {
+                  ext_edge_end=pq.to();
+               }
+            }
+            if (kq<pq.start || kq>pq.end) all_cross_line=false;
          }
          if (one_crosses && all_cross_line) { // move point i over edge j
-            Point vec=pj.dist_vec(state.nw.nodes[i])*factor*scale;
+            Point vec=pj.dist_vec(ext_edge_end)*factor*scale;
             state.mov[i]+=vec;
+            state.mov[state.nw.edges[j].from]-=vec/2;
+            state.mov[state.nw.edges[j].to]-=vec/2;
             state.force[i]+=manh(vec);
+            state.force[state.nw.edges[j].from]+=manh(vec/2);
+            state.force[state.nw.edges[j].to]+=manh(vec/2);
 #ifdef SHOWPROGRESS
             if (debug) state.debug[i].push_back(forcevec(vec,debug));
-#endif            
+            if (debug) state.debug[state.nw.edges[j].from].push_back(forcevec(-vec/2,debug));
+            if (debug) state.debug[state.nw.edges[j].to].push_back(forcevec(-vec/2,debug));
+            #endif            
          }
       }
    }
