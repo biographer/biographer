@@ -23,7 +23,7 @@ class NetDisplay{
       NetDisplay(const Network &n);
       NetDisplay(const Network &n, vector<vector<forcevec> > &f);
       ~NetDisplay();
-      int show();
+      int show(const char* fn=NULL);
       bool waitKeyPress;
    protected:
       const Network &net;
