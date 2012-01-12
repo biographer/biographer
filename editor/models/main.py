@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
 
 def reset_current_session():
 	global session
@@ -7,14 +9,18 @@ def reset_current_session():
 
 	if session.bioGraph is not None:		# delete old graph
 		del session.bioGraph
+
 	from graph import Graph
 	session.bioGraph = Graph()			# new graph
+
 
 def importBioModel( BioModelID ):
 	...
 
+
 def import_Reactome( ReactomeStableIdentifier ):
 	...
+
 
 def importLayout(graph, lines):
     type2sbo = dict(Protein = 252,SimpleCompound=247,Complex=253,Reaction=167,Compartment=290,Compound=285)

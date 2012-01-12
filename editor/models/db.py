@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
 
 # http://www.web2py.com/book/default/chapter/06
 
