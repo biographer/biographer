@@ -1,33 +1,21 @@
 # -*- coding: utf-8 -*-
 
 def index():
-	return redirect(URL(r=request, c="Export", f="JSON"))				# default behaviour: export JSON
+	return redirect( URL(r=request, c="Export", f="JSON") )
 
 def JSON():
 	if session.bioGraph is None:
-		session.flash = "Unable to export: No Model is loaded !"
+		session.flash = "Unable to export: No Model is loaded"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
-	content = session.bioGraph.exportJSON()						# export JSON
-
-	IP = response.session_id.split("-")[0]
-	filename = IP+".json"
-	open(request.folder+"/static/Export/"+filename, "w").write(content)		# save it to file
-
-	return redirect(URL(r=request, c="static", f="Export")+"/"+filename)		# pass the file to the client
+	return session.bioGraph.exportJSON()
 
 def Layout():
 	if session.bioGraph is None:
-		session.flash = "Unable to export: No Model is loaded !"
+		session.flash = "Unable to export: No Model is loaded"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
-	content = session.bioGraph.export_to_Layouter()					# export Layout
-
-	IP = response.session_id.split("-")[0]
-	filename = IP+".layout"
-	open(request.folder+"/static/Export/"+filename, "w").write(content)		# save it to file
-
-	return redirect(URL(r=request, c="static", f="Export")+"/"+filename)		# pass the file to the client
+	return session.bioGraph.export_to_Layouter()
 
 def Picture():
 	import os
@@ -36,9 +24,9 @@ def Picture():
 
 	formats_supported = ['jpeg', 'png', 'pdf', 'svg', 'tiff', 'eps']
 
-#	if session.bioGraph is None:
-#		session.flash = "Unable to export: No Model is loaded !"
-#		return redirect( URL(r=request, c="Workbench", f="index") )
+	if session.bioGraph is None:							# Error: no model loaded
+		session.flash = "Unable to export: No Model is loaded"
+		return redirect( URL(r=request, c="Workbench", f="index") )
 
 	if not request.vars.format in formats_supported:				# Error: format not specified
 		session.flash = "Error: No export format specified or format not supported"
@@ -61,14 +49,9 @@ def Picture():
 		session.bioGraph.log(error)
 
 	if len(content) > 0:
-		IP = response.session_id.split("-")[0]						# save output to file
-		filename = IP+"."+request.vars.format
-		open(request.folder+"/static/Exporter/"+filename, "w").write(content)
-
-		return redirect(URL(r=request, c="static", f="Exporter")+"/"+filename)		# pass file to the client
+		return content
 
 	else:
-		session.flash = "Exporter failed: No output"					# no content? what happened?
-		return redirect(URL(r=request, c="Workbench", f="index"))
-
+		session.flash = "Exporter failed: No output"
+		return redirect( URL(r=request, c="Workbench", f="index") )
 

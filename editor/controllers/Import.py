@@ -1,21 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import os, sys, httplib
-
-# QUICKFIX
-#hardcoded = request.folder + "/modules"
-#if not hardcoded in sys.path:
-#	sys.path.append(hardcoded)
-
-import biographer
-
 
 #################### JSON ####################
-
-def importJSON( JSONstring ):
-	global session
-	reset_current_session()
-	session.bioGraph.importJSON( JSONstring )
 
 def JSON():									# function: import JSON
 	if request.env.request_method == "GET":
@@ -29,7 +15,7 @@ def JSON():									# function: import JSON
 			session.JSON = open( os.path.join(request.folder, "static/examples/example.json") ).read()
 			session.flash = "Example JSON loaded."
 
-		importJSON( session.JSON )					# import JSON
+		import_JSON( session.JSON )					# import JSON
 
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
@@ -39,12 +25,7 @@ def JSONdebug():								# function: show JSON details
 
 #################### SBML ####################
 
-def importSBML( SBMLstring ):
-	global session
-	reset_current_session()
-	session.bioGraph.importSBML( SBMLstring )
-
-def SBML():									# function: import SBML
+def SBML():
 	if request.env.request_method == "GET":
 		return dict()
 
@@ -57,7 +38,7 @@ def SBML():									# function: import SBML
 			session.SBML = open( os.path.join(request.folder, "static/examples/reactome.sbml") ).read()
 			session.flash = "Example SBML loaded."
 
-		importSBML( session.SBML )					# import SBML
+		import_SBML( session.SBML )					# import SBML
 
 		Layouter = request.vars.Layouter				# goto selected Layouter page
 		if Layouter == "Ask":
@@ -66,16 +47,17 @@ def SBML():									# function: import SBML
 			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+URL(r=request,c='Workbench',f='index') )
 		if Layouter == "graphviz":
 			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+
 		return redirect( URL(r=request, c='Workbench',f='index') )
 
 
 #################### BioModels ####################
 
-def BioModels():		# import from BioModels.net
+def BioModels():
 
-	if (request.env.request_method == "POST") or (request.vars.BioModelsID is not None):	# allows direct calls in the way /biographer/Import/BioModel?BioModelsID=8
+	if (request.env.request_method == "POST") or (request.vars.BioModelsID is not None):	# allows direct calls like /biographer/Import/BioModel?BioModelsID=220
 
-		importBioModel( request.vars.BioModelsID )			# import
+		import_BioModel( request.vars.BioModelsID )			# import
 
 		if type(request.vars.returnto) == type([]):			# evaluate returnto parameters
 			returnto = str(request.vars.returnto[0])
@@ -95,17 +77,21 @@ def BioModels():		# import from BioModels.net
 		return redirect( URL(r=request, c='Workbench', f='index') )	# else: goto Workbench
 
 	if request.env.request_method == "GET":
+
 		session.PreviousBioModels = db( db.BioModels.Title != None ).select()
+
 		return dict( returnto=request.vars.returnto )
 
 
 #################### Reactome ####################
 
-def Reactome():									# function: import Reactome
+def Reactome():
 	if request.env.request_method == "GET":
 		return dict()
 
 	if request.env.request_method == "POST":
-		importReactome( request.vars.ST_ID )				# import Reactome
+
+		import_Reactome( request.vars.ST_ID )
+
 		return redirect( URL(r=request, c='Workbench', f='index') )
 
