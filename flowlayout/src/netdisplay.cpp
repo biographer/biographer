@@ -90,8 +90,9 @@ void NetDisplay::processEvents(){
    }
 //   XSync(dpy,true);
 }
-int NetDisplay::show(){
+int NetDisplay::show(const char* fn){
    draw();
+   if (fn) cairo_surface_write_to_png(cs,fn);
    processEvents();
    dbglines.clear();
    if (stepnum>1) printf("progressing %i steps\n",stepnum);

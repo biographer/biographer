@@ -140,6 +140,7 @@ void Layouter::execute(){
    
    init();
    int prs=program.size();
+   int totalcc=0;
    for (s=0;s<prs;s++){
       #ifdef SHOWPROGRESS
       int skip=1;
@@ -212,7 +213,13 @@ void Layouter::execute(){
 
 #ifdef SHOWPROGRESS
          if (--skip<=0) {
+            #ifdef OUTPNG
+            char fn[20];
+            sprintf(fn,"ani_s%02d_i%04d.png",s,totalcc);
+            skip=nd.show(fn);
+            #else
             skip=nd.show();
+            #endif
          }
          for (i=0;i<num;i++){
             debug[i].clear();
@@ -254,6 +261,7 @@ void Layouter::execute(){
          lastForce=totalForce;
          if (show_progress && (cc>0 || s>0)) showProgress(cc);
          cc++;
+         totalcc++;
       }
       printf("\n");
       if (show_progress) showProgress(0);
@@ -325,7 +333,7 @@ double get_dij(Layouter &l,int i, int j){
    //ideal distance between adjacent nodes;
    double x=l.nw.nodes[i].width * l.nw.nodes[i].width + l.nw.nodes[i].height * l.nw.nodes[i].height;
    double y=l.nw.nodes[j].width * l.nw.nodes[j].width + l.nw.nodes[j].height * l.nw.nodes[j].height;
-   return (sqrt(x)+sqrt(y))*0.6+l.avgsize/2*(log(1+l.nw.degree(i)+l.nw.degree(j))-log(3));
+   return (sqrt(x)+sqrt(y))*0.5+l.avgsize/2*(log(1+l.nw.degree(i)+l.nw.degree(j))-log(3));
 }
 void get_ideal_distances(Layouter &l,VF &dij){
    /* This procedure computes the ideal lengths of edges (the ideal distances between adjacent nodes): dij[i],
