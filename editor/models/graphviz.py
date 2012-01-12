@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
+import pygraphviz
+
 
 def execute_graphviz(self, execution_folder="/tmp", use_cache=True, update_nodes=True):
 	self.log("Preparing graphviz model ...")

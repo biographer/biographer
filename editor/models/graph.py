@@ -23,7 +23,6 @@ from shlex import split
 
 import json				# JSON format
 import libsbml				# SBML format
-import pygraphviz			# calling graphviz from python
 
 from node import Node
 from edge import Edge

@@ -1,10 +1,6 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
-from cache import *
-from biomodels import *
-from reactome import *
-
 def reset_current_session():
 	global session
 
