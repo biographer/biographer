@@ -109,8 +109,8 @@ void Layouter::stepAddEndCondition(int step, conditions cond, double param, doub
       program[step].c_iterations=(int) param;
    } else if (cond==C_relForceDiff){ // end condition for a certain relative change in total force
       program[step].c_relForceDiff=param;
-   } else if (cond==C_relMovLimit){ // end condition for avg movement smaller than avg node size * param1
-      program[step].c_relMovLimit=param;
+   } else if (cond==C_avgMovLimit){ // end condition for avg movement smaller than avg node size * param1
+      program[step].c_avgMovLimit=param;
    } else if (cond==C_maxMovLimit){ // end condition for max movement smaller than avg node size * param1
       program[step].c_maxMovLimit=param;
    } else if (cond==C_totForceInc){ // 
@@ -240,7 +240,7 @@ void Layouter::execute(){
             end|=(program[s].c_totForceIncCC<=0);
          }
          if (program[s].endc & C_relForceDiff) end|=(fabs(lastForce-totalForce)/totalForce<program[s].c_relForceDiff); // relative change in total force
-         if (program[s].endc & C_relMovLimit) end|=(totalMov/num/avgsize<program[s].c_relMovLimit); //avg movement compared to avg size
+         if (program[s].endc & C_avgMovLimit) end|=(totalMov/num/avgsize<program[s].c_avgMovLimit); //avg movement compared to avg size
          if (program[s].endc & C_maxMovLimit) end|=(maxMov/avgsize<program[s].c_maxMovLimit); //avg movement compared to avg size
                
          if (end && program[s].endc & C_temp){
