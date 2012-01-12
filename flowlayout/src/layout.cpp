@@ -247,6 +247,7 @@ void Layouter::execute(){
          if (end && program[s].endc & C_temp){
             temp-=1.0/(double)program[s].c_tempSteps;// decrease temperature if one of the other conditions is fullfilled
             lastForce=-1; // reset 
+            cc=0; // reset
             program[s].c_totForceIncCC=program[s].c_totForceInc; // reset
             if (temp>0) end=false;
          }
