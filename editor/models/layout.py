@@ -510,6 +510,39 @@ class Graph:
 
 		self.initialize()
 
+	def execute_layout(self, path_to_layout_binary, execution_folder='/tmp'):
+
+		infile = os.path.join(execution_folder, 'layout.infile')
+		outfile = os.path.join(execution_folder, 'layout.outfile')
+
+		self.log("Now executing the layouter: "+path_to_layout_binary)
+		self.log("in "+execution_folder+" ...")
+
+		open(infile, 'w').write( self.export_to_Layouter() )
+		os.path.delete(outfile)
+
+		timeout = 30
+		start = time()									# start a timer
+		process = Popen( split(path_to_layout_binary) )					# run layout binary
+		self.log("Executable started. Waiting for process to complete ...")
+		runtime = 0
+		while (layouter.poll is None) and (runtime < timeout):				# wait until timeout
+			sleep(2)
+			runtime = time()-start
+			self.log("Timeout is set to "+str(timeout)+"s. Runtime is now: "+str(runtime)+"s.")
+
+		if runtime < timeout:
+			self.log(path_to_layout_binary+" finished.")
+		else:
+			self.log("Sorry, process timed out.")
+			return False
+
+		self.import_from_Layouter( open(outfile).read() )
+		os.path.delete(outfile)
+		os.path.delete(infile)
+
+		self.log("Layouting completed successfully.")
+
 
 	### secondary model layouting
 	### using graphviz

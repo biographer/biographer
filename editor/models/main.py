@@ -5,8 +5,10 @@ import sys
 hardcoded = request.folder + "/modules"
 if not hardcoded in sys.path:
 	sys.path.append(hardcoded)
+
 from graph import Graph
 
+import os
 from copy import deepcopy
 
 #
@@ -51,17 +53,18 @@ def import_BioModel( BioModelsID ):
 
 	model = BioModel_from_cache( BioModelsID )
 	if model is None:
+		print "Not in cache. Downloading ..."
 		model = download_BioModel( BioModelsID )
 		if model is None:
-			print "Error: BioModel download failed"
+			print "Error: Download failed"
 			session.flash = "Error: BioModel download failed"
 			return False
 		else:
-			print "BioModel downloaded"
+			print "Downloaded successful."
 			session.flash = "BioModel downloaded"
 			BioModel_to_cache( model, BioModelsID )
 	else:
-		print "BioModel loaded from cache"
+		print "Loaded from cache."
 		session.flash = "BioModel loaded from cache"
 	
 	reset_current_session()
@@ -78,17 +81,18 @@ def import_Reactome( ReactomeStableIdentifier ):
 
 	model = Reactome_from_cache( ReactomeStableIdentifier )
 	if model is None:
+		print "Not in cache. Downloading ..."
 		model = download_Reactome( ReactomeStableIdentifier )
 		if model is None:
-			print "Error: Reactome download failed"
+			print "Error: Download failed"
 			session.flash = "Error: Reactome download failed"
 			return False
 		else:
-			print "Reactome model downloaded"
+			print "Downloaded successful."
 			session.flash = "Reactome model downloaded"
 			Reactome_to_cache( model, ReactomeStableIdentifier )
 	else:
-		print "Reactome model loaded from cache"
+		print "Loaded from cache."
 		session.flash = "Reactome model loaded from cache"
 
 	reset_current_session()

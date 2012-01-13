@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
-def download_BioModel( BioModelID ):
+def download_BioModel( BioModelsID ):
 
 	import httplib
 
@@ -10,8 +10,8 @@ def download_BioModel( BioModelID ):
 	Model = connection.getresponse().read()
 	connection.close()
 
-	if session.SBML.find("There is no model associated") > -1:	# no such model
+	if Model.find("There is no model associated") > -1:	# no such model
 		return None
-	else:               				                # SBML download successful
+	else:							# SBML download successful
 		return Model
 

@@ -20,7 +20,7 @@ def BioModel_from_cache( BioModelID ):
 	select = db( db.BioModels.BIOMD==BioModelID ).select()
 
 	if len( select ) == 1:
-		return select.File
+		return select[0].File
 	else:
 		return None
 
@@ -43,7 +43,7 @@ def Reactome_from_cache( ReactomeStableIdentifier ):
 	select = db( db.Reactome.ST_ID==ReactomeStableIdentifier ).select()
 
 	if len( select ) == 1:
-		return select.File
+		return select[0].File
 	else:
 		return None
 
