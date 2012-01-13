@@ -54,7 +54,7 @@ def import_graph():
     response.generic_patterns = ['json']
     action,graph,json_string = None,None,None
     if request.vars.type=='biomodel':
-        importBioModel( request.vars.identifier )
+        import_BioModel( request.vars.identifier )
         json_string = session.bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
         action = 'Imported BioModel: %s'%request.vars.identifier
@@ -88,12 +88,12 @@ def layout():
         outfile = os.path.join(request.folder, "static","tmp.bgout")
         open(infile, 'w').write(bioGraph.exportLayout())
         #return bioGraph.exportLayout()
-        executable = os.path.join(request.folder, "static","layout")
+        #executable = os.path.join(request.folder, "static","layout")
         p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         p.communicate()
         layout_output = open(outfile, 'r').readlines()
         graph = simplejson.loads(bioGraph.exportJSON())
-        importLayout(graph, layout_output)
+        import_Layout(graph, layout_output)
         json_string = simplejson.dumps(graph)
         #return PRE(XML(simplejson.dumps(graph)))
         #print 'exit'
