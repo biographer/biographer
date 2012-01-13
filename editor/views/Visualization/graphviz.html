@@ -24,6 +24,7 @@
 	#canvas img		{
 				position:		relative;
 				top:			50px;
+				width:			95%;
 				}
 </style>
 
@@ -33,14 +34,15 @@
 		}
 </script>
 
+[ <a href="../Layout/graphviz">Redo layout</a> ], 
 [ <a href="../Layout/graphviz_layout">Download layout</a> ], 
 [ <a href="{{ = session.graphviz_png }}">Download picture</a> ]
 
 <div id=canvas>
 
-<img src="{{ = session.graphviz_png }}" />
+	<img src="{{ = session.graphviz_png }}" />
 
-{{ = XML(DijkstraMap) }}
+	<!--{{ = XML(DijkstraMap) }}-->
 
 </div>
 

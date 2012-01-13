@@ -26,10 +26,10 @@ def layout(graph, path_to_layout_binary, execution_folder='/tmp'):
 
 	timeout = 30
 	start = time()									# start a timer
-	process = Popen( split(path_to_layout_binary) )					# run layout binary
+	process = Popen( split(path_to_layout_binary+' '+infile+' '+outfile) )		# run layout binary
 	graph.log("Executable started. Waiting for process to complete ...")
 	runtime = 0
-	while (layouter.poll is None) and (runtime < timeout):				# wait until timeout
+	while (process.poll() is None) and (runtime < timeout):				# wait until timeout
 		sleep(2)
 		runtime = time()-start
 		graph.log("Timeout is set to "+str(timeout)+"s. Runtime is now: "+str(runtime)+"s.")

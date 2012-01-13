@@ -66,46 +66,50 @@ SBODefinedEdgeType2LayoutEdgeTypeMapping = {	"Reactant":		"Substrate",
 						"Catalysis":		"Catalyst"	}
 
 
-### SBO helper functions ###
+### SBO related functions ###
 
-def keyOf(dictionary, value):					# return the first key, having the given value inside the dictionary
+def keyOf(dictionary, value):						# return the first key, having the given value inside the dictionary
 	for key in dictionary.keys():
-		if dictionary[key] == value:
+		if dictionary[key].lower() == value.lower():
 			return key
 	return None
 
-def getSBO(term):						# return SBO of text SBO term
-	if term in NodeSBO.values():
-		result = keyOf(NodeSBO, term)			# Node SBO
-	elif term in EdgeSBO.values():
-		result = keyOf(EdgeSBO, term)			# Edge SBO
-	elif term in ModificationSBO.values():
-		result = keyOf(ModificationSBO, term)		# Modification SBO
+def getSBO(term):							# return SBO number of SBO term
+	term = str(term).lower()
+	if term in [x.lower() for x in NodeSBO.values()]:
+		result = keyOf(NodeSBO, term)				# Node SBO
+	elif term in [x.lower() for x in EdgeSBO.values()]:
+		result = keyOf(EdgeSBO, term)				# Edge SBO
+	elif term in [x.lower() for x in ModificationSBO.values()]:
+		result = keyOf(ModificationSBO, term)			# Modification SBO
 	elif term == -1 or term == "-1":
 		result = 285 # Unspecified
 	else:
-		result = 285 # Unspecified			# default SBO, if nothing matches
+		result = 285 # Unspecified				# default SBO, if nothing matches
 		print "Error: Unknown SBO term '"+str(term)+"' !"
 	return str(result)
 
 def getNodeType(text):
-	if text in NodeTypes.keys():
-		return NodeTypes[text]
-	if text+" Node" in NodeTypes.keys():
-		return NodeTypes[text+" Node"]
+	text = text.lower()
+	for key in NodeTypes.keys():
+		if text == key.lower() or text+' node' == key.lower():
+			return NodeTypes[key]
 	return 0
 
-def getLayoutNodeType(type):					# QUICKFIX -> Acer/Thomas
+def getLayoutNodeType(type):						# QUICKFIX -> Acer/Thomas
 	if type == NodeTypes["Process Node"]:
 		return "Reaction"
 	else:
 		return "Compound"
 
-def getEdgeType(SBO):
-	t = LayoutEdgeTypes[0]						# fallback value: "Substrate"
-	if SBO in EdgeSBO.keys():					# define type by SBO
+def getEdgeType(SBO):							# get Edge type by SBO number
+	t = LayoutEdgeTypes[0]	# fallback: Substrate
+
+	if SBO in EdgeSBO.keys():
 		t = EdgeSBO[SBO]
-	if t in SBODefinedEdgeType2LayoutEdgeTypeMapping.keys():	# translate to a value the Layouter understands
-		t = SBODefinedEdgeType2LayoutEdgeTypeMapping[t]
+
+	if SBO in SBODefinedEdgeType2LayoutEdgeTypeMapping.keys():
+		t = SBODefinedEdgeType2LayoutEdgeTypeMapping[SBO]
+
 	return t
 

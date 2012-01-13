@@ -24,7 +24,7 @@ def internal():
 		session.flash = "No graph is loaded. Do you want to import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="biographer") )
 
-	layout( session.bioGraph, path_to_layout_binary=os.path.join(request.folder, "layout/build/layout") )
+	layout( session.bioGraph, path_to_layout_binary=os.path.join(request.folder, "layout/build/layout"), execution_folder=os.path.join(request.folder, "cache") )
 
 	if request.vars.returnto is not None:
 		return redirect(str(request.vars.returnto))

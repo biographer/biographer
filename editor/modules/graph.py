@@ -517,29 +517,30 @@ class Graph:
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		graphviz_model = pygraphviz.AGraph(directed=True)
 
-		nodes_deleted = False
-		# !!!!!!!!!!!!!!!!!!!!!!!!!!
-		# Compartments have to be added as
-		# SG = graphviz_model.add_subgraph(name='bla')
-		# !!!!!!!!!!!!!!!!!!!!!!!!!!
 		for node in self.Nodes:
-			# !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			# This rule actually removes compartments!!!!!!
-			# Come up with something different!
-			# !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			#if (not node.is_abstract) and (self.EdgeCount(node) > 0):
-			graphviz_model.add_node( 	str(node.id),
-							label = node.data.label if node.data.owns("label") else str(node.id),
-							shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
-						)
-			#
-			#elif updateNodeProperties:
-			#	self.Nodes.pop( self.Nodes.index(node) )
-			#	nodes_deleted = True
-			#	self.log("Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.")
+			if node.sbo == getSBO('Compartment'):
+				subgraph = graphviz_model.add_subgraph(
+									[],
+									name = node.data.label if node.data.owns("label") else str(node.id),
+									shape = 'ellipse'
+									)
+				for subnode in self.Nodes:
+					if subnode.data.owns('compartment') and (subnode.data.compartment == node.id):
+						subgraph.add_node(
+								 	str(subnode.id),
+									label = subnode.data.label if subnode.data.owns("label") else str(subnode.id),
+									shape = 'ellipse' if subnode.type != getNodeType("Process Node") else 'box'
+								)
+			else:
+				graphviz_model.add_node(
+								str(node.id),
+								label = node.data.label if node.data.owns("label") else str(node.id),
+								shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
+							)
 
-		if nodes_deleted:
-			self.initialize()	# necessary; e.g. ID map may not fit anymore, because we deleted Nodes
+# we are not deleting nodes anymore, just to remember, that initialize must be called, if we do so ...
+#		if nodes_deleted:
+#			self.initialize()	# necessary; e.g. ID map may not fit anymore, because we deleted Nodes
 
 		for edge in self.Edges:
 			graphviz_model.add_edge(	str(edge.source),
