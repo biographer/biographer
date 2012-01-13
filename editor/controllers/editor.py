@@ -83,7 +83,7 @@ def layout():
         executable = os.path.join(request.folder, "static/Layouter/build", "layout")
         infile = os.path.join(request.folder, "static","tmp.bgin")
         outfile = os.path.join(request.folder, "static","tmp.bgout")
-        open(infile, 'w').write(bioGraph.exportLayout())
+        open(infile, 'w').write(bioGraph.export_to_Layouter())
         #return bioGraph.exportLayout()
         #executable = os.path.join(request.folder, "static","layout")
         p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
