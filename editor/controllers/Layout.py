@@ -24,13 +24,7 @@ def internal():
 		session.flash = "No graph is loaded. Do you want to import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="biographer") )
 
-	executable = os.path.join(request.folder, "layout/build/layout")
-
-	if os.path.exists(executable):
-		layout( session.bioGraph, path_to_layout_binary=executable )
-	else:
-		session.flash = "Layouter not installed."
-		return redirect( URL(r=request, c="Workbench", f="index") )
+	layout( session.bioGraph, path_to_layout_binary=os.path.join(request.folder, "layout/build/layout") )
 
 	if request.vars.returnto is not None:
 		return redirect(str(request.vars.returnto))
@@ -41,10 +35,13 @@ def graphviz():
 		session.flash = "No graph is loaded. Do you want to import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="graphviz") )
 
-	server_object		= deepcopy( session.bioGraph )	# without these two lines, some caching problem occurs,
-	del session.bioGraph					# and session.bioGraph does not get updated
+	server_object = deepcopy( session.bioGraph )	# without these two lines, some caching problem occurs,
+	del session.bioGraph				# and session.bioGraph does not get updated
 
-	session.graphvizDOT, filename, cached, boundaries = server_object.execute_graphviz( execution_folder=os.path.join(request.folder, "cache"), use_cache=True, update_nodes=True )
+	session.graphvizDOT, filename, cached, boundaries = server_object.
+
+	layout_using_graphviz( session.bioGraph, execution_folder=os.path.join(request.folder, "cache"), use_cache=True )
+
 	session.bioGraph	= server_object
 #	session.graphvizURL	= URL(r=request, c="static/graphviz", f=filename)
 
