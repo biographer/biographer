@@ -354,7 +354,7 @@ class Graph:
 		d = self.exportDICT(status=False)
 
 		h = md5( pickle.dumps(d) ).hexdigest()
-		print h
+		print 'Hash: '+h
 		if self.JSON_hash != h:
 			self.JSON = json.dumps( d, indent=Indent )
 			self.JSON_hash = h
@@ -367,7 +367,7 @@ class Graph:
 			self.status()
 
 		h = md5( pickle.dumps(self.Nodes) ).hexdigest() + md5( pickle.dumps(self.Edges) ).hexdigest()
-		print h
+		print 'Hash: '+h
 		if self.dict_hash != h:
 			self.exportdict = { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }
 			self.dict_hash = h
@@ -553,6 +553,7 @@ class Graph:
 		graphviz_model = pygraphviz.AGraph(directed=True)
 
 		self.cluster_name_mapping = []
+		self.node_name_mapping = []
 
 		def recurse( parent, compartment_ID ):
 			for node in self.Nodes:
@@ -561,7 +562,7 @@ class Graph:
 						subgraph = parent.add_subgraph(
 										[],
 										name = 'cluster'+str(len(self.cluster_name_mapping)),
-										label = node.data.label if node.data.owns("label") else str(node.id),
+										label = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id),
 										shape = 'ellipse'
 										)
 						if debug:
@@ -572,10 +573,11 @@ class Graph:
 						if debug:
 							self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
 						parent.add_node(
-									str(node.id),
-									label = node.data.label if node.data.owns("label") else str(node.id),
-									shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
+									'node'+str(len(self.node_name_mapping))	),
+									label = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id),
+									shape = 'ellipse' if getNodeType(node.type) != getNodeType("Process Node") else 'box'
 								)
+						self.node_name_mapping.append( str(node.id) )
 		recurse( graphviz_model, 0 )
 
 # we are not deleting nodes anymore, just to remember, that initialize must be called, if we do so ...
@@ -583,9 +585,9 @@ class Graph:
 #			self.initialize()	# necessary; e.g. ID map may not fit anymore, because we deleted Nodes
 
 		for edge in self.Edges:
-			graphviz_model.add_edge(	str(edge.source),
-							str(edge.target),
-							arrowhead='normal' if edge.sbo in [getSBO('Consumption'), getSBO('Production')] else 'tee'
+			graphviz_model.add_edge(	'node'+str(self.node_name_mapping.index(str(edge.source))),
+							'node'+str(self.node_name_mapping.index(str(edge.target))),
+							arrowhead='tee' if edge.sbo getSBO('inhibition') else 'normal'
 						)
 		return graphviz_model
 
@@ -609,10 +611,12 @@ class Graph:
 		nodes_deleted = False
 		for node in self.Nodes:
 			if node.sbo != getSBO('compartment'):
-				nodename = str(node.id)
-				if nodename in self.cluster_name_mapping:
-					nodename = 'cluster'+str(self.cluster_name_mapping.index(nodename))
-				p = find_node_in_graphviz_output(layout, nodename)
+				nodealias = str(node.id)
+				if nodealias in self.cluster_name_mapping:
+					nodealias = 'cluster'+str(self.cluster_name_mapping.index(nodealias))
+				elif nodealias in self.node_name_mapping:
+					nodealias = 'node'+str(self.node_name_mapping.index(nodealias))
+				p = find_node_in_graphviz_output(layout, nodealias)
 				if p > -1:
 					q = layout.find(";", p)
 					node.update_from_graphviz( layout[p:q] )

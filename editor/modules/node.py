@@ -20,16 +20,12 @@ class Node:
 			# conversion of data dictionary to data object happens below
 			# this is necessary, to ensure takeover of the data default values during update
 
-		print self.__dict__
-
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)			# converts JSON to dictionary
-			data = self.data
+			data = self.data				# save it, since it will be overwritten by .update
 			self.__dict__.update( deepcopy(JSON) )		# map all input key/value pairs to the python object
-			self.data.update(data)
-
-		print self.__dict__
+			self.data.update(data)				# write it back
 
 		if not self.owns('data'):
 			self.data = {}

@@ -23,7 +23,6 @@ def graphviz():									# graphviz
 	xfactor = 1.34
 	yfactor = 1.33
 	for node in session.bioGraph.Nodes:
-		print str(node.data.__dict__)
 		width	= int(float(node.data.width)*xfactor)
 		height	= int(float(node.data.height)*yfactor)
 		left	= str(int(_left + float(node.data.x)*xfactor - width/2.))
