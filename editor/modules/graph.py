@@ -28,23 +28,6 @@ from edge import Edge
 from defaults import *
 from SBO_terms import *
 
-def find_whole_word(haystack, needle):
-	allowed_chars = [' ', '\t']
-	p = haystack.find(needle)
-	while p > -1:
-		if p == 0:
-			before = " "
-		else:
-			before = haystack[p-1]
-		if p+len(needle) > len(haystack):
-			after = " "
-		else:
-			after = haystack[p+len(needle)]
-		if before in allowed_chars and after in allowed_chars:
-			return p
-		p = haystack.find(needle, p+1)
-	return -1
-
 
 ### Graph object definition ###
 
@@ -354,6 +337,7 @@ class Graph:
 		d = self.exportDICT(status=False)
 
 		h = md5( pickle.dumps(d) ).hexdigest()
+		print h
 		if self.JSON_hash != h:
 			self.JSON = json.dumps( d, indent=Indent )
 			self.JSON_hash = h
@@ -366,6 +350,7 @@ class Graph:
 			self.status()
 
 		h = md5( pickle.dumps(self.Nodes) ).hexdigest() + md5( pickle.dumps(self.Edges) ).hexdigest()
+		print h
 		if self.dict_hash != h:
 			self.exportdict = { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }
 			self.dict_hash = h
@@ -544,38 +529,37 @@ class Graph:
 	### secondary model layouting
 	### using graphviz
 
-	def export_to_graphviz(self, debug=False):
+	def export_to_graphviz(self, debug=True):
 		self.log("Exporting model to graphviz ...")
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		graphviz_model = pygraphviz.AGraph(directed=True)
 
-		for node in self.Nodes:
-			if node.sbo == getSBO('Compartment'):
-				if debug:
-					self.log('Adding compartment '+str(node.id)+' ...')
-				subgraph = graphviz_model.add_subgraph(
-									[],
-									name = node.data.label if node.data.owns("label") else str(node.id),
-									shape = 'ellipse'
-									)
-				for subnode in self.Nodes:
-					if subnode.data.owns('compartment') and (subnode.data.compartment == node.id):
+		self.cluster_name_mapping = []
+
+		def recurse( parent, compartment_ID ):
+			for node in self.Nodes:
+				if ((compartment_ID == 0) and (not node.data.owns('compartment'))) or (str(node.data.compartment) == str(compartment_ID)):
+					if node.sbo == getSBO('Compartment'):
+						subgraph = parent.add_subgraph(
+										[],
+										name = 'cluster'+str(len(self.cluster_name_mapping)),
+										label = node.data.label if node.data.owns("label") else str(node.id),
+										shape = 'ellipse'
+										)
 						if debug:
-							self.log('Adding node '+str(subnode.id)+' to compartment '+str(node.id)+' ...')
-						subgraph.add_node(
-								 	str(subnode.id),
-									label = subnode.data.label if subnode.data.owns("label") else str(subnode.id),
-									shape = 'ellipse' if subnode.type != getNodeType("Process Node") else 'box'
+							self.log('Created subgraph for compartment '+str(node.id)+' in '+str(compartment_ID)+' ...')
+						self.cluster_name_mapping.append( str(node.id) )
+						recurse( subgraph, node.id )
+					else:
+						if debug:
+							self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
+						parent.add_node(
+									str(node.id),
+									label = node.data.label if node.data.owns("label") else str(node.id),
+									shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
 								)
-			else:
-				if debug:
-					self.log('Adding node '+str(node.id)+' ...')
-				graphviz_model.add_node(
-								str(node.id),
-								label = node.data.label if node.data.owns("label") else str(node.id),
-								shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
-							)
+		recurse( graphviz_model, 0 )
 
 # we are not deleting nodes anymore, just to remember, that initialize must be called, if we do so ...
 #		if nodes_deleted:
@@ -593,10 +577,25 @@ class Graph:
 
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
 
+		def find_node_in_graphviz_output(haystack, needle):
+			allowed_chars = [' ', '\t', '[']
+			p = haystack.find(needle)
+			while p > -1:
+				try:
+					if (haystack[p-1] in allowed_chars) and (haystack[p+len(needle)] in allowed_chars) and (haystack[p+len(needle)+1] in allowed_chars):
+						return p
+				except:	# string index out of range
+					pass
+				p = haystack.find(needle, p+1)
+			return -1
+
 		nodes_deleted = False
 		for node in self.Nodes:
 			if node.sbo != getSBO('compartment'):
-				p = find_whole_word(layout, str(node.id))
+				nodename = str(node.id)
+				if nodename in self.cluster_name_mapping:
+					nodename = 'cluster'+str(self.cluster_name_mapping.index(nodename))
+				p = find_node_in_graphviz_output(layout, nodename)
 				if p > -1:
 					q = layout.find(";", p)
 					node.update_from_graphviz( layout[p:q] )
