@@ -78,12 +78,12 @@ class Graph:
 	def status(self):
 		self.log("Network has "+str(self.NodeCount())+" Nodes ("+str(len(self.Compartments))+" of which are compartments) and "+str(self.EdgeCount())+" Edges.")
 
-	def pickCompartments(self):						# create array Compartments with links to the appropriate Node Objects
-		self.log("Picking Compartments ...")
+	def identifyCompartments(self):						# create array Compartments with links to the appropriate Node Objects
+		self.log("Identifying Compartments ...")
 		self.Compartments = []
-		CompartmentNode = getNodeType("Compartment Node")
+		NodeType_Compartment = getNodeType("Compartment Node")
 		for node in self.Nodes:
-			if node.type == CompartmentNode:
+			if getNodeType(node.type) == NodeType_Compartment:
 				self.Compartments.append(node)
 
 	def generateObjectLinks(self):
@@ -109,19 +109,19 @@ class Graph:
 		self.status()
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
-		self.pickCompartments()
+		self.identifyCompartments()
 		self.generateObjectLinks()
 		self.hash()
 		self.log("Graph initialized.")
 
-	def selfcheck(self, autoresize=True, removeOrphanEdges=True):		# perform some basic integrity checks on the created Graph
+	def selfcheck(self, autoresize=True, removeOrphanEdges=True, verbosity=1):		# perform some basic integrity checks on the created Graph
 
 		self.log("Performing Selfcheck ...")
 
 		for n in self.Nodes:						# self-check all Nodes and Edges
-			self.log( n.selfcheck(), raw=True )
+			self.log( n.selfcheck(verbosity=verbosity), raw=True )
 		for e in self.Edges:
-			self.log( e.selfcheck(), raw=True )
+			self.log( e.selfcheck(verbosity=verbosity), raw=True )
 
 		usedIDs = []				# remember all used IDs
 		nodeIDs = []				# remember all Node IDs
@@ -130,9 +130,10 @@ class Graph:
 			while n.id in usedIDs:
 				oldID = str(n.id)
 				n.id = randomID()
-				self.log("Collision: Node ID changed from '"+odlID+"' to '"+n.id+"' !")
+				if verbosity >= 1:
+					self.log("Collision: Node '"+odlID+"' renamed to '"+n.id+"'")
 			usedIDs.append(n.id)
-			if n.type == getNodeType("Compartment Node"):
+			if getNodeType(n.type) == getNodeType("Compartment Node"):
 				compartmentIDs.append(n.id)
 			nodeIDs.append(n.id)
 
@@ -140,24 +141,33 @@ class Graph:
 			while e.id in usedIDs:
 				oldID = str(e.id)
 				e.id = randomID()
-				self.log("Collision: Edge ID changed from '"+oldID+"' to '"+e.id+"' !")
+				if verbosity >= 1:
+					self.log("Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
 			usedIDs.append(e.id)
 
 		for n in self.Nodes:
 			if not n.data.owns('compartment'):
 				n.data.compartment = TopCompartmentID
-				self.log("Strange: "+str(n.id)+".data.compartment is not defined. Node moved to top.")
+				if verbosity >= 2:
+					self.log("Strange: "+str(n.id)+".data.compartment is not defined. Moved to top.")
 			if not n.data.compartment in compartmentIDs:		# valid compartment ?
-				self.log("Error: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found ! Node moved to top.")
+				if verbosity >= 1:
+					new = Node(defaults=True)
+					new.id = n.data.compartment
+					self.Nodes.append(new)
+					compartmentIDs.append(new.id)
+					self.log("Warning: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found. Created.")
 				n.data.compartment = TopCompartmentID
 
 		for e in self.Edges:
 			orphan = False
 			if not e.source in nodeIDs:				# Source Node exists?
-				self.log("Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" not found !")
+				if verbosity >= 1:
+					self.log("Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" not found")
 				orphan = True
 			if not e.target in nodeIDs:				# Target Node exists ?
-				self.log("Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" not found !")
+				if verbosity >= 1:
+					self.log("Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" not found")
 				orphan = True
 			if orphan and removeOrphanEdges:			# No -> Orphan!
 				self.log("Edge removed.")
@@ -167,24 +177,30 @@ class Graph:
 										# or subnodes lie outside parent ?
 			if not n.data.owns('subnodes'):
 				n.data.subnodes = []
-				self.log("Strange: "+str(n.id)+".data.subnodes is not defined. Attached an empty array.")
+				if verbosity >= 2:
+					self.log("Strange: "+str(n.id)+".data.subnodes is not defined. Attached an empty array.")
 			for subID in n.data.subnodes:
 				s = self.getNodeByID( subID )
 				if s is None:
 					n.data.subnodes.pop( n.data.subnodes.index(subID) )	# Subnode not found -> remove !
-					self.log("Error: Subnode "+str(subID)+" of Node "+str(n.id)+" not found ! Subnode removed.")
+					if verbosity >= 1:
+						self.log("Error: Subnode "+str(subID)+" of Node "+str(n.id)+" not found ! Subnode removed.")
 				else:
 					if s.data.owns('x','y','width') and n.data.owns('x','y','width'):
 						if s.data.x + s.data.width > n.data.x + n.data.width:
-							self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" broadener than parent !")
+							if verbosity >= 2:
+								self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" broadener than parent !")
 							if autoresize:
 								n.data.width = s.data.x + s.data.width - n.data.x
-								self.log("Autoresize: Made it smaller.")
+								if verbosity >= 2:
+									self.log("Autoresize: Made it smaller.")
 						if s.data.y + s.data.height > n.data.y + n.data.height:
-							self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" higher than parent !")
+							if verbosity >= 2:
+								self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" higher than parent !")
 							if autoresize:
 								n.data.height = s.data.y + s.data.height - n.data.y
-								self.log("Autoresize: Made it smaller.")
+								if verbosity >= 2:
+									self.log("Autoresize: Made it smaller.")
 
 	### generating a unique Graph identifier ###
 
@@ -271,9 +287,9 @@ class Graph:
 				self.log(pre+"JSON = '{' + JSON")
 
 			json = JSON.lower()
-			if json.replace(" ","").find('nodes:') == -1:		# nodes: present?
+			if json.replace(" ","").lower().find('nodes:') == -1:	# "nodes:" statement missing
 				self.log(pre+"No Nodes defined !")
-			if json.replace(" ","").find('edges:') == -1:		# edges: present?
+			if json.replace(" ","").lower().find('edges:') == -1:	# "edges:" statement missing
 				self.log(pre+"No Edges defined !")
 
 			while JSON.find("//") > -1:				# remove commentary
@@ -529,7 +545,7 @@ class Graph:
 	### secondary model layouting
 	### using graphviz
 
-	def export_to_graphviz(self, debug=True):
+	def export_to_graphviz(self, debug=False):
 		self.log("Exporting model to graphviz ...")
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html

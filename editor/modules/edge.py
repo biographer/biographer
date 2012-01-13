@@ -15,14 +15,18 @@ from data import Data
 class Edge:
 	def __init__(self, JSON=None, defaults=False):			# input parameter may be string or dictionary
 		if defaults:
-			self.__dict__.update(deepcopy(DefaultEdge))
+			self.__dict__.update( deepcopy(DefaultEdge) )
+			self.data = Data( DefaultEdge['data'] )
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
 			self.__dict__.update(deepcopy(JSON))		# import all input key/value pairs to the python object
-		if not self.owns('data'):
-			self.data = {}
-		self.data = Data(self.data)
+			# after that self.data will be a dictionary
+			# we don't want that, we want to access all parameters in the way node.data.subnodes etc...
+			if not self.owns('data'):
+				self.data = {}
+			if type(self.data) == type( {} ):
+				self.data = Data(self.data)
 
 	def owns(self, key1, key2=None, key3=None):
 		if key2 is None:
@@ -65,7 +69,7 @@ class Edge:
 		self.source		= layout['source']
 		self.target		= layout['target']
 
-	def selfcheck(self):
+	def selfcheck(self, verbosity=1):
 		result = ""
 		show = False
 
@@ -73,43 +77,51 @@ class Edge:
 			if not key in ['SourceNode', 'TargetNode']:		# skip it ...
 				if key in EdgeKeyAliases.keys():		# is it an alias ...
 					newkey = EdgeKeyAliases[key]
-					result += 'Automatically corrected error: Edge property "'+key+'" should be named "'+newkey+'" !\n'
+					if verbosity >= 2:
+						result += 'Warning: Edge property "'+key+'" renamed to "'+newkey+'"\n'
 					self.__dict__[newkey] = self.__dict__[key]
 					del self.__dict__[key]
 					key = newkey
 				if not key in EdgeKeys:
 					if key in OptionalEdgeKeys:
-						result += 'Automatically corrected error: Edge property "'+key+'" belongs under "data" !\n'
+						if verbosity >= 2:
+							result += 'Warning: Edge property "'+key+'" moved below "data"\n'
 						self.data.__dict__[key] = self.__dict__[key]
 						del self.__dict__[key]
 					else:
-						result += 'Warning: Unrecognized Edge property "'+key+'" !\n'
+						if verbosity >= 2:
+							result += 'Warning: Ignoring unrecognized Edge property "'+key+'"\n'
 						show = True
 
 		for key in self.data.__dict__.keys():			# check optional keys
 			if key in EdgeKeyAliases.keys():		# is it an alias ...
 				newkey = EdgeKeyAliases[key]
-				result += 'Automatically corrected error: Optional edge property "'+key+'" should be named "'+newkey+'" !\n'
+				if verbosity >= 2:
+					result += 'Warning: Optional edge property "'+key+'" renamed to "'+newkey+'"\n'
 				self.data.__dict__[newkey] = self.data.__dict__[key]
 				del self.data.__dict__[key]
 				key = newkey
 			if not key in OptionalEdgeKeys:
 				if key == 'id':
 					if not self.owns('id'):
-						result += 'Format error: '+self.id+'.data.id moved to '+self.id+'.id\n'
+						if verbosity >= 2:
+							result += 'Warning: '+self.id+'.data.id moved to '+self.id+'.id\n'
 						self.id = self.data.id
 						self.data.id = randomID()
 				elif key in NodeKeys:			# is it a mandatory key ...
-					result += 'Automatically corrected error: Edge property "'+key+'" does not belong under "data" !\n'
+					if verbosity >= 2:
+						result += 'Warning: Edge property "'+key+'" does not belong in "data"\n'
 					self.__dict__[key] = self.data.__dict__[key]
 					del self.data.__dict__[key]
 				else:
-					result += 'Warning: Unrecognized optional Edge property "'+key+'" !\n'
+					if verbosity >= 2:
+						result += 'Warning: Unrecognized optional Edge property "'+key+'"\n'
 					show = True
 
 		for key in MandatoryEdgeKeys:				# check for mandatory keys
 			if not self.owns(key):
-				result += "Error: Mandatory Edge key "+key+" is missing !\n"
+				if verbosity >= 1:
+					result += "Error: Mandatory Edge key "+key+" is missing !\n"
 				show = True
 
 		if str(self.id) == "-1":				# check ID
@@ -128,7 +140,7 @@ class Edge:
 			result += "Error: Label position incomplete !\n"
 			show = True
 
-		if show:						# if errors: show source
-			result += "Edge contains errors: "+self.exportJSON()+"\n"
+#		if show:						# if errors: show source
+#			result += "Edge contains errors: "+self.exportJSON()+"\n"
 		return result
 

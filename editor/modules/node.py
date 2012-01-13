@@ -17,15 +17,17 @@ class Node:
 	def __init__(self, JSON=None, defaults=False):			# input may be string or dictionary
 		if defaults:
 			self.__dict__.update( deepcopy(DefaultNode) )
+			self.data = Data( DefaultNode['data'] )
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
 			self.__dict__.update( deepcopy(JSON) )		# map all input key/value pairs to the python object
 			# after that self.data will be a dictionary
 			# we don't want that, we want to access all parameters in the way node.data.subnodes etc...
-		if not self.owns('data'):
-			self.data = {}
-		self.data = Data(self.data)
+			if not self.owns('data'):
+				self.data = {}
+			if type(self.data) == type( {} ):
+				self.data = Data(self.data)
 
 	def owns(self, key1, key2=None, key3=None):
 		if key2 is None:
@@ -103,51 +105,64 @@ class Node:
 		self.data.width		= layout['width']
 		self.data.height	= layout['height']
 
-	def selfcheck(self):						# perform some basic integrity checks
+	def selfcheck(self, verbosity=1):					# perform some basic integrity checks
 		result = ""
 		show = False
 
 		for key in self.__dict__.keys():				# check if we recognize all keys
 			if not key in ["ConnectedEdges", "SubNodes", "CompartmentNode"]:	# else skip it ...
+
 				if key in NodeKeyAliases.keys():		# is it an alias ...
 					newkey = NodeKeyAliases[key]
-					result += 'Format error: '+self.id+'.'+key+' moved to '+self.id+'.'+newkey+'\n'
 					self.__dict__[newkey] = self.__dict__[key]
 					del self.__dict__[key]
 					key = newkey
+
+					if verbosity >= 2:
+						result += 'Warning: '+self.id+'.'+key+' moved to '+self.id+'.'+newkey+'\n'
+
 				if not key in NodeKeys:
 					if key in OptionalNodeKeys:		# is it an optional key ...
-						result += 'Format error: '+self.id+'.'+key+'" moved to '+self.id+'.data.'+key+'\n'
 						self.data.__dict__[key] = self.__dict__[key]
 						del self.__dict__[key]
+						if verbosity >= 2:
+							result += 'Warning: '+self.id+'.'+key+'" moved to '+self.id+'.data.'+key+'\n'
 					else:
-						result += 'Format error: Unrecognized Node property "'+key+'" !\n'
+						if verbosity >= 2:
+							result += 'Warning: Ignoring unrecognized Node property "'+key+'"\n'
 						show = True
 
 		for key in self.data.__dict__.keys():				# check optional keys
+
 			if key in NodeKeyAliases.keys():		# is it an alias ...
 				newkey = NodeKeyAliases[key]
-				result += 'Format error: '+self.id+'.data.'+key+' moved to '+self.id+'.data.'+newkey+'\n'
+				if verbosity >= 2:
+					result += 'Warning: '+self.id+'.data.'+key+' moved to '+self.id+'.data.'+newkey+'\n'
 				self.data.__dict__[newkey] = self.data.__dict__[key]
 				del self.data.__dict__[key]
 				key = newkey
+
 			if not key in OptionalNodeKeys:
 				if key == 'id':
 					if not self.owns('id'):
-						result += 'Format error: '+self.id+'.data.id moved to '+self.id+'.id\n'
+						if verbosity >= 2:
+							result += 'Warning: '+self.id+'.data.id moved to '+self.id+'.id\n'
 						self.id = self.data.id
 						self.data.id = randomID()
 				elif key in NodeKeys:			# is it a mandatory key ...
-					result += 'Format error: '+self.id+'.data.'+key+' moved to '+self.id+'.'+key+'\n'
+					if verbosity >= 2:
+						result += 'Warning: '+self.id+'.data.'+key+' moved to '+self.id+'.'+key+'\n'
 					self.__dict__[key] = self.data.__dict__[key]
 					del self.data.__dict__[key]
 				else:
-					result += 'Format error: Unrecognized optional Node property "'+key+'" !\n'
+					if verbosity >= 2:
+						result += 'Warning: Ignoring unrecognized optional Node property "'+key+'"\n'
 					show = True
 
 		for key in MandatoryNodeKeys:				# check mandatory keys
 			if not self.owns(key):
-				result += 'Error: '+self.id+'.'+key+' undefined but mandatory !\n'
+				if verbosity >= 1:
+					result += 'Error: '+self.id+'.'+key+' undefined but mandatory !\n'
 				show = True
 
 		if str(self.id) == "-1":				# check ID
@@ -167,7 +182,7 @@ class Node:
 			result += "Warning: Incomplete information on Node size !\n"
 			show = True
 
-		if show:						# if errors: show source
-			result += "Node contains errors: "+self.exportJSON()+"\n"
+#		if show:						# if errors: show source
+#			result += "Node contains errors: "+self.exportJSON()+"\n"
 		return result
 
