@@ -16,17 +16,25 @@ class Edge:
 	def __init__(self, JSON=None, defaults=False):			# input parameter may be string or dictionary
 		if defaults:
 			self.__dict__.update( deepcopy(DefaultEdge) )
-			self.data = Data( DefaultEdge['data'] )
+			# conversion of data dictionary to data object happens below
+			# this is necessary, to ensure takeover of the data default values during update
+
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
-			self.__dict__.update(deepcopy(JSON))		# import all input key/value pairs to the python object
-			# after that self.data will be a dictionary
-			# we don't want that, we want to access all parameters in the way node.data.subnodes etc...
-			if not self.owns('data'):
-				self.data = {}
-			if type(self.data) == type( {} ):
-				self.data = Data(self.data)
+			data = self.data				# save it, since it will be overwritten by .update
+			self.__dict__.update( deepcopy(JSON) )		# import all input key/value pairs to the python object
+
+			new_data = self.data				# self.data will be a dictionary
+			self.data.update(data)				# put old data settings back in place
+			self.data.update(new_data)			# perform a separate update for data subobject
+
+		# after that self.data will be a dictionary
+		# we don't want that, we want to access all parameters in the way node.data.subnodes etc...
+		if not self.owns('data'):
+			self.data = {}
+		if type(self.data) == type( {} ):
+			self.data = Data(self.data)
 
 	def owns(self, key1, key2=None, key3=None):
 		if key2 is None:
