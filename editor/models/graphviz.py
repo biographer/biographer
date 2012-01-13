@@ -1,4 +1,4 @@
-!/usr/bin/python
+#!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
 # wrapper for graphviz
