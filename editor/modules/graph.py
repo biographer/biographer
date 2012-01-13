@@ -559,12 +559,10 @@ class Graph:
 			for node in self.Nodes:
 				if ((compartment_ID == 0) and (not node.data.owns('compartment'))) or (str(node.data.compartment) == str(compartment_ID)):
 					if node.sbo == getSBO('Compartment'):
-						subgraph = parent.add_subgraph(
-										[],
+						subgraph = parent.add_subgraph(	[],
 										name = 'cluster'+str(len(self.cluster_name_mapping)),
 										label = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id),
-										shape = 'ellipse'
-										)
+										shape = 'ellipse'		)
 						if debug:
 							self.log('Created subgraph for compartment '+str(node.id)+' in '+str(compartment_ID)+' ...')
 						self.cluster_name_mapping.append( str(node.id) )
@@ -572,11 +570,9 @@ class Graph:
 					else:
 						if debug:
 							self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
-						parent.add_node(
-									'node'+str(len(self.node_name_mapping))	),
+						parent.add_node(	'node'+str(len(self.node_name_mapping)),
 									label = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id),
-									shape = 'ellipse' if getNodeType(node.type) != getNodeType("Process Node") else 'box'
-								)
+									shape = 'ellipse' if getNodeType(node.type) != getNodeType("Process Node") else 'box'		)
 						self.node_name_mapping.append( str(node.id) )
 		recurse( graphviz_model, 0 )
 
@@ -587,7 +583,7 @@ class Graph:
 		for edge in self.Edges:
 			graphviz_model.add_edge(	'node'+str(self.node_name_mapping.index(str(edge.source))),
 							'node'+str(self.node_name_mapping.index(str(edge.target))),
-							arrowhead='tee' if edge.sbo getSBO('inhibition') else 'normal'
+							arrowhead='tee' if edge.sbo == getSBO('Inhibition') else 'normal'
 						)
 		return graphviz_model
 
