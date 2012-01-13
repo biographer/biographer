@@ -22,11 +22,11 @@ class Edge:
 		if JSON is not None:
 			if type(JSON) == type(""):
 				JSON = json.loads(JSON)
-			data = self.data				# save it, since it will be overwritten by .update
+			backup = deepcopy(self.data)			# save it, since it will be overwritten by .update
 			self.__dict__.update( deepcopy(JSON) )		# import all input key/value pairs to the python object
 
-			new_data = self.data				# self.data will be a dictionary
-			self.data.update(data)				# put old data settings back in place
+			new_data = deepcopy(self.data)			# self.data will be a dictionary
+			self.data.update(backup)			# put old data settings back in place
 			self.data.update(new_data)			# perform a separate update for data subobject
 
 		# after that self.data will be a dictionary

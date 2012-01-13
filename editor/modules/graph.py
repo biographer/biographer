@@ -556,23 +556,28 @@ class Graph:
 		self.node_name_mapping = []
 
 		def recurse( parent, compartment_ID ):
+			print "recursing "+str(compartment_ID)
 			for node in self.Nodes:
-				if ((compartment_ID == 0) and (not node.data.owns('compartment'))) or (str(node.data.compartment) == str(compartment_ID)):
-					if node.sbo == getSBO('Compartment'):
+				if (str(node.data.compartment) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == 0)):
+					if getNodeType(node.type) == getNodeType('Compartment'):
+						label = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id)
 						subgraph = parent.add_subgraph(	[],
-										name = 'cluster'+str(len(self.cluster_name_mapping)),
-										label = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id),
-										shape = 'ellipse'		)
+										name = 'cluster'+str(len(self.cluster_name_mapping)) )
+#										label = label,
+#										shape = 'ellipse'		)
 						if debug:
 							self.log('Created subgraph for compartment '+str(node.id)+' in '+str(compartment_ID)+' ...')
 						self.cluster_name_mapping.append( str(node.id) )
+						self.node_name_mapping.append( str(node.id) )
 						recurse( subgraph, node.id )
 					else:
 						if debug:
 							self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
-						parent.add_node(	'node'+str(len(self.node_name_mapping)),
-									label = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id),
-									shape = 'ellipse' if getNodeType(node.type) != getNodeType("Process Node") else 'box'		)
+						name = 'node'+str(len(self.node_name_mapping))
+						l = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id)
+						s = 'ellipse' if ( getNodeType(str(node.type)) != getNodeType("Process Node")) else 'box'
+#						parent.add_node(	name, label=l, shape=s		)	# Fehler?
+						parent.add_node(	name		)
 						self.node_name_mapping.append( str(node.id) )
 		recurse( graphviz_model, 0 )
 
@@ -581,6 +586,7 @@ class Graph:
 #			self.initialize()	# necessary; e.g. ID map may not fit anymore, because we deleted Nodes
 
 		for edge in self.Edges:
+#			print str(edge.source)+' to '+str(edge.target)
 			graphviz_model.add_edge(	'node'+str(self.node_name_mapping.index(str(edge.source))),
 							'node'+str(self.node_name_mapping.index(str(edge.target))),
 							arrowhead='tee' if edge.sbo == getSBO('Inhibition') else 'normal'
