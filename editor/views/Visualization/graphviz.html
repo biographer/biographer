@@ -1,0 +1,49 @@
+{{extend 'layout.html'}}
+
+<style>
+	#canvas			{
+				position:		relative;
+				border:			1pt solid #000;
+				width:			100%;
+				height:			75%;
+				overflow:		scroll;
+				}
+	#canvas div		{
+				border:			none;
+				position:		absolute;
+				color:			white;
+				background-color:	 #4e4ea9;
+				text-align:		center;
+				vertical-align:		 middle;
+				opacity:		.3;
+				}
+	#canvas div:hover	{
+				cursor:			pointer;
+				opacity:		.8;
+				}
+	#canvas img		{
+				position:		relative;
+				top:			50px;
+				width:			95%;
+				}
+</style>
+
+<script>
+	function gotoDijkstra(ID) {
+		#document.location.href = '{{ =URL(r=request, c="Workbench", f="Dijkstra") }}?ID='+ID;
+		}
+</script>
+
+[ <a href="../Layout/graphviz">Redo layout</a> ], 
+[ <a href="../Layout/graphviz_layout">Download layout</a> ], 
+[ <a href="{{ = session.graphviz_png }}">Download picture</a> ]
+
+<div id=canvas>
+
+	<img src="{{ = session.graphviz_png }}" />
+
+	<!--{{ = XML(DijkstraMap) }}-->
+
+</div>
+
+
