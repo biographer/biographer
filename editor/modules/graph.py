@@ -85,6 +85,7 @@ class Graph:
 		for node in self.Nodes:
 			if getNodeType(node.type) == NodeType_Compartment:
 				self.Compartments.append(node)
+		self.log(str(len(self.Compartments))+" compartments identified.")
 
 	def generateObjectLinks(self):
 		self.log("Generating object links ...")
@@ -288,9 +289,9 @@ class Graph:
 
 			json = JSON.lower()
 			if json.replace(" ","").lower().find('nodes:') == -1:	# "nodes:" statement missing
-				self.log(pre+"No Nodes defined !")
+				self.log(pre+'"nodes:" statement not found')
 			if json.replace(" ","").lower().find('edges:') == -1:	# "edges:" statement missing
-				self.log(pre+"No Edges defined !")
+				self.log(pre+'"nodes:" statement not found')
 
 			while JSON.find("//") > -1:				# remove commentary
 				p = JSON.find("//")

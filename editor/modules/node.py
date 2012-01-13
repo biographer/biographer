@@ -14,20 +14,29 @@ from data import Data
 ### Node object definition ###
 
 class Node:
-	def __init__(self, JSON=None, defaults=False):			# input may be string or dictionary
+	def __init__(self, JSON=None, defaults=True):			# input may be string or dictionary
 		if defaults:
 			self.__dict__.update( deepcopy(DefaultNode) )
-			self.data = Data( DefaultNode['data'] )
+			# conversion of data dictionary to data object happens below
+			# this is necessary, to ensure takeover of the data default values during update
+
+		print self.__dict__
+
 		if JSON is not None:
 			if type(JSON) == type(""):
-				JSON = json.loads(JSON)
+				JSON = json.loads(JSON)			# converts JSON to dictionary
+			data = self.data
 			self.__dict__.update( deepcopy(JSON) )		# map all input key/value pairs to the python object
-			# after that self.data will be a dictionary
-			# we don't want that, we want to access all parameters in the way node.data.subnodes etc...
-			if not self.owns('data'):
-				self.data = {}
-			if type(self.data) == type( {} ):
-				self.data = Data(self.data)
+			self.data.update(data)
+
+		print self.__dict__
+
+		if not self.owns('data'):
+			self.data = {}
+		# in any case, after that self.data will be a dictionary
+		# we don't want that, we want to access all parameters in the way node.data.subnodes etc...
+		if type(self.data) == type( {} ):
+			self.data = Data(self.data)
 
 	def owns(self, key1, key2=None, key3=None):
 		if key2 is None:
