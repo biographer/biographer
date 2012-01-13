@@ -36,8 +36,7 @@ def index():
                 else:
                     action = 'loaded %s'%request.vars.import_file.filename
             elif file_content.startswith('<?xml'):
-                import biographer
-                bioGraph = biographer.Graph()
+                bioGraph = Graph()
                 bioGraph.importSBML( file_content )
                 json_string = bioGraph.exportJSON()
                 #print 'sbml2json: ',json_string
@@ -54,7 +53,7 @@ def import_graph():
     response.generic_patterns = ['json']
     action,graph,json_string = None,None,None
     if request.vars.type=='biomodel':
-        importBioModel( request.vars.identifier )
+        import_BioModel( request.vars.identifier )
         json_string = session.bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
         action = 'Imported BioModel: %s'%request.vars.identifier
@@ -75,11 +74,9 @@ def layout():
     if not request.vars.layout:
         raise HTTP(500, 'not layout algorithm specified')
     #-------------------
-    import biographer
     import os
     import subprocess
-    reload(biographer)#TODO remove in production mode
-    bioGraph = biographer.Graph()
+    bioGraph = Graph()
     bioGraph.importJSON( session.editor_autosave )
     #-------------------
     if request.vars.layout == "biographer":
@@ -88,20 +85,19 @@ def layout():
         outfile = os.path.join(request.folder, "static","tmp.bgout")
         open(infile, 'w').write(bioGraph.exportLayout())
         #return bioGraph.exportLayout()
-        executable = os.path.join(request.folder, "static","layout")
+        #executable = os.path.join(request.folder, "static","layout")
         p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         p.communicate()
         layout_output = open(outfile, 'r').readlines()
         graph = simplejson.loads(bioGraph.exportJSON())
-        importLayout(graph, layout_output)
+        import_Layout(graph, layout_output)
         json_string = simplejson.dumps(graph)
         #return PRE(XML(simplejson.dumps(graph)))
         #print 'exit'
         #bioGraph.importLayout( open(outfile, 'r').read() )					# import STDOUT
 
     elif request.vars.layout == 'graphviz':
-        pass
-        bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
+        layout_using_graphviz( bioGraph, png_output_folder=os.path.join(request.folder, "static/graphviz"))
         #-------------------
         json_string = bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
