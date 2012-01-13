@@ -34,7 +34,7 @@ class Node:
 			return self.owns(key1) and self.owns(key2)
 		return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
-	def update_using_graphviz_output( self, dot ):
+	def update_from_graphviz_dot( self, dot ):
 		if not self.owns("data"):
 			self.data = Data()
 
