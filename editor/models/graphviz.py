@@ -3,7 +3,7 @@
 
 # wrapper for graphviz
 
-def graphviz(graph, execution_folder="/tmp", use_cache=True, update_nodes=True):
+def layout_using_graphviz(graph, execution_folder="/tmp", use_cache=True, update_nodes=True):
 
 	import pygraphviz
 

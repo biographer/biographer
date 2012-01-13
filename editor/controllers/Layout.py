@@ -13,13 +13,13 @@ def choose():
 			returnto = URL(r=request,c='Workbench',f='index')
 
 		Layouter = request.vars.Layouter
-		if Layouter == "biographer":
-			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+returnto )
+		if Layouter == "internal":
+			return redirect( URL(r=request,c='Layout',f='internal')+"?returnto="+returnto )
 		if Layouter == "graphviz":
 			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+returnto )
 		return redirect( returnto )
 
-def biographer():
+def internal():
 	if session.bioGraph is None:
 		session.flash = "No graph is loaded. Do you want to import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="biographer") )
@@ -27,7 +27,7 @@ def biographer():
 	executable = os.path.join(request.folder, "layout/build/layout")
 
 	if os.path.exists(executable):
-		session.bioGraph.execute_layout( executable )
+		layout( session.bioGraph, path_to_layout_binary=executable )
 	else:
 		session.flash = "Layouter not installed."
 		return redirect( URL(r=request, c="Workbench", f="index") )

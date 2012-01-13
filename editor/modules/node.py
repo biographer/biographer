@@ -34,37 +34,37 @@ class Node:
 			return self.owns(key1) and self.owns(key2)
 		return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
-	def update_from_graphviz_dot( self, dot ):
+	def update_from_graphviz( self, layout ):
 		if not self.owns("data"):
 			self.data = Data()
 
 		r = re.compile('[\d\.]+')
 
 		key = 'pos="'
-		p = dot.find(key)
+		p = layout.find(key)
 		if p == -1:
 			return False
 		p += len(key)
-		q = dot.find('"', p)
-		pos = r.findall( dot[p:q] )
+		q = layout.find('"', p)
+		pos = r.findall( layout[p:q] )
 		self.data.x = pos[0]
 		self.data.y = pos[1]
 
 		key = 'width="'
-		p = dot.find(key)
+		p = layout.find(key)
 		if p == -1:
 			return False
 		p += len(key)
-		q = dot.find('"', p)
-		self.data.width = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround	# future
+		q = layout.find('"', p)
+		self.data.width = int( float( r.findall(layout[p:q])[0] ) *70)		# temporary workaround	# future
 
 		key = 'height="'
-		p = dot.find(key)
+		p = layout.find(key)
 		if p == -1:
 			return False
 		p += len(key)
-		q = dot.find('"', p)
-		self.data.height = int( float( r.findall(dot[p:q])[0] ) *70)		# temporary workaround
+		q = layout.find('"', p)
+		self.data.height = int( float( r.findall(layout[p:q])[0] ) *70)		# temporary workaround
 
 		return str(self.id)+" is now at ( "+str(self.data.x)+" | "+str(self.data.y)+" ), width = "+str(self.data.width)+", height = "+str(self.data.height)
 

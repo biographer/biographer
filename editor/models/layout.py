@@ -8,15 +8,21 @@ def layout(graph, path_to_layout_binary, execution_folder='/tmp'):
 	import os
 	from subprocess import Popen
 	from shlex import split
-
-	infile = os.path.join(execution_folder, 'layout.infile')
-	outfile = os.path.join(execution_folder, 'layout.outfile')
+	from time import time
 
 	graph.log("Now executing the layouter: "+path_to_layout_binary)
 	graph.log("in "+execution_folder+" ...")
 
+	if not os.path.exists(path_to_layout_binary):
+		print "layout binary not found."
+		return False
+
+	infile = os.path.join(execution_folder, 'layout.infile')
+	outfile = os.path.join(execution_folder, 'layout.outfile')
+
 	open(infile, 'w').write( graph.export_to_Layouter() )
-	os.path.delete(outfile)
+	if os.path.exists(outfile):
+		os.path.remove(outfile)
 
 	timeout = 30
 	start = time()									# start a timer
@@ -35,8 +41,8 @@ def layout(graph, path_to_layout_binary, execution_folder='/tmp'):
 		return False
 
 	graph.import_from_Layouter( open(outfile).read() )
-	os.path.delete(outfile)
-	os.path.delete(infile)
+	os.path.remove(outfile)
+	os.path.remove(infile)
 
 	graph.log("Layouting completed successfully.")
 

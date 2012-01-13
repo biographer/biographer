@@ -12,7 +12,6 @@
 ### dependencies ###
 
 import os
-from time import time, sleep		# to measure layouter runtime
 from datetime import datetime		# to log with timestamp
 from copy import deepcopy
 from math import ceil
@@ -511,17 +510,17 @@ class Graph:
 	### secondary model layouting
 	### using graphviz
 
-	def import_from_graphviz_dot(self, dot):
-		self.log("Updating layout from graphviz dot ...")
+	def import_from_graphviz(self, layout):
+		self.log("Updating layout from graphviz ...")
 
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
 
 		nodes_deleted = False
 		for node in self.Nodes:
-			p = dot.find("\t"+str(node.id)+"\t")
+			p = layout.find("\t"+str(node.id)+"\t")
 			if p > -1:
-				q = dot.find(";", p)
-				node.update_from_graphviz_dot( dot[p:q] )
+				q = layout.find(";", p)
+				node.update_from_graphviz( layout[p:q] )
 			else:
 				self.Nodes.pop( self.Nodes.index(node) )
 				nodes_deleted = True
