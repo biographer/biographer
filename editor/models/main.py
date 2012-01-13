@@ -1,6 +1,22 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
+import sys
+hardcoded = request.folder + "/modules"
+if not hardcoded in sys.path:
+	sys.path.append(hardcoded)
+from graph import Graph
+
+from copy import deepcopy
+
+#
+# the following lines are not necessary,
+# since all in /models is imported automatically by web2py
+#
+#from cache import *
+#from biomodels import *
+#from reactome import *
+
 def reset_current_session():
 	global session
 

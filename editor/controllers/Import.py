@@ -63,10 +63,10 @@ def BioModels():
 			returnto = str(request.vars.returnto[0])
 		else:
 			returnto = str(request.vars.returnto)
-		if (returnto is not None) and (returnto != ""):			# explicit redirection
+		if (returnto is not None) and (returnto != ""):
 			return redirect( returnto )
 
-		Layouter = request.vars.Layouter				# implicit redirection: a Layouter was chosen
+		Layouter = request.vars.Layouter				# a Layouter was chosen
 		if Layouter == "Ask":
 			return redirect( URL(r=request,c='Layout',f='choose')+"?returnto="+URL(r=request,c='Workbench',f='index') )
 		if Layouter == "biographer":

@@ -1,22 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import sys
-
-hardcoded = request.folder + "/modules"
-if not hardcoded in sys.path:
-	sys.path.append(hardcoded)
-import biographer
-
-from copy import deepcopy
-
-NoModel = "- no model is loaded -"
+NoModelMsg = "- no model is loaded -"
 EmptyNet = '{ "nodes":[], "edges":[] }'
 
-def index():							# show DEBUG messages, JSON & BioLayout
-
+def index():
 	if session.bioGraph is None:
-		session.flash = NoModel
-#		net = open( request.folder+'static/examples/example.json' ).read()
+		session.flash = NoModelMsg
 		net = EmptyNet
 	else:
 		net = session.bioGraph.exportJSON()
@@ -24,7 +13,7 @@ def index():							# show DEBUG messages, JSON & BioLayout
 
 def Console():
 	if session.bioGraph is None:
-		return dict( Console=NoModel )
+		return dict( Console=NoModelMsg )
 	else:
 		return dict( Console=session.bioGraph.DEBUG )
 
@@ -36,7 +25,7 @@ def JSON():
 
 def Layout():
 	if session.bioGraph is None:
-		return dict( Layout=NoModel )
+		return dict( Layout=NoModelMsg )
 	else:
 		return dict( Layout=session.bioGraph.exportLayout() )
 
