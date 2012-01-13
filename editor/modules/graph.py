@@ -512,7 +512,7 @@ class Graph:
 	### using graphviz
 
 	def export_to_graphviz(self):
-		graph.log("Exporting model to graphviz ...")
+		self.log("Exporting model to graphviz ...")
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		graphviz_model = pygraphviz.AGraph(directed=True)
@@ -522,26 +522,26 @@ class Graph:
 		# Compartments have to be added as
 		# SG = graphviz_model.add_subgraph(name='bla')
 		# !!!!!!!!!!!!!!!!!!!!!!!!!!
-		for node in graph.Nodes:
+		for node in self.Nodes:
 			# !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			# This rule actually removes compartments!!!!!!
 			# Come up with something different!
 			# !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			#if (not node.is_abstract) and (graph.EdgeCount(node) > 0):
+			#if (not node.is_abstract) and (self.EdgeCount(node) > 0):
 			graphviz_model.add_node( 	str(node.id),
 							label = node.data.label if node.data.owns("label") else str(node.id),
 							shape = 'ellipse' if node.type != getNodeType("Process Node") else 'box'
 						)
 			#
 			#elif updateNodeProperties:
-			#	graph.Nodes.pop( graph.Nodes.index(node) )
+			#	self.Nodes.pop( self.Nodes.index(node) )
 			#	nodes_deleted = True
-			#	graph.log("Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.")
+			#	self.log("Warning: Graphviz can't handle Node "+str(node.id)+"! Node deleted.")
 
 		if nodes_deleted:
-			graph.initialize()	# necessary; e.g. ID map may not fit anymore, because we deleted Nodes
+			self.initialize()	# necessary; e.g. ID map may not fit anymore, because we deleted Nodes
 
-		for edge in graph.Edges:
+		for edge in self.Edges:
 			graphviz_model.add_edge(	str(edge.source),
 							str(edge.target),
 							arrowhead='normal' if edge.sbo in [getSBO('Consumption'), getSBO('Production')] else 'tee'

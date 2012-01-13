@@ -38,20 +38,13 @@ def graphviz():
 	server_object = deepcopy( session.bioGraph )	# without these two lines, some caching problem occurs,
 	del session.bioGraph				# and session.bioGraph does not get updated
 
-	session.graphvizDOT, filename, cached, boundaries = server_object.
-
-	layout_using_graphviz( session.bioGraph, execution_folder=os.path.join(request.folder, "cache"), use_cache=True )
+	png = layout_using_graphviz( server_object, execution_folder=os.path.join(request.folder, "cache"), png_output_folder=os.path.join(request.folder, "static/graphviz") )
 
 	session.bioGraph	= server_object
-#	session.graphvizURL	= URL(r=request, c="static/graphviz", f=filename)
+	session.graphviz_png	= 'static/graphviz/'+png
+	session.graphviz_layout = session.bioGraph.graphviz_layout
 
-	# no, this won't work anymore
-	# layouts are stored to database
-
-	if cached:
-		response.flash = "graphviz layout loaded from cache"
-	else:
-		response.flash = "graphviz layout completed"
+	response.flash = "graphviz layout completed"
 
 	if request.vars.returnto is not None:
 		return redirect(str(request.vars.returnto))

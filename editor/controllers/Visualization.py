@@ -1,20 +1,9 @@
 # -*- coding: utf-8 -*-
 
-request_folder = "/var/www/web2py/applications/biographer"
-
-import os, sys
-
-hardcoded = request_folder + "/modules"
-if not hardcoded in sys.path:
-	sys.path.append(hardcoded)
-import biographer
-
-from copy import deepcopy
-
 def index():
 	return redirect(URL(r=request, c="Visualization", f="biographer"))
 
-def biographer():								# Ben's JavaScripts
+def internal():								# Ben's JavaScripts
 	if session.bioGraph is None:
 		session.flash = "Unable to visualize: No graph is loaded. But look at this pretty example!"
 		return redirect(URL(r=request, c="Visualization", f="example"))

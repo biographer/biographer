@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
-#################### JSON ####################
-
-def JSON():									# function: import JSON
+def JSON():
 	if request.env.request_method == "GET":
 		return dict()
 
@@ -19,11 +16,10 @@ def JSON():									# function: import JSON
 
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
+
 def JSONdebug():								# function: show JSON details
 	return dict()
 
-
-#################### SBML ####################
 
 def SBML():
 	if request.env.request_method == "GET":
@@ -50,8 +46,6 @@ def SBML():
 
 		return redirect( URL(r=request, c='Workbench',f='index') )
 
-
-#################### BioModels ####################
 
 def BioModels():
 
@@ -82,8 +76,6 @@ def BioModels():
 
 		return dict( returnto=request.vars.returnto )
 
-
-#################### Reactome ####################
 
 def Reactome():
 	if request.env.request_method == "GET":

@@ -3,33 +3,38 @@
 
 # wrapper for graphviz
 
-def layout_using_graphviz(graph, execution_folder="/tmp", picture_output_folder="/tmp", use_cache=True):
+def mkdir_and_parents( path ):
+	import os
 
-	import pygraphviz
+	fullpath = ""
+	for part in path.split("/"):
+		fullpath += part+"/"
+		if (len(fullpath) > 1) and (not os.path.exists(fullpath)):
+			os.mkdir(fullpath)
+
+def layout_using_graphviz(graph, execution_folder="/tmp", png_output_folder="/tmp", algorithm="dot"):
+
+	import os, pygraphviz
+
+	mkdir_and_parents(execution_folder)
+	mkdir_and_parents(png_output_folder)
 
 	graphviz_model = graph.export_to_graphviz()
 
-	png = graph.MD5+".png"
-	graphviz_layout = graph.MD5+".graphviz_layout"
-	s   = graph.MD5+".str"
-	pngpath = os.path.join(execution_folder, png)
-	graphviz_layoutpath = os.path.join(execution_folder, graphviz_layout)
+	graph.log("Executing graphviz ...")
 
-	if use_cache and os.path.exists( pngpath ):	# no need to do the cpu-intense layouting again
-		cached = True
-		graph.graphviz_layout = open(graphviz_layoutpath).read()
-		graph.log("A matching graphviz layout was found in cache. use_cache is enabled. Not executing graphviz.")
-	else:
-		graph.log("Executing graphviz ...")
-		cached = False
-		graphviz_model.dpi = 70;
-		graphviz_model.layout( prog='graphviz_layout' )
-		graphviz_model.draw( pngpath )
-		graph.graphviz_layout = graphviz_model.string()
-		open(graphviz_layoutpath,'w').write(graph.graphviz_layout)
-		graph.log("graphviz completed.")
+	png_filename = graph.MD5+".png"
+	png = os.path.join(png_output_folder, png_filename)
+	if os.path.exists(png):
+		os.path.remove(png)
 
-	graph.import_from_graphviz_graphviz_layout( graph.graphviz_layout )
+	graphviz_model.dpi = 70;
+	graphviz_model.layout( prog=algorithm )
+	graphviz_model.draw( png )
+	graph.graphviz_layout = graphviz_model.string()
+	graph.log("graphviz completed.")
 
-	return graph.graphviz_layout, png, cached, None
+	graph.import_from_graphviz( graph.graphviz_layout )
+
+	return png_filename
 

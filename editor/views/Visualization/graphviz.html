@@ -33,11 +33,11 @@
 		}
 </script>
 
-<a href="{{ = session.graphvizURL }}">{{ = session.graphvizURL }}</a>
+<a href="{{ = session.graphviz_png }}">{{ = session.graphviz_png }}</a>
 
 <div id=canvas>
 
-<img src="{{ = session.graphvizURL }}" />
+<img src="{{ = session.graphviz_png }}" />
 
 {{ = XML(DijkstraMap) }}
 
