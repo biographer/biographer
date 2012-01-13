@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+def index():
+	return redirect( URL(r=request, c="Import", f="BioModels") )
+
+
 def JSON():
 	if request.env.request_method == "GET":
 		return dict()

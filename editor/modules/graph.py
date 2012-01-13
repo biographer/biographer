@@ -70,7 +70,9 @@ class Graph:
 		self.Edges = []
 		self.Compartments = []
 		self.CenterNode = None
+		self.dict_hash = ""
 		self.JSON = None
+		self.JSON_hash = ""
 		self.SBML = None
 		self.BioPAX = None
 		self.BioLayout = None
@@ -348,14 +350,27 @@ class Graph:
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
 		self.log("Exporting JSON ...")
-		self.JSON = json.dumps( self.exportDICT(status=False), indent=Indent )
+
+		d = self.exportDICT(status=False)
+
+		h = md5( pickle.dumps(d) ).hexdigest()
+		if self.JSON_hash != h:
+			self.JSON = json.dumps( d, indent=Indent )
+			self.JSON_hash = h
+
 		self.status()
 		return self.JSON
 
 	def exportDICT(self, status=True):					# export current model as python dictionary
 		if status:
 			self.status()
-		return { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }
+
+		h = md5( pickle.dumps(self.Nodes) ).hexdigest() + md5( pickle.dumps(self.Edges) ).hexdigest()
+		if self.dict_hash != h:
+			self.exportdict = { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }
+			self.dict_hash = h
+
+		return self.exportdict
 
 	def importSBML(self, SBML):						# import SBML
 		self.empty()
@@ -529,7 +544,7 @@ class Graph:
 	### secondary model layouting
 	### using graphviz
 
-	def export_to_graphviz(self):
+	def export_to_graphviz(self, debug=False):
 		self.log("Exporting model to graphviz ...")
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
@@ -537,7 +552,8 @@ class Graph:
 
 		for node in self.Nodes:
 			if node.sbo == getSBO('Compartment'):
-				self.log('Adding compartment '+str(node.id)+' ...')
+				if debug:
+					self.log('Adding compartment '+str(node.id)+' ...')
 				subgraph = graphviz_model.add_subgraph(
 									[],
 									name = node.data.label if node.data.owns("label") else str(node.id),
@@ -545,14 +561,16 @@ class Graph:
 									)
 				for subnode in self.Nodes:
 					if subnode.data.owns('compartment') and (subnode.data.compartment == node.id):
-						self.log('Adding node '+str(subnode.id)+' to compartment '+str(node.id)+' ...')
+						if debug:
+							self.log('Adding node '+str(subnode.id)+' to compartment '+str(node.id)+' ...')
 						subgraph.add_node(
 								 	str(subnode.id),
 									label = subnode.data.label if subnode.data.owns("label") else str(subnode.id),
 									shape = 'ellipse' if subnode.type != getNodeType("Process Node") else 'box'
 								)
 			else:
-				self.log('Adding node '+str(node.id)+' ...')
+				if debug:
+					self.log('Adding node '+str(node.id)+' ...')
 				graphviz_model.add_node(
 								str(node.id),
 								label = node.data.label if node.data.owns("label") else str(node.id),
@@ -586,6 +604,8 @@ class Graph:
 					self.Nodes.pop( self.Nodes.index(node) )
 					nodes_deleted = True
 					self.log("Error: Updating Node "+str(node.id)+" failed! Node deleted.")
+			else:
+				self.log('Skipping update of compartment "'+str(node.id)+'"')
 
 		self.log("Updated.")
 
