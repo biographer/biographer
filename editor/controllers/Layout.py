@@ -41,7 +41,7 @@ def graphviz():
 	png = layout_using_graphviz( server_object, execution_folder=os.path.join(request.folder, "cache"), png_output_folder=os.path.join(request.folder, "static/graphviz") )
 
 	session.bioGraph	= server_object
-	session.graphviz_png	= 'static/graphviz/'+png
+	session.graphviz_png	= '../static/graphviz/'+png
 	session.graphviz_layout = session.bioGraph.graphviz_layout
 
 	response.flash = "graphviz layout completed"
@@ -49,4 +49,7 @@ def graphviz():
 	if request.vars.returnto is not None:
 		return redirect(str(request.vars.returnto))
 	return dict()
+
+def graphviz_layout():
+	return 	session.graphviz_layout
 

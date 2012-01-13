@@ -26,7 +26,7 @@ def layout_using_graphviz(graph, execution_folder="/tmp", png_output_folder="/tm
 	png_filename = graph.MD5+".png"
 	png = os.path.join(png_output_folder, png_filename)
 	if os.path.exists(png):
-		os.path.remove(png)
+		os.remove(png)
 
 	graphviz_model.dpi = 70;
 	graphviz_model.layout( prog=algorithm )
