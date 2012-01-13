@@ -43,6 +43,21 @@ bui.settings = {
 
     /**
      * @field
+     * Set to true to enable modification support. Please note though that this
+     * can have a strong impact on the initial load time as described in the
+     * following issue.
+     * http://code.google.com/p/biographer/issues/detail?id=6
+     */
+    enableModificationSupport : true,
+
+    /**
+     * @field
+     * How many frames per second (FPS) should be used for animations.
+     */
+    animationFPS : 30,
+
+    /**
+     * @field
      * Prefixes for various ids
      */
     idPrefix : {
@@ -62,10 +77,27 @@ bui.settings = {
 
     /**
      * @field
+     * The data exchange format
+     */
+    dataFormat : {
+        node : {
+            id : 'id',
+            sbo : 'sbo',
+            label : ['data', 'label'],
+            x : ['data', 'x'],
+            y : ['data', 'y'],
+            width : ['data', 'width'],
+            height : ['data', 'height']
+        }
+
+    },
+
+    /**
+     * @field
      * The url from which the CSS file should be imported and CSS classes
      */
     css : {
-        stylesheetUrl : '../static/Visualization/test/resources/css/visualization-svg.css',
+        stylesheetUrl : 'resources/css/visualization-svg.css',
         classes : {
             invisible : 'hidden',
             selected : 'selected',
@@ -93,7 +125,8 @@ bui.settings = {
                 necessaryStimulation : 'necessaryStimulation'
             },
             splineEdgeHandle : 'splineEdgeHandle',
-            splineAutoEdgeHandle : 'autoAlign'
+            splineAutoEdgeHandle : 'autoAlign',
+            hideBorder : 'hideBorder'
         }
     },
     /**
@@ -114,15 +147,21 @@ bui.settings = {
                 height : -2
             }
         },
+        graphReduceCanvasPadding : 30,
         edgeHandleRadius : 4,
-        nodeCornerRadius : 25,
+        nodeCornerRadius : 15,
         adaptToLabelNodePadding : {
             top : 5,
             right : 5,
             bottom : 5,
             left : 5
         },
-        complexCornerRadius : 25,
+        complexCornerRadius : 15,
+        complexTableLayout : {
+            padding : 10,
+            restrictNumberOfColumns : false,
+            showBorder : true
+        },
         compartmentCornerRadius : {
             x : 25,
             y : 15
@@ -143,8 +182,21 @@ bui.settings = {
             sizeBasedOnLabelPassing : {
                 horizontal : 20,
                 vertical : 20
-            }
+            },
+            modificationLabel : 'short' // either 'long' or 'short'
         },
+        // x/y coordinates as % of a node's size (1 = 100%)
+        // T = top, L = left, R = right, B = bottom, CX = Center X,
+        // CY = center y
+        automaticAuxiliaryUnitPositioning : [[0, 0], // T-L
+                [1, 1], // B-R
+                [1, 0], // T-R
+                [0, 1], // B-L
+                [0.5, 0], // T-CX
+                [1, 0.5], // CY-R
+                [0.5, 1], // B-CX
+                [0, 0.5] // CY-L
+        ],
         markerWidthCorrection : 0.25 // (1 / .lineHover#stroke-width) (see CSS)
     }
 };
@@ -518,49 +570,171 @@ var circularShapeLineEndCalculationHookWithoutPadding =
     bui.util.getHoverId = function(id) {
         return id + bui.settings.idSuffix.hover;
     };
+
+    /**
+     * Retrieve an objects value if it is set. If it's not set undefined will
+     * be returned.
+     *
+     * @param {Object} obj An object whose properties should be checked
+     * @param {Object} property1 One or more (var args function) property names
+     *   that should be accessed and checked.
+     * @return {Object} The properties value or undefined in case the property
+     *   does not exist.
+     *
+     */
+    bui.util.retrieveValueIfSet = function(obj, property1) {
+        obj = arguments[0];
+
+        for(var i = 1; i < arguments.length && obj !== undefined; i++) {
+            obj = obj[arguments[i]];
+        }
+
+        return obj;
+    };
+
+     /**
+     * Verify that an object has a property with the given name and that this
+     * property is not null.
+     *
+     * @param {Object} obj The object which should be checked for the property.
+     * @param {String} property Property names which should be checked. This is
+     *   a var args method.
+     * @return {Boolean} True in case the property exists and is not null.
+     *   False otherwise.
+     */
+    bui.util.propertySetAndNotNull = function() {
+        var obj = arguments[0];
+        
+        for(var i = 1; i < arguments.length; i++) {
+
+            var property = arguments[i];
+
+            if (typeof(property) === 'string') {
+                if ((obj.hasOwnProperty(property) === false ||
+                    obj[property] === null)) {
+                    return false;
+                }
+            } else {
+                property.splice(0, 0, obj);
+
+                var result = bui.util.retrieveValueIfSet.apply(window,
+                        property);
+
+                if (result === undefined || result === null) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    };
+
+    /**
+     * Ensure that a value is a number. If it is not an exception will be thrown.
+     * @param {Number|String} val The value which should be converted to a number.
+     *   If you pass a string it will be converted to a number if possible.
+     * @return {Number} The converted number.
+     */
+    bui.util.toNumber = function(val) {
+        var type = typeof(val);
+
+        if (type === 'number') {
+            return val;
+        } else if (type === 'string' && isNaN(val) === false) {
+            return parseFloat(val);
+        } else {
+            throw 'It can\'t be ensured that the value: "' + val +
+                    '" is a number.';
+        }
+    };
+
+    /**
+     * Ensure that the given value is a boolean value.  If it is not an exception
+     *   will be thrown.
+     * @param {Boolean|Number|String} val The value which should be converted to
+     *   a boolean value. If you pass a boolean value it will simply be returned.
+     *   A numeric value will be result in true in case the parameter equals '1'.
+     *   All other numbers will result in false. A string will evaluate to true
+     *   when it equals (case insensitive) 'true' or '1'.
+     * @return {Boolean} The converted boolean value.
+     */
+    bui.util.toBoolean = function(val) {
+        var type = typeof(val);
+
+        if (type === 'boolean') {
+            return val;
+        } else if (type === 'string') {
+            return val.toLowerCase() === 'true' || val === '1';
+        } else if (type === 'number') {
+            return val === 1;
+        } else {
+            throw 'The value: "' + val + 'can\'t be converted to boolean.';
+        }
+    };
+
+    /**
+     * Align the viewport to a node.
+     *
+     * @param {bui.Graph} graph The graph in which the node is located to
+     *   the viewpoint should be aligned to.
+     * @param {String} nodeJSONId The JSON identifier which was used in the
+     *   import JSON data.
+     * @param {jQueryHTMLElement} [canvas] Use this parameter and the viewport
+     *   parameter in combination to change the viewport. Mostly this is
+     *   required when you place the visualization in an HTMLElement with
+     *   overflow: (scroll|auto). In such cases, pass the aforementioned
+     *   HTMLElement as third and fourth parameter.
+     * @param {jQueryHTMLElement} [viewport] Please refer to the documentation
+     *   of the canvas parameter.
+     */
+    bui.util.alignCanvas = function(graph, nodeJSONId, canvas, viewport) {
+        var drawables = graph.drawables(),
+                node;
+
+        for (var key in drawables) {
+            if (drawables.hasOwnProperty(key)) {
+                var drawable = drawables[key];
+
+                if (drawable.json() !== null &&
+                        drawable.json().id === nodeJSONId) {
+                    node = drawable;
+                }
+            }
+        }
+
+        if (node === undefined) {
+            log('Node with id ' + nodeJSONId +
+                    ' could not be found in the graph.');
+            return;
+        }
+
+        if (canvas === undefined) {
+            canvas = jQuery('body');
+        }
+        if (viewport === undefined) {
+            viewport = jQuery(window);
+        }
+        
+        var position = node.absolutePosition(),
+                size = node.size(),
+                scale = graph.scale();
+
+        canvas.scrollLeft(position.x * scale - ((
+                viewport.width() - size.width * scale) / 2));
+        canvas.scrollTop(position.y * scale - ((
+                viewport.height() - size.height * scale) / 2));
+    };
 })(bui);
 
-
 /**
- * Ensure that a value is a number. If it is not an exception will be thrown.
- * @param {Number|String} val The value which should be converted to a number.
- *   If you pass a string it will be converted to a number if possible.
- * @return {Number} The converted number.
+ * A secure function call to the console.log function which makes sure that a
+ * console object and its log function exists before continuing. Use this
+ * function the way console.log would be used.
+ * @param {Object} object The object which you want to log.
  */
-var toNumber = function(val) {
-    var type = typeof(val);
-
-    if (type === 'number') {
-        return val;
-    } else if (type === 'string' && isNaN(val) === false) {
-        return parseFloat(val);
-    } else {
-        throw 'It can\'t be ensured that the value: "' + val +
-                '" is a number.';
-    }
-};
-
-/**
- * Ensure that the given value is a boolean value.  If it is not an exception
- *   will be thrown.
- * @param {Boolean|Number|String} val The value which should be converted to
- *   a boolean value. If you pass a boolean value it will simply be returned.
- *   A numeric value will be result in true in case the parameter equals '1'.
- *   All other numbers will result in false. A string will evaluate to true
- *   when it equals (case insensitive) 'true' or '1'.
- * @return {Boolean} The converted boolean value.
- */
-var toBoolean = function(val) {
-    var type = typeof(val);
-
-    if (type === 'boolean') {
-        return val;
-    } else if (type === 'string') {
-        return val.toLowerCase() === 'true' || val === '1';
-    } else if (type === 'number') {
-        return val === 1;
-    } else {
-        throw 'The value: "' + val + 'can\'t be converted to boolean.';
+log = function(object) {
+    if (console !== undefined && console.log !== undefined) {
+        console.log(object);
     }
 };
 (function(bui) {
@@ -778,7 +952,7 @@ var toBoolean = function(val) {
             path.setAttributeNS(null, 'd', data);
             marker.appendChild(path);
         } else {
-            marker.appendChild(data);
+            marker.appendChild(jQuery(data).clone(false)[0]);
         }
 
         return marker;
@@ -951,7 +1125,7 @@ var toBoolean = function(val) {
         var privates = this._privates(identifier);
         var value = ['scale(', privates.scale.toString(), ')'].join('');
 
-        privates.rootGroup.setAttributeNS(null, 'transform', value);
+        privates.rootGroup.setAttribute('transform', value);
     };
 
     /**
@@ -974,8 +1148,8 @@ var toBoolean = function(val) {
         privates.container.appendChild(div);
 
         privates.root = document.createElementNS(bui.svgns, 'svg');
-        privates.root.setAttributeNS(null, 'xmlns', bui.svgns);
-        privates.root.setAttributeNS(null, 'id', privates.id);
+        privates.root.setAttribute('xmlns', bui.svgns);
+        privates.root.setAttribute('id', privates.id);
         div.appendChild(privates.root);
 
         var offset = jQuery(privates.root).offset();
@@ -993,7 +1167,7 @@ var toBoolean = function(val) {
         privates.root.appendChild(privates.defsGroup);
 
         privates.css = document.createElementNS(bui.svgns, 'style');
-        privates.css.setAttributeNS(null, 'type', 'text/css');
+        privates.css.setAttribute('type', 'text/css');
         privates.css.textContent = __getStylesheetContents();
         privates.root.appendChild(privates.css);
 
@@ -1027,14 +1201,14 @@ var toBoolean = function(val) {
 
     /**
      * @private
-     * This function makes sure that each nodes fits onto the SVG canvas.
+     * This function makes sure that each node fits onto the SVG canvas.
      * In order to do so it's a observer of the nodes' position and size
      * events.
      */
     var __assertCanvasSize = function(node) {
         var privates = this._privates(identifier);
 
-        var bottomRight = node.bottomRight();
+        var bottomRight = node.absoluteBottomRight();
 
         if (bottomRight.x > privates.rootDimensions.width) {
             privates.rootDimensions.width = bottomRight.x;
@@ -1272,12 +1446,12 @@ var toBoolean = function(val) {
             // identify them.
             if (drawable.bottomRight !== undefined) {
                 drawable.bind(bui.Node.ListenerType.position,
-                        __assertCanvasSize.createDelegate(this),
+                        this.reduceCanvasSize.createDelegate(this),
                         listenerIdentifier(this));
                 drawable.bind(bui.Node.ListenerType.size,
-                        __assertCanvasSize.createDelegate(this),
+                        this.reduceCanvasSize.createDelegate(this),
                         listenerIdentifier(this));
-                __assertCanvasSize.call(this, drawable);
+                this.reduceCanvasSize.call(this, drawable);
             }
 
             this.fire(bui.Graph.ListenerType.add, [drawable]);
@@ -1293,20 +1467,24 @@ var toBoolean = function(val) {
         reduceCanvasSize : function() {
             var privates = this._privates(identifier);
 
-            var x = Integer.MIN_VALUE, y = Integer.MIN_VALUE;
+            var x = Number.MIN_VALUE, y = Number.MIN_VALUE;
 
             for(var i in privates.drawables) {
                 if (privates.drawables.hasOwnProperty(i)) {
                     var drawable = privates.drawables[i];
 
                     if (drawable.bottomRight !== undefined) {
-                        var bottomRight = drawable.bottomRight();
+                        var bottomRight = drawable.absoluteBottomRight();
 
                         x = Math.max(x, bottomRight.x);
                         y = Math.max(y, bottomRight.y);
                     }
                 }
             }
+
+            var padding = bui.settings.style.graphReduceCanvasPadding;
+            x += padding;
+            y += padding;
 
             privates.rootDimensions.width = x;
             privates.root.setAttribute('width', x);
@@ -1383,6 +1561,18 @@ var toBoolean = function(val) {
             }
 
             return privates.highPerformance;
+        },
+
+        /**
+         * Retrieve an object which holds references to all the graph's
+         * drawables.
+         *
+         * @return {Object} Key/value store of the graph's drawables. The keys
+         *   are the drawable's IDs. The value is the drawable instance
+         *   reference.
+         */
+        drawables : function() {
+            return this._privates(identifier).drawables;
         }
     };
 
@@ -1623,6 +1813,35 @@ var toBoolean = function(val) {
             }
 
             return privates.json;
+        },
+
+        /**
+         * Update the JSON object.
+         * 
+         * @param {String|String[]} path The property name which should be
+         *   updated. Pass a string array to handle property chains.
+         * @param {Object} value The property's value.
+         * @returh {bui.Drawable} Fluent interface
+         */
+        updateJson : function(path, value) {
+            var privates = this._privates(identifier);
+
+            privates.json = privates.json || {};
+
+            if (typeof(path) === 'string') {
+                privates.json[path] = value;
+            } else {
+                var lastProperty = privates.json;
+                for(var i = 0; i < path.length - 1; i++) {
+                    var propertyName = path[i];
+                    lastProperty[propertyName] =
+                            lastProperty[propertyName] || {};
+                    lastProperty = lastProperty[propertyName];
+                }
+                lastProperty[path[path.length-1]] = value;
+            }
+
+            return this;
         }
     };
 
@@ -1668,22 +1887,26 @@ var toBoolean = function(val) {
     };
 
     /**
-     * @private  
+     * @private
      */
     var positionPlaceHolder = function() {
         var privates = this._privates(identifier);
         var htmlPosition = this.htmlTopLeft();
         var correction = bui.settings.style.placeholderCorrection.position;
+        var dimensions = this.size();
         privates.placeholder.style.left = (htmlPosition.x +
                 correction.x) + 'px';
         privates.placeholder.style.top = (htmlPosition.y +
                 correction.y) + 'px';
 
         correction = bui.settings.style.placeholderCorrection.size;
-        privates.placeholder.style.width =  (privates.width +
+        privates.placeholder.style.width = (privates.width +
                 correction.width) + 'px';
         privates.placeholder.style.height = (privates.height +
                 correction.height) + 'px';
+
+        this.updateJson(bui.settings.dataFormat.node.width, privates.width);
+        this.updateJson(bui.settings.dataFormat.node.height, privates.height);
     };
 
     /**
@@ -1705,13 +1928,9 @@ var toBoolean = function(val) {
 
         this.fire(bui.Node.ListenerType.absolutePosition,
                 [this, position.x, position.y]);
-    };
 
-    /**
-     * @private size changed listener
-     */
-    var sizeChanged = function() {
-        positionPlaceHolder.call(this);
+        this.updateJson(bui.settings.dataFormat.node.x, position.x);
+        this.updateJson(bui.settings.dataFormat.node.y, position.y);
     };
 
     /**
@@ -1755,8 +1974,8 @@ var toBoolean = function(val) {
 
         var correction = bui.settings.style.placeholderCorrection.size;
 
-        width += correction.width * -1;
-        height += correction.height * -1;
+        width -= correction.width;
+        height -= correction.height;
 
         var suspendHandle = this.graph().suspendRedraw(200);
         this.size(width, height);
@@ -1841,7 +2060,7 @@ var toBoolean = function(val) {
         }
     };
 
-     /**
+    /**
      * @private
      * Initial paint of the placeholder node and group node
      */
@@ -1858,26 +2077,31 @@ var toBoolean = function(val) {
                 placeholderClass(false));
         this.graph().placeholderContainer().appendChild(privates.placeholder);
 
-        sizeChanged.call(this);
+        positionPlaceHolder.call(this);
         positionChanged.call(this);
 
-         jQuery(privates.nodeGroup)
-                 .add(privates.placeholder)
-                 .click(mouseClick.createDelegate(this));
+        var nodeGroupHtmlElement = jQuery(privates.nodeGroup)
+                .add(privates.placeholder);
 
-        if (this._enableDragging === true) {
-            jQuery(privates.placeholder).draggable({
-                stop : placeholderDragStop.createDelegate(this),
-                drag : placeholderDrag.createDelegate(this)
-            });
-        }
 
-        if (this._enableResizing === true) {
-            jQuery(privates.placeholder).resizable({
-                stop : placeholderResizeStop.createDelegate(this),
-                resize : placeholderResize.createDelegate(this),
-                aspectRatio : (this._forceRectangular ? 1 : false)
-            });
+        if (bui.settings.enableModificationSupport === true) {
+
+            nodeGroupHtmlElement.click(mouseClick.createDelegate(this));
+
+            if (this._enableDragging === true) {
+                jQuery(privates.placeholder).draggable({
+                            stop : placeholderDragStop.createDelegate(this),
+                            drag : placeholderDrag.createDelegate(this)
+                        });
+            }
+
+            if (this._enableResizing === true) {
+                jQuery(privates.placeholder).resizable({
+                            stop : placeholderResizeStop.createDelegate(this),
+                            resize : placeholderResize.createDelegate(this),
+                            aspectRatio : (this._forceRectangular ? 1 : false)
+                        });
+            }
         }
     };
 
@@ -2119,6 +2343,24 @@ var toBoolean = function(val) {
 
         /**
          * @description
+         * Use this function to retrieve the absolute bottom right coordinates
+         * of the node.
+         *
+         * @return {Object} Object with x and y properties.
+         */
+        absoluteBottomRight : function() {
+            var privates = this._privates(identifier);
+
+            var position = this.absolutePosition();
+
+            return {
+                x : position.x + privates.width,
+                y : position.y + privates.height
+            };
+        },
+
+        /**
+         * @description
          * Use this function to retrieve the center of the node.
          *
          * @return {Object} Object with x and y properties.
@@ -2151,13 +2393,14 @@ var toBoolean = function(val) {
 
         /**
          * @description
-         * Use this function to move the relative to its current position.
+         * Use this function to move the node relative to its current position.
          *
          * @param {Number} x Relative change on the x-axis.
          * @param {Number} y Relative change on the y-axis.
-         * @param {Boolean} [duration] Whether this movement should be animated
-         *   and how long this animation should run. When omitted or a value
-         *   <= 0 is passed the movement will be executed immediately.
+         * @param {Number} [duration] Whether this movement should be animated
+         *   and how long this animation should run in milliseconds. When
+         *   omitted or a value <= 0 is passed the movement will be executed
+         *   immediately.
          * @return {bui.Node} Fluent interface.
          */
         move : function(x, y, duration) {
@@ -2166,10 +2409,47 @@ var toBoolean = function(val) {
             if (duration === undefined || duration <= 0) {
                 this.position(privates.x + x, privates.y + y);
             } else {
-                throw "Not implemented.";
+                var node = this,
+                        // 1000 milliseconds / x fps
+                        timeOffset = 1000 / bui.settings.animationFPS,
+                        remainingCalls = Math.floor(duration / timeOffset);
+
+
+                (function() {
+                    // to avoid rounding issues
+                    var diffX = x / remainingCalls,
+                            diffY = y / remainingCalls;
+
+                    node.position(privates.x + diffX, privates.y + diffY);
+
+                    remainingCalls--;
+
+                    if (remainingCalls >= 1) {
+                        x -= diffX;
+                        y -= diffY;
+                        setTimeout(arguments.callee, timeOffset);
+                    }
+                })();
             }
 
             return this;
+        },
+
+        /**
+         * @description
+         * Use this function to move the node.
+         *
+         * @param {Number} x Absolute position on the x-axis.
+         * @param {Number} y Absolute position on the y-axis.
+         * @param {Number} [duration] Whether this movement should be animated
+         *   and how long this animation should run in milliseconds. When
+         *   omitted or a value <= 0 is passed the movement will be executed
+         *   immediately.
+         * @return {bui.Node} Fluent interface.
+         */
+        moveAbsolute : function(x, y, duration) {
+            var privates = this._privates(identifier);
+            return this.move(x - privates.x, y - privates.y, duration);
         },
 
         /**
@@ -2205,6 +2485,16 @@ var toBoolean = function(val) {
             }
 
             return privates.parent;
+        },
+
+        /**
+         * This function can be used to check whether this node has a parent
+         * node.
+         *
+         * @return {Boolean} True when this node has a parent node.
+         */
+        hasParent : function() {
+            return this.parent() !== this.graph();
         },
 
         /**
@@ -2260,20 +2550,63 @@ var toBoolean = function(val) {
         },
 
         /**
-         * Retrieve the node's child elements.
+         * Retrieve the node's child elements. The returned child nodes can
+         * also be filtered using a callback which will be executed for every
+         * child node.
          *
-         * @return {bui.Node[]} Child elements.
+         * @param {Function} [checkFunction] Filter nodes using this filter
+         *   function. The function will be called for every sub node. The
+         *   function should return true in order to include the node in the
+         *   return value.
+         * @return {bui.Node[]} All the node's child elements. The returned
+         *   array is actually a copy and can therefore be modified.
          */
-        children : function() {
-            return this._privates(identifier).children;
+        children : function(checkFunction) {
+            var filteredChildren = [],
+                    allChildren = this._privates(identifier).children;
+
+            for (var i = 0; i < allChildren.length; i++) {
+                var child = allChildren[i];
+
+                if (checkFunction === undefined ||
+                        checkFunction(child) === true) {
+                    filteredChildren.push(child);
+                }
+            }
+
+            return filteredChildren;
         },
 
+        /**
+         * Retrieve the node's auxiliary units.
+         *
+         * @return {bui.Node[]} All the node's auxiliary units. The returned
+         *   array is actually a copy and can therefore be modified.
+         */
+        auxiliaryUnits : function() {
+            return this.children(function(node) {
+                return node.auxiliaryUnit === true;
+            });
+        },
+
+        /**
+         * Retrieve the node's auxiliary units.
+         *
+         * @return {bui.Node[]} All the node's sub nodes without auxiliary
+         *   units. The returned array is actually a copy and can therefore be
+         *   modified.
+         */
+        childrenWithoutAuxiliaryUnits : function() {
+            return this.children(function(node) {
+                return node.auxiliaryUnit !== true;
+            });
+        },
 
         /**
          * @private
          * Used to calculate line endpoints. Generally spoken this method
          * will only be used by the class {@link bui.StraightLine}.
-         * 
+         *
          * @param {bui.Node} otherNode
          * @return {Object} an object with x and y properties
          */
@@ -2282,9 +2615,9 @@ var toBoolean = function(val) {
                 return this.center();
             }
 
-            var position = this.center(),
+            var position = this.absoluteCenter(),
                     size = this.size(),
-                    otherPosition = otherNode.center();
+                    otherPosition = otherNode.absoluteCenter();
 
             var padding = bui.settings.style.edgeToNodePadding;
             var widthWithPadding = size.width + padding.leftRight * 2,
@@ -2398,11 +2731,30 @@ var toBoolean = function(val) {
 
             var placeholder = this._privates(identifier).placeholder;
             jQuery(placeholder).simulate("mousedown", {
-                clientX : x,
-                clientY : y
-            });
+                        clientX : x,
+                        clientY : y
+                    });
 
             return this;
+        },
+
+        positionAuxiliaryUnits : function() {
+            var auxUnits = this.auxiliaryUnits();
+            var possiblePositions =
+                    bui.settings.style.automaticAuxiliaryUnitPositioning;
+
+            var nodeSize = this.size();
+
+            for (var i = 0; i < auxUnits.length &&
+                    i < possiblePositions.length; i++) {
+                var auxUnit = auxUnits[i];
+                var positionAt = possiblePositions[i];
+
+                var auxUnitSize = auxUnit.size();
+
+                auxUnit.positionCenter(nodeSize.width * positionAt[0],
+                        nodeSize.height * positionAt[1]);
+            }
         }
     };
 
@@ -3005,6 +3357,7 @@ var toBoolean = function(val) {
     };
 
     bui.UnitOfInformation.prototype = {
+        auxiliaryUnit : true,
         _enableResizing : false
     };
 
@@ -3086,6 +3439,123 @@ var toBoolean = function(val) {
         initialPaint.call(this);
 
         this.addClass(bui.settings.css.classes.complex);
+    };
+
+    bui.Complex.prototype = {
+        // TODO document
+        tableLayout : function(settings) {
+            if (settings === undefined) {
+                settings = bui.settings.style.complexTableLayout;
+            }
+
+            if (settings.showBorder === true) {
+                this.removeClass(bui.settings.css.classes.hideBorder);
+            } else {
+                this.addClass(bui.settings.css.classes.hideBorder);
+            }
+
+            // the items of the table array represent rows. Row items represent
+            // columns
+            var table = [[]];
+
+            var children = this.childrenWithoutAuxiliaryUnits();
+
+            var maxColumnsOrRow = Math.max(1,
+                    Math.round(Math.sqrt(children.length)));
+
+            var addToTable;
+
+            if (settings.restrictNumberOfColumns === true) {
+                /**
+                 * @private
+                 */
+                addToTable = function(node) {
+                    var lastRow = table[table.length - 1];
+
+                    if (lastRow.length === maxColumnsOrRow) {
+                        lastRow = [];
+                        table.push(lastRow);
+                    }
+
+                    lastRow.push(node);
+                };
+            } else {
+                var lastRow = 0;
+                /**
+                 * @private
+                 */
+                addToTable = function(node) {
+                    var row = table[lastRow];
+
+                    if (row === undefined) {
+                        row = [];
+                        table[lastRow] = row;
+                    }
+
+                    row.push(node);
+
+                    lastRow++;
+
+                    if (lastRow >= maxColumnsOrRow) {
+                        lastRow = 0;
+                    }
+                };
+            }
+
+            var subComplexSettings = {};
+            // copy original settings
+            for (var key in settings) {
+                if (settings.hasOwnProperty(key)) {
+                    subComplexSettings[key] = settings[key];
+                }
+            }
+            subComplexSettings.padding *= 0.7;
+            subComplexSettings.restrictNumberOfColumns =
+                    !subComplexSettings.restrictNumberOfColumns;
+
+            if (subComplexSettings.padding < 4) {
+                subComplexSettings.showBorder = false;
+                subComplexSettings.padding = 0;
+            }
+
+            for (var i = 0; i < children.length; i++) {
+                var node = children[i];
+
+                if (node instanceof bui.Complex) {
+                    node.tableLayout(subComplexSettings);
+                }
+
+                addToTable(node);
+            }
+
+            var totalWidth = Number.MIN_VALUE,
+                    totalHeight = settings.padding;
+
+            for (var rowId = 0; rowId < table.length; rowId++) {
+                var row = table[rowId];
+
+                var totalColumnWidth = settings.padding,
+                        highestColumn = Number.MIN_VALUE;
+
+                for (var columnId = 0; columnId < row.length; columnId++) {
+                    // each column holds a node, i.e. a bui.Node instance
+                    var columnNode = row[columnId];
+
+                    var size = columnNode.size();
+                    highestColumn = Math.max(size.height, highestColumn);
+
+                    columnNode.position(totalColumnWidth, totalHeight);
+
+                    // this probably needs to go to the end of the loop
+                    totalColumnWidth += size.width + settings.padding;
+                }
+
+                totalHeight += highestColumn + settings.padding;
+                totalWidth = Math.max(totalWidth, totalColumnWidth);
+            }
+
+            this.size(totalWidth, totalHeight);
+        }
     };
 
     bui.util.setSuperClass(bui.Complex, bui.Node);
@@ -3261,6 +3731,7 @@ var toBoolean = function(val) {
     };
 
     bui.StateVariable.prototype = {
+        auxiliaryUnit : true,
         _enableResizing : false
     };
 
@@ -3629,7 +4100,7 @@ var toBoolean = function(val) {
         if (newSource !== null) {
             var listener = this._sourceOrTargetDimensionChanged
                     .createDelegate(this);
-            newSource.bind(bui.Node.ListenerType.position, listener,
+            newSource.bind(bui.Node.ListenerType.absolutePosition, listener,
                     listenerIdentifier(this));
             newSource.bind(bui.Node.ListenerType.size, listener,
                     listenerIdentifier(this));
@@ -3654,7 +4125,7 @@ var toBoolean = function(val) {
         if (newTarget !== null) {
             var listener = this._sourceOrTargetDimensionChanged
                     .createDelegate(this);
-            newTarget.bind(bui.Node.ListenerType.position, listener,
+            newTarget.bind(bui.Node.ListenerType.absolutePosition, listener,
                     listenerIdentifier(this));
             newTarget.bind(bui.Node.ListenerType.size, listener,
                     listenerIdentifier(this));
@@ -4193,6 +4664,32 @@ var toBoolean = function(val) {
             }
 
             return privates.layoutElementsVisible;
+        },
+
+        /**
+         * Set the spline handle positions and optionally animate them.
+         * 
+         * @param {Object[]} positions An array of positions, i.e. an array
+         *   of objects where each object has an x and y property which
+         *   resembles the spline handle coordinates.
+         * @param {Number} [duration] Optional duration for an animation. The
+         *   default value assumes no animation. Refer to {@link bui.Node#move}
+         *   for additional information about this parameter.
+         * @return {bui.Spline} Fluent interface
+         */
+        setSplineHandlePositions : function(positions, duration) {
+            var privates = this._privates(identifier);
+
+            if (positions.length >= 1) {
+                privates.sourceSplineHandle.moveAbsolute(positions[0].x,
+                        positions[0].y, duration);
+            }
+            if (positions.length >= 2) {
+                privates.targetSplineHandle.moveAbsolute(positions[1].x,
+                        positions[1].y, duration);
+            }
+
+            return this;
         }
     };
 
@@ -4308,7 +4805,8 @@ var toBoolean = function(val) {
                 mouseLeaveListener = lineMouseLeave.createDelegate(this),
                 listenerId = listenerIdentifier(this),
                 sourceNode = this.source(),
-                targetNode = null;
+                targetNode = null,
+                lineStyle = privates.lineStyle;
 
         lines = [];
 
@@ -4317,18 +4815,23 @@ var toBoolean = function(val) {
                     .add(bui.StraightLine)
                     .source(sourceNode)
                     .target(targetNode)
-                    .bind(bui.AbstractLine.ListenerType.click,
-                            clickListener,
-                            listenerId)
-                    .bind(bui.AbstractLine.ListenerType.mousedown,
-                            mouseDownListener,
-                            listenerId)
+                    .lineStyle(lineStyle)
                     .bind(bui.AbstractLine.ListenerType.mouseEnter,
                             mouseEnterListener,
                             listenerId)
                     .bind(bui.AbstractLine.ListenerType.mouseLeave,
                             mouseLeaveListener,
                             listenerId);
+
+            if (bui.settings.enableModificationSupport === true) {
+                line.bind(bui.AbstractLine.ListenerType.click,
+                            clickListener,
+                            listenerId)
+                    .bind(bui.AbstractLine.ListenerType.mousedown,
+                            mouseDownListener,
+                            listenerId);
+
+            }
 
             lines.push(line);
             sourceNode = targetNode;
@@ -4343,6 +4846,10 @@ var toBoolean = function(val) {
         addLine();
 
         privates.lines = lines;
+
+        if (privates.marker !== null) {
+            lines[lines.length - 1].marker(privates.marker);
+        }
 
         this.graph().unsuspendRedraw(suspendHandle);
     };
@@ -4441,6 +4948,7 @@ var toBoolean = function(val) {
         privates.edgeHandlesVisible = true;
         privates.handles = [];
         privates.lines = [];
+        privates.marker = null;
         redrawLines.call(this);
 
         this.bind(bui.AttachedDrawable.ListenerType.source,
@@ -4467,98 +4975,170 @@ var toBoolean = function(val) {
             }
 
             return privates.edgeHandlesVisible;
+        },
+
+        /**
+         * Set the marker, i.e. a symbol at the end of the line.
+         *
+         * @param {Object} [markerId] Marker type identification.
+         *   The appropriate identifications can be retrieved through the id
+         *   property of the connecting arcs generation functions. Example:
+         *
+         *   bui.connectingArcs.stimulation.id
+         * @return {bui.Edge|String} The id of the current marker when
+         *   you omit the parameter. In case you pass a parameter it will be
+         *   set as a new marker and the current instance will be removed
+         *   (fluent interface).
+         */
+        marker : function(markerId) {
+            var privates = this._privates(identifier);
+
+            if (markerId !== undefined) {
+                if (markerId === null) {
+                    privates.marker = null;
+                } else {
+                    privates.marker = markerId;
+                }
+
+                redrawLines.call(this);
+
+                return this;
+            }
+
+            return privates.marker;
+        },
+
+        /**
+         * Set the line style. Available line style can be retrieved through
+         * the {@link bui.AbstractLine.Style} object.
+         *
+         * @param {Object} style A property of {@link bui.AbstractLine.Style}.
+         * @return {bui.AbstractLine} Fluent interface
+         * @example
+         * edge.lineStyle(bui.AbstractLine.Style.dotted);
+         */
+        lineStyle : function(style) {
+            var privates = this._privates(identifier);
+            privates.lineStyle = style;
+            redrawLines.call(this);
+            return this;
         }
     };
 
     bui.util.setSuperClass(bui.Edge, bui.AttachedDrawable);
 })(bui);
-(function(bui) {
+/**
+ * Add mappings to the mappings object.
+ *
+ * @param {Object} mapping The mappings object
+ * @param {Number[]} keys The keys which should be mapped
+ * @param {Function} klass A classes' constructor
+ * @param {Function} [generator] Generator funtion which should be used
+ *   instead of the constructor.
+ */
+var addMapping = function(mapping, keys, klass, generator) {
+    var val = { klass : klass };
 
-    /**
-     * Add mappings to the mappings object.
-     *
-     * @param {Object} mapping The mappings object
-     * @param {Number[]} keys The keys which should be mapped
-     * @param {Function} klass A classes' constructor
-     * @param {Function} [generator] Generator funtion which should be used
-     *   instead of the constructor.
-     */
-    var addMapping = function(mapping, keys, klass, generator) {
-        var val = { klass : klass };
+    if (generator !== undefined) {
+        val.generator = generator;
+    }
 
-        if (generator !== undefined) {
-            val.generator = generator;
-        }
+    for (var i = 0; i < keys.length; i++) {
+        mapping[keys[i]] = val;
+    }
+};
 
-        for (var i = 0; i < keys.length; i++) {
-            mapping[keys[i]] = val;
-        }
+/**
+ * @private
+ * Mapping between SBO terms and biographer-ui classes.
+ */
+var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {},
+        modificationMapping = {};
+
+// TODO remove mapping to 167
+addMapping(nodeMapping, [285, 167], bui.UnspecifiedEntity);
+addMapping(nodeMapping, [247, 240], bui.SimpleChemical);
+addMapping(nodeMapping, [245, 252], bui.Macromolecule);
+addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
+addMapping(nodeMapping, [253], bui.Complex);
+addMapping(nodeMapping, [290], bui.Compartment);
+
+
+addMapping(nodeMapping, [375], bui.Process);
+addMapping(processNodeMapping, [375], bui.Process);
+
+
+addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
+addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
+// TODO remove mapping to 15 and 11
+addMapping(edgeMarkerMapping, [459, 15, 11], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [461],
+        bui.connectingArcs.necessaryStimulation.id);
+addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
+
+/**
+ * Add mappings to the mappings object.
+ *
+ * @param {Number[]} keys The keys which should be mapped
+ * @param {String} long Long name of the SBO term
+ * @param {String} short Short name (abbreviation of the SBO term
+ */
+var addModificationMapping = function(keys, long, short) {
+    var val = {
+        long : long,
+        short : short
     };
 
-    /**
-     * @private
-     * Mapping between SBO terms and biographer-ui classes.
-     */
-    var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {};
-
-    addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
-    addMapping(nodeMapping, [247], bui.SimpleChemical);
-    addMapping(nodeMapping, [245, 252], bui.Macromolecule);
-    addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
-    addMapping(nodeMapping, [253], bui.Complex);
-    addMapping(nodeMapping, [290], bui.Compartment);
-
-    addMapping(processNodeMapping, [375], bui.Process);
-
-    addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
-    addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
-    addMapping(edgeMarkerMapping, [459], bui.connectingArcs.stimulation.id);
-    addMapping(edgeMarkerMapping, [461],
-            bui.connectingArcs.necessaryStimulation.id);
-    addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
-
-    /**
-     * Retrieve the class and generator from a mapping object. When the mapping
-     * object does not have an appropriate class or generator object an
-     * exception will be thrown.
-     *
-     * @param {Object} mapping A mapping object, i.e. an object with SBO ids
-     *   as keys. The values should be objects will at least a 'klass'
-     *   property.
-     * @param {Number} sbo The SBO id.
-     * @return {Object} An object with a 'klass' and an optional 'generator'
-     *   property.
-     */
-    var retrieveFrom = function(mapping, sbo) {
-        if (mapping.hasOwnProperty(sbo)) {
-            return mapping[sbo];
+    for (var i = 0; i < keys.length; i++) {
+        if (modificationMapping.hasOwnProperty(keys[i])) {
+            log('Warning: The mapping of modification keys has' +
+                    ' already a mapping for key: ' + keys[i]);
         } else {
-            throw 'SBO id "' + sbo + '" could not be found.';
+            modificationMapping[keys[i]] = val;
         }
-    };
+    }
+};
 
-    /**
-     * Verify that an object has a property with the given name and that this
-     * property is not null.
-     *
-     * @param {Object} obj The object which should be checked for the property.
-     * @param {String} property Property names which should be checked. This is
-     *   a var args method.
-     * @return {Boolean} True in case the property exists and is not null.
-     *   False otherwise.
-     */
-    var propertySetAndNotNull = function() {
-        var obj = arguments[0];
-        for(var i = 1; i < arguments.length; i++) {
-            var property = arguments[i];
-            if (obj.hasOwnProperty(property) === false ||
-                    obj[property] === null) {
-                return false;
-            }
-        }
+addModificationMapping([215], 'acetylation', 'A');
+addModificationMapping([111101], 'active', 'active');
+addModificationMapping([217], 'glycosylation', 'G');
+addModificationMapping([111100], 'glycosylphosphatidylinositolation', 'GPI');
+addModificationMapping([233], 'hydroxylation', 'OH');
+addModificationMapping([111102], 'inactive', 'inactive');
+addModificationMapping([214], 'methylation', 'M');
+addModificationMapping([219], 'myristoylation', 'MYR');
+addModificationMapping([218], 'palmitoylation', 'PAL');
+addModificationMapping([216], 'phosphorylation', 'P');
+addModificationMapping([224], 'ubiquitination', 'U');
+addModificationMapping([111100], 'unknownModification', '?');
+addModificationMapping([111101], 'PTM_active1', 'active');
+addModificationMapping([111101], 'PTM_active2', 'active');
+addModificationMapping([111100], 'PTM_farnesylation', 'F');
+addModificationMapping([111100], 'geranylgeranylation', 'GER');
+addModificationMapping([111100], 'PTM_glycosaminoglycan', 'GA');
+addModificationMapping([111100], 'PTM_oxidation', '0');
+addModificationMapping([111100], 'PTM_sumoylation', 'S');
 
-        return true;
-    };
+/**
+ * Retrieve the class and generator from a mapping object. When the mapping
+ * object does not have an appropriate class or generator object an
+ * exception will be thrown.
+ *
+ * @param {Object} mapping A mapping object, i.e. an object with SBO ids
+ *   as keys. The values should be objects will at least a 'klass'
+ *   property.
+ * @param {Number} sbo The SBO id.
+ * @return {Object} An object with a 'klass' and an optional 'generator'
+ *   property.
+ */
+var retrieveFrom = function(mapping, sbo) {
+    if (mapping.hasOwnProperty(sbo)) {
+        return mapping[sbo];
+    } else {
+        throw('Warning: SBO id "' + sbo + '" could not be found.');
+    }
+};
+(function(bui) {
 
     /**
      * Default generator for node types. This will be used when
@@ -4572,15 +5152,16 @@ var toBoolean = function(val) {
     var defaultNodeGenerator = function(graph, nodeType, nodeJSON) {
         var node = graph.add(nodeType.klass);
 
-        if (propertySetAndNotNull(nodeJSON.data, 'label')) {
+        if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'label'])) {
             if (node.label !== undefined) {
                 node.label(nodeJSON.data.label);
             }
         }
 
-        if (propertySetAndNotNull(nodeJSON.data, 'x', 'y')) {
-            nodeJSON.data.x = toNumber(nodeJSON.data.x);
-            nodeJSON.data.y = toNumber(nodeJSON.data.y);
+        if (bui.util.propertySetAndNotNull(nodeJSON,
+                ['data', 'x'], ['data', 'y'])) {
+            nodeJSON.data.x = bui.util.toNumber(nodeJSON.data.x);
+            nodeJSON.data.y = bui.util.toNumber(nodeJSON.data.y);
 
             node.position(nodeJSON.data.x, nodeJSON.data.y);
         }
@@ -4603,23 +5184,30 @@ var toBoolean = function(val) {
         node.size(size.width, size.height)
                 .visible(true);
 
-        return node;
-    };
+        if (bui.util.propertySetAndNotNull(nodeJSON,
+                ['data', 'modification'])) {
+            var modifications = nodeJSON.data.modification;
 
-    /**
-     * Retrieve the node's id or the ref key if applicable.
-     *
-     * @param {Object} nodeJSON Node information
-     * @return {String} The node's id or ref key.
-     */
-    var getId = function(nodeJSON) {
-        var id = nodeJSON.id;
+            for (var i = 0; i < modifications.length; i++) {
+                var modification = modifications[i];
 
-        if (nodeJSON.data.ref !== undefined) {
-            id = nodeJSON.data.ref;
+                var label, mapping = retrieveFrom(modificationMapping,
+                        modification[0]);
+
+                label = mapping.short;
+
+                if (bui.settings.style.importer.modificationLabel === 'long') {
+                    label += '@' + modification[1];
+                }
+
+                graph.add(bui.StateVariable)
+                        .label(label)
+                        .parent(node)
+                        .visible(true);
+            }
         }
 
-        return id;
+        return node;
     };
 
     /**
@@ -4637,23 +5225,37 @@ var toBoolean = function(val) {
                 node,
                 nodeJSON;
 
+        var addNode = function(nodeJSON, id) {
+            var nodeType = retrieveFrom(nodeMapping, nodeJSON.sbo);
+            var node;
+
+            if (nodeType === undefined) {
+                return undefined;
+            }
+
+            if (bui.util.propertySetAndNotNull(nodeType, 'generator')) {
+                node = nodeType.generator(graph, nodeJSON);
+            } else {
+                node = defaultNodeGenerator(graph, nodeType, nodeJSON);
+            }
+
+            if (node !== undefined) {
+                node.json(nodeJSON);
+                generatedNodes[id] = node;
+            }
+
+            return node;
+        };
+
         // add all nodes
-        for(var i = 0; i < nodes.length; i++) {
+        for (var i = 0; i < nodes.length; i++) {
             // TODO: remove try-catch block or use different error handling
             try {
                 nodeJSON = nodes[i];
-                var nodeType = retrieveFrom(nodeMapping, nodeJSON.sbo);
 
-                if (nodeType.hasOwnProperty('generator')) {
-                    node = nodeType.generator(graph, nodeJSON);
-                } else {
-                    node = defaultNodeGenerator(graph, nodeType, nodeJSON);
-                }
-
-                node.json(nodeJSON);
-                generatedNodes[getId(nodeJSON)] = node;
+                addNode(nodeJSON, nodeJSON.id);
             } catch (e) {
-                console.log(e);
+                log(e);
             }
         }
 
@@ -4663,39 +5265,24 @@ var toBoolean = function(val) {
                 node = generatedNodes[key];
                 nodeJSON = node.json();
 
-                if (nodeJSON.data.subnodes !== undefined) {
-                    for (var j = 0; j <  nodeJSON.data.subnodes.length; j++) {
+                if (nodeJSON.data !== undefined &&
+                        nodeJSON.data.subnodes !== undefined) {
+                    for (var j = 0; j < nodeJSON.data.subnodes.length; j++) {
                         var subNodeId = nodeJSON.data.subnodes[j];
                         var subNode = generatedNodes[subNodeId];
-                        subNode.parent(node);
+
+                        if (subNode !== undefined) {
+                            subNode.parent(node);
+                        } else {
+                            log('Broken sub node reference to sub' +
+                                    ' node id: ' + subNodeId);
+                        }
                     }
                 }
             }
         }
 
         return generatedNodes;
-    };
-
-    /**
-     * Layout this complex node and all its sub-nodes.
-     *
-     * @param {bui.Node} node A bui.Complex instances which needs layouting.
-     */
-    var layoutComplex = function(node) {
-        var children = node.children();
-
-        for (var i = 0; i < children.length; i++) {
-            var child = children[i];
-
-            // ensure that all complex node children are laid ot
-            if (child instanceof bui.Complex) {
-                layoutComplex(child);
-            }
-
-            // make some kind of grid and do stuuuuuuufffff!
-        }
-
-
     };
 
     /**
@@ -4710,10 +5297,85 @@ var toBoolean = function(val) {
                 var node = nodes[key];
 
                 if (node instanceof bui.Complex &&
-                        node.parent() === node.graph()) {
-                    layoutComplex(node);
+                        node.parent() instanceof bui.Complex === false) {
+                    node.tableLayout();
                 }
             }
+        }
+    };
+
+    /**
+     * Position the auxiliary units for each node.
+     *
+     * @param {Object} All the generated nodes. Keys of this object are the
+     *   node's ids or, if applicable, the node's ref key (node.data.ref).
+     */
+    var positionAuxiliaryUnits = function(nodes) {
+        for (var key in nodes) {
+            if (nodes.hasOwnProperty(key)) {
+                nodes[key].positionAuxiliaryUnits();
+            }
+        }
+    };
+
+    /**
+     * Add edges to the graph. Information about the edges will be extracted
+     * from the data parameter.
+     *
+     * @param {bui.Graph} graph The target graph to which the nodes and edges
+     *   should be added.
+     * @param {Object} data JSON data which should be imported
+     * @return {Object} All the generated nodes. Keys of this object are the
+     *   node's ids or, if applicable, the node's ref key (node.data.ref).
+     */
+    var addAllEdges = function(graph, data, generatedNodes) {
+        var edges = data.edges;
+
+        for (var i = 0; i < edges.length; i++) {
+            var edgeJSON = edges[i], edge;
+
+            var source = generatedNodes[edgeJSON.source];
+            var target = generatedNodes[edgeJSON.target];
+
+            if (source === undefined) {
+                log('Edge source ' + edgeJSON.source + ' could not be found.');
+                continue;
+            } else if (target === undefined) {
+                log('Edge target ' + edgeJSON.target + ' could not be found.');
+                continue;
+            }
+
+            // ensuring that the data property exists
+            edgeJSON.data = edgeJSON.data || {};
+
+            if (edgeJSON.data.type !== 'curve') {
+                edge = graph.add(bui.Edge);
+            } else {
+                edge = graph.add(bui.Spline)
+                        .layoutElementsVisible(false);
+
+                if (edgeJSON.data.handles !== undefined) {
+                    edge.setSplineHandlePositions(edgeJSON.data.handles);
+                }
+            }
+
+            edge.json(edgeJSON).source(source).target(target);
+
+            if (edgeJSON.sbo !== undefined) {
+                try {
+                    var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
+                    edge.marker(marker.klass);
+                } catch (e) {
+                    log(e);
+                }
+            }
+
+            var style = bui.AbstractLine.Style[edgeJSON.data.style];
+            if (style !== undefined) {
+                edge.lineStyle(style);
+            }
+
+            edge.visible(true);
         }
     };
 
@@ -4725,8 +5387,96 @@ var toBoolean = function(val) {
      * @param {Object} data JSON data which should be imported
      */
     bui.importFromJSON = function(graph, data) {
+        var start = new Date().getTime();
+        var suspendHandle = graph.suspendRedraw(20000);
+
+        log('## Importing all nodes');
         var generatedNodes = addAllNodes(graph, data);
+
+        log('## Layout complexes');
         doComplexLayout(generatedNodes);
+
+        log('## Layout auxiliary units');
+        positionAuxiliaryUnits(generatedNodes);
+
+        log('## Adding all edges');
+        addAllEdges(graph, data, generatedNodes);
+
+        log('## Reducing canvas size');
+        graph.reduceCanvasSize();
+
+        graph.unsuspendRedraw(suspendHandle);
+        var elapsed = new Date().getTime() - start;
+        log('## Complete import took ' + elapsed + 'ms.');
+    };
+
+    /**
+     * Update node positions by reimporting data from JSON.
+     *
+     * @param {bui.Graph} graph The target graph to which the nodes and edges
+     *   should be added.
+     * @param {Object} data JSON data which should be imported
+     * @param {Number} [duration] An optional duration in milliseconds.
+     *   {@link bui.Node#move}
+     */
+    bui.importUpdatedNodePositionsFromJSON = function(graph, data, duration) {
+        var drawables = graph.drawables();
+
+        // optimize the data structure to map json IDs to drawable references
+        // to achieve a computational complexity of O(2n).
+        var optimizedDrawables = {};
+        for (var key in drawables) {
+            if (drawables.hasOwnProperty(key)) {
+                var drawable = drawables[key];
+                var json = drawable.json();
+
+                if (json !== undefined && json !== null) {
+                    optimizedDrawables[json.id] = drawable;
+                }
+            }
+        }
+
+        var nodesJSON = data.nodes, i;
+        for (i = 0; i < nodesJSON.length; i++) {
+            var nodeJSON = nodesJSON[i],
+                    node = optimizedDrawables[nodeJSON.id];
+
+            if (node === undefined) {
+                log('Warning: Can\'t update nodes position for json node id ' +
+                        nodeJSON.id + ' because the node can\'t be found.');
+                continue;
+            } else if (bui.util.propertySetAndNotNull(nodeJSON,
+                    ['data', 'x'], ['data', 'y']) === false) {
+                continue;
+            } else if (node.hasParent() === true) {
+                continue;
+            }
+
+            var x = nodeJSON.data.x,
+                    y = nodeJSON.data.y,
+                    currentPosition = node.position();
+
+            node.move(x - currentPosition.x, y - currentPosition.y, duration);
+        }
+
+        var edgesJSON = data.edges;
+        for (i = 0; i < edgesJSON.length; i++) {
+            var edgeJSON = edgesJSON[i],
+                    edge = optimizedDrawables[edgeJSON.id];
+
+            if (edge === undefined) {
+                log('Warning: Can\'t update edge for json edge id ' +
+                        edgeJSON.id + ' because the edge can\'t be found.');
+                continue;
+            } else if (!bui.util.propertySetAndNotNull(edgeJSON,
+                    ['data', 'type'], ['data', 'handles'])) {
+                continue;
+            } else if (edgeJSON.data.type !== 'curve') {
+                continue;
+            }
+
+            edge.setSplineHandlePositions(edgeJSON.data.handles, duration);
+        }
     };
 })(bui);
 window.bui = bui;
