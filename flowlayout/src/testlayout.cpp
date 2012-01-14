@@ -76,7 +76,6 @@ int main(int argc,char *argv[]){
    l.addEndCondition(C_temp,3);
    l.addEndCondition(C_iterations,100);
 
-  
    l.addStep();
    l.addPlugins(P_force_compartments);
    l.fixPluginTemp(P_force_compartments,0);
@@ -90,6 +89,10 @@ int main(int argc,char *argv[]){
    //l.pluginScale(P_min_edge_crossing_multi, 0.1);
    //l.pluginScale(P_force_compartments, 10);
    l.addEndCondition(C_iterations,550);
+
+   l.addStep();
+   l.addPlugins(P_unfix_all);
+   l.addEndCondition(C_iterations,1);
    
    l.addStep();
    l.addPlugins(P_force_adj, P_force_nadj, P_torque_adj, P_distribute_edges, P_min_edge_crossing_multi, P_adjust_compartments_fixed, 

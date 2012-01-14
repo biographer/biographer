@@ -277,9 +277,10 @@ void Layouter::moveNodes(){
    for(int i=0;i<n;i++){
 //      double length=norm(mov[i]);
 //      if (limit && length>avgsize) mov[i]=mov[i]*(avgsize/length); // limit movement to average node size
-         
-      nw.nodes[i].x+=mov[i].x; //update position
-      nw.nodes[i].y+=mov[i].y; //update position
+      if (!nw.nodes[i].fixed){
+         nw.nodes[i].x+=mov[i].x; //update position
+         nw.nodes[i].y+=mov[i].y; //update position
+      }
       mov[i].x=mov[i].y=0.0; //set to zero.
       
 //      if (rot[i]>0.25*PI) rot[i]=0.25*PI;  // limit rotation

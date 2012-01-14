@@ -6,6 +6,7 @@ const Nodetype inodetypes[]={none,reaction,compound,compound,compound,compound,o
 Network::Network(){
    //default network constructor.
    infile=NULL;
+   hasfixed=false;
 }
 
 
@@ -82,15 +83,11 @@ void Network::addNode(int index, Nodetype _type){
    nodes[index]=Node(_type);
 }
 
-void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir){
-   if((size_t) index>=nodes.size())nodes.resize(index+1);
-   nodes[index]=Node(_type, _name, _width, _height, _x, _y, _dir);
-}
-
-void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir, int _comp){
+void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir, int _comp, bool _fx){
    //add in a node with all node properties specified (prefered in the algorithms).
    if((size_t) index>=nodes.size())nodes.resize(index+1);
-   nodes[index]=Node(_type, _name, _width, _height, _x, _y, _dir, _comp);
+   nodes[index]=Node(_type, _name, _width, _height, _x, _y, _dir, _comp, _fx);
+   if (_fx) hasfixed=true;
 }
 
 void Network::addCompartment(int index, string _name){
@@ -99,10 +96,11 @@ void Network::addCompartment(int index, string _name){
    compartments[index]=(Compartment(_name));
 }
 
-void Network::addCompartment(int index, double _xmin, double _ymin, double _xmax, double _ymax, string _name){
+void Network::addCompartment(int index, double _xmin, double _ymin, double _xmax, double _ymax, string _name, bool _fx){
    //add in a compartment with all attributes specified.
    if((size_t) index>=compartments.size())compartments.resize(index+1);
-   compartments[index]=(Compartment(_xmin,_ymin,_xmax,_ymax,_name));
+   compartments[index]=(Compartment(_xmin,_ymin,_xmax,_ymax,_name,_fx));
+   if (_fx) hasfixed=true;
 }
 
 void Network::addReaction(int index, const VI* substrates,const VI* products, const VI* catalysts, const VI* activators, const VI* inhibitors){
@@ -185,6 +183,7 @@ char scanerr[200];
 #define MSCANF(f,v) if(!(scanf(f,v))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
 #define MSCANF2(f,v,x) if(!(scanf(f,v,x))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
 #define MSCANF3(f,v,x,y) if(!(scanf(f,v,x,y))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
+#define MSCANF4(f,v,x,y,z) if(!(scanf(f,v,x,y,z))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
 void Network::read(const char* file){
    try {
       int numc,ci,i,n,m,p,q,k,_index;
@@ -208,11 +207,18 @@ void Network::read(const char* file){
       printf("number of compartments: %d\n",numc);
       for(i=0;i<numc;i++){
          MSCANF2(" %d %s\n",&_index,t);
+         char fc[2];
+         float _xmin,_ymin,_xmax,_ymax;
+         if (scanf(" %[!]",fc)){
+            MSCANF4("%f%f%f%f",&_xmin,&_ymin,&_xmax,&_ymax);
+            addCompartment(_index,_xmin,_ymin,_xmax,_ymax,t,true);
+         } else {
+            addCompartment(_index,t);
+         }
          if (_index>numc+1){ // not starting at zero
             fprintf(stderr,"compartment index out of bound %d",_index);
             abort();
          }
-         addCompartment(_index,t);
       }  
       numc++;
       MSCANF(" %s\n",s); // "///"  
@@ -235,9 +241,14 @@ void Network::read(const char* file){
          else _type=none;
          MSCANF("%s\n",s);
          MSCANF("%d\n",&ci); 
-         MSCANF2("%f%f",&_x,&_y);
+         char fc[2];
+         bool fix=false;
+         if (scanf(" %[!]",fc)) fix=true;
+         MSCANF("%f",&_x);
+         if (scanf(" %[!]",fc)) fix=true;
+         MSCANF("%f",&_y);
          MSCANF3("%f%f%f",& _width,& _height,& _dir);      
-         addNode(_index, _type, s, _width, _height, _x, _y, _dir,ci);
+         addNode(_index, _type, s, _width, _height, _x, _y, _dir,ci,fix);
          printf("added %s %s %i\n",t,s,_index);
       }
       MSCANF(" %s\n",s); // "///"

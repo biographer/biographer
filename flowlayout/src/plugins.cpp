@@ -31,6 +31,7 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_rotate,"rotate",rotate,T_pos);
    glob_pgs.registerPlugin(P_stack_rotate,"stack_rotate",stack_rotate,T_pos);
    glob_pgs.registerPlugin(P_route_edges,"route_edges",route_edges,T_pos);
+   glob_pgs.registerPlugin(P_unfix_all,"unfix_all",unfix_all,T_pos);
    return glob_pgs;
 }
 void Plugins::registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, enumPT type, void* persist){
@@ -503,6 +504,14 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
       }
    //}   
 }
+void unfix_all(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   for (int i=0,n=state.nw.nodes.size();i<n;i++){
+      state.nw.nodes[i].fixed=false;
+   }
+   state.nw.hasfixed=false;
+   
+}
+
 void rotate(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int n=state.nw.nodes.size();
    Point com(0,0); // center of mass

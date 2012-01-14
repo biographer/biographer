@@ -72,6 +72,10 @@ void reactionlayout(Layouter& l){
    l.addEndCondition(C_iterations,550);
    
    l.addStep();
+   l.addPlugins(P_unfix_all);
+   l.addEndCondition(C_iterations,1);
+   
+   l.addStep();
    l.addPlugins(P_force_adj, P_force_nadj, P_torque_adj, P_distribute_edges, P_min_edge_crossing_multi, P_adjust_compartments_fixed, 
                     P_force_compartments, P_limit_mov, P_node_collision);
    //l.pluginScale(P_min_edge_crossing_multi, 0.1);

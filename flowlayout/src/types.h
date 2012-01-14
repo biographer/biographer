@@ -98,16 +98,17 @@ class Rect{
 
 class Compartment : public Rect{
 public:
-   Compartment():name(string()){
+   Compartment():name(string()),fixed(false){
       //default compartment constructor.            
    }
-   Compartment(string _name):name(_name){
+   Compartment(string _name):name(_name),fixed(false){
       //construct a compartment with a specified name (preferred in the algorithm).
    }
-   Compartment(double _xmin, double _ymin, double _xmax, double _ymax, string _name):Rect(_xmin,_ymin,_xmax,_ymax), name(_name){
-      //construct a compartment with all attributes given.
+   Compartment(double _xmin, double _ymin, double _xmax, double _ymax, string _name, bool _fx=false):Rect(_xmin,_ymin,_xmax,_ymax), name(_name),fixed(_fx){   
+   //construct a compartment with all attributes given.
    }
    string name; //name of the node.
+   bool fixed;
 };
 
 class Edge {
@@ -136,16 +137,13 @@ class Edge {
 };
 class Node: public Point{
    public:
-      Node():type(none){
+      Node():type(none),fixed(false){
          //default node constructor.
       }
-      Node(Nodetype _type):type(_type){
+      Node(Nodetype _type):type(_type),fixed(false){
          //node constructor with a specified node type.
       }
-      Node(Nodetype _type, string _name, float _width, float _height, float _x, float _y, float _dir):Point(_x,_y), type(_type), name(_name), width(_width), height(_height), dir(_dir), compartment(0){
-         
-      }
-      Node(Nodetype _type, string _name, float _width, float _height, float _x, float _y, float _dir, int _comp):Point(_x,_y), type(_type), name(_name), width(_width), height(_height), dir(_dir), compartment(_comp){
+      Node(Nodetype _type, string _name, float _width=0, float _height=0, float _x=0, float _y=0, float _dir=0, int _comp=0, bool _fx=false):Point(_x,_y), type(_type), name(_name), width(_width), height(_height), dir(_dir), compartment(_comp),fixed(_fx){
          //constructing a node with all node properties given (preferred in the algorithm).
       }       
       void setPoint(const Point& pt){
@@ -161,6 +159,7 @@ class Node: public Point{
       double width, height;  //horizontal and vertical sizes of the node.
       double dir; // default direction of node (in particular for reactions) - direction in which substrates should point to
       int compartment; //the compartment that the node belongs to (eg. Cytosol).
+      bool fixed;
 };
 typedef vector<Node> VN;
 typedef vector<Edge> VE;
