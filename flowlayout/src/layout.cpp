@@ -193,9 +193,11 @@ void Layouter::execute(){
          }
          for (i=0;i<num;i++){ // calculated tension
             totalForce+=force[i];
-            double mv=manh(mov[i]);
-            totalMov+=mv;
-            if (mv>maxMov) maxMov=mv;
+	    if (!nw.nodes[i].fixed){
+	      double mv=manh(mov[i]);
+	      totalMov+=mv;
+	      if (mv>maxMov) maxMov=mv;
+	    }
             tension[i]=false;
             if (force[i]>0.8*maxForce){ // high relative force on node
                if (manh(mov[i])/force[i]<0.1){ // effective force is low compared to added up force (force equilibrium)
