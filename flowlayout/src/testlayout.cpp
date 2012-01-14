@@ -115,7 +115,7 @@ int main(int argc,char *argv[]){
 
    l.addStep();
    l.addPlugins(P_route_edges2);
-   l.addEndCondition(C_iterations,2);
+   l.addEndCondition(C_iterations,1);
    
    l.execute();
    l.show_network();

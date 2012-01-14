@@ -56,7 +56,6 @@ void reactionlayout(Layouter& l){
    l.addEndCondition(C_temp,3);
    l.addEndCondition(C_iterations,100);
 
-  
    l.addStep();
    l.addPlugins(P_force_compartments);
    l.fixPluginTemp(P_force_compartments,0);
@@ -70,7 +69,7 @@ void reactionlayout(Layouter& l){
    //l.pluginScale(P_min_edge_crossing_multi, 0.1);
    //l.pluginScale(P_force_compartments, 10);
    l.addEndCondition(C_iterations,550);
-   
+
    l.addStep();
    l.addPlugins(P_unfix_all);
    l.addEndCondition(C_iterations,1);
@@ -95,9 +94,9 @@ void reactionlayout(Layouter& l){
    l.addEndCondition(C_iterations,550);
 
    l.addStep();
-   l.addPlugins(P_route_edges);
+   l.addPlugins(P_route_edges2);
    l.addEndCondition(C_iterations,1);
-  
+   
    l.execute();
    
 }
