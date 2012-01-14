@@ -2,50 +2,51 @@ CC=g++
 XINC=-Isrc
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DPROGRESSLINUX -DUSEJSON `pkg-config --cflags glib-2.0 json-glib-1.0` -lglib-2.0 -ljson-glib-1.0
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DUSEJSON `pkg-config --cflags glib-2.0`  -lglib-2.0 -rpath=/local/home/handorf/lib -I/local/home/handorf/hg/biographer-layout/json-glib-0.12.6/ -L/local/home/handorf/lib -ljson-glib-1.0
-CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX
+#CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX
+CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX -DSHOWPROGRESS -DOUTPNG `pkg-config --cflags cairo` -lcairo
 SRC=src/
 BDIR=build/
 VPATH=$(SRC):$(BDIR)
-OBJS=network.o layout.o functions.o plugins.o netdisplay.o
+OBJS=network.o layout.o types.o plugins.o netdisplay.o
 
 layout: dolayout.cpp reactionlayout.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o -o $(BDIR)layout $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o -o $(BDIR)layout $<
 layoutp: dolayout.cpp reactionlayout.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)layoutp $<
-#json:	layout_json.cpp network.o layout.o functions.o
-#	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)layoutJson $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)layoutp $<
+#json:	layout_json.cpp network.o layout.o types.o
+#	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o -o $(BDIR)layoutJson $<
 network.o: network.cpp network.h types.h
 	$(CC) -o $(BDIR)network.o $(CCFLAGS) -c $<
-layout.o: layout.cpp plugins.h layout.h functions.h network.h types.h defines.h
+layout.o: layout.cpp plugins.h layout.h network.h types.h defines.h
 	$(CC) -o $(BDIR)layout.o $(CCFLAGS) -c $<
-functions.o: functions.cpp functions.h types.h defines.h
-	$(CC) -o $(BDIR)functions.o $(CCFLAGS) -c $<	
-plugins.o: plugins.cpp paramedge.cpp edgerouting.cpp bfs.cpp plugins.h layout.h functions.h network.h types.h defines.h
+types.o: types.cpp types.h defines.h
+	$(CC) -o $(BDIR)types.o $(CCFLAGS) -c $<	
+plugins.o: plugins.cpp paramedge.cpp edgerouting.cpp bfs.cpp plugins.h layout.h network.h types.h defines.h
 	$(CC) -o $(BDIR)plugins.o $(CCFLAGS) -c $<
 netdisplay.o: netdisplay.cpp netdisplay.h network.h types.h
 	$(CC) -o $(BDIR)netdisplay.o $(CCFLAGS) -c $<
 
-#test: layout_test.cpp network.o layout.o functions.o
-#	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o -o $(BDIR)test $<
+#test: layout_test.cpp network.o layout.o types.o
+#	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o -o $(BDIR)test $<
 #
 testlayout: testlayout.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)testlayout $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)testlayout $<
 test_dist_edges: test_dist_edges.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_dist_edges $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_dist_edges $<
 test_rea_torque: test_rea_torque.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_rea_torque $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_rea_torque $<
 test_min_cross: test_min_cross.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_min_cross $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_min_cross $<
 test_min_cross_multi: test_min_cross_multi.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_min_cross_multi $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_min_cross_multi $<
 test_compartments: test_compartments.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_compartments $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_compartments $<
 test_node_collision: test_node_collision.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_node_collision $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_node_collision $<
 test_route_edges: test_route_edges.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_route_edges $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_route_edges $<
 test_rotate: test_rotate.cpp $(OBJS)
-	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)functions.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_rotate $<
+	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_rotate $<
 
 	

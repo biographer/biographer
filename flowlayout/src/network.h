@@ -1,7 +1,7 @@
 #ifndef th_network_h
 #define th_network_h
 #include "types.h"
-#include "functions.h"
+
 #ifdef USEJSON 
 #include <stdlib.h>
 #include <glib-object.h>

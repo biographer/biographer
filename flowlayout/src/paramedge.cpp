@@ -1,7 +1,7 @@
 #ifndef th_paramedge_h
 #define th_paramedge_h
 #include "types.h"
-#include "functions.h"
+
 #include "network.h"
 class ParamEdge {
    public:

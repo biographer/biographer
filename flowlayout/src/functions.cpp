@@ -8,6 +8,10 @@ Point operator+(const Point& p1, const Point& p2){
    p.y=p1.y+p2.y;
    return p;
 }
+Point operator+(const Point& p1, const double d){
+   Point dvec=Point(angle(p1))*d;
+   return p1+dvec;
+}
 
 Point operator-(const Point& p1, const Point& p2){
    //vector p1 minus vector p2
@@ -21,6 +25,12 @@ Point operator-(const Point& p1){
    return Point(-p1.x,-p1.y);
 }
 
+Point& operator+=(Point& p1, const double d){
+   //vector p1 plus vector p2 (inplace)
+   Point dvec=Point(angle(p1))*d;
+   p1+=dvec;
+   return p1;   
+}
 Point& operator+=(Point& p1, const Point& p2){
    //vector p1 plus vector p2 (inplace)
    p1.x+=p2.x;

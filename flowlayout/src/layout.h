@@ -1,7 +1,7 @@
 #ifndef th_layout_h
 #define th_layout_h
 #include "network.h"
-#include "functions.h"
+#include "types.h"
 #include "plugins.h"
 #ifdef SHOWPROGRESS
 #include "netdisplay.h"
