@@ -51,7 +51,7 @@ int p_compare(const Point& p1, const Point& p2);//comparing two points (y-domina
 int min_four(int a1,int a2,int a3,int a4); //get the minimum among four integers.
 
 
-Point unit(Point &);
+
 using namespace std;
 
 typedef vector<int> VI; 
