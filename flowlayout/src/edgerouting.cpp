@@ -315,6 +315,8 @@ void route_edges2(Layouter &state,plugin& pg, double scale, int iter, double tem
    for (int i=0,m=state.nw.edges.size();i<m;i++){
       //if (i!=iter) continue;
       Edge &e=state.nw.edges[i];
+      e.splinehandles.clear();
+      e.splinepoints.clear();
       int n1=e.from;
       int n2=e.to;
       Point vec,p1,p2;
