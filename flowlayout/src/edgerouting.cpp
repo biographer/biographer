@@ -305,13 +305,15 @@ class Segment{
 void split_route(vector<Segment> &vs,VR &nodes,int idx, int n1, int n2);
 void route_edges2(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    VR nodes;
-   double d=MARGIN;
+   double d=state.avgsize/5;
    int n=state.nw.nodes.size();
    for (int i=0;i<n;i++){
       nodes.push_back(state.nw.nodes[i].rect());
       nodes.back().extend(d);
+      //debugrect(nodes.back(),0,0,255);
    }
    for (int i=0,m=state.nw.edges.size();i<m;i++){
+      //if (i!=iter) continue;
       Edge &e=state.nw.edges[i];
       int n1=e.from;
       int n2=e.to;
@@ -351,7 +353,7 @@ void route_edges2(Layouter &state,plugin& pg, double scale, int iter, double tem
          case inhibitor:
          case catalyst:
             dir=lim(state.nw.nodes[n2].dir);
-            if (scalar(Point(dir),vs.back().edge.from()-vs.back().edge.to())) dir=lim(dir+PI);
+            if (scalar(Point(dir),vs.back().edge.from()-vs.back().edge.to())<0) dir=lim(dir+PI);
             vec=Point(dir);
             vec=state.nw.nodes[n2].rect().border_vec(vec);
             p2=state.nw.nodes[n2]+vec;
@@ -370,16 +372,18 @@ void route_edges2(Layouter &state,plugin& pg, double scale, int iter, double tem
       for (int j=1,s=vs.size();j<s;j++){
          Point before=vs[j-1].edge.from();
          Point cur=vs[j-1].edge.to();
-         if (cur!=vs[j].edge.from()) throw "ups: edge segments not continious";
+         //if (cur!=vs[j].edge.from()) throw "ups: edge segments not continious";
          Point after=vs[j].edge.to();
-         Point dv=unit(before-cur+after-cur)*d;
-         e.splinehandles.insert(--e.splinehandles.end(),to_left(dv,PI/2)*sign(scalar(to_left(dv,PI/2),before-cur)));
+         Point dv=unit(before-cur)*d+unit(after-cur)*d;
+	 debugline(cur,cur+dv,0,255,0,true);
+         e.splinehandles.insert(--e.splinehandles.end(),unit(to_left(dv,PI/2))*sign(scalar(to_left(dv,PI/2),before-cur))*d);
          e.splinepoints.push_back(cur+dv);
       }
    }
 }
 void split_route(vector<Segment> &vs,VR &nodes,int idx, int n1, int n2){
    ParamEdge e=vs[idx].edge;
+   debugline(e.from(),e.to(),255,0,0,true);
    double minp=DBL_MAX;
    int minidx=-1;
    for (int j=0,n=nodes.size();j<n;j++){
@@ -406,14 +410,20 @@ void split_route(vector<Segment> &vs,VR &nodes,int idx, int n1, int n2){
    if (scalar(r,dc)<0) pts.push_back(nodes[minidx].BL());
    r=e.dist_vec(nodes[minidx].BR());
    if (scalar(r,dc)<0) pts.push_back(nodes[minidx].BR());
-   if (pts.size()==0) printf("Ups, no points on smaller side of edge/node cut area");
+   if (pts.size()==0) {
+      printf("Ups, no points on smaller side of edge/node cut area");
+      return;
+   }
    if (pts.size()>2 ) throw "expected 1 or 2 points";
    vector<Segment> vsnew;
    int idxlast=idx+1;
    if (pts.size()==1){
       vsnew.push_back(Segment(ParamEdge(e.from(),pts[0]),vs[idx].first,false));
       vsnew.push_back(Segment(ParamEdge(pts[0],e.to()),false,vs[idx].last));
-   } else if (pts.size()==3) {
+   } else if (pts.size()==2) {
+      if (norm(pts[0]-e.from())>norm(pts[1]-e.from())){ // do nearest point first
+	swap(pts[0],pts[1]);
+      }
       vsnew.push_back(Segment(ParamEdge(e.from(),pts[0]),vs[idx].first,false));
       vsnew.push_back(Segment(ParamEdge(pts[0],pts[1]),false,false));
       vsnew.push_back(Segment(ParamEdge(pts[1],e.to()),false,vs[idx].last));
@@ -421,6 +431,6 @@ void split_route(vector<Segment> &vs,VR &nodes,int idx, int n1, int n2){
    }
    vs.erase(vs.begin()+idx);
    vs.insert(vs.begin()+idx,vsnew.begin(),vsnew.end());
-   split_route(vs,nodes,idxlast,n1,n2);
-   split_route(vs,nodes,idx,n1,n2); // new overlaps could be introduced after makeing a kink into the line
+   split_route(vs,nodes,idxlast,minidx,n2);
+   split_route(vs,nodes,idx,n1,minidx); // new overlaps could be introduced after makeing a kink into the line
 }
