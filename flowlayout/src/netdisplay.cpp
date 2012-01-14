@@ -206,6 +206,11 @@ void NetDisplay::draw(){
       cairo_stroke(c);
 /*      cairo_move_to(c,n.x-n.width/2,n.y-n.height/2);
       cairo_show_text(c,n.name.c_str());*/
+      cairo_move_to(c,n.x,n.y);
+      char num[6];
+      sprintf(num,"%d",i);
+      cairo_set_font_size(c,(n.width+n.height)/4);
+      cairo_show_text(c,num);
 /*      cairo_set_source_rgb (c, 0,0,0); 
       cairo_set_dash (c,(double[2]){3/scale,3/scale},2,0);
       cairo_move_to(c,n.x,n.y);
