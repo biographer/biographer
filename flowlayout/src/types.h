@@ -36,6 +36,7 @@ Point operator/(const Point& p1, const double scalar); //scale vector
 Point& operator*=(Point& p1, const double scalar);
 Point& operator/=(Point& p1, const double scalar);
 bool operator==(const Point& p1, const Point& p2);
+bool operator!=(const Point& p1, const Point& p2);
 double scalar(const Point& p1, const Point& p2); // scalar product
 double prod(const Point& p1, const Point& p2); // vector product 2d
 Point unit(const Point& p1); // unit vector
@@ -111,16 +112,16 @@ class Rect{
       double r(){ // radius of the smallest surrounding circle
          return sqrt((xmax-xmin)*(xmax-xmin)+(ymax-ymin)*(ymax-ymin));
       }
-      inline Point TL(){
+      inline Point TL() const {
          return Point(xmin,ymin);
       }
-      inline Point TR(){
+      inline Point TR() const {
          return Point(xmax,ymin);
       }
-      inline Point BL(){
+      inline Point BL() const {
          return Point(xmin,ymax);
       }
-      inline Point BR(){
+      inline Point BR() const {
          return Point(xmax,ymax);
       }
       Point border_vec(Point vec){

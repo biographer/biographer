@@ -114,7 +114,7 @@ int main(int argc,char *argv[]){
    l.addEndCondition(C_iterations,550);
 
    l.addStep();
-   l.addPlugins(P_route_edges);
+   l.addPlugins(P_route_edges2);
    l.addEndCondition(C_iterations,2);
    
    l.execute();

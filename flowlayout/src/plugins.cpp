@@ -4,10 +4,12 @@
 #ifdef SHOWPROGRESS
 #include "netdisplay.h"
 #endif
+#define MARGIN state.avgsize/2
+
+
 #include "paramedge.cpp"
 #include "edgerouting.cpp"
 
-#define MARGIN state.avgsize/2
 
 Plugins glob_pgs;
 Plugins& register_plugins(){
@@ -31,6 +33,7 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_rotate,"rotate",rotate,T_pos);
    glob_pgs.registerPlugin(P_stack_rotate,"stack_rotate",stack_rotate,T_pos);
    glob_pgs.registerPlugin(P_route_edges,"route_edges",route_edges,T_pos);
+   glob_pgs.registerPlugin(P_route_edges2,"route_edges2",route_edges2,T_pos);
    glob_pgs.registerPlugin(P_unfix_all,"unfix_all",unfix_all,T_pos);
    return glob_pgs;
 }
