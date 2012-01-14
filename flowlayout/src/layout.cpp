@@ -205,7 +205,7 @@ void Layouter::execute(){
                }
             }
          }
-         printf("\rstep: %i, it: %i, tot.force: %0.4f, tot.mov: %0.4f, temp: %0.4f, max.force: %0.4f, max.mov: %0.4f, forceIncCC: %d",s,cc,totalForce,totalMov,temp,maxForce,maxMov,program[s].c_totForceIncCC);fflush(stdout);
+         //printf("\rstep: %i, it: %i, tot.force: %0.4f, tot.mov: %0.4f, temp: %0.4f, max.force: %0.4f, max.mov: %0.4f, forceIncCC: %d",s,cc,totalForce,totalMov,temp,maxForce,maxMov,program[s].c_totForceIncCC);fflush(stdout);
          if (lastForce<0) lastForce=2*totalForce; //workaround for first loop where lastForce is not yet defined
          if (totalForce!=totalForce) break; // emergency break (nan)
          if (totalMov!=totalMov) break; // emergency break (nan)
