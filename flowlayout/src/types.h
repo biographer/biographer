@@ -104,7 +104,7 @@ public:
    Compartment(string _name):name(_name){
       //construct a compartment with a specified name (preferred in the algorithm).
    }
-   Compartment(double _xmin, double _ymin, double _xmax, double _ymax, string _name):Rect(_xmin,_ymin,_ymax,_ymax), name(_name){
+   Compartment(double _xmin, double _ymin, double _xmax, double _ymax, string _name):Rect(_xmin,_ymin,_xmax,_ymax), name(_name){
       //construct a compartment with all attributes given.
    }
    string name; //name of the node.
