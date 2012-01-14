@@ -389,6 +389,8 @@ void split_route(vector<Segment> &vs,VR &nodes,int idx, int n1, int n2){
    for (int j=0,n=nodes.size();j<n;j++){
       if (j==n1 || j==n2) continue;
       if (e.cross(nodes[j])){
+	 if (nodes[j].contains(e.from())) continue;
+	 if (nodes[j].contains(e.to())) continue;
          double p=e.cross_param_smallest(nodes[j]);
          if (p<minp){
             minp=p;

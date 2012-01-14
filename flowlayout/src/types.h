@@ -135,7 +135,9 @@ class Rect{
          }
          return vec;
       }
-         
+      bool contains(const Point &p){
+	return xmin<p.x && xmax>p.x && ymin<p.y && ymax>p.y;
+      }
       double xmin, ymin, xmax, ymax;
 
 };
