@@ -157,6 +157,7 @@
      */
     var parentRemoved = function() {
         this.parent(this.graph());
+	this.remove();
     };
 
     /**
