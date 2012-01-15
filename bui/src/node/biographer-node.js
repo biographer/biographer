@@ -1,7 +1,8 @@
 var jsdom  = require('jsdom');
 var fs     = require('fs');
 var exec   = require('child_process').exec;
-var jquery = fs.readFileSync("./jquery-1.7.js").toString();
+//var jquery = fs.readFileSync("./jquery-1.7.js").toString();
+var jquery = fs.readFileSync("./jquery-1.6.min.js").toString();
 var biog   = fs.readFileSync("./biographer-ui.js").toString();
 var css    = fs.readFileSync("./visualization-svg.css").toString();
 var fn     = process.argv[2];
@@ -158,6 +159,12 @@ jsdom.env({
     bui.settings.staticSVG=true;
     console.log('loading "' + fn + '"');
     var div=window.document.createElement('div');
+    var div2=window.document.createElement('div');
+    div2.setAttribute('class', 'test');
+    $(div2).html('');
+    console.log('width from $(div).width() "' + $(div2).width() + '"');
+    var dim = bui.util.calculateWordDimensions('test',[],true,true);
+    console.log('bui.util.calculateWordDimensions: width='+dim.width+' height='+dim.height)
     //console.log(graph.cssSVG(css));
     var graph=new bui.Graph(div);
     bui.importFromJSON(graph,jdata);

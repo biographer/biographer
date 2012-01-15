@@ -313,6 +313,9 @@
     };
 
     bui.Node.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         _minWidth : 10,
         _minHeight : 10,
         _forceRectangular : false,
