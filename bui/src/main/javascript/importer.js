@@ -358,7 +358,7 @@
      * @param {Number} [duration] An optional duration in milliseconds.
      *   {@link bui.Node#move}
      */
-    bui.importUpdatedNodePositionsFromJSON = function(graph, data, duration) {
+    bui.importUpdatedNodePositionsFromJSON = function(graph, data, duration, finishListener) {
         var drawables = graph.drawables();
 
         // optimize the data structure to map json IDs to drawable references
@@ -405,8 +405,11 @@
             var x = nodeJSON.data.x,
                     y = nodeJSON.data.y,
                     currentPosition = node.position();
-
-            node.move(x - currentPosition.x, y - currentPosition.y, duration);
+	    if (i==nodesJSON.length-1){
+	      node.move(x - currentPosition.x, y - currentPosition.y, duration, finishListener); // the last node will call the finishListener
+	    } else {
+	      node.move(x - currentPosition.x, y - currentPosition.y, duration);
+	    }
         }
 
         var edgesJSON = data.edges;
@@ -426,6 +429,7 @@
             }
 
             edge.setSplineHandlePositions(edgeJSON.data.handles, duration);
+            edge.setSplinePoints(edgeJSON.data.points, duration);
         }
     };
 })(bui);
