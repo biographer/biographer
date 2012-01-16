@@ -143,7 +143,7 @@ class Node:
 		result = ""
 
 		for key in self.__dict__.keys():
-			if not key in ["ConnectedEdges", "SubNodes", "CompartmentNode"]:	# don't check these 3, they are "internal"
+			if not key in ["connections", "edges"]:		# don't check these, they are internal
 
 				if key in NodeKeyAliases.keys():			# is it an alias ...
 					renameto = NodeKeyAliases[key]

@@ -508,21 +508,26 @@ class Graph:
 
 		while len(lines) > 8:
 			index = int(lines.pop(0))
-			node = self.Nodes[index]
-			type = lines.pop(0)
+			Type = lines.pop(0)
 			name = lines.pop(0)
 			compartmentidx = lines.pop(0)
+			if Type in ['Compound', 'Reaction']:
+				node = self.Nodes[index]
+			elif Type == 'Compartment':
+				node = self.Compartments[index]
+			else:
+				self.log(error, "Error: What kind of a node is '"+Type+"' that supposed to be?")
+				return False
 			node.data.x = float(lines.pop(0))
 			node.data.y = float(lines.pop(0))
 			node.data.width = float(lines.pop(0))
 			node.data.height = float(lines.pop(0))
 			direction = float(lines.pop(0))
-			self.log(debug, node.id+' updated')
+			self.log(debug, 'Node '+node.id+' updated')
 
 		# ignore splines
 
-		self.initialize()
-
+		return True
 
 	### secondary model layouting
 	### using graphviz
