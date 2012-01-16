@@ -2,11 +2,11 @@
 
 # remove old installation
 cd static
-rm Visualization -f
+rm Visualization -fR
 rm biographer.visualization -fR
 
 # download
-hg clone https://code.google.com/p/biographer.visualization/
+hg clone --rev ce0138fb634d https://code.google.com/p/biographer.visualization/
 ln biographer.visualization/target/distribution Visualization -s
 cd biographer.visualization
 rm .hg* -fR

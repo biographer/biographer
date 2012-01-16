@@ -8,7 +8,7 @@
 	<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-1.6.min.js"></script>
     <script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery.simulate.js"></script>
 	<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-ui-1.8.12.custom.min.js"></script>
-    <script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/biographer-ui.min.js"></script>
+    <script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/biographer-ui.js"></script>
 
 <style>
 	#canvas		{
@@ -34,7 +34,6 @@
                            'node2',
                            'node3'
                         ]
-                        // TODO state variable 'tense'
                     }
                 }, {
                     id : 'node2',
@@ -59,7 +58,6 @@
                             'node6',
                             'node7'
                         ]
-                        // TODO state variable 'relaxed'
                     }
                 }, {
                     id : 'node5',
@@ -104,7 +102,7 @@
                     }
                 }, {
                     id : 'node11',
-                    sbo : 375, // TODO change to dissociation
+                    sbo : 375,
                     data : {
                         x : 255,
                         y : 380
@@ -184,10 +182,9 @@
             ]
         };
 
-        bui.ready(function() {
-            bui.settings.css.stylesheetUrl = '{{ = URL(r=request, c='static', f='Visualization') }}/css/visualization-svg.css';
-            graph = new bui.Graph(document.getElementById('canvas'));
-
+	bui.ready(function() {
+            var canvas = document.getElementById('canvas');
+            graph = new bui.Graph(canvas);
             bui.importFromJSON(graph, customExample);
         });
     </script>
