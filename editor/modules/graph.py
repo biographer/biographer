@@ -66,7 +66,7 @@ class Graph:
 			self.DEBUG = ""
 
 	def log(self, level, msg, raw=False):
-		if level >= self.verbosity:
+		if self.verbosity >= level:
 			msg = msg.strip()
 			if msg != "":
 				time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -82,7 +82,7 @@ class Graph:
 	## initialize ###
 
 	def make_object_links(self):
-		self.log(debug, "Generating object links ...")
+		self.log(progress, "Generating object links ...")
 
 		def getNodeByID(ID):
 			for n in self.Nodes:
@@ -142,7 +142,7 @@ class Graph:
 
 	def initialize(self, removeOrphans=False):				# initialize the network
 		self.mapped = False
-		self.log(debug, "Initializing Graph ...")
+		self.log(progress, "Initializing Graph ...")
 		self.status()
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.make_object_links()
@@ -219,7 +219,7 @@ class Graph:
 
 	def selfcheck(self, removeOrphanEdges=True):
 
-		self.log(debug, "Performing Selfcheck ...")
+		self.log(progress, "Performing Selfcheck ...")
 
 		for n in self.Nodes:						# self-check all Nodes and Edges
 			self.log( error, n.selfcheck(verbosity=self.verbosity), raw=True )
@@ -313,7 +313,7 @@ class Graph:
 
 	def importJSON(self, JSON):						# import JSON
 		self.reset()
-		self.log(debug, "Importing JSON ...")
+		self.log(progress, "Importing JSON ...")
 
 		JSON = self.checkJSON(JSON)
 		try:
@@ -332,9 +332,7 @@ class Graph:
 
 		d = self.exportDICT(status=False)
 
-		self.log(debug, "Exporting JSON ...")
-
-		print d
+		self.log(progress, "Exporting JSON ...")
 
 		h = md5( pickle.dumps(d) ).hexdigest()
 		self.log(debug, 'Hash: '+h)
@@ -349,7 +347,7 @@ class Graph:
 		if status:
 			self.status()
 
-		self.log(debug, "Exporting dictionary ...")
+		self.log(progress, "Exporting dictionary ...")
 
 		h = md5( pickle.dumps(self.Nodes) ).hexdigest() + md5( pickle.dumps(self.Edges) ).hexdigest()
 		self.log(debug, 'Hash: '+h)
@@ -361,7 +359,7 @@ class Graph:
 
 	def importSBML(self, SBML):						# import SBML
 		self.reset()
-		self.log(debug, "Importing SBML ...")
+		self.log(progress, "Importing SBML ...")
 
 		SBML = libsbml.readSBMLFromString( SBML )
 		model = SBML.getModel()
@@ -463,7 +461,7 @@ class Graph:
 	# ...
 
 	def export_to_Layouter(self):
-		self.log(debug, "Exporting Layout ...")
+		self.log(progress, "Exporting Layout ...")
 		global layout
 		layout = ""
 		def write(s):
@@ -502,7 +500,7 @@ class Graph:
 		return layout
 
 	def import_from_Layouter(self, layout):
-		self.log(debug, "Importing Layout ...")
+		self.log(progress, "Importing Layout ...")
 		lines = layout.split("\n")
 
 		# Compartments are ignored
@@ -532,7 +530,7 @@ class Graph:
 	### using graphviz
 
 	def export_to_graphviz(self):
-		self.log(debug, "Exporting model to graphviz ...")
+		self.log(progress, "Exporting model to graphviz ...")
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		graphviz_model = pygraphviz.AGraph(directed=True)
@@ -592,7 +590,7 @@ class Graph:
 		return graphviz_model
 
 	def import_from_graphviz(self, layout):
-		self.log(debug, "Updating layout from graphviz ...")
+		self.log(progress, "Updating layout from graphviz ...")
 
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
 

@@ -46,8 +46,8 @@ for o, a in opts:
 ### import model ###
 
 from graph import Graph
-from defaults import info, error, warning, debug
-model = Graph( verbosity=info )
+from defaults import error, info, progress, warning, debug
+model = Graph( verbosity=progress )
 
 if sbml is not None:
 	sbml = open(sbml).read()
