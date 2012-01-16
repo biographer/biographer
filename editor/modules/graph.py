@@ -178,8 +178,8 @@ class Graph:
 		for node in self.Nodes:
 			node.edges = []
 			for edge in self.Edges:
-				if edge.source == node or e.target == node.id:
-					node.edges.append(edges)
+				if edge.source == node or edge.target == node.id:
+					node.edges.append(edge)
 
 	def find_abstract_nodes(self):
 		for node in self.Nodes:
@@ -360,6 +360,7 @@ class Graph:
 		h = md5( pickle.dumps(d) ).hexdigest()
 		print 'Hash: '+h
 		if self.JSON_hash != h:
+			print d
 			self.JSON = json.dumps( d, indent=Indent )
 			self.JSON_hash = h
 
@@ -514,7 +515,7 @@ class Graph:
 
 		write( len(self.Edges) )			# Edges
 		for edge in self.Edges:
-			write( edge.type +" "+ str(self.getNodeIndex(edge.SourceNode)) +" "+ str(self.getNodeIndex(edge.TargetNode)) )
+			write( edge.type +" "+ str( self.Nodes.index(edge.source) ) +" "+ str( self.Nodes.index(edge.target) ) )
 
 #		self.log(layout)
 

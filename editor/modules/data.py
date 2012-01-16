@@ -27,9 +27,9 @@ class Data:
 		export = deepcopy(self.__dict__)
 		del export['id']
 		if 'subnodes' in export.keys():
-			replacement_array = []
+			replacement = []
 			for subnode in export['subnodes']:
-				replacement_array.append(subnode.id)
-			export['subnodes'] = replacement_array
+				replacement.append(subnode.id)
+			export['subnodes'] = replacement
 		return export
 

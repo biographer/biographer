@@ -99,10 +99,13 @@ class Node:
 	def exportDICT(self):
 		export = deepcopy(self.__dict__)			# convert self to dictionary
 		export['data'] = self.data.exportDICT()
-		if "ConnectedEdges" in export.keys():			# do not export ConnectedEdges,
-			del export["ConnectedEdges"]
-		if "CompartmentNode" in export.keys():			# and the CompartmentNode
-			del export["CompartmentNode"]
+		if "edges" in export.keys():
+			replacement = []
+			for edge in export['edges']:
+				replacement.append( edge.id )
+			export['edges'] = replacement
+		if "parent" in export.keys():
+			export['parent'] = export['parent'].id
 		return export
 
 	def export_to_Layouter(self):
