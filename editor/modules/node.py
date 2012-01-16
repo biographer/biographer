@@ -108,6 +108,11 @@ class Node:
 			for edge in export['edges']:
 				replacement.append( edge.id )
 			export['edges'] = replacement
+		if "connections" in export.keys():
+			replacement = []
+			for node in export['connections']:
+				replacement.append( node.id )
+			export['edges'] = replacement
 		return export
 
 	def export_to_Layouter(self):

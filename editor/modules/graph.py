@@ -81,6 +81,26 @@ class Graph:
 	def status(self):
 		self.log(info, "Network has "+str(self.NodeCount())+" nodes ("+str(len(self.Compartments))+" compartments, "+str(self.abstract_nodes)+" abstract) and "+str(self.EdgeCount())+" edges.")
 
+	def refresh_node_connections(self):
+		for node in self.Nodes:
+			node.connections = []
+			for edges in node.edges:
+				if edge.source == node:
+					node.connections.append( edge.target )
+				else:
+					node.connections.append( edge.source )
+
+	def move_process_nodes(self):
+		for node in self.Nodes:
+			if getNodeType(node.type) == getNodeType('Process'):
+				for i in range(len(node.connections)):
+					try:
+						print node.connections[0].data.compartment
+						node.data.compartment = node.connections[0].data.compartment
+						break
+					except:
+						pass
+
 	def make_object_links(self):
 		self.log(debug, "Generating object links ...")
 
@@ -102,6 +122,7 @@ class Graph:
 		for e in self.Edges:
 			e.source = getNodeByID(e.source)			# add Source and Target Node as Python Object links
 			e.target = getNodeByID(e.target)
+		self.refresh_node_connections()
 
 	def initialize(self, removeOrphans=False):				# initialize the network
 		self.mapped = False
@@ -110,6 +131,7 @@ class Graph:
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
 		self.make_object_links()
+		self.move_process_nodes()
 		self.hash()
 		self.log(info, "Graph initialized.")
 
@@ -564,8 +586,9 @@ class Graph:
 			global alias_counter
 			self.log(debug, "recursing "+str(compartment_ID))
 			for node in self.Nodes:
-				print str(node.is_abstract)
-				if not node.is_abstract:
+				if node.is_abstract:
+					self.log(debug, 'Not adding abstract node '+str(node.id))
+				else:
 					if (node.data.owns('compartment') and str(node.data.compartment.id) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
 						if getNodeType(node.type) == getNodeType('Compartment'):
 							node.alias = 'cluster'+str(alias_counter)
@@ -586,8 +609,6 @@ class Graph:
 							l = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id)
 							s = 'ellipse' if ( getNodeType(str(node.type)) != getNodeType("Process Node")) else 'box'
 							parent.add_node( node.alias, label=str(l), shape=s )
-				else:
-					self.log(debug, str(node.id)+' is abstract')
 		recurse( graphviz_model, TopCompartmentID )
 
 		self.log(info, 'Added '+str(alias_counter)+' nodes.')
