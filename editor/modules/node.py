@@ -108,29 +108,28 @@ class Node:
 		self.type		= layout['type']
 		self.id			= layout['id']
 		self.data.compartment 	= layout['compartment']
-		self.data.x		= layout['x']
-		self.data.y		= layout['y']
-		self.data.width		= layout['width']
-		self.data.height	= layout['height']
+		self.data.x		= float(layout['x'])
+		self.data.y		= float(layout['y'])
+		self.data.width		= float(layout['width'])
+		self.data.height	= float(layout['height'])
 
-	def selfcheck(self, verbosity=1):					# perform some basic integrity checks
+	def check_if_primary_keys_recognized(self, verbosity):
 		result = ""
-		show = False
 
-		for key in self.__dict__.keys():				# check if we recognize all keys
-			if not key in ["ConnectedEdges", "SubNodes", "CompartmentNode"]:	# else skip it ...
+		for key in self.__dict__.keys():
+			if not key in ["ConnectedEdges", "SubNodes", "CompartmentNode"]:	# don't check these 3, they are "internal"
 
-				if key in NodeKeyAliases.keys():		# is it an alias ...
-					newkey = NodeKeyAliases[key]
-					self.__dict__[newkey] = self.__dict__[key]
+				if key in NodeKeyAliases.keys():			# is it an alias ...
+					renameto = NodeKeyAliases[key]
+					self.__dict__[renameto] = self.__dict__[key]
 					del self.__dict__[key]
-					key = newkey
+					key = renameto
 
 					if verbosity >= 2:
-						result += 'Warning: '+self.id+'.'+key+' moved to '+self.id+'.'+newkey+'\n'
+						result += 'Warning: '+self.id+'.'+key+' renamed to '+self.id+'.'+renameto+'\n'
 
 				if not key in NodeKeys:
-					if key in OptionalNodeKeys:		# is it an optional key ...
+					if key in OptionalNodeKeys:			# is it an optional key ...
 						self.data.__dict__[key] = self.__dict__[key]
 						del self.__dict__[key]
 						if verbosity >= 2:
@@ -138,59 +137,68 @@ class Node:
 					else:
 						if verbosity >= 2:
 							result += 'Warning: Ignoring unrecognized Node property "'+key+'"\n'
-						show = True
+		return result
 
-		for key in self.data.__dict__.keys():				# check optional keys
+	def check_if_data_keys_recognized(self, verbosity):
+		result = ""
 
-			if key in NodeKeyAliases.keys():		# is it an alias ...
-				newkey = NodeKeyAliases[key]
-				if verbosity >= 2:
-					result += 'Warning: '+self.id+'.data.'+key+' moved to '+self.id+'.data.'+newkey+'\n'
-				self.data.__dict__[newkey] = self.data.__dict__[key]
+		for key in self.data.__dict__.keys():
+
+			if key in NodeKeyAliases.keys():				# is it an alias ...
+				renameto = NodeKeyAliases[key]
+				self.data.__dict__[renameto] = self.data.__dict__[key]
 				del self.data.__dict__[key]
-				key = newkey
 
-			if not key in OptionalNodeKeys:
+				if verbosity >= 2:
+					result += 'Warning: '+self.id+'.data.'+key+' renamed to '+self.id+'.data.'+renameto+'\n'
+				key = renameto
+
+			if not key in OptionalNodeKeys:					# it does not belong here
 				if key == 'id':
 					if not self.owns('id'):
-						if verbosity >= 2:
-							result += 'Warning: '+self.id+'.data.id moved to '+self.id+'.id\n'
 						self.id = self.data.id
 						self.data.id = randomID()
-				elif key in NodeKeys:			# is it a mandatory key ...
-					if verbosity >= 2:
-						result += 'Warning: '+self.id+'.data.'+key+' moved to '+self.id+'.'+key+'\n'
+						if verbosity >= 2:
+							result += 'Warning: Parent lacks id. '+self.id+'.data.id moved to '+self.id+'.id\n'
+
+				elif key in NodeKeys:					# is it a mandatory key ...
 					self.__dict__[key] = self.data.__dict__[key]
 					del self.data.__dict__[key]
+					if verbosity >= 2:
+						result += 'Warning: '+self.id+'.data.'+key+' moved to '+self.id+'.'+key+'\n'
 				else:
 					if verbosity >= 2:
 						result += 'Warning: Ignoring unrecognized optional Node property "'+key+'"\n'
-					show = True
+		return result
 
-		for key in MandatoryNodeKeys:				# check mandatory keys
+	def check_mandatory_keys(self, verbosity):
+		result = ''
+
+		for key in MandatoryNodeKeys:
 			if not self.owns(key):
 				if verbosity >= 1:
-					result += 'Error: '+self.id+'.'+key+' undefined but mandatory !\n'
-				show = True
+					result += 'Error: '+self.id+'.'+key+' undefined but mandatory. Expect global failure !\n'
 
-		if str(self.id) == "-1":				# check ID
-			result += "Error: Node ID -1 is not allowed !\n"
-			show = True
-		if type(self.id) == type(0):
-			if self.id < 0:
-				result += "Warning: Node ID < 0 !\n"
-				show = True
+		return result
 
-		if self.data.owns("compartment") and ( type(self.data.compartment) == type(0) ):	# check compartment
-			if self.data.compartment < 0 and self.type in [0,3]:
-				result += "Warning: Node compartment < 0 !\n"
-				show = True
-									# check visual properties
-		if self.data.owns("width") is not self.data.owns("height"):
-			result += "Warning: Incomplete information on Node size !\n"
-			show = True
+	def check_visual_properties(verbosity):
+		result = ""
 
-#		if show:						# if errors: show source
-#			result += "Node contains errors: "+self.exportJSON()+"\n"
+		if self.data.owns("width"):
+			self.width = float(self.width)
+
+		if self.data.owns("height"):
+			self.height = float(self.height)
+
+		return result
+
+	def selfcheck(self, verbosity=1):				# perform some integrity checks
+		result = ""
+
+		result += check_if_primary_keys_recognized(verbosity)
+		result += check_if_data_keys_recognized(verbosity)
+		result += check_mandatory_keys(verbosity)
+		result += check_visual_properties(verbosity)
+
 		return result
 
