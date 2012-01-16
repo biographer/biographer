@@ -12,7 +12,7 @@ def JSON():
 
 	response.headers['Content-Type'] = 'application/json'
 	response.headers['Content-Disposition'] = 'attachment; filename=model.json'
-	return response.stream(content, request=request)
+	return content
 
 def Layout():
 	if session.bioGraph is None:
@@ -23,7 +23,7 @@ def Layout():
 
 	response.headers['Content-Type'] = 'text/html'
 	response.headers['Content-Disposition'] = 'attachment; filename=model.layout'
-	return response.stream(content, request=request)
+	return content
 
 def Picture():
 	import os

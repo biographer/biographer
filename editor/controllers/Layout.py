@@ -50,5 +50,7 @@ def graphviz():
 	return redirect( URL(r=request, c="Visualization", f="graphviz") )
 
 def graphviz_layout():
-	return 	session.graphviz_layout
+	response.headers['Content-Type'] = 'text/vnd.graphviz'
+	response.headers['Content-Disposition'] = 'attachment; filename=model.dot'
+	return session.graphviz_layout
 
