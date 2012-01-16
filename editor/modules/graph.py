@@ -190,7 +190,7 @@ class Graph:
 	def find_abstract_nodes(self):
 		self.abstract_nodes = 0
 		for node in self.Nodes:
-			if getNodeType(node.type) == 253:
+			if node.is_abstract in [1, '1', True]:
 				node.is_abstract = True
 				self.abstract_nodes += 1
 
