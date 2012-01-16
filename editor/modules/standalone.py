@@ -7,9 +7,10 @@ import sys, getopt
 json = 'json'
 layouter = 'layouter'
 dot = 'dot'
+stdout = 'stdout'
 
 def usage():
-	print "Usage: standalone.py [--biomodel=123] [--sbml=model.sbml] [--json=model.json] [--output=json|layouter|dot]"
+	print "Usage: standalone.py [--biomodel=123] [--sbml=model.sbml] [--json=model.json] [--output=json|layouter|dot] [--saveto=stdout|<filename>]"
 	sys.exit()
 
 if len(sys.argv) < 2:
@@ -19,8 +20,9 @@ biomodel = None
 sbml = None
 json = None
 output = json
+saveto = stdout
 
-opts, args = getopt.getopt(sys.argv[1:], "", ['biomodel=', 'sbml=', 'json=', 'output='])
+opts, args = getopt.getopt(sys.argv[1:], "", ['biomodel=', 'sbml=', 'json=', 'output=', 'saveto='])
 
 for o, a in opts:
 	if o == '--biomodel':
@@ -35,6 +37,8 @@ for o, a in opts:
 		else:
 			print "Error: Invalid output format '"+a+"'"
 			sys.exit(1)
+	elif o == '--saveto':
+		saveto = a
 	else:
 		print 'Warning: Ignoring unrecognized parameter "'+o+'".'
 
@@ -69,10 +73,16 @@ else:
 
 ### export model ###
 
+result = None
 if output == json:
-	print model.exportJSON()
+	result = model.exportJSON()
 elif output == layouter:
-	print model.export_to_Layouter()
+	result = model.export_to_Layouter()
 elif output == dot:
-	print model.export_to_graphviz().string()
+	result = model.export_to_graphviz().string()
 
+if result is not None:
+	if saveto == stdout:
+		print result
+	else:
+		open(saveto, 'w').write(result)
