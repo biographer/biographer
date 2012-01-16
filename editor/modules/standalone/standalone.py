@@ -54,7 +54,7 @@ if sbml is not None:
 
 elif biomodel is not None:
 	from biomodels import download_BioModel
-	print 'Downloading BioModel BIOMD'+str(biomodel).rjust(10, '0')+' ...'
+	model.log(progress, 'Downloading BioModel BIOMD'+str(biomodel).rjust(10, '0')+' ...')
 	sbml = download_BioModel( biomodel )
 	if sbml is None:
 		print 'BioModel '+str(biomodel)+': no model associated'
