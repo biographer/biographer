@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
-error = 1
-warning = 2
-info = 3
-debug = 3
+info = 1
+error = 2
+warning = 3
+debug = 4
 
 DefaultIndent = 9	# for JSON output string formatting, 9 spaces per indent
 

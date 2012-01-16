@@ -32,7 +32,7 @@ from SBO_terms import *
 ### Graph object definition ###
 
 class Graph:
-	def __init__(self, filename=None, JSON=None, SBML=None, verbosity=debug_level):
+	def __init__(self, filename=None, JSON=None, SBML=None, verbosity=debug):
 		self.reset()
 		self.verbosity = verbosity
 		if filename is not None:
@@ -79,10 +79,10 @@ class Graph:
 				print msg
 
 	def status(self):
-		self.log("Network has "+str(self.NodeCount())+" nodes ("+str(len(self.Compartments))+" compartments, "+str(self.abstract_nodes)+" abstract) and "+str(self.EdgeCount())+" edges.")
+		self.log(info, "Network has "+str(self.NodeCount())+" nodes ("+str(len(self.Compartments))+" compartments, "+str(self.abstract_nodes)+" abstract) and "+str(self.EdgeCount())+" edges.")
 
 	def make_object_links(self):
-		self.log("Generating object links ...")
+		self.log(debug, "Generating object links ...")
 		for n in self.Nodes:
 			if n.data.owns('compartment') and type(n.data.compartment) == type(u''):
 				n.data.compartment = self.getNodeByID(n.data.compartment)
@@ -92,13 +92,13 @@ class Graph:
 
 	def initialize(self, removeOrphans=False):				# initialize the network
 		self.mapped = False
-		self.log("Initializing Graph ...")
+		self.log(debug, "Initializing Graph ...")
 		self.status()
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
 		self.make_object_links()
 		self.hash()
-		self.log("Graph initialized.")
+		self.log(info, "Graph initialized.")
 
 	def enumerate_IDs(self):						# enumerate IDs and correct collisions
 		self.node_IDs = []
@@ -183,12 +183,12 @@ class Graph:
 
 	def selfcheck(self, autoresize=True, removeOrphanEdges=True):
 
-		self.log("Performing Selfcheck ...")
+		self.log(debug, "Performing Selfcheck ...")
 
 		for n in self.Nodes:						# self-check all Nodes and Edges
-			self.log( n.selfcheck(verbosity=self.verbosity), raw=True )
+			self.log( error, n.selfcheck(verbosity=self.verbosity), raw=True )
 		for e in self.Edges:
-			self.log( e.selfcheck(verbosity=self.verbosity), raw=True )
+			self.log( error, e.selfcheck(verbosity=self.verbosity), raw=True )
 
 		self.enumerate_IDs()
 		self.enumerate_compartments()
@@ -212,7 +212,7 @@ class Graph:
 	### handling element IDs ###
 
 	def mapIDs(self):							# generate a map of IDs and array indices
-		self.log("Mapping IDs ...")
+		self.log(debug, "Mapping IDs ...")
 		self.maxID = 1							# thereby determine the highest ID used in our model
 		self.IDmapNodes = self.IDmapEdges = {}
 		for i in range(0, len(self.Nodes)):
@@ -266,36 +266,36 @@ class Graph:
 		if len(JSON) > 0:
 			if JSON.find("'") > -1:
 				JSON = JSON.replace("'",'"')			# JSON parser expects " quotes, ' quotes are not understood !
-				self.log(pre+"' quotations are not understood and have been replaced. Please only use \" quotes in the future.")
+				self.log(warning, pre+"' quotations are not understood and have been replaced. Please only use \" quotes in the future.")
 
 			if JSON.lstrip()[0] != "{":				# JSON needs to start with "{"
 				JSON = "{\n"+JSON+"\n}"
-				self.log(pre+"JSON = '{' + JSON + '}'")
+				self.log(warning, pre+"JSON = '{' + JSON + '}'")
 
 			while JSON.count("[") > JSON.count("]"):		# count "[" == count "]" ?
 				JSON += "]"
-				self.log(pre+"JSON = JSON + '}'")
+				self.log(warning, pre+"JSON = JSON + '}'")
 			while JSON.count("[") < JSON.count("]"):
 				JSON = "["+JSON
-				self.log(pre+"JSON = '{' + JSON")
+				self.log(warning, pre+"JSON = '{' + JSON")
 
 			while JSON.count("{") > JSON.count("}"):		# count "{" == count "}" ?
 				JSON += "}"
-				self.log(pre+"JSON = JSON + '}'")
+				self.log(warning, pre+"JSON = JSON + '}'")
 			while JSON.count("{") < JSON.count("}"):
 				JSON = "{"+JSON
-				self.log(pre+"JSON = '{' + JSON")
+				self.log(warning, pre+"JSON = '{' + JSON")
 
 			json = JSON.lower().replace(" ","")
 			if json.find('nodes:') == -1 and json.find('"nodes":') == -1 and json.find("'nodes':") == -1:
-				self.log(pre+'"nodes:" statement not found')
+				self.log(warning, pre+'"nodes:" statement not found')
 			if json.find('edges:') == -1 and json.find('"edges":') == -1 and json.find("'edges':") == -1:
-				self.log(pre+'"nodes:" statement not found')
+				self.log(warning, pre+'"nodes:" statement not found')
 
 			while JSON.find("//") > -1:				# remove commentary
 				p = JSON.find("//")
 				q = JSON.find("\n", p)
-				self.log(pre+"Removed commentary '"+JSON[p:q]+"'")
+				self.log(warning, pre+"Removed commentary '"+JSON[p:q]+"'")
 				JSON = JSON[:p] + JSON[q+1:]
 
 			alphabet = range(ord("a"), ord("z")+1)+range(ord("A"), ord("Z")+1)
@@ -322,17 +322,17 @@ class Graph:
 						JSON = JSON[:q] + '"' + JSON[q:]	# insert quote after statement
 						JSON = JSON[:p] + '"' + JSON[p:]	# insert quote before statement
 						after = (space+JSON+space)[p:p+30].replace(" ","").replace("\n","").replace("\t","")
-						self.log(pre+"Added missing quotation: ... "+before+" ... -> ... "+after+" ...")
+						self.log(warning, pre+"Added missing quotation: ... "+before+" ... -> ... "+after+" ...")
 						quoter = False			# done here, no more quotation
 				p += 1
 		else:
-			self.log(pre+"JSON = '{}'")
+			self.log(warning, pre+"JSON = '{}'")
 			JSON = "{}"
 		return JSON	#.replace("\n","").replace("\t","").replace(" : ",":")	# for debugging, to make it easier to track the JSON importer problem
 
 	def importJSON(self, JSON):						# import JSON
 		self.reset()
-		self.log("Importing JSON ...")
+		self.log(debug, "Importing JSON ...")
 
 		JSON = self.checkJSON(JSON)
 		try:
@@ -341,7 +341,7 @@ class Graph:
 		#	self.log(str(e.__dict__))
 		#	return
 		except Exception, err:
-			self.log("Fatal: JSON parser raised an exception! %s"%err)
+			self.log(error, "Fatal: JSON parser raised an exception! %s"%err)
 			return
 		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
 		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
@@ -351,7 +351,7 @@ class Graph:
 
 		d = self.exportDICT(status=False)
 
-		self.log("Exporting JSON ...")
+		self.log(debug, "Exporting JSON ...")
 
 		h = md5( pickle.dumps(d) ).hexdigest()
 		print 'Hash: '+h
@@ -366,7 +366,7 @@ class Graph:
 		if status:
 			self.status()
 
-		self.log("Exporting dictionary ...")
+		self.log(debug, "Exporting dictionary ...")
 
 		h = md5( pickle.dumps(self.Nodes) ).hexdigest() + md5( pickle.dumps(self.Edges) ).hexdigest()
 		print 'Hash: '+h
@@ -378,12 +378,12 @@ class Graph:
 
 	def importSBML(self, SBML):						# import SBML
 		self.reset()
-		self.log("Importing SBML ...")
+		self.log(debug, "Importing SBML ...")
 
 		SBML = libsbml.readSBMLFromString( SBML )
 		model = SBML.getModel()
 		if model is None:
-			self.log("Error: SBML model is None !")
+			self.log(error, "Error: SBML model is None !")
 			return False
 
 		for compartment in model.getListOfCompartments():
@@ -483,7 +483,7 @@ class Graph:
 	# ...
 
 	def export_to_Layouter(self):
-		self.log("Exporting Layout ...")
+		self.log(debug, "Exporting Layout ...")
 		global layout
 		layout = ""
 		def write(s):
@@ -519,7 +519,7 @@ class Graph:
 		return layout
 
 	def import_from_Layouter(self, layout):
-		self.log("Importing Layout ...")
+		self.log(debug, "Importing Layout ...")
 		lines = layout.split("\n")
 
 		# Compartments are ignored
@@ -549,7 +549,7 @@ class Graph:
 	### using graphviz
 
 	def export_to_graphviz(self):
-		self.log("Exporting model to graphviz ...")
+		self.log(debug, "Exporting model to graphviz ...")
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		graphviz_model = pygraphviz.AGraph(directed=True)
@@ -561,8 +561,8 @@ class Graph:
 			global alias_counter
 			self.log(debug, "recursing "+str(compartment_ID))
 			for node in self.Nodes:
-				if not node.is_abstract:
-					if (str(node.data.compartment) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
+				if not node.is_abstract or node.is_abstract == 1:
+					if (str(node.data.compartment.id) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
 						if getNodeType(node.type) == getNodeType('Compartment'):
 							node.alias = 'cluster'+str(alias_counter)
 							alias_counter += 1
@@ -598,7 +598,7 @@ class Graph:
 				counter += 1
 			except:
 				print "failed to add edge"
-				if self.verbosity >= debug_level:
+				if self.verbosity >= debug:
 					print edge.exportDICT()
 					print edge.source.exportDICT()
 					print edge.target.exportDICT()
@@ -608,7 +608,7 @@ class Graph:
 		return graphviz_model
 
 	def import_from_graphviz(self, layout):
-		self.log("Updating layout from graphviz ...")
+		self.log(debug, "Updating layout from graphviz ...")
 
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
 
@@ -648,7 +648,7 @@ class Graph:
 						else:
 							self.log(warning, "Warning: Node "+str(node.id)+" not updated")
 
-		self.log("Updated.")
+		self.log(info, "Model updated.")
 
 
 	### basic functions on Graph properties ###
@@ -666,7 +666,7 @@ class Graph:
 	### functions for really doing something with the Graph ###
 
 	def Split(self, node, NumClones=1):
-		self.log("Splitting "+str(node.id)+" ...")
+		self.log(debug, "Splitting "+str(node.id)+" ...")
 
 		clones = []
 		for i in range(0, NumClones):
@@ -680,7 +680,7 @@ class Graph:
 		# reaction Nodes cannot be cloned !
 		######################################################################
 
-		self.log(str(NumClones)+" clones created. "+str(node.id)+" is now abstract.")
+		self.log(info, str(NumClones)+" clones created. "+str(node.id)+" is now abstract.")
 	
 		# re-distribute Edges connected to the original Node onto clone Nodes #
 
@@ -692,27 +692,27 @@ class Graph:
 
 				if edge.source == node.id:
 					edge.source = clone[CurrentClone].id
-					self.log("Edge "+str(e.id)+" now originates from cloned Node "+str(clone[CurrentClone].id))
+					self.log(info, "Edge "+str(e.id)+" now originates from cloned Node "+str(clone[CurrentClone].id))
 					EdgesOfCurrentClone += 1
 
 				elif edge.target == node.id:
 					edge.target = clone[CurrentClone].id
-					self.log("Edge "+str(e.id)+" now points to cloned Node "+str(clone[CurrentClone].id))
+					self.log(info, "Edge "+str(e.id)+" now points to cloned Node "+str(clone[CurrentClone].id))
 					EdgesOfCurrentClone += 1
 
 				if EdgesOfCurrentClone >= EdgesPerClone:
 					CurrentClone += 1
 
-		self.log("Node "+str(node.id)+" cloned to 1 abstract Node + "+str(NumClones)+" clones. "+str( len(node.ConnectedEdges) )+" Edges re-distributed.")
+		self.log(info, "Node "+str(node.id)+" cloned to 1 abstract Node + "+str(NumClones)+" clones. "+str( len(node.ConnectedEdges) )+" Edges re-distributed.")
 		self.initialize()
 			
 
 	def setMaxEdges(self, degree):							# split all Nodes, that have more than "degree" Edges connected
 		self.MaxEdges = degree
-		self.log("Maximum Edge count set to "+str(degree)+".")
+		self.log(iinfo, "Maximum Edge count set to "+str(degree)+".")
 		for n in self.Nodes:							# for all Nodes
 			if len(n.ConnectedEdges) > degree:
-				self.log(str(n.id)+" exceeds maximum edge count.")
+				self.log(info, str(n.id)+" exceeds maximum edge count.")
 				self.Split( n )
 
 
@@ -722,12 +722,12 @@ class Graph:
 		except:
 			distance = 0
 		if distance < 1:
-			self.log("Fatal: Dijkstra requires positive integer arguments !")
+			self.log(error, "Fatal: Dijkstra requires positive integer arguments !")
 			return
 
 		# http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 		self.status()
-		self.log("Cutting width distance "+str(distance)+" around Node "+start.id+" ...")
+		self.log(error, "Cutting width distance "+str(distance)+" around Node "+start.id+" ...")
 
 		print "Suche Knoten mit Distanz: "+str(distance)
 
