@@ -27,7 +27,7 @@ from edge import Edge
 
 from defaults import *
 from SBO_terms import *
-
+from randomid import randomID
 
 ### Graph object definition ###
 
@@ -159,17 +159,18 @@ class Graph:
 
 	def enumerate_IDs(self):						# enumerate IDs and correct collisions
 		self.node_IDs = []
-		self.edge_IDs = []
 		for n in self.Nodes:
 			while n.id in self.node_IDs:
 				oldID = str(n.id)
-				n.id = randomID()
+				n.id = randomID( prefix=oldID+'_', length=4 )
 				self.log(error, "Collision: Node '"+odlID+"' renamed to '"+n.id+"'")
 			self.node_IDs.append(n.id)
+
+		self.edge_IDs = []
 		for e in self.Edges:
 			while e.id in self.edge_IDs or e.id in self.node_IDs:
 				oldID = str(e.id)
-				e.id = randomID()
+				e.id = randomID( prefix=oldID+'_', length=4 )
 				self.log(error, "Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
 			self.edge_IDs.append(e.id)
 
