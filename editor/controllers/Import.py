@@ -55,7 +55,9 @@ def BioModels():
 
 	if (request.env.request_method == "POST") or (request.vars.BioModelsID is not None):	# allows direct calls like /biographer/Import/BioModel?BioModelsID=220
 
-		import_BioModel( request.vars.BioModelsID )			# import
+		if not import_BioModel( request.vars.BioModelsID ):
+			session.flash = 'BioModel import failed. See web2py log for details.'
+			return redirect( URL(r=request, c='Workbench', f='index') )
 
 		if type(request.vars.returnto) == type([]):			# evaluate returnto parameters
 			returnto = str(request.vars.returnto[0])
@@ -87,7 +89,9 @@ def Reactome():
 
 	if request.env.request_method == "POST":
 
-		import_Reactome( request.vars.ST_ID )
+		if not import_Reactome( request.vars.ST_ID ):
+			session.flash = 'Reactome import failed. See web2py log for details.'
+			return redirect( URL(r=request, c='Workbench', f='index') )
 
 		return redirect( URL(r=request, c="Layout", f="graphviz") )
 
