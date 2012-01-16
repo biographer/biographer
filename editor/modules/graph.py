@@ -190,7 +190,7 @@ class Graph:
 	def find_abstract_nodes(self):
 		self.abstract_nodes = 0
 		for node in self.Nodes:
-			if node.is_abstract in [1, '1', True]:
+			if node.is_abstract in [1, '1', True, 'True', 'true', 'TRUE', 'yes', 'YES']:
 				node.is_abstract = True
 				self.abstract_nodes += 1
 
@@ -564,7 +564,8 @@ class Graph:
 			global alias_counter
 			self.log(debug, "recursing "+str(compartment_ID))
 			for node in self.Nodes:
-				if not node.is_abstract or node.is_abstract == 1:
+				print str(node.is_abstract)
+				if not node.is_abstract:
 					if (node.data.owns('compartment') and str(node.data.compartment.id) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
 						if getNodeType(node.type) == getNodeType('Compartment'):
 							node.alias = 'cluster'+str(alias_counter)
