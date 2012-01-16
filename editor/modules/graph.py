@@ -338,7 +338,7 @@ class Graph:
 		self.log(progress, "Exporting JSON ...")
 
 		h = md5( pickle.dumps(d) ).hexdigest()
-		self.log(debug, 'Hash: '+h)
+		self.log(debug, 'Hash is now '+h+', previous model was '+self.JSON_hash)
 		if self.JSON_hash != h:
 			self.JSON = json.dumps( d, indent=Indent )
 			self.JSON_hash = h
@@ -353,7 +353,7 @@ class Graph:
 		self.log(progress, "Exporting dictionary ...")
 
 		h = md5( pickle.dumps(self.Nodes) ).hexdigest() + md5( pickle.dumps(self.Edges) ).hexdigest()
-		self.log(debug, 'Hash: '+h)
+		self.log(debug, 'Hash is now '+h+', previous model was '+self.dict_hash)
 		if self.dict_hash != h:
 			self.exportdict = { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }
 			self.dict_hash = h
