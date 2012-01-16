@@ -33,7 +33,7 @@ from SBO_terms import *
 
 class Graph:
 	def __init__(self, filename=None, JSON=None, SBML=None, verbosity=2):
-e		self.reset()
+		self.reset()
 		self.verbosity = verbosity
 		if filename is not None:
 			self.importfile( filename )
@@ -92,15 +92,9 @@ e		self.reset()
 		self.log("Generating object links ...")
 		for n in self.Nodes:
 			n.ConnectedEdges = self.getConnectedEdges(n)		# add connected Edges as Object links
-			n.SubNodes = []
-			if n.data.owns('subnodes'):
-				for subID in n.data.subnodes:			# add SubNodes as Object links
-					node = self.getNodeByID(subID)
-					if node is not None:
-						n.SubNodes.append( node )
-			n.CompartmentNode = None				# add CompartmentNode as Object Link
+			n.ParentComparent = None				# add ParentComparent as Object Link
 			if n.data.owns('compartment'):
-				n.CompartmentNode = self.getNodeByID(n.data.compartment)
+				n.ParentComparent = self.getNodeByID(n.data.compartment)
 		for e in self.Edges:
 			e.SourceNode = self.getNodeByID(e.source)		# add Source and Target Node as Python Object links
 			e.TargetNode = self.getNodeByID(e.target)
@@ -117,10 +111,10 @@ e		self.reset()
 		self.log("Graph initialized.")
 
 	def enumerate_compartments(self):					# enumerate compartment list
-		self.compartment_IDs = [TopCompartmentID]
+		self.Compartment_IDs = [TopCompartmentID]
 		for n in self.Nodes:
 			if getNodeType(n.type) == getNodeType("Compartment Node"):
-				self.compartment_IDs.append(n.id)
+				self.Compartment_IDs.append(n.id)
 
 	def enumerate_IDs(self):						# enumerate IDs and correct collisions
 		self.node_IDs = []
@@ -139,9 +133,59 @@ e		self.reset()
 				if self.verbosity >= 1:
 					self.log("Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
 			self.edge_IDs.append(e.id)
+
+	def check_node_compartments(self):
+		for n in self.Nodes:
+			if not n.data.owns('compartment'):
+				n.data.compartment = TopCompartmentID
+				if self.verbosity >= 2:
+					self.log("Strange: "+str(n.id)+".data.compartment is not defined. Moved to top.")
+			if not n.data.compartment in self.Compartment_IDs:
+				if self.verbosity >= 1:
+					new = Node(defaults=True)
+					new.id = n.data.compartment
+					self.Nodes.append(new)
+					compartmentIDs.append(new.id)
+					self.log("Warning: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found. Created.")
+				n.data.compartment = TopCompartmentID
+
+	def check_edge_connections(self, removeOrphanEdges=True):
+		for e in self.Edges:
+			if not e.source in self.node_IDs:
+				self.Edges.pop( self.Edges.index(e) )
+				if self.verbosity >= 1:
+					self.log("Warning: Source node "+str(e.source)+" for edge "+str(e.id)+" not found. Edge removed.")
+			elif not e.target in self.node_IDs:
+				self.Edges.pop( self.Edges.index(e) )
+				if self.verbosity >= 1:
+					self.log("Warning: Target node "+str(e.target)+" for edge "+str(e.id)+" not found. Edge removed.")
+
+	def refresh_subnode_arrays(self):
+		for n in self.Nodes:
+			n.data.subnodes = []
+			for sub in self.Nodes:
+				if sub != n:
+					if sub.data.owns('compartment') and sub.data.compartment == n.id:
+						n.data.subnodes.append(sub)	# object link
+
+	def autosize_nodes(self):						# checks, if subnodes are bigger than parents and resizes the parent accordingly
+		for node in self.Nodes:
+			for subnode in node.data.subnodes:
+
+				if node.data.owns('width') and subnode.data.owns('width'):
+					if subnode.data.width > node.data.width:
+						if self.verbosity >= 2:
+							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is broadener than parent")s
+						node.data.width = subnode.data.width+20
+
+				if node.data.owns('height') and subnode.data.owns('height'):
+					if subnode.data.height > node.data.height:
+						if self.verbosity >= 2:
+							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is higher than parent")
+						node.data.height = subnode.data.height+20
 		
 
-	def selfcheck(self, autoresize=True, removeOrphanEdges=True):		# perform some basic integrity checks on the created Graph
+	def selfcheck(self, autoresize=True, removeOrphanEdges=True):
 
 		self.log("Performing Selfcheck ...")
 
@@ -152,63 +196,13 @@ e		self.reset()
 
 		self.enumerate_IDs()
 		self.enumerate_compartments()
+		self.check_node_compartments()
+		self.check_edge_connections( removeOrphanEdges )
+		self.refresh_subnode_arrays()
 
-		for n in self.Nodes:
-			if not n.data.owns('compartment'):
-				n.data.compartment = TopCompartmentID
-				if self.verbosity >= 2:
-					self.log("Strange: "+str(n.id)+".data.compartment is not defined. Moved to top.")
-			if not n.data.compartment in compartmentIDs:		# valid compartment ?
-				if self.verbosity >= 1:
-					new = Node(defaults=True)
-					new.id = n.data.compartment
-					self.Nodes.append(new)
-					compartmentIDs.append(new.id)
-					self.log("Warning: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found. Created.")
-				n.data.compartment = TopCompartmentID
+		if autoresize:
+			self.autosize_nodes()
 
-		for e in self.Edges:
-			orphan = False
-			if not e.source in nodeIDs:				# Source Node exists?
-				if self.verbosity >= 1:
-					self.log("Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" not found")
-				orphan = True
-			if not e.target in nodeIDs:				# Target Node exists ?
-				if self.verbosity >= 1:
-					self.log("Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" not found")
-				orphan = True
-			if orphan and removeOrphanEdges:			# No -> Orphan!
-				self.log("Edge removed.")
-				self.Edges.pop( self.Edges.index(e) )		# remove it
-
-		for n in self.Nodes:						# Nodes have non-existing subnodes ?
-										# or subnodes lie outside parent ?
-			if not n.data.owns('subnodes'):
-				n.data.subnodes = []
-				if self.verbosity >= 2:
-					self.log("Strange: "+str(n.id)+".data.subnodes is not defined. Attached an reset array.")
-			for subID in n.data.subnodes:
-				s = self.getNodeByID( subID )
-				if s is None:
-					n.data.subnodes.pop( n.data.subnodes.index(subID) )	# Subnode not found -> remove !
-					if self.verbosity >= 1:
-						self.log("Error: Subnode "+str(subID)+" of Node "+str(n.id)+" not found ! Subnode removed.")
-				else:
-					if s.data.owns('x','y','width') and n.data.owns('x','y','width'):
-						if s.data.x + s.data.width > n.data.x + n.data.width:
-							if self.verbosity >= 2:
-								self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" broadener than parent !")
-							if autoresize:
-								n.data.width = s.data.x + s.data.width - n.data.x
-								if self.verbosity >= 2:
-									self.log("Autoresize: Made it smaller.")
-						if s.data.y + s.data.height > n.data.y + n.data.height:
-							if self.verbosity >= 2:
-								self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" higher than parent !")
-							if autoresize:
-								n.data.height = s.data.y + s.data.height - n.data.y
-								if self.verbosity >= 2:
-									self.log("Autoresize: Made it smaller.")
 
 	### generating a unique Graph identifier ###
 
@@ -506,7 +500,7 @@ e		self.reset()
 			write( self.getNodeIndex(node) )
 			write( getLayoutNodeType(node.type) )
 			write( node.id )
-			write( self.getCompartmentIndex(node.CompartmentNode) )
+			write( self.getCompartmentIndex(node.ParentComparent) )
 			write( node.data.x )
 			write( node.data.y )
 			write( node.data.width )
