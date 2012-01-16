@@ -108,8 +108,6 @@ class Node:
 			for edge in export['edges']:
 				replacement.append( edge.id )
 			export['edges'] = replacement
-		if "parent" in export.keys():
-			export['parent'] = export['parent'].id
 		return export
 
 	def export_to_Layouter(self):
