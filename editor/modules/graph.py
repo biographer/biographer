@@ -107,15 +107,13 @@ class Graph:
 			while n.id in self.node_IDs:
 				oldID = str(n.id)
 				n.id = randomID()
-				if self.verbosity >= 1:
-					self.log("Collision: Node '"+odlID+"' renamed to '"+n.id+"'")
+				self.log(error, "Collision: Node '"+odlID+"' renamed to '"+n.id+"'")
 			self.node_IDs.append(n.id)
 		for e in self.Edges:
 			while e.id in self.edge_IDs or e.id in self.node_IDs:
 				oldID = str(e.id)
 				e.id = randomID()
-				if self.verbosity >= 1:
-					self.log("Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
+				self.log(error, "Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
 			self.edge_IDs.append(e.id)
 
 	def enumerate_compartments(self):					# enumerate compartment list
@@ -130,26 +128,22 @@ class Graph:
 		for n in self.Nodes:
 			if not n.data.owns('compartment'):
 				n.data.compartment = TopCompartmentID
-				if self.verbosity >= warning_level:
-					self.log("Strange: "+str(n.id)+".data.compartment is not defined. Moved to top.")
+				self.log(warning, "Warning: "+str(n.id)+".data.compartment is not defined. Moved to top.")
+
 			if not n.data.compartment in self.Compartment_IDs:
-				if self.verbosity >= error_level:
-					new = Node(defaults=True)
-					new.id = n.data.compartment
-					self.Nodes.append(new)
-					self.log("Warning: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found. Created.")
-				n.data.compartment = TopCompartmentID
+				new = Node(defaults=True)
+				new.id = n.data.compartment
+				self.Nodes.append(new)
+				self.log(warning, "Warning: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found. Created.")
 
 	def check_edge_connections(self, removeOrphanEdges=True):	# in the pre-objectlink-phase; edge.source/.target are still strings
 		for e in self.Edges:
 			if not e.source in self.node_IDs:
 				self.Edges.pop( self.Edges.index(e) )
-				if self.verbosity >= error_level:
-					self.log("Warning: Source node "+str(e.source)+" for edge "+str(e.id)+" not found. Edge removed.")
+				self.log(error, "Warning: Source node "+str(e.source)+" for edge "+str(e.id)+" not found. Edge removed.")
 			elif not e.target in self.node_IDs:
 				self.Edges.pop( self.Edges.index(e) )
-				if self.verbosity >= error_level:
-					self.log("Warning: Target node "+str(e.target)+" for edge "+str(e.id)+" not found. Edge removed.")
+				self.log(error, "Warning: Target node "+str(e.target)+" for edge "+str(e.id)+" not found. Edge removed.")
 
 	def refresh_subnode_arrays(self):
 		for n in self.Nodes:
@@ -165,14 +159,12 @@ class Graph:
 
 				if node.data.owns('width') and subnode.data.owns('width'):
 					if subnode.data.width > node.data.width:
-						if self.verbosity >= warning_level:
-							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is broadener than parent")
+						self.log(warning, "Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is broadener than parent")
 						node.data.width = subnode.data.width+20
 
 				if node.data.owns('height') and subnode.data.owns('height'):
 					if subnode.data.height > node.data.height:
-						if self.verbosity >= warning_level:
-							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is higher than parent")
+						self.log(warning, "Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is higher than parent")
 						node.data.height = subnode.data.height+20
 
 	def refresh_node_connected_edges(self):
@@ -522,8 +514,7 @@ class Graph:
 		for edge in self.Edges:
 			write( edge.type +" "+ str( self.Nodes.index(edge.source) ) +" "+ str( self.Nodes.index(edge.target) ) )
 
-		if self.verbosity >= debug_level:
-			self.log(layout)
+		self.log(debug, layout)
 
 		return layout
 
@@ -568,8 +559,7 @@ class Graph:
 
 		def recurse( parent, compartment_ID ):
 			global alias_counter
-			if self.verbosity >= debug_level:
-				print "recursing "+str(compartment_ID)
+			self.log(debug, "recursing "+str(compartment_ID))
 			for node in self.Nodes:
 				if not node.is_abstract:
 					if (str(node.data.compartment) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
@@ -582,12 +572,10 @@ class Graph:
 											label = str(l),
 											shape = 'ellipse'		)
 
-							if self.verbosity >= debug_level:
-								self.log('Created subgraph for compartment '+str(node.id)+' in '+str(compartment_ID)+' ...')
+							self.log(debug, 'Created subgraph for compartment '+str(node.id)+' in '+str(compartment_ID)+' ...')
 							recurse( subgraph, node.id )
 						else:
-							if self.verbosity >= debug_level:
-								self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
+							self.log(debug, 'Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
 
 							node.alias = 'node'+str(alias_counter)
 							alias_counter += 1
@@ -596,13 +584,12 @@ class Graph:
 							parent.add_node( node.alias, label=str(l), shape=s )
 		recurse( graphviz_model, TopCompartmentID )
 
-		if self.verbosity >= debug_level:
-			self.log('Added '+str(alias_counter)+' nodes.')
+		self.log(info, 'Added '+str(alias_counter)+' nodes.')
 
 		counter = 0
 		for edge in self.Edges:
-			if self.verbosity >= debug_level:
-				print 'Adding edge from '+str(edge.source.id)+' to '+str(edge.target.id)
+			self.log(debug, 'Adding edge from '+str(edge.source.id)+' to '+str(edge.target.id))
+
 			try:
 				source = edge.source.alias
 				target = edge.target.alias
@@ -615,8 +602,8 @@ class Graph:
 					print edge.exportDICT()
 					print edge.source.exportDICT()
 					print edge.target.exportDICT()
-		if self.verbosity >= debug_level:
-			self.log('Added '+str(counter)+' edges.')
+
+		self.log(info, 'Added '+str(counter)+' edges.')
 
 		return graphviz_model
 
@@ -646,23 +633,20 @@ class Graph:
 		for node in self.Nodes:
 			if not node.is_abstract:
 				if not node.owns('alias'):
-					if self.verbosity >= error_level:
-						self.log('Error: Node '+str(node.id)+' lacks alias.')
+					self.log(error, 'Error: Node '+str(node.id)+' lacks alias.')
 				else:
 					if getNodeType(node.type) == getNodeType('Compartment'):
 						coordinates = find_subgraph_in_graphviz_output(layout, node.alias)
 						if coordinates is not None:
 							node.update_from_graphviz_subgraph( coordinates )
 						else:
-							if self.verbosity >= warning_level:
-								self.log("Warning: Node "+str(node.id)+" not updated")
+							self.log(warning, "Warning: Node "+str(node.id)+" not updated")
 					else:
 						coordinates = find_node_in_graphviz_output(layout, node.alias)
 						if coordinates is not None:
 							node.update_from_graphviz_node( coordinates )
 						else:
-							if self.verbosity >= warning_level:
-								self.log("Warning: Node "+str(node.id)+" not updated")
+							self.log(warning, "Warning: Node "+str(node.id)+" not updated")
 
 		self.log("Updated.")
 
