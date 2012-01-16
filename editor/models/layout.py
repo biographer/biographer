@@ -31,9 +31,9 @@ def layout(graph, path_to_layout_binary, execution_folder='/tmp'):
 	graph.log(info, "Executable started. Timeout is set to "+str(timeout)+" seconds. Waiting for process to complete ...")
 	runtime = 0
 	while (process.poll() is None) and (runtime < timeout):				# wait until timeout
-		sleep(2)
+		sleep(1)
 		runtime = time()-start
-		graph.log(info, "Runtime is now: "+str(int(runtime))+" seconds.")
+		graph.log(info, "Runtime is now: "+str(int(runtime))+" seconds")
 
 	if runtime < timeout:
 		graph.log(info, path_to_layout_binary+" finished.")

@@ -506,17 +506,17 @@ class Graph:
 		self.log(progress, "Importing Layout ...")
 		lines = layout.split('///')[0].split("\n")
 
-		while len(lines) > 0:
-			index = int(lines.pop())
+		while len(lines) > 8:
+			index = int(lines.pop(0))
 			node = self.Nodes[index]
-			type = lines.pop()
-			name = lines.pop()
-			compartmentidx = lines.pop()
-			node.data.x = float(lines.pop())
-			node.data.y = float(lines.pop())
-			node.data.width = float(lines.pop())
-			node.data.height = float(lines.pop())
-			direction = float(lines.pop())
+			type = lines.pop(0)
+			name = lines.pop(0)
+			compartmentidx = lines.pop(0)
+			node.data.x = float(lines.pop(0))
+			node.data.y = float(lines.pop(0))
+			node.data.width = float(lines.pop(0))
+			node.data.height = float(lines.pop(0))
+			direction = float(lines.pop(0))
 			self.log(debug, node.id+' updated')
 
 		# ignore splines
