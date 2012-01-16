@@ -44,7 +44,7 @@ class Node:
 			return self.owns(key1) and self.owns(key2)
 		return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
-	def update_from_graphviz( self, layout ):
+	def update_from_graphviz_node( self, layout ):
 		if not self.owns("data"):
 			self.data = Data()
 
@@ -76,7 +76,22 @@ class Node:
 		q = layout.find('"', p)
 		self.data.height = int( float( r.findall(layout[p:q])[0] ) *70)		# temporary workaround
 
-		return str(self.id)+" is now at ( "+str(self.data.x)+" | "+str(self.data.y)+" ), width = "+str(self.data.width)+", height = "+str(self.data.height)
+#		return str(self.id)+" is now at ( "+str(self.data.x)+" | "+str(self.data.y)+" ), width = "+str(self.data.width)+", height = "+str(self.data.height)
+
+	def update_from_graphviz_subgraph( self, layout ):
+		if not self.owns("data"):
+			self.data = Data()
+
+		p = layout.find('[bb="')	# subgraph bounding box
+		if p == -1:
+			return False
+		q = layout.find('"', p)
+		haystack = layout[p:q].split(',')
+
+		self.data.x = float(haystack[0])
+		self.data.y = float(haystack[1])
+		self.data.width = float(haystack[2])-self.data.x
+		self.data.height = float(haystack[3])-self.data.y
 
 	def exportJSON(self, Indent=DefaultIndent):			# export Node as JSON string
 		return json.dumps( self.exportDICT(), indent=Indent )

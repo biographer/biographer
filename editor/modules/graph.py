@@ -175,7 +175,7 @@ class Graph:
 				if node.data.owns('width') and subnode.data.owns('width'):
 					if subnode.data.width > node.data.width:
 						if self.verbosity >= 2:
-							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is broadener than parent")s
+							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is broadener than parent")
 						node.data.width = subnode.data.width+20
 
 				if node.data.owns('height') and subnode.data.owns('height'):
@@ -183,7 +183,9 @@ class Graph:
 						if self.verbosity >= 2:
 							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is higher than parent")
 						node.data.height = subnode.data.height+20
-		
+
+	def find_abstract_nodes(self):
+		...
 
 	def selfcheck(self, autoresize=True, removeOrphanEdges=True):
 
@@ -629,7 +631,13 @@ class Graph:
 				except:	# string index out of range
 					pass
 				p = haystack.find(needle, p+1)
-			return -1
+			return None
+
+		def find_subgraph_in_graphviz_output(haystack, needle):
+			p = haystack.find('subgraph '+needle)
+			if p > -1:
+				return haystack[p:haystack.find(';', p)]
+			return None
 
 		# invert node name mapping dictionary for reverse lookup
 		self.node_name_mapping = dict([[v,k] for k,v in self.node_name_mapping.items()])
@@ -639,19 +647,22 @@ class Graph:
 
 		for node in self.Nodes:
 			if not node.is_abstract:
-				if getNodeType(node.type) == getNodeType('Compartment'):
-					self.log('Skipping update of compartment "'+str(node.id)+'" because compartment update does not work right now')
+				if str(node.id) not in self.node_name_mapping.keys():
+					print "Error: Node name mapping failed for '"+str(node.id)+"' in '"+str(node.data.compartment)+"'"
+
 				else:
-					if str(node.id) not in self.node_name_mapping.keys():
-						print "Error: Node name mapping failed for '"+str(node.id)+"' in '"+str(node.data.compartment)+"'"
+					nodealias = self.node_name_mapping[ str(node.id) ]
 
+					if getNodeType(node.type) == getNodeType('Compartment'):
+						coordinates = find_subgraph_in_graphviz_output(layout, nodealias)
+						if coordinates is not None:
+							node.update_from_graphviz_subgraph( coordinates )
+						else:
+							self.log("Warning: Node "+str(node.id)+" not updated")
 					else:
-						nodealias = self.node_name_mapping[ str(node.id) ]
-
-						p = find_node_in_graphviz_output(layout, nodealias)
-						if p > -1:
-							q = layout.find(";", p)
-							node.update_from_graphviz( layout[p:q] )
+						coordinates = find_node_in_graphviz_output(layout, nodealias)
+						if coordinates is not None:
+							node.update_from_graphviz_node( coordinates )
 						else:
 							self.log("Warning: Node "+str(node.id)+" not updated")
 
