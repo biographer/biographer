@@ -97,6 +97,8 @@ class Graph:
 		for n in self.Nodes:
 			if n.data.owns('compartment'):
 				n.data.compartment = getNodeByID(n.data.compartment)
+				if n.data.compartment is None:
+					del n.data.compartment
 		for e in self.Edges:
 			e.source = getNodeByID(e.source)			# add Source and Target Node as Python Object links
 			e.target = getNodeByID(e.target)
@@ -563,7 +565,7 @@ class Graph:
 			self.log(debug, "recursing "+str(compartment_ID))
 			for node in self.Nodes:
 				if not node.is_abstract or node.is_abstract == 1:
-					if (node.data.owns('compartment') and node.data.compartment is not None and str(node.data.compartment.id) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
+					if (node.data.owns('compartment') and str(node.data.compartment.id) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
 						if getNodeType(node.type) == getNodeType('Compartment'):
 							node.alias = 'cluster'+str(alias_counter)
 							alias_counter += 1
