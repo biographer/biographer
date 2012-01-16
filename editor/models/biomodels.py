@@ -6,7 +6,7 @@ def download_BioModel( BioModelsID ):
 	import httplib
 
 	connection = httplib.HTTPConnection("www.ebi.ac.uk")
-	connection.request("GET", "/biomodels-main/download?mid=BIOMD"+BioModelsID)
+	connection.request("GET", "/biomodels-main/download?mid=BIOMD"+str(BioModelsID).rjust(10, "0"))
 	Model = connection.getresponse().read()
 	connection.close()
 

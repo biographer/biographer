@@ -479,7 +479,10 @@ class Graph:
 			write( self.Nodes.index(node) )
 			write( getLayoutNodeType(node.type) )
 			write( node.id )
-			write( self.Compartments.index(node.data.compartment) )
+			if node.data.owns('compartment'):
+				write( self.Compartments.index(node.data.compartment) )
+			else:
+				write( str(TopCompartmentID) )
 			write( node.data.x )
 			write( node.data.y )
 			write( node.data.width )
@@ -563,8 +566,7 @@ class Graph:
 							s = 'ellipse' if ( getNodeType(str(node.type)) != getNodeType("Process Node")) else 'box'
 							parent.add_node( node.alias, label=str(l), shape=s )
 		recurse( graphviz_model, TopCompartmentID )
-
-		self.log(info, 'Added '+str(alias_counter)+' nodes.')
+		self.log(info, 'Added '+str(alias_counter)+' nodes to graphviz model.')
 
 		counter = 0
 		for edge in self.Edges:
@@ -583,7 +585,7 @@ class Graph:
 					print edge.source.exportDICT()
 					print edge.target.exportDICT()
 
-		self.log(info, 'Added '+str(counter)+' edges.')
+		self.log(info, 'Added '+str(counter)+' edges to graphviz model.')
 
 		return graphviz_model
 
