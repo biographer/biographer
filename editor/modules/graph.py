@@ -514,6 +514,7 @@ class Graph:
 		lines.pop()		# number of nodes
 
 		for node in self.Nodes:
+			self.log(debug, 'reading in '+node.id+' ...')
 			lines.pop()			# node index
 			lines.pop()			# node type
 			lines.pop()			# node id

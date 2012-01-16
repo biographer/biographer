@@ -41,12 +41,12 @@ def SBML():
 		import_SBML( session.SBML )					# import SBML
 
 		Layouter = request.vars.Layouter				# goto selected Layouter page
-		if Layouter == "Ask":
-			return redirect( URL(r=request,c='Layout',f='choose')+"?returnto="+URL(r=request,c='Workbench',f='index') )
-		if Layouter == "biographer":
-			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "ask":
+			return redirect( URL(r=request,c='Layout',f='choose') )
+		if Layouter == "internal":
+			return redirect( URL(r=request,c='Layout',f='internal') )
 		if Layouter == "graphviz":
-			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+			return redirect( URL(r=request,c='Layout',f='graphviz') )
 
 		return redirect( URL(r=request, c="Layout", f="graphviz") )
 
@@ -67,12 +67,12 @@ def BioModels():
 			return redirect( returnto )
 
 		Layouter = request.vars.Layouter				# a Layouter was chosen
-		if Layouter == "Ask":
-			return redirect( URL(r=request,c='Layout',f='choose')+"?returnto="+URL(r=request,c='Workbench',f='index') )
-		if Layouter == "biographer":
-			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+		if Layouter == "ask":
+			return redirect( URL(r=request,c='Layout',f='choose') )
+		if Layouter == "internal":
+			return redirect( URL(r=request,c='Layout',f='internal') )
 		if Layouter == "graphviz":
-			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
+			return redirect( URL(r=request,c='Layout',f='graphviz') )
 
 		return redirect( URL(r=request, c='Workbench', f='index') )	# else: goto Workbench
 

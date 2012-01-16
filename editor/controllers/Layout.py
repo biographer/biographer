@@ -15,11 +15,6 @@ def choose():
 		if returnto == "":
 			returnto = URL(r=request,c='Workbench',f='index')
 
-		Layouter = request.vars.Layouter
-		if Layouter == "internal":
-			return redirect( URL(r=request,c='Layout',f='internal')+"?returnto="+returnto )
-		if Layouter == "graphviz":
-			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+returnto )
 		return redirect( returnto )
 
 def internal():
