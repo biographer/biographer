@@ -26,7 +26,7 @@ from node import Node
 from edge import Edge
 
 from defaults import *
-from SBO_terms import *
+from sbo import *
 from randomid import randomID
 
 ### Graph object definition ###

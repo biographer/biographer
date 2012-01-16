@@ -7,7 +7,7 @@ import json				# JSON exchange format
 import re				# regular expressions, used for graphviz output parsing
 
 from defaults import *
-from SBO_terms import *
+from sbo import *
 from data import Data
 
 

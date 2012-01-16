@@ -6,7 +6,7 @@ from randomid import randomID
 import json
 
 from defaults import *
-from SBO_terms import *
+from sbo import *
 from data import Data
 
 
