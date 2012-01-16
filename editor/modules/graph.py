@@ -62,9 +62,6 @@ class Graph:
 		self.BioPAX = None
 		self.BioLayout = None
 		self.MD5 = None
-		self.maxID = 1
-		self.mapped = False
-		self.IDmapNodes = self.IDmapEdges = {}
 		if clearDEBUG:
 			self.DEBUG = ""
 
@@ -88,10 +85,6 @@ class Graph:
 		self.log(debug, "Generating object links ...")
 
 		def getNodeByID(ID):						# return Node with specified ID, else None
-	#		if self.mapped:
-	#			if ID in self.IDmapNodes.keys():
-	#				return self.Nodes[ self.IDmapNodes[ID] ]
-	#		else:
 			for n in self.Nodes:
 				if n.id == ID:
 					return n
@@ -152,7 +145,6 @@ class Graph:
 		self.log(debug, "Initializing Graph ...")
 		self.status()
 		self.selfcheck( removeOrphanEdges=removeOrphans )
-		self.mapIDs()
 		self.make_object_links()
 		self.refresh_node_connected_edges()
 		self.refresh_node_connections()
@@ -245,46 +237,6 @@ class Graph:
 	def hash(self):
 		self.MD5 = md5( pickle.dumps(self) ).hexdigest()
 		return self.MD5
-
-
-	### handling element IDs ###
-
-	def mapIDs(self):							# generate a map of IDs and array indices
-		self.log(debug, "Mapping IDs ...")
-		self.maxID = 1							# thereby determine the highest ID used in our model
-		self.IDmapNodes = self.IDmapEdges = {}
-		for i in range(0, len(self.Nodes)):
-			self.IDmapNodes[ self.Nodes[i].id ] = i
-			try:
-				if int( self.Nodes[i].id ) > self.maxID:	# may raise an exception, if Node ID is not integer
-					self.maxID = int( self.Nodes[i].id )+1
-			except:
-				pass						# ... this exception is ignored
-		for i in range(0, len(self.Edges)):
-			self.IDmapEdges[ self.Edges[i].id ] = i
-			try:
-				if int( self.Edge[i].id ) > self.maxID:
-					self.maxID = int( self.Edge[i].id )+1
-			except:
-				pass						# ... again ignored
-		self.mapped = True
-
-	def newID(self):							# generate a valid ID for the creation of a new object into our model
-		self.maxID += 1
-		return self.maxID
-
-	def getEdgeByID(self, ID):
-		return self.Edges[ self.IDmapEdges[ID] ]
-
-	def getNodeIndex(self, node):						# get the array index of a specified Node
-		if not node in self.Nodes:
-			return 0						# not found
-		return self.Nodes.index(node)					# counting starts with 0...
-
-	def getCompartmentIndex(self, node):					# get the array index of a specified Node
-		if not node in self.Compartments:
-			return 0						# not found
-		return self.Compartments.index(node)+1				# counting starts with 1...
 
 
 	### functions for Graph creation: import / export ###
@@ -434,8 +386,6 @@ class Graph:
 			n.data.compartment	= species.getCompartment()
 			self.Nodes.append(n)
 
-		self.mapIDs()	# because we will use newID() below
-
 		for reaction in model.getListOfReactions():			# create a process node
 			n			= Node( defaults=True )
 			n.id			= reaction.getId()
@@ -445,11 +395,10 @@ class Graph:
 			n.data.width		= 26
 			n.data.height		= 26
 			self.Nodes.append(n)
-			self.IDmapNodes[ n.id ]	= len(self.Nodes)-1
 
 			for reactant in reaction.getListOfReactants():		# create Edges from the educts, products and modifiers to this process node
 				e		= Edge( defaults=True )
-				e.id		= self.newID()
+				e.id		= 'reactant'+str(len(self.Nodes))
 				e.sbo           = 10#getSBO('Reactant')
 				e.type		= getEdgeType(e.sbo)#'Substrate'
 				e.source        = reactant.getSpecies()
@@ -458,7 +407,7 @@ class Graph:
 
 			for product in reaction.getListOfProducts():
 				e		= Edge( defaults=True )
-				e.id		= self.newID()
+				e.id		= 'product'+str(len(self.Nodes))
 				e.sbo           = 393#getSBO('Production')
 				e.type		= getEdgeType(e.sbo)#'Product'
 				e.source        = n.id
@@ -467,7 +416,7 @@ class Graph:
 
 			for modifier in reaction.getListOfModifiers():
 				e		= Edge( defaults=True )
-				e.id		= self.newID()
+				e.id		= 'modifier'+str(len(self.Nodes))
 				#e.sbo		= getSBO( modifier.getSBOTerm() )
 				e.sbo		= 19
 				if modifier.isSetSBOTerm():
