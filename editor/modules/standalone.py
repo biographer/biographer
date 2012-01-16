@@ -4,7 +4,7 @@
 ### parse console arguments ###
 
 import sys, getopt
-json = 'json'
+json_format = 'json'
 layouter = 'layouter'
 dot = 'dot'
 stdout = 'stdout'
@@ -30,9 +30,9 @@ for o, a in opts:
 	elif o == '--sbml':
 		sbml = a
 	elif o == '--json':
-		json = a
+		JSON = a
 	elif o == '--output':
-		if a in [json, layouter, dot]:
+		if a in [json_format, layouter, dot]:
 			output = a
 		else:
 			print "Error: Invalid output format '"+a+"'"
@@ -74,7 +74,7 @@ else:
 ### export model ###
 
 result = None
-if output == json:
+if output == json_format:
 	result = model.exportJSON()
 elif output == layouter:
 	result = model.export_to_Layouter()
@@ -86,3 +86,5 @@ if result is not None:
 		print result
 	else:
 		open(saveto, 'w').write(result)
+		print saveto+' saved.'
+

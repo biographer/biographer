@@ -163,7 +163,7 @@ class Graph:
 			while n.id in self.node_IDs:
 				oldID = str(n.id)
 				n.id = randomID( prefix=oldID+'_', length=4 )
-				self.log(error, "Collision: Node '"+odlID+"' renamed to '"+n.id+"'")
+				self.log(warning, "Collision: Node '"+odlID+"' renamed to '"+n.id+"'")
 			self.node_IDs.append(n.id)
 
 		self.edge_IDs = []
@@ -171,7 +171,7 @@ class Graph:
 			while e.id in self.edge_IDs or e.id in self.node_IDs:
 				oldID = str(e.id)
 				e.id = randomID( prefix=oldID+'_', length=4 )
-				self.log(error, "Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
+				self.log(warning, "Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
 			self.edge_IDs.append(e.id)
 
 	def enumerate_compartments(self):					# enumerate compartment list
@@ -335,7 +335,7 @@ class Graph:
 		self.log(debug, "Exporting JSON ...")
 
 		h = md5( pickle.dumps(d) ).hexdigest()
-		print 'Hash: '+h
+		self.log(debug, 'Hash: '+h)
 		if self.JSON_hash != h:
 			self.JSON = json.dumps( d, indent=Indent )
 			self.JSON_hash = h
@@ -350,7 +350,7 @@ class Graph:
 		self.log(debug, "Exporting dictionary ...")
 
 		h = md5( pickle.dumps(self.Nodes) ).hexdigest() + md5( pickle.dumps(self.Edges) ).hexdigest()
-		print 'Hash: '+h
+		self.log(debug, 'Hash: '+h)
 		if self.dict_hash != h:
 			self.exportdict = { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }
 			self.dict_hash = h
