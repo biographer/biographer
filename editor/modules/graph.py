@@ -86,7 +86,7 @@ class Graph:
 
 		def getNodeByID(ID):
 			for n in self.Nodes:
-				if n.id == ID:
+				if str(n.id).lower() == str(ID).lower():
 					return n
 			return None
 
@@ -98,12 +98,15 @@ class Graph:
 		for e in self.Edges:
 			e.source = getNodeByID(e.source)			# edge.source, edge.target
 			e.target = getNodeByID(e.target)
+			if e.source is None or e.target is None:
+				self.Edges.pop( self.Edges.index(e) )
+				self.log(warning, 'Warning: Deleted broken edge '+e.id)
 
 	def refresh_node_connected_edges(self):					# node.edges
 		for node in self.Nodes:
 			node.edges = []
 			for edge in self.Edges:
-				if edge.source == node or edge.target == node:
+				if edge.source == node or edge.target == node or edge.source == node.id or edge.target == node.id:
 					node.edges.append(edge)
 
 	def refresh_node_connections(self):					# node.connections (connected nodes)
@@ -399,7 +402,7 @@ class Graph:
 
 			for reactant in reaction.getListOfReactants():		# create Edges from the educts, products and modifiers to this process node
 				e		= Edge( defaults=True )
-				e.id		= 'reactant'+str(len(self.Nodes))
+				e.id		= 'reactant'+str(len(self.Edges))
 				e.sbo           = 10#getSBO('Reactant')
 				e.type		= getEdgeType(e.sbo)#'Substrate'
 				e.source        = reactant.getSpecies()
@@ -408,7 +411,7 @@ class Graph:
 
 			for product in reaction.getListOfProducts():
 				e		= Edge( defaults=True )
-				e.id		= 'product'+str(len(self.Nodes))
+				e.id		= 'product'+str(len(self.Edges))
 				e.sbo           = 393#getSBO('Production')
 				e.type		= getEdgeType(e.sbo)#'Product'
 				e.source        = n.id
@@ -417,7 +420,7 @@ class Graph:
 
 			for modifier in reaction.getListOfModifiers():
 				e		= Edge( defaults=True )
-				e.id		= 'modifier'+str(len(self.Nodes))
+				e.id		= 'modifier'+str(len(self.Edges))
 				#e.sbo		= getSBO( modifier.getSBOTerm() )
 				e.sbo		= 19
 				if modifier.isSetSBOTerm():
@@ -544,6 +547,8 @@ class Graph:
 			for node in self.Nodes:
 				if node.is_abstract:
 					self.log(debug, 'Not adding abstract node '+str(node.id))
+				elif len(node.edges) == 0 and getNodeType(node.type) != getNodeType('Compartment'):
+					self.log(warning, 'Warning: Not adding orphaned node '+str(node.id))
 				else:
 					if (node.data.owns('compartment') and str(node.data.compartment.id) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
 						if getNodeType(node.type) == getNodeType('Compartment'):
@@ -581,9 +586,12 @@ class Graph:
 			except:
 				print "failed to add edge"
 				if self.verbosity >= debug:
-					print edge.exportDICT()
-					print edge.source.exportDICT()
-					print edge.target.exportDICT()
+					print edge.__dict__
+					print edge.source.__dict__
+					print edge.target.__dict__
+#					print edge.exportDICT()
+#					print edge.source.exportDICT()
+#					print edge.target.exportDICT()
 
 		self.log(info, 'Added '+str(counter)+' edges to graphviz model.')
 

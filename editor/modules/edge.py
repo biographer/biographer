@@ -58,8 +58,10 @@ class Edge:
 		export = deepcopy(self.__dict__)				# export self as dictionary
 		export['data'] = self.data.exportDICT()
 		if type(export['source']) not in [type(''), type(u''), type(0)]:	# export IDs of linked objects
+#			del export['source']
 			export['source'] = export['source'].id
 		if type(export['target']) not in [type(''), type(u''), type(0)]:
+#			del export['target']
 			export['target'] = export['target'].id
 		return export
 

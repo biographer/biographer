@@ -103,12 +103,15 @@ class Node:
 	def exportDICT(self):
 		export = deepcopy(self.__dict__)			# convert self to dictionary
 		export['data'] = self.data.exportDICT()
+		
 		if "edges" in export.keys():
+#			del export['edges']
 			replacement = []
 			for edge in export['edges']:
 				replacement.append( edge.id )
 			export['edges'] = replacement
 		if "connections" in export.keys():
+#			del export['connections']
 			replacement = []
 			for node in export['connections']:
 				replacement.append( node.id )
