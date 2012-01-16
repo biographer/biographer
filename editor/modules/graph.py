@@ -106,6 +106,13 @@ class Graph:
 			e.source = getNodeByID(e.source)			# add Source and Target Node as Python Object links
 			e.target = getNodeByID(e.target)
 
+	def refresh_node_connected_edges(self):
+		for node in self.Nodes:
+			node.edges = []
+			for edge in self.Edges:
+				if edge.source == node or edge.target == node:
+					node.edges.append(edge)
+
 	def refresh_node_connections(self):
 		for node in self.Nodes:
 			node.connections = []
@@ -114,13 +121,6 @@ class Graph:
 					node.connections.append( edge.target )
 				else:
 					node.connections.append( edge.source )
-
-	def refresh_node_connected_edges(self):
-		for node in self.Nodes:
-			node.edges = []
-			for edge in self.Edges:
-				if edge.source == node or edge.target == node:
-					node.edges.append(edge)
 
 	def refresh_subnode_arrays(self):
 		for n in self.Nodes:
@@ -155,8 +155,8 @@ class Graph:
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
 		self.make_object_links()
-		self.refresh_node_connections()
 		self.refresh_node_connected_edges()
+		self.refresh_node_connections()
 		self.refresh_subnode_arrays()
 		self.find_abstract_nodes()
 		self.move_process_nodes()
