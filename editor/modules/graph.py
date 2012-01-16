@@ -504,28 +504,22 @@ class Graph:
 
 	def import_from_Layouter(self, layout):
 		self.log(progress, "Importing Layout ...")
-		lines = layout.split("\n")
+		lines = layout.split('///')[0].split("\n")
 
-		# Compartments are ignored
-
-		while lines[0] != "///":
-			lines.pop()
-		lines.pop()		# ///
-		lines.pop()		# number of nodes
-
-		for node in self.Nodes:
-			self.log(debug, 'reading in '+node.id+' ...')
-			lines.pop()			# node index
-			lines.pop()			# node type
-			lines.pop()			# node id
-			lines.pop()			# node compartment
+		while len(lines) > 0:
+			index = int(lines.pop())
+			node = self.Nodes[index]
+			type = lines.pop()
+			name = lines.pop()
+			compartmentidx = lines.pop()
 			node.data.x = float(lines.pop())
 			node.data.y = float(lines.pop())
 			node.data.width = float(lines.pop())
 			node.data.height = float(lines.pop())
-			lines.pop()			# node direction
+			direction = float(lines.pop())
+			self.log(debug, node.id+' updated')
 
-		# Edges are ignored		
+		# ignore splines
 
 		self.initialize()
 
