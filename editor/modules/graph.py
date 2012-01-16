@@ -287,10 +287,10 @@ class Graph:
 				JSON = "{"+JSON
 				self.log(pre+"JSON = '{' + JSON")
 
-			json = JSON.lower()
-			if json.replace(" ","").lower().find('nodes:') == -1:	# "nodes:" statement missing
+			json = JSON.lower().replace(" ","")
+			if json.find('nodes:') == -1 and json.find('"nodes":') == -1 and json.find("'nodes':") == -1:
 				self.log(pre+'"nodes:" statement not found')
-			if json.replace(" ","").lower().find('edges:') == -1:	# "edges:" statement missing
+			if json.find('edges:') == -1 and json.find('"edges":') == -1 and json.find("'edges':") == -1:
 				self.log(pre+'"nodes:" statement not found')
 
 			while JSON.find("//") > -1:				# remove commentary
