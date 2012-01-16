@@ -112,7 +112,7 @@ class Node:
 			replacement = []
 			for node in export['connections']:
 				replacement.append( node.id )
-			export['edges'] = replacement
+			export['connections'] = replacement
 		return export
 
 	def export_to_Layouter(self):

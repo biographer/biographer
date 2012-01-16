@@ -84,29 +84,29 @@ class Graph:
 	def make_object_links(self):
 		self.log(debug, "Generating object links ...")
 
-		def getNodeByID(ID):						# return Node with specified ID, else None
+		def getNodeByID(ID):
 			for n in self.Nodes:
 				if n.id == ID:
 					return n
 			return None
 
-		for n in self.Nodes:
+		for n in self.Nodes:						# node.data.compartment
 			if n.data.owns('compartment'):
 				n.data.compartment = getNodeByID(n.data.compartment)
 				if n.data.compartment is None:
 					del n.data.compartment
 		for e in self.Edges:
-			e.source = getNodeByID(e.source)			# add Source and Target Node as Python Object links
+			e.source = getNodeByID(e.source)			# edge.source, edge.target
 			e.target = getNodeByID(e.target)
 
-	def refresh_node_connected_edges(self):
+	def refresh_node_connected_edges(self):					# node.edges
 		for node in self.Nodes:
 			node.edges = []
 			for edge in self.Edges:
 				if edge.source == node or edge.target == node:
 					node.edges.append(edge)
 
-	def refresh_node_connections(self):
+	def refresh_node_connections(self):					# node.connections (connected nodes)
 		for node in self.Nodes:
 			node.connections = []
 			for edge in node.edges:
@@ -333,6 +333,8 @@ class Graph:
 		d = self.exportDICT(status=False)
 
 		self.log(debug, "Exporting JSON ...")
+
+		print d
 
 		h = md5( pickle.dumps(d) ).hexdigest()
 		self.log(debug, 'Hash: '+h)
