@@ -85,6 +85,7 @@ class Node:
 		p = layout.find('[bb="')	# subgraph bounding box
 		if p == -1:
 			return False
+		p += 5
 		q = layout.find('"', p)
 		haystack = layout[p:q].split(',')
 

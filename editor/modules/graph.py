@@ -52,6 +52,7 @@ class Graph:
 	def reset(self, clearDEBUG=True):					# reset current model
 		self.Nodes = []
 		self.Edges = []
+		self.abstract_nodes = 0
 		self.Compartments = []
 		self.CenterNode = None
 		self.dict_hash = ""
@@ -77,7 +78,7 @@ class Graph:
 			print msg
 
 	def status(self):
-		self.log("Network has "+str(self.NodeCount())+" Nodes ("+str(len(self.Compartments))+" of which are compartments) and "+str(self.EdgeCount())+" Edges.")
+		self.log("Network has "+str(self.NodeCount())+" nodes ("+str(len(self.Compartments))+" compartments, "+str(self.abstract_nodes)+" abstract) and "+str(self.EdgeCount())+" edges.")
 
 	def generateObjectLinks(self):
 		self.log("Generating object links ...")
@@ -139,7 +140,7 @@ class Graph:
 					self.log("Warning: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found. Created.")
 				n.data.compartment = TopCompartmentID
 
-	def check_edge_connections(self, removeOrphanEdges=True):
+	def check_edge_connections(self, removeOrphanEdges=True):	# in the pre-objectlink-phase; edge.source/.target are still strings
 		for e in self.Edges:
 			if not e.source in self.node_IDs:
 				self.Edges.pop( self.Edges.index(e) )
@@ -178,13 +179,15 @@ class Graph:
 		for node in self.Nodes:
 			node.edges = []
 			for edge in self.Edges:
-				if edge.source == node or edge.target == node.id:
+				if edge.source == node or edge.target == node:
 					node.edges.append(edge)
 
 	def find_abstract_nodes(self):
+		self.abstract_nodes = 0
 		for node in self.Nodes:
 			if getNodeType(node.type) == getNodeType('Process Node'):
 				node.is_abstract = True
+				self.abstract_nodes += 1
 
 	def selfcheck(self, autoresize=True, removeOrphanEdges=True):
 
@@ -353,14 +356,14 @@ class Graph:
 		self.initialize()
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
-		self.log("Exporting JSON ...")
 
 		d = self.exportDICT(status=False)
+
+		self.log("Exporting JSON ...")
 
 		h = md5( pickle.dumps(d) ).hexdigest()
 		print 'Hash: '+h
 		if self.JSON_hash != h:
-			print d
 			self.JSON = json.dumps( d, indent=Indent )
 			self.JSON_hash = h
 
@@ -370,6 +373,8 @@ class Graph:
 	def exportDICT(self, status=True):					# export current model as python dictionary
 		if status:
 			self.status()
+
+		self.log("Exporting dictionary ...")
 
 		h = md5( pickle.dumps(self.Nodes) ).hexdigest() + md5( pickle.dumps(self.Edges) ).hexdigest()
 		print 'Hash: '+h
@@ -557,22 +562,22 @@ class Graph:
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		graphviz_model = pygraphviz.AGraph(directed=True)
 
-		self.node_name_mapping = {}
-		abstract_nodes = 0
-		global abstract_nodes
+		global alias_counter
+		alias_counter = 0
 
 		def recurse( parent, compartment_ID ):
-			global abstract_nodes
+			global alias_counter
 			if debug:
 				print "recursing "+str(compartment_ID)
 			for node in self.Nodes:
 				if not node.is_abstract:
 					if (str(node.data.compartment) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
 						if getNodeType(node.type) == getNodeType('Compartment'):
-							self.node_name_mapping[str(node.id)] = 'cluster'+str(len(self.node_name_mapping.keys()))
+							node.alias = 'cluster'+str(alias_counter)
+							alias_counter += 1
 							l = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id)
 							subgraph = parent.add_subgraph(	[],
-											name = self.node_name_mapping[str(node.id)],
+											name = node.alias,
 											label = str(l) )
 #											shape = 'ellipse'		)
 
@@ -583,39 +588,26 @@ class Graph:
 							if debug:
 								self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
 
-							self.node_name_mapping[str(node.id)] = 'node'+str(len(self.node_name_mapping.keys()))
+							node.alias = 'node'+str(alias_counter)
+							alias_counter += 1
 							l = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id)
 							s = 'ellipse' if ( getNodeType(str(node.type)) != getNodeType("Process Node")) else 'box'
 #							parent.add_node(	name, label=l, shape=s		)	# Fehler?
-							parent.add_node(	self.node_name_mapping[str(node.id)], label=str(l)		)
-				else:
-					abstract_nodes += 1
+							parent.add_node(	node.alias, label=str(l)		)
 		recurse( graphviz_model, TopCompartmentID )
 
-		if debug:
-			print self.node_name_mapping
-			print 'Node name map has '+str(len(self.node_name_mapping.keys()))+' entries.'
-			print 'Total node count is '+str(len(self.Nodes))+', '+str(abstract_nodes)+' of which are abstract'
-
 		for edge in self.Edges:
-			if str(edge.source) not in self.node_name_mapping.keys():
-				print "Warning: Not adding arrow with unknown source '"+str(edge.source)+"'"
+			source = edge.source.alias
+			target = edge.target.alias
+			arrow = 'tee' if getEdgeType(edge.sbo) == getEdgeType(getSBO('Inhibition')) else 'normal'
 
-			elif str(edge.target) not in self.node_name_mapping.keys():
-				print "Warning: Not adding arrow with unknown target '"+str(edge.target)+"'"
-
-			else:
-				source = self.node_name_mapping[ str(edge.source) ]
-				target = self.node_name_mapping[ str(edge.target) ]
-				arrow = 'tee' if getEdgeType(edge.sbo) == getEdgeType(getSBO('Inhibition')) else 'normal'
-
+			if debug:
+				print 'Adding edge from '+str(edge.source.id)+' to '+str(edge.target.id)
+			try:
+				graphviz_model.add_edge( source, target, arrowhead=arrow )
+			except:
 				if debug:
-					print 'Adding edge from '+str(edge.source)+' to '+str(edge.target)
-				try:
-					graphviz_model.add_edge( source, target, arrowhead=arrow )
-				except:
-					if debug:
-						print "failed"
+					print "failed"
 		return graphviz_model
 
 	def import_from_graphviz(self, layout, debug=True):
@@ -629,7 +621,7 @@ class Graph:
 			while p > -1:
 				try:
 					if (haystack[p-1] in allowed_chars) and (haystack[p+len(needle)] in allowed_chars) and (haystack[p+len(needle)+1] in allowed_chars):
-						return p
+						return haystack[p:haystack.find(';',p)]
 				except:	# string index out of range
 					pass
 				p = haystack.find(needle, p+1)
@@ -641,32 +633,20 @@ class Graph:
 				return haystack[p:haystack.find(';', p)]
 			return None
 
-		# invert node name mapping dictionary for reverse lookup
-		self.node_name_mapping = dict([[v,k] for k,v in self.node_name_mapping.items()])
-
-		if debug:
-			print self.node_name_mapping
-
 		for node in self.Nodes:
 			if not node.is_abstract:
-				if str(node.id) not in self.node_name_mapping.keys():
-					print "Error: Node name mapping failed for '"+str(node.id)+"' in '"+str(node.data.compartment)+"'"
-
-				else:
-					nodealias = self.node_name_mapping[ str(node.id) ]
-
-					if getNodeType(node.type) == getNodeType('Compartment'):
-						coordinates = find_subgraph_in_graphviz_output(layout, nodealias)
-						if coordinates is not None:
-							node.update_from_graphviz_subgraph( coordinates )
-						else:
-							self.log("Warning: Node "+str(node.id)+" not updated")
+				if getNodeType(node.type) == getNodeType('Compartment'):
+					coordinates = find_subgraph_in_graphviz_output(layout, node.alias)
+					if coordinates is not None:
+						node.update_from_graphviz_subgraph( coordinates )
 					else:
-						coordinates = find_node_in_graphviz_output(layout, nodealias)
-						if coordinates is not None:
-							node.update_from_graphviz_node( coordinates )
-						else:
-							self.log("Warning: Node "+str(node.id)+" not updated")
+						self.log("Warning: Node "+str(node.id)+" not updated")
+				else:
+					coordinates = find_node_in_graphviz_output(layout, node.alias)
+					if coordinates is not None:
+						node.update_from_graphviz_node( coordinates )
+					else:
+						self.log("Warning: Node "+str(node.id)+" not updated")
 
 		self.log("Updated.")
 
