@@ -6,16 +6,24 @@ def index():
 def JSON():
 	if session.bioGraph is None:
 		session.flash = "Unable to export: No Model is loaded"
-		return redirect( URL(r=request, c="Workbench", f="index") )
+		return redirect( URL(r=request, c="Import", f="JSON") )
 
-	return session.bioGraph.exportJSON()
+	content = session.bioGraph.exportJSON()
+
+	response.headers['Content-Type'] = 'application/json'
+	response.headers['Content-Disposition'] = 'attachment; filename=model.json'
+	return response.stream(content, request=request)
 
 def Layout():
 	if session.bioGraph is None:
 		session.flash = "Unable to export: No Model is loaded"
-		return redirect( URL(r=request, c="Workbench", f="index") )
+		return redirect( URL(r=request, c="Import", f="JSON") )
 
-	return session.bioGraph.export_to_Layouter()
+	content = session.bioGraph.export_to_Layouter()
+
+	response.headers['Content-Type'] = 'text/html'
+	response.headers['Content-Disposition'] = 'attachment; filename=model.layout'
+	return response.stream(content, request=request)
 
 def Picture():
 	import os
@@ -26,7 +34,7 @@ def Picture():
 
 	if session.bioGraph is None:							# Error: no model loaded
 		session.flash = "Unable to export: No Model is loaded"
-		return redirect( URL(r=request, c="Workbench", f="index") )
+		return redirect( URL(r=request, c="Import", f="JSON") )
 
 	if not request.vars.format in formats_supported:				# Error: format not specified
 		session.flash = "Error: No export format specified or format not supported"
