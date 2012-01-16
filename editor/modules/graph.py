@@ -546,54 +546,68 @@ class Graph:
 	### secondary model layouting
 	### using graphviz
 
-	def export_to_graphviz(self, debug=True):
+	def export_to_graphviz(self, debug=False):
 		self.log("Exporting model to graphviz ...")
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		graphviz_model = pygraphviz.AGraph(directed=True)
 
-		self.cluster_name_mapping = []
-		self.node_name_mapping = []
+		self.node_name_mapping = {}
 
 		def recurse( parent, compartment_ID ):
-			print "recursing "+str(compartment_ID)
+			if debug:
+				print "recursing "+str(compartment_ID)
 			for node in self.Nodes:
-				if (str(node.data.compartment) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == 0)):
+				if (str(node.data.compartment) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
 					if getNodeType(node.type) == getNodeType('Compartment'):
-						label = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id)
+						self.node_name_mapping[str(node.id)] = 'cluster'+str(len(self.node_name_mapping.keys()))
+						l = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id)
 						subgraph = parent.add_subgraph(	[],
-										name = 'cluster'+str(len(self.cluster_name_mapping)) )
-#										label = label,
+										name = self.node_name_mapping[str(node.id)],
+										label = str(l) )
 #										shape = 'ellipse'		)
+
 						if debug:
 							self.log('Created subgraph for compartment '+str(node.id)+' in '+str(compartment_ID)+' ...')
-						self.cluster_name_mapping.append( str(node.id) )
-						self.node_name_mapping.append( str(node.id) )
 						recurse( subgraph, node.id )
 					else:
 						if debug:
 							self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
-						name = 'node'+str(len(self.node_name_mapping))
+
+						self.node_name_mapping[str(node.id)] = 'node'+str(len(self.node_name_mapping.keys()))
 						l = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id)
 						s = 'ellipse' if ( getNodeType(str(node.type)) != getNodeType("Process Node")) else 'box'
 #						parent.add_node(	name, label=l, shape=s		)	# Fehler?
-						parent.add_node(	name		)
-						self.node_name_mapping.append( str(node.id) )
-		recurse( graphviz_model, 0 )
+						parent.add_node(	self.node_name_mapping[str(node.id)], label=str(l)		)
+		recurse( graphviz_model, TopCompartmentID )
 
-# we are not deleting nodes anymore, just to remember, that initialize must be called, if we do so ...
-#		if nodes_deleted:
-#			self.initialize()	# necessary; e.g. ID map may not fit anymore, because we deleted Nodes
+		if debug:
+			print self.node_name_mapping
+			print 'Node name map has '+str(len(self.node_name_mapping.keys()))+' entries.'
+			print 'Total node count is '+str(len(self.Nodes))+' (should be the same number)'
 
 		for edge in self.Edges:
-#			print str(edge.source)+' to '+str(edge.target)
-			graphviz_model.add_edge(	'node'+str(self.node_name_mapping.index(str(edge.source))),
-							'node'+str(self.node_name_mapping.index(str(edge.target))),
-							arrowhead='tee' if edge.sbo == getSBO('Inhibition') else 'normal'
-						)
+			if str(edge.source) not in self.node_name_mapping.keys():
+				print "Warning: Not adding arrow with unknown source '"+str(edge.source)+"'"
+
+			elif str(edge.target) not in self.node_name_mapping.keys():
+				print "Warning: Not adding arrow with unknown target '"+str(edge.target)+"'"
+
+			else:
+				source = self.node_name_mapping[ str(edge.source) ]
+				target = self.node_name_mapping[ str(edge.target) ]
+				arrow = 'tee' if getEdgeType(edge.sbo) == getEdgeType(getSBO('Inhibition')) else 'normal'
+
+				if debug:
+					print 'Adding edge from '+str(edge.source)+' to '+str(edge.target)
+				try:
+					graphviz_model.add_edge( source, target, arrowhead=arrow )
+				except:
+					if debug:
+						print "failed"
 		return graphviz_model
 
-	def import_from_graphviz(self, layout):
+	def import_from_graphviz(self, layout, debug=True):
 		self.log("Updating layout from graphviz ...")
 
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
@@ -610,30 +624,30 @@ class Graph:
 				p = haystack.find(needle, p+1)
 			return -1
 
-		nodes_deleted = False
+		# invert node name mapping dictionary for reverse lookup
+		self.node_name_mapping = dict([[v,k] for k,v in self.node_name_mapping.items()])
+
+		if debug:
+			print self.node_name_mapping
+
 		for node in self.Nodes:
-			if node.sbo != getSBO('compartment'):
-				nodealias = str(node.id)
-				if nodealias in self.cluster_name_mapping:
-					nodealias = 'cluster'+str(self.cluster_name_mapping.index(nodealias))
-				elif nodealias in self.node_name_mapping:
-					nodealias = 'node'+str(self.node_name_mapping.index(nodealias))
-				p = find_node_in_graphviz_output(layout, nodealias)
-				if p > -1:
-					q = layout.find(";", p)
-					node.update_from_graphviz( layout[p:q] )
-				else:
-					self.Nodes.pop( self.Nodes.index(node) )
-					nodes_deleted = True
-					self.log("Error: Updating Node "+str(node.id)+" failed! Node deleted.")
+			if getNodeType(node.type) == getNodeType('Compartment'):
+				self.log('Skipping update of compartment "'+str(node.id)+'" because compartment update does not work right now')
 			else:
-				self.log('Skipping update of compartment "'+str(node.id)+'"')
+				if str(node.id) not in self.node_name_mapping.keys():
+					print "Error: Node name mapping failed for '"+str(node.id)+"' in '"+str(node.data.compartment)+"'"
+
+				else:
+					nodealias = self.node_name_mapping[ str(node.id) ]
+
+					p = find_node_in_graphviz_output(layout, nodealias)
+					if p > -1:
+						q = layout.find(";", p)
+						node.update_from_graphviz( layout[p:q] )
+					else:
+						self.log("Warning: Node "+str(node.id)+" not updated")
 
 		self.log("Updated.")
-
-		if nodes_deleted:
-			self.initialize()
-		return nodes_deleted
 
 
 	### basic functions on Graph properties ###

@@ -181,24 +181,27 @@ class Node:
 
 		return result
 
-	def check_visual_properties(verbosity):
+	def check_visual_properties(self, verbosity):
 		result = ""
 
+		if self.data.owns("x"):
+			self.data.x = float(self.data.x)
+		if self.data.owns("y"):
+			self.data.y = float(self.data.y)
 		if self.data.owns("width"):
-			self.width = float(self.width)
-
+			self.data.width = float(self.data.width)
 		if self.data.owns("height"):
-			self.height = float(self.height)
+			self.data.height = float(self.data.height)
 
 		return result
 
 	def selfcheck(self, verbosity=1):				# perform some integrity checks
 		result = ""
 
-		result += check_if_primary_keys_recognized(verbosity)
-		result += check_if_data_keys_recognized(verbosity)
-		result += check_mandatory_keys(verbosity)
-		result += check_visual_properties(verbosity)
+		result += self.check_if_primary_keys_recognized(verbosity)
+		result += self.check_if_data_keys_recognized(verbosity)
+		result += self.check_mandatory_keys(verbosity)
+		result += self.check_visual_properties(verbosity)
 
 		return result
 
