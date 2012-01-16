@@ -81,25 +81,8 @@ class Graph:
 	def status(self):
 		self.log(info, "Network has "+str(self.NodeCount())+" nodes ("+str(len(self.Compartments))+" compartments, "+str(self.abstract_nodes)+" abstract) and "+str(self.EdgeCount())+" edges.")
 
-	def refresh_node_connections(self):
-		for node in self.Nodes:
-			node.connections = []
-			for edges in node.edges:
-				if edge.source == node:
-					node.connections.append( edge.target )
-				else:
-					node.connections.append( edge.source )
 
-	def move_process_nodes(self):
-		for node in self.Nodes:
-			if getNodeType(node.type) == getNodeType('Process'):
-				for i in range(len(node.connections)):
-					try:
-						print node.connections[0].data.compartment
-						node.data.compartment = node.connections[0].data.compartment
-						break
-					except:
-						pass
+	## initialize ###
 
 	def make_object_links(self):
 		self.log(debug, "Generating object links ...")
@@ -122,7 +105,48 @@ class Graph:
 		for e in self.Edges:
 			e.source = getNodeByID(e.source)			# add Source and Target Node as Python Object links
 			e.target = getNodeByID(e.target)
-		self.refresh_node_connections()
+
+	def refresh_node_connections(self):
+		for node in self.Nodes:
+			node.connections = []
+			for edges in node.edges:
+				if edge.source == node:
+					node.connections.append( edge.target )
+				else:
+					node.connections.append( edge.source )
+
+	def refresh_node_connected_edges(self):
+		for node in self.Nodes:
+			node.edges = []
+			for edge in self.Edges:
+				if edge.source == node or edge.target == node:
+					node.edges.append(edge)
+
+	def refresh_subnode_arrays(self):
+		for n in self.Nodes:
+			n.data.subnodes = []
+			for sub in self.Nodes:
+				if sub != n:
+					if sub.data.owns('compartment') and sub.data.compartment == n:
+						n.data.subnodes.append(sub)	# object link
+
+	def find_abstract_nodes(self):
+		self.abstract_nodes = 0
+		for node in self.Nodes:
+			if node.is_abstract in [1, '1', True, 'True', 'true', 'TRUE', 'yes', 'YES']:
+				node.is_abstract = True
+				self.abstract_nodes += 1
+
+	def move_process_nodes(self):
+		for node in self.Nodes:
+			if getNodeType(node.type) in [getNodeType('Process'), getNodeType('Reaction'), getNodeType('Entitiy Pool Node')]:
+				for i in range(len(node.connections)):
+					try:
+						print node.connections[0].data.compartment
+						node.data.compartment = node.connections[0].data.compartment
+						break
+					except:
+						pass
 
 	def initialize(self, removeOrphans=False):				# initialize the network
 		self.mapped = False
@@ -131,9 +155,16 @@ class Graph:
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
 		self.make_object_links()
+		self.refresh_node_connections()
+		self.refresh_node_connected_edges()
+		self.refresh_subnode_arrays()
+		self.find_abstract_nodes()
 		self.move_process_nodes()
 		self.hash()
 		self.log(info, "Graph initialized.")
+
+
+	### selfcheck ###
 
 	def enumerate_IDs(self):						# enumerate IDs and correct collisions
 		self.node_IDs = []
@@ -180,15 +211,7 @@ class Graph:
 				self.Edges.pop( self.Edges.index(e) )
 				self.log(error, "Warning: Target node "+str(e.target)+" for edge "+str(e.id)+" not found. Edge removed.")
 
-	def refresh_subnode_arrays(self):
-		for n in self.Nodes:
-			n.data.subnodes = []
-			for sub in self.Nodes:
-				if sub != n:
-					if sub.data.owns('compartment') and sub.data.compartment == n.id:
-						n.data.subnodes.append(sub)	# object link
-
-	def autosize_nodes(self):						# checks, if subnodes are bigger than parents and resizes the parent accordingly
+	def check_node_sizes(self):						# checks, if subnodes are bigger than parents and resizes the parent accordingly
 		for node in self.Nodes:
 			for subnode in node.data.subnodes:
 
@@ -202,21 +225,7 @@ class Graph:
 						self.log(warning, "Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is higher than parent")
 						node.data.height = subnode.data.height+20
 
-	def refresh_node_connected_edges(self):
-		for node in self.Nodes:
-			node.edges = []
-			for edge in self.Edges:
-				if edge.source == node or edge.target == node:
-					node.edges.append(edge)
-
-	def find_abstract_nodes(self):
-		self.abstract_nodes = 0
-		for node in self.Nodes:
-			if node.is_abstract in [1, '1', True, 'True', 'true', 'TRUE', 'yes', 'YES']:
-				node.is_abstract = True
-				self.abstract_nodes += 1
-
-	def selfcheck(self, autoresize=True, removeOrphanEdges=True):
+	def selfcheck(self, removeOrphanEdges=True):
 
 		self.log(debug, "Performing Selfcheck ...")
 
@@ -229,12 +238,7 @@ class Graph:
 		self.enumerate_compartments()
 		self.check_node_compartments()
 		self.check_edge_connections( removeOrphanEdges )
-		self.refresh_subnode_arrays()
-		self.refresh_node_connected_edges()
-		self.find_abstract_nodes()
-
-		if autoresize:
-			self.autosize_nodes()
+		self.check_node_sizes()
 
 
 	### generating a unique Graph identifier ###
