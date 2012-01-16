@@ -48,7 +48,7 @@ def SBML():
 		if Layouter == "graphviz":
 			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+URL(r=request,c='Workbench',f='index') )
 
-		return redirect( URL(r=request, c='Workbench',f='index') )
+		return redirect( URL(r=request, c="Layout", f="graphviz") )
 
 
 def BioModels():
@@ -89,5 +89,5 @@ def Reactome():
 
 		import_Reactome( request.vars.ST_ID )
 
-		return redirect( URL(r=request, c='Workbench', f='index') )
+		return redirect( URL(r=request, c="Layout", f="graphviz") )
 
