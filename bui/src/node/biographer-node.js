@@ -172,7 +172,7 @@ jsdom.env({
       var fmt=makeLayouterFormat(bui,jdata);
       var fnt="/tmp/biographer-node"+process.pid;
       fs.writeFileSync(fnt+"in.tmp",fmt,0);
-      exec(layouter+" "+fnt+"in.tmp "+fnt+"out.tmp",function(error,stdout,stderr){
+      exec(layouter+" "+fnt+"in.tmp "+fnt+"out.tmp",{maxBuffer: 5000*1024},function(error,stdout,stderr){
          console.log(stdout+stderr);
          //if (error!=0) process.exit(1);
          var fmt2 = fs.readFileSync(fnt+"out.tmp").toString();
