@@ -116,7 +116,7 @@ class Graph:
 	def refresh_node_connections(self):
 		for node in self.Nodes:
 			node.connections = []
-			for edges in node.edges:
+			for edge in node.edges:
 				if edge.source == node:
 					node.connections.append( edge.target )
 				else:
@@ -142,7 +142,6 @@ class Graph:
 			if getNodeType(node.type) in [getNodeType('Process'), getNodeType('Reaction'), getNodeType('Entitiy Pool Node')]:
 				for i in range(len(node.connections)):
 					try:
-						print node.connections[0].data.compartment
 						node.data.compartment = node.connections[0].data.compartment
 						break
 					except:
