@@ -32,7 +32,7 @@ from SBO_terms import *
 ### Graph object definition ###
 
 class Graph:
-	def __init__(self, filename=None, JSON=None, SBML=None, verbosity=2):
+	def __init__(self, filename=None, JSON=None, SBML=None, verbosity=debug_level):
 		self.reset()
 		self.verbosity = verbosity
 		if filename is not None:
@@ -68,23 +68,24 @@ class Graph:
 		if clearDEBUG:
 			self.DEBUG = ""
 
-	def log(self, msg, raw=False):
-		msg = msg.strip()
-		if msg != "":
-			time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-			if not raw:
-				msg = time+": "+msg
-			self.DEBUG += msg+"\n"
-			print msg
+	def log(self, level, msg, raw=False):
+		if level >= self.verbosity:
+			msg = msg.strip()
+			if msg != "":
+				time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+				if not raw:
+					msg = time+": "+msg
+				self.DEBUG += msg+"\n"
+				print msg
 
 	def status(self):
 		self.log("Network has "+str(self.NodeCount())+" nodes ("+str(len(self.Compartments))+" compartments, "+str(self.abstract_nodes)+" abstract) and "+str(self.EdgeCount())+" edges.")
 
-	def generateObjectLinks(self):
+	def make_object_links(self):
 		self.log("Generating object links ...")
 		for n in self.Nodes:
-			if n.data.owns('compartment'):
-				n.parent = self.getNodeByID(n.data.compartment)
+			if n.data.owns('compartment') and type(n.data.compartment) == type(u''):
+				n.data.compartment = self.getNodeByID(n.data.compartment)
 		for e in self.Edges:
 			e.source = self.getNodeByID(e.source)			# add Source and Target Node as Python Object links
 			e.target = self.getNodeByID(e.target)
@@ -95,7 +96,7 @@ class Graph:
 		self.status()
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
-		self.generateObjectLinks()
+		self.make_object_links()
 		self.hash()
 		self.log("Graph initialized.")
 
@@ -129,14 +130,13 @@ class Graph:
 		for n in self.Nodes:
 			if not n.data.owns('compartment'):
 				n.data.compartment = TopCompartmentID
-				if self.verbosity >= 2:
+				if self.verbosity >= warning_level:
 					self.log("Strange: "+str(n.id)+".data.compartment is not defined. Moved to top.")
 			if not n.data.compartment in self.Compartment_IDs:
-				if self.verbosity >= 1:
+				if self.verbosity >= error_level:
 					new = Node(defaults=True)
 					new.id = n.data.compartment
 					self.Nodes.append(new)
-					compartmentIDs.append(new.id)
 					self.log("Warning: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found. Created.")
 				n.data.compartment = TopCompartmentID
 
@@ -144,11 +144,11 @@ class Graph:
 		for e in self.Edges:
 			if not e.source in self.node_IDs:
 				self.Edges.pop( self.Edges.index(e) )
-				if self.verbosity >= 1:
+				if self.verbosity >= error_level:
 					self.log("Warning: Source node "+str(e.source)+" for edge "+str(e.id)+" not found. Edge removed.")
 			elif not e.target in self.node_IDs:
 				self.Edges.pop( self.Edges.index(e) )
-				if self.verbosity >= 1:
+				if self.verbosity >= error_level:
 					self.log("Warning: Target node "+str(e.target)+" for edge "+str(e.id)+" not found. Edge removed.")
 
 	def refresh_subnode_arrays(self):
@@ -165,13 +165,13 @@ class Graph:
 
 				if node.data.owns('width') and subnode.data.owns('width'):
 					if subnode.data.width > node.data.width:
-						if self.verbosity >= 2:
+						if self.verbosity >= warning_level:
 							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is broadener than parent")
 						node.data.width = subnode.data.width+20
 
 				if node.data.owns('height') and subnode.data.owns('height'):
 					if subnode.data.height > node.data.height:
-						if self.verbosity >= 2:
+						if self.verbosity >= warning_level:
 							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is higher than parent")
 						node.data.height = subnode.data.height+20
 
@@ -185,7 +185,7 @@ class Graph:
 	def find_abstract_nodes(self):
 		self.abstract_nodes = 0
 		for node in self.Nodes:
-			if getNodeType(node.type) == getNodeType('Process Node'):
+			if getNodeType(node.type) == 253:
 				node.is_abstract = True
 				self.abstract_nodes += 1
 
@@ -500,16 +500,16 @@ class Graph:
 
 		write( len(self.Compartments) )			# Compartments
 		for compartment in self.Compartments:
-			write( str(self.getCompartmentIndex(compartment)) +" "+ compartment.id )
+			write( str(self.Compartments.index(compartment)) +" "+ str(compartment.id) )
 
 		write("///")
 
 		write( len(self.Nodes) )
 		for node in self.Nodes:				# Nodes
-			write( self.getNodeIndex(node) )
+			write( self.Nodes.index(node) )
 			write( getLayoutNodeType(node.type) )
 			write( node.id )
-			write( self.getCompartmentIndex(node.ParentComparent) )
+			write( self.Compartments.index(node.data.compartment) )
 			write( node.data.x )
 			write( node.data.y )
 			write( node.data.width )
@@ -522,7 +522,8 @@ class Graph:
 		for edge in self.Edges:
 			write( edge.type +" "+ str( self.Nodes.index(edge.source) ) +" "+ str( self.Nodes.index(edge.target) ) )
 
-#		self.log(layout)
+		if self.verbosity >= debug_level:
+			self.log(layout)
 
 		return layout
 
@@ -542,10 +543,10 @@ class Graph:
 			lines.pop()			# node type
 			lines.pop()			# node id
 			lines.pop()			# node compartment
-			node.data.x = lines.pop()
-			node.data.y = lines.pop()
-			node.data.width = lines.pop()
-			node.data.height = lines.pop()
+			node.data.x = float(lines.pop())
+			node.data.y = float(lines.pop())
+			node.data.width = float(lines.pop())
+			node.data.height = float(lines.pop())
 			lines.pop()			# node direction
 
 		# Edges are ignored		
@@ -556,7 +557,7 @@ class Graph:
 	### secondary model layouting
 	### using graphviz
 
-	def export_to_graphviz(self, debug=True):
+	def export_to_graphviz(self):
 		self.log("Exporting model to graphviz ...")
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
@@ -567,7 +568,7 @@ class Graph:
 
 		def recurse( parent, compartment_ID ):
 			global alias_counter
-			if debug:
+			if self.verbosity >= debug_level:
 				print "recursing "+str(compartment_ID)
 			for node in self.Nodes:
 				if not node.is_abstract:
@@ -578,39 +579,48 @@ class Graph:
 							l = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id)
 							subgraph = parent.add_subgraph(	[],
 											name = node.alias,
-											label = str(l) )
-#											shape = 'ellipse'		)
+											label = str(l),
+											shape = 'ellipse'		)
 
-							if debug:
+							if self.verbosity >= debug_level:
 								self.log('Created subgraph for compartment '+str(node.id)+' in '+str(compartment_ID)+' ...')
 							recurse( subgraph, node.id )
 						else:
-							if debug:
+							if self.verbosity >= debug_level:
 								self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
 
 							node.alias = 'node'+str(alias_counter)
 							alias_counter += 1
 							l = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id)
 							s = 'ellipse' if ( getNodeType(str(node.type)) != getNodeType("Process Node")) else 'box'
-#							parent.add_node(	name, label=l, shape=s		)	# Fehler?
-							parent.add_node(	node.alias, label=str(l)		)
+							parent.add_node( node.alias, label=str(l), shape=s )
 		recurse( graphviz_model, TopCompartmentID )
 
-		for edge in self.Edges:
-			source = edge.source.alias
-			target = edge.target.alias
-			arrow = 'tee' if getEdgeType(edge.sbo) == getEdgeType(getSBO('Inhibition')) else 'normal'
+		if self.verbosity >= debug_level:
+			self.log('Added '+str(alias_counter)+' nodes.')
 
-			if debug:
+		counter = 0
+		for edge in self.Edges:
+			if self.verbosity >= debug_level:
 				print 'Adding edge from '+str(edge.source.id)+' to '+str(edge.target.id)
 			try:
+				source = edge.source.alias
+				target = edge.target.alias
+				arrow = 'tee' if getEdgeType(edge.sbo) == getEdgeType(getSBO('Inhibition')) else 'normal'
 				graphviz_model.add_edge( source, target, arrowhead=arrow )
+				counter += 1
 			except:
-				if debug:
-					print "failed"
+				print "failed to add edge"
+				if self.verbosity >= debug_level:
+					print edge.exportDICT()
+					print edge.source.exportDICT()
+					print edge.target.exportDICT()
+		if self.verbosity >= debug_level:
+			self.log('Added '+str(counter)+' edges.')
+
 		return graphviz_model
 
-	def import_from_graphviz(self, layout, debug=True):
+	def import_from_graphviz(self, layout):
 		self.log("Updating layout from graphviz ...")
 
 		# http://www.graphviz.org/doc/info/attrs.html#d:pos
@@ -635,18 +645,24 @@ class Graph:
 
 		for node in self.Nodes:
 			if not node.is_abstract:
-				if getNodeType(node.type) == getNodeType('Compartment'):
-					coordinates = find_subgraph_in_graphviz_output(layout, node.alias)
-					if coordinates is not None:
-						node.update_from_graphviz_subgraph( coordinates )
-					else:
-						self.log("Warning: Node "+str(node.id)+" not updated")
+				if not node.owns('alias'):
+					if self.verbosity >= error_level:
+						self.log('Error: Node '+str(node.id)+' lacks alias.')
 				else:
-					coordinates = find_node_in_graphviz_output(layout, node.alias)
-					if coordinates is not None:
-						node.update_from_graphviz_node( coordinates )
+					if getNodeType(node.type) == getNodeType('Compartment'):
+						coordinates = find_subgraph_in_graphviz_output(layout, node.alias)
+						if coordinates is not None:
+							node.update_from_graphviz_subgraph( coordinates )
+						else:
+							if self.verbosity >= warning_level:
+								self.log("Warning: Node "+str(node.id)+" not updated")
 					else:
-						self.log("Warning: Node "+str(node.id)+" not updated")
+						coordinates = find_node_in_graphviz_output(layout, node.alias)
+						if coordinates is not None:
+							node.update_from_graphviz_node( coordinates )
+						else:
+							if self.verbosity >= warning_level:
+								self.log("Warning: Node "+str(node.id)+" not updated")
 
 		self.log("Updated.")
 

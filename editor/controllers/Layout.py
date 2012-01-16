@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+def index():
+	return redirect( URL(r=request, c="Layout", f="choose") )
+
 def choose():
 	if request.env.request_method == "GET":
 		return dict( returnto=str(request.vars.returnto) )
@@ -26,9 +29,7 @@ def internal():
 
 	layout( session.bioGraph, path_to_layout_binary=os.path.join(request.folder, "layout/build/layout"), execution_folder=os.path.join(request.folder, "cache") )
 
-	if request.vars.returnto is not None:
-		return redirect(str(request.vars.returnto))
-	return dict()
+	return redirect( URL(r=request, c="Workbench", f="index") )
 
 def graphviz():
 	if session.bioGraph is None:
@@ -44,11 +45,9 @@ def graphviz():
 	session.graphviz_png	= '../static/graphviz/'+png
 	session.graphviz_layout = session.bioGraph.graphviz_layout
 
-	response.flash = "graphviz layout completed"
+	session.flash = "graphviz layout completed"
 
-	if request.vars.returnto is not None:
-		return redirect(str(request.vars.returnto))
-	return dict()
+	return redirect( URL(r=request, c="Visualization", f="graphviz") )
 
 def graphviz_layout():
 	return 	session.graphviz_layout

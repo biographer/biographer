@@ -1,6 +1,10 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
+error_level = 1
+warning_level = 2
+debug_level = 3
+
 DefaultIndent = 9	# for JSON output string formatting, 9 spaces per indent
 
 TopCompartmentID = 0

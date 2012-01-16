@@ -88,6 +88,9 @@ class Node:
 		p += 5
 		q = layout.find('"', p)
 		haystack = layout[p:q].split(',')
+		if len(haystack) != 4:
+			print "skipping bogus subgraph haystack: "+str(haystack)
+			return False
 
 		self.data.x = float(haystack[0])
 		self.data.y = float(haystack[1])
