@@ -32,8 +32,9 @@ from SBO_terms import *
 ### Graph object definition ###
 
 class Graph:
-	def __init__(self, filename=None, JSON=None, SBML=None):
-		self.empty()
+	def __init__(self, filename=None, JSON=None, SBML=None, verbosity=2):
+e		self.reset()
+		self.verbosity = verbosity
 		if filename is not None:
 			self.importfile( filename )
 		if JSON is not None:
@@ -48,7 +49,7 @@ class Graph:
 			return self.owns(key1) and self.owns(key2)
 		return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
-	def empty(self, clearDEBUG=True):					# reset current model
+	def reset(self, clearDEBUG=True):					# reset current model
 		self.Nodes = []
 		self.Edges = []
 		self.Compartments = []
@@ -115,44 +116,50 @@ class Graph:
 		self.hash()
 		self.log("Graph initialized.")
 
-	def selfcheck(self, autoresize=True, removeOrphanEdges=True, verbosity=1):		# perform some basic integrity checks on the created Graph
+	def enumerate_compartments(self):					# enumerate compartment list
+		self.compartment_IDs = [TopCompartmentID]
+		for n in self.Nodes:
+			if getNodeType(n.type) == getNodeType("Compartment Node"):
+				self.compartment_IDs.append(n.id)
+
+	def enumerate_IDs(self):						# enumerate IDs and correct collisions
+		self.node_IDs = []
+		self.edge_IDs = []
+		for n in self.Nodes:
+			while n.id in self.node_IDs:
+				oldID = str(n.id)
+				n.id = randomID()
+				if self.verbosity >= 1:
+					self.log("Collision: Node '"+odlID+"' renamed to '"+n.id+"'")
+			self.node_IDs.append(n.id)
+		for e in self.Edges:
+			while e.id in self.edge_IDs or e.id in self.node_IDs:
+				oldID = str(e.id)
+				e.id = randomID()
+				if self.verbosity >= 1:
+					self.log("Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
+			self.edge_IDs.append(e.id)
+		
+
+	def selfcheck(self, autoresize=True, removeOrphanEdges=True):		# perform some basic integrity checks on the created Graph
 
 		self.log("Performing Selfcheck ...")
 
 		for n in self.Nodes:						# self-check all Nodes and Edges
-			self.log( n.selfcheck(verbosity=verbosity), raw=True )
+			self.log( n.selfcheck(verbosity=self.verbosity), raw=True )
 		for e in self.Edges:
-			self.log( e.selfcheck(verbosity=verbosity), raw=True )
+			self.log( e.selfcheck(verbosity=self.verbosity), raw=True )
 
-		usedIDs = []				# remember all used IDs
-		nodeIDs = []				# remember all Node IDs
-		compartmentIDs = [TopCompartmentID]	# remember compartments
-		for n in self.Nodes:						# check for (and correct) colliding Node IDs !
-			while n.id in usedIDs:
-				oldID = str(n.id)
-				n.id = randomID()
-				if verbosity >= 1:
-					self.log("Collision: Node '"+odlID+"' renamed to '"+n.id+"'")
-			usedIDs.append(n.id)
-			if getNodeType(n.type) == getNodeType("Compartment Node"):
-				compartmentIDs.append(n.id)
-			nodeIDs.append(n.id)
-
-		for e in self.Edges:						# check for (and correct) colliding Node IDs !
-			while e.id in usedIDs:
-				oldID = str(e.id)
-				e.id = randomID()
-				if verbosity >= 1:
-					self.log("Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
-			usedIDs.append(e.id)
+		self.enumerate_IDs()
+		self.enumerate_compartments()
 
 		for n in self.Nodes:
 			if not n.data.owns('compartment'):
 				n.data.compartment = TopCompartmentID
-				if verbosity >= 2:
+				if self.verbosity >= 2:
 					self.log("Strange: "+str(n.id)+".data.compartment is not defined. Moved to top.")
 			if not n.data.compartment in compartmentIDs:		# valid compartment ?
-				if verbosity >= 1:
+				if self.verbosity >= 1:
 					new = Node(defaults=True)
 					new.id = n.data.compartment
 					self.Nodes.append(new)
@@ -163,11 +170,11 @@ class Graph:
 		for e in self.Edges:
 			orphan = False
 			if not e.source in nodeIDs:				# Source Node exists?
-				if verbosity >= 1:
+				if self.verbosity >= 1:
 					self.log("Error: Source Node "+str(e.source)+" for Edge "+str(e.id)+" not found")
 				orphan = True
 			if not e.target in nodeIDs:				# Target Node exists ?
-				if verbosity >= 1:
+				if self.verbosity >= 1:
 					self.log("Error: Target Node "+str(e.target)+" for Edge "+str(e.id)+" not found")
 				orphan = True
 			if orphan and removeOrphanEdges:			# No -> Orphan!
@@ -178,29 +185,29 @@ class Graph:
 										# or subnodes lie outside parent ?
 			if not n.data.owns('subnodes'):
 				n.data.subnodes = []
-				if verbosity >= 2:
-					self.log("Strange: "+str(n.id)+".data.subnodes is not defined. Attached an empty array.")
+				if self.verbosity >= 2:
+					self.log("Strange: "+str(n.id)+".data.subnodes is not defined. Attached an reset array.")
 			for subID in n.data.subnodes:
 				s = self.getNodeByID( subID )
 				if s is None:
 					n.data.subnodes.pop( n.data.subnodes.index(subID) )	# Subnode not found -> remove !
-					if verbosity >= 1:
+					if self.verbosity >= 1:
 						self.log("Error: Subnode "+str(subID)+" of Node "+str(n.id)+" not found ! Subnode removed.")
 				else:
 					if s.data.owns('x','y','width') and n.data.owns('x','y','width'):
 						if s.data.x + s.data.width > n.data.x + n.data.width:
-							if verbosity >= 2:
+							if self.verbosity >= 2:
 								self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" broadener than parent !")
 							if autoresize:
 								n.data.width = s.data.x + s.data.width - n.data.x
-								if verbosity >= 2:
+								if self.verbosity >= 2:
 									self.log("Autoresize: Made it smaller.")
 						if s.data.y + s.data.height > n.data.y + n.data.height:
-							if verbosity >= 2:
+							if self.verbosity >= 2:
 								self.log("Warning: Subnode "+str(s.id)+" of Node "+str(n.id)+" higher than parent !")
 							if autoresize:
 								n.data.height = s.data.y + s.data.height - n.data.y
-								if verbosity >= 2:
+								if self.verbosity >= 2:
 									self.log("Autoresize: Made it smaller.")
 
 	### generating a unique Graph identifier ###
@@ -332,7 +339,7 @@ class Graph:
 		return JSON	#.replace("\n","").replace("\t","").replace(" : ",":")	# for debugging, to make it easier to track the JSON importer problem
 
 	def importJSON(self, JSON):						# import JSON
-		self.empty()
+		self.reset()
 		self.log("Importing JSON ...")
 
 		JSON = self.checkJSON(JSON)
@@ -375,7 +382,7 @@ class Graph:
 		return self.exportdict
 
 	def importSBML(self, SBML):						# import SBML
-		self.empty()
+		self.reset()
 		self.log("Importing SBML ...")
 
 		SBML = libsbml.readSBMLFromString( SBML )
@@ -546,45 +553,51 @@ class Graph:
 	### secondary model layouting
 	### using graphviz
 
-	def export_to_graphviz(self, debug=False):
+	def export_to_graphviz(self, debug=True):
 		self.log("Exporting model to graphviz ...")
 
 		# http://networkx.lanl.gov/pygraphviz/tutorial.html
 		graphviz_model = pygraphviz.AGraph(directed=True)
 
 		self.node_name_mapping = {}
+		abstract_nodes = 0
+		global abstract_nodes
 
 		def recurse( parent, compartment_ID ):
+			global abstract_nodes
 			if debug:
 				print "recursing "+str(compartment_ID)
 			for node in self.Nodes:
-				if (str(node.data.compartment) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
-					if getNodeType(node.type) == getNodeType('Compartment'):
-						self.node_name_mapping[str(node.id)] = 'cluster'+str(len(self.node_name_mapping.keys()))
-						l = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id)
-						subgraph = parent.add_subgraph(	[],
-										name = self.node_name_mapping[str(node.id)],
-										label = str(l) )
-#										shape = 'ellipse'		)
+				if not node.is_abstract:
+					if (str(node.data.compartment) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
+						if getNodeType(node.type) == getNodeType('Compartment'):
+							self.node_name_mapping[str(node.id)] = 'cluster'+str(len(self.node_name_mapping.keys()))
+							l = node.data.label if node.data.owns("label") and node.data.label != "" else str(node.id)
+							subgraph = parent.add_subgraph(	[],
+											name = self.node_name_mapping[str(node.id)],
+											label = str(l) )
+#											shape = 'ellipse'		)
 
-						if debug:
-							self.log('Created subgraph for compartment '+str(node.id)+' in '+str(compartment_ID)+' ...')
-						recurse( subgraph, node.id )
-					else:
-						if debug:
-							self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
+							if debug:
+								self.log('Created subgraph for compartment '+str(node.id)+' in '+str(compartment_ID)+' ...')
+							recurse( subgraph, node.id )
+						else:
+							if debug:
+								self.log('Adding '+str(node.id)+' to '+str(compartment_ID)+' ...')
 
-						self.node_name_mapping[str(node.id)] = 'node'+str(len(self.node_name_mapping.keys()))
-						l = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id)
-						s = 'ellipse' if ( getNodeType(str(node.type)) != getNodeType("Process Node")) else 'box'
-#						parent.add_node(	name, label=l, shape=s		)	# Fehler?
-						parent.add_node(	self.node_name_mapping[str(node.id)], label=str(l)		)
+							self.node_name_mapping[str(node.id)] = 'node'+str(len(self.node_name_mapping.keys()))
+							l = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id)
+							s = 'ellipse' if ( getNodeType(str(node.type)) != getNodeType("Process Node")) else 'box'
+#							parent.add_node(	name, label=l, shape=s		)	# Fehler?
+							parent.add_node(	self.node_name_mapping[str(node.id)], label=str(l)		)
+				else:
+					abstract_nodes += 1
 		recurse( graphviz_model, TopCompartmentID )
 
 		if debug:
 			print self.node_name_mapping
 			print 'Node name map has '+str(len(self.node_name_mapping.keys()))+' entries.'
-			print 'Total node count is '+str(len(self.Nodes))+' (should be the same number)'
+			print 'Total node count is '+str(len(self.Nodes))+', '+str(abstract_nodes)+' of which are abstract'
 
 		for edge in self.Edges:
 			if str(edge.source) not in self.node_name_mapping.keys():
@@ -631,21 +644,22 @@ class Graph:
 			print self.node_name_mapping
 
 		for node in self.Nodes:
-			if getNodeType(node.type) == getNodeType('Compartment'):
-				self.log('Skipping update of compartment "'+str(node.id)+'" because compartment update does not work right now')
-			else:
-				if str(node.id) not in self.node_name_mapping.keys():
-					print "Error: Node name mapping failed for '"+str(node.id)+"' in '"+str(node.data.compartment)+"'"
-
+			if not node.is_abstract:
+				if getNodeType(node.type) == getNodeType('Compartment'):
+					self.log('Skipping update of compartment "'+str(node.id)+'" because compartment update does not work right now')
 				else:
-					nodealias = self.node_name_mapping[ str(node.id) ]
+					if str(node.id) not in self.node_name_mapping.keys():
+						print "Error: Node name mapping failed for '"+str(node.id)+"' in '"+str(node.data.compartment)+"'"
 
-					p = find_node_in_graphviz_output(layout, nodealias)
-					if p > -1:
-						q = layout.find(";", p)
-						node.update_from_graphviz( layout[p:q] )
 					else:
-						self.log("Warning: Node "+str(node.id)+" not updated")
+						nodealias = self.node_name_mapping[ str(node.id) ]
+
+						p = find_node_in_graphviz_output(layout, nodealias)
+						if p > -1:
+							q = layout.find(";", p)
+							node.update_from_graphviz( layout[p:q] )
+						else:
+							self.log("Warning: Node "+str(node.id)+" not updated")
 
 		self.log("Updated.")
 
