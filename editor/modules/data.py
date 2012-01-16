@@ -24,7 +24,12 @@ class Data:
 		return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
 	def exportDICT(self):
-		me = deepcopy(self.__dict__)
-		del me['id']
-		return me
+		export = deepcopy(self.__dict__)
+		del export['id']
+		if 'subnodes' in export.keys():
+			replacement_array = []
+			for subnode in export['subnodes']:
+				replacement_array.append(subnode.id)
+			export['subnodes'] = replacement_array
+		return export
 

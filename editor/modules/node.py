@@ -97,15 +97,13 @@ class Node:
 		return json.dumps( self.exportDICT(), indent=Indent )
 
 	def exportDICT(self):
-		me = deepcopy(self.__dict__)				# convert self to dictionary
-		me['data'] = self.data.exportDICT()
-		if "ConnectedEdges" in me.keys():			# do not export ConnectedEdges,
-			del me["ConnectedEdges"]
-		if "SubNodes" in me.keys():				# SubNodes,
-			del me["SubNodes"]
-		if "CompartmentNode" in me.keys():			# and the CompartmentNode
-			del me["CompartmentNode"]
-		return me
+		export = deepcopy(self.__dict__)			# convert self to dictionary
+		export['data'] = self.data.exportDICT()
+		if "ConnectedEdges" in export.keys():			# do not export ConnectedEdges,
+			del export["ConnectedEdges"]
+		if "CompartmentNode" in export.keys():			# and the CompartmentNode
+			del export["CompartmentNode"]
+		return export
 
 	def export_to_Layouter(self):
 		return {

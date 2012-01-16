@@ -79,25 +79,14 @@ class Graph:
 	def status(self):
 		self.log("Network has "+str(self.NodeCount())+" Nodes ("+str(len(self.Compartments))+" of which are compartments) and "+str(self.EdgeCount())+" Edges.")
 
-	def identifyCompartments(self):						# create array Compartments with links to the appropriate Node Objects
-		self.log("Identifying Compartments ...")
-		self.Compartments = []
-		NodeType_Compartment = getNodeType("Compartment Node")
-		for node in self.Nodes:
-			if getNodeType(node.type) == NodeType_Compartment:
-				self.Compartments.append(node)
-		self.log(str(len(self.Compartments))+" compartments identified.")
-
 	def generateObjectLinks(self):
 		self.log("Generating object links ...")
 		for n in self.Nodes:
-			n.ConnectedEdges = self.getConnectedEdges(n)		# add connected Edges as Object links
-			n.ParentComparent = None				# add ParentComparent as Object Link
 			if n.data.owns('compartment'):
-				n.ParentComparent = self.getNodeByID(n.data.compartment)
+				n.parent = self.getNodeByID(n.data.compartment)
 		for e in self.Edges:
-			e.SourceNode = self.getNodeByID(e.source)		# add Source and Target Node as Python Object links
-			e.TargetNode = self.getNodeByID(e.target)
+			e.source = self.getNodeByID(e.source)			# add Source and Target Node as Python Object links
+			e.target = self.getNodeByID(e.target)
 
 	def initialize(self, removeOrphans=False):				# initialize the network
 		self.mapped = False
@@ -105,16 +94,9 @@ class Graph:
 		self.status()
 		self.selfcheck( removeOrphanEdges=removeOrphans )
 		self.mapIDs()
-		self.identifyCompartments()
 		self.generateObjectLinks()
 		self.hash()
 		self.log("Graph initialized.")
-
-	def enumerate_compartments(self):					# enumerate compartment list
-		self.Compartment_IDs = [TopCompartmentID]
-		for n in self.Nodes:
-			if getNodeType(n.type) == getNodeType("Compartment Node"):
-				self.Compartment_IDs.append(n.id)
 
 	def enumerate_IDs(self):						# enumerate IDs and correct collisions
 		self.node_IDs = []
@@ -133,6 +115,14 @@ class Graph:
 				if self.verbosity >= 1:
 					self.log("Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
 			self.edge_IDs.append(e.id)
+
+	def enumerate_compartments(self):					# enumerate compartment list
+		self.Compartments = []
+		self.Compartment_IDs = [TopCompartmentID]
+		for n in self.Nodes:
+			if getNodeType(n.type) == getNodeType("Compartment Node"):
+				self.Compartments.append(n)
+				self.Compartment_IDs.append(n.id)
 
 	def check_node_compartments(self):
 		for n in self.Nodes:
@@ -184,8 +174,17 @@ class Graph:
 							self.log("Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is higher than parent")
 						node.data.height = subnode.data.height+20
 
+	def refresh_node_connected_edges(self):
+		for node in self.Nodes:
+			node.edges = []
+			for edge in self.Edges:
+				if edge.source == node or e.target == node.id:
+					node.edges.append(edges)
+
 	def find_abstract_nodes(self):
-		...
+		for node in self.Nodes:
+			if getNodeType(node.type) == getNodeType('Process Node'):
+				node.is_abstract = True
 
 	def selfcheck(self, autoresize=True, removeOrphanEdges=True):
 
@@ -201,6 +200,8 @@ class Graph:
 		self.check_node_compartments()
 		self.check_edge_connections( removeOrphanEdges )
 		self.refresh_subnode_arrays()
+		self.refresh_node_connected_edges()
+		self.find_abstract_nodes()
 
 		if autoresize:
 			self.autosize_nodes()
@@ -670,21 +671,6 @@ class Graph:
 
 
 	### basic functions on Graph properties ###
-
-	def getConnectedEdges(self, node):							# returns an array of Edges, pointing from/to the specified Node
-		edges = []
-		for e in self.Edges:
-			if (str(e.source) == str(node.id)) or (str(e.target) == str(node.id)):
-				edges.append( e )
-		return edges
-
-	def getConnectedNodes(self, node):
-		results = []
-		if not node.owns('ConnectedEdges'):
-			node.ConnectedEdges = self.getConnectedEdges(node)
-		for edge in node.ConnectedEdges:
-			results.append( self.getNodeByID( edge.theotherID(node.id) ) )
-		return results
 
 	def NodeCount(self):
 		return len(self.Nodes)

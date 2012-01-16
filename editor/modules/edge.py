@@ -51,17 +51,17 @@ class Edge:
 				return self.source
 		return None
 
-	def exportJSON(self, Indent=DefaultIndent):			# export Edge as JSON
+	def exportJSON(self, Indent=DefaultIndent):				# export Edge as JSON
 		return json.dumps( self.exportDICT(), indent=Indent )
 
 	def exportDICT(self):
-		me = deepcopy(self.__dict__)				# export self as dictionary
-		me['data'] = self.data.exportDICT()
-		if "SourceNode" in me.keys():				# do not export SourceNode and TargetNode
-			del me["SourceNode"]
-		if "TargetNode" in me.keys():
-			del me["TargetNode"]
-		return me
+		export = deepcopy(self.__dict__)				# export self as dictionary
+		export['data'] = self.data.exportDICT()
+		if type(export['source']) not in [type(''), type(u''), type(0)]:	# export IDs of linked objects
+			export['source'] = export['source'].id
+		if type(export['target']) not in [type(''), type(u''), type(0)]:
+			export['target'] = export['target'].id
+		return export
 
 	def export_to_Layouter(self):
 		return {
