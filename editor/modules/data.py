@@ -26,7 +26,7 @@ class Data:
 	def exportDICT(self):
 		export = deepcopy(self.__dict__)
 		del export['id']
-		if 'compartment' in export.keys() and type(export['compartment']) not in [type(0), type(''), type(u'')]:
+		if 'compartment' in export.keys() and export['compartment'] is not None and type(export['compartment']) not in [type(0), type(''), type(u'')]:
 			export['compartment'] = export['compartment'].id
 		if 'subnodes' in export.keys():
 			replacement = []

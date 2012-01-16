@@ -13,12 +13,12 @@ def JSON():
 			session.JSON = request.vars.File.file.read()
 			session.flash = request.vars.File.filename+" retrieved and parsed."
 		else:								# the example JSON was requested
-			session.JSON = open( os.path.join(request.folder, "static/examples/example.json") ).read()
+			session.JSON = open( os.path.join(request.folder, "static/examples/apoptosis_biom220_reacp.xjson") ).read()
 			session.flash = "Example JSON loaded."
 
 		import_JSON( session.JSON )					# import JSON
 
-		return redirect( URL(r=request, c="Workbench", f="index") )
+		return redirect( URL(r=request, c="Layout", f="graphviz") )
 
 
 def JSONdebug():								# function: show JSON details

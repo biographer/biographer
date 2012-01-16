@@ -83,12 +83,23 @@ class Graph:
 
 	def make_object_links(self):
 		self.log(debug, "Generating object links ...")
+
+		def getNodeByID(ID):						# return Node with specified ID, else None
+	#		if self.mapped:
+	#			if ID in self.IDmapNodes.keys():
+	#				return self.Nodes[ self.IDmapNodes[ID] ]
+	#		else:
+			for n in self.Nodes:
+				if n.id == ID:
+					return n
+			return None
+
 		for n in self.Nodes:
-			if n.data.owns('compartment') and type(n.data.compartment) == type(u''):
-				n.data.compartment = self.getNodeByID(n.data.compartment)
+			if n.data.owns('compartment'):
+				n.data.compartment = getNodeByID(n.data.compartment)
 		for e in self.Edges:
-			e.source = self.getNodeByID(e.source)			# add Source and Target Node as Python Object links
-			e.target = self.getNodeByID(e.target)
+			e.source = getNodeByID(e.source)			# add Source and Target Node as Python Object links
+			e.target = getNodeByID(e.target)
 
 	def initialize(self, removeOrphans=False):				# initialize the network
 		self.mapped = False
@@ -234,16 +245,6 @@ class Graph:
 	def newID(self):							# generate a valid ID for the creation of a new object into our model
 		self.maxID += 1
 		return self.maxID
-
-	def getNodeByID(self, ID):						# return Node with specified ID, else None
-		if self.mapped:
-			if ID in self.IDmapNodes.keys():
-				return self.Nodes[ self.IDmapNodes[ID] ]
-		else:
-			for n in self.Nodes:
-				if n.id == ID:
-					return n
-		return None
 
 	def getEdgeByID(self, ID):
 		return self.Edges[ self.IDmapEdges[ID] ]
@@ -562,7 +563,7 @@ class Graph:
 			self.log(debug, "recursing "+str(compartment_ID))
 			for node in self.Nodes:
 				if not node.is_abstract or node.is_abstract == 1:
-					if (str(node.data.compartment.id) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
+					if (node.data.owns('compartment') and node.data.compartment is not None and str(node.data.compartment.id) == str(compartment_ID)) or ((not node.data.owns('compartment')) and (compartment_ID == TopCompartmentID)):
 						if getNodeType(node.type) == getNodeType('Compartment'):
 							node.alias = 'cluster'+str(alias_counter)
 							alias_counter += 1
@@ -582,6 +583,8 @@ class Graph:
 							l = node.data.label if node.data.owns("label") and node.data.label != ""  else str(node.id)
 							s = 'ellipse' if ( getNodeType(str(node.type)) != getNodeType("Process Node")) else 'box'
 							parent.add_node( node.alias, label=str(l), shape=s )
+				else:
+					self.log(debug, str(node.id)+' is abstract')
 		recurse( graphviz_model, TopCompartmentID )
 
 		self.log(info, 'Added '+str(alias_counter)+' nodes.')
