@@ -167,22 +167,21 @@ def getSBO(term):							# return SBO number of SBO term
 		result = UnspecifiedEntity
 
 #	print '->'+str(result)
-
 	return str(result)
 
 def getNodeType(text):
-	print text
+#	print text
 	text = str(text).lower()
 
 	for key in SBOs.keys():
 		if str(text) == str(key) or text == SBOs[key].lower() or text == SBOs[key].lower()+' node' or text+' node' == SBOs[key].lower():
-			print '->'+SBOs[key]
+#			print '->'+SBOs[key]
 			return SBOs[key]
 
 	return UnspecifiedEntity
 
 def getEdgeType(number):
-	print str(number)
+#	print str(number)
 
 	try:
 		if int(number) in EdgeSBO.keys():
