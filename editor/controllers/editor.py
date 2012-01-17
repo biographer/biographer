@@ -36,12 +36,10 @@ def index():
                 else:
                     action = 'loaded %s'%request.vars.import_file.filename
             elif file_content.startswith('<?xml'):
-                bioGraph = Graph()
-                bioGraph.importSBML( file_content )
-
-		session.bioGraph.exportJSON()		# workaround for web2py bug
-		json_string = session.bioGraph.JSON
-
+                import biographer
+                bioGraph = biographer.Graph()
+                bioGraph.import_SBML( file_content )
+                json_string = bioGraph.exportJSON()
                 #print 'sbml2json: ',json_string
                 graph = simplejson.loads(json_string)
                 action = 'loaded %s'%request.vars.import_file.filename
@@ -57,18 +55,12 @@ def import_graph():
     action,graph,json_string = None,None,None
     if request.vars.type=='biomodel':
         import_BioModel( request.vars.identifier )
-
-	session.bioGraph.exportJSON()		# workaround for web2py bug
-	json_string = session.bioGraph.JSON
-
+        json_string = session.bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
         action = 'Imported BioModel: %s'%request.vars.identifier
     elif request.vars.type == 'reactome_id':
-        importReactome( request.vars.identifier )
-
-	session.bioGraph.exportJSON()		# workaround for web2py bug
-	json_string = session.bioGraph.JSON
-
+        import_Reactome( request.vars.identifier )
+        json_string = session.bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
         action = 'Imported Reactome Id: %s'%request.vars.identifier
         print 'reactome_id xxx ',action, json_string
@@ -83,26 +75,25 @@ def layout():
     if not request.vars.layout:
         raise HTTP(500, 'not layout algorithm specified')
     #-------------------
+    import biographer
     import os
     import subprocess
-    bioGraph = Graph()
+    reload(biographer)#TODO remove in production mode
+    bioGraph = biographer.Graph()
     bioGraph.importJSON( session.editor_autosave )
     #-------------------
     if request.vars.layout == "biographer":
-        executable = os.path.join(request.folder, "static/Layouter/build", "layout")
         infile = os.path.join(request.folder, "static","tmp.bgin")
         outfile = os.path.join(request.folder, "static","tmp.bgout")
-        open(infile, 'w').write(bioGraph.export_to_Layouter())
+        open(infile, 'w').write(bioGraph.exportLayout())
+        print 'infile written'
         #return bioGraph.exportLayout()
-        #executable = os.path.join(request.folder, "static","layout")
+        executable = os.path.join(request.folder, "static","layout")
+        #executable = os.path.join(request.folder, "static","Layouter","build", "layout")
         p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         p.communicate()
         layout_output = open(outfile, 'r').readlines()
-
-	session.bioGraph.exportJSON()		# workaround for web2py bug
-	net = session.bioGraph.JSON
-        graph = simplejson.loads(net)
-
+        graph = simplejson.loads(bioGraph.exportJSON())
         import_Layout(graph, layout_output)
         json_string = simplejson.dumps(graph)
         #return PRE(XML(simplejson.dumps(graph)))
@@ -110,12 +101,10 @@ def layout():
         #bioGraph.importLayout( open(outfile, 'r').read() )					# import STDOUT
 
     elif request.vars.layout == 'graphviz':
-        layout_using_graphviz( bioGraph, png_output_folder=os.path.join(request.folder, "static/graphviz"))
+        pass
+        bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
         #-------------------
-
-	session.bioGraph.exportJSON()		# workaround for web2py bug
-	json_string = session.bioGraph.JSON
-
+        json_string = bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
     action = 'applied automatic biographer layout'
     return undoRegister(action, graph, json_string)
@@ -195,3 +184,5 @@ def export():
     return out
     response.write(out,escape=False)
 
+def text_width():
+    return dict()
