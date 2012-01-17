@@ -1,0 +1,25 @@
+{{extend 'layout.html'}}
+<h1>Download</h1>
+Here you can download <i>{{=APPLICATION_NAME}}</i> version {{=LOAD('plugin_release', 'version', target="versionstring")}}
+{{extension = 'tar.gz'}}
+<table id='download_table'>
+	<tr>
+		<td>as Web2py Application</td>
+        <td>{{=A('Download', _href=URL(request.application, 'static', 'web2py.app.%s.w2p'%APPLICATION_NAME))}}</td>
+	</tr>
+	<tr>
+		<td>Source / Linux</td>
+        <td>{{=A('Download', _href=URL(request.application, 'static', '%s_src.%s'%(APPLICATION_NAME,extension)))}}</td>
+	</tr>
+	<tr>
+		<td>Windows</td>
+        <td>{{=A('Download', _href=URL(request.application, 'static', '%s_win.%s'%(APPLICATION_NAME,extension)))}}</td>
+	</tr>
+	<tr>
+		<td>Os X</td>
+        <td>{{=A('Download', _href=URL(request.application, 'static', '%s_osx.%s'%(APPLICATION_NAME,extension)))}}</td>
+	</tr>
+</table>
+<br />
+<br />
+If your download does not work, please visit our alternative download location <a href="https://sourceforge.net/projects/yeastmap/files/">sourceforge.net/projects/yeastmap/files/</a>

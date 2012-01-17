@@ -318,7 +318,39 @@ function layout(algorithm){
 $(document).ready(function() {
     showUndoRedo();
     //=========================
+    $('#align_vertical, #align_hoizontal, #align_left, #align_top, #align_right, #align_bottom').click(function(){
+        var all_drawables = graph.drawables();
+        var pos = undefined;
+        for (var key in all_drawables) {
+            drawable = all_drawables[key]
+            if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
+                if(pos === undefined){
+                    pos = drawable.absolutePosition();
+                }else{
+                    if($(this).attr('id')=='align_hoizontal'){
+                        drawable.absolutePosition(drawable.absolutePosition().x,pos.y);
+                    }else if($(this).attr('id')=='align_vertical'){
+                        drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
+                    }else if($(this).attr('id')=='align_left'){
+                        drawable.absolutePosition(drawable.absolutePosition().x,pos.y);
+                    }else if($(this).attr('id')=='align_top'){
+                        drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
+                    }else if($(this).attr('id')=='align_right'){
+                        drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
+                    }else if($(this).attr('id')=='align_bottom'){
+                        drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
+                    }
+                }
+            }
+        }
+    });
+    //=========================
     $('#canvas').resizable();
+    //=========================
+    $('#clear').click(function(){
+        redrawGraph({nodes:[],edges:[]});
+        //graph.clear();//FIXME this does not work 
+    });
     //=========================
     $('#layout_grahviz').click(function(){
         layout('graphviz');

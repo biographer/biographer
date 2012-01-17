@@ -11,14 +11,16 @@ text, tspan {
     font-size: 16px;
     fill: black;
 }
-
 /*
  * Please copy all changes to the .smallText css class in the
  * visualization-html.css file.
  */
-text.small, tspan.small {
-    font-size: 13px;
+text.small, tspan.small, text.small tspan {
+    font-size: 10px;
+    bottom: 3px;
 }
+
+
 
 ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect {
     fill: white;
@@ -35,10 +37,20 @@ ellipse.selected, circle.selected {
 line {
     stroke: #000;
 }
+.process {
+	font-size: 10px;
+}
+.statevariable {
+	font-size: 10px;
+}
 
 .stimulation, .catalysis, .modulation, .necessaryStimulation {
     fill: white;
     stroke: black;
+}
+.interaction {
+	fill: black;
+	stroke: black;
 }
 
 .line {
@@ -57,7 +69,14 @@ line {
 .dashed {
     stroke-dasharray: 4, 5;
 }
-
+.Outcome circle {
+	fill: black;
+	stroke: black;
+}
+.edgeHandle circle {
+	stroke: black;
+       opacity: 0.5;	
+}
 .splineEdgeHandle circle {
     fill: #9ea5ff;
     stroke: blue;

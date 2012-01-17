@@ -30,10 +30,17 @@ bui = {};
  */
 bui.svgns = "http://www.w3.org/2000/svg";
 
+
 /**
  * @namespace Settings are stored within this variable
  */
 bui.settings = {
+    /**
+     * @field
+     * Define the SBGN Language: PD, ER, AF
+     * this makes minor differnces in e.g. how StateVariable will be drawn
+     */
+    SBGNlang : 'PD',
     /**
      * @field
      * Whether or not the bui.Graph will be initialised in high or low
@@ -50,6 +57,13 @@ bui.settings = {
      */
     enableModificationSupport : true,
 
+    /**
+     * @field
+     * set to disable certain dynamic SVG features (like suspendRedraw) which 
+     * are not needed or supported by static SVG generation in node.js
+     */
+    staticSVG : false,
+    
     /**
      * @field
      * How many frames per second (FPS) should be used for animations.
@@ -95,14 +109,16 @@ bui.settings = {
             width : ['data', 'width'],
             height : ['data', 'height'],
             subNodes : ['data', 'subnodes'],
-            modifications : ['data', 'modifications']
+            modification : ['data', 'modification'],
+            statevariable : ['data', 'statevariable']
         },
         edge : {
             source : 'source',
             target : 'target',
             style : ['data', 'style'],
             type : ['data', 'type'],
-            handles : ['data', 'handles']
+            handles : ['data', 'handles'],
+            points : ['data', 'points']
         }
 
     },
@@ -121,6 +137,7 @@ bui.settings = {
             complex : 'complex',
             compartment : 'compartment',
             process : 'process',
+	    statevariable : 'statevariable',
             smallText : 'small',
             textDimensionCalculation : {
                 generic : 'textDimensionCalculation',
@@ -136,6 +153,7 @@ bui.settings = {
             lineHover : 'lineHover',
             connectingArcs : {
                 stimulation : 'stimulation',
+                assignment : 'assignment',
                 catalysis : 'catalysis',
                 modulation : 'modulation',
                 necessaryStimulation : 'necessaryStimulation',
@@ -187,6 +205,10 @@ bui.settings = {
             width : 26,
             height : 26
         },
+        helperNodeMinSize : {
+            width : 5,
+            height : 5
+        },
         edgeToNodePadding : {
             topBottom : 5,
             leftRight : 5
@@ -200,7 +222,7 @@ bui.settings = {
                 horizontal : 20,
                 vertical : 20
             },
-            modificationLabel : 'short' // either 'long' or 'short'
+            modificationLabel : 'long' // either 'long' or 'short'
         },
         // x/y coordinates as % of a node's size (1 = 100%)
         // T = top, L = left, R = right, B = bottom, CX = Center X,
@@ -407,12 +429,21 @@ var circularShapeLineEndCalculationHookWithoutPadding =
      *   Defaults to true.
      * @return {Object} An object with width and height properties.
      */
-    bui.util.calculateWordDimensions = function(text, classes, escape) {
+    bui.util.calculateWordDimensions = function(text, classes, escape, precalc) {
         if (classes === undefined) {
             classes = [];
         }
         if (escape === undefined) {
             escape = true;
+        }
+        //use fallback if it chant be calculated because we use node.js with jsdom that cannot calculate word sized automatically
+        if (precalc !== undefined){
+            var letter2width = bui.util.precalcLetterWidth();
+            var text_length = 0;
+            for(var i=0; i<text.length; i++){
+                text_length += letter2width[text.charAt(i)];
+            }
+            return { width : text_length, height : 16};
         }
 
         classes.push(
@@ -535,6 +566,35 @@ var circularShapeLineEndCalculationHookWithoutPadding =
         return lines;
     };
 
+    /**
+     * Calculate the width for each letter, if this is not possible, used a default output
+     **/
+    bui.util.precalcLetterWidth = function(){
+        var letters = 'abcdefghijklmnopqrstuvwzxz';
+        var numbers = '1234567890_-@.:';
+        var out = {};
+        var elem = document.createElement('span');
+        $(elem).html(letters.charAt(0));
+        //test if we can get the length of a char
+        if( $(elem).width() > 1 ){
+            for(var i = 0; i<letters.length; i++){
+                $(elem).html(letters.charAt(i));
+                out[letters.charAt(i)]=$(elem).width();
+            }
+            letters = letters.toUpperCase();
+            for(var i = 0; i<letters.length; i++){
+                $(elem).html(letters.charAt(i));
+                out[letters.charAt(i)]=$(elem).width();
+            }
+            for(var i = 0; i<numbers.length; i++){
+                $(elem).html(numbers.charAt(i));
+                out[numbers.charAt(i)]=$(elem).width();
+            }
+            return out
+        }else{
+            return {"0":8,"1":8,"2":8,"3":8,"4":8,"5":8,"6":8,"7":8,"8":8,"9":8,"a":8,"b":8,"c":7,"d":8,"e":8,"f":4,"g":8,"h":8,"i":3,"j":3,"k":7,"l":3,"m":13,"n":8,"o":8,"p":8,"q":8,"r":5,"s":7,"t":5,"u":8,"v":7,"w":9,"z":7,"x":7,"A":9,"B":9,"C":9,"D":10,"E":8,"F":7,"G":10,"H":10,"I":3,"J":3,"K":8,"L":7,"M":11,"N":10,"O":10,"P":8,"Q":10,"R":8,"S":9,"T":7,"U":10,"V":9,"W":11,"Z":10,"X":8}
+        }
+    };
     /**
      * Set the super class for a given class. The provided class (first
      * parameter will have a superClazz property which can be used to
@@ -865,6 +925,14 @@ var addMapping = function(mapping, keys, klass, generator) {
 var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {},
         modificationMapping = {};
 
+(function(bui){
+   bui.nodeMapping = nodeMapping;
+   bui.processNodeMapping = processNodeMapping;
+   bui.modificationMapping = modificationMapping;
+   bui.edgeMarkerMapping = edgeMarkerMapping;
+})(bui);
+        
+        
 /**
  * Add mappings to the mappings object.
  *
@@ -976,6 +1044,7 @@ var getSBOForMarkerId = function(id) {
 
     return null;
 };
+
 (function(bui) {
     var identifier = 'bui.Observable';
 
@@ -1237,6 +1306,26 @@ var getSBOForMarkerId = function(id) {
     };
 
     /**
+     * Generator for a assignment connecting arc.
+     *
+     * This generates a simple triangle.
+     *
+     * @return {Object} An object with id and element properties. The id
+     *   property holds the id of the marker and the element property the
+     *   generated element.
+     */
+    bui.connectingArcs.assignment = function() {
+        return createPathWithData('M0,0 S10,10,0,20 L20,10 Z', 20, 10, 20, 20,
+                bui.settings.css.classes.connectingArcs.assignment);
+    };
+
+    /**
+     * @field Identifier for this connecting arc type.
+     */
+    bui.connectingArcs.assignment.id = 'assignment';
+    
+
+    /**
      * Generator for a stimulation connecting arc.
      *
      * This generates a simple triangle.
@@ -1256,6 +1345,66 @@ var getSBOForMarkerId = function(id) {
     bui.connectingArcs.stimulation.id = 'stimulation';
 
 
+    /**
+     * Generator for a stimulation connecting arc.
+     *
+     * This generates a simple triangle.
+     *
+     * @return {Object} An object with id and element properties. The id
+     *   property holds the id of the marker and the element property the
+     *   generated element.
+     */
+    bui.connectingArcs.stimulation = function() {
+        return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
+                bui.settings.css.classes.connectingArcs.stimulation);
+    };
+
+    /**
+     * @field Identifier for this connecting arc type.
+     */
+    bui.connectingArcs.stimulation.id = 'stimulation';
+
+
+    /**
+    * Generator for a product connecting arc.
+    *
+    * This generates a simple triangle.
+    *
+    * @return {Object} An object with id and element properties. The id
+    *   property holds the id of the marker and the element property the
+    *   generated element.
+    */
+    bui.connectingArcs.product = function() {
+       return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
+                                 bui.settings.css.classes.connectingArcs.product);
+    };
+    
+    /**
+    * @field Identifier for this connecting arc type.
+    */
+    bui.connectingArcs.product.id = 'product';
+    
+    
+    /**
+    * Generator for a substrate connecting arc.
+    *
+    * This generates nothing.
+    *
+    * @return {Object} An object with id and element properties. The id
+    *   property holds the id of the marker and the element property the
+    *   generated element.
+    */
+    bui.connectingArcs.substrate = function() {
+       return createPathWithData('', 20, 10, 20, 20,
+                                 bui.settings.css.classes.connectingArcs.substrate);
+    };
+    
+    /**
+    * @field Identifier for this connecting arc type.
+    */
+    bui.connectingArcs.substrate.id = 'substrate';
+    
+    
     /**
      * Generator for an inhibition connecting arc.
      *
@@ -1350,7 +1499,6 @@ var getSBOForMarkerId = function(id) {
      */
     bui.connectingArcs.necessaryStimulation = function() {
         return createPathWithData('M0,0 V20 M10,0 L25,10L10,20Z', 25, 10, 26, 26,
-        //return createPathWithData('M0,0 V25 M10,0 V25Z', 10, 12, 10, 26,
             bui.settings.css.classes.connectingArcs.necessaryStimulation);
     };
 
@@ -1617,6 +1765,7 @@ var getSBOForMarkerId = function(id) {
          *   {@link bui.Graph#unsuspendRedraw} to enable redrawing.
          */
         suspendRedraw : function(duration) {
+            if (bui.settings.staticSVG) return 0; 
             return this._privates(identifier).root.suspendRedraw(duration);
         },
 
@@ -1631,6 +1780,7 @@ var getSBOForMarkerId = function(id) {
          * @return {bui.Graph} Fluent interface
          */
         unsuspendRedraw : function(handle) {
+            if (bui.settings.staticSVG) return; 
             if (handle !== undefined) {
                 this._privates(identifier).root.unsuspendRedraw(handle);
             } else {
@@ -1746,6 +1896,20 @@ var getSBOForMarkerId = function(id) {
          *
          * @return {bui.Graph} Fluent interface
          */
+        
+        clear : function() {
+           var privates = this._privates(identifier);
+           for (var i in privates.drawables){
+              privates.drawables[i].remove();
+           }
+           //privates.idCounter=0;
+        },
+ 
+        /**
+         * Reduce the Canvas size to the minimum requirement
+         *
+         * @return {bui.Graph} Fluent interface
+         */
         reduceCanvasSize : function() {
             var privates = this._privates(identifier);
 
@@ -1819,7 +1983,22 @@ var getSBOForMarkerId = function(id) {
 
             return inner;
         },
-
+ 
+ 
+         /**
+         * replace the css import directive in svg by an actual css code and return SVG.
+         *
+         *
+         * @return {String} The raw SVG as it can be used to save / export it.
+         */
+         cssSVG : function(css) {
+            var inner = this._privates(identifier).root.parentNode.innerHTML;
+            
+            inner = inner.replace(__getStylesheetContents(), css);
+            
+            return inner;
+         },
+ 
         /**
          * A graph supports a high and low performance mode. This has
          * implications on the way dragging and resizing is realized. When in
@@ -2471,16 +2650,18 @@ var getSBOForMarkerId = function(id) {
     };
 
     var mouseClick = function(event) {
-        if (event.ctrlKey === true) {
-            this.placeholderVisible(!this.placeholderVisible());
-        } else {
-            this.fire(bui.Node.ListenerType.click, [this, event]);
-        }
+       if (event.ctrlKey === true && (bui.settings.enableModificationSupport === true)) {
+          this.placeholderVisible(!this.placeholderVisible());
+       } else if (!this.placeholderVisible()) {
+          this.fire(bui.Node.ListenerType.click, [this, event]);
+       }
     };
     var dblclick = function(event) {
-            this.placeholderVisible(!this.placeholderVisible());
+       if (bui.settings.enableModificationSupport === true){
+          this.placeholderVisible(!this.placeholderVisible());
+       }
     };
-
+    
     /**
      * @private
      * Initial paint of the placeholder node and group node
@@ -2506,9 +2687,7 @@ var getSBOForMarkerId = function(id) {
         if (bui.settings.enableModificationSupport === true) {
 
             jQuery(privates.nodeGroup)
-                    .add(privates.placeholder)
-                    .click(mouseClick.createDelegate(this))
-                    .dblclick(dblclick.createDelegate(this));
+                    .add(privates.placeholder);
 
             if (this._enableDragging === true) {
                 jQuery(privates.placeholder).draggable({
@@ -2525,6 +2704,11 @@ var getSBOForMarkerId = function(id) {
                         });
             }
         }
+        
+        jQuery(privates.nodeGroup)
+            .click(mouseClick.createDelegate(this))
+            .dblclick(dblclick.createDelegate(this));
+        
     };
 
     /**
@@ -2582,6 +2766,9 @@ var getSBOForMarkerId = function(id) {
     };
 
     bui.Node.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         _minWidth : 10,
         _minHeight : 10,
         _forceRectangular : false,
@@ -2672,6 +2859,23 @@ var getSBOForMarkerId = function(id) {
             var size = this.size();
 
             this.position(x - size.width / 2, y - size.height / 2);
+
+            return this;
+        },
+
+         /**
+         * Position the node's center on the given coordinate (SVG absolute).
+         *
+         * The positioning is done relatively.
+         *
+         * @param {Number} x Position on x-coordinate.
+         * @param {Number} y Position on y-coordinate.
+         * @return {bui.Node} Fluent interface
+         */
+        absolutePositionCenter : function(x, y) {
+            var size = this.size();
+
+            this.absolutePosition(x - size.width / 2, y - size.height / 2);
 
             return this;
         },
@@ -2862,6 +3066,45 @@ var getSBOForMarkerId = function(id) {
 
         /**
          * @description
+         * Use this function to move the node relative to its current position.
+         *
+         * @param {Number} w new width
+         * @param {Number} h new height
+         * @param {Number} [duration] Whether this movement should be animated
+         *   and how long this animation should run in milliseconds. When
+         *   omitted or a value <= 0 is passed the movement will be executed
+         *   immediately.
+         * @return {bui.Node} Fluent interface.
+         */
+        resize : function(w, h, duration) {
+            var privates = this._privates(identifier);
+
+            if (duration === undefined || duration <= 0) {
+                this.size(w, h);
+            } else {
+                var node = this,
+                        // 1000 milliseconds / x fps
+                        timeOffset = 1000 / bui.settings.animationFPS,
+                        remainingCalls = Math.floor(duration / timeOffset),
+                        diffw=(w-privates.width)/remainingCalls,
+                        diffh=(h-privates.height)/remainingCalls;
+
+                (function() {
+                    node.size(w-remainingCalls*diffw, h-remainingCalls*diffh);
+
+                    remainingCalls--;
+
+                    if (remainingCalls >= 1) {
+                        setTimeout(arguments.callee, timeOffset);
+                    }
+                })();
+            }
+
+            return this;
+        },
+ 
+        /**
+         * @description
          * Use this function to move the node.
          *
          * @param {Number} x Absolute position on the x-axis.
@@ -2877,6 +3120,24 @@ var getSBOForMarkerId = function(id) {
             return this.move(x - privates.x, y - privates.y, duration);
         },
 
+        /**
+         * @description
+         * Use this function to move the node.
+         *
+         * @param {Number} x Absolute center position on the x-axis.
+         * @param {Number} y Absolute center position on the y-axis.
+         * @param {Number} [duration] Whether this movement should be animated
+         *   and how long this animation should run in milliseconds. When
+         *   omitted or a value <= 0 is passed the movement will be executed
+         *   immediately.
+         * @return {bui.Node} Fluent interface.
+         */
+        moveAbsoluteCenter : function(x, y, duration) {
+            var size = this.size();
+            
+            this.moveAbsolute(x - size.width / 2, y - size.height / 2);
+            
+        },
         /**
          * Retrieve the current parent or set it
          *
@@ -3051,6 +3312,9 @@ var getSBOForMarkerId = function(id) {
             var deltaX = otherPosition.x - position.x,
                     deltaY = otherPosition.y - position.y;
 
+            if (deltaX==0 && deltaY==0){
+               return this.center();
+            }
             var hitAngle = Math.abs(Math.atan(deltaY / deltaX));
             var sideHitAngle = Math.atan(heightWithPadding / widthWithPadding);
 
@@ -3553,6 +3817,7 @@ var getSBOForMarkerId = function(id) {
         labelClass : bui.util.createListenerTypeId()
     };
 })(bui);
+
 (function(bui) {
     var identifier = 'bui.EdgeHandle';
 
@@ -3585,7 +3850,7 @@ var getSBOForMarkerId = function(id) {
 
         privates.circle = document.createElementNS(bui.svgns, 'circle');
         sizeChanged.call(this, this, this.size().width);
-        this.nodeGroup().appendChild(privates.circle);
+      this.nodeGroup().appendChild(privates.circle);
     };
     
     /**
@@ -3618,6 +3883,7 @@ var getSBOForMarkerId = function(id) {
 
     bui.util.setSuperClass(bui.EdgeHandle, bui.Node);
 })(bui);
+
 (function(bui) {
 
     /**
@@ -3904,6 +4170,35 @@ var getSBOForMarkerId = function(id) {
     };
 
     bui.util.setSuperClass(bui.Macromolecule, bui.RectangularNode);
+})(bui);
+
+(function(bui) {
+    var identifier = 'bui.VariableValue';
+    /**
+     * @class
+     * A node with the shape of an rectangle and a label inside.
+     * This shape has be default rounded corners.
+     *
+     * @extends bui.RectangularNode
+     * @constructor
+     */
+    bui.VariableValue = function() {
+        bui.VariableValue.superClazz.apply(this, arguments);
+        this.topRadius(8);
+        this.bottomRadius(8);
+        this.labelClass(bui.settings.css.classes.smallText,
+                [bui.settings.css.classes.textDimensionCalculation.small]);
+    };
+    bui.VariableValue.prototype = {
+        identifier : function() {
+            return identifier;
+        },
+        _minWidth : 16,
+        _minHeight : 16,
+        _enableResizing : false,
+    };
+
+    bui.util.setSuperClass(bui.VariableValue, bui.RectangularNode);
 })(bui);
 
 (function(bui) {
@@ -4274,22 +4569,34 @@ var getSBOForMarkerId = function(id) {
      */
     bui.StateVariable = function() {
         bui.StateVariable.superClazz.apply(this, arguments);
+        if(bui.settings.sbgnLanguage == 'PD'){
+            this.bind(bui.Node.ListenerType.size,
+                    sizeChanged.createDelegate(this),
+                    listenerIdentifier(this));
 
-        this.bind(bui.Node.ListenerType.size,
-                sizeChanged.createDelegate(this),
-                listenerIdentifier(this));
+            initialPaint.call(this);
 
-        initialPaint.call(this);
-
-        this.labelClass(bui.settings.css.classes.smallText,
-                [bui.settings.css.classes.textDimensionCalculation.small]);
-        this.adaptSizeToLabel(true);
+            this.labelClass(bui.settings.css.classes.smallText,
+                    [bui.settings.css.classes.textDimensionCalculation.small]);
+            this.adaptSizeToLabel(true);
+        }else if(bui.settings.sbgnLanguage == 'ER'){
+            this.topRadius(7);
+            this.bottomRadius(7);
+            this.labelClass(bui.settings.css.classes.smallText,
+                    [bui.settings.css.classes.textDimensionCalculation.small]);
+            this.addClass(bui.settings.css.classes.statevariable);
+        }
     };
 
     bui.StateVariable.prototype = {
+        identifier : function() {
+            return identifier;
+        },
+        _minWidth : 60,
+        _minHeight : 14,
         auxiliaryUnit : true,
         includeInJSON : false,
-        _enableResizing : false,
+        _enableResizing : bui.settings.sbgnLanguage == 'PD',
 
         // override
         toJSON : function() {
@@ -4312,9 +4619,14 @@ var getSBOForMarkerId = function(id) {
             return json;
         }
     };
-
-    bui.util.setSuperClass(bui.StateVariable, bui.Labelable);
+    if(bui.settings.SBGNlang == 'PD'){//FIXME this does not work :(
+        bui.util.setSuperClass(bui.StateVariable, bui.Labelable);
+    }else if(bui.settings.SBGNlang == 'ER'){
+        alert('bui.settings/SBGNlang '+bui.settings.SBGNlang)
+        bui.util.setSuperClass(bui.StateVariable, bui.RectangularNode);
+    }
 })(bui);
+
 (function(bui) {
     var identifier = 'bui.SimpleChemical';
 
@@ -5074,6 +5386,7 @@ var getSBOForMarkerId = function(id) {
         dashed : bui.settings.css.classes.lineStyle.dashed
     };
 })(bui);
+
 (function(bui) {
     var identifier = 'bui.StraightLine';
 
@@ -5132,6 +5445,7 @@ var getSBOForMarkerId = function(id) {
 
     bui.util.setSuperClass(bui.StraightLine, bui.AbstractLine);
 })(bui);
+
 (function(bui) {
     var identifier = 'bui.Spline';
 
@@ -5210,11 +5524,14 @@ var getSBOForMarkerId = function(id) {
         _initialPaint : function() {
             var privates = this._privates(identifier);
             privates.layoutElementsVisible = true;
+            privates.points=[];
+            privates.sourceSplineHandlePos={x:0,y:0};
+            privates.targetSplineHandlePos={x:0,y:0};
             this._line = document.createElementNS(bui.svgns, 'path');
             this.graph().edgeGroup().appendChild(this._line);
             this.addClass(bui.settings.css.classes.invisible);
 
-            var listener = this._sourceOrTargetDimensionChanged
+            var listener = this._splineHandleChanged
                     .createDelegate(this);
             privates.sourceSplineHandle = this.graph()
                     .add(bui.SplineEdgeHandle)
@@ -5245,7 +5562,52 @@ var getSBOForMarkerId = function(id) {
 
             jQuery(this._line).click(lineMouseClick.createDelegate(this));
         },
-
+        /**
+         * @private spline handle position changed; update control point vectors
+         */
+        _splineHandleChanged : function() {
+           var privates = this._privates(identifier);
+           if (privates.positioningSplineHandles) return;
+              privates.sourceSplineHandlePos.x=privates.sourceSplineHandle.absoluteCenter().x-this.source().absoluteCenter().x;
+              privates.sourceSplineHandlePos.y=privates.sourceSplineHandle.absoluteCenter().y-this.source().absoluteCenter().y;
+           for (var i=0;i<privates.points.length;i++){
+                 privates.points[i].x=privates.points[i].splineHandle.absoluteCenter().x-privates.points[i].point.absoluteCenter().x;
+                 privates.points[i].y=privates.points[i].splineHandle.absoluteCenter().y-privates.points[i].point.absoluteCenter().y;
+           }
+              privates.targetSplineHandlePos.x=privates.targetSplineHandle.absoluteCenter().x-this.target().absoluteCenter().x;
+              privates.targetSplineHandlePos.y=privates.targetSplineHandle.absoluteCenter().y-this.target().absoluteCenter().y;
+           this._sourceOrTargetDimensionChanged();
+           /*           var changed=false;
+           if (privates.sourceSplineHandlePos.x!=privates.sourceSplineHandle.absoluteCenter().x-this.source().absoluteCenter().x){
+              privates.sourceSplineHandlePos.x=privates.sourceSplineHandle.absoluteCenter().x-this.source().absoluteCenter().x;
+              changed=true;
+           }
+           if (privates.sourceSplineHandlePos.y!=privates.sourceSplineHandle.absoluteCenter().y-this.source().absoluteCenter().y){
+              privates.sourceSplineHandlePos.y=privates.sourceSplineHandle.absoluteCenter().y-this.source().absoluteCenter().y;
+              changed=true;
+           }
+           for (var i=0;i<privates.points.length;i++){
+              if (privates.points[i].x!=privates.points[i].SplineHandle.absoluteCenter().x-privates.points[i].point.absoluteCenter().x){
+                  privates.points[i].x=privates.points[i].SplineHandle.absoluteCenter().x-privates.points[i].point.absoluteCenter().x;
+                  changed=true;
+              }
+              if (privates.points[i].y!=privates.points[i].SplineHandle.absoluteCenter().y-privates.points[i].point.absoluteCenter().y){
+                  privates.points[i].y=privates.points[i].SplineHandle.absoluteCenter().y-privates.points[i].point.absoluteCenter().y;
+                  changed=true;
+              }
+           }
+           if (privates.targetSplineHandlePos.x!=privates.targetSplineHandle.absoluteCenter().x-this.target().absoluteCenter().x){
+               privates.targetSplineHandlePos.x=privates.targetSplineHandle.absoluteCenter().x-this.target().absoluteCenter().x;
+               changed=true;
+           }
+           if (privates.targetSplineHandlePos.y!=privates.targetSplineHandle.absoluteCenter().y-this.target().absoluteCenter().y){
+               privates.targetSplineHandlePos.y=privates.targetSplineHandle.absoluteCenter().y-this.target().absoluteCenter().y;
+               changed=true;
+           }
+           if (changed) { // this detects whether SplineHandle is changed external (not via _sourceOrTargetDimensionChanged itself)
+              this._sourceOrTargetDimensionChanged();
+           }*/
+        },
         /**
          * @private Source / target position and size listener
          */
@@ -5256,6 +5618,17 @@ var getSBOForMarkerId = function(id) {
             if (target !== null && source !== null) {
 
                 var privates = this._privates(identifier);
+                privates.positioningSplineHandles=true;
+                privates.sourceSplineHandle.absolutePositionCenter(source.absoluteCenter().x+privates.sourceSplineHandlePos.x,
+                                                         source.absoluteCenter().y+privates.sourceSplineHandlePos.y);
+                for (var i=0;i<privates.points.length;i++){
+                    privates.points[i].splineHandle.absolutePositionCenter(privates.points[i].point.absoluteCenter().x+privates.points[i].x,
+                                                                           privates.points[i].point.absoluteCenter().y+privates.points[i].y)
+                }
+                privates.targetSplineHandle.absolutePositionCenter(target.absoluteCenter().x+privates.targetSplineHandlePos.x,
+                                                    target.absoluteCenter().y+privates.targetSplineHandlePos.y);
+                privates.positioningSplineHandles=false;
+                                                    
                 var sourceSplineHandle = privates.sourceSplineHandle,
                         targetSplineHandle = privates.targetSplineHandle;
 
@@ -5268,19 +5641,27 @@ var getSBOForMarkerId = function(id) {
                         targetSplineHandlePosition = targetSplineHandle
                                 .absoluteCenter();
                 
-                var data = ['M',
+                var data = ['M' ,
                         sourcePosition.x,
                         sourcePosition.y,
                         'C',
                         sourceSplineHandlePosition.x,
-                        sourceSplineHandlePosition.y,
-                        targetSplineHandlePosition.x,
+                        sourceSplineHandlePosition.y]
+                for (var i=0;i<privates.points.length;i++){
+                   var p=privates.points[i];
+                   data.push.apply(data,[p.point.absoluteCenter().x+p.x,
+                               p.point.absoluteCenter().y+p.y,
+                               p.point.absoluteCenter().x,
+                               p.point.absoluteCenter().y,
+                               'S']);
+                }
+                data.push.apply(data,[targetSplineHandlePosition.x,
                         targetSplineHandlePosition.y,
                         targetPosition.x,
-                        targetPosition.y].join(' ');
+                        targetPosition.y]);
 
 
-                this._line.setAttributeNS(null, 'd', data);
+                this._line.setAttributeNS(null, 'd', data.join(' '));
             }
         },
 
@@ -5303,6 +5684,11 @@ var getSBOForMarkerId = function(id) {
 
                 privates.sourceSplineHandle.visible(visible);
                 privates.targetSplineHandle.visible(visible);
+                for (var i=0;i<privates.points.length;i++){
+                   privates.points[i].splineHandle.visible(visible);
+                   privates.points[i].helperLine.visible(visible);
+                   privates.points[i].point.visible(visible);
+                }
                 privates.sourceHelperLine.visible(visible);
                 privates.targetHelperLine.visible(visible);
 
@@ -5313,11 +5699,63 @@ var getSBOForMarkerId = function(id) {
         },
 
         /**
+         * Set the additional spline point positions and optionally animate them.
+         * 
+         * @param {Object[]} positions An array of positions, i.e. [x1,y1,x2,y2,...]
+         *   contains the spline point coordinates except source and target positions (these are directly taken form source and target)
+         * @param {Number} [duration] Optional duration for an animation. The
+         *   default value assumes no animation. Refer to {@link bui.Node#move}
+         *   for additional information about this parameter.
+         * @return {bui.Spline} Fluent interface
+         */
+        setSplinePoints : function(positions, duration) {
+           var privates = this._privates(identifier);
+           var dl=positions.length/2-privates.points.length;
+           if (dl<0){
+              for (var i=privates.points.length-dl;i<privates.points.length;i++){
+                 privates.points[i].splineHandle.delete();
+                 privates.points[i].helperLine.delete();
+                 privates.points[i].point.delete();
+              }
+           }
+           if (dl>0){
+              var listener = this._sourceOrTargetDimensionChanged
+              .createDelegate(this);
+              var listener2 = this._splineHandleChanged
+              .createDelegate(this);
+              for (var i=privates.points.length;i<positions.length/2;i++){
+                 privates.points[i]={x:0,y:0};
+                  privates.points[i].splineHandle=this.graph()
+                     .add(bui.SplineEdgeHandle)
+                     .bind(bui.Node.ListenerType.absolutePosition,
+                       listener2,
+                       listenerIdentifier(this))
+                       .visible(privates.layoutElementsVisible);
+                  privates.points[i].point=this.graph()
+                     .add(bui.EdgeHandle)
+                     .bind(bui.Node.ListenerType.absolutePosition,
+                       listener,
+                       listenerIdentifier(this))
+                       .visible(privates.layoutElementsVisible);
+                  privates.points[i].helperLine=this.graph()
+                       .add(bui.StraightLine)
+                       .lineStyle(bui.AbstractLine.Style.dotted)
+                       .hoverEffect(false)
+                       .source(privates.points[i].splineHandle)
+                       .target(privates.points[i].point)
+                       .visible(privates.layoutElementsVisible);
+              }
+           }
+           for (var i=0;i<positions.length;i+=2){
+              var n=i/2;
+              privates.points[n].point.moveAbsoluteCenter(positions[i],positions[i+1],duration);
+           }
+        },
+        /**
          * Set the spline handle positions and optionally animate them.
          * 
-         * @param {Object[]} positions An array of positions, i.e. an array
-         *   of objects where each object has an x and y property which
-         *   resembles the spline handle coordinates.
+         * @param {Object[]} positions An array of positions, i.e. [x1,y1,x2,y2,...]
+         *   contains the spline handle coordinates relative to the spline points.
          * @param {Number} [duration] Optional duration for an animation. The
          *   default value assumes no animation. Refer to {@link bui.Node#move}
          *   for additional information about this parameter.
@@ -5325,16 +5763,22 @@ var getSBOForMarkerId = function(id) {
          */
         setSplineHandlePositions : function(positions, duration) {
             var privates = this._privates(identifier);
-
-            if (positions.length >= 1) {
-                privates.sourceSplineHandle.moveAbsolute(positions[0].x,
-                        positions[0].y, duration);
+            var target = this.target(),
+                    source = this.source();
+            privates.sourceSplineHandlePos.x=positions[0];
+            privates.sourceSplineHandlePos.y=positions[1];
+            for (var i=2;i<positions.length-2;i+=2){
+               var n=(i-2)/2;
+               if (privates.points[n]){
+                  privates.points[n].x=positions[i];
+                  privates.points[n].y=positions[i+1];
+               } else {
+                  throw "not enough spline points set for spline handles"
+               }
             }
-            if (positions.length >= 2) {
-                privates.targetSplineHandle.moveAbsolute(positions[1].x,
-                        positions[1].y, duration);
-            }
-
+            privates.targetSplineHandlePos.x=positions[i];
+            privates.targetSplineHandlePos.y=positions[i+1];
+            this._sourceOrTargetDimensionChanged();
             return this;
         },
 
@@ -5344,14 +5788,17 @@ var getSBOForMarkerId = function(id) {
                     dataFormat = bui.settings.dataFormat,
                     privates = this._privates(identifier);
 
-            var sourcePosition =
-                    privates.sourceSplineHandle.absoluteCenter(),
-                    targetPosition =
-                    privates.targetSplineHandle.absoluteCenter();
-
-            updateJson(json, dataFormat.edge.handles, [sourcePosition,
-                targetPosition]);
-            updateJson(json, dataFormat.edge.type, 'curve');
+            var handles = [privates.sourceSplineHandlePos.x,privates.sourceSplineHandlePos.y];
+            var points = [];
+            for (var i=0;i<privates.points.length;i++){
+               var pos=privates.points[i].point.absoluteCenter()
+               points.push.apply(points,[pos.x,pos.y]);
+               handles.push.apply(handles,[privates.points[i].x,privates.points[i].y]);
+            }
+            handles.push.apply(handles,[privates.targetSplineHandlePos.x,privates.targetSplineHandlePos.y]);
+            updateJson(json, dataFormat.edge.handles, handles);
+            updateJson(json, dataFormat.edge.points, points);
+            //updateJson(json, dataFormat.edge.type, 'curve');
 
             return json;
         }
@@ -5397,6 +5844,7 @@ var getSBOForMarkerId = function(id) {
             source.bind(bui.Drawable.ListenerType.visible,
                 endpointVisibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
+            source.bind(bui.Node.ListenerType.absolutePosition, recalculatePoints.createDelegate(this), listenerIdentifier(this));
         }
     };
 
@@ -5415,6 +5863,7 @@ var getSBOForMarkerId = function(id) {
             target.bind(bui.Drawable.ListenerType.visible,
                 endpointVisibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
+            target.bind(bui.Node.ListenerType.absolutePosition, recalculatePoints.createDelegate(this), listenerIdentifier(this));
         }
     };
 
@@ -5571,9 +6020,9 @@ var getSBOForMarkerId = function(id) {
      */
     var lineClicked = function(line, event) {
         // deactivated functionality based on Falko's request
-//        if (event.ctrlKey === true) {
-//            this.edgeHandlesVisible(!this.edgeHandlesVisible());
-//        }
+        if (event.ctrlKey === true) {
+            this.edgeHandlesVisible(!this.edgeHandlesVisible());
+        }
     };
 
     /**
@@ -5599,6 +6048,25 @@ var getSBOForMarkerId = function(id) {
             lines[i].hoverEffectActive(false);
         }
     };
+    /*
+     *
+     */
+    var recalculatePoints = function() {
+        var privates = this._privates(identifier);
+        
+        if((privates.handles.length > 0) && (privates.lines[0].source() != null) && (privates.lines[privates.lines.length - 1].target() != null)){
+            //log('source is: '+privates.lines[0].source().label());//+' target is: '+privates.lines[privates.lines.length-1].target().label());
+            var sp = privates.lines[0].source().absoluteCenter();
+            var tp = privates.lines[privates.lines.length - 1].target().absoluteCenter();
+            var devby = 1/(privates.handles.length+3);
+            var lx = tp.x-sp.x;
+            var ly = tp.y-sp.y;
+            for(var i = 0; i<privates.handles.length; i++){
+                privates.handles[i].positionCenter(sp.x+((i+2)*devby*lx),sp.y+((i+2)*devby*ly));
+            }
+            redrawLines.call(this);
+        }
+    }
 
     /**
      * @class
@@ -5631,6 +6099,36 @@ var getSBOForMarkerId = function(id) {
     };
 
     bui.Edge.prototype = {
+        //recalculatePoints : recalculatePoints.createDelegate(this),
+        addPoint : function(x, y){
+            var privates = this._privates(identifier);
+            var handle = this.graph()
+                    .add(bui.EdgeHandle)
+                    .positionCenter(x, y)
+                    .visible(privates.edgeHandlesVisible)
+                    .addClass('edgeHandle');
+            index = 0;
+            privates.handles.splice(index, 0, handle);
+            redrawLines.call(this);
+            return handle;
+        },
+        addOutcome : function(x, y){
+            //SBO:0000409
+            //An outcome is represented by a black dot located on the arc of a statement
+            //The diameter of the dot has to be larger than the thickness of the arc.
+            //-----------------------------
+            var privates = this._privates(identifier);
+            var handle = this.graph()
+                    .add(bui.EdgeHandle)
+                    .positionCenter(x, y)
+                    .visible(privates.edgeHandlesVisible)
+                    .addClass('Outcome');// the stylesheet mus fill the circle black
+            index = 0;
+            privates.handles.splice(index, 0, handle);
+            redrawLines.call(this);
+            return handle;
+        },
+
         edgeHandlesVisible : function(visible) {
             var privates = this._privates(identifier);
 
@@ -5728,6 +6226,7 @@ var getSBOForMarkerId = function(id) {
 
     bui.util.setSuperClass(bui.Edge, bui.AttachedDrawable);
 })(bui);
+
 /*
  * All these functions and variables are defined in the util.js file as
  * the specific node types need access for the variables for the JSON
@@ -5741,14 +6240,23 @@ addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
 addMapping(nodeMapping, [253], bui.Complex);
 addMapping(nodeMapping, [290], bui.Compartment);
 addMapping(nodeMapping, [375, 167], bui.Process);
-
+addMapping(nodeMapping, [-1], bui.Helper);
+addMapping(nodeMapping, [110001], bui.VariableValue);
 
 addMapping(processNodeMapping, [375, 167], bui.Process);
+addMapping(processNodeMapping, [-1], bui.Helper);
+
+
 
 
 addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
 addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
-addMapping(edgeMarkerMapping, [459, 15, 11, 10], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [407], bui.connectingArcs.absoluteInhibition.id);
+addMapping(edgeMarkerMapping, [464], bui.connectingArcs.assignment.id);
+//addMapping(edgeMarkerMapping, [342], bui.connectingArcs.interaction.id);
+addMapping(edgeMarkerMapping, [459,462], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [15], bui.connectingArcs.substrate.id);
+addMapping(edgeMarkerMapping, [11], bui.connectingArcs.product.id);
 addMapping(edgeMarkerMapping, [461],
         bui.connectingArcs.necessaryStimulation.id);
 addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
@@ -5834,12 +6342,26 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         nodeJSON.data.width = size.width;
         nodeJSON.data.height = size.height;
 
+        // generic state variables
+        if (bui.util.propertySetAndNotNull(nodeJSON,
+                ['data', 'statevariable'])) {
+            var variables = nodeJSON.data.statevariable;
+            for (var i = 0; i < variables.length; i++) {
+                graph.add(bui.StateVariable)
+                        .label(variables[i])
+                        .parent(node)
+                        .visible(true)
+                        .json(variables[i]);//FIXME needs to be added to json, no clue what this does
+            }
+        }
         if (bui.util.propertySetAndNotNull(nodeJSON,
                 ['data', 'modification'])) {
+            alert ('xyrock');
             var modifications = nodeJSON.data.modification;
 
             for (var i = 0; i < modifications.length; i++) {
                 var modification = modifications[i];
+                //log('adding modification');
 
                 var label, mapping = retrieveFrom(modificationMapping,
                         modification[0]);
@@ -5986,35 +6508,73 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
     var addAllEdges = function(graph, data, generatedNodes) {
         var edges = data.edges;
 
+        var edge_stack = [];
+        var drawables = graph.drawables();
+        var generatedEdges = {};
         for (var i = 0; i < edges.length; i++) {
             var edgeJSON = edges[i], edge;
 
-            var source = generatedNodes[edgeJSON.source];
-            var target = generatedNodes[edgeJSON.target];
 
-            if (source === undefined) {
-                log('Edge source ' + edgeJSON.source + ' could not be found.');
-                continue;
-            } else if (target === undefined) {
-                log('Edge target ' + edgeJSON.target + ' could not be found.');
+            var source = undefined;
+            //if there are ports defined (molecule:domain-port) make them to the target
+            if (edgeJSON.source.indexOf(':') != -1){
+                node_ids = edgeJSON.source.split(':');
+                source = generatedNodes[node_ids[0]];
+                if (source !== undefined) {
+                    children = source.children();
+                    for(var j = 0;j<children.length;j++){
+                        if(children[j].label() == node_ids[1]){
+                            source = drawables[children[j].id()];
+                            break;
+                        }
+                    }
+                }
+            }else{
+                var source = generatedNodes[edgeJSON.source];
+            }
+            var target = undefined;
+            //if there are ports defined (molecule:domain-port) make them to the target
+            if (edgeJSON.target.indexOf(':') != -1){
+                node_ids = edgeJSON.target.split(':');
+                target = generatedNodes[node_ids[0]];
+                if (target !== undefined) {
+                    var children = target.children();
+                    for(var j = 0;j<children.length;j++){
+                        if(children[j].label() == node_ids[1]){
+                            target = drawables[children[j].id()];
+                            break;
+                        }
+                    }
+                }
+            }else{
+                target = generatedNodes[edgeJSON.target];
+            }
+
+            if ((source === undefined)||(target === undefined)) {
+                edge_stack.push(edgeJSON);
                 continue;
             }
 
             // ensuring that the data property exists
             edgeJSON.data = edgeJSON.data || {};
 
-            if (edgeJSON.data.type !== 'curve') {
-                edge = graph.add(bui.Edge);
-            } else {
+            if (edgeJSON.data.handles !== undefined && edgeJSON.data.handles.length>=4) {
                 edge = graph.add(bui.Spline)
-                        .layoutElementsVisible(false);
+                    .layoutElementsVisible(false);
 
+                edge.json(edgeJSON).source(source).target(target);
+
+                if (edgeJSON.data.points !== undefined) {
+                    edge.setSplinePoints(edgeJSON.data.points);
+                }
                 if (edgeJSON.data.handles !== undefined) {
                     edge.setSplineHandlePositions(edgeJSON.data.handles);
                 }
+            } else {
+                edge = graph.add(bui.Edge);
+                edge.json(edgeJSON).source(source).target(target);
             }
 
-            edge.json(edgeJSON).source(source).target(target);
 
             if (edgeJSON.sbo !== undefined) {
                 try {
@@ -6031,7 +6591,95 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             }
 
             edge.visible(true);
+            generatedEdges[edgeJSON.id] = edge;
         }
+
+        var last_len = edge_stack.length + 1;
+        //alert(edge_stack.length);
+        while ((edge_stack.length > 0) && (edge_stack.length<last_len)){
+            for(var i = 0; i<edge_stack.length;i++){
+                last_len = edge_stack.length;
+                var edgeJSON = edge_stack[i];
+                //alert(edge_stack.length+'Processing '+JSON.stringify(edgeJSON));
+                //---------------------------
+                var target = undefined;
+                if (edgeJSON.target.indexOf(':') != -1){
+                    node_ids = edgeJSON.target.split(':');
+                    target = generatedNodes[node_ids[0]];
+                    if (target !== undefined) {
+                        var children = target.children();
+                        for(var j = 0;j<children.length;j++){
+                            if(children[j].label() == node_ids[1]){
+                                target = drawables[children[j].id()];
+                                break;
+                            }
+                        }
+                    }
+                }else{
+                    target = generatedNodes[edgeJSON.target];
+                }
+                if(target === undefined){
+                    var target_edge = generatedEdges[edgeJSON.target];
+                    if (target_edge === undefined){
+                        continue;
+                    } 
+                    var sp = target_edge.source().absoluteCenter();
+                    var tp = target_edge.target().absoluteCenter();
+                    target = target_edge.addPoint((sp.x+tp.x)/2, (sp.y+tp.y)/2);
+                }
+                //---------------------------
+                var source = undefined; 
+                if (edgeJSON.source.indexOf(':') != -1){
+                    node_ids = edgeJSON.source.split(':');
+                    source = generatedNodes[node_ids[0]];
+                    if (source !== undefined) {
+                        children = source.children();
+                        for(var j = 0;j<children.length;j++){
+                            if(children[j].label() == node_ids[1]){
+                                source = drawables[children[j].id()];
+                                break;
+                            }
+                        }
+                    }
+                }else{
+                    source = generatedNodes[edgeJSON.source];
+                }
+                if(source===undefined){
+                    var source_edge = generatedEdges[edgeJSON.source];
+                    if (source_edge === undefined){
+                        continue;
+                    } 
+                    var sp = source_edge.source().absoluteCenter();
+                    var tp = source_edge.target().absoluteCenter();
+                    source = source_edge.addOutcome((sp.x+tp.x)/2, (sp.y+tp.y)/2);//FIXME this does not give the proper positions ... y???
+                }
+                //---------------------------
+                //---------------------------
+                if ((source === undefined)||(target === undefined)) continue
+                rm_elem = edge_stack.splice(i,1);
+                //alert('success '+JSON.stringify(rm_elem));
+                edge = graph.add(bui.Edge);
+                edge.source(source).target(target);//.json(edgeJSON);
+                var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
+                edge.marker(marker.klass);
+                generatedEdges[edgeJSON.id] = edge;
+            }
+        }
+        //alert(edge_stack.length);
+        /*for(edge_id in generatedEdges){
+            edge = generatedEdges[edge_id];
+            edge.recalculatePoints();//FIXME how to implement this in edge.js???
+        }*/
+        for(var i = 0; i<edge_stack.length; i++){
+            if ((generatedNodes[edge_stack[i].source] === undefined) && (generatedEdges[edge_stack[i].source] === undefined)){
+                log('Edge source '+edge_stack[i].source+' could not be found. '+edge_stack[i].id);
+            }
+            if ((generatedNodes[edge_stack[i].target] === undefined) && (generatedEdges[edge_stack[i].target] === undefined)){
+                log('Edge target '+edge_stack[i].target+' could not be found. '+edge_stack[i].id);
+            }
+            //log('Edge source '+edge_stack[i].source+' or target ' + edge_stack[i].target + ' could not be found.');
+        } 
+        log('Edge stack still contains '+String(edge_stack.length)+' edges');
     };
 
     /**
@@ -6097,6 +6745,14 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         var start = new Date().getTime();
         var suspendHandle = graph.suspendRedraw(20000);
 
+        if('sbgnlang' in data){
+            bui.settings.SBGNlang = data.sbgnlang; 
+            if(bui.settings.SBGNlang == 'ER'){
+                bui.util.setSuperClass(bui.StateVariable, bui.RectangularNode);
+            }
+        }
+        log('## Setting SBGN language to '+bui.settings.SBGNlang);
+
         log('## Importing all nodes');
         var generatedNodes = addAllNodes(graph, data);
 
@@ -6158,11 +6814,19 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             } else if (bui.util.propertySetAndNotNull(nodeJSON,
                     ['data', 'x'], ['data', 'y']) === false) {
                 continue;
-            } else if (node.hasParent() === true) {
-               if (!(node.parent() instanceof bui.Compartment)){
+            } else if (node.hasParent() === true) { // this ensures complex members are not moved
+               if (!(node.parent() instanceof bui.Compartment)){  // allow members of compartments to be moved
                   continue;
+               } 
+            }
+            if (node instanceof bui.Compartment){
+               // animate size for compartments
+               var w=nodeJSON.data.width,
+                     h=nodeJSON.data.height;
+               if (w && h){
+                  node.resize(w,h,duration);
                }
-               
+            
             }
 
             var x = nodeJSON.data.x,
