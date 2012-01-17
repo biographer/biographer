@@ -51,10 +51,10 @@
 <link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/visualization-html.css" />
 <link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/jquery-ui-1.8.13.css" />
 
-<!--script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-1.6.min.js"></script>
+<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-1.6.min.js"></script>
 <script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery.simulate.js"></script>
-<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-ui-1.8.12.custom.min.js"></script-->
-<script type="text/javascript" src="{{ = URL(request.application, 'static/Visualization/js/biographer-ui.js') }}"></script>
+<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-ui-1.8.12.custom.min.js"></script>
+<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/biographer-ui.js"></script>
 
 <script type="text/javascript">
 	if (Object === undefined || Object.create === undefined) $("#BrowserNotSupported").show();
@@ -62,10 +62,10 @@
 	var network = {{ = XML(network) }};
 
 	bui.ready(function() {
-		bui.settings.css.stylesheetUrl = '{{ = URL(r=request, c="static", f="Visualization") }}/css/visualization-svg.css';
-		graph = new bui.Graph(document.getElementById('canvas'));
-		bui.importFromJSON(graph, network);
-	});
+            var canvas = document.getElementById('canvas');
+            graph = new bui.Graph(canvas);
+            bui.importFromJSON(graph, network);
+        });
 
 	graph.scale(0.5);
 </script>

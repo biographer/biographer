@@ -2,13 +2,13 @@
 
 <h1>Example</h1>
 
-    <link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/visualization-html.css" />
-    <link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/jquery-ui-1.8.13.css" />
+	<link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/visualization-html.css" />
+	<link rel="stylesheet" type="text/css" href="{{ = URL(r=request, c='static', f='Visualization') }}/css/jquery-ui-1.8.13.css" />
 
 	<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-1.6.min.js"></script>
-    <script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery.simulate.js"></script>
+	<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery.simulate.js"></script>
 	<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/jquery-ui-1.8.12.custom.min.js"></script>
-    <script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/biographer-ui.js"></script>
+	<script type="text/javascript" src="{{ = URL(r=request, c='static', f='Visualization') }}/js/biographer-ui.js"></script>
 
 <style>
 	#canvas		{
@@ -22,7 +22,7 @@
 <div id=canvas>
 
     <script type="text/javascript">
-        var customExample = {
+        var network = {
             nodes : [
                 {
                     id : 'node1',
@@ -185,7 +185,7 @@
 	bui.ready(function() {
             var canvas = document.getElementById('canvas');
             graph = new bui.Graph(canvas);
-            bui.importFromJSON(graph, customExample);
+            bui.importFromJSON(graph, network);
         });
     </script>
 
