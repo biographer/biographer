@@ -38,7 +38,7 @@ def index():
             elif file_content.startswith('<?xml'):
                 import biographer
                 bioGraph = biographer.Graph()
-                bioGraph.importSBML( file_content )
+                bioGraph.import_SBML( file_content )
                 json_string = bioGraph.exportJSON()
                 #print 'sbml2json: ',json_string
                 graph = simplejson.loads(json_string)
@@ -54,12 +54,12 @@ def import_graph():
     response.generic_patterns = ['json']
     action,graph,json_string = None,None,None
     if request.vars.type=='biomodel':
-        importBioModel( request.vars.identifier )
+        import_BioModel( request.vars.identifier )
         json_string = session.bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
         action = 'Imported BioModel: %s'%request.vars.identifier
     elif request.vars.type == 'reactome_id':
-        importReactome( request.vars.identifier )
+        import_Reactome( request.vars.identifier )
         json_string = session.bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
         action = 'Imported Reactome Id: %s'%request.vars.identifier
@@ -83,17 +83,18 @@ def layout():
     bioGraph.importJSON( session.editor_autosave )
     #-------------------
     if request.vars.layout == "biographer":
-        executable = os.path.join(request.folder, "static/Layouter/build", "layout")
         infile = os.path.join(request.folder, "static","tmp.bgin")
         outfile = os.path.join(request.folder, "static","tmp.bgout")
         open(infile, 'w').write(bioGraph.exportLayout())
+        print 'infile written'
         #return bioGraph.exportLayout()
         executable = os.path.join(request.folder, "static","layout")
+        #executable = os.path.join(request.folder, "static","Layouter","build", "layout")
         p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         p.communicate()
         layout_output = open(outfile, 'r').readlines()
         graph = simplejson.loads(bioGraph.exportJSON())
-        importLayout(graph, layout_output)
+        import_Layout(graph, layout_output)
         json_string = simplejson.dumps(graph)
         #return PRE(XML(simplejson.dumps(graph)))
         #print 'exit'

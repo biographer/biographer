@@ -6054,7 +6054,7 @@ var getSBOForMarkerId = function(id) {
     var recalculatePoints = function() {
         var privates = this._privates(identifier);
         
-        if(privates.handles.length>0){
+        if((privates.handles.length > 0) && (privates.lines[0].source() != null) && (privates.lines[privates.lines.length - 1].target() != null)){
             //log('source is: '+privates.lines[0].source().label());//+' target is: '+privates.lines[privates.lines.length-1].target().label());
             var sp = privates.lines[0].source().absoluteCenter();
             var tp = privates.lines[privates.lines.length - 1].target().absoluteCenter();
