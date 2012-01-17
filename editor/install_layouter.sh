@@ -16,8 +16,7 @@ rm article example_networks perl pictures -fR
 rm .hg* -fR
 
 # resolve dependencies
-apt-get update
-apt-get install gcc make libjson-glib-dev libcairo2-dev --yes
+sudo apt-get update; apt-get install gcc make libjson-glib-dev libcairo2-dev --yes
 
 # build
 make

@@ -16,8 +16,7 @@ cd biographer.visualization
 rm .hg* -fR
 
 # resolve dependencies
-apt-get update
-apt-get install libnode-uglify nodejs --yes
+sudo apt-get update; apt-get install libnode-uglify nodejs --yes
 
 # build
 python src/build/python/manage.py clean build test jslint jsdoc compress createDistribution
