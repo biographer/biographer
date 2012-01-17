@@ -5,6 +5,7 @@
 
 def layout(graph, path_to_layout_binary, execution_folder='/tmp'):
 
+	global session
 	import os
 	from subprocess import Popen
 	from shlex import split
@@ -48,7 +49,8 @@ def layout(graph, path_to_layout_binary, execution_folder='/tmp'):
 		graph.log(error, 'Outfile not found: '+outfile)
 		return False
 
-	graph.import_from_Layouter( open(outfile).read() )
+	session.last_layout = open(outfile).read()
+	graph.import_from_Layouter( session.last_layout )
 	os.remove(outfile)
 	os.remove(infile)
 

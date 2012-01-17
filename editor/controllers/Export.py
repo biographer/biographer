@@ -12,7 +12,7 @@ def JSON():
 	response.headers['Content-Disposition'] = 'attachment; filename=model.json'
 	return export_JSON()
 
-def Layouter():
+def LayouterInput():
 	if session.bioGraph is None:
 		session.flash = "Unable to export: No Model is loaded"
 		return redirect( URL(r=request, c="Import", f="JSON") )
@@ -20,6 +20,16 @@ def Layouter():
 	response.headers['Content-Type'] = 'text/html'
 	response.headers['Content-Disposition'] = 'attachment; filename=model.layout'
 	return session.bioGraph.export_to_Layouter()
+
+def LayouterOutput():
+	if session.last_layout is None:
+		session.flash = "Unable to export: Not layouted yet"
+		return redirect( URL(r=request, c="Import", f="JSON") )
+
+	response.headers['Content-Type'] = 'text/html'
+	response.headers['Content-Disposition'] = 'attachment; filename=output.layout'
+	return session.last_layout
+
 
 def dot():
 	if session.bioGraph is None:
