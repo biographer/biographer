@@ -488,7 +488,7 @@ class Graph:
 		write( len(self.Nodes) )
 		for node in self.Nodes:				# Nodes
 			write( self.Nodes.index(node) )
-			write( getLayoutNodeType(node.type) )
+			write( global2layouter(node.type) )
 			write( node.id )
 			if node.data.owns('compartment'):
 				write( self.Compartments.index(node.data.compartment) )
@@ -519,9 +519,9 @@ class Graph:
 			Type = lines.pop(0)
 			name = lines.pop(0)
 			compartmentidx = lines.pop(0)
-			if Type in ['Compound', 'Reaction']:
+			if Type in [Compound, Reaction]:
 				node = self.Nodes[index]
-			elif Type == 'Compartment':
+			elif Type == _Compartment:
 				node = self.Compartments[index]
 			else:
 				self.log(error, "Error: What kind of a node is '"+Type+"' that supposed to be?")

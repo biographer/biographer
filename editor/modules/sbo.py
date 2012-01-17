@@ -137,10 +137,12 @@ SBO_Translations_for_Layouter = {	# nodes
 				}
 
 def global2layouter(text):
-	...
+	if text in SBO_Translations_for_Layouter.keys():
+		return SBO_Translations_for_Layouter[text]
+	else:
+		return Compound	# fallback value
 
-def layouter2global(text):
-	...
+#def layouter2global(text):	# don't translate back, just keep the loaded types
 
 #def getLayoutNodeType(type):
 #	if type == NodeTypes["Process Node"]:
