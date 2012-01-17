@@ -5,33 +5,31 @@
 
 SBOs = {}
 
-# Visualizer definition wrapping
+# Visualizer wrapper
 
 nodeMapping = SBOs
 processNodeMapping = SBOs
 edgeMarkerMapping = SBOs
 
-UnspecifiedEntity = ''
-SimpleChemical
-Macromolecule
-NucleicAcidFeature
-Complex
-Compartment
-Process
-Helper
+UnspecifiedEntity = 'Unspecified'
+SimpleChemical = 'Simple Chemical'
+Macromolecule = 'Macromolecule'
+NucleicAcidFeature = 'Nucleic Acid Feature'
+Complex = 'Complex'
+Compartment = 'Compartment'
+Process = 'Process'
+Helper = 'Helper'
 
-Process
-
-modulation
-inhibition
-absoluteInhibition
-assignment
-interaction
-stimulation
-substrate
-product
-necessaryStimulation
-catalysis
+modulation = 'Modulation'
+inhibition = 'Inhibition'
+absoluteInhibition = 'Absolute Inhibition'
+assignment = 'Assignment'
+interaction = 'Interaction'
+stimulation = 'Stimulation'
+substrate = 'Substrate'
+product = 'Product'
+necessaryStimulation = 'Necessary Stimulation'
+catalysis = 'Catalysis'
 
 def addMapping(which, numbers, term):
 	for number in numbers:
@@ -93,9 +91,8 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
 ### end of pasted content
 
 
-# translations for Layouter "specials"
+# hopefully temporary translations for Layouter "specials"
 # see http://code.google.com/p/biographer/wiki/SBO , section "Layouter specials"
-
 
 SBODefinedEdgeType2LayoutEdgeTypeMapping = {	"Reactant":		"Substrate",
 						"Production":		"Product",
@@ -105,6 +102,12 @@ SBODefinedEdgeType2LayoutEdgeTypeMapping = {	"Reactant":		"Substrate",
 						"Stimulation":		"Activator",
 						"Necessary Stimulation":"Activator",
 						"Catalysis":		"Catalyst"	}
+
+def getLayoutNodeType(type):
+	if type == NodeTypes["Process Node"]:
+		return "Reaction"
+	else:
+		return "Compound"
 
 # end translation section
 
@@ -138,12 +141,6 @@ def getNodeType(text):
 		if text == key.lower() or text+' node' == key.lower():
 			return NodeTypes[key]
 	return 0
-
-def getLayoutNodeType(type):						# QUICKFIX -> Acer/Thomas
-	if type == NodeTypes["Process Node"]:
-		return "Reaction"
-	else:
-		return "Compound"
 
 def getEdgeType(SBO):							# get Edge type by SBO number
 	t = LayoutEdgeTypes[0]	# fallback: Substrate
