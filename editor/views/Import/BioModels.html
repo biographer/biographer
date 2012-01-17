@@ -11,11 +11,13 @@
 			document.main.Valid.value = "<< Integer expected";
 			document.main.Valid.style.color = "red";
 			document.main.Submit.style.visibility = "hidden";
+			document.main.Download.style.visibility = "hidden";
 			}
 		else	{
 			document.main.Valid.value = "Okay";
 			document.main.Valid.style.color = "green";
 			document.main.Submit.style.visibility = "visible";
+			document.main.Download.style.visibility = "visible";
 			}
 		}
 
@@ -29,6 +31,11 @@
 	function Load( ID ) {
 		document.main.BioModelsID.value = ID;
 		document.main.submit();
+		}
+
+	function Get() {
+		id = document.main.BioModelsID.value;
+		if ( id != '' )	window.location.href = '{{=URL(r=request, c="Export", f="BioModel")}}?BIOMD='+id;
 		}
 </script>
 
@@ -64,8 +71,9 @@
 	<tr>
 		<td></td>
 		<td>
-			<!--<input type=button name=Open value="Open" onClick="Open();" />-->
-			<input type=submit name=Submit value="Load" style="visibility:hidden;" />
+			<input type=button name=Open value="Open" onClick="Open();" />
+			<input type=submit name=Submit value="Load" />
+			<input type=button name=Download value="Download" onClick="Get();" />
 		</td>
 	</tr>
    </table>

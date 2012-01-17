@@ -71,6 +71,12 @@ def Picture():
 		session.flash = "Exporter failed: No output"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
+def BioModel():
+	sbml = download_BioModel( request.vars.BIOMD )
+	response.headers['Content-Type'] = 'application/sbml+xml'
+	response.headers['Content-Disposition'] = 'attachment; filename='+request.vars.BIOMD+'.sbml'
+	return sbml
+
 def Reactome():
 	sbml = download_Reactome( request.vars.ST_ID )
 	response.headers['Content-Type'] = 'application/sbml+xml'
