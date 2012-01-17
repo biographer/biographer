@@ -21,6 +21,8 @@ Compartment = 'Compartment'
 Process = 'Process'
 Helper = 'Helper'
 
+NodeTypes = [UnspecifiedEntity, SimpleChemical, Macromolecule, NucleicAcidFeature, Complex, Compartment, Process]
+
 # edge keywords
 modulation = 'Modulation'
 inhibition = 'Inhibition'
@@ -63,7 +65,7 @@ addMapping(edgeMarkerMapping, [19], modulation);
 addMapping(edgeMarkerMapping, [20], inhibition);
 addMapping(edgeMarkerMapping, [407], absoluteInhibition);
 addMapping(edgeMarkerMapping, [464], assignment);
-//addMapping(edgeMarkerMapping, [342], interaction);
+addMapping(edgeMarkerMapping, [342], interaction);
 addMapping(edgeMarkerMapping, [459,462], stimulation);
 addMapping(edgeMarkerMapping, [15], substrate);
 addMapping(edgeMarkerMapping, [11], product);
@@ -144,12 +146,6 @@ def global2layouter(text):
 
 #def layouter2global(text):	# don't translate back, just keep the loaded types
 
-#def getLayoutNodeType(type):
-#	if type == NodeTypes["Process Node"]:
-#		return "Reaction"
-#	else:
-#		return "Compound"
-
 # end translation section
 
 
@@ -162,39 +158,38 @@ def keyOf(dictionary, value):						# return the first key, having the given valu
 	return None
 
 def getSBO(term):							# return SBO number of SBO term
+#	print term
 	term = str(term).lower()
 
-	if term in [x.lower() for x in NodeSBO.values()]:
-		result = keyOf(NodeSBO, term)				# Node SBO
-	elif term in [x.lower() for x in EdgeSBO.values()]:
-		result = keyOf(EdgeSBO, term)				# Edge SBO
-	elif term in [x.lower() for x in ModificationSBO.values()]:
-		result = keyOf(ModificationSBO, term)			# Modification SBO
-	elif term == -1 or term == "-1":
-		result = UnspecifiedEntity
+	if term in [x.lower() for x in SBOs.values()]:
+		result = keyOf(SBOs, term)
 	else:
-		result = UnspecifiedEntity				# default SBO, if nothing matches
-		print "Error: Unknown SBO term '"+str(term)+"' !"
+		result = UnspecifiedEntity
+
+#	print '->'+str(result)
 
 	return str(result)
 
 def getNodeType(text):
-	text = text.lower()
+	print text
+	text = str(text).lower()
 
-	for key in NodeTypes.keys():
-		if text == key.lower() or text+' node' == key.lower():
-			return NodeTypes[key]
+	for key in SBOs.keys():
+		if str(text) == str(key) or text == SBOs[key].lower() or text == SBOs[key].lower()+' node' or text+' node' == SBOs[key].lower():
+			print '->'+SBOs[key]
+			return SBOs[key]
 
-	return 0
+	return UnspecifiedEntity
 
-def getEdgeType(SBO):							# get Edge type by SBO number
-	t = substrate # fallback value
+def getEdgeType(number):
+	print str(number)
 
-	if SBO in EdgeSBO.keys():
-		t = EdgeSBO[SBO]
+	try:
+		if int(number) in EdgeSBO.keys():
+			print '->'+SBOs[int(number)]
+			return SBOs[int(number)]
+	except:
+		pass
 
-	if SBO in SBODefinedEdgeType2LayoutEdgeTypeMapping.keys():
-		t = SBODefinedEdgeType2LayoutEdgeTypeMapping[SBO]
-
-	return t
+	return substrate
 

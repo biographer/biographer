@@ -418,13 +418,13 @@ class Graph:
 				e.target	= n.id
 				self.Edges.append(e)
 
-			for product in reaction.getListOfProducts():
+			for p in reaction.getListOfProducts():
 				e		= Edge( defaults=True )
 				e.id		= product+str(len(self.Edges))
 				e.sbo           = getSBO( product )
 				e.type		= getEdgeType(e.sbo)
 				e.source        = n.id
-				e.target	= product.getSpecies()
+				e.target	= p.getSpecies()
 				self.Edges.append(e)
 
 			for modifier in reaction.getListOfModifiers():
