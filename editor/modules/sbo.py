@@ -11,6 +11,7 @@ nodeMapping = SBOs
 processNodeMapping = SBOs
 edgeMarkerMapping = SBOs
 
+# node keywords
 UnspecifiedEntity = 'Unspecified'
 SimpleChemical = 'Simple Chemical'
 Macromolecule = 'Macromolecule'
@@ -20,6 +21,7 @@ Compartment = 'Compartment'
 Process = 'Process'
 Helper = 'Helper'
 
+# edge keywords
 modulation = 'Modulation'
 inhibition = 'Inhibition'
 absoluteInhibition = 'Absolute Inhibition'
@@ -91,17 +93,49 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
 ### end of pasted content
 
 
-# hopefully temporary translations for Layouter "specials"
-# see http://code.google.com/p/biographer/wiki/SBO , section "Layouter specials"
+# translations for the Layouter
+# see http://code.google.com/p/biographer/wiki/SBO
 
-SBODefinedEdgeType2LayoutEdgeTypeMapping = {	"Reactant":		"Substrate",
-						"Production":		"Product",
-						"Consumption":		"Substrate",
-						"Modulation":		"Catalyst",
-						"Inhibition":		"Inhibitor",
-						"Stimulation":		"Activator",
-						"Necessary Stimulation":"Activator",
-						"Catalysis":		"Catalyst"	}
+
+#nodes
+UnspecifiedEntity = 'Unspecified'
+SimpleChemical = 'Simple Chemical'
+Macromolecule = 'Macromolecule'
+NucleicAcidFeature = 'Nucleic Acid Feature'
+Complex = 'Complex'
+Compartment = 'Compartment'
+Process = 'Process'
+Helper = 'Helper'
+
+#edges
+modulation = 'Modulation'
+inhibition = 'Inhibition'
+absoluteInhibition = 'Absolute Inhibition'
+assignment = 'Assignment'
+interaction = 'Interaction'
+stimulation = 'Stimulation'
+substrate = 'Substrate'
+product = 'Product'
+necessaryStimulation = 'Necessary Stimulation'
+catalysis = 'Catalysis'
+
+
+edge: {"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"}
+
+node : {"None", "Reaction", "Compound","Other"}
+
+SBO2Layouter = {	"Reactant":			"Substrate",
+			"Production":			"Product",
+			"Consumption":			"Substrate",
+			"Modulation":			"Catalyst",
+			"Inhibition":			"Inhibitor",
+			"Stimulation":			"Activator",
+			"Necessary Stimulation":	"Activator",
+			"Catalysis":			"Catalyst"	}
+
+def global2layouter(text):
+	SBOs[
+
 
 def getLayoutNodeType(type):
 	if type == NodeTypes["Process Node"]:

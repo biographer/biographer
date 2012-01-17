@@ -375,8 +375,8 @@ class Graph:
 		for compartment in model.getListOfCompartments():		# compartments
 			n = Node( defaults=True )
 			n.id			= compartment.getId()
-			n.sbo			= getSBO("Compartment")
-			n.type                  = getNodeType("Compartment")
+			n.sbo			= getSBO( Compartment )
+			n.type                  = getNodeType( Compartment )
 			n.data.label		= compartment.getName() if compartment.isSetName() else compartment.getId()
 			if compartment.isSetOutside():
 				n.data.compartment	= compartment.getOutside()
@@ -390,8 +390,8 @@ class Graph:
 			if sbo not in [-1, '-1']:
 				n.sbo		= getSBO( sbo )
 			else:
-				n.sbo		= getSBO('Simple Chemical')
-			n.type			= getNodeType("Simple Chemical")
+				n.sbo		= getSBO( SimpleChemical ) # fallback value
+			n.type			= getNodeType( SimpleChemical )
 			n.data.label		= species.getName() if species.isSetName() else species.getId()
 			n.data.compartment	= species.getCompartment()
 			self.Nodes.append(n)
@@ -402,8 +402,8 @@ class Graph:
 			if sbo not in [-1, '-1']:
 				n.sbo		= getSBO( sbo )
 			else:
-				n.sbo		= getSBO('Process Node')
-		        n.type         		= getNodeType('Process Node')
+				n.sbo		= getSBO( Process ) # fallback value
+		        n.type         		= getNodeType( Process )
 			n.data.label		= reaction.getName() if reaction.isSetName() else reaction.getId()
 			n.data.width		= 26
 			n.data.height		= 26
@@ -411,8 +411,8 @@ class Graph:
 
 			for reactant in reaction.getListOfReactants():		# connecting edges
 				e		= Edge( defaults=True )
-				e.id		= 'reactant'+str(len(self.Edges))
-				e.sbo           = getSBO('Reactant')
+				e.id		= substrate+str(len(self.Edges))
+				e.sbo           = getSBO( substrate )
 				e.type		= getEdgeType(e.sbo)
 				e.source        = reactant.getSpecies()
 				e.target	= n.id
@@ -420,8 +420,8 @@ class Graph:
 
 			for product in reaction.getListOfProducts():
 				e		= Edge( defaults=True )
-				e.id		= 'product'+str(len(self.Edges))
-				e.sbo           = getSBO('Production')
+				e.id		= product+str(len(self.Edges))
+				e.sbo           = getSBO( product )
 				e.type		= getEdgeType(e.sbo)
 				e.source        = n.id
 				e.target	= product.getSpecies()
@@ -429,8 +429,8 @@ class Graph:
 
 			for modifier in reaction.getListOfModifiers():
 				e		= Edge( defaults=True )
-				e.id		= 'modifier'+str(len(self.Edges))
-				e.sbo		= getSBO('Modulation')
+				e.id		= modulation+str(len(self.Edges))
+				e.sbo		= getSBO( modulation )
 				if modifier.isSetSBOTerm():
 					e.sbo	= getSBO( modifier.getSBOTerm() )
 				e.type		= getEdgeType(e.sbo)
