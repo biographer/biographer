@@ -8,9 +8,7 @@ def internal():								# Ben's JavaScripts
 		session.flash = "Unable to visualize: No graph is loaded. But look at this pretty example!"
 		return redirect(URL(r=request, c="Visualization", f="example"))
 
-	session.bioGraph.exportJSON()		# workaround for web2py bug
-	net = session.bioGraph.JSON
-	return dict( network=net )
+	return dict( network=export_JSON() )
 
 def example():									# Ben's example
 	return dict()
