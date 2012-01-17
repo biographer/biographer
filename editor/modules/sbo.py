@@ -96,52 +96,57 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
 # translations for the Layouter
 # see http://code.google.com/p/biographer/wiki/SBO
 
+## what the Layouter understands
 
-#nodes
-UnspecifiedEntity = 'Unspecified'
-SimpleChemical = 'Simple Chemical'
-Macromolecule = 'Macromolecule'
-NucleicAcidFeature = 'Nucleic Acid Feature'
-Complex = 'Complex'
-Compartment = 'Compartment'
-Process = 'Process'
-Helper = 'Helper'
+# nodes
+Reaction = "Reaction"
+Compound = "Compound"
+_Compartment = "Compartment"
+Other = "Other"
 
-#edges
-modulation = 'Modulation'
-inhibition = 'Inhibition'
-absoluteInhibition = 'Absolute Inhibition'
-assignment = 'Assignment'
-interaction = 'Interaction'
-stimulation = 'Stimulation'
-substrate = 'Substrate'
-product = 'Product'
-necessaryStimulation = 'Necessary Stimulation'
-catalysis = 'Catalysis'
+# edges
+Directed = "Directed"
+Undirected = "Undirected"
+Substrate = "Substrate"
+Product = "Product"
+Catalyst = "Catalyst"
+Activator = "Activator"
+Inhibitor = "Inhibitor"
 
+SBO_Translations_for_Layouter = {	# nodes
+					UnspecifiedEntity:	Compound,
+					SimpleChemical:		Compound,
+					Macromolecule:		Compound,
+					NucleicAcidFeature:	Compound,
+					Complex:		Compound,
+					Compartment:		_Compartment,
+					Process:		Reaction,
+					Helper:			Compound,
 
-edge: {"Directed", "Undirected", "Substrate", "Product", "Catalyst", "Activator", "Inhibitor"}
-
-node : {"None", "Reaction", "Compound","Other"}
-
-SBO2Layouter = {	"Reactant":			"Substrate",
-			"Production":			"Product",
-			"Consumption":			"Substrate",
-			"Modulation":			"Catalyst",
-			"Inhibition":			"Inhibitor",
-			"Stimulation":			"Activator",
-			"Necessary Stimulation":	"Activator",
-			"Catalysis":			"Catalyst"	}
+					# edges
+					modulation:		Activator,
+					inhibition:		Inhibitor,
+					absoluteInhibition:	Inhibitor,
+					assignment:		Undirected,
+					interaction:		Undirected,
+					stimulation:		Activator,
+					substrate:		Substrate,
+					product:		Product,
+					necessaryStimulation:	Activator,
+					catalysis:		Catalyst
+				}
 
 def global2layouter(text):
-	SBOs[
+	...
 
+def layouter2global(text):
+	...
 
-def getLayoutNodeType(type):
-	if type == NodeTypes["Process Node"]:
-		return "Reaction"
-	else:
-		return "Compound"
+#def getLayoutNodeType(type):
+#	if type == NodeTypes["Process Node"]:
+#		return "Reaction"
+#	else:
+#		return "Compound"
 
 # end translation section
 
@@ -156,6 +161,7 @@ def keyOf(dictionary, value):						# return the first key, having the given valu
 
 def getSBO(term):							# return SBO number of SBO term
 	term = str(term).lower()
+
 	if term in [x.lower() for x in NodeSBO.values()]:
 		result = keyOf(NodeSBO, term)				# Node SBO
 	elif term in [x.lower() for x in EdgeSBO.values()]:
@@ -163,21 +169,24 @@ def getSBO(term):							# return SBO number of SBO term
 	elif term in [x.lower() for x in ModificationSBO.values()]:
 		result = keyOf(ModificationSBO, term)			# Modification SBO
 	elif term == -1 or term == "-1":
-		result = 285 # Unspecified
+		result = UnspecifiedEntity
 	else:
-		result = 285 # Unspecified				# default SBO, if nothing matches
+		result = UnspecifiedEntity				# default SBO, if nothing matches
 		print "Error: Unknown SBO term '"+str(term)+"' !"
+
 	return str(result)
 
 def getNodeType(text):
 	text = text.lower()
+
 	for key in NodeTypes.keys():
 		if text == key.lower() or text+' node' == key.lower():
 			return NodeTypes[key]
+
 	return 0
 
 def getEdgeType(SBO):							# get Edge type by SBO number
-	t = LayoutEdgeTypes[0]	# fallback: Substrate
+	t = substrate # fallback value
 
 	if SBO in EdgeSBO.keys():
 		t = EdgeSBO[SBO]
