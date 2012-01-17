@@ -8,7 +8,8 @@ def index():
 		session.flash = NoModelMsg
 		net = EmptyNet
 	else:
-		net = session.bioGraph.exportJSON()
+		session.bioGraph.exportJSON()	# a web2py bug makes it necessary, to separate these two lines
+		net = session.bioGraph.JSON
 	return dict( network=net )
 
 def Console():
@@ -21,7 +22,9 @@ def JSON():
 	if session.bioGraph is None:
 		return dict( JSON='network = '+EmptyNet+";" )
 	else:
-		return dict( JSON="network = "+session.bioGraph.exportJSON()+";" )
+		session.bioGraph.exportJSON()	# a web2py bug makes it necessary, to separate these lines
+		net = session.JSON
+		return dict( JSON="network = "+net+";" )
 
 def Layout():
 	if session.bioGraph is None:

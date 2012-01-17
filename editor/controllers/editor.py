@@ -38,7 +38,10 @@ def index():
             elif file_content.startswith('<?xml'):
                 bioGraph = Graph()
                 bioGraph.importSBML( file_content )
-                json_string = bioGraph.exportJSON()
+
+		session.bioGraph.exportJSON()		# workaround for web2py bug
+		json_string = session.bioGraph.JSON
+
                 #print 'sbml2json: ',json_string
                 graph = simplejson.loads(json_string)
                 action = 'loaded %s'%request.vars.import_file.filename
@@ -54,12 +57,18 @@ def import_graph():
     action,graph,json_string = None,None,None
     if request.vars.type=='biomodel':
         import_BioModel( request.vars.identifier )
-        json_string = session.bioGraph.exportJSON()
+
+	session.bioGraph.exportJSON()		# workaround for web2py bug
+	json_string = session.bioGraph.JSON
+
         graph = simplejson.loads(json_string)
         action = 'Imported BioModel: %s'%request.vars.identifier
     elif request.vars.type == 'reactome_id':
         importReactome( request.vars.identifier )
-        json_string = session.bioGraph.exportJSON()
+
+	session.bioGraph.exportJSON()		# workaround for web2py bug
+	json_string = session.bioGraph.JSON
+
         graph = simplejson.loads(json_string)
         action = 'Imported Reactome Id: %s'%request.vars.identifier
         print 'reactome_id xxx ',action, json_string
@@ -89,7 +98,11 @@ def layout():
         p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         p.communicate()
         layout_output = open(outfile, 'r').readlines()
-        graph = simplejson.loads(bioGraph.exportJSON())
+
+	session.bioGraph.exportJSON()		# workaround for web2py bug
+	net = session.bioGraph.JSON
+        graph = simplejson.loads(net)
+
         import_Layout(graph, layout_output)
         json_string = simplejson.dumps(graph)
         #return PRE(XML(simplejson.dumps(graph)))
@@ -99,7 +112,10 @@ def layout():
     elif request.vars.layout == 'graphviz':
         layout_using_graphviz( bioGraph, png_output_folder=os.path.join(request.folder, "static/graphviz"))
         #-------------------
-        json_string = bioGraph.exportJSON()
+
+	session.bioGraph.exportJSON()		# workaround for web2py bug
+	json_string = session.bioGraph.JSON
+
         graph = simplejson.loads(json_string)
     action = 'applied automatic biographer layout'
     return undoRegister(action, graph, json_string)

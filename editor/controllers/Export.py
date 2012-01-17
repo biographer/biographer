@@ -8,7 +8,8 @@ def JSON():
 		session.flash = "Unable to export: No Model is loaded"
 		return redirect( URL(r=request, c="Import", f="JSON") )
 
-	content = session.bioGraph.exportJSON()
+	session.bioGraph.exportJSON()		# workaround for web2py bug
+	content = session.bioGraph.JSON
 
 	response.headers['Content-Type'] = 'application/json'
 	response.headers['Content-Disposition'] = 'attachment; filename=model.json'
