@@ -4619,10 +4619,10 @@ var getSBOForMarkerId = function(id) {
             return json;
         }
     };
-
-    if(bui.settings.SBGNlang == 'PD'){
+    if(bui.settings.SBGNlang == 'PD'){//FIXME this does not work :(
         bui.util.setSuperClass(bui.StateVariable, bui.Labelable);
     }else if(bui.settings.SBGNlang == 'ER'){
+        alert('bui.settings/SBGNlang '+bui.settings.SBGNlang)
         bui.util.setSuperClass(bui.StateVariable, bui.RectangularNode);
     }
 })(bui);
@@ -6747,6 +6747,9 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
 
         if('sbgnlang' in data){
             bui.settings.SBGNlang = data.sbgnlang; 
+            if(bui.settings.SBGNlang == 'ER'){
+                bui.util.setSuperClass(bui.StateVariable, bui.RectangularNode);
+            }
         }
         log('## Setting SBGN language to '+bui.settings.SBGNlang);
 
