@@ -514,24 +514,56 @@ class Graph:
 		self.log(progress, "Importing Layout ...")
 		lines = layout.split('///')[0].split("\n")
 
+		updated_nodes = []
+
 		while len(lines) > 8:
 			index = int(lines.pop(0))
 			Type = lines.pop(0)
 			name = lines.pop(0)
 			compartmentidx = lines.pop(0)
-			if Type in [Compound, Reaction]:
-				node = self.Nodes[index]
-			elif Type == _Compartment:
-				node = self.Compartments[index]
+			if not Type in [Compound, Reaction, Compartment]:
+				for i in range(5):
+					lines.pop(0)
+				self.log(error, "Error: Unknown node type '"+Type+"'. Skipping.")
+
 			else:
-				self.log(error, "Error: What kind of a node is '"+Type+"' that supposed to be?")
-				return False
-			node.data.x = float(lines.pop(0))
-			node.data.y = float(lines.pop(0))
-			node.data.width = float(lines.pop(0))
-			node.data.height = float(lines.pop(0))
-			direction = float(lines.pop(0))
-			self.log(debug, 'Node '+node.id+' updated')
+				if Type in [Compound, Reaction]:
+					node = self.Nodes[index]
+				else: # Type == Compartment:
+					node = self.Compartments[index]
+
+				node.data.x = float(lines.pop(0))
+				node.data.y = float(lines.pop(0))
+				node.data.width = float(lines.pop(0))
+				node.data.height = float(lines.pop(0))
+
+				# x|y was at node center
+				node.data.x = node.data.x - node.data.width/2
+				node.data.y = node.data.y - node.data.height/2
+
+				direction = float(lines.pop(0))
+				updated_nodes.append(node)
+				self.log(debug, 'Node '+node.id+' updated')
+
+		# get graph size
+		x_min = 0
+		x_max = 0
+		y_min = 0
+		y_max = 0
+		for node in updated_nodes:
+			if node.data.x < x_min:
+				x_min = node.data.x
+			elif node.data.x > x_max:
+				x_max = node.data.x
+			if node.data.y < y_min:
+				y_min = node.data.y
+			elif node.data.y > y_max:
+				y_max = node.data.y
+		self.log(debug, 'Graph size is ['+str(x_min)+';'+str(x_max)+'], ['+str(y_min)+';'+str(y_max)+']')
+
+		for node in updated_nodes:
+			node.data.x = node.data.x - x_min
+			node.data.y = node.data.y - y_min
 
 		# ignore splines
 

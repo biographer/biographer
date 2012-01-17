@@ -3,16 +3,6 @@
 <h1>Workbench</h1>
 
 <style>
-	#ZoomMenu		{
-				border:		1px solid gray;
-				background:	transparent;
-				padding:	10px;
-				margin:		5px;
-
-				position:	absolute;
-	/*			width:		auto;
-				float:		left;		*/
-				}
 	#BrowserNotSupported	{
 				border:		1px solid black;
 				text-align:	center;
@@ -25,12 +15,19 @@
 				height:		68%;
 				overflow:	scroll;
 				}
+	#ZoomMenu		{
+				position:	absolute;
+				border:		1px solid gray;
+				background:	transparent;
+				padding:	10px;
+				margin:		5px;
+				}
 </style>
-<!--
-<div id=BrowserNotSupported>
+
+<!--div id=BrowserNotSupported>
 	Sorry, it seems your Browser is not supported. Maybe you need to activate JavaScript !
-</div>
--->
+</div-->
+
 <div id=canvas>
 	<div id=ZoomMenu>
 		<script>
@@ -42,9 +39,9 @@
 		</script>
 
 		Zoom: 
-		<input type=button value="+" onClick="zoom(+0.1);"/>
+		<input type=button value="+" onClick="zoom(+0.2);"/>
 		<input type=button value="O" onClick="graph.scale(1);"/>
-		<input type=button value="-" onClick="zoom(-0.1);"/>
+		<input type=button value="-" onClick="zoom(-0.2);"/>
 	</div>
 </div>
 
