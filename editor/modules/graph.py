@@ -399,8 +399,11 @@ class Graph:
 		for reaction in model.getListOfReactions():			# process nodes
 			n			= Node( defaults=True )
 			n.id			= reaction.getId()
-			n.sbo			= '375'#getSBO("Unspecified")
-		        n.type         		= 'reaction'#getNodeType('Process Node')
+			if sbo not in [-1, '-1']:
+				n.sbo		= getSBO( sbo )
+			else:
+				n.sbo		= getSBO('Process Node')
+		        n.type         		= getNodeType('Process Node')
 			n.data.label		= reaction.getName() if reaction.isSetName() else reaction.getId()
 			n.data.width		= 26
 			n.data.height		= 26
@@ -409,8 +412,8 @@ class Graph:
 			for reactant in reaction.getListOfReactants():		# connecting edges
 				e		= Edge( defaults=True )
 				e.id		= 'reactant'+str(len(self.Edges))
-				e.sbo           = 10#getSBO('Reactant')
-				e.type		= getEdgeType(e.sbo)#'Substrate'
+				e.sbo           = getSBO('Reactant')
+				e.type		= getEdgeType(e.sbo)
 				e.source        = reactant.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
@@ -418,8 +421,8 @@ class Graph:
 			for product in reaction.getListOfProducts():
 				e		= Edge( defaults=True )
 				e.id		= 'product'+str(len(self.Edges))
-				e.sbo           = 393#getSBO('Production')
-				e.type		= getEdgeType(e.sbo)#'Product'
+				e.sbo           = getSBO('Production')
+				e.type		= getEdgeType(e.sbo)
 				e.source        = n.id
 				e.target	= product.getSpecies()
 				self.Edges.append(e)
@@ -427,11 +430,10 @@ class Graph:
 			for modifier in reaction.getListOfModifiers():
 				e		= Edge( defaults=True )
 				e.id		= 'modifier'+str(len(self.Edges))
-				#e.sbo		= getSBO( modifier.getSBOTerm() )
-				e.sbo		= 19
+				e.sbo		= getSBO('Modulation')
 				if modifier.isSetSBOTerm():
-					e.sbo	= int(getSBO( modifier.getSBOTerm() ))
-				e.type		= getEdgeType(e.sbo)#'Modifier'
+					e.sbo	= getSBO( modifier.getSBOTerm() )
+				e.type		= getEdgeType(e.sbo)
 				e.source        = modifier.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)

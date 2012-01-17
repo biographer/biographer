@@ -3,57 +3,99 @@
 
 ### SBO definitions ###
 
-NodeSBO = EdgeSBO = ModificationSBO = {}
+SBOs = {}
 
-NodeSBO[285] = NodeSBO[167] = "Unspecified"
-NodeSBO[247] = NodeSBO[240] = "Simple Chemical"
-NodeSBO[245] = NodeSBO[252] = "Macromolecule"
-NodeSBO[250] = NodeSBO[251] = "Nucleic Acid Feature"
-NodeSBO[253] = "Complex"
-NodeSBO[290] = "Compartment"
-NodeSBO[375] = "Process"
+# Visualizer definition wrapping
 
-EdgeSBO[10] = EdgeSBO[336] = "Reactant"
-EdgeSBO[393] = "Production"
-EdgeSBO[394] = "Consumption"
-EdgeSBO[19] = "Modulation"
-EdgeSBO[20] = "Inhibition"
-EdgeSBO[459] = EdgeSBO[15] = EdgeSBO[11] = "Stimulation"
-EdgeSBO[461] =  "Necessary Stimulation"
-EdgeSBO[13] = "Catalysis"
+nodeMapping = SBOs
+processNodeMapping = SBOs
+edgeMarkerMapping = SBOs
 
-ModificationSBO[215] = 'Acetylation'
-ModificationSBO[111101] = 'Active'
-ModificationSBO[217] = 'Glycosylation'
-ModificationSBO[111100] = 'Glycosylphosphatidylinositolation'
-ModificationSBO[233] = 'Hydroxylation'
-ModificationSBO[111102] = 'Inactive'
-ModificationSBO[214] = 'Methylation'
-ModificationSBO[219] = 'Myristoylation'
-ModificationSBO[218] = 'Palmitoylation'
-ModificationSBO[216] = 'Phosphorylation'
-ModificationSBO[224] = 'Ubiquitination'
-ModificationSBO[111100] = 'Unknown Modification'
-ModificationSBO[111101] = 'PTM Active1'
-ModificationSBO[111101] = 'PTM Active2'
-ModificationSBO[111100] = 'PTM Farnesylation'
-ModificationSBO[111100] = 'Geranylgeranylation'
-ModificationSBO[111100] = 'PTM Glycosaminoglycan'
-ModificationSBO[111100] = 'PTM Oxidation'
-ModificationSBO[111100] = 'PTM Sumoylation'
+UnspecifiedEntity = ''
+SimpleChemical
+Macromolecule
+NucleicAcidFeature
+Complex
+Compartment
+Process
+Helper
 
-NodeTypes = { "Entitiy Pool Node":"reaction", "Auxiliary Unit":"simple_species", "Compartment Node":"compartment", "Container Node":"complex_species", "Process Node":"reaction", "Reference Node":"info" }
+Process
 
-LayoutEdgeTypes = ["Substrate", "Product", "Catalyst", "Activator", "Inhibitor"]
+modulation
+inhibition
+absoluteInhibition
+assignment
+interaction
+stimulation
+substrate
+product
+necessaryStimulation
+catalysis
 
-#EdgeSBO[10] = EdgeSBO[336] = "Reactant"			->	Substrate
-#EdgeSBO[393] = "Production"					->	Product
-#EdgeSBO[394] = "Consumption"					->	Substrate
-#EdgeSBO[19] = "Modulation"					->	Catalyst
-#EdgeSBO[20] = "Inhibition"					->	Inhibitor
-#EdgeSBO[459] = EdgeSBO[15] = EdgeSBO[11] = "Stimulation"	->	Activator
-#EdgeSBO[461] =  "Necessary Stimulation"			->	Activator
-#EdgeSBO[13] = "Catalysis"					->	Catalyst
+def addMapping(which, numbers, term):
+	for number in numbers:
+		which[number] = term
+
+def addModificationMapping(numbers, term, trash):
+	addMapping(SBOs, numbers, term)
+
+### paste below the global SBO definitions
+### from http://code.google.com/p/biographer/source/browse/src/main/javascript/sboMappings.js?repo=visualization
+### and remove all
+###	bui.
+###	connectingArcs.
+###	.id
+
+addMapping(nodeMapping, [285], UnspecifiedEntity);
+addMapping(nodeMapping, [247, 240], SimpleChemical);
+addMapping(nodeMapping, [245, 252], Macromolecule);
+addMapping(nodeMapping, [250, 251], NucleicAcidFeature);
+addMapping(nodeMapping, [253], Complex);
+addMapping(nodeMapping, [290], Compartment);
+addMapping(nodeMapping, [375, 167], Process);
+addMapping(nodeMapping, [-1], Helper);
+
+addMapping(processNodeMapping, [375, 167], Process);
+addMapping(processNodeMapping, [-1], Helper);
+
+addMapping(edgeMarkerMapping, [19], modulation);
+addMapping(edgeMarkerMapping, [20], inhibition);
+addMapping(edgeMarkerMapping, [407], absoluteInhibition);
+addMapping(edgeMarkerMapping, [464], assignment);
+//addMapping(edgeMarkerMapping, [342], interaction);
+addMapping(edgeMarkerMapping, [459,462], stimulation);
+addMapping(edgeMarkerMapping, [15], substrate);
+addMapping(edgeMarkerMapping, [11], product);
+addMapping(edgeMarkerMapping, [461], necessaryStimulation);
+addMapping(edgeMarkerMapping, [13], catalysis);
+
+addModificationMapping([215], 'acetylation', 'A');
+addModificationMapping([111101], 'active', 'active');
+addModificationMapping([217], 'glycosylation', 'G');
+addModificationMapping([111100], 'glycosylphosphatidylinositolation', 'GPI');
+addModificationMapping([233], 'hydroxylation', 'OH');
+addModificationMapping([111102], 'inactive', 'inactive');
+addModificationMapping([214], 'methylation', 'M');
+addModificationMapping([219], 'myristoylation', 'MYR');
+addModificationMapping([218], 'palmitoylation', 'PAL');
+addModificationMapping([216], 'phosphorylation', 'P');
+addModificationMapping([224], 'ubiquitination', 'U');
+addModificationMapping([111100], 'unknownModification', '?');
+addModificationMapping([111101], 'PTM_active1', 'active');
+addModificationMapping([111101], 'PTM_active2', 'active');
+addModificationMapping([111100], 'PTM_farnesylation', 'F');
+addModificationMapping([111100], 'geranylgeranylation', 'GER');
+addModificationMapping([111100], 'PTM_glycosaminoglycan', 'GA');
+addModificationMapping([111100], 'PTM_oxidation', '0');
+addModificationMapping([111100], 'PTM_sumoylation', 'S');
+
+### end of pasted content
+
+
+# translations for Layouter "specials"
+# see http://code.google.com/p/biographer/wiki/SBO , section "Layouter specials"
+
 
 SBODefinedEdgeType2LayoutEdgeTypeMapping = {	"Reactant":		"Substrate",
 						"Production":		"Product",
@@ -63,6 +105,8 @@ SBODefinedEdgeType2LayoutEdgeTypeMapping = {	"Reactant":		"Substrate",
 						"Stimulation":		"Activator",
 						"Necessary Stimulation":"Activator",
 						"Catalysis":		"Catalyst"	}
+
+# end translation section
 
 
 ### SBO related functions ###
