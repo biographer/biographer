@@ -369,30 +369,34 @@ class Graph:
 		SBML = libsbml.readSBMLFromString( SBML )
 		model = SBML.getModel()
 		if model is None:
-			self.log(error, "Error: SBML model is None !")
+			self.log(error, "Error: SBML import failed")
 			return False
 
-		for compartment in model.getListOfCompartments():
+		for compartment in model.getListOfCompartments():		# compartments
 			n = Node( defaults=True )
 			n.id			= compartment.getId()
 			n.sbo			= getSBO("Compartment")
-			n.type                  = getNodeType("Compartment Node")
+			n.type                  = getNodeType("Compartment")
 			n.data.label		= compartment.getName() if compartment.isSetName() else compartment.getId()
 			if compartment.isSetOutside():
 				n.data.compartment	= compartment.getOutside()
 			self.Nodes.append(n)
 			#self.Compartments.append(n)
 
-		for species in model.getListOfSpecies():
+		for species in model.getListOfSpecies():			# compounds
 			n = Node( defaults=True )
 			n.id			= species.getId()
-			n.sbo			= getSBO( species.getSBOTerm() )
-			n.type			= 'simple species'#getNodeType("Entitiy Pool Node")
+			sbo = species.getSBOTerm()
+			if sbo not in [-1, '-1']:
+				n.sbo		= getSBO( sbo )
+			else:
+				n.sbo		= getSBO('Simple Chemical')
+			n.type			= getNodeType("Simple Chemical")
 			n.data.label		= species.getName() if species.isSetName() else species.getId()
 			n.data.compartment	= species.getCompartment()
 			self.Nodes.append(n)
 
-		for reaction in model.getListOfReactions():			# create a process node
+		for reaction in model.getListOfReactions():			# process nodes
 			n			= Node( defaults=True )
 			n.id			= reaction.getId()
 			n.sbo			= '375'#getSBO("Unspecified")
@@ -402,7 +406,7 @@ class Graph:
 			n.data.height		= 26
 			self.Nodes.append(n)
 
-			for reactant in reaction.getListOfReactants():		# create Edges from the educts, products and modifiers to this process node
+			for reactant in reaction.getListOfReactants():		# connecting edges
 				e		= Edge( defaults=True )
 				e.id		= 'reactant'+str(len(self.Edges))
 				e.sbo           = 10#getSBO('Reactant')

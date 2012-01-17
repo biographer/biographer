@@ -6,6 +6,10 @@
 <br/>
 
 <script>
+	function Download() {
+		id = document.getElementById('ST_ID').value;
+		if ( id != '' )	window.location.href = '{{=URL(r=request, c="Export", f="Reactome")}}?ST_ID='+id;
+		}
 	function Example() {
 		document.main.ST_ID.value = 'REACT_6167.3';
 		document.main.submit();
@@ -13,7 +17,9 @@
 </script>
 
 <br/>
-Stable identifier: <input type=text name="ST_ID" /> <input type=submit value="Load this Pathway"/>
+Stable identifier: <input type=text name="ST_ID" id="ST_ID" value='REACT_6167.3' />
+<input type=submit value="Load this Pathway"/>
+<input type=button value="Download this Pathway" onClick='Download();'/>
 
 <br/><br/>
 

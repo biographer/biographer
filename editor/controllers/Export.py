@@ -71,3 +71,9 @@ def Picture():
 		session.flash = "Exporter failed: No output"
 		return redirect( URL(r=request, c="Workbench", f="index") )
 
+def Reactome():
+	sbml = download_Reactome( request.vars.ST_ID )
+	response.headers['Content-Type'] = 'application/sbml+xml'
+	response.headers['Content-Disposition'] = 'attachment; filename='+request.vars.ST_ID+'.sbml'
+	return sbml
+

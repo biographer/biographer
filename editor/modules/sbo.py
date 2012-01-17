@@ -7,7 +7,6 @@ NodeSBO = EdgeSBO = ModificationSBO = {}
 
 NodeSBO[285] = NodeSBO[167] = "Unspecified"
 NodeSBO[247] = NodeSBO[240] = "Simple Chemical"
-
 NodeSBO[245] = NodeSBO[252] = "Macromolecule"
 NodeSBO[250] = NodeSBO[251] = "Nucleic Acid Feature"
 NodeSBO[253] = "Complex"
