@@ -1,0 +1,23 @@
+
+nodes:
+ entity pool nodes (EPNs):
+   0. sucrose
+   1. h2o
+   2. glucose
+   3. fructose
+   4. sucrase
+ container nodes (CNs):
+   5. compartment: cytoplasma (contains all other nodes)
+ process nodes (PNs):
+   6. reaction
+
+reactions:
+ h2o + sucrose -> glucose + fructose (catalyzed by sucrase)
+
+edges:
+ 7. sucrose		-> reaction node
+ 8. h2o			-> reaction node
+ 9. reaction node	-> glucose
+10. reaction node	-> fructose
+11. sucrase		-> reaction node (catalyze)
+
