@@ -62,7 +62,7 @@
 	<div class=spacer style="left:110px;">
 		<div class=dropdown>
 			Layout<br/>
-			<a href="{{=URL(r=request, c='Layout', f='biographer')}}">biographer</a><br/>
+			<a href="{{=URL(r=request, c='Layout', f='internal')}}">internal</a><br/>
 			<a href="{{=URL(r=request, c='Layout', f='graphviz')}}">graphviz</a><br/>
 		</div>
 	</div>
@@ -70,7 +70,7 @@
 	<div class=spacer style="left:220px;">
 		<div class=dropdown>
 			Visualization<br/>
-			<a href="{{=URL(r=request, c='Visualization', f='biographer')}}">biographer</a><br/>
+			<a href="{{=URL(r=request, c='Visualization', f='internal')}}">internal</a><br/>
 			<a href="{{=URL(r=request, c='Visualization', f='example')}}">example</a><br/>
 			<a href="{{=URL(r=request, c='Visualization', f='graphviz')}}">graphviz</a><br/>
 		</div>
@@ -96,9 +96,8 @@
 		<div class=dropdown>
 			Export<br/>
 			<a href="{{=URL(r=request, c='Export', f='JSON')}}">JSON</a><br/>
-			<a href="{{=URL(r=request, c='Export', f='Layout')}}">Layout</a><br/>
-	<!--		<a href="{{=URL(r=request, c='ODP', f='exporter')}}">ODP</a><br/>
-			<a href="{{=URL(r=request, c='SBML', f='exporter')}}">SBML</a><br/>	-->
+			<a href="{{=URL(r=request, c='Export', f='Layouter')}}">Layout</a><br/>
+			<a href="{{=URL(r=request, c='Export', f='dot')}}">dot</a><br/>
 
 			<style>
 				#format		{
@@ -137,11 +136,6 @@
 			Project<br/>
 			<a href="{{=URL(r=request, c='Project', f='Roadmap')}}">Roadmap</a><br/>
 			<a target="_blank" href="http://code.google.com/p/biographer/">Home</a><br/>
-			<a target="_blank" href="http://code.google.com/p/biographer/source/browse/?repo=server">Source</a><br/>
-			<a target="_blank" href="http://code.google.com/p/biographer/source/list?repo=server">Changes</a><br/>
-			<a target="_blank" href="http://code.google.com/p/biographer/source/checkout?repo=server">Checkout</a><br/>
-			<a target="_blank" href="http://code.google.com/hosting/settings">Your password</a><br/>
-			<a target="_blank" href="http://cheetah.biologie.hu-berlin.de/biographer/"><nobr>biographer installation @ HU-Berlin.de</nobr></a><br/>
 		</div>
 	</div>
 </div>

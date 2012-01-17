@@ -1,15 +1,7 @@
 # -*- coding: utf-8 -*-
 
-request_folder = "/var/www/web2py/applications/biographer"
-
-import os, sys
-
-hardcoded = request_folder + "/modules"
-if not hardcoded in sys.path:
-	sys.path.append(hardcoded)
-import biographer
-
-from copy import deepcopy
+def index():
+	return redirect( URL(r=request, c="Layout", f="choose") )
 
 def choose():
 	if request.env.request_method == "GET":
@@ -23,46 +15,37 @@ def choose():
 		if returnto == "":
 			returnto = URL(r=request,c='Workbench',f='index')
 
-		Layouter = request.vars.Layouter
-		if Layouter == "biographer":
-			return redirect( URL(r=request,c='Layout',f='biographer')+"?returnto="+returnto )
-		if Layouter == "graphviz":
-			return redirect( URL(r=request,c='Layout',f='graphviz')+"?returnto="+returnto )
 		return redirect( returnto )
 
-def biographer():
+def internal():
 	if session.bioGraph is None:
-		session.flash = "Unable to layout: No graph is loaded. Import a model from BioModels.net ?"
+		session.flash = "No graph is loaded. Do you want to import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="biographer") )
 
-	executable = os.path.join(request.folder, "static/Layouter/build/layout")
+	layout( session.bioGraph, path_to_layout_binary=os.path.join(request.folder, "layout/build/layout"), execution_folder=os.path.join(request.folder, "cache") )
 
-	if os.path.exists(executable):
-		session.bioGraph.Layout( executable )
-	else:
-		session.flash = "Layouter not installed."
-		return redirect( URL(r=request, c="Workbench", f="index") )
-
-	if request.vars.returnto is not None:
-		return redirect(str(request.vars.returnto))
-	return dict()
+	return redirect( URL(r=request, c="Workbench", f="index") )
 
 def graphviz():
 	if session.bioGraph is None:
-		session.flash = "Unable to layout: No graph is loaded. Import a model from BioModels.net ?"
+		session.flash = "No graph is loaded. Do you want to import a model from BioModels.net ?"
 		return redirect( URL(r=request, c="Import", f="BioModels")+"?returnto="+URL(r=request, c="Layout", f="graphviz") )
 
-	server_object		= deepcopy( session.bioGraph )
-	session.graphvizDOT, filename, cached, boundaries = server_object.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
-	del session.bioGraph
-	session.bioGraph	= server_object
-	session.graphvizURL	= URL(r=request, c="static/graphviz", f=filename)
-	if cached:
-		response.flash = "graphviz layout loaded from cache"
-	else:
-		response.flash = "graphviz layout completed"
+	server_object = deepcopy( session.bioGraph )	# without these two lines, some caching problem occurs,
+	del session.bioGraph				# and session.bioGraph does not get updated
 
-	if request.vars.returnto is not None:
-		return redirect(str(request.vars.returnto))
-	return dict()
+	png = layout_using_graphviz( server_object, execution_folder=os.path.join(request.folder, "cache"), png_output_folder=os.path.join(request.folder, "static/graphviz") )
+
+	session.bioGraph	= server_object
+	session.graphviz_png	= '../static/graphviz/'+png
+	session.graphviz_layout = session.bioGraph.graphviz_layout
+
+	session.flash = "graphviz layout completed"
+
+	return redirect( URL(r=request, c="Visualization", f="graphviz") )
+
+def graphviz_layout():
+	response.headers['Content-Type'] = 'text/vnd.graphviz'
+	response.headers['Content-Disposition'] = 'attachment; filename=model.dot'
+	return session.graphviz_layout
 
