@@ -93,5 +93,32 @@ def Reactome():
 			session.flash = 'Reactome import failed. See web2py log for details.'
 			return redirect( URL(r=request, c='Workbench', f='index') )
 
-		return redirect( URL(r=request, c="Layout", f="graphviz") )
+		Layouter = request.vars.Layouter				# a Layouter was chosen
+		if Layouter == "ask":
+			return redirect( URL(r=request,c='Layout',f='choose') )
+		if Layouter == "internal":
+			return redirect( URL(r=request,c='Layout',f='internal') )
+		if Layouter == "graphviz":
+			return redirect( URL(r=request,c='Layout',f='graphviz') )
+
+		return redirect( URL(r=request, c='Workbench', f='index') )	# else: goto Workbench
+
+def BooleanNet():
+	if request.env.request_method == "GET":
+		return dict()
+
+	if request.env.request_method == "POST":
+
+		reset_current_session()
+		session.bioGraph.importBooleanNet( request.vars.File.file.read() )
+
+		Layouter = request.vars.Layouter				# a Layouter was chosen
+		if Layouter == "ask":
+			return redirect( URL(r=request,c='Layout',f='choose') )
+		if Layouter == "internal":
+			return redirect( URL(r=request,c='Layout',f='internal') )
+		if Layouter == "graphviz":
+			return redirect( URL(r=request,c='Layout',f='graphviz') )
+
+		return redirect( URL(r=request, c='Workbench', f='index') )	# else: goto Workbench
 

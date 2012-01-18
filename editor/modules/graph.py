@@ -168,7 +168,7 @@ class Graph:
 			while n.id in self.node_IDs:
 				oldID = str(n.id)
 				n.id = randomID( prefix=oldID+'_', length=4 )
-				self.log(warning, "Collision: Node '"+odlID+"' renamed to '"+n.id+"'")
+				self.log(warning, "Collision: Node '"+oldID+"' renamed to '"+n.id+"'")
 			self.node_IDs.append(n.id)
 
 		self.edge_IDs = []
@@ -437,6 +437,52 @@ class Graph:
 				e.source        = modifier.getSpecies()
 				e.target	= n.id
 				self.Edges.append(e)
+
+		self.initialize()
+
+	def importBooleanNet(self, network):
+		self.reset()
+		self.log(info, 'Importing Boolean Network ...')
+
+		node_name_dictionary = []
+
+		for line in network.split('\n'):
+			line = line.strip()
+			if len(line) > 0 and line[0] != '#':
+				if line.find('=') == -1:
+					self.log(error, 'unrecognized definition: '+line)
+				else:
+					s = line.split('=')
+					left = s[0].strip(' \t*')
+					right = s[1].strip()
+
+					if left.find(':') > -1:			# generations
+						s = left.split(':')
+						left = s[1].strip()
+
+					if not left in node_name_dictionary:
+						node = Node( defaults=True )
+						node.id = left
+						node.type = SimpleChemical
+						self.Nodes.append(node)
+						node_name_dictionary.append(left)
+
+					if right not in ['True', 'False']:
+						right = right.replace('(',' ').replace(')',' ').strip().split(' ')
+						for word in right:
+							if not word.lower() in ['','and','or','not']:
+								edge = Edge( defaults=True )
+								edge.id = 'edge'+str(len(self.Edges))
+								edge.source = word
+								edge.target = left
+								self.Edges.append(edge)
+
+								if not word in node_name_dictionary:
+									node = Node( defaults=True )
+									node.id = word
+									node.type = SimpleChemical
+									self.Nodes.append(node)
+									node_name_dictionary.append(word)
 
 		self.initialize()
 
