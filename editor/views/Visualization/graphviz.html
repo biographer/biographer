@@ -30,14 +30,17 @@
 </style>
 
 <script>
+	function zoom(add) {
+		width = document.network.offsetWidth;
+		if ( width + add > 100 ) document.network.style.width = width + add;
+		}
+
 	function handle(delta) {
-		previous_width = document.network.offsetWidth;
-		aspect_ratio = previous_width / document.network.offsetHeight;
-		add = 200;
+/*		aspect_ratio = previous_width / document.network.offsetHeight;	*/
 		if (delta < 0)
-			document.network.style.width = previous_width - add;
+			zoom(-300);
 		else
-			document.network.style.width = previous_width + add;
+			zoom(300);
 /*		document.network.style.height = document.network.offsetWidth / aspect_ratio;	*/
 	}
 
@@ -72,9 +75,9 @@
 <div id=canvas>
 
 	<center>
-	<img name=network src="{{ = session.graphviz_png }}" />
+	<img name=network src="{{ = session.graphviz_png }}" onClick='zoom(500);'/>
 
 	<!--{{ = XML(DijkstraMap) }}-->
 
 </div>
-Use mouse wheel to zoom in or out.
+Click to zoom. Use mouse wheel to zoom in or out.

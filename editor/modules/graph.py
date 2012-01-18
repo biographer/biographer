@@ -475,6 +475,7 @@ class Graph:
 								edge.id = 'edge'+str(len(self.Edges))
 								edge.source = word
 								edge.target = left
+								edge.type = substrate
 								self.Edges.append(edge)
 
 								if not word in node_name_dictionary:
