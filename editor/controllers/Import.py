@@ -110,7 +110,10 @@ def BooleanNet():
 	if request.env.request_method == "POST":
 
 		reset_current_session()
-		session.bioGraph.importBooleanNet( request.vars.File.file.read() )
+		if request.vars.File == '':
+			session.bioGraph.importBooleanNet( open('/home/Master/Network/Whi2p.boolenet').read() )
+		else:
+			session.bioGraph.importBooleanNet( request.vars.File.file.read() )
 
 		Layouter = request.vars.Layouter				# a Layouter was chosen
 		if Layouter == "ask":
