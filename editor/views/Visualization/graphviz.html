@@ -75,9 +75,15 @@
 <div id=canvas>
 
 	<center>
-	<img name=network src="{{ = session.graphviz_png }}" onClick='zoom(500);'/>
+	<img name=network src="{{ = session.graphviz_png }}" />
 
 	<!--{{ = XML(DijkstraMap) }}-->
 
 </div>
-Click to zoom. Use mouse wheel to zoom in or out.
+Click to zoom. Use mouse wheel to zoom in or out. 
+{{ if os.path.exists('/home/Master/Network/Whi2p.boolenet'): }}
+<form name=main action="{{=URL(r=request, c='Layout', f='graphviz')}}" method=POST enctype="multipart/form-data">
+	<input type=hidden name=Layouter value=graphviz />
+	<input type=submit value="Load Matthias's Whi2p Network" />
+</form>
+{{ pass }}

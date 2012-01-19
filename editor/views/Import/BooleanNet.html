@@ -24,8 +24,11 @@
 	<tr>
 		<td></td>
 		<td>
-			<input type=submit value=Load /> or 
+			<input type=submit value=Load />
+{{ if os.path.exists('/home/Master/Network/Whi2p.boolenet'): }}
+			&nbsp;or&nbsp;
 			<input type=submit value="Load Matthias's Whi2p Network" />
+{{ pass }}
 		</td>
 	</tr>
    </table>

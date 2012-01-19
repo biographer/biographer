@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 def index():
-    check_first_user()#check if the first users exits if not redirect to setup
+#    check_first_user()#check if the first users exits if not redirect to setup
     return redirect( URL(r=request, c='editor', f='index') )
 
 def user():
