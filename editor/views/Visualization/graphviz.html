@@ -80,9 +80,9 @@
 	<!--{{ = XML(DijkstraMap) }}-->
 
 </div>
-Click to zoom. Use mouse wheel to zoom in or out. 
+Use mouse wheel to zoom in or out. 
 {{ if os.path.exists('/home/Master/Network/Whi2p.boolenet'): }}
-<form name=main action="{{=URL(r=request, c='Layout', f='graphviz')}}" method=POST enctype="multipart/form-data">
+<form name=main action="{{=URL(r=request, c='Import', f='BooleanNet')}}" method=POST enctype="multipart/form-data">
 	<input type=hidden name=Layouter value=graphviz />
 	<input type=submit value="Load Matthias's Whi2p Network" />
 </form>

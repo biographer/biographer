@@ -476,6 +476,7 @@ class Graph:
 								edge.source = word
 								edge.target = left
 								edge.type = substrate
+								edge.sbo = getSBO(edge.type)
 								self.Edges.append(edge)
 
 								if not word in node_name_dictionary:
@@ -667,7 +668,11 @@ class Graph:
 			try:
 				source = edge.source.alias
 				target = edge.target.alias
-				arrow = 'tee' if getEdgeType(edge.sbo) == getEdgeType(getSBO('Inhibition')) else 'normal'
+				arrow = 'normal'
+				if edge.owns('type') and getEdgeType(edge.type) == inhibition:
+					arrow = 'tee'
+				elif edge.owns('sbo') and getEdgeType(edge.sbo) == inhibition:
+					arrow = 'tee'
 				graphviz_model.add_edge( source, target, arrowhead=arrow )
 				counter += 1
 			except:

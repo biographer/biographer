@@ -110,7 +110,7 @@ def BooleanNet():
 	if request.env.request_method == "POST":
 
 		reset_current_session()
-		if request.vars.File == '':
+		if request.vars.File in ['', None]:
 			session.bioGraph.importBooleanNet( open('/home/Master/Network/Whi2p.boolenet').read() )
 		else:
 			session.bioGraph.importBooleanNet( request.vars.File.file.read() )
