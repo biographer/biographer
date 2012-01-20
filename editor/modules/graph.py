@@ -55,9 +55,7 @@ class Graph:
 		self.abstract_nodes = 0
 		self.Compartments = []
 		self.CenterNode = None
-		self.dict_hash = ""
 		self.JSON = None
-		self.JSON_hash = ""
 		self.SBML = None
 		self.BioPAX = None
 		self.BioLayout = None
@@ -334,32 +332,17 @@ class Graph:
 		self.initialize()
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
-
 		d = self.exportDICT(status=False)
-
 		self.log(progress, "Exporting JSON ...")
-
-		h = md5( pickle.dumps(d) ).hexdigest()
-		self.log(debug, 'Hash is now '+h+', previous model was '+self.JSON_hash)
-		if self.JSON_hash != h:
-			self.JSON = json.dumps( d, indent=Indent )
-			self.JSON_hash = h
-
+		self.JSON = json.dumps( d, indent=Indent )
 		self.status()
 		return self.JSON
 
 	def exportDICT(self, status=True):					# export current model as python dictionary
 		if status:
 			self.status()
-
 		self.log(progress, "Exporting dictionary ...")
-
-		h = md5( pickle.dumps(self.Nodes) ).hexdigest() + md5( pickle.dumps(self.Edges) ).hexdigest()
-		self.log(debug, 'Hash is now '+h+', previous model was '+self.dict_hash)
-		if self.dict_hash != h:
-			self.exportdict = { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }
-			self.dict_hash = h
-
+		self.exportdict = { "nodes":[n.exportDICT() for n in self.Nodes], "edges":[e.exportDICT() for e in self.Edges] }
 		return self.exportdict
 
 	def importSBML(self, SBML):						# import SBML

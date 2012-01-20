@@ -56,7 +56,7 @@ class Edge:
 
 	def exportDICT(self):
 		data = None
-		if self.owns('data'):					# necessary for speed, without deepcopy will take forever
+		if self.owns('data'):						# necessary for speed, without deepcopy will take forever
 			data = self.data
 			del self.data
 		source = None
