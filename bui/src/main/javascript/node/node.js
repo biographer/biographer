@@ -157,6 +157,7 @@
      */
     var parentRemoved = function() {
         this.parent(this.graph());
+	this.remove();
     };
 
     /**
@@ -579,7 +580,7 @@
          *   immediately.
          * @return {bui.Node} Fluent interface.
          */
-        move : function(x, y, duration) {
+        move : function(x, y, duration, finishedListener) {
             var privates = this._privates(identifier);
 
             if (duration === undefined || duration <= 0) {
@@ -604,7 +605,9 @@
                         x -= diffX;
                         y -= diffY;
                         setTimeout(arguments.callee, timeOffset);
-                    }
+                    } else {
+		      if (finishedListener) finishedlistener();
+		    }
                 })();
             }
 

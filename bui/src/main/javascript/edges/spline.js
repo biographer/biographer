@@ -179,7 +179,6 @@
                 }
                 privates.targetSplineHandle.absolutePositionCenter(target.absoluteCenter().x+privates.targetSplineHandlePos.x,
                                                     target.absoluteCenter().y+privates.targetSplineHandlePos.y);
-                privates.positioningSplineHandles=false;
                                                     
                 var sourceSplineHandle = privates.sourceSplineHandle,
                         targetSplineHandle = privates.targetSplineHandle;
@@ -187,12 +186,30 @@
                 var sourcePosition = source
                         .calculateLineEnd(sourceSplineHandle),
                         targetPosition = target
-                                .calculateLineEnd(targetSplineHandle),
-                        sourceSplineHandlePosition = sourceSplineHandle
+                                .calculateLineEnd(targetSplineHandle);
+                // repositon splineHandles if they ar within the node
+                var dx=sourcePosition.x-source.absoluteCenter().x,
+                    dy=sourcePosition.y-source.absoluteCenter().y;
+                if (Math.abs(dx)>=Math.abs(privates.sourceSplineHandlePos.x)){
+                   privates.sourceSplineHandlePos.x=dx*1.2;
+                   privates.sourceSplineHandlePos.y=dy*1.2;
+                   privates.sourceSplineHandle.absolutePositionCenter(source.absoluteCenter().x+privates.sourceSplineHandlePos.x,
+                                                                      source.absoluteCenter().y+privates.sourceSplineHandlePos.y);
+                }
+                dx=targetPosition.x-target.absoluteCenter().x,
+                dy=targetPosition.y-target.absoluteCenter().y;
+                if (Math.abs(dx)>=Math.abs(privates.targetSplineHandlePos.x)){
+                   privates.targetSplineHandlePos.x=dx*1.2;
+                   privates.targetSplineHandlePos.y=dy*1.2;
+                   privates.targetSplineHandle.absolutePositionCenter(target.absoluteCenter().x+privates.targetSplineHandlePos.x,
+                                                                      target.absoluteCenter().y+privates.targetSplineHandlePos.y);
+                }
+                privates.positioningSplineHandles=false;
+                var sourceSplineHandlePosition = sourceSplineHandle
                                 .absoluteCenter(),
                         targetSplineHandlePosition = targetSplineHandle
                                 .absoluteCenter();
-                
+
                 var data = ['M' ,
                         sourcePosition.x,
                         sourcePosition.y,
@@ -300,7 +317,7 @@
            }
            for (var i=0;i<positions.length;i+=2){
               var n=i/2;
-              privates.points[n].point.moveAbsoluteCenter(positions[i],positions[i+1],duration);
+              privates.points[n].point.moveAbsoluteCenter(bui.util.toNumber(positions[i]),bui.util.toNumber(positions[i+1]),duration);
            }
         },
         /**
@@ -317,19 +334,19 @@
             var privates = this._privates(identifier);
             var target = this.target(),
                     source = this.source();
-            privates.sourceSplineHandlePos.x=positions[0];
-            privates.sourceSplineHandlePos.y=positions[1];
+            privates.sourceSplineHandlePos.x=bui.util.toNumber(positions[0]);
+            privates.sourceSplineHandlePos.y=bui.util.toNumber(positions[1]);
             for (var i=2;i<positions.length-2;i+=2){
                var n=(i-2)/2;
                if (privates.points[n]){
-                  privates.points[n].x=positions[i];
-                  privates.points[n].y=positions[i+1];
+                  privates.points[n].x=bui.util.toNumber(positions[i]);
+                  privates.points[n].y=bui.util.toNumber(positions[i+1]);
                } else {
                   throw "not enough spline points set for spline handles"
                }
             }
-            privates.targetSplineHandlePos.x=positions[i];
-            privates.targetSplineHandlePos.y=positions[i+1];
+            privates.targetSplineHandlePos.x=bui.util.toNumber(positions[i]);
+            privates.targetSplineHandlePos.y=bui.util.toNumber(positions[i+1]);
             this._sourceOrTargetDimensionChanged();
             return this;
         },

@@ -9,6 +9,16 @@ var simpleExample = {"edges":[
 "target":"c2",
 "id":0,
 "type":"Substrate"
+},{
+   "source":"c2",
+   "sbo":15,
+   "data":{
+      "handles":[5,5,-5,5],
+      "points":[]
+   },
+   "target":"c3",
+   "id":0,
+   "type":"Substrate"
 }
 ],
 "nodes":[
@@ -39,5 +49,19 @@ var simpleExample = {"edges":[
 },
 "type":"Protein",
 "id":"c2"
+},
+{
+   "is_abstract":0,
+   "sbo":"252",
+   "data":{
+      "width":"70",
+      "y":"300",
+      "x":"600",
+      "label":"C2",
+      "height":"70",
+      "dir":0
+   },
+   "type":"Protein",
+   "id":"c3"
 }
 ]};
