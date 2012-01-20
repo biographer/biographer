@@ -446,6 +446,27 @@ class Graph:
 
 		node_name_dictionary = []
 
+		def is_compound(name):
+			if True in [name.lower().find(key)>-1 for key in ['_present', '_active', '_vesicle', '_body', '_complex', '_repressor']]:
+				return True
+			if name in ['Glucose', 'Pyruvat', 'Nitrogen']:
+				return True
+			if len(name) == 5 and name[4] == 'p':
+				name = name[0:4]
+			if len(name) == 4 and name[0] == name[0].upper() and name[1:3] == name[1:3].lower() and name[3] in range(10):
+				return True
+			if name.find('_')>-1:
+				return False
+			else:
+				return True
+
+		def is_negative_regulator(word, logic):
+			short = logic.replace('(','').replace(' ','')
+			x = short.find(word)
+			if logic.find(word) > 3 and short[x-3:x] == 'not':
+				return True
+			return False
+
 		for line in network.split('\n'):
 			line = line.strip()
 			if len(line) > 0 and line[0] != '#':
@@ -462,27 +483,40 @@ class Graph:
 
 					if not left in node_name_dictionary:
 						node = Node( defaults=True )
-						node.id = left
-						node.type = SimpleChemical
+						node.id = left.replace('_',' ')
+						node.data.label = node.id
+						if is_compound(left):
+							node.type = Macromolecule
+						else:
+							node.type = Process
+						node.sbo = getSBO(node.type)
 						self.Nodes.append(node)
 						node_name_dictionary.append(left)
 
 					if right not in ['True', 'False']:
-						right = right.replace('(',' ').replace(')',' ').strip().split(' ')
-						for word in right:
+						for word in right.replace('(',' ').replace(')',' ').strip().split(' '):
 							if not word.lower() in ['','and','or','not']:
-								edge = Edge( defaults=True )
-								edge.id = 'edge'+str(len(self.Edges))
-								edge.source = word
-								edge.target = left
-								edge.type = substrate
-								edge.sbo = getSBO(edge.type)
-								self.Edges.append(edge)
+								if word != left:
+									edge = Edge( defaults=True )
+									edge.id = 'edge'+str(len(self.Edges))
+									edge.source = word.replace('_',' ')
+									edge.target = left.replace('_',' ')
+									if is_negative_regulator(word, right):
+										edge.type = inhibition
+									else:
+										edge.type = substrate
+									edge.sbo = getSBO(edge.type)
+									self.Edges.append(edge)
 
 								if not word in node_name_dictionary:
 									node = Node( defaults=True )
-									node.id = word
-									node.type = SimpleChemical
+									node.id = word.replace('_',' ')
+									node.data.label = node.id
+									if is_compound(word):
+										node.type = Macromolecule
+									else:
+										node.type = Process
+									node.sbo = getSBO(node.type)
 									self.Nodes.append(node)
 									node_name_dictionary.append(word)
 
@@ -584,14 +618,20 @@ class Graph:
 				node.data.y = float(lines.pop(0))
 				node.data.width = float(lines.pop(0))
 				node.data.height = float(lines.pop(0))
-
-				# x|y was at node center
-				node.data.x = node.data.x - node.data.width/2
-				node.data.y = node.data.y - node.data.height/2
-
 				direction = float(lines.pop(0))
 				updated_nodes.append(node)
 				self.log(debug, 'Node '+node.id+' updated')
+
+		# corrrect layouter positions
+		for node in updated_nodes:
+			# x|y was at node center
+			node.data.x = node.data.x - node.data.width/2
+			node.data.y = node.data.y - node.data.height/2
+
+			# x|y positions come relative to the compartment
+			if node.data.owns('compartment') and node.data.compartment.data.owns('x','y'):
+				node.data.x = node.data.x + node.data.compartment.data.x
+				node.data.y = node.data.y + node.data.compartment.data.y
 
 		# get graph size
 		x_min = 0
@@ -712,6 +752,12 @@ class Graph:
 				return haystack[p:haystack.find(';', p)]
 			return None
 
+		key = '[bb="'
+		p = layout.find(key)+len(key)
+		q = layout.find('"',p)
+		bb = layout[p:q].split(',')
+		max_y = bb[3]
+
 		for node in self.Nodes:
 			if not node.is_abstract:
 				if not node.owns('alias'):
@@ -726,7 +772,7 @@ class Graph:
 					else:
 						coordinates = find_node_in_graphviz_output(layout, node.alias)
 						if coordinates is not None:
-							node.update_from_graphviz_node( coordinates )
+							node.update_from_graphviz_node( coordinates, max_y )
 						else:
 							self.log(warning, "Warning: Node "+str(node.id)+" not updated")
 
