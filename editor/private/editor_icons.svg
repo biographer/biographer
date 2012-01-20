@@ -170,9 +170,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.99999995"
-     inkscape:cx="-126.96862"
-     inkscape:cy="828.69835"
+     inkscape:zoom="2.828427"
+     inkscape:cx="332.07451"
+     inkscape:cy="702.25907"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -189,7 +189,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -923,11 +923,11 @@
       <image
          sodipodi:absref="/home/fkrause/Dev/biographer-server/private/json160.gif"
          xlink:href="json160.gif"
-         width="16.282143"
-         height="16.282143"
-         id="image4606"
+         y="355.62958"
          x="441.27188"
-         y="355.62958" />
+         id="image4606"
+         height="16.282143"
+         width="16.282143" />
       <g
          transform="matrix(0.82646749,0,0,0.82646749,71.126843,64.96684)"
          id="g3226">
@@ -948,11 +948,11 @@
         <image
            sodipodi:absref="/home/fkrause/Dev/biographer-server/private/json160.gif"
            xlink:href="json160.gif"
-           width="19.700888"
-           height="19.700888"
-           id="image3224"
+           y="351.69287"
            x="447.86401"
-           y="351.69287" />
+           id="image3224"
+           height="19.700888"
+           width="19.700888" />
       </g>
     </g>
     <g
@@ -2005,7 +2005,10 @@
     </g>
     <g
        id="g5303"
-       transform="translate(-23.679382,-54.511488)">
+       transform="translate(-23.679382,-54.511488)"
+       inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/align_vertical.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <rect
          y="262.05157"
          x="298.15399"
@@ -2055,7 +2058,7 @@
            sodipodi:nodetypes="cc" />
       </g>
       <path
-         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.0532949;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          d="m 310.82388,286.90421 0,-27.97532"
          id="rect5264"
          inkscape:connector-curvature="0" />
@@ -2089,7 +2092,10 @@
     </g>
     <g
        id="g5303-4"
-       transform="matrix(0,1,-1,0,601.00321,-91.664873)">
+       transform="matrix(0,1,-1,0,601.35676,-91.664873)"
+       inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/align_hoizontal.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <rect
          y="262.05157"
          x="298.15399"
@@ -2139,7 +2145,7 @@
            sodipodi:nodetypes="cc" />
       </g>
       <path
-         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.0532949;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          d="m 310.82388,286.90421 0,-27.97532"
          id="rect5264-9"
          inkscape:connector-curvature="0" />
@@ -2173,7 +2179,10 @@
     </g>
     <g
        id="g5303-6"
-       transform="translate(44.971261,-54.511488)">
+       transform="translate(44.971261,-54.511488)"
+       inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/align_left.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <g
          id="g5390"
          transform="translate(13.796536,0)">
@@ -2200,7 +2209,7 @@
            y="276.1937" />
       </g>
       <path
-         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.0532949;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          d="m 310.82388,286.90421 0,-27.97532"
          id="rect5264-0"
          inkscape:connector-curvature="0" />
@@ -2234,7 +2243,10 @@
     </g>
     <g
        id="g5303-6-5"
-       transform="matrix(-1,0,0,1,733.41938,-54.511488)">
+       transform="matrix(-1,0,0,1,733.41938,-54.511488)"
+       inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/align_right.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <g
          id="g5390-7"
          transform="translate(13.796536,0)">
@@ -2261,7 +2273,7 @@
            y="276.1937" />
       </g>
       <path
-         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.0532949;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          d="m 310.82388,286.90421 0,-27.97532"
          id="rect5264-0-2"
          inkscape:connector-curvature="0" />
@@ -2295,7 +2307,10 @@
     </g>
     <g
        id="g5303-6-5-9"
-       transform="matrix(0,-1,-1,0,723.22053,543.2166)">
+       transform="matrix(0,-1,-1,0,723.22053,543.2166)"
+       inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/align_bottom.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <g
          id="g5390-7-0"
          transform="translate(13.796536,0)">
@@ -2322,7 +2337,7 @@
            y="276.1937" />
       </g>
       <path
-         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.0532949;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          d="m 310.82388,286.90421 0,-27.97532"
          id="rect5264-0-2-6"
          inkscape:connector-curvature="0" />
@@ -2356,7 +2371,10 @@
     </g>
     <g
        id="g5303-6-5-9-9"
-       transform="matrix(0,1,-1,0,764.91667,-104.97093)">
+       transform="matrix(0,1,-1,0,764.91667,-104.97093)"
+       inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/align_top.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <g
          id="g5390-7-0-2"
          transform="translate(13.796536,0)">
@@ -2383,7 +2401,7 @@
            y="276.1937" />
       </g>
       <path
-         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.0532949;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         style="fill:#ff0000;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          d="m 310.82388,286.90421 0,-27.97532"
          id="rect5264-0-2-6-6"
          inkscape:connector-curvature="0" />
@@ -2413,6 +2431,51 @@
            id="rect4284-7-7-6-7-4-4-4-1-6"
            inkscape:connector-curvature="0"
            sodipodi:nodetypes="cc" />
+      </g>
+    </g>
+    <g
+       id="g4579"
+       transform="matrix(1.3408863,0,0,1.3408863,-286.99613,-269.61562)"
+       inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/trash.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <path
+         sodipodi:nodetypes="sssssssss"
+         inkscape:connector-curvature="0"
+         id="rect3723"
+         d="m 428.57525,392.16949 12.50252,0 c 0.554,0 1.0842,0.45244 1,1 l -2,13.00685 c -0.0842,0.54756 -0.446,1 -1,1 l -8.50252,0 c -0.554,0 -0.9158,-0.45244 -1,-1 l -2,-13.00685 c -0.0842,-0.54756 0.446,-1 1,-1 z"
+         style="fill:#000000;stroke:none" />
+      <g
+         id="g4564">
+        <path
+           style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:1.34083211;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+           d="m 431.95389,404.74074 0,-9.77941"
+           id="rect3729"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:1.34083211;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+           d="m 434.82651,404.74074 0,-9.77941"
+           id="rect3729-7"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:1.34083211;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+           d="m 437.69913,404.74074 0,-9.77941"
+           id="rect3729-4"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         transform="matrix(0.99168315,0.12870326,-0.12870326,0.99168315,54.251375,-52.678812)"
+         id="g4560">
+        <path
+           style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.54210043;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+           d="m 428.04931,391.04053 12.93566,0"
+           id="rect3729-75"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.83454764;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
+           d="m 434.51714,390.0374 0,-0.59768"
+           id="rect3729-0"
+           inkscape:connector-curvature="0" />
       </g>
     </g>
   </g>

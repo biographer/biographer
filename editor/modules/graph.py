@@ -12,14 +12,18 @@
 ### dependencies ###
 
 import os
-from datetime import datetime		# to log with timestamp
+from datetime import datetime       # to log with timestamp
 from copy import deepcopy
 from math import ceil
 from hashlib import md5
 import pickle
 
-import json				# JSON format
-import libsbml				# SBML format
+import json             # JSON format
+try:
+    import libsbml              # SBML format
+except ImportError:
+    print 'Warning: libsbml is not available'
+    libsbml = None
 import pygraphviz
 
 from node import Node
@@ -32,22 +36,22 @@ from randomid import randomID
 ### Graph object definition ###
 
 class Graph:
-	def __init__(self, filename=None, JSON=None, SBML=None, verbosity=debug):
-		self.reset()
-		self.verbosity = verbosity
-		if filename is not None:
-			self.importfile( filename )
-		if JSON is not None:
-			self.importJSON( JSON )
-		if SBML is not None:
-			self.importSBML( SBML )
+    def __init__(self, filename=None, JSON=None, SBML=None, verbosity=debug):
+        self.reset()
+        self.verbosity = verbosity
+        if filename is not None:
+            self.importfile( filename )
+        if JSON is not None:
+            self.importJSON( JSON )
+        if SBML is not None:
+            self.importSBML( SBML )
 
-	def owns(self, key1, key2=None, key3=None):
-		if key2 is None:
-			return key1 in self.__dict__.keys()
-		if key3 is None:
-			return self.owns(key1) and self.owns(key2)
-		return self.owns(key1) and self.owns(key2) and self.owns(key3)
+    def owns(self, key1, key2=None, key3=None):
+        if key2 is None:
+            return key1 in self.__dict__.keys()
+        if key3 is None:
+            return self.owns(key1) and self.owns(key2)
+        return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
 	def reset(self, clearDEBUG=True):					# reset current model
 		self.Nodes = []
@@ -63,73 +67,73 @@ class Graph:
 		if clearDEBUG:
 			self.DEBUG = ""
 
-	def log(self, level, msg, raw=False):
-		if self.verbosity >= level:
-			msg = msg.strip()
-			if msg != "":
-				time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-				if not raw:
-					msg = time+": "+msg
-				self.DEBUG += msg+"\n"
-				print msg
+    def log(self, level, msg, raw=False):
+        if self.verbosity >= level:
+            msg = msg.strip()
+            if msg != "":
+                time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                if not raw:
+                    msg = time+": "+msg
+                self.DEBUG += msg+"\n"
+                print msg
 
-	def status(self):
-		self.log(info, "Network has "+str(self.NodeCount())+" nodes ("+str(len(self.Compartments))+" compartments, "+str(self.abstract_nodes)+" abstract) and "+str(self.EdgeCount())+" edges.")
+    def status(self):
+        self.log(info, "Network has "+str(self.NodeCount())+" nodes ("+str(len(self.Compartments))+" compartments, "+str(self.abstract_nodes)+" abstract) and "+str(self.EdgeCount())+" edges.")
 
 
-	## initialize ###
+    ## initialize ###
 
-	def make_object_links(self):
-		self.log(progress, "Generating object links ...")
+    def make_object_links(self):
+        self.log(progress, "Generating object links ...")
 
-		def getNodeByID(ID):
-			for n in self.Nodes:
-				if str(n.id).lower() == str(ID).lower():
-					return n
-			return None
+        def getNodeByID(ID):
+            for n in self.Nodes:
+                if str(n.id).lower() == str(ID).lower():
+                    return n
+            return None
 
-		for n in self.Nodes:						# node.data.compartment
-			if n.data.owns('compartment'):
-				n.data.compartment = getNodeByID(n.data.compartment)
-				if n.data.compartment is None:
-					del n.data.compartment
-		for e in self.Edges:
-			e.source = getNodeByID(e.source)			# edge.source, edge.target
-			e.target = getNodeByID(e.target)
-			if e.source is None or e.target is None:
-				self.Edges.pop( self.Edges.index(e) )
-				self.log(warning, 'Warning: Deleted broken edge '+e.id)
+        for n in self.Nodes:                        # node.data.compartment
+            if n.data.owns('compartment'):
+                n.data.compartment = getNodeByID(n.data.compartment)
+                if n.data.compartment is None:
+                    del n.data.compartment
+        for e in self.Edges:
+            e.source = getNodeByID(e.source)            # edge.source, edge.target
+            e.target = getNodeByID(e.target)
+            if e.source is None or e.target is None:
+                self.Edges.pop( self.Edges.index(e) )
+                self.log(warning, 'Warning: Deleted broken edge '+e.id)
 
-	def refresh_node_connected_edges(self):					# node.edges
-		for node in self.Nodes:
-			node.edges = []
-			for edge in self.Edges:
-				if edge.source == node or edge.target == node or edge.source == node.id or edge.target == node.id:
-					node.edges.append(edge)
+    def refresh_node_connected_edges(self):                 # node.edges
+        for node in self.Nodes:
+            node.edges = []
+            for edge in self.Edges:
+                if edge.source == node or edge.target == node or edge.source == node.id or edge.target == node.id:
+                    node.edges.append(edge)
 
-	def refresh_node_connections(self):					# node.connections (connected nodes)
-		for node in self.Nodes:
-			node.connections = []
-			for edge in node.edges:
-				if edge.source == node:
-					node.connections.append( edge.target )
-				else:
-					node.connections.append( edge.source )
+    def refresh_node_connections(self):                 # node.connections (connected nodes)
+        for node in self.Nodes:
+            node.connections = []
+            for edge in node.edges:
+                if edge.source == node:
+                    node.connections.append( edge.target )
+                else:
+                    node.connections.append( edge.source )
 
-	def refresh_subnode_arrays(self):
-		for n in self.Nodes:
-			n.data.subnodes = []
-			for sub in self.Nodes:
-				if sub != n:
-					if sub.data.owns('compartment') and sub.data.compartment == n:
-						n.data.subnodes.append(sub)	# object link
+    def refresh_subnode_arrays(self):
+        for n in self.Nodes:
+            n.data.subnodes = []
+            for sub in self.Nodes:
+                if sub != n:
+                    if sub.data.owns('compartment') and sub.data.compartment == n:
+                        n.data.subnodes.append(sub) # object link
 
-	def find_abstract_nodes(self):
-		self.abstract_nodes = 0
-		for node in self.Nodes:
-			if node.is_abstract in [1, '1', True, 'True', 'true', 'TRUE', 'yes', 'YES']:
-				node.is_abstract = True
-				self.abstract_nodes += 1
+    def find_abstract_nodes(self):
+        self.abstract_nodes = 0
+        for node in self.Nodes:
+            if node.is_abstract in [1, '1', True, 'True', 'true', 'TRUE', 'yes', 'YES']:
+                node.is_abstract = True
+                self.abstract_nodes += 1
 
 	def move_process_nodes(self):
 		for node in self.Nodes:
@@ -143,22 +147,22 @@ class Graph:
 					except:
 						pass
 
-	def initialize(self, removeOrphans=False):				# initialize the network
-		self.mapped = False
-		self.log(progress, "Initializing Graph ...")
-		self.status()
-		self.selfcheck( removeOrphanEdges=removeOrphans )
-		self.make_object_links()
-		self.refresh_node_connected_edges()
-		self.refresh_node_connections()
-		self.refresh_subnode_arrays()
-		self.find_abstract_nodes()
-		self.move_process_nodes()
-		self.hash()
-		self.log(info, "Graph initialized.")
+    def initialize(self, removeOrphans=False):              # initialize the network
+        self.mapped = False
+        self.log(progress, "Initializing Graph ...")
+        self.status()
+        self.selfcheck( removeOrphanEdges=removeOrphans )
+        self.make_object_links()
+        self.refresh_node_connected_edges()
+        self.refresh_node_connections()
+        self.refresh_subnode_arrays()
+        self.find_abstract_nodes()
+        self.move_process_nodes()
+        self.hash()
+        self.log(info, "Graph initialized.")
 
 
-	### selfcheck ###
+    ### selfcheck ###
 
 	def enumerate_IDs(self):						# enumerate IDs and correct collisions
 		self.node_IDs = []
@@ -169,170 +173,172 @@ class Graph:
 				self.log(warning, "Collision: Node '"+oldID+"' renamed to '"+n.id+"'")
 			self.node_IDs.append(n.id)
 
-		self.edge_IDs = []
-		for e in self.Edges:
-			while e.id in self.edge_IDs or e.id in self.node_IDs:
-				oldID = str(e.id)
-				e.id = randomID( prefix=oldID+'_', length=4 )
-				self.log(warning, "Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
-			self.edge_IDs.append(e.id)
+        self.edge_IDs = []
+        for e in self.Edges:
+            while e.id in self.edge_IDs or e.id in self.node_IDs:
+                oldID = str(e.id)
+                e.id = randomID( prefix=oldID+'_', length=4 )
+                self.log(warning, "Collision: Edge '"+oldID+"' renamed to '"+e.id+"'")
+            self.edge_IDs.append(e.id)
 
-	def enumerate_compartments(self):					# enumerate compartment list
-		self.Compartments = []
-		self.Compartment_IDs = [TopCompartmentID]
-		for n in self.Nodes:
-			if getNodeType(n.type) == getNodeType("Compartment Node"):
-				self.Compartments.append(n)
-				self.Compartment_IDs.append(n.id)
+    def enumerate_compartments(self):                   # enumerate compartment list
+        self.Compartments = []
+        self.Compartment_IDs = [TopCompartmentID]
+        for n in self.Nodes:
+            if getNodeType(n.type) == getNodeType("Compartment Node"):
+                self.Compartments.append(n)
+                self.Compartment_IDs.append(n.id)
 
-	def check_node_compartments(self):
-		for n in self.Nodes:
-			if not n.data.owns('compartment'):
-				n.data.compartment = TopCompartmentID
-				self.log(warning, "Warning: "+str(n.id)+".data.compartment is not defined. Moved to top.")
+    def check_node_compartments(self):
+        for n in self.Nodes:
+            if not n.data.owns('compartment'):
+                n.data.compartment = TopCompartmentID
+                self.log(warning, "Warning: "+str(n.id)+".data.compartment is not defined. Moved to top.")
 
-			if not n.data.compartment in self.Compartment_IDs:
-				new = Node(defaults=True)
-				new.id = n.data.compartment
-				self.Nodes.append(new)
-				self.log(warning, "Warning: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found. Created.")
+            if not n.data.compartment in self.Compartment_IDs:
+                new = Node(defaults=True)
+                new.id = n.data.compartment
+                self.Nodes.append(new)
+                self.log(warning, "Warning: Compartment '"+str(n.data.compartment)+"' for Node '"+str(n.id)+"' not found. Created.")
 
-	def check_edge_connections(self, removeOrphanEdges=True):	# in the pre-objectlink-phase; edge.source/.target are still strings
-		for e in self.Edges:
-			if not e.source in self.node_IDs:
-				self.Edges.pop( self.Edges.index(e) )
-				self.log(error, "Warning: Source node "+str(e.source)+" for edge "+str(e.id)+" not found. Edge removed.")
-			elif not e.target in self.node_IDs:
-				self.Edges.pop( self.Edges.index(e) )
-				self.log(error, "Warning: Target node "+str(e.target)+" for edge "+str(e.id)+" not found. Edge removed.")
+    def check_edge_connections(self, removeOrphanEdges=True):   # in the pre-objectlink-phase; edge.source/.target are still strings
+        for e in self.Edges:
+            if not e.source in self.node_IDs:
+                self.Edges.pop( self.Edges.index(e) )
+                self.log(error, "Warning: Source node "+str(e.source)+" for edge "+str(e.id)+" not found. Edge removed.")
+            elif not e.target in self.node_IDs:
+                self.Edges.pop( self.Edges.index(e) )
+                self.log(error, "Warning: Target node "+str(e.target)+" for edge "+str(e.id)+" not found. Edge removed.")
 
-	def check_node_sizes(self):						# checks, if subnodes are bigger than parents and resizes the parent accordingly
-		for node in self.Nodes:
-			for subnode in node.data.subnodes:
+    def check_node_sizes(self):                     # checks, if subnodes are bigger than parents and resizes the parent accordingly
+        for node in self.Nodes:
+            for subnode in node.data.subnodes:
 
-				if node.data.owns('width') and subnode.data.owns('width'):
-					if subnode.data.width > node.data.width:
-						self.log(warning, "Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is broadener than parent")
-						node.data.width = subnode.data.width+20
+                if node.data.owns('width') and subnode.data.owns('width'):
+                    if subnode.data.width > node.data.width:
+                        self.log(warning, "Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is broadener than parent")
+                        node.data.width = subnode.data.width+20
 
-				if node.data.owns('height') and subnode.data.owns('height'):
-					if subnode.data.height > node.data.height:
-						self.log(warning, "Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is higher than parent")
-						node.data.height = subnode.data.height+20
+                if node.data.owns('height') and subnode.data.owns('height'):
+                    if subnode.data.height > node.data.height:
+                        self.log(warning, "Warning: Resizing subnode "+str(subnode.id)+" of "+str(node.id)+", which is higher than parent")
+                        node.data.height = subnode.data.height+20
 
-	def selfcheck(self, removeOrphanEdges=True):
+    def selfcheck(self, removeOrphanEdges=True):
 
-		self.log(progress, "Performing Selfcheck ...")
+        self.log(progress, "Performing Selfcheck ...")
 
-		for n in self.Nodes:						# self-check all Nodes and Edges
-			self.log( error, n.selfcheck(verbosity=self.verbosity), raw=True )
-		for e in self.Edges:
-			self.log( error, e.selfcheck(verbosity=self.verbosity), raw=True )
+        for n in self.Nodes:                        # self-check all Nodes and Edges
+            self.log( error, n.selfcheck(verbosity=self.verbosity), raw=True )
+        for e in self.Edges:
+            self.log( error, e.selfcheck(verbosity=self.verbosity), raw=True )
 
-		self.enumerate_IDs()
-		self.enumerate_compartments()
-		self.check_node_compartments()
-		self.check_edge_connections( removeOrphanEdges )
-		self.check_node_sizes()
-
-
-	### generating a unique Graph identifier ###
-
-	def hash(self):
-		self.MD5 = md5( pickle.dumps(self) ).hexdigest()
-		return self.MD5
+        self.enumerate_IDs()
+        self.enumerate_compartments()
+        self.check_node_compartments()
+        self.check_edge_connections( removeOrphanEdges )
+        self.check_node_sizes()
 
 
-	### functions for Graph creation: import / export ###
+    ### generating a unique Graph identifier ###
 
-	def checkJSON(self, JSON):
-		pre = "JSON checker: "
-		if len(JSON) > 0:
-			if JSON.find("'") > -1:
-				JSON = JSON.replace("'",'"')			# JSON parser expects " quotes, ' quotes are not understood !
-				self.log(warning, pre+"' quotations are not understood and have been replaced. Please only use \" quotes in the future.")
+    def hash(self):
+        self.MD5 = md5( pickle.dumps(self) ).hexdigest()
+        return self.MD5
 
-			if JSON.lstrip()[0] != "{":				# JSON needs to start with "{"
-				JSON = "{\n"+JSON+"\n}"
-				self.log(warning, pre+"JSON = '{' + JSON + '}'")
 
-			while JSON.count("[") > JSON.count("]"):		# count "[" == count "]" ?
-				JSON += "]"
-				self.log(warning, pre+"JSON = JSON + '}'")
-			while JSON.count("[") < JSON.count("]"):
-				JSON = "["+JSON
-				self.log(warning, pre+"JSON = '{' + JSON")
+    ### functions for Graph creation: import / export ###
 
-			while JSON.count("{") > JSON.count("}"):		# count "{" == count "}" ?
-				JSON += "}"
-				self.log(warning, pre+"JSON = JSON + '}'")
-			while JSON.count("{") < JSON.count("}"):
-				JSON = "{"+JSON
-				self.log(warning, pre+"JSON = '{' + JSON")
+    def checkJSON(self, JSON):
+        pre = "JSON checker: "
+        if len(JSON) > 0:
+            if JSON.find("'") > -1:
+                JSON = JSON.replace("'",'"')            # JSON parser expects " quotes, ' quotes are not understood !
+                self.log(warning, pre+"' quotations are not understood and have been replaced. Please only use \" quotes in the future.")
 
-			json = JSON.lower().replace(" ","")
-			if json.find('nodes:') == -1 and json.find('"nodes":') == -1 and json.find("'nodes':") == -1:
-				self.log(warning, pre+'"nodes:" statement not found')
-			if json.find('edges:') == -1 and json.find('"edges":') == -1 and json.find("'edges':") == -1:
-				self.log(warning, pre+'"nodes:" statement not found')
+            if JSON.lstrip()[0] != "{":             # JSON needs to start with "{"
+                JSON = "{\n"+JSON+"\n}"
+                self.log(warning, pre+"JSON = '{' + JSON + '}'")
 
-			while JSON.find("//") > -1:				# remove commentary
-				p = JSON.find("//")
-				q = JSON.find("\n", p)
-				self.log(warning, pre+"Removed commentary '"+JSON[p:q]+"'")
-				JSON = JSON[:p] + JSON[q+1:]
+            while JSON.count("[") > JSON.count("]"):        # count "[" == count "]" ?
+                JSON += "]"
+                self.log(warning, pre+"JSON = JSON + '}'")
+            while JSON.count("[") < JSON.count("]"):
+                JSON = "["+JSON
+                self.log(warning, pre+"JSON = '{' + JSON")
 
-			alphabet = range(ord("a"), ord("z")+1)+range(ord("A"), ord("Z")+1)
-			space = ""
-			for i in range(0,15):
-				space += " "
-			p = 0							### put all hash keys in quotes ###
-			quoter = True
-			while p < len(JSON):
-				if JSON[p] == "{":				# hash starts, quotation started
-					quoter = True
-				if JSON[p] == ":":				# definition starts, quotation stopped
-					quoter = False			
-				if JSON[p] == ",":				# definition completed, quotation restarted
-					quoter = True
-				if False and quoter:
-					if JSON[p] == '"' or JSON[p] == "'":	# quote found, quotation stopped
-						quoter = False
-					elif ord(JSON[p]) in alphabet:		# next byte is a character, not a quote !
-						before = (space+JSON+space)[p:p+30].replace(" ","").replace("\n","").replace("\t","")
-						q = p+1
-						while ord(JSON[q]) in alphabet:
-							q += 1
-						JSON = JSON[:q] + '"' + JSON[q:]	# insert quote after statement
-						JSON = JSON[:p] + '"' + JSON[p:]	# insert quote before statement
-						after = (space+JSON+space)[p:p+30].replace(" ","").replace("\n","").replace("\t","")
-						self.log(warning, pre+"Added missing quotation: ... "+before+" ... -> ... "+after+" ...")
-						quoter = False			# done here, no more quotation
-				p += 1
-		else:
-			self.log(warning, pre+"JSON = '{}'")
-			JSON = "{}"
-		return JSON	#.replace("\n","").replace("\t","").replace(" : ",":")	# for debugging, to make it easier to track the JSON importer problem
+            while JSON.count("{") > JSON.count("}"):        # count "{" == count "}" ?
+                JSON += "}"
+                self.log(warning, pre+"JSON = JSON + '}'")
+            while JSON.count("{") < JSON.count("}"):
+                JSON = "{"+JSON
+                self.log(warning, pre+"JSON = '{' + JSON")
 
-	def importJSON(self, JSON):						# import JSON
-		self.reset()
-		self.log(progress, "Importing JSON ...")
+            json = JSON.lower().replace(" ","")
+            if json.find('nodes:') == -1 and json.find('"nodes":') == -1 and json.find("'nodes':") == -1:
+                self.log(warning, pre+'"nodes:" statement not found')
+            if json.find('edges:') == -1 and json.find('"edges":') == -1 and json.find("'edges':") == -1:
+                self.log(warning, pre+'"nodes:" statement not found')
 
-		JSON = self.checkJSON(JSON)
-		try:
-			JSON = json.loads(JSON)
-		#except ValueError as e:
-		#	self.log(str(e.__dict__))
-		#	return
-		except Exception, err:
-			self.log(error, "Fatal: JSON parser raised an exception! %s"%err)
-			return
-		self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
-		self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
-		self.initialize()
+            while JSON.find("//") > -1:             # remove commentary
+                p = JSON.find("//")
+                q = JSON.find("\n", p)
+                self.log(warning, pre+"Removed commentary '"+JSON[p:q]+"'")
+                JSON = JSON[:p] + JSON[q+1:]
+
+            alphabet = range(ord("a"), ord("z")+1)+range(ord("A"), ord("Z")+1)
+            space = ""
+            for i in range(0,15):
+                space += " "
+            p = 0                           ### put all hash keys in quotes ###
+            quoter = True
+            while p < len(JSON):
+                if JSON[p] == "{":              # hash starts, quotation started
+                    quoter = True
+                if JSON[p] == ":":              # definition starts, quotation stopped
+                    quoter = False          
+                if JSON[p] == ",":              # definition completed, quotation restarted
+                    quoter = True
+                if False and quoter:
+                    if JSON[p] == '"' or JSON[p] == "'":    # quote found, quotation stopped
+                        quoter = False
+                    elif ord(JSON[p]) in alphabet:      # next byte is a character, not a quote !
+                        before = (space+JSON+space)[p:p+30].replace(" ","").replace("\n","").replace("\t","")
+                        q = p+1
+                        while ord(JSON[q]) in alphabet:
+                            q += 1
+                        JSON = JSON[:q] + '"' + JSON[q:]    # insert quote after statement
+                        JSON = JSON[:p] + '"' + JSON[p:]    # insert quote before statement
+                        after = (space+JSON+space)[p:p+30].replace(" ","").replace("\n","").replace("\t","")
+                        self.log(warning, pre+"Added missing quotation: ... "+before+" ... -> ... "+after+" ...")
+                        quoter = False          # done here, no more quotation
+                p += 1
+        else:
+            self.log(warning, pre+"JSON = '{}'")
+            JSON = "{}"
+        return JSON #.replace("\n","").replace("\t","").replace(" : ",":")  # for debugging, to make it easier to track the JSON importer problem
+
+    def importJSON(self, JSON):                     # import JSON
+        self.reset()
+        self.log(progress, "Importing JSON ...")
+
+        JSON = self.checkJSON(JSON)
+        try:
+            JSON = json.loads(JSON)
+        #except ValueError as e:
+        #   self.log(str(e.__dict__))
+        #   return
+        except Exception, err:
+            self.log(error, "Fatal: JSON parser raised an exception! %s"%err)
+            return
+        self.Nodes = [Node(n, defaults=True) for n in JSON["nodes"]]
+        self.Edges = [Edge(e, defaults=True) for e in JSON["edges"]]
+        self.initialize()
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
+
 		d = self.exportDICT(status=False)
+
 		self.log(progress, "Exporting JSON ...")
 		self.JSON = json.dumps( d, indent=Indent )
 		self.status()
@@ -755,7 +761,7 @@ class Graph:
 					else:
 						coordinates = find_node_in_graphviz_output(layout, node.alias)
 						if coordinates is not None:
-							node.update_from_graphviz_node( coordinates, max_y )
+							node.update_from_graphviz_node( coordinates )
 						else:
 							self.log(warning, "Warning: Node "+str(node.id)+" not updated")
 
