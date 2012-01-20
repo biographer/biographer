@@ -105,21 +105,29 @@ class Node:
 		return json.dumps( self.exportDICT(), indent=Indent )
 
 	def exportDICT(self):
+		data = None
+		if self.owns('data'):					# necessary for speed, without deepcopy will take forever
+			data = self.data
+			del self.data
+		connections = None
+		if self.owns('connections'):
+			connections = self.connections
+			del self.connections
+		edges = None
+		if self.owns('edges'):
+			edges = self.edges
+			del self.edges
+
 		export = deepcopy(self.__dict__)			# convert self to dictionary
-		export['data'] = self.data.exportDICT()
-		
-		if "edges" in export.keys():
-#			del export['edges']
-			replacement = []
-			for edge in export['edges']:
-				replacement.append( edge.id )
-			export['edges'] = replacement
-		if "connections" in export.keys():
-#			del export['connections']
-			replacement = []
-			for node in export['connections']:
-				replacement.append( node.id )
-			export['connections'] = replacement
+
+		if data is not None:
+			self.data = data
+			export['data'] = self.data.exportDICT()
+		if edges is not None:
+			self.edges = edges
+		if connections is not None:
+			self.connections = connections
+
 		return export
 
 	def export_to_Layouter(self):

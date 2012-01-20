@@ -55,14 +55,31 @@ class Edge:
 		return json.dumps( self.exportDICT(), indent=Indent )
 
 	def exportDICT(self):
+		data = None
+		if self.owns('data'):					# necessary for speed, without deepcopy will take forever
+			data = self.data
+			del self.data
+		source = None
+		if self.owns('source'):
+			source = self.source
+			del self.source
+			self.source = source.id
+		target = None
+		if self.owns('target'):
+			target = self.target
+			del self.target
+			self.target = target.id
+
 		export = deepcopy(self.__dict__)				# export self as dictionary
-		export['data'] = self.data.exportDICT()
-		if type(export['source']) not in [type(''), type(u''), type(0)]:	# export IDs of linked objects
-#			del export['source']
-			export['source'] = export['source'].id
-		if type(export['target']) not in [type(''), type(u''), type(0)]:
-#			del export['target']
-			export['target'] = export['target'].id
+
+		if data is not None:
+			self.data = data
+			export['data'] = self.data.exportDICT()
+		if source is not None:
+			self.source = source
+		if target is not None:
+			self.target = target
+
 		return export
 
 	def export_to_Layouter(self):

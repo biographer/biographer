@@ -24,16 +24,24 @@ class Data:
 		return self.owns(key1) and self.owns(key2) and self.owns(key3)
 
 	def exportDICT(self):
+		compartment = None
+		if self.owns('compartment'):				# necessary for speed, without deepcopy will take forever
+			compartment = self.compartment
+			del self.compartment
+			self.compartment = compartment.id
+		subnodes = None
+		if self.owns('subnodes'):
+			subnodes = self.subnodes
+			del self.subnodes
+
 		export = deepcopy(self.__dict__)
+
+		if compartment is not None:
+			self.compartment = compartment
+		if subnodes is not None:
+			self.subnodes = subnodes
+
 		del export['id']
-		if 'compartment' in export.keys(): # and export['compartment'] is not None and type(export['compartment']) not in [type(0), type(''), type(u'')]:
-#			del export['compartment']
-			export['compartment'] = export['compartment'].id
-		if 'subnodes' in export.keys():
-#			del export['subnodes']
-			replacement = []
-			for subnode in export['subnodes']:
-				replacement.append(subnode.id)
-			export['subnodes'] = replacement
+
 		return export
 

@@ -483,8 +483,8 @@ class Graph:
 
 					if not left in node_name_dictionary:
 						node = Node( defaults=True )
-						node.id = left.replace('_',' ')
-						node.data.label = node.id
+						node.id = left
+						node.data.label = node.id.replace('_',' ')
 						if is_compound(left):
 							node.type = Macromolecule
 						else:
@@ -499,8 +499,8 @@ class Graph:
 								if word != left:
 									edge = Edge( defaults=True )
 									edge.id = 'edge'+str(len(self.Edges))
-									edge.source = word.replace('_',' ')
-									edge.target = left.replace('_',' ')
+									edge.source = word
+									edge.target = left
 									if is_negative_regulator(word, right):
 										edge.type = inhibition
 									else:
@@ -510,8 +510,8 @@ class Graph:
 
 								if not word in node_name_dictionary:
 									node = Node( defaults=True )
-									node.id = word.replace('_',' ')
-									node.data.label = node.id
+									node.id = word
+									node.data.label = node.id.replace('_',' ')
 									if is_compound(word):
 										node.type = Macromolecule
 									else:
