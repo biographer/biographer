@@ -344,6 +344,9 @@ $(document).ready(function() {
             }
         }
     });
+    $('#canvas').dblclick(function(){
+            placeholdersVisible(false);
+    });
     //=========================
     $('#canvas').resizable();
     //=========================
