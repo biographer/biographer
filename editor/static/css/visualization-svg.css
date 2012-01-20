@@ -20,13 +20,24 @@ text.small, tspan.small, text.small tspan {
     bottom: 3px;
 }
 
-
-
+g.VariableValue > text {
+   top: 5px;
+}
 ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect {
     fill: white;
     stroke-width: 2px;
     stroke: black
 }
+g.cloneMarker > path, g.cloneMarker > path, g.cloneMarker > rect {
+    fill: url(#cloneMarker);
+}
+g.existance > path {
+    fill: url(#stateVariableExistence);
+}
+g.location > path {
+    fill: url(#stateVariableLocation);
+}
+
 g.hideBorder > path {
     stroke: white;
 }
@@ -81,6 +92,12 @@ line {
     fill: #9ea5ff;
     stroke: blue;
     opacity: 0.5;
+}
+.clone path{
+	background-image: url('../images/editor/black_pixle.gif');
+	background-repeat:repeat;
+	background-attachment:fixed;
+	background-position:0% 70%;
 }
 
 .splineEdgeHandle.autoAlign circle {

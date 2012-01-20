@@ -1434,9 +1434,7 @@ var getSBOForMarkerId = function(id) {
      */
     bui.connectingArcs.absoluteInhibition = function() {
         return createPathWithData('M0,0 V25 M10,0 V25Z', 10, 12, 10, 26,
-            //bui.settings.css.classes.connectingArcs.absoluteInhibition);
             bui.settings.css.classes.connectingArcs.necessaryStimulation);
-	    //);
     };
 
     /**
@@ -1595,6 +1593,47 @@ var getSBOForMarkerId = function(id) {
                 .appendChild(privates.placeholderContainer);
 
         privates.connectingArcs = {};
+
+        privates.cloneMarker = document.createElementNS(bui.svgns, 'pattern');
+        privates.cloneMarker.setAttribute('id', 'cloneMarker');
+        privates.cloneMarker.setAttribute('patternUnits','objectBoundingBox');
+        privates.cloneMarker.setAttribute('x','0');
+        privates.cloneMarker.setAttribute('y', '70%');
+        privates.cloneMarker.setAttribute('width', '100');
+        privates.cloneMarker.setAttribute('height', '100');
+        privates.cloneRect = document.createElementNS(bui.svgns, 'rect');
+        privates.cloneRect.setAttribute('fill', 'black');
+        privates.cloneRect.setAttribute('width' , '100');
+        privates.cloneRect.setAttribute('height' , '100');
+        privates.cloneMarker.appendChild(privates.cloneRect);
+        privates.defsGroup.appendChild(privates.cloneMarker);
+
+        privates.stateVarExistence = document.createElementNS(bui.svgns, 'pattern');
+        privates.stateVarExistence.setAttribute('id', 'stateVariableExistence');
+        privates.stateVarExistence.setAttribute('patternUnits','objectBoundingBox');
+        privates.stateVarExistence.setAttribute('x','50%');
+        privates.stateVarExistence.setAttribute('y', '0');
+        privates.stateVarExistence.setAttribute('width', '100');
+        privates.stateVarExistence.setAttribute('height', '100');
+        privates.existanceRect = document.createElementNS(bui.svgns, 'rect');
+        privates.existanceRect.setAttribute('fill', 'black');
+        privates.existanceRect.setAttribute('width' , '100');
+        privates.existanceRect.setAttribute('height' , '100');
+        privates.stateVarExistence.appendChild(privates.existanceRect);
+        privates.defsGroup.appendChild(privates.stateVarExistence);
+
+        privates.stateVarLocation = document.createElementNS(bui.svgns, 'pattern');
+        privates.stateVarLocation.setAttribute('id', 'stateVariableLocation');
+        privates.stateVarLocation.setAttribute('patternUnits','objectBoundingBox');
+        privates.stateVarLocation.setAttribute('x','0');
+        privates.stateVarLocation.setAttribute('y', '0');
+        privates.stateVarLocation.setAttribute('width', '14');
+        privates.stateVarLocation.setAttribute('height', '14');
+        privates.locationRect = document.createElementNS(bui.svgns, 'path');
+        privates.locationRect.setAttribute('d' , 'M0,14 L14,0 M7,7 L14,14 Z');
+        privates.locationRect.setAttribute('style', "stroke-width:2;stroke:rgb(0,0,0)")
+        privates.stateVarLocation.appendChild(privates.locationRect);
+        privates.defsGroup.appendChild(privates.stateVarLocation);
 
         for (var i in bui.connectingArcs) {
             if (bui.connectingArcs.hasOwnProperty(i)) {
@@ -2317,6 +2356,10 @@ var getSBOForMarkerId = function(id) {
             }
 
             return this;
+        },
+        hasClass : function(klass) {
+            var classes = this._privates(identifier).classes;
+             return (classes.indexOf(klass) != -1);
         },
 
         /**
@@ -3664,6 +3707,8 @@ var getSBOForMarkerId = function(id) {
         var privates = this._privates(identifier);
         privates.label = this._label;
         privates.adaptSizeToLabel = this._adaptSizeToLabel;
+        privates.maxHeight = this._maxHeight;
+        privates.maxWidth = this._maxWidth;
         privates.labelElement = null;
         privates.svgClasses = this._svgClasses;
         privates.calculationClasses = this._calculationClasses;
@@ -3686,6 +3731,8 @@ var getSBOForMarkerId = function(id) {
     bui.Labelable.prototype = {
         _label : '',
         _adaptSizeToLabel : false,
+        _maxHeight: undefined,//FIXME would be nice if they could be used
+        _maxWidth: undefined,
         _svgClasses : '',
         _ignLabelSize : false,
         _calculationClasses :
@@ -4184,18 +4231,25 @@ var getSBOForMarkerId = function(id) {
      */
     bui.VariableValue = function() {
         bui.VariableValue.superClazz.apply(this, arguments);
-        this.topRadius(8);
-        this.bottomRadius(8);
+        this.topRadius(7);
+        this.bottomRadius(7);
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
+        this.addClass('VariableValue');
+        //this.adaptSizeToLabel(true);
+        //this.size(this.size().x, 14);
     };
     bui.VariableValue.prototype = {
         identifier : function() {
             return identifier;
         },
-        _minWidth : 16,
-        _minHeight : 16,
+        _minWidth : 14,
+        _minHeight : 14,
         _enableResizing : false,
+        _adaptSizeToLabel : false,
+        /*label : function(label) {
+            bui.VariableValue.superClazz.superClazz.prototype.label.apply(this,[label]);
+        }*/
     };
 
     bui.util.setSuperClass(bui.VariableValue, bui.RectangularNode);
@@ -4569,23 +4623,15 @@ var getSBOForMarkerId = function(id) {
      */
     bui.StateVariable = function() {
         bui.StateVariable.superClazz.apply(this, arguments);
-        if(bui.settings.sbgnLanguage == 'PD'){
-            this.bind(bui.Node.ListenerType.size,
-                    sizeChanged.createDelegate(this),
-                    listenerIdentifier(this));
+        this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
 
-            initialPaint.call(this);
+        initialPaint.call(this);
 
-            this.labelClass(bui.settings.css.classes.smallText,
-                    [bui.settings.css.classes.textDimensionCalculation.small]);
-            this.adaptSizeToLabel(true);
-        }else if(bui.settings.sbgnLanguage == 'ER'){
-            this.topRadius(7);
-            this.bottomRadius(7);
-            this.labelClass(bui.settings.css.classes.smallText,
-                    [bui.settings.css.classes.textDimensionCalculation.small]);
-            this.addClass(bui.settings.css.classes.statevariable);
-        }
+        this.labelClass(bui.settings.css.classes.smallText,
+                [bui.settings.css.classes.textDimensionCalculation.small]);
+        this.adaptSizeToLabel(true);
     };
 
     bui.StateVariable.prototype = {
@@ -4596,7 +4642,7 @@ var getSBOForMarkerId = function(id) {
         _minHeight : 14,
         auxiliaryUnit : true,
         includeInJSON : false,
-        _enableResizing : bui.settings.sbgnLanguage == 'PD',
+        _enableResizing : true,
 
         // override
         toJSON : function() {
@@ -4619,12 +4665,71 @@ var getSBOForMarkerId = function(id) {
             return json;
         }
     };
-    if(bui.settings.SBGNlang == 'PD'){//FIXME this does not work :(
-        bui.util.setSuperClass(bui.StateVariable, bui.Labelable);
-    }else if(bui.settings.SBGNlang == 'ER'){
-        alert('bui.settings/SBGNlang '+bui.settings.SBGNlang)
-        bui.util.setSuperClass(bui.StateVariable, bui.RectangularNode);
-    }
+    bui.util.setSuperClass(bui.StateVariable, bui.Labelable);
+})(bui);
+
+(function(bui) {
+    var identifier = 'bui.StateVariableER';
+
+    /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.StateVariable} StateVariable
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(StateVariableER) {
+        return identifier + StateVariableER.id();
+    };
+
+
+    /**
+     * @class
+     * State variable class which can be used in combination with other nodes
+     *
+     * @extends bui.Labelable
+     * @constructor
+     */
+    bui.StateVariableER = function() {
+        bui.StateVariableER.superClazz.apply(this, arguments);
+        this.topRadius(7);
+        this.bottomRadius(7);
+        this.labelClass(bui.settings.css.classes.smallText,
+                [bui.settings.css.classes.textDimensionCalculation.small]);
+        this.addClass(bui.settings.css.classes.statevariable);
+    };
+
+    bui.StateVariableER.prototype = {
+        identifier : function() {
+            return identifier;
+        },
+        _minWidth : 14,
+        _minHeight : 14,
+        auxiliaryUnit : true,
+        includeInJSON : false,
+        _enableResizing : false,
+
+        // override
+        toJSON : function() {
+            // is actually an override but won't call the superclass because
+            // units of information aren't considered as nodes in the JSON
+            // data format. We are also assuming that only the state variable's
+            // label can be edited and that therefore the JSON data needs to
+            // be extracted from the label.
+
+            var json = [null, ''];
+
+            var labelParts = this.label().split('@');
+
+            json[0] = getModificationSBOForLabel(labelParts[0]);
+
+            if (labelParts.length > 1) {
+                json[1] = labelParts[1];
+            }
+
+            return json;
+        }
+    };
+    bui.util.setSuperClass(bui.StateVariableER, bui.RectangularNode);
 })(bui);
 
 (function(bui) {
@@ -6099,30 +6204,23 @@ var getSBOForMarkerId = function(id) {
     };
 
     bui.Edge.prototype = {
-        //recalculatePoints : recalculatePoints.createDelegate(this),
-        addPoint : function(x, y){
+
+        addPoint : function(x, y, type){
             var privates = this._privates(identifier);
             var handle = this.graph()
                     .add(bui.EdgeHandle)
                     .positionCenter(x, y)
-                    .visible(privates.edgeHandlesVisible)
-                    .addClass('edgeHandle');
-            index = 0;
-            privates.handles.splice(index, 0, handle);
-            redrawLines.call(this);
-            return handle;
-        },
-        addOutcome : function(x, y){
-            //SBO:0000409
-            //An outcome is represented by a black dot located on the arc of a statement
-            //The diameter of the dot has to be larger than the thickness of the arc.
-            //-----------------------------
-            var privates = this._privates(identifier);
-            var handle = this.graph()
-                    .add(bui.EdgeHandle)
-                    .positionCenter(x, y)
-                    .visible(privates.edgeHandlesVisible)
-                    .addClass('Outcome');// the stylesheet mus fill the circle black
+                    .visible(privates.edgeHandlesVisible);
+                    
+            if (type == undefined){
+                handle.addClass('edgeHandle');
+            }else if (type == 'Outcome'){
+                //SBO:0000409
+                //An outcome is represented by a black dot located on the arc of a statement
+                //The diameter of the dot has to be larger than the thickness of the arc.
+                //-----------------------------
+                handle.addClass('Outcome');// the stylesheet mus fill the circle black
+            }
             index = 0;
             privates.handles.splice(index, 0, handle);
             redrawLines.call(this);
@@ -6252,13 +6350,12 @@ addMapping(processNodeMapping, [-1], bui.Helper);
 addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
 addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
 addMapping(edgeMarkerMapping, [407], bui.connectingArcs.absoluteInhibition.id);
-addMapping(edgeMarkerMapping, [464], bui.connectingArcs.assignment.id);
+addMapping(edgeMarkerMapping, [464,342], bui.connectingArcs.assignment.id);
 //addMapping(edgeMarkerMapping, [342], bui.connectingArcs.interaction.id);
 addMapping(edgeMarkerMapping, [459,462], bui.connectingArcs.stimulation.id);
 addMapping(edgeMarkerMapping, [15], bui.connectingArcs.substrate.id);
 addMapping(edgeMarkerMapping, [11], bui.connectingArcs.product.id);
-addMapping(edgeMarkerMapping, [461],
-        bui.connectingArcs.necessaryStimulation.id);
+addMapping(edgeMarkerMapping, [461], bui.connectingArcs.necessaryStimulation.id);
 addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
 
 
@@ -6336,6 +6433,10 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             node.addClass(nodeJSON.data.cssClasses);
         }
 
+        if(('clone_marker' in nodeJSON.data)&&(nodeJSON.data.clone_marker == true)){
+            node.addClass('cloneMarker');
+        }
+
         node.size(size.width, size.height)
                 .visible(true);
 
@@ -6346,12 +6447,24 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         if (bui.util.propertySetAndNotNull(nodeJSON,
                 ['data', 'statevariable'])) {
             var variables = nodeJSON.data.statevariable;
+            var state_class_obj = bui.StateVariable;
+            if(bui.settings.SBGNlang == 'ER'){
+                state_class_obj = bui.StateVariableER;
+            }
             for (var i = 0; i < variables.length; i++) {
-                graph.add(bui.StateVariable)
+                statevar = graph.add(state_class_obj)
                         .label(variables[i])
                         .parent(node)
                         .visible(true)
+                        .size(60,14)
                         .json(variables[i]);//FIXME needs to be added to json, no clue what this does
+                if((bui.settings.SBGNlang == 'ER')&&(variables[i] == 'existance')){
+                    statevar.label('').addClass('existance').size(14,14);
+                }
+                if((bui.settings.SBGNlang == 'ER')&&(variables[i] == 'location')){
+                    statevar.label('').addClass('location').size(14,14);
+                    //statevar.privates.labelElement.setAttributeNS(null, 'transform', 'rotate(-45,7,7)');
+                }
             }
         }
         if (bui.util.propertySetAndNotNull(nodeJSON,
@@ -6523,7 +6636,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 if (source !== undefined) {
                     children = source.children();
                     for(var j = 0;j<children.length;j++){
-                        if(children[j].label() == node_ids[1]){
+                        if((children[j].label() == node_ids[1])||(children[j].hasClass(node_ids[1]))){
                             source = drawables[children[j].id()];
                             break;
                         }
@@ -6540,7 +6653,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 if (target !== undefined) {
                     var children = target.children();
                     for(var j = 0;j<children.length;j++){
-                        if(children[j].label() == node_ids[1]){
+                        if((children[j].label() == node_ids[1])||(children[j].hasClass(node_ids[1]))){
                             target = drawables[children[j].id()];
                             break;
                         }
@@ -6577,11 +6690,29 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
 
 
             if (edgeJSON.sbo !== undefined) {
-                try {
+                if (edgeJSON.sbo == 342){//SBO:0000342 molecular or genetic interaction
+                    // source and tartget are the same molecule add cis/trans infobox 
+                    var pos = edge.source().absoluteCenter();
+                    var handle = graph.add(bui.RectangularNode)
+                            .positionCenter(pos.x+80, pos.y)
+                            .visible(true)
+                            .size(50,20)
+                            .label(edgeJSON.data.cis_trans);
+                    edge.json(edgeJSON).source(handle).target(target);
+                    back_edge = graph.add(bui.Edge);
+                    back_edge.json(edgeJSON).source(handle).target(source);
                     var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
+                    back_edge.marker(marker.klass);
                     edge.marker(marker.klass);
-                } catch (e) {
-                    log(e);
+                    back_edge.addPoint(pos.x+80, pos.y-20);
+                    edge.addPoint(pos.x+80, pos.y+20);
+                }else{
+                    try {
+                        var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
+                        edge.marker(marker.klass);
+                    } catch (e) {
+                        log(e);
+                    }
                 }
             }
 
@@ -6609,7 +6740,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                     if (target !== undefined) {
                         var children = target.children();
                         for(var j = 0;j<children.length;j++){
-                            if(children[j].label() == node_ids[1]){
+                            if((children[j].label() == node_ids[1])||(children[j].hasClass(node_ids[1]))){
                                 target = drawables[children[j].id()];
                                 break;
                             }
@@ -6635,7 +6766,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                     if (source !== undefined) {
                         children = source.children();
                         for(var j = 0;j<children.length;j++){
-                            if(children[j].label() == node_ids[1]){
+                            if((children[j].label() == node_ids[1])||(children[j].hasClass(node_ids[1]))){
                                 source = drawables[children[j].id()];
                                 break;
                             }
@@ -6651,7 +6782,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                     } 
                     var sp = source_edge.source().absoluteCenter();
                     var tp = source_edge.target().absoluteCenter();
-                    source = source_edge.addOutcome((sp.x+tp.x)/2, (sp.y+tp.y)/2);//FIXME this does not give the proper positions ... y???
+                    source = source_edge.addPoint((sp.x+tp.x)/2, (sp.y+tp.y)/2, 'Outcome');//FIXME this does not give the proper positions ... y???
                 }
                 //---------------------------
                 //---------------------------
@@ -6747,9 +6878,6 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
 
         if('sbgnlang' in data){
             bui.settings.SBGNlang = data.sbgnlang; 
-            if(bui.settings.SBGNlang == 'ER'){
-                bui.util.setSuperClass(bui.StateVariable, bui.RectangularNode);
-            }
         }
         log('## Setting SBGN language to '+bui.settings.SBGNlang);
 
