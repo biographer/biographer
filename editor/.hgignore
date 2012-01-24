@@ -6,3 +6,4 @@ errors/*
 databases/*
 sessions/*
 */*.swp
+static/BioModels.net/*

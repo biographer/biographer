@@ -318,31 +318,61 @@ function layout(algorithm){
 $(document).ready(function() {
     showUndoRedo();
     //=========================
+    $('#vertical_gaps_equal, #horizontal_gaps_equal').click(function(){
+        var all_drawables = graph.drawables();
+        var pos = undefined;
+        for (var key in all_drawables) {
+            drawable = all_drawables[key]
+            var align_type = $(this).attr('id');
+            if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
+                selected_drawables.push(drawable);
+            }
+        }
+    }
+    //=========================
     $('#align_vertical, #align_hoizontal, #align_left, #align_top, #align_right, #align_bottom').click(function(){
         var all_drawables = graph.drawables();
         var pos = undefined;
         for (var key in all_drawables) {
             drawable = all_drawables[key]
+            var align_type = $(this).attr('id');
             if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
-                if(pos === undefined){
-                    pos = drawable.absolutePosition();
-                }else{
-                    if($(this).attr('id')=='align_hoizontal'){
-                        drawable.absolutePosition(drawable.absolutePosition().x,pos.y);
-                    }else if($(this).attr('id')=='align_vertical'){
-                        drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
-                    }else if($(this).attr('id')=='align_left'){
-                        drawable.absolutePosition(drawable.absolutePosition().x,pos.y);
-                    }else if($(this).attr('id')=='align_top'){
-                        drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
-                    }else if($(this).attr('id')=='align_right'){
-                        drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
-                    }else if($(this).attr('id')=='align_bottom'){
-                        drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
+                if((align_type == 'align_hoizontal')||(align_type == 'align_vertical')){
+                    if(pos === undefined){
+                        pos = drawable.absolutePositionCenter();
+                    }else{
+                        if(align_type=='align_hoizontal'){
+                            drawable.absolutePositionCenter(drawable.absolutePositionCenter().x,pos.y);
+                        }else if(align_type=='align_vertical'){
+                            drawable.absolutePositionCenter(pos.x, drawable.absolutePositionCenter().y);
+                        }
+                    }
+                }else if((align_type == 'align_left')||(align_type == 'align_top')){
+                    if(pos === undefined){
+                        pos = drawable.absolutePosition();
+                    }else{
+                        if(align_type=='align_left'){
+                            drawable.absolutePosition(drawable.absolutePosition().x,pos.y);
+                        }else if(align_type=='align_top'){
+                            drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
+                        }
+                    }
+                }else if((align_type == 'align_right')||(align_type == 'align_bottom')){
+                    if(pos === undefined){
+                        pos = drawable.bottomRight();
+                    }else{
+                        if(align_type=='align_right'){
+                            drawable.bottomRight(pos.x, drawable.bottomRight().y);
+                        }else if(align_type=='align_bottom'){
+                            drawable.bottomRight(drawable.bottomRight().x, pos.y);
+                        }
                     }
                 }
             }
         }
+    });
+    $('#canvas').dblclick(function(){
+            placeholdersVisible(false);
     });
     //=========================
     $('#canvas').resizable();

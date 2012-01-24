@@ -335,7 +335,9 @@ class Graph:
 		self.initialize()
 
 	def exportJSON(self, Indent=DefaultIndent):				# export current model to JSON code
+
 		d = self.exportDICT(status=False)
+
 		self.log(progress, "Exporting JSON ...")
 		self.JSON = json.dumps( d, indent=Indent )
 		self.status()
