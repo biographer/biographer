@@ -2653,6 +2653,7 @@ var getSBOForMarkerId = function(id) {
      */
     var parentRemoved = function() {
         this.parent(this.graph());
+	this.remove();
     };
 
     /**
@@ -2865,7 +2866,29 @@ var getSBOForMarkerId = function(id) {
         },
 
         /**
-         * Retrieve the absolute position of this node in the SVG or set it.
+         * Set or retrieve position of the node's center.
+         *
+         * The positioning is done relatively.
+         *
+         * @param {Number} x Position on x-coordinate.
+         * @param {Number} y Position on y-coordinate.
+         * @return {bui.Node} Fluent interface
+         */
+        positionCenter : function(x, y) {
+            var size = this.size();
+
+            if (x !== undefined && y !== undefined) {
+                this.position(x - size.width / 2, y - size.height / 2);
+            }
+            var pos = this.position();
+            return {
+                x : pos.x + size.width / 2,
+                y : pos.y + size.height /2
+            };
+        },
+
+        /**
+         * Set or retrieve the absolute position of this node in the SVG.
          *
          * @param {Number} [x] The new x-axis position.
          * @param {Number} [y] The new y-axis position.
@@ -2880,34 +2903,15 @@ var getSBOForMarkerId = function(id) {
                 y -= parentTopLeft.y;
 
                 this.position(x, y);
-                return this;
-            } else {
-                return {
-                    x : parentTopLeft.x + privates.x,
-                    y : parentTopLeft.y + privates.y
-                };
             }
-        },
-
-        /**
-         * Position the node's center on the given coordinate.
-         *
-         * The positioning is done relatively.
-         *
-         * @param {Number} x Position on x-coordinate.
-         * @param {Number} y Position on y-coordinate.
-         * @return {bui.Node} Fluent interface
-         */
-        positionCenter : function(x, y) {
-            var size = this.size();
-
-            this.position(x - size.width / 2, y - size.height / 2);
-
-            return this;
+            return {
+                x : parentTopLeft.x + privates.x,
+                y : parentTopLeft.y + privates.y
+            };
         },
 
          /**
-         * Position the node's center on the given coordinate (SVG absolute).
+         * Set or retrieve the position of the node's center (SVG absolute).
          *
          * The positioning is done relatively.
          *
@@ -2918,9 +2922,15 @@ var getSBOForMarkerId = function(id) {
         absolutePositionCenter : function(x, y) {
             var size = this.size();
 
-            this.absolutePosition(x - size.width / 2, y - size.height / 2);
-
-            return this;
+            if (x !== undefined && y !== undefined) {
+                //set x y
+                this.absolutePosition(x - size.width / 2, y - size.height / 2);
+            }
+            var pos = this.absolutePosition()
+            return {
+                x : pos.x + size.width / 2,
+                y : pos.y + size.height / 2,
+            };
         },
 
         /**
@@ -2985,13 +2995,17 @@ var getSBOForMarkerId = function(id) {
 
         /**
          * @description
-         * Use this function to retrieve the top-left corner of the node.
+         * Use this function to set or retrieve the top-left corner of the node.
          *
          * @return {Object} Object with x and y properties.
          */
-        topLeft : function() {
+        topLeft : function(x ,y) {
             var privates = this._privates(identifier);
 
+            if (x !== undefined && y !== undefined) {
+                privates.x = x;
+                privates.y = y;
+            }
             return {
                 x : privates.x,
                 y : privates.y
@@ -3004,9 +3018,13 @@ var getSBOForMarkerId = function(id) {
          *
          * @return {Object} Object with x and y properties.
          */
-        bottomRight : function() {
+        bottomRight : function(x, y) {
             var privates = this._privates(identifier);
 
+            if (x !== undefined && y !== undefined) {
+                privates.x = x - privates.width;
+                privates.y = y - privates.height;
+            }
             return {
                 x : privates.x + privates.width,
                 y : privates.y + privates.height
@@ -3015,16 +3033,20 @@ var getSBOForMarkerId = function(id) {
 
         /**
          * @description
-         * Use this function to retrieve the absolute bottom right coordinates
+         * Use this function to set or retrieve the absolute bottom right coordinates
          * of the node.
          *
          * @return {Object} Object with x and y properties.
          */
-        absoluteBottomRight : function() {
+        absoluteBottomRight : function(x, y) {
             var privates = this._privates(identifier);
 
             var position = this.absolutePosition();
 
+            if (x !== undefined && y !== undefined) {
+                //set x y
+                this.absolutePosition(x - privates.width, y - privates.height);
+            }
             return {
                 x : position.x + privates.width,
                 y : position.y + privates.height
@@ -3075,7 +3097,7 @@ var getSBOForMarkerId = function(id) {
          *   immediately.
          * @return {bui.Node} Fluent interface.
          */
-        move : function(x, y, duration) {
+        move : function(x, y, duration, finishedListener) {
             var privates = this._privates(identifier);
 
             if (duration === undefined || duration <= 0) {
@@ -3100,7 +3122,9 @@ var getSBOForMarkerId = function(id) {
                         x -= diffX;
                         y -= diffY;
                         setTimeout(arguments.callee, timeOffset);
-                    }
+                    } else {
+		      if (finishedListener) finishedlistener();
+		    }
                 })();
             }
 
@@ -3707,8 +3731,6 @@ var getSBOForMarkerId = function(id) {
         var privates = this._privates(identifier);
         privates.label = this._label;
         privates.adaptSizeToLabel = this._adaptSizeToLabel;
-        privates.maxHeight = this._maxHeight;
-        privates.maxWidth = this._maxWidth;
         privates.labelElement = null;
         privates.svgClasses = this._svgClasses;
         privates.calculationClasses = this._calculationClasses;
@@ -3731,8 +3753,6 @@ var getSBOForMarkerId = function(id) {
     bui.Labelable.prototype = {
         _label : '',
         _adaptSizeToLabel : false,
-        _maxHeight: undefined,//FIXME would be nice if they could be used
-        _maxWidth: undefined,
         _svgClasses : '',
         _ignLabelSize : false,
         _calculationClasses :
@@ -3864,7 +3884,6 @@ var getSBOForMarkerId = function(id) {
         labelClass : bui.util.createListenerTypeId()
     };
 })(bui);
-
 (function(bui) {
     var identifier = 'bui.EdgeHandle';
 
@@ -5732,7 +5751,6 @@ var getSBOForMarkerId = function(id) {
                 }
                 privates.targetSplineHandle.absolutePositionCenter(target.absoluteCenter().x+privates.targetSplineHandlePos.x,
                                                     target.absoluteCenter().y+privates.targetSplineHandlePos.y);
-                privates.positioningSplineHandles=false;
                                                     
                 var sourceSplineHandle = privates.sourceSplineHandle,
                         targetSplineHandle = privates.targetSplineHandle;
@@ -5740,12 +5758,30 @@ var getSBOForMarkerId = function(id) {
                 var sourcePosition = source
                         .calculateLineEnd(sourceSplineHandle),
                         targetPosition = target
-                                .calculateLineEnd(targetSplineHandle),
-                        sourceSplineHandlePosition = sourceSplineHandle
+                                .calculateLineEnd(targetSplineHandle);
+                // repositon splineHandles if they ar within the node
+                var dx=sourcePosition.x-source.absoluteCenter().x,
+                    dy=sourcePosition.y-source.absoluteCenter().y;
+                if (Math.abs(dx)>=Math.abs(privates.sourceSplineHandlePos.x)){
+                   privates.sourceSplineHandlePos.x=dx*1.2;
+                   privates.sourceSplineHandlePos.y=dy*1.2;
+                   privates.sourceSplineHandle.absolutePositionCenter(source.absoluteCenter().x+privates.sourceSplineHandlePos.x,
+                                                                      source.absoluteCenter().y+privates.sourceSplineHandlePos.y);
+                }
+                dx=targetPosition.x-target.absoluteCenter().x,
+                dy=targetPosition.y-target.absoluteCenter().y;
+                if (Math.abs(dx)>=Math.abs(privates.targetSplineHandlePos.x)){
+                   privates.targetSplineHandlePos.x=dx*1.2;
+                   privates.targetSplineHandlePos.y=dy*1.2;
+                   privates.targetSplineHandle.absolutePositionCenter(target.absoluteCenter().x+privates.targetSplineHandlePos.x,
+                                                                      target.absoluteCenter().y+privates.targetSplineHandlePos.y);
+                }
+                privates.positioningSplineHandles=false;
+                var sourceSplineHandlePosition = sourceSplineHandle
                                 .absoluteCenter(),
                         targetSplineHandlePosition = targetSplineHandle
                                 .absoluteCenter();
-                
+
                 var data = ['M' ,
                         sourcePosition.x,
                         sourcePosition.y,
@@ -5853,7 +5889,7 @@ var getSBOForMarkerId = function(id) {
            }
            for (var i=0;i<positions.length;i+=2){
               var n=i/2;
-              privates.points[n].point.moveAbsoluteCenter(positions[i],positions[i+1],duration);
+              privates.points[n].point.moveAbsoluteCenter(bui.util.toNumber(positions[i]),bui.util.toNumber(positions[i+1]),duration);
            }
         },
         /**
@@ -5870,19 +5906,19 @@ var getSBOForMarkerId = function(id) {
             var privates = this._privates(identifier);
             var target = this.target(),
                     source = this.source();
-            privates.sourceSplineHandlePos.x=positions[0];
-            privates.sourceSplineHandlePos.y=positions[1];
+            privates.sourceSplineHandlePos.x=bui.util.toNumber(positions[0]);
+            privates.sourceSplineHandlePos.y=bui.util.toNumber(positions[1]);
             for (var i=2;i<positions.length-2;i+=2){
                var n=(i-2)/2;
                if (privates.points[n]){
-                  privates.points[n].x=positions[i];
-                  privates.points[n].y=positions[i+1];
+                  privates.points[n].x=bui.util.toNumber(positions[i]);
+                  privates.points[n].y=bui.util.toNumber(positions[i+1]);
                } else {
                   throw "not enough spline points set for spline handles"
                }
             }
-            privates.targetSplineHandlePos.x=positions[i];
-            privates.targetSplineHandlePos.y=positions[i+1];
+            privates.targetSplineHandlePos.x=bui.util.toNumber(positions[i]);
+            privates.targetSplineHandlePos.y=bui.util.toNumber(positions[i+1]);
             this._sourceOrTargetDimensionChanged();
             return this;
         },
@@ -6913,7 +6949,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
      * @param {Number} [duration] An optional duration in milliseconds.
      *   {@link bui.Node#move}
      */
-    bui.importUpdatedNodePositionsFromJSON = function(graph, data, duration) {
+    bui.importUpdatedNodePositionsFromJSON = function(graph, data, duration, finishListener) {
         var drawables = graph.drawables();
 
         // optimize the data structure to map json IDs to drawable references
@@ -6960,8 +6996,11 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             var x = nodeJSON.data.x,
                     y = nodeJSON.data.y,
                     currentPosition = node.position();
-
-            node.move(x - currentPosition.x, y - currentPosition.y, duration);
+	    if (i==nodesJSON.length-1){
+	      node.move(x - currentPosition.x, y - currentPosition.y, duration, finishListener); // the last node will call the finishListener
+	    } else {
+	      node.move(x - currentPosition.x, y - currentPosition.y, duration);
+	    }
         }
 
         var edgesJSON = data.edges;
@@ -6981,6 +7020,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             }
 
             edge.setSplineHandlePositions(edgeJSON.data.handles, duration);
+            edge.setSplinePoints(edgeJSON.data.points, duration);
         }
     };
 })(bui);

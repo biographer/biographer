@@ -319,16 +319,51 @@ $(document).ready(function() {
     showUndoRedo();
     //=========================
     $('#vertical_gaps_equal, #horizontal_gaps_equal').click(function(){
+        // collect selected drawables
         var all_drawables = graph.drawables();
-        var pos = undefined;
+        var selected_drawables = [];
         for (var key in all_drawables) {
             drawable = all_drawables[key]
-            var align_type = $(this).attr('id');
             if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
                 selected_drawables.push(drawable);
             }
         }
-    }
+        // sort drawables
+        var sorted_drawables = []
+        for(var i=0; i<selected_drawables.length; i++){
+            sorted_drawables.push( { 
+            x : selected_drawables[i].absolutePosition().x,
+            y : selected_drawables[i].absolutePosition().y,
+            drawable : selected_drawables[i],
+            });
+        }
+        if($(this).attr('id')=='vertical_gaps_equal'){
+            sorted_drawables.sort(function(a,b) { return a.y - b.y } );
+        }else{
+            sorted_drawables.sort(function(a,b) { return a.x - b.x } );
+        }
+        //calculate gap space
+        var gap_space = 0;
+        for (var i=0; i<sorted_drawables.length-1; i++){
+            if($(this).attr('id')=='vertical_gaps_equal'){
+                gap_space += sorted_drawables[i+1].drawable.absolutePosition().y - sorted_drawables[i].drawable.absoluteBottomRight().y;
+            }else{
+                gap_space += sorted_drawables[i+1].drawable.absolutePosition().x - sorted_drawables[i].drawable.absoluteBottomRight().x;
+            }
+        }
+        //set equal gaps
+        var gap_length = gap_space/(sorted_drawables.length-1)
+        for (var i=1; i<sorted_drawables.length-1; i++){
+            if($(this).attr('id')=='vertical_gaps_equal'){
+                sorted_drawables[i].drawable.absolutePosition(sorted_drawables[i].drawable.absolutePosition().x, sorted_drawables[i-1].drawable.absoluteBottomRight().y+gap_length)
+            }else{
+                sorted_drawables[i].drawable.absolutePosition(sorted_drawables[i-1].drawable.absoluteBottomRight().x+gap_length, sorted_drawables[i].drawable.absolutePosition().y)
+            }
+        }
+
+        var x_vals
+        var max_x = Math.max()
+    });
     //=========================
     $('#align_vertical, #align_hoizontal, #align_left, #align_top, #align_right, #align_bottom').click(function(){
         var all_drawables = graph.drawables();
@@ -340,6 +375,7 @@ $(document).ready(function() {
                 if((align_type == 'align_hoizontal')||(align_type == 'align_vertical')){
                     if(pos === undefined){
                         pos = drawable.absolutePositionCenter();
+                        //alert('horiz vert'+JSON.stringify(pos));
                     }else{
                         if(align_type=='align_hoizontal'){
                             drawable.absolutePositionCenter(drawable.absolutePositionCenter().x,pos.y);
@@ -350,21 +386,23 @@ $(document).ready(function() {
                 }else if((align_type == 'align_left')||(align_type == 'align_top')){
                     if(pos === undefined){
                         pos = drawable.absolutePosition();
+                        //alert('left top'+JSON.stringify(pos));
                     }else{
                         if(align_type=='align_left'){
-                            drawable.absolutePosition(drawable.absolutePosition().x,pos.y);
-                        }else if(align_type=='align_top'){
                             drawable.absolutePosition(pos.x, drawable.absolutePosition().y);
+                        }else if(align_type=='align_top'){
+                            drawable.absolutePosition(drawable.absolutePosition().x,pos.y);
                         }
                     }
                 }else if((align_type == 'align_right')||(align_type == 'align_bottom')){
                     if(pos === undefined){
-                        pos = drawable.bottomRight();
+                        pos = drawable.absoluteBottomRight();
+                        //alert('right bottom'+JSON.stringify(pos));
                     }else{
                         if(align_type=='align_right'){
-                            drawable.bottomRight(pos.x, drawable.bottomRight().y);
+                            drawable.absoluteBottomRight(pos.x, drawable.absoluteBottomRight().y);
                         }else if(align_type=='align_bottom'){
-                            drawable.bottomRight(drawable.bottomRight().x, pos.y);
+                            drawable.absoluteBottomRight(drawable.absoluteBottomRight().x, pos.y);
                         }
                     }
                 }
