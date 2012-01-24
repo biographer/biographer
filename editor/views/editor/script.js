@@ -329,12 +329,12 @@ $(document).ready(function() {
             }
         }
         // sort drawables
-        var sorted_drawables = []
+        var sorted_drawables = [];
         for(var i=0; i<selected_drawables.length; i++){
             sorted_drawables.push( { 
             x : selected_drawables[i].absolutePosition().x,
             y : selected_drawables[i].absolutePosition().y,
-            drawable : selected_drawables[i],
+            drawable : selected_drawables[i]
             });
         }
         if($(this).attr('id')=='vertical_gaps_equal'){
