@@ -17,7 +17,7 @@ def index():
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     response.files.append(URL(request.application, 'static/js', 'jquery.simplemodal.1.4.1.min.js'))
     #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))
-    response.files.append(URL(request.application, 'editor', 'script.js'))
+    response.files.append(URL('script.js'))
     if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph:
         action,graph,json_string = None,None,None
         if request.vars.jgraph:
