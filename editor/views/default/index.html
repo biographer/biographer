@@ -1,8 +1,11 @@
 {{extend 'layout.html'}}
-<!-- script type="text/javascript" src="{{=URL(request.application, 'static/js', 'biographer-ui.js')}}"></script -->
+{{if session.debug:}}
 <script type="text/javascript">
     {{include 'default/biographer-ui.js'}}
 </script>
+{{else:}}
+<script type="text/javascript" src="{{=URL(request.application, 'static/js', 'biographer-ui.js')}}"></script>
+{{pass}}
 <table>
 	<tr>
 		<td></td>

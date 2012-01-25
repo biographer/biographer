@@ -46,6 +46,12 @@ def index():
             undoRegister(action, graph, json_string)
     return dict()
 
+def debug():
+    if session.debug == None:
+        session.debug = True;
+    else:
+        session.debug = not session.debug
+
 def script():
     return dict()
 
