@@ -98,3 +98,288 @@ if not auth.is_logged_in() and db(db.auth_user.id>0).count() and not os.path.exi
     response.flash = 'You were automatically logged in as %s %s.<br/> To prevent this create the file %s'%(user.first_name, user.last_name, os.path.join(request.folder, 'LOCK'))
 #########################################################################
 #########################################################################
+#Cache functions
+def BioModel_to_cache(SBML, ID):
+	global db
+
+	key = 'name="'
+	p = SBML.find(key)
+	if p > -1:
+		p += len(key)
+		q = SBML.find('"',p)
+		title = SBML[p:q].replace("_"," ")
+
+		if len( db( db.BioModels.BIOMD==ID ).select() ) == 0:
+			db.BioModels.insert( BIOMD=ID, Title=title, File=SBML )
+
+def BioModel_from_cache( BioModelID ):
+	global db
+
+	select = db( db.BioModels.BIOMD==BioModelID ).select()
+
+	if len( select ) == 1:
+		return select[0].File
+	else:
+		return None
+
+def Reactome_to_cache(SBML, ID):
+	global db
+
+	key = 'name="'
+	p = SBML.find(key)
+	if p > -1:
+		p += len(key)
+		q = SBML.find('"',p)
+		title = SBML[p:q].replace("_"," ")
+
+		if len( db( db.Reactome.ST_ID==ID ).select() ) == 0:
+			db.Reactome.insert( ST_ID=ID, Title=title, File=SBML )
+
+def Reactome_from_cache( ReactomeStableIdentifier ):
+	global db
+
+	select = db( db.Reactome.ST_ID==ReactomeStableIdentifier ).select()
+
+	if len( select ) == 1:
+		return select[0].File
+	else:
+		return None
+
+def download_Reactome( ReactomeStableIdentifier ):
+
+	import httplib
+
+	connection = httplib.HTTPConnection("www.reactome.org")
+	connection.request("GET", '/cgi-bin/eventbrowser_st_id?ST_ID='+ReactomeStableIdentifier, None, {"Cookie":"ClassicView=1"} )
+	page = connection.getresponse().read()
+
+	p = page.find('/cgi-bin/sbml_export?')
+	if p > -1:
+		q = page.find('"', p)
+		connection.request("GET", page[p:q])					# download SBML
+		return connection.getresponse().read()
+
+	if page.find('has been updated in the most recent release of Reactome') > -1:
+
+		print 'This Reactome model is superseded.'
+
+		key = '="eventbrowser_st_id?ST_ID='
+		p = page.find(key)+len(key)
+		q = page.find('"', p)
+		new_RSI = page[p:q]
+		if new_RSI.find('REACT_') == 0:
+			print 'New RSI is '+new_RSI+'.'
+			return download_Reactome( new_RSI )
+
+	return None
+
+def download_BioModel( BioModelsID ):
+
+	import httplib
+
+	connection = httplib.HTTPConnection("www.ebi.ac.uk")
+	connection.request("GET", "/biomodels-main/download?mid=BIOMD"+str(BioModelsID).rjust(10, "0"))
+	Model = connection.getresponse().read()
+	connection.close()
+
+	if Model.find("There is no model associated") > -1:	# no such model
+		return None
+	else:							# SBML download successful
+		return Model
+#########################################################################
+#########################################################################
+def layout(graph, path_to_layout_binary, execution_folder='/tmp'):
+
+	global session
+	import os
+	from subprocess import Popen
+	from shlex import split
+	from time import time, sleep
+	from defaults import info, error
+
+	if not os.path.exists(path_to_layout_binary):
+		graph.log(error, "Fatal: layout binary not found.")
+		return False
+
+	infile = os.path.join(execution_folder, 'layout.infile')
+	outfile = os.path.join(execution_folder, 'layout.outfile')
+
+	open(infile, 'w').write( graph.export_to_Layouter() )
+	if os.path.exists(outfile):
+		os.remove(outfile)
+
+	graph.log(info, "Now executing the layouter: "+path_to_layout_binary)
+	graph.log(info, "in "+execution_folder+" ...")
+
+	timeout = 120
+	start = time()									# start a timer
+	process = Popen( split(path_to_layout_binary+' '+infile+' '+outfile) )		# run layout binary
+	graph.log(info, "Executable started. Timeout is set to "+str(timeout)+" seconds. Waiting for process to complete ...")
+	runtime = 0
+	while (process.poll() is None) and (runtime < timeout):				# wait until timeout
+		sleep(1)
+		runtime = time()-start
+		graph.log(info, "Runtime is now: "+str(int(runtime))+" seconds")
+
+	if runtime < timeout:
+		graph.log(info, path_to_layout_binary+" finished.")
+	else:
+		graph.log(info, "Sorry, process timed out.")
+		process.kill()
+		return False
+
+	if os.path.exists(outfile):
+		graph.log(info, 'Output found in '+outfile)
+	else:
+		graph.log(error, 'Outfile not found: '+outfile)
+		return False
+
+	session.last_layout = open(outfile).read()
+	graph.import_from_Layouter( session.last_layout )
+	os.remove(outfile)
+	os.remove(infile)
+
+	graph.log(info,"Layouting completed successfully.")
+#########################################################################
+def import_Layout(graph, lines):
+    type2sbo = dict(Protein = 252,SimpleCompound=247,Complex=253,Reaction=167,Compartment=290,Compound=285)
+    nodeh={}#nodeid to index
+    for cc,node in enumerate(graph['nodes']):
+      nodeh[node['id']] = cc
+
+    minx=1000000000000000000
+    miny=1000000000000000000
+    i = 0
+    while i < len(lines):
+        node_type=lines[i+1].strip()
+        node_id=lines[i+2].strip()
+        compartment=lines[i+3].strip()
+        x=float(lines[i+4].strip())
+        y=float(lines[i+5].strip())
+        w=float(lines[i+6].strip())
+        h=float(lines[i+7].strip())
+        i+=9
+        print 'node_type: ',node_type,'node_id',node_id,'compartment',compartment,'x',x,'y',y,'w',w,'h',h
+
+        if node_id not in nodeh:
+            print 'continue id not in nodeh'
+            continue
+
+        if node_type == 'Compartment':
+            graph['nodes'][nodeh[node_id]]['data']['x'] = 1*x
+            graph['nodes'][nodeh[node_id]]['data']['y'] = -y-h
+            graph['nodes'][nodeh[node_id]]['data']['width'] = 1*w
+            graph['nodes'][nodeh[node_id]]['data']['height'] = 1*h
+        elif node_type in type2sbo:
+            graph['nodes'][nodeh[node_id]]['data']['x'] = 1*x-w/2
+            graph['nodes'][nodeh[node_id]]['data']['y'] = -y-h/2
+        else:
+            print 'eeeerrroroor'
+            raise HTTP(500, 'nooo')
+
+        if graph['nodes'][nodeh[node_id]]['data']['x'] < minx:
+            minx= graph['nodes'][nodeh[node_id]]['data']['x']
+        if graph['nodes'][nodeh[node_id]]['data']['y'] < miny:
+            miny= graph['nodes'][nodeh[node_id]]['data']['y']
+
+    for node in graph['nodes']:
+        if node['data'].has_key('x'):
+            node['data']['x'] -= minx
+        if node['data'].has_key('y'):
+            node['data']['y'] -= miny
+    #node_id2node = dict([(node['id'],node) for node in graph['nodes']])
+    for node in graph['nodes']:
+        print node
+        if node['data'].has_key('compartment') and node['data']['compartment']:
+            cp = nodeh[node['data']['compartment']]
+            node['data']['x'] -= graph['nodes'][cp]['data']['x']
+            node['data']['y'] -= graph['nodes'][cp]['data']['y']
+#########################################################################
+
+def sbgnml2json(sbgnml_str):
+    graph = dict(nodes = [], edges = [])
+    import xmlobject
+    xml = xmlobject.XMLFile(raw=sbgnml_str)
+    class2sbo = {
+            'compartment' : 290,
+            'macromolecule' : 245,
+            'simple chemical' : 247,
+            'complex' : 253,
+            'process' : 375,
+            'association' : 285,#FIXME this is not correct but our json lib does not have this node type
+            'phenotype' : 285,#FIXME this is not correct but our json lib does not have this node type
+            'submap' : 285,#FIXME this is not correct but our json lib does not have this node type
+            #addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
+            #addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
+            }
+    def get_node(node):
+        '''
+        recursive funciton to get one node/glyph and its sub nodes/glyphs
+        '''
+        node_item = dict(
+            id = node.id,
+            sbo = class2sbo[node.get('class')],
+            is_abstract = 0,
+            type = node.get('class'),
+            data = dict (
+                x = float(node.bbox[0].x),
+                y = float(node.bbox[0].y),
+                )
+            )
+        #---------
+        if hasattr(node, 'label'):
+            node_item['data']['label'] = node.label[0].text,
+        #---------
+        if hasattr(node, 'glyph'):#subnodes present
+            node.glyph
+            node_item['data']['subnodes'] = []
+            for sub_node in node.glyph:
+                if sub_node.get('class') in class2sbo.keys():
+                    get_node(sub_node)
+                    node_item['data']['subnodes'].append(sub_node.id)
+        graph['nodes'].append(node_item)
+    #------------------------------
+    #iterate through nodes
+    for node in xml.root.map[0].glyph:
+        get_node(node)
+    return graph
+
+#########################################################################
+#########################################################################
+# wrapper for graphviz
+def mkdir_and_parents( path ):
+	import os
+
+	fullpath = ""
+	for part in path.split("/"):
+		fullpath += part+"/"
+		if (len(fullpath) > 1) and (not os.path.exists(fullpath)):
+			os.mkdir(fullpath)
+
+def layout_using_graphviz(graph, execution_folder="/tmp", image_output_folder="/tmp", algorithm="dot"):
+
+	import os, pygraphviz
+	from defaults import info
+
+	mkdir_and_parents(execution_folder)
+	mkdir_and_parents(image_output_folder)
+
+	graphviz_model = graph.export_to_graphviz()
+
+	graph.log(info, "Executing graphviz ...")
+
+	out_filename = graph.MD5+".svg"
+	out = os.path.join(image_output_folder, out_filename)
+	if os.path.exists(out):
+		os.remove(out)
+
+    #graphviz_model.dpi = 70;
+	graphviz_model.layout( prog=algorithm )
+	graphviz_model.draw( out )
+	graph.graphviz_layout = graphviz_model.string()
+	graph.log(info, "graphviz completed.")
+
+	graph.import_from_graphviz( graph.graphviz_layout )
+
+	return out_filename
+
