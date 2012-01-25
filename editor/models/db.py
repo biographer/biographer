@@ -5,8 +5,8 @@
 
 db = DAL('sqlite://cache.sqlite')
 
-db.define_table('BioModels',	Field('BIOMD','string'),	Field('Title','string'),	Field('File','string') )
-db.define_table('Reactome',	Field('ST_ID','string'),	Field('Title','string'),	Field('File','string') )
+db.define_table('BioModels',    Field('BIOMD','string'),    Field('Title','string'),    Field('File','string') )
+db.define_table('Reactome', Field('ST_ID','string'),    Field('Title','string'),    Field('File','string') )
 
 
 #########################################################################
@@ -100,235 +100,235 @@ if not auth.is_logged_in() and db(db.auth_user.id>0).count() and not os.path.exi
 #########################################################################
 #Cache functions
 def BioModel_to_cache(SBML, ID):
-	global db
+    global db
 
-	key = 'name="'
-	p = SBML.find(key)
-	if p > -1:
-		p += len(key)
-		q = SBML.find('"',p)
-		title = SBML[p:q].replace("_"," ")
+    key = 'name="'
+    p = SBML.find(key)
+    if p > -1:
+        p += len(key)
+        q = SBML.find('"',p)
+        title = SBML[p:q].replace("_"," ")
 
-		if len( db( db.BioModels.BIOMD==ID ).select() ) == 0:
-			db.BioModels.insert( BIOMD=ID, Title=title, File=SBML )
+        if len( db( db.BioModels.BIOMD==ID ).select() ) == 0:
+            db.BioModels.insert( BIOMD=ID, Title=title, File=SBML )
 
 def BioModel_from_cache( BioModelID ):
-	global db
+    global db
 
-	select = db( db.BioModels.BIOMD==BioModelID ).select()
+    select = db( db.BioModels.BIOMD==BioModelID ).select()
 
-	if len( select ) == 1:
-		return select[0].File
-	else:
-		return None
+    if len( select ) == 1:
+        return select[0].File
+    else:
+        return None
 
 def Reactome_to_cache(SBML, ID):
-	global db
+    global db
 
-	key = 'name="'
-	p = SBML.find(key)
-	if p > -1:
-		p += len(key)
-		q = SBML.find('"',p)
-		title = SBML[p:q].replace("_"," ")
+    key = 'name="'
+    p = SBML.find(key)
+    if p > -1:
+        p += len(key)
+        q = SBML.find('"',p)
+        title = SBML[p:q].replace("_"," ")
 
-		if len( db( db.Reactome.ST_ID==ID ).select() ) == 0:
-			db.Reactome.insert( ST_ID=ID, Title=title, File=SBML )
+        if len( db( db.Reactome.ST_ID==ID ).select() ) == 0:
+            db.Reactome.insert( ST_ID=ID, Title=title, File=SBML )
 
 def Reactome_from_cache( ReactomeStableIdentifier ):
-	global db
+    global db
 
-	select = db( db.Reactome.ST_ID==ReactomeStableIdentifier ).select()
+    select = db( db.Reactome.ST_ID==ReactomeStableIdentifier ).select()
 
-	if len( select ) == 1:
-		return select[0].File
-	else:
-		return None
+    if len( select ) == 1:
+        return select[0].File
+    else:
+        return None
 
 def download_Reactome( ReactomeStableIdentifier ):
 
-	import httplib
+    import httplib
 
-	connection = httplib.HTTPConnection("www.reactome.org")
-	connection.request("GET", '/cgi-bin/eventbrowser_st_id?ST_ID='+ReactomeStableIdentifier, None, {"Cookie":"ClassicView=1"} )
-	page = connection.getresponse().read()
+    connection = httplib.HTTPConnection("www.reactome.org")
+    connection.request("GET", '/cgi-bin/eventbrowser_st_id?ST_ID='+ReactomeStableIdentifier, None, {"Cookie":"ClassicView=1"} )
+    page = connection.getresponse().read()
 
-	p = page.find('/cgi-bin/sbml_export?')
-	if p > -1:
-		q = page.find('"', p)
-		connection.request("GET", page[p:q])					# download SBML
-		return connection.getresponse().read()
+    p = page.find('/cgi-bin/sbml_export?')
+    if p > -1:
+        q = page.find('"', p)
+        connection.request("GET", page[p:q])                    # download SBML
+        return connection.getresponse().read()
 
-	if page.find('has been updated in the most recent release of Reactome') > -1:
+    if page.find('has been updated in the most recent release of Reactome') > -1:
 
-		print 'This Reactome model is superseded.'
+        print 'This Reactome model is superseded.'
 
-		key = '="eventbrowser_st_id?ST_ID='
-		p = page.find(key)+len(key)
-		q = page.find('"', p)
-		new_RSI = page[p:q]
-		if new_RSI.find('REACT_') == 0:
-			print 'New RSI is '+new_RSI+'.'
-			return download_Reactome( new_RSI )
+        key = '="eventbrowser_st_id?ST_ID='
+        p = page.find(key)+len(key)
+        q = page.find('"', p)
+        new_RSI = page[p:q]
+        if new_RSI.find('REACT_') == 0:
+            print 'New RSI is '+new_RSI+'.'
+            return download_Reactome( new_RSI )
 
-	return None
+    return None
 
 def download_BioModel( BioModelsID ):
 
-	import httplib
+    import httplib
 
-	connection = httplib.HTTPConnection("www.ebi.ac.uk")
-	connection.request("GET", "/biomodels-main/download?mid=BIOMD"+str(BioModelsID).rjust(10, "0"))
-	Model = connection.getresponse().read()
-	connection.close()
+    connection = httplib.HTTPConnection("www.ebi.ac.uk")
+    connection.request("GET", "/biomodels-main/download?mid=BIOMD"+str(BioModelsID).rjust(10, "0"))
+    Model = connection.getresponse().read()
+    connection.close()
 
-	if Model.find("There is no model associated") > -1:	# no such model
-		return None
-	else:							# SBML download successful
-		return Model
+    if Model.find("There is no model associated") > -1: # no such model
+        return None
+    else:                           # SBML download successful
+        return Model
 
 def reset_current_session():
-	global session
+    global session
 
-	session.JSON = None				# reset
-	session.SBML = None
-	session.BioModelsID = None
+    session.JSON = None             # reset
+    session.SBML = None
+    session.BioModelsID = None
 
-	if session.bioGraph is not None:		# delete old graph
-		del session.bioGraph
+    if session.bioGraph is not None:        # delete old graph
+        del session.bioGraph
 
-	from graph import Graph
+    from graph import Graph
     from defaults import progress
-	session.bioGraph = Graph(verbosity=progress)	# new graph
+    session.bioGraph = Graph(verbosity=progress)    # new graph
 
 def import_JSON( JSONstring ):
-	global session
-	reset_current_session()
-	session.bioGraph.importJSON( JSONstring )
+    global session
+    reset_current_session()
+    session.bioGraph.importJSON( JSONstring )
 
-def export_JSON():					# workaround for web2py bug
+def export_JSON():                  # workaround for web2py bug
     from copy import deepcopy
-	global session
-	session.bioGraph.exportJSON()
-	temp = deepcopy( session.bioGraph )
-	del session.bioGraph
-	session.bioGraph = temp
-	return session.bioGraph.JSON
+    global session
+    session.bioGraph.exportJSON()
+    temp = deepcopy( session.bioGraph )
+    del session.bioGraph
+    session.bioGraph = temp
+    return session.bioGraph.JSON
 
 def import_SBML( SBMLstring ):
-	global session
-	reset_current_session()
-	session.bioGraph.importSBML( SBMLstring )
+    global session
+    reset_current_session()
+    session.bioGraph.importSBML( SBMLstring )
 
 def import_BioModel( BioModelsID ):
-	global session, request, db
+    global session, request, db
 
-	BioModelsID = BioModelsID.rjust(10, "0")	# adjust BioModel's ID
-	print "BioModel requested: BIOMD"+BioModelsID
+    BioModelsID = BioModelsID.rjust(10, "0")    # adjust BioModel's ID
+    print "BioModel requested: BIOMD"+BioModelsID
 
-	model = BioModel_from_cache( BioModelsID )
-	if model is None:
-		print "Not in cache. Downloading ..."
-		model = download_BioModel( BioModelsID )
-		if model is None:
-			print "Error: Download failed"
-			session.flash = "Error: BioModel download failed"
-			return False
-		else:
-			print "Downloaded successful."
-			session.flash = "BioModel downloaded"
-			BioModel_to_cache( model, BioModelsID )
-	else:
-		print "Loaded from cache."
-		session.flash = "BioModel loaded from cache"
-	
-	reset_current_session()
-	session.BioModelsID = BioModelsID
-	session.SBML = model
-	session.bioGraph.importSBML( session.SBML )
-	return model
+    model = BioModel_from_cache( BioModelsID )
+    if model is None:
+        print "Not in cache. Downloading ..."
+        model = download_BioModel( BioModelsID )
+        if model is None:
+            print "Error: Download failed"
+            session.flash = "Error: BioModel download failed"
+            return False
+        else:
+            print "Downloaded successful."
+            session.flash = "BioModel downloaded"
+            BioModel_to_cache( model, BioModelsID )
+    else:
+        print "Loaded from cache."
+        session.flash = "BioModel loaded from cache"
+    
+    reset_current_session()
+    session.BioModelsID = BioModelsID
+    session.SBML = model
+    session.bioGraph.importSBML( session.SBML )
+    return model
 
 def import_Reactome( ReactomeStableIdentifier ):
-	global session, request, db
+    global session, request, db
 
-	print "Request for RSI:"+ReactomeStableIdentifier
+    print "Request for RSI:"+ReactomeStableIdentifier
 
-	model = Reactome_from_cache( ReactomeStableIdentifier )
-	if model is None:
-		print "Not in cache. Downloading ..."
-		model = download_Reactome( ReactomeStableIdentifier )
-		if model is None:
-			print "Error: Download failed"
-			session.flash = "Error: Reactome download failed"
-			return False
-		else:
-			print "Downloaded successful."
-			session.flash = "Reactome model downloaded"
-			Reactome_to_cache( model, ReactomeStableIdentifier )
-	else:
-		print "Loaded from cache."
-		session.flash = "Reactome model loaded from cache"
+    model = Reactome_from_cache( ReactomeStableIdentifier )
+    if model is None:
+        print "Not in cache. Downloading ..."
+        model = download_Reactome( ReactomeStableIdentifier )
+        if model is None:
+            print "Error: Download failed"
+            session.flash = "Error: Reactome download failed"
+            return False
+        else:
+            print "Downloaded successful."
+            session.flash = "Reactome model downloaded"
+            Reactome_to_cache( model, ReactomeStableIdentifier )
+    else:
+        print "Loaded from cache."
+        session.flash = "Reactome model loaded from cache"
 
-	reset_current_session()
-	session.ST_ID = ReactomeStableIdentifier
-	session.SBML = model
-	session.bioGraph.importSBML( session.SBML )
-	return model
+    reset_current_session()
+    session.ST_ID = ReactomeStableIdentifier
+    session.SBML = model
+    session.bioGraph.importSBML( session.SBML )
+    return model
 
 #########################################################################
 #########################################################################
 def layout(graph, path_to_layout_binary, execution_folder='/tmp'):
 
-	global session
-	import os
-	from subprocess import Popen
-	from shlex import split
-	from time import time, sleep
-	from defaults import info, error
+    global session
+    import os
+    from subprocess import Popen
+    from shlex import split
+    from time import time, sleep
+    from defaults import info, error
 
-	if not os.path.exists(path_to_layout_binary):
-		graph.log(error, "Fatal: layout binary not found.")
-		return False
+    if not os.path.exists(path_to_layout_binary):
+        graph.log(error, "Fatal: layout binary not found.")
+        return False
 
-	infile = os.path.join(execution_folder, 'layout.infile')
-	outfile = os.path.join(execution_folder, 'layout.outfile')
+    infile = os.path.join(execution_folder, 'layout.infile')
+    outfile = os.path.join(execution_folder, 'layout.outfile')
 
-	open(infile, 'w').write( graph.export_to_Layouter() )
-	if os.path.exists(outfile):
-		os.remove(outfile)
+    open(infile, 'w').write( graph.export_to_Layouter() )
+    if os.path.exists(outfile):
+        os.remove(outfile)
 
-	graph.log(info, "Now executing the layouter: "+path_to_layout_binary)
-	graph.log(info, "in "+execution_folder+" ...")
+    graph.log(info, "Now executing the layouter: "+path_to_layout_binary)
+    graph.log(info, "in "+execution_folder+" ...")
 
-	timeout = 120
-	start = time()									# start a timer
-	process = Popen( split(path_to_layout_binary+' '+infile+' '+outfile) )		# run layout binary
-	graph.log(info, "Executable started. Timeout is set to "+str(timeout)+" seconds. Waiting for process to complete ...")
-	runtime = 0
-	while (process.poll() is None) and (runtime < timeout):				# wait until timeout
-		sleep(1)
-		runtime = time()-start
-		graph.log(info, "Runtime is now: "+str(int(runtime))+" seconds")
+    timeout = 120
+    start = time()                                  # start a timer
+    process = Popen( split(path_to_layout_binary+' '+infile+' '+outfile) )      # run layout binary
+    graph.log(info, "Executable started. Timeout is set to "+str(timeout)+" seconds. Waiting for process to complete ...")
+    runtime = 0
+    while (process.poll() is None) and (runtime < timeout):             # wait until timeout
+        sleep(1)
+        runtime = time()-start
+        graph.log(info, "Runtime is now: "+str(int(runtime))+" seconds")
 
-	if runtime < timeout:
-		graph.log(info, path_to_layout_binary+" finished.")
-	else:
-		graph.log(info, "Sorry, process timed out.")
-		process.kill()
-		return False
+    if runtime < timeout:
+        graph.log(info, path_to_layout_binary+" finished.")
+    else:
+        graph.log(info, "Sorry, process timed out.")
+        process.kill()
+        return False
 
-	if os.path.exists(outfile):
-		graph.log(info, 'Output found in '+outfile)
-	else:
-		graph.log(error, 'Outfile not found: '+outfile)
-		return False
+    if os.path.exists(outfile):
+        graph.log(info, 'Output found in '+outfile)
+    else:
+        graph.log(error, 'Outfile not found: '+outfile)
+        return False
 
-	session.last_layout = open(outfile).read()
-	graph.import_from_Layouter( session.last_layout )
-	os.remove(outfile)
-	os.remove(infile)
+    session.last_layout = open(outfile).read()
+    graph.import_from_Layouter( session.last_layout )
+    os.remove(outfile)
+    os.remove(infile)
 
-	graph.log(info,"Layouting completed successfully.")
+    graph.log(info,"Layouting completed successfully.")
 #########################################################################
 def import_Layout(graph, lines):
     type2sbo = dict(Protein = 252,SimpleCompound=247,Complex=253,Reaction=167,Compartment=290,Compound=285)
@@ -437,38 +437,38 @@ def sbgnml2json(sbgnml_str):
 #########################################################################
 # wrapper for graphviz
 def mkdir_and_parents( path ):
-	import os
+    import os
 
-	fullpath = ""
-	for part in path.split("/"):
-		fullpath += part+"/"
-		if (len(fullpath) > 1) and (not os.path.exists(fullpath)):
-			os.mkdir(fullpath)
+    fullpath = ""
+    for part in path.split("/"):
+        fullpath += part+"/"
+        if (len(fullpath) > 1) and (not os.path.exists(fullpath)):
+            os.mkdir(fullpath)
 
 def layout_using_graphviz(graph, execution_folder="/tmp", image_output_folder="/tmp", algorithm="dot"):
 
-	import os, pygraphviz
-	from defaults import info
+    import os, pygraphviz
+    from defaults import info
 
-	mkdir_and_parents(execution_folder)
-	mkdir_and_parents(image_output_folder)
+    mkdir_and_parents(execution_folder)
+    mkdir_and_parents(image_output_folder)
 
-	graphviz_model = graph.export_to_graphviz()
+    graphviz_model = graph.export_to_graphviz()
 
-	graph.log(info, "Executing graphviz ...")
+    graph.log(info, "Executing graphviz ...")
 
-	out_filename = graph.MD5+".svg"
-	out = os.path.join(image_output_folder, out_filename)
-	if os.path.exists(out):
-		os.remove(out)
+    out_filename = graph.MD5+".svg"
+    out = os.path.join(image_output_folder, out_filename)
+    if os.path.exists(out):
+        os.remove(out)
 
     #graphviz_model.dpi = 70;
-	graphviz_model.layout( prog=algorithm )
-	graphviz_model.draw( out )
-	graph.graphviz_layout = graphviz_model.string()
-	graph.log(info, "graphviz completed.")
+    graphviz_model.layout( prog=algorithm )
+    graphviz_model.draw( out )
+    graph.graphviz_layout = graphviz_model.string()
+    graph.log(info, "graphviz completed.")
 
-	graph.import_from_graphviz( graph.graphviz_layout )
+    graph.import_from_graphviz( graph.graphviz_layout )
 
-	return out_filename
+    return out_filename
 

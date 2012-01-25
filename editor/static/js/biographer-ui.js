@@ -878,7 +878,7 @@ var log = function(object) {
 var updateJson = function(json, path, value) {
     if (typeof(path) === 'string') {
         json[path] = value;
-    } else {
+    } else if (path !== undefined){
         var lastProperty = json;
         for(var i = 0; i < path.length - 1; i++) {
             var propertyName = path[i];
@@ -6122,8 +6122,8 @@ var getSBOForMarkerId = function(id) {
 
         var handle = this.graph()
                 .add(bui.EdgeHandle)
-                .positionCenter(x, y)
                 .visible(privates.edgeHandlesVisible);
+        handle.positionCenter(x, y);
 
         var index = privates.handles.indexOf(node);
 
@@ -6245,8 +6245,8 @@ var getSBOForMarkerId = function(id) {
             var privates = this._privates(identifier);
             var handle = this.graph()
                     .add(bui.EdgeHandle)
-                    .positionCenter(x, y)
                     .visible(privates.edgeHandlesVisible);
+            handle.positionCenter(x, y);
                     
             if (type == undefined){
                 handle.addClass('edgeHandle');
@@ -6336,6 +6336,7 @@ var getSBOForMarkerId = function(id) {
             }
 
             if (privates.handles.length > 0) {
+                log('toJSON called iterating handles');
                 var handles = [];
 
                 for (var i = 0; i < privates.handles.length; i++) {
@@ -6663,7 +6664,9 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         for (var i = 0; i < edges.length; i++) {
             var edgeJSON = edges[i], edge;
 
-
+            if ((edgeJSON.source === undefined)||(edgeJSON.target===undefined)){
+                continue;
+            }
             var source = undefined;
             //if there are ports defined (molecule:domain-port) make them to the target
             if (edgeJSON.source.indexOf(':') != -1){
@@ -6726,14 +6729,12 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
 
 
             if (edgeJSON.sbo !== undefined) {
-                if (edgeJSON.sbo == 342){//SBO:0000342 molecular or genetic interaction
+                if ((edgeJSON.source.split(':')[0] == edgeJSON.target.split(':')[0])&&(edgeJSON.sbo == 342)){//SBO:0000342 molecular or genetic interaction
+                    log(JSON.stringify(edgeJSON));
                     // source and tartget are the same molecule add cis/trans infobox 
                     var pos = edge.source().absoluteCenter();
-                    var handle = graph.add(bui.RectangularNode)
-                            .positionCenter(pos.x+80, pos.y)
-                            .visible(true)
-                            .size(50,20)
-                            .label(edgeJSON.data.cis_trans);
+                    var handle = graph.add(bui.RectangularNode).visible(true).size(50,20).label(edgeJSON.data.cis_trans);
+                    handle.positionCenter(pos.x+80, pos.y);
                     edge.json(edgeJSON).source(handle).target(target);
                     back_edge = graph.add(bui.Edge);
                     back_edge.json(edgeJSON).source(handle).target(source);

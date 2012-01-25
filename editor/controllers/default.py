@@ -11,7 +11,6 @@ def undoRegister(action, graph, json_string):
 
 def index():
     response.files.append(URL(request.application, 'static/css', 'visualization-html.css'))
-    response.files.append(URL(request.application, 'static/css', 'editor.css'))
     response.files.append(URL(request.application, 'static/css', 'jquery-ui-1.8.13.css'))
     response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))

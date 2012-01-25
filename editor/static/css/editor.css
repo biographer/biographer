@@ -36,6 +36,13 @@ div.flash {
     display: inline-block;
     vertical-align: top;
 }
+#editor-header #logo a {
+    color: #fff;
+    text-decoration: none;
+}
+#editor-header #menu-right{
+    float: right;
+}
 #editor-header ul {
 	display: inline-block;
 	list-style: none;
