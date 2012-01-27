@@ -86,6 +86,47 @@
 
         privates.connectingArcs = {};
 
+        privates.cloneMarker = document.createElementNS(bui.svgns, 'pattern');
+        privates.cloneMarker.setAttribute('id', 'cloneMarker');
+        privates.cloneMarker.setAttribute('patternUnits','objectBoundingBox');
+        privates.cloneMarker.setAttribute('x','0');
+        privates.cloneMarker.setAttribute('y', '70%');
+        privates.cloneMarker.setAttribute('width', '100');
+        privates.cloneMarker.setAttribute('height', '100');
+        privates.cloneRect = document.createElementNS(bui.svgns, 'rect');
+        privates.cloneRect.setAttribute('fill', 'black');
+        privates.cloneRect.setAttribute('width' , '100');
+        privates.cloneRect.setAttribute('height' , '100');
+        privates.cloneMarker.appendChild(privates.cloneRect);
+        privates.defsGroup.appendChild(privates.cloneMarker);
+
+        privates.stateVarExistence = document.createElementNS(bui.svgns, 'pattern');
+        privates.stateVarExistence.setAttribute('id', 'stateVariableExistence');
+        privates.stateVarExistence.setAttribute('patternUnits','objectBoundingBox');
+        privates.stateVarExistence.setAttribute('x','50%');
+        privates.stateVarExistence.setAttribute('y', '0');
+        privates.stateVarExistence.setAttribute('width', '100');
+        privates.stateVarExistence.setAttribute('height', '100');
+        privates.existanceRect = document.createElementNS(bui.svgns, 'rect');
+        privates.existanceRect.setAttribute('fill', 'black');
+        privates.existanceRect.setAttribute('width' , '100');
+        privates.existanceRect.setAttribute('height' , '100');
+        privates.stateVarExistence.appendChild(privates.existanceRect);
+        privates.defsGroup.appendChild(privates.stateVarExistence);
+
+        privates.stateVarLocation = document.createElementNS(bui.svgns, 'pattern');
+        privates.stateVarLocation.setAttribute('id', 'stateVariableLocation');
+        privates.stateVarLocation.setAttribute('patternUnits','objectBoundingBox');
+        privates.stateVarLocation.setAttribute('x','0');
+        privates.stateVarLocation.setAttribute('y', '0');
+        privates.stateVarLocation.setAttribute('width', '14');
+        privates.stateVarLocation.setAttribute('height', '14');
+        privates.locationRect = document.createElementNS(bui.svgns, 'path');
+        privates.locationRect.setAttribute('d' , 'M0,14 L14,0 M7,7 L14,14 Z');
+        privates.locationRect.setAttribute('style', "stroke-width:2;stroke:rgb(0,0,0)")
+        privates.stateVarLocation.appendChild(privates.locationRect);
+        privates.defsGroup.appendChild(privates.stateVarLocation);
+
         for (var i in bui.connectingArcs) {
             if (bui.connectingArcs.hasOwnProperty(i)) {
                 var ca = bui.connectingArcs[i]();

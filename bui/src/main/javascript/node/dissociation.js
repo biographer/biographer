@@ -1,14 +1,14 @@
 (function(bui) {
-    var identifier = 'bui.EdgeHandle';
+    var identifier = 'bui.Dissociation';
 
     /**
      * @private
      * Function used for the generation of listener identifiers
-     * @param {bui.EdgeHandle} EdgeHandle
+     * @param {bui.Dissociation} Dissociation
      * @return {String} listener identifier
      */
-    var listenerIdentifier = function(EdgeHandle) {
-        return identifier + EdgeHandle.id();
+    var listenerIdentifier = function(Dissociation) {
+        return identifier + Dissociation.id();
     };
 
     /**
@@ -20,6 +20,9 @@
         privates.circle.setAttributeNS(null, 'cx', r);
         privates.circle.setAttributeNS(null, 'cy', r);
         privates.circle.setAttributeNS(null, 'r', r);
+        privates.subcircle.setAttributeNS(null, 'cx', r);
+        privates.subcircle.setAttributeNS(null, 'cy', r);
+        privates.subcircle.setAttributeNS(null, 'r', width / 4);
     };
 
     /**
@@ -29,8 +32,10 @@
         var privates = this._privates(identifier);
 
         privates.circle = document.createElementNS(bui.svgns, 'circle');
+        privates.subcircle = document.createElementNS(bui.svgns, 'circle');
         sizeChanged.call(this, this, this.size().width);
-      this.nodeGroup().appendChild(privates.circle);
+        this.nodeGroup().appendChild(privates.circle);
+        this.nodeGroup().appendChild(privates.subcircle);
     };
     
     /**
@@ -40,8 +45,8 @@
      * @extends bui.Node
      * @constructor
      */
-    bui.EdgeHandle = function() {
-        bui.EdgeHandle.superClazz.apply(this, arguments);
+    bui.Dissociation = function() {
+        bui.Dissociation.superClazz.apply(this, arguments);
 
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
@@ -53,13 +58,15 @@
         this.size(widthHeight, widthHeight);
     };
 
-    bui.EdgeHandle.prototype = {
+    bui.Dissociation.prototype = {
         includeInJSON : false,
         _circle : null,
         _forceRectangular : true,
         _enableResizing : false,
+        _minWidth : 14,
+        _minHeight : 14,
         _calculationHook : circularShapeLineEndCalculationHookWithoutPadding
     };
 
-    bui.util.setSuperClass(bui.EdgeHandle, bui.Node);
+    bui.util.setSuperClass(bui.Dissociation, bui.Node);
 })(bui);

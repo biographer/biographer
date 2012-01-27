@@ -128,16 +128,11 @@
      *   property holds the id of the marker and the element property the
      *   generated element.
      */
-    bui.connectingArcs.stimulation = function() {
-        return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
+    bui.connectingArcs.absoluteStimulation = function() {
+        return createPathWithData('M0,0 L0,20 L10,15 L10,5 L0,0 Z M10,0 L10,20 L30,10Z', 20, 10, 40, 20,
                 bui.settings.css.classes.connectingArcs.stimulation);
     };
-
-    /**
-     * @field Identifier for this connecting arc type.
-     */
-    bui.connectingArcs.stimulation.id = 'stimulation';
-
+    bui.connectingArcs.absoluteStimulation.id = 'absoluteStimulation';
 
     /**
      * Generator for a stimulation connecting arc.
@@ -152,10 +147,6 @@
         return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
                 bui.settings.css.classes.connectingArcs.stimulation);
     };
-
-    /**
-     * @field Identifier for this connecting arc type.
-     */
     bui.connectingArcs.stimulation.id = 'stimulation';
 
 
@@ -228,9 +219,7 @@
      */
     bui.connectingArcs.absoluteInhibition = function() {
         return createPathWithData('M0,0 V25 M10,0 V25Z', 10, 12, 10, 26,
-            //bui.settings.css.classes.connectingArcs.absoluteInhibition);
             bui.settings.css.classes.connectingArcs.necessaryStimulation);
-	    //);
     };
 
     /**

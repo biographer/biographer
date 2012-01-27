@@ -370,7 +370,29 @@
         },
 
         /**
-         * Retrieve the absolute position of this node in the SVG or set it.
+         * Set or retrieve position of the node's center.
+         *
+         * The positioning is done relatively.
+         *
+         * @param {Number} x Position on x-coordinate.
+         * @param {Number} y Position on y-coordinate.
+         * @return {bui.Node} Fluent interface
+         */
+        positionCenter : function(x, y) {
+            var size = this.size();
+
+            if (x !== undefined && y !== undefined) {
+                this.position(x - size.width / 2, y - size.height / 2);
+            }
+            var pos = this.position();
+            return {
+                x : pos.x + size.width / 2,
+                y : pos.y + size.height /2
+            };
+        },
+
+        /**
+         * Set or retrieve the absolute position of this node in the SVG.
          *
          * @param {Number} [x] The new x-axis position.
          * @param {Number} [y] The new y-axis position.
@@ -385,34 +407,15 @@
                 y -= parentTopLeft.y;
 
                 this.position(x, y);
-                return this;
-            } else {
-                return {
-                    x : parentTopLeft.x + privates.x,
-                    y : parentTopLeft.y + privates.y
-                };
             }
-        },
-
-        /**
-         * Position the node's center on the given coordinate.
-         *
-         * The positioning is done relatively.
-         *
-         * @param {Number} x Position on x-coordinate.
-         * @param {Number} y Position on y-coordinate.
-         * @return {bui.Node} Fluent interface
-         */
-        positionCenter : function(x, y) {
-            var size = this.size();
-
-            this.position(x - size.width / 2, y - size.height / 2);
-
-            return this;
+            return {
+                x : parentTopLeft.x + privates.x,
+                y : parentTopLeft.y + privates.y
+            };
         },
 
          /**
-         * Position the node's center on the given coordinate (SVG absolute).
+         * Set or retrieve the position of the node's center (SVG absolute).
          *
          * The positioning is done relatively.
          *
@@ -423,9 +426,15 @@
         absolutePositionCenter : function(x, y) {
             var size = this.size();
 
-            this.absolutePosition(x - size.width / 2, y - size.height / 2);
-
-            return this;
+            if (x !== undefined && y !== undefined) {
+                //set x y
+                this.absolutePosition(x - size.width / 2, y - size.height / 2);
+            }
+            var pos = this.absolutePosition()
+            return {
+                x : pos.x + size.width / 2,
+                y : pos.y + size.height / 2,
+            };
         },
 
         /**
@@ -490,13 +499,17 @@
 
         /**
          * @description
-         * Use this function to retrieve the top-left corner of the node.
+         * Use this function to set or retrieve the top-left corner of the node.
          *
          * @return {Object} Object with x and y properties.
          */
-        topLeft : function() {
+        topLeft : function(x ,y) {
             var privates = this._privates(identifier);
 
+            if (x !== undefined && y !== undefined) {
+                privates.x = x;
+                privates.y = y;
+            }
             return {
                 x : privates.x,
                 y : privates.y
@@ -509,9 +522,13 @@
          *
          * @return {Object} Object with x and y properties.
          */
-        bottomRight : function() {
+        bottomRight : function(x, y) {
             var privates = this._privates(identifier);
 
+            if (x !== undefined && y !== undefined) {
+                privates.x = x - privates.width;
+                privates.y = y - privates.height;
+            }
             return {
                 x : privates.x + privates.width,
                 y : privates.y + privates.height
@@ -520,16 +537,20 @@
 
         /**
          * @description
-         * Use this function to retrieve the absolute bottom right coordinates
+         * Use this function to set or retrieve the absolute bottom right coordinates
          * of the node.
          *
          * @return {Object} Object with x and y properties.
          */
-        absoluteBottomRight : function() {
+        absoluteBottomRight : function(x, y) {
             var privates = this._privates(identifier);
 
             var position = this.absolutePosition();
 
+            if (x !== undefined && y !== undefined) {
+                //set x y
+                this.absolutePosition(x - privates.width, y - privates.height);
+            }
             return {
                 x : position.x + privates.width,
                 y : position.y + privates.height

@@ -21,6 +21,7 @@
             return identifier;
         },
         _enableResizing : false,
+        _adaptSizeToLabel : false,
         _minWidth : bui.settings.style.processNodeMinSize.width,
         _minHeight : bui.settings.style.processNodeMinSize.height,
         _ignLabelSize : true

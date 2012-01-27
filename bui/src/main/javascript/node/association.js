@@ -1,14 +1,14 @@
 (function(bui) {
-    var identifier = 'bui.EdgeHandle';
+    var identifier = 'bui.Association';
 
     /**
      * @private
      * Function used for the generation of listener identifiers
-     * @param {bui.EdgeHandle} EdgeHandle
+     * @param {bui.Association} Association
      * @return {String} listener identifier
      */
-    var listenerIdentifier = function(EdgeHandle) {
-        return identifier + EdgeHandle.id();
+    var listenerIdentifier = function(Association) {
+        return identifier + Association.id();
     };
 
     /**
@@ -40,8 +40,8 @@
      * @extends bui.Node
      * @constructor
      */
-    bui.EdgeHandle = function() {
-        bui.EdgeHandle.superClazz.apply(this, arguments);
+    bui.Association = function() {
+        bui.Association.superClazz.apply(this, arguments);
 
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
@@ -51,15 +51,18 @@
 
         var widthHeight = bui.settings.style.edgeHandleRadius * 2;
         this.size(widthHeight, widthHeight);
+        this.addClass('Outcome');// the stylesheet mus fill the circle black
     };
 
-    bui.EdgeHandle.prototype = {
+    bui.Association.prototype = {
         includeInJSON : false,
         _circle : null,
         _forceRectangular : true,
         _enableResizing : false,
+        _minWidth : 14,
+        _minHeight : 14,
         _calculationHook : circularShapeLineEndCalculationHookWithoutPadding
     };
 
-    bui.util.setSuperClass(bui.EdgeHandle, bui.Node);
+    bui.util.setSuperClass(bui.Association, bui.Node);
 })(bui);

@@ -9,10 +9,17 @@ bui = {};
  */
 bui.svgns = "http://www.w3.org/2000/svg";
 
+
 /**
  * @namespace Settings are stored within this variable
  */
 bui.settings = {
+    /**
+     * @field
+     * Define the SBGN Language: PD, ER, AF
+     * this makes minor differnces in e.g. how StateVariable will be drawn
+     */
+    SBGNlang : 'PD',
     /**
      * @field
      * Whether or not the bui.Graph will be initialised in high or low
@@ -81,7 +88,8 @@ bui.settings = {
             width : ['data', 'width'],
             height : ['data', 'height'],
             subNodes : ['data', 'subnodes'],
-            modifications : ['data', 'modifications']
+            modification : ['data', 'modification'],
+            statevariable : ['data', 'statevariable']
         },
         edge : {
             source : 'source',
@@ -108,6 +116,8 @@ bui.settings = {
             complex : 'complex',
             compartment : 'compartment',
             process : 'process',
+            perturbation : 'perturbation',
+	    statevariable : 'statevariable',
             smallText : 'small',
             textDimensionCalculation : {
                 generic : 'textDimensionCalculation',
@@ -192,7 +202,7 @@ bui.settings = {
                 horizontal : 20,
                 vertical : 20
             },
-            modificationLabel : 'short' // either 'long' or 'short'
+            modificationLabel : 'long' // either 'long' or 'short'
         },
         // x/y coordinates as % of a node's size (1 = 100%)
         // T = top, L = left, R = right, B = bottom, CX = Center X,

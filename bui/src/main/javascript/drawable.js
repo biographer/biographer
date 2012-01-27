@@ -180,6 +180,10 @@
 
             return this;
         },
+        hasClass : function(klass) {
+            var classes = this._privates(identifier).classes;
+             return (classes.indexOf(klass) != -1);
+        },
 
         /**
          * @description

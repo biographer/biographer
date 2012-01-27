@@ -36,6 +36,7 @@
             source.bind(bui.Drawable.ListenerType.visible,
                 endpointVisibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
+            source.bind(bui.Node.ListenerType.absolutePosition, recalculatePoints.createDelegate(this), listenerIdentifier(this));
         }
     };
 
@@ -54,6 +55,7 @@
             target.bind(bui.Drawable.ListenerType.visible,
                 endpointVisibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
+            target.bind(bui.Node.ListenerType.absolutePosition, recalculatePoints.createDelegate(this), listenerIdentifier(this));
         }
     };
 
@@ -171,8 +173,8 @@
 
         var handle = this.graph()
                 .add(bui.EdgeHandle)
-                .positionCenter(x, y)
                 .visible(privates.edgeHandlesVisible);
+        handle.positionCenter(x, y);
 
         var index = privates.handles.indexOf(node);
 
@@ -210,9 +212,9 @@
      */
     var lineClicked = function(line, event) {
         // deactivated functionality based on Falko's request
-//        if (event.ctrlKey === true) {
-//            this.edgeHandlesVisible(!this.edgeHandlesVisible());
-//        }
+        if (event.ctrlKey === true) {
+            this.edgeHandlesVisible(!this.edgeHandlesVisible());
+        }
     };
 
     /**
@@ -238,6 +240,25 @@
             lines[i].hoverEffectActive(false);
         }
     };
+    /*
+     *
+     */
+    var recalculatePoints = function() {
+        var privates = this._privates(identifier);
+        
+        if((privates.handles.length > 0) && (privates.lines[0].source() != null) && (privates.lines[privates.lines.length - 1].target() != null)){
+            //log('source is: '+privates.lines[0].source().label());//+' target is: '+privates.lines[privates.lines.length-1].target().label());
+            var sp = privates.lines[0].source().absoluteCenter();
+            var tp = privates.lines[privates.lines.length - 1].target().absoluteCenter();
+            var devby = 1/(privates.handles.length+3);
+            var lx = tp.x-sp.x;
+            var ly = tp.y-sp.y;
+            for(var i = 0; i<privates.handles.length; i++){
+                privates.handles[i].positionCenter(sp.x+((i+2)*devby*lx),sp.y+((i+2)*devby*ly));
+            }
+            redrawLines.call(this);
+        }
+    }
 
     /**
      * @class
@@ -270,6 +291,43 @@
     };
 
     bui.Edge.prototype = {
+
+        addPoint : function(x, y, type){
+            var privates = this._privates(identifier);
+            var handle = undefined
+            
+            if (type == 'Outcome'){
+                //SBO:0000409
+                //An outcome is represented by a black dot located on the arc of a statement
+                //The diameter of the dot has to be larger than the thickness of the arc.
+                //-----------------------------
+                handle = this.graph()
+                    .add(bui.EdgeHandle)
+                    .size(12,12)
+                    .visible(true);
+                handle.addClass('Outcome');// the stylesheet mus fill the circle black
+            }else if ((type == 'and')||(type == 'or')||(type == 'not')||(type == 'delay')){
+                //SBO:0000174 ! or
+                //SBO:0000173 ! and
+                //...
+                handle = this.graph()
+                    .add(bui.LogicalOperator, type)
+                    .visible(true);
+                handle.addClass('LogicalOperator');
+            } else{
+                handle = this.graph()
+                    .add(bui.EdgeHandle)
+                    .visible(privates.edgeHandlesVisible);
+                handle.addClass('edgeHandle');//let the stylesheet make it grey
+            }
+            handle.positionCenter(x, y);
+            
+            index = 0;
+            privates.handles.splice(index, 0, handle);
+            redrawLines.call(this);
+            return handle;
+        },
+
         edgeHandlesVisible : function(visible) {
             var privates = this._privates(identifier);
 
@@ -343,13 +401,14 @@
             }
 
             if (privates.handles.length > 0) {
+                log('toJSON called iterating handles');
                 var handles = [];
 
                 for (var i = 0; i < privates.handles.length; i++) {
                     var position = privates.handles[i].absoluteCenter();
                     handles.push(position);
                 }
-
+                log('got this ')
                 updateJson(json, dataFormat.edge.handles, handles);
             }
 
