@@ -91,13 +91,14 @@
         if (escape === undefined) {
             escape = true;
         }
-        //use fallback if it chant be calculated because we use node.js with jsdom that cannot calculate word sized automatically
-        if (precalc !== undefined){
+        //use fallback if it can't be calculated because we use node.js with jsdom that cannot calculate word sized automatically
+        if (bui.settings.staticSVG || precalc !== undefined){
             var letter2width = bui.util.precalcLetterWidth();
             var text_length = 0;
             for(var i=0; i<text.length; i++){
                 text_length += letter2width[text.charAt(i)];
             }
+            if (text_length<=1) text_length=1;
             return { width : text_length, height : 16};
         }
 
@@ -224,12 +225,14 @@
     /**
      * Calculate the width for each letter, if this is not possible, used a default output
      **/
+    var precalcHash=undefined;
     bui.util.precalcLetterWidth = function(){
+        if (precalcHash) return precalcHash;
         var letters = 'abcdefghijklmnopqrstuvwzxz';
         var numbers = '1234567890_-@.:';
         var out = {};
         var elem = document.createElement('span');
-        $(elem).html(letters.charAt(0));
+        $(elem).html('A');
         //test if we can get the length of a char
         if( $(elem).width() > 1 ){
             for(var i = 0; i<letters.length; i++){
@@ -245,9 +248,11 @@
                 $(elem).html(numbers.charAt(i));
                 out[numbers.charAt(i)]=$(elem).width();
             }
-            return out
+            precalcHash=out;
+            return out;
         }else{
-            return {"0":8,"1":8,"2":8,"3":8,"4":8,"5":8,"6":8,"7":8,"8":8,"9":8,"a":8,"b":8,"c":7,"d":8,"e":8,"f":4,"g":8,"h":8,"i":3,"j":3,"k":7,"l":3,"m":13,"n":8,"o":8,"p":8,"q":8,"r":5,"s":7,"t":5,"u":8,"v":7,"w":9,"z":7,"x":7,"A":9,"B":9,"C":9,"D":10,"E":8,"F":7,"G":10,"H":10,"I":3,"J":3,"K":8,"L":7,"M":11,"N":10,"O":10,"P":8,"Q":10,"R":8,"S":9,"T":7,"U":10,"V":9,"W":11,"Z":10,"X":8}
+            precalcHash={"0":8,"1":8,"2":8,"3":8,"4":8,"5":8,"6":8,"7":8,"8":8,"9":8,"a":8,"b":8,"c":7,"d":8,"e":8,"f":4,"g":8,"h":8,"i":3,"j":3,"k":7,"l":3,"m":13,"n":8,"o":8,"p":8,"q":8,"r":5,"s":7,"t":5,"u":8,"v":7,"w":9,"z":7,"x":7,"A":9,"B":9,"C":9,"D":10,"E":8,"F":7,"G":10,"H":10,"I":3,"J":3,"K":8,"L":7,"M":11,"N":10,"O":10,"P":8,"Q":10,"R":8,"S":9,"T":7,"U":10,"V":9,"W":11,"Z":10,"X":8};
+            return precalcHash;
         }
     };
     /**
