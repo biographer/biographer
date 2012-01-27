@@ -533,7 +533,7 @@ var log = function(object) {
 var updateJson = function(json, path, value) {
     if (typeof(path) === 'string') {
         json[path] = value;
-    } else {
+    } else if (path !== undefined){
         var lastProperty = json;
         for(var i = 0; i < path.length - 1; i++) {
             var propertyName = path[i];

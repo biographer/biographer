@@ -62,8 +62,8 @@
         identifier : function() {
             return identifier;
         },
-        _minWidth : 60,
-        _minHeight : 14,
+        _minWidth : 20,
+        _minHeight : 20,
         auxiliaryUnit : true,
         includeInJSON : false,
         _enableResizing : true,

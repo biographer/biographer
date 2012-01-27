@@ -173,8 +173,8 @@
 
         var handle = this.graph()
                 .add(bui.EdgeHandle)
-                .positionCenter(x, y)
                 .visible(privates.edgeHandlesVisible);
+        handle.positionCenter(x, y);
 
         var index = privates.handles.indexOf(node);
 
@@ -294,20 +294,34 @@
 
         addPoint : function(x, y, type){
             var privates = this._privates(identifier);
-            var handle = this.graph()
-                    .add(bui.EdgeHandle)
-                    .positionCenter(x, y)
-                    .visible(privates.edgeHandlesVisible);
-                    
-            if (type == undefined){
-                handle.addClass('edgeHandle');
-            }else if (type == 'Outcome'){
+            var handle = undefined
+            
+            if (type == 'Outcome'){
                 //SBO:0000409
                 //An outcome is represented by a black dot located on the arc of a statement
                 //The diameter of the dot has to be larger than the thickness of the arc.
                 //-----------------------------
+                handle = this.graph()
+                    .add(bui.EdgeHandle)
+                    .size(12,12)
+                    .visible(true);
                 handle.addClass('Outcome');// the stylesheet mus fill the circle black
+            }else if ((type == 'and')||(type == 'or')||(type == 'not')||(type == 'delay')){
+                //SBO:0000174 ! or
+                //SBO:0000173 ! and
+                //...
+                handle = this.graph()
+                    .add(bui.LogicalOperator, type)
+                    .visible(true);
+                handle.addClass('LogicalOperator');
+            } else{
+                handle = this.graph()
+                    .add(bui.EdgeHandle)
+                    .visible(privates.edgeHandlesVisible);
+                handle.addClass('edgeHandle');//let the stylesheet make it grey
             }
+            handle.positionCenter(x, y);
+            
             index = 0;
             privates.handles.splice(index, 0, handle);
             redrawLines.call(this);
@@ -387,13 +401,14 @@
             }
 
             if (privates.handles.length > 0) {
+                log('toJSON called iterating handles');
                 var handles = [];
 
                 for (var i = 0; i < privates.handles.length; i++) {
                     var position = privates.handles[i].absoluteCenter();
                     handles.push(position);
                 }
-
+                log('got this ')
                 updateJson(json, dataFormat.edge.handles, handles);
             }
 

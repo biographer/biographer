@@ -116,6 +116,7 @@ bui.settings = {
             complex : 'complex',
             compartment : 'compartment',
             process : 'process',
+            perturbation : 'perturbation',
 	    statevariable : 'statevariable',
             smallText : 'small',
             textDimensionCalculation : {

@@ -10,7 +10,13 @@
      * @return {bui.Node} The generated node
      */
     var defaultNodeGenerator = function(graph, nodeType, nodeJSON) {
-        var node = graph.add(nodeType.klass);
+       
+        var node;
+        if (nodeJSON.sbo == 174 || nodeJSON.sbo == 173 || nodeJSON.sbo == 238 || nodeJSON.sbo == 225){
+            node = graph.add(nodeType.klass, [nodeJSON.sbo]);
+        }else{
+            node = graph.add(nodeType.klass);
+        }
 
         if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'label'])) {
             if (node.label !== undefined) {
@@ -61,7 +67,16 @@
 
         nodeJSON.data.width = size.width;
         nodeJSON.data.height = size.height;
-
+        
+        if (nodeJSON.data.unitofinformation !== undefined) {
+            for (var i = 0; i < nodeJSON.data.unitofinformation.length; i++) {
+                uoi = graph.add(bui.UnitOfInformation)
+                        .label(nodeJSON.data.unitofinformation[i])
+                        .parent(node)
+                        .visible(true)
+                        .json(nodeJSON.data.unitofinformation[i]);//FIXME needs to be added to json, no clue what this does
+            }
+        }
         // generic state variables
         if (bui.util.propertySetAndNotNull(nodeJSON,
                 ['data', 'statevariable'])) {
@@ -75,14 +90,16 @@
                         .label(variables[i])
                         .parent(node)
                         .visible(true)
-                        .size(60,14)
                         .json(variables[i]);//FIXME needs to be added to json, no clue what this does
-                if((bui.settings.SBGNlang == 'ER')&&(variables[i] == 'existance')){
-                    statevar.label('').addClass('existance').size(14,14);
-                }
-                if((bui.settings.SBGNlang == 'ER')&&(variables[i] == 'location')){
-                    statevar.label('').addClass('location').size(14,14);
-                    //statevar.privates.labelElement.setAttributeNS(null, 'transform', 'rotate(-45,7,7)');
+                if(bui.settings.SBGNlang == 'ER'){
+                    statevar.size(60,14)
+                    if(variables[i] == 'existance'){
+                        statevar.label('').addClass('existance').size(14,14);
+                    }
+                    if(variables[i] == 'location'){
+                        statevar.label('').addClass('location').size(14,14);
+                        //statevar.privates.labelElement.setAttributeNS(null, 'transform', 'rotate(-45,7,7)');
+                    }
                 }
             }
         }
@@ -246,7 +263,9 @@
         for (var i = 0; i < edges.length; i++) {
             var edgeJSON = edges[i], edge;
 
-
+            if ((edgeJSON.source === undefined)||(edgeJSON.target===undefined)){
+                continue;
+            }
             var source = undefined;
             //if there are ports defined (molecule:domain-port) make them to the target
             if (edgeJSON.source.indexOf(':') != -1){
@@ -305,18 +324,21 @@
             } else {
                 edge = graph.add(bui.Edge);
                 edge.json(edgeJSON).source(source).target(target);
+                if(edgeJSON.data.points !== undefined){
+                    for(var j=0; j<edgeJSON.data.points.length; j += 2){
+                        edge.addPoint(edgeJSON.data.points[j], edgeJSON.data.points[j+1])
+                    }
+                }
             }
 
 
             if (edgeJSON.sbo !== undefined) {
-                if (edgeJSON.sbo == 342){//SBO:0000342 molecular or genetic interaction
+                if ((edgeJSON.source.split(':')[0] == edgeJSON.target.split(':')[0])&&(edgeJSON.sbo == 342)){//SBO:0000342 molecular or genetic interaction
+                    log(JSON.stringify(edgeJSON));
                     // source and tartget are the same molecule add cis/trans infobox 
                     var pos = edge.source().absoluteCenter();
-                    var handle = graph.add(bui.RectangularNode)
-                            .positionCenter(pos.x+80, pos.y)
-                            .visible(true)
-                            .size(50,20)
-                            .label(edgeJSON.data.cis_trans);
+                    var handle = graph.add(bui.RectangularNode).visible(true).size(50,20).label(edgeJSON.data.cis_trans);
+                    handle.positionCenter(pos.x+80, pos.y);
                     edge.json(edgeJSON).source(handle).target(target);
                     back_edge = graph.add(bui.Edge);
                     back_edge.json(edgeJSON).source(handle).target(source);
