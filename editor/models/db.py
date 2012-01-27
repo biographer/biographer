@@ -389,17 +389,33 @@ def sbgnml2json(sbgnml_str):
     graph = dict(nodes = [], edges = [])
     import xmlobject
     xml = xmlobject.XMLFile(raw=sbgnml_str)
+    port2node = {}
     class2sbo = {
             'compartment' : 290,
             'macromolecule' : 245,
             'simple chemical' : 247,
             'complex' : 253,
             'process' : 375,
-            'association' : 285,#FIXME this is not correct but our json lib does not have this node type
-            'phenotype' : 285,#FIXME this is not correct but our json lib does not have this node type
+            'phenotype' : 358,
+            'nucleic acid feature' : 250,
+            'association' : 177,
+            'dissociation' : 180,
             'submap' : 285,#FIXME this is not correct but our json lib does not have this node type
+            'tag' : 110002,
+            'and' : 173,
+            'or' : 174,
+            'not' : 238,
+            'delay' : 255,
+            'source and sink' : 291,
             #addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
             #addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
+            'stimulation' : 459,
+            'consumption' : 15,
+            'production' : 11,
+            'catalysis' : 13,
+            'equivalence arc' : 15,
+            'logic arc' : 15,
+            'necessary stimulation': 461,
             }
     def get_node(node):
         '''
@@ -409,28 +425,76 @@ def sbgnml2json(sbgnml_str):
             id = node.id,
             sbo = class2sbo[node.get('class')],
             is_abstract = 0,
-            type = node.get('class'),
+            #type = node.get('class'),
             data = dict (
                 x = float(node.bbox[0].x),
                 y = float(node.bbox[0].y),
+                height = float(node.bbox[0].h),
+                width = float(node.bbox[0].w),
                 )
             )
         #---------
         if hasattr(node, 'label'):
-            node_item['data']['label'] = node.label[0].text,
+            node_item['data']['label'] = node.label[0].text
+        #---------
+        if hasattr(node, 'clone'):
+            node_item['data']['clone_marker'] = True
         #---------
         if hasattr(node, 'glyph'):#subnodes present
             node.glyph
             node_item['data']['subnodes'] = []
             for sub_node in node.glyph:
-                if sub_node.get('class') in class2sbo.keys():
+                if sub_node.get('class') == 'state variable':
+                    try: var = sub_node.state[0].get('variable')
+                    except AttributeError: var = ''
+                    try: val = sub_node.state[0].get('value')
+                    except AttributeError: val = ''
+
+                    if not var and not val: state = ''
+                    elif var and val: state = '%s@%s'%(var,val)
+                    else: state = var if var else val
+
+                    try: node_item['data']['statevariable'].append( state )
+                    except KeyError: node_item['data']['statevariable'] = [state]
+                if sub_node.get('class') == 'unit of information':
+                    try:
+                        node_item['data']['unitofinformation'].append( sub_node.label[0].text )
+                    except KeyError:
+                        node_item['data']['unitofinformation'] = [sub_node.label[0].text]
+                elif sub_node.get('class') in class2sbo.keys():
                     get_node(sub_node)
                     node_item['data']['subnodes'].append(sub_node.id)
+        if hasattr(node, 'port'):
+            for port in node.port:
+                port2node[port.id] = node.id
         graph['nodes'].append(node_item)
+
     #------------------------------
     #iterate through nodes
     for node in xml.root.map[0].glyph:
         get_node(node)
+    count = 0
+    for edge in xml.root.map[0].arc:
+        source = edge.source if edge.source not in port2node else port2node[edge.source]
+        target = edge.target if edge.target not in port2node else port2node[edge.target]
+        edge_item = dict(
+            id = 'edge%s'%count,
+            source = source,
+                target = target,
+            sbo = class2sbo[edge.get('class')]
+            )
+        count += 1
+        if hasattr(edge, 'next'):
+            for point in edge.get('next'):
+                x = float(point.x)
+                y = float(point.y)
+                try:
+                    edge_item['data']['points'].insert(0, x)
+                    edge_item['data']['points'].insert(0, y)
+                except KeyError:
+                    edge_item['data'] = dict(points = [x, y])
+        graph['edges'].append(edge_item)
+    #print graph
     return graph
 
 #########################################################################

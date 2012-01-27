@@ -156,6 +156,7 @@
 				<li class="spacer"></li>
 				<li id='help'> 
 				<div>help
+                    Biographer currently works best with Chromium (Chrome), while FireFox also works it is very slow in working with lager graphs. Opera currently does not render the line ends properly.
 					<table>
 						<tr>
 							<th>ctrl+click</th>
@@ -221,6 +222,14 @@
 				<img src="{{=URL(request.application, 'static/images/editor', 'UnspecifiedEntity.png')}}" id="UnspecifiedEntity" class="tool node"/>
 				</li>
 				<li>
+				<div>Perturbation (drag me)</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'Perturbation.png')}}" id="Perturbation" class="tool node"/>
+				</li>
+				<li>
+				<div>Phenotype (drag me)</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'Phenotype.png')}}" id="Phenotype" class="tool node"/>
+				</li>
+				<li>
 				<div>Compartment (drag me)</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'Compartment.png')}}" id="Compartment" class="tool node no_drop_complex"/>
 				</li>
@@ -254,10 +263,11 @@
 <div id="import_file_modal_input" class="modal_input">
 		<table>
 			<tr>
-				<th> JSON / SBML File </th>
+				<th> JSON / SBML / SBGN-ML File </th>
                 <td>
                     <form id='import_form' method="post" enctype="multipart/form-data">
-                        <input type="file" id="import_file_input">
+                        <input name="import_file" type="file" id="import_file_input"/>
+                        <input name='test' type="hidden" value='lala'/>
                     </form>
                 </td>
 			</tr>
@@ -372,6 +382,9 @@
 					<div class="marker_select" id="necessaryStimulation">
 						<div> necessaryStimulation </div>
 						<img src="{{=URL(request.application, 'static/images/editor', 'necessaryStimulation.png')}}"/> </div>
+					<div class="marker_select" id="absoluteStimulation">
+						<div> absoluteStimulation </div>
+						<img src="{{=URL(request.application, 'static/images/editor', 'absoluteStimulation.png')}}"/> </div>
 					<div class="marker_select" id="absoluteInhibition">
 						<div> absoluteInhibition </div>
 						<img src="{{=URL(request.application, 'static/images/editor', 'absoluteInhibition.png')}}"/> </div>

@@ -23,12 +23,12 @@ text.small, tspan.small, text.small tspan {
 g.VariableValue > text {
    top: 5px;
 }
-ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect {
+ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect, g.perturbation > path, g.phenotype path {
     fill: white;
     stroke-width: 2px;
     stroke: black
 }
-g.cloneMarker > path, g.cloneMarker > path, g.cloneMarker > rect {
+g.cloneMarker > path, g.cloneMarker > circle, g.cloneMarker > rect {
     fill: url(#cloneMarker);
 }
 g.existance > path {
@@ -80,6 +80,15 @@ line {
 .dashed {
     stroke-dasharray: 4, 5;
 }
+.LogicalOperator circle {
+	fill: white;
+	stroke: black;
+}
+/*.LogicalOperator.delay tspan {
+    font-family: Verdana;
+    font-size: 16px;
+    fill: black;
+}*/
 .Outcome circle {
 	fill: black;
 	stroke: black;

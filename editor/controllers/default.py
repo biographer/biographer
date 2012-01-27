@@ -35,12 +35,16 @@ def index():
                 else:
                     action = 'loaded %s'%request.vars.import_file.filename
             elif file_content.startswith('<?xml'):
-                import biographer
-                bioGraph = biographer.Graph()
-                bioGraph.import_SBML( file_content )
-                json_string = bioGraph.exportJSON()
-                #print 'sbml2json: ',json_string
-                graph = simplejson.loads(json_string)
+                if 'http://sbgn.org/libsbgn/pd' in file_content:
+                    graph = sbgnml2json(file_content)
+                    json_string = simplejson.dumps(graph)
+                else:
+                    import biographer
+                    bioGraph = biographer.Graph()
+                    bioGraph.import_SBML( file_content )
+                    json_string = bioGraph.exportJSON()
+                    #print 'sbml2json: ',json_string
+                    graph = simplejson.loads(json_string)
                 action = 'loaded %s'%request.vars.import_file.filename
         if action and graph and json_string:
             undoRegister(action, graph, json_string)

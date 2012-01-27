@@ -137,6 +137,7 @@ bui.settings = {
             complex : 'complex',
             compartment : 'compartment',
             process : 'process',
+            perturbation : 'perturbation',
 	    statevariable : 'statevariable',
             smallText : 'small',
             textDimensionCalculation : {
@@ -1334,16 +1335,11 @@ var getSBOForMarkerId = function(id) {
      *   property holds the id of the marker and the element property the
      *   generated element.
      */
-    bui.connectingArcs.stimulation = function() {
-        return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
+    bui.connectingArcs.absoluteStimulation = function() {
+        return createPathWithData('M0,0 L0,20 L10,15 L10,5 L0,0 Z M10,0 L10,20 L30,10Z', 20, 10, 40, 20,
                 bui.settings.css.classes.connectingArcs.stimulation);
     };
-
-    /**
-     * @field Identifier for this connecting arc type.
-     */
-    bui.connectingArcs.stimulation.id = 'stimulation';
-
+    bui.connectingArcs.absoluteStimulation.id = 'absoluteStimulation';
 
     /**
      * Generator for a stimulation connecting arc.
@@ -1358,10 +1354,6 @@ var getSBOForMarkerId = function(id) {
         return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
                 bui.settings.css.classes.connectingArcs.stimulation);
     };
-
-    /**
-     * @field Identifier for this connecting arc type.
-     */
     bui.connectingArcs.stimulation.id = 'stimulation';
 
 
@@ -3951,6 +3943,229 @@ var getSBOForMarkerId = function(id) {
 })(bui);
 
 (function(bui) {
+    var identifier = 'bui.Association';
+
+    /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.Association} Association
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(Association) {
+        return identifier + Association.id();
+    };
+
+    /**
+     * @private size listener
+     */
+    var sizeChanged = function(node, width) {
+        var r = width / 2;
+        var privates = this._privates(identifier);
+        privates.circle.setAttributeNS(null, 'cx', r);
+        privates.circle.setAttributeNS(null, 'cy', r);
+        privates.circle.setAttributeNS(null, 'r', r);
+    };
+
+    /**
+     * @private
+     */
+    var initialPaint = function() {
+        var privates = this._privates(identifier);
+
+        privates.circle = document.createElementNS(bui.svgns, 'circle');
+        sizeChanged.call(this, this, this.size().width);
+      this.nodeGroup().appendChild(privates.circle);
+    };
+    
+    /**
+     * @class
+     * Drag handle node type which is useful for manipulation of edge shapes
+     *
+     * @extends bui.Node
+     * @constructor
+     */
+    bui.Association = function() {
+        bui.Association.superClazz.apply(this, arguments);
+
+        this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+
+        initialPaint.call(this);
+
+        var widthHeight = bui.settings.style.edgeHandleRadius * 2;
+        this.size(widthHeight, widthHeight);
+        this.addClass('Outcome');// the stylesheet mus fill the circle black
+    };
+
+    bui.Association.prototype = {
+        includeInJSON : false,
+        _circle : null,
+        _forceRectangular : true,
+        _enableResizing : false,
+        _minWidth : 14,
+        _minHeight : 14,
+        _calculationHook : circularShapeLineEndCalculationHookWithoutPadding
+    };
+
+    bui.util.setSuperClass(bui.Association, bui.Node);
+})(bui);
+
+(function(bui) {
+    var identifier = 'bui.Dissociation';
+
+    /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.Dissociation} Dissociation
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(Dissociation) {
+        return identifier + Dissociation.id();
+    };
+
+    /**
+     * @private size listener
+     */
+    var sizeChanged = function(node, width) {
+        var r = width / 2;
+        var privates = this._privates(identifier);
+        privates.circle.setAttributeNS(null, 'cx', r);
+        privates.circle.setAttributeNS(null, 'cy', r);
+        privates.circle.setAttributeNS(null, 'r', r);
+        privates.subcircle.setAttributeNS(null, 'cx', r);
+        privates.subcircle.setAttributeNS(null, 'cy', r);
+        privates.subcircle.setAttributeNS(null, 'r', width / 4);
+    };
+
+    /**
+     * @private
+     */
+    var initialPaint = function() {
+        var privates = this._privates(identifier);
+
+        privates.circle = document.createElementNS(bui.svgns, 'circle');
+        privates.subcircle = document.createElementNS(bui.svgns, 'circle');
+        sizeChanged.call(this, this, this.size().width);
+        this.nodeGroup().appendChild(privates.circle);
+        this.nodeGroup().appendChild(privates.subcircle);
+    };
+    
+    /**
+     * @class
+     * Drag handle node type which is useful for manipulation of edge shapes
+     *
+     * @extends bui.Node
+     * @constructor
+     */
+    bui.Dissociation = function() {
+        bui.Dissociation.superClazz.apply(this, arguments);
+
+        this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+
+        initialPaint.call(this);
+
+        var widthHeight = bui.settings.style.edgeHandleRadius * 2;
+        this.size(widthHeight, widthHeight);
+    };
+
+    bui.Dissociation.prototype = {
+        includeInJSON : false,
+        _circle : null,
+        _forceRectangular : true,
+        _enableResizing : false,
+        _minWidth : 14,
+        _minHeight : 14,
+        _calculationHook : circularShapeLineEndCalculationHookWithoutPadding
+    };
+
+    bui.util.setSuperClass(bui.Dissociation, bui.Node);
+})(bui);
+
+(function(bui) {
+    var identifier = 'bui.LogicalOperator';
+
+    /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.LogicalOperator} LogicalOperator
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(LogicalOperator) {
+        return identifier + LogicalOperator.id();
+    };
+
+    /**
+     * @private size listener
+     */
+    var sizeChanged = function(node, width) {
+        var r = width / 2;
+        var privates = this._privates(identifier);
+        privates.circle.setAttributeNS(null, 'cx', r);
+        privates.circle.setAttributeNS(null, 'cy', r);
+        privates.circle.setAttributeNS(null, 'r', r);
+    };
+
+    /**
+     * @private
+     */
+    var initialPaint = function() {
+        var privates = this._privates(identifier);
+
+        privates.circle = document.createElementNS(bui.svgns, 'circle');
+        sizeChanged.call(this, this, this.size().width);
+      this.nodeGroup().appendChild(privates.circle);
+    };
+    
+    /**
+     * @class
+     * Drag handle node type which is useful for manipulation of edge shapes
+     *
+     * @extends bui.Node
+     * @constructor
+     */
+    bui.LogicalOperator = function(type) {
+        bui.LogicalOperator.superClazz.apply(this, arguments);
+
+        this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+
+        initialPaint.call(this);
+        if (typeof(type) === 'string') {
+            if(type == 'delay') this.label('τ');
+            else this.label(type);
+        }else if (typeof(type) === 'object') {
+            if(type == 174) this.label('or');
+            else if (type == 173) this.label('and');
+            else if (type == 238) this.label('not');
+            else if (type == 225) this.label('τ');
+        }
+        if(this.label() == 'τ'){
+            this.addClass('delay');
+        }
+
+
+        var widthHeight = bui.settings.style.edgeHandleRadius * 2;
+        this.size(widthHeight, widthHeight);
+    };
+
+    bui.LogicalOperator.prototype = {
+        _minWidth : 14,
+        _minHeight : 14,
+        includeInJSON : false,
+        _circle : null,
+        _forceRectangular : true,
+        _enableResizing : false,
+        _calculationHook : circularShapeLineEndCalculationHookWithoutPadding
+    };
+
+    bui.util.setSuperClass(bui.LogicalOperator, bui.Labelable);
+})(bui);
+
+(function(bui) {
 
     /**
      * @class
@@ -4469,6 +4684,239 @@ var getSBOForMarkerId = function(id) {
 })(bui);
 
 (function(bui) {
+    var identifier = 'bui.Perturbation';
+
+    /*
+     * Generate a path's data attribute
+     *
+     * @param {Number} width Width of the shape
+     * @param {Number} height Height of the shape
+     * @return {String} a path's data attribute value
+     */
+    var sizeChanged = function(node, width, height) {
+        var pathData = [
+            'M', width/5, height/2,         // start point in middle left, go clockwise to draw
+            'L', 0, height,     // draw / to top
+            'L', width, height, //draw _ on top
+            'L', (width/5)*4, height/2,     //draw \ to middle right
+            'L', width, 0,      //draw / to bottm
+            'L', 0, 0,          //draw _ to left
+            'L', width/5, height/2, 
+            'Z'].join(' '); //draw \ to middle left
+
+        this._privates(identifier).path.setAttributeNS(null, 'd', pathData);
+    };
+
+    /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.RectangularNode} RectangularNode
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(RectangularNode) {
+        return identifier + RectangularNode.id();
+    };
+
+    /**
+     * @private used from the constructor to improve readability
+     */
+    var initialPaint = function() {
+        var container = this.nodeGroup();
+        var size = this.size();
+        var privates = this._privates(identifier);
+        privates.path = document.createElementNS(bui.svgns, 'path');
+        sizeChanged.call(this, this, size.width, size.height);
+        container.appendChild(privates.path);
+    };
+
+    /**
+     * @class
+     * A node with the shape of an rectangle and a label inside.
+     *
+     * @extends bui.Labelable
+     * @constructor
+     */
+    bui.Perturbation = function() {
+        bui.Perturbation.superClazz.apply(this, arguments);
+
+        this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        var privates = this._privates(identifier);
+
+        initialPaint.call(this);
+
+        this.addClass(bui.settings.css.classes.perturbation);
+    };
+
+    bui.Perturbation.prototype = {
+        identifier : function() {
+            return identifier;
+        },
+        _minWidth : 80,
+        _minHeight : 60,
+    };
+
+    bui.util.setSuperClass(bui.Perturbation, bui.Labelable);
+
+})(bui);
+
+(function(bui) {
+    var identifier = 'bui.Phenotype';
+
+    /*
+     * Generate a path's data attribute
+     *
+     * @param {Number} width Width of the shape
+     * @param {Number} height Height of the shape
+     * @return {String} a path's data attribute value
+     */
+    var sizeChanged = function(node, width, height) {
+        var pathData = [
+            'M', 0, height/2,         // start point in middle left, go clockwise to draw
+            'L', width/5, height,     // draw / to top
+            'L', (width/5)*4, height, //draw _ on top
+            'L', width, height/2,     //draw \ to middle right
+            'L', (width/5)*4, 0,      //draw / to bottm
+            'L', width/5, 0,          //draw _ to left
+            'L', 0, height/2, 
+            'Z'].join(' '); //draw \ to middle left
+
+        this._privates(identifier).path.setAttributeNS(null, 'd', pathData);
+    };
+
+    /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.RectangularNode} RectangularNode
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(RectangularNode) {
+        return identifier + RectangularNode.id();
+    };
+
+    /**
+     * @private used from the constructor to improve readability
+     */
+    var initialPaint = function() {
+        var container = this.nodeGroup();
+        var size = this.size();
+        var privates = this._privates(identifier);
+        privates.path = document.createElementNS(bui.svgns, 'path');
+        sizeChanged.call(this, this, size.width, size.height);
+        container.appendChild(privates.path);
+    };
+
+    /**
+     * @class
+     * A node with the shape of an rectangle and a label inside.
+     *
+     * @extends bui.Labelable
+     * @constructor
+     */
+    bui.Phenotype = function() {
+        bui.Phenotype.superClazz.apply(this, arguments);
+
+        this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        var privates = this._privates(identifier);
+
+        initialPaint.call(this);
+
+        this.addClass(bui.settings.css.classes.perturbation);
+    };
+
+    bui.Phenotype.prototype = {
+        identifier : function() {
+            return identifier;
+        },
+        _minWidth : 80,
+        _minHeight : 60,
+    };
+
+    bui.util.setSuperClass(bui.Phenotype, bui.Labelable);
+
+})(bui);
+
+(function(bui) {
+    var identifier = 'bui.Tag';
+
+    /*
+     * Generate a path's data attribute
+     *
+     * @param {Number} width Width of the shape
+     * @param {Number} height Height of the shape
+     * @return {String} a path's data attribute value
+     */
+    var sizeChanged = function(node, width, height) {
+        var pathData = [
+            'M', 0, 0,         // start point in middle left, go clockwise to draw
+            'L', 0, height,     // draw / to top
+            'L', (width/5)*4, height, //draw _ on top
+            'L', width, height/2,     //draw \ to middle right
+            'L', (width/5)*4, 0,      //draw / to bottm
+            'L', 0, 0,          //draw _ to left
+            'Z'].join(' '); //draw \ to middle left
+
+        this._privates(identifier).path.setAttributeNS(null, 'd', pathData);
+    };
+
+    /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.RectangularNode} RectangularNode
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(RectangularNode) {
+        return identifier + RectangularNode.id();
+    };
+
+    /**
+     * @private used from the constructor to improve readability
+     */
+    var initialPaint = function() {
+        var container = this.nodeGroup();
+        var size = this.size();
+        var privates = this._privates(identifier);
+        privates.path = document.createElementNS(bui.svgns, 'path');
+        sizeChanged.call(this, this, size.width, size.height);
+        container.appendChild(privates.path);
+    };
+
+    /**
+     * @class
+     * A node with the shape of an rectangle and a label inside.
+     *
+     * @extends bui.Labelable
+     * @constructor
+     */
+    bui.Tag = function() {
+        bui.Tag.superClazz.apply(this, arguments);
+
+        this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        var privates = this._privates(identifier);
+
+        initialPaint.call(this);
+
+        this.addClass(bui.settings.css.classes.perturbation);
+    };
+
+    bui.Tag.prototype = {
+        identifier : function() {
+            return identifier;
+        },
+        _minWidth : 80,
+        _minHeight : 60,
+    };
+
+    bui.util.setSuperClass(bui.Tag, bui.Labelable);
+
+})(bui);
+
+(function(bui) {
     var identifier = 'bui.Compartment';
     /**
      * @private
@@ -4657,8 +5105,8 @@ var getSBOForMarkerId = function(id) {
         identifier : function() {
             return identifier;
         },
-        _minWidth : 60,
-        _minHeight : 14,
+        _minWidth : 20,
+        _minHeight : 20,
         auxiliaryUnit : true,
         includeInJSON : false,
         _enableResizing : true,
@@ -4881,6 +5329,78 @@ var getSBOForMarkerId = function(id) {
 })(bui);
 
 (function(bui) {
+    var identifier = 'bui.EmptySet';
+
+    /**
+     * @private
+     * Function used for the generation of listener identifiers
+     * @param {bui.EmptySet} EmptySet
+     * @return {String} listener identifier
+     */
+    var listenerIdentifier = function(EmptySet) {
+        return identifier + EmptySet.id();
+    };
+
+    var sizeChanged = function(node, width) {
+        var r = width / 2;
+        var privates = this._privates(identifier);
+        privates.circle.setAttributeNS(null, 'cx', r);
+        privates.circle.setAttributeNS(null, 'cy', r);
+        privates.circle.setAttributeNS(null, 'r', r);
+        var pathData = [
+            'M', 0, width,
+            'L', width, 0, 
+            'Z'].join(' ');
+        privates.dash.setAttributeNS(null, 'd', pathData);
+        privates.dash.setAttributeNS(null, 'stroke', 'black');
+        privates.dash.setAttributeNS(null, 'stroke-width', 2);
+    };
+
+    /**
+     * @private used from the constructor to improve readability
+     */
+    var initialPaint = function() {
+        var container = this.nodeGroup();
+        var privates = this._privates(identifier);
+        privates.circle = document.createElementNS(bui.svgns, 'circle');
+        privates.dash = document.createElementNS(bui.svgns, 'path');
+        sizeChanged.call(this, this, this.size().width);
+        container.appendChild(privates.circle);
+        container.appendChild(privates.dash);
+    };
+
+    /**
+     * @class
+     * Class for SBGN simple chemicals. Please note that the width and height
+     * values must be equal.
+     *
+     * @extends bui.Labelable
+     * @constructor
+     */
+    bui.EmptySet = function() {
+        bui.EmptySet.superClazz.apply(this, arguments);
+
+        this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+
+        initialPaint.call(this);
+    };
+
+    bui.EmptySet.prototype = {
+        identifier : function() {
+            return identifier;
+        },
+        _minWidth : 60,
+        _minHeight : 60,
+        _forceRectangular : true,
+        _calculationHook : circularShapeLineEndCalculationHook
+    };
+
+    bui.util.setSuperClass(bui.EmptySet, bui.Labelable);
+})(bui);
+
+(function(bui) {
     var identifier = 'bui.Process';
     /**
      * @class
@@ -4903,6 +5423,7 @@ var getSBOForMarkerId = function(id) {
             return identifier;
         },
         _enableResizing : false,
+        _adaptSizeToLabel : false,
         _minWidth : bui.settings.style.processNodeMinSize.width,
         _minHeight : bui.settings.style.processNodeMinSize.height,
         _ignLabelSize : true
@@ -6243,20 +6764,34 @@ var getSBOForMarkerId = function(id) {
 
         addPoint : function(x, y, type){
             var privates = this._privates(identifier);
-            var handle = this.graph()
-                    .add(bui.EdgeHandle)
-                    .visible(privates.edgeHandlesVisible);
-            handle.positionCenter(x, y);
-                    
-            if (type == undefined){
-                handle.addClass('edgeHandle');
-            }else if (type == 'Outcome'){
+            var handle = undefined
+            
+            if (type == 'Outcome'){
                 //SBO:0000409
                 //An outcome is represented by a black dot located on the arc of a statement
                 //The diameter of the dot has to be larger than the thickness of the arc.
                 //-----------------------------
+                handle = this.graph()
+                    .add(bui.EdgeHandle)
+                    .size(12,12)
+                    .visible(true);
                 handle.addClass('Outcome');// the stylesheet mus fill the circle black
+            }else if ((type == 'and')||(type == 'or')||(type == 'not')||(type == 'delay')){
+                //SBO:0000174 ! or
+                //SBO:0000173 ! and
+                //...
+                handle = this.graph()
+                    .add(bui.LogicalOperator, type)
+                    .visible(true);
+                handle.addClass('LogicalOperator');
+            } else{
+                handle = this.graph()
+                    .add(bui.EdgeHandle)
+                    .visible(privates.edgeHandlesVisible);
+                handle.addClass('edgeHandle');//let the stylesheet make it grey
             }
+            handle.positionCenter(x, y);
+            
             index = 0;
             privates.handles.splice(index, 0, handle);
             redrawLines.call(this);
@@ -6343,7 +6878,7 @@ var getSBOForMarkerId = function(id) {
                     var position = privates.handles[i].absoluteCenter();
                     handles.push(position);
                 }
-
+                log('got this ')
                 updateJson(json, dataFormat.edge.handles, handles);
             }
 
@@ -6372,11 +6907,18 @@ addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
 addMapping(nodeMapping, [247, 240], bui.SimpleChemical);
 addMapping(nodeMapping, [245, 252], bui.Macromolecule);
 addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
+addMapping(nodeMapping, [405, 347], bui.Perturbation);
+addMapping(nodeMapping, [358], bui.Phenotype);
 addMapping(nodeMapping, [253], bui.Complex);
 addMapping(nodeMapping, [290], bui.Compartment);
 addMapping(nodeMapping, [375, 167], bui.Process);
 addMapping(nodeMapping, [-1], bui.Helper);
 addMapping(nodeMapping, [110001], bui.VariableValue);
+addMapping(nodeMapping, [110002], bui.Tag);
+addMapping(nodeMapping, [177], bui.Association);
+addMapping(nodeMapping, [180], bui.Dissociation);
+addMapping(nodeMapping, [174,173,238,225], bui.LogicalOperator);
+addMapping(nodeMapping, [291], bui.EmptySet);
 
 addMapping(processNodeMapping, [375, 167], bui.Process);
 addMapping(processNodeMapping, [-1], bui.Helper);
@@ -6394,20 +6936,21 @@ addMapping(edgeMarkerMapping, [15], bui.connectingArcs.substrate.id);
 addMapping(edgeMarkerMapping, [11], bui.connectingArcs.product.id);
 addMapping(edgeMarkerMapping, [461], bui.connectingArcs.necessaryStimulation.id);
 addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
+addMapping(edgeMarkerMapping, [411], bui.connectingArcs.absoluteStimulation.id);
 
 
-addModificationMapping([215], 'acetylation', 'A');
+addModificationMapping([111100], 'unknownModification', '?');
 addModificationMapping([111101], 'active', 'active');
-addModificationMapping([217], 'glycosylation', 'G');
-addModificationMapping([111100], 'glycosylphosphatidylinositolation', 'GPI');
-addModificationMapping([233], 'hydroxylation', 'OH');
 addModificationMapping([111102], 'inactive', 'inactive');
+addModificationMapping([215], 'acetylation', 'A');
+addModificationMapping([217], 'glycosylation', 'G');
+addModificationMapping([233], 'hydroxylation', 'OH');
 addModificationMapping([214], 'methylation', 'M');
 addModificationMapping([219], 'myristoylation', 'MYR');
 addModificationMapping([218], 'palmitoylation', 'PAL');
 addModificationMapping([216], 'phosphorylation', 'P');
 addModificationMapping([224], 'ubiquitination', 'U');
-addModificationMapping([111100], 'unknownModification', '?');
+/*addModificationMapping([111100], 'glycosylphosphatidylinositolation', 'GPI');
 addModificationMapping([111101], 'PTM_active1', 'active');
 addModificationMapping([111101], 'PTM_active2', 'active');
 addModificationMapping([111100], 'PTM_farnesylation', 'F');
@@ -6415,6 +6958,7 @@ addModificationMapping([111100], 'geranylgeranylation', 'GER');
 addModificationMapping([111100], 'PTM_glycosaminoglycan', 'GA');
 addModificationMapping([111100], 'PTM_oxidation', '0');
 addModificationMapping([111100], 'PTM_sumoylation', 'S');
+*/
 
 (function(bui) {
 
@@ -6428,7 +6972,13 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
      * @return {bui.Node} The generated node
      */
     var defaultNodeGenerator = function(graph, nodeType, nodeJSON) {
-        var node = graph.add(nodeType.klass);
+       
+        var node;
+        if (nodeJSON.sbo == 174 || nodeJSON.sbo == 173 || nodeJSON.sbo == 238 || nodeJSON.sbo == 225){
+            node = graph.add(nodeType.klass, [nodeJSON.sbo]);
+        }else{
+            node = graph.add(nodeType.klass);
+        }
 
         if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'label'])) {
             if (node.label !== undefined) {
@@ -6479,7 +7029,16 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
 
         nodeJSON.data.width = size.width;
         nodeJSON.data.height = size.height;
-
+        
+        if (nodeJSON.data.unitofinformation !== undefined) {
+            for (var i = 0; i < nodeJSON.data.unitofinformation.length; i++) {
+                uoi = graph.add(bui.UnitOfInformation)
+                        .label(nodeJSON.data.unitofinformation[i])
+                        .parent(node)
+                        .visible(true)
+                        .json(nodeJSON.data.unitofinformation[i]);//FIXME needs to be added to json, no clue what this does
+            }
+        }
         // generic state variables
         if (bui.util.propertySetAndNotNull(nodeJSON,
                 ['data', 'statevariable'])) {
@@ -6493,14 +7052,16 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                         .label(variables[i])
                         .parent(node)
                         .visible(true)
-                        .size(60,14)
                         .json(variables[i]);//FIXME needs to be added to json, no clue what this does
-                if((bui.settings.SBGNlang == 'ER')&&(variables[i] == 'existance')){
-                    statevar.label('').addClass('existance').size(14,14);
-                }
-                if((bui.settings.SBGNlang == 'ER')&&(variables[i] == 'location')){
-                    statevar.label('').addClass('location').size(14,14);
-                    //statevar.privates.labelElement.setAttributeNS(null, 'transform', 'rotate(-45,7,7)');
+                if(bui.settings.SBGNlang == 'ER'){
+                    statevar.size(60,14)
+                    if(variables[i] == 'existance'){
+                        statevar.label('').addClass('existance').size(14,14);
+                    }
+                    if(variables[i] == 'location'){
+                        statevar.label('').addClass('location').size(14,14);
+                        //statevar.privates.labelElement.setAttributeNS(null, 'transform', 'rotate(-45,7,7)');
+                    }
                 }
             }
         }
@@ -6725,6 +7286,11 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             } else {
                 edge = graph.add(bui.Edge);
                 edge.json(edgeJSON).source(source).target(target);
+                if(edgeJSON.data.points !== undefined){
+                    for(var j=0; j<edgeJSON.data.points.length; j += 2){
+                        edge.addPoint(edgeJSON.data.points[j], edgeJSON.data.points[j+1])
+                    }
+                }
             }
 
 
