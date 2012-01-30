@@ -105,7 +105,7 @@
         }
         if (bui.util.propertySetAndNotNull(nodeJSON,
                 ['data', 'modification'])) {
-            alert ('xyrock');
+            //alert ('xyrock');
             var modifications = nodeJSON.data.modification;
 
             for (var i = 0; i < modifications.length; i++) {
