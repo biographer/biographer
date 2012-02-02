@@ -91,11 +91,11 @@
         privates.cloneMarker.setAttribute('patternUnits','objectBoundingBox');
         privates.cloneMarker.setAttribute('x','0');
         privates.cloneMarker.setAttribute('y', '70%');
-        privates.cloneMarker.setAttribute('width', '100');
+        privates.cloneMarker.setAttribute('width', '1000');
         privates.cloneMarker.setAttribute('height', '100');
         privates.cloneRect = document.createElementNS(bui.svgns, 'rect');
         privates.cloneRect.setAttribute('fill', 'black');
-        privates.cloneRect.setAttribute('width' , '100');
+        privates.cloneRect.setAttribute('width' , '1000');
         privates.cloneRect.setAttribute('height' , '100');
         privates.cloneMarker.appendChild(privates.cloneRect);
         privates.defsGroup.appendChild(privates.cloneMarker);

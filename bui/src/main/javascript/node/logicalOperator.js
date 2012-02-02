@@ -52,9 +52,9 @@
             if(type == 'delay') this.label('τ');
             else this.label(type);
         }else if (typeof(type) === 'object') {
-            if(type == 174) this.label('or');
-            else if (type == 173) this.label('and');
-            else if (type == 238) this.label('not');
+            if(type == 174) this.label('OR');
+            else if (type == 173) this.label('AND');
+            else if (type == 238) this.label('NOT');
             else if (type == 225) this.label('τ');
         }
         if(this.label() == 'τ'){

@@ -135,7 +135,7 @@ bui.settings = {
                 stimulation : 'stimulation',
                 assignment : 'assignment',
                 catalysis : 'catalysis',
-                modulation : 'modulation',
+                control : 'control',
                 necessaryStimulation : 'necessaryStimulation',
                 absoluteInhibition : 'absoluteInhibition'
             },

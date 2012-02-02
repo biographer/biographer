@@ -7,12 +7,16 @@
      * @extends bui.RectangularNode
      * @constructor
      */
-    bui.Process = function() {
+    bui.Process = function(type) {
         bui.Process.superClazz.apply(this, arguments);
 
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass(bui.settings.css.classes.process);
+        if (typeof(type) === 'object') {
+            if(type == 379) this.label('\\\\');
+            else if(type == 396) this.label('?');
+        }
                 
     };
 

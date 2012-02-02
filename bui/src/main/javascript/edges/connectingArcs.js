@@ -253,7 +253,7 @@
 
 
     /**
-     * Generator for a modulation connecting arc.
+     * Generator for a control connecting arc.
      *
      * This generates a diamond.
      *
@@ -261,15 +261,15 @@
      *   property holds the id of the marker and the element property the
      *   generated element.
      */
-    bui.connectingArcs.modulation = function() {
+    bui.connectingArcs.control = function() {
         return createPathWithData('M10,0L20,10L10,20L0,10Z', 20, 10, 20, 20,
-            bui.settings.css.classes.connectingArcs.modulation);
+            bui.settings.css.classes.connectingArcs.control);
     };
 
     /**
      * @field Identifier for this connecting arc type.
      */
-    bui.connectingArcs.modulation.id = 'modulation';
+    bui.connectingArcs.control.id = 'control';
 
     /**
      * Generator for a necessary stimulation connecting arc.

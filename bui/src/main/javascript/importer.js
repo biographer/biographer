@@ -12,7 +12,7 @@
     var defaultNodeGenerator = function(graph, nodeType, nodeJSON) {
        
         var node;
-        if (nodeJSON.sbo == 174 || nodeJSON.sbo == 173 || nodeJSON.sbo == 238 || nodeJSON.sbo == 225){
+        if (nodeJSON.sbo == 174 || nodeJSON.sbo == 173 || nodeJSON.sbo == 238 || nodeJSON.sbo == 225 || nodeJSON.sbo == 396 || nodeJSON.sbo == 379){
             node = graph.add(nodeType.klass, [nodeJSON.sbo]);
         }else{
             node = graph.add(nodeType.klass);
@@ -21,6 +21,13 @@
         if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'label'])) {
             if (node.label !== undefined) {
                 node.label(nodeJSON.data.label);
+            }
+        }
+        if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'orientation'])) {
+            try{
+                node.orientation(nodeJSON.data.orientation);
+            } catch (e) {
+                log('FIXME orientation only for Tag at the moment: '+e);
             }
         }
 
@@ -93,12 +100,11 @@
                         .json(variables[i]);//FIXME needs to be added to json, no clue what this does
                 if(bui.settings.SBGNlang == 'ER'){
                     statevar.size(60,14)
-                    if(variables[i] == 'existance'){
-                        statevar.label('').addClass('existance').size(14,14);
+                    if(variables[i] == 'existence'){
+                        statevar.label('').addClass('existence').size(14,14);
                     }
                     if(variables[i] == 'location'){
                         statevar.label('').addClass('location').size(14,14);
-                        //statevar.privates.labelElement.setAttributeNS(null, 'transform', 'rotate(-45,7,7)');
                     }
                 }
             }
@@ -334,19 +340,24 @@
 
             if (edgeJSON.sbo !== undefined) {
                 if ((edgeJSON.source.split(':')[0] == edgeJSON.target.split(':')[0])&&(edgeJSON.sbo == 342)){//SBO:0000342 molecular or genetic interaction
-                    log(JSON.stringify(edgeJSON));
+                    //log(JSON.stringify(edgeJSON));
                     // source and tartget are the same molecule add cis/trans infobox 
                     var pos = edge.source().absoluteCenter();
-                    var handle = graph.add(bui.RectangularNode).visible(true).size(50,20).label(edgeJSON.data.cis_trans);
-                    handle.positionCenter(pos.x+80, pos.y);
+                    var size = edge.source().size();
+                    var cis_trans = 'cis_trans';
+                    if (edgeJSON.data.cis_trans !== undefined){
+                        cis_trans = edgeJSON.data.cis_trans;
+                    }
+                    var handle = graph.add(bui.RectangularNode).visible(true).size(50,20).label(cis_trans);
+                    handle.positionCenter(pos.x+size.width+30, pos.y);
                     edge.json(edgeJSON).source(handle).target(target);
                     back_edge = graph.add(bui.Edge);
                     back_edge.json(edgeJSON).source(handle).target(source);
                     var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
                     back_edge.marker(marker.klass);
                     edge.marker(marker.klass);
-                    back_edge.addPoint(pos.x+80, pos.y-20);
-                    edge.addPoint(pos.x+80, pos.y+20);
+                    back_edge.addPoint(pos.x+size.width+30, pos.y-20);
+                    edge.addPoint(pos.x+size.width+30, pos.y+20)
                 }else{
                     try {
                         var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
@@ -369,8 +380,8 @@
         var last_len = edge_stack.length + 1;
         //alert(edge_stack.length);
         while ((edge_stack.length > 0) && (edge_stack.length<last_len)){
+            last_len = edge_stack.length;
             for(var i = 0; i<edge_stack.length;i++){
-                last_len = edge_stack.length;
                 var edgeJSON = edge_stack[i];
                 //alert(edge_stack.length+'Processing '+JSON.stringify(edgeJSON));
                 //---------------------------
@@ -387,17 +398,12 @@
                             }
                         }
                     }
-                }else{
-                    target = generatedNodes[edgeJSON.target];
-                }
+                }else{ target = generatedNodes[edgeJSON.target]; }
+
                 if(target === undefined){
                     var target_edge = generatedEdges[edgeJSON.target];
-                    if (target_edge === undefined){
-                        continue;
-                    } 
-                    var sp = target_edge.source().absoluteCenter();
-                    var tp = target_edge.target().absoluteCenter();
-                    target = target_edge.addPoint((sp.x+tp.x)/2, (sp.y+tp.y)/2);
+                    if (target_edge === undefined) continue;  
+                    target = target_edge.addPoint(0,0);
                 }
                 //---------------------------
                 var source = undefined; 
@@ -413,17 +419,12 @@
                             }
                         }
                     }
-                }else{
-                    source = generatedNodes[edgeJSON.source];
-                }
+                }else{ source = generatedNodes[edgeJSON.source]; }
+
                 if(source===undefined){
                     var source_edge = generatedEdges[edgeJSON.source];
-                    if (source_edge === undefined){
-                        continue;
-                    } 
-                    var sp = source_edge.source().absoluteCenter();
-                    var tp = source_edge.target().absoluteCenter();
-                    source = source_edge.addPoint((sp.x+tp.x)/2, (sp.y+tp.y)/2, 'Outcome');//FIXME this does not give the proper positions ... y???
+                    if (source_edge === undefined) continue;  
+                    source = source_edge.addPoint(0,0, 'Outcome');//FIXME this does not give the proper positions ... y???
                 }
                 //---------------------------
                 //---------------------------
@@ -437,18 +438,29 @@
                 generatedEdges[edgeJSON.id] = edge;
             }
         }
-        //alert(edge_stack.length);
-        /*for(edge_id in generatedEdges){
+        //recalculate all edge points this should be prevented if points were specified
+        for(edge_id in generatedEdges){
             edge = generatedEdges[edge_id];
-            edge.recalculatePoints();//FIXME how to implement this in edge.js???
-        }*/
+            handles = edge.handles();
+            for(var i=0; i<handles.length; i++){
+                var curpos = handles[i].positionCenter(); 
+                if(curpos.x==0 && curpos.y==0){
+                    edge.recalculatePoints();
+                    break;
+                }
+            }
+        }
         for(var i = 0; i<edge_stack.length; i++){
+            var flag = true;
             if ((generatedNodes[edge_stack[i].source] === undefined) && (generatedEdges[edge_stack[i].source] === undefined)){
-                log('Edge source '+edge_stack[i].source+' could not be found. '+edge_stack[i].id);
+                log('Edge source '+edge_stack[i].source+' could not be found. Edge ID: '+edge_stack[i].id);
+                flag = false;
             }
             if ((generatedNodes[edge_stack[i].target] === undefined) && (generatedEdges[edge_stack[i].target] === undefined)){
-                log('Edge target '+edge_stack[i].target+' could not be found. '+edge_stack[i].id);
+                log('Edge target '+edge_stack[i].target+' could not be found. Edge ID: '+edge_stack[i].id);
+                flag = false;
             }
+            if (flag) log('found but not added: '+JSON.stringify(edge_stack[i]));
             //log('Edge source '+edge_stack[i].source+' or target ' + edge_stack[i].target + ' could not be found.');
         } 
         log('Edge stack still contains '+String(edge_stack.length)+' edges');
