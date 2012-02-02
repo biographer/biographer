@@ -7,11 +7,21 @@
      *
      * @extends bui.RectangularNode
      * @constructor
-     */
+     **/
+
+    var sizeChanged = function(node, width, height) {
+        this.topRadius(height/2);
+        this.bottomRadius(height/2);
+        this.formChanged(this);
+    };
     bui.VariableValue = function() {
         bui.VariableValue.superClazz.apply(this, arguments);
         this.topRadius(7);
         this.bottomRadius(7);
+        /*this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        */
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass('VariableValue');
