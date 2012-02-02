@@ -247,7 +247,6 @@
         var privates = this._privates(identifier);
         
         if((privates.handles.length > 0) && (privates.lines[0].source() != null) && (privates.lines[privates.lines.length - 1].target() != null)){
-            //log('source is: '+privates.lines[0].source().label());//+' target is: '+privates.lines[privates.lines.length-1].target().label());
             var sp = privates.lines[0].source().absoluteCenter();
             var tp = privates.lines[privates.lines.length - 1].target().absoluteCenter();
             var devby = 1/(privates.handles.length+3);
@@ -327,7 +326,13 @@
             redrawLines.call(this);
             return handle;
         },
-
+        recalculatePoints : function(){
+            recalculatePoints.call(this)
+        },
+        handles : function(){
+            var privates = this._privates(identifier);
+            return privates.handles;
+        },
         edgeHandlesVisible : function(visible) {
             var privates = this._privates(identifier);
 

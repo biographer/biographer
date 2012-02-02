@@ -67,8 +67,20 @@
         identifier : function() {
             return identifier;
         },
-        _minWidth : 80,
-        _minHeight : 60,
+        _minWidth : 40,
+        _minHeight : 30,
+        orientation : function(type){
+            var centerpos = this.absolutePositionCenter();
+            if(type=='down'){
+                this._privates(identifier).path.setAttributeNS(null, 'transform', 'rotate(90,'+centerpos.x+','+centerpos.y+')');
+            }else if(type=='up'){
+                this._privates(identifier).path.setAttributeNS(null, 'transform', 'rotate(270,'+centerpos.x+','+centerpos.y+')');
+            }else if(type=='left'){
+                this._privates(identifier).path.setAttributeNS(null, 'transform', 'rotate(180,'+centerpos.x+','+centerpos.y+')');
+            }else if(type=='right'){
+                //this._privates(identifier).path.setAttributeNS(null, 'transform', 'roatet(0)');
+            }
+        }
     };
 
     bui.util.setSuperClass(bui.Tag, bui.Labelable);

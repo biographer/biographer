@@ -5,34 +5,35 @@
  */
 
 addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
-addMapping(nodeMapping, [247, 240], bui.SimpleChemical);
+addMapping(nodeMapping, [247, 240, 245], bui.SimpleChemical);
 addMapping(nodeMapping, [245, 252], bui.Macromolecule);
 addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
 addMapping(nodeMapping, [405, 347], bui.Perturbation);
 addMapping(nodeMapping, [358], bui.Phenotype);
 addMapping(nodeMapping, [253], bui.Complex);
 addMapping(nodeMapping, [290], bui.Compartment);
-addMapping(nodeMapping, [375, 167], bui.Process);
+addMapping(nodeMapping, [375, 167, 379, 396], bui.Process);
 addMapping(nodeMapping, [-1], bui.Helper);
 addMapping(nodeMapping, [110001], bui.VariableValue);
 addMapping(nodeMapping, [110002], bui.Tag);
+addMapping(nodeMapping, [412,110003], bui.RectangularNode);//Annotation
 addMapping(nodeMapping, [177], bui.Association);
 addMapping(nodeMapping, [180], bui.Dissociation);
 addMapping(nodeMapping, [174,173,238,225], bui.LogicalOperator);
 addMapping(nodeMapping, [291], bui.EmptySet);
 
 addMapping(processNodeMapping, [375, 167], bui.Process);
-addMapping(processNodeMapping, [-1], bui.Helper);
+addMapping(processNodeMapping, [-1], bui.EdgeHandle);
 
 
 
 
-addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
-addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
+addMapping(edgeMarkerMapping, [19, 168], bui.connectingArcs.control.id);
+addMapping(edgeMarkerMapping, [20, 169], bui.connectingArcs.inhibition.id);
 addMapping(edgeMarkerMapping, [407], bui.connectingArcs.absoluteInhibition.id);
 addMapping(edgeMarkerMapping, [464,342], bui.connectingArcs.assignment.id);
 //addMapping(edgeMarkerMapping, [342], bui.connectingArcs.interaction.id);
-addMapping(edgeMarkerMapping, [459,462], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [459,462, 170], bui.connectingArcs.stimulation.id);
 addMapping(edgeMarkerMapping, [15], bui.connectingArcs.substrate.id);
 addMapping(edgeMarkerMapping, [11], bui.connectingArcs.product.id);
 addMapping(edgeMarkerMapping, [461], bui.connectingArcs.necessaryStimulation.id);

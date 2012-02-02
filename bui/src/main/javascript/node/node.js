@@ -383,6 +383,7 @@
 
             if (x !== undefined && y !== undefined) {
                 this.position(x - size.width / 2, y - size.height / 2);
+                return this;
             }
             var pos = this.position();
             return {
@@ -405,8 +406,8 @@
             if (x !== undefined && y !== undefined) {
                 x -= parentTopLeft.x;
                 y -= parentTopLeft.y;
-
                 this.position(x, y);
+                return this;
             }
             return {
                 x : parentTopLeft.x + privates.x,
@@ -429,6 +430,7 @@
             if (x !== undefined && y !== undefined) {
                 //set x y
                 this.absolutePosition(x - size.width / 2, y - size.height / 2);
+                return this;
             }
             var pos = this.absolutePosition()
             return {
@@ -509,6 +511,7 @@
             if (x !== undefined && y !== undefined) {
                 privates.x = x;
                 privates.y = y;
+                return this;
             }
             return {
                 x : privates.x,
@@ -528,6 +531,7 @@
             if (x !== undefined && y !== undefined) {
                 privates.x = x - privates.width;
                 privates.y = y - privates.height;
+                return this;
             }
             return {
                 x : privates.x + privates.width,
