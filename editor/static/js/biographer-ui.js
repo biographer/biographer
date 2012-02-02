@@ -156,7 +156,7 @@ bui.settings = {
                 stimulation : 'stimulation',
                 assignment : 'assignment',
                 catalysis : 'catalysis',
-                modulation : 'modulation',
+                control : 'control',
                 necessaryStimulation : 'necessaryStimulation',
                 absoluteInhibition : 'absoluteInhibition'
             },
@@ -1460,7 +1460,7 @@ var getSBOForMarkerId = function(id) {
 
 
     /**
-     * Generator for a modulation connecting arc.
+     * Generator for a control connecting arc.
      *
      * This generates a diamond.
      *
@@ -1468,15 +1468,15 @@ var getSBOForMarkerId = function(id) {
      *   property holds the id of the marker and the element property the
      *   generated element.
      */
-    bui.connectingArcs.modulation = function() {
+    bui.connectingArcs.control = function() {
         return createPathWithData('M10,0L20,10L10,20L0,10Z', 20, 10, 20, 20,
-            bui.settings.css.classes.connectingArcs.modulation);
+            bui.settings.css.classes.connectingArcs.control);
     };
 
     /**
      * @field Identifier for this connecting arc type.
      */
-    bui.connectingArcs.modulation.id = 'modulation';
+    bui.connectingArcs.control.id = 'control';
 
     /**
      * Generator for a necessary stimulation connecting arc.
@@ -1591,11 +1591,11 @@ var getSBOForMarkerId = function(id) {
         privates.cloneMarker.setAttribute('patternUnits','objectBoundingBox');
         privates.cloneMarker.setAttribute('x','0');
         privates.cloneMarker.setAttribute('y', '70%');
-        privates.cloneMarker.setAttribute('width', '100');
+        privates.cloneMarker.setAttribute('width', '1000');
         privates.cloneMarker.setAttribute('height', '100');
         privates.cloneRect = document.createElementNS(bui.svgns, 'rect');
         privates.cloneRect.setAttribute('fill', 'black');
-        privates.cloneRect.setAttribute('width' , '100');
+        privates.cloneRect.setAttribute('width' , '1000');
         privates.cloneRect.setAttribute('height' , '100');
         privates.cloneMarker.appendChild(privates.cloneRect);
         privates.defsGroup.appendChild(privates.cloneMarker);
@@ -2871,6 +2871,7 @@ var getSBOForMarkerId = function(id) {
 
             if (x !== undefined && y !== undefined) {
                 this.position(x - size.width / 2, y - size.height / 2);
+                return this;
             }
             var pos = this.position();
             return {
@@ -2893,8 +2894,8 @@ var getSBOForMarkerId = function(id) {
             if (x !== undefined && y !== undefined) {
                 x -= parentTopLeft.x;
                 y -= parentTopLeft.y;
-
                 this.position(x, y);
+                return this;
             }
             return {
                 x : parentTopLeft.x + privates.x,
@@ -2917,6 +2918,7 @@ var getSBOForMarkerId = function(id) {
             if (x !== undefined && y !== undefined) {
                 //set x y
                 this.absolutePosition(x - size.width / 2, y - size.height / 2);
+                return this;
             }
             var pos = this.absolutePosition()
             return {
@@ -2997,6 +2999,7 @@ var getSBOForMarkerId = function(id) {
             if (x !== undefined && y !== undefined) {
                 privates.x = x;
                 privates.y = y;
+                return this;
             }
             return {
                 x : privates.x,
@@ -3016,6 +3019,7 @@ var getSBOForMarkerId = function(id) {
             if (x !== undefined && y !== undefined) {
                 privates.x = x - privates.width;
                 privates.y = y - privates.height;
+                return this;
             }
             return {
                 x : privates.x + privates.width,
@@ -4138,9 +4142,9 @@ var getSBOForMarkerId = function(id) {
             if(type == 'delay') this.label('τ');
             else this.label(type);
         }else if (typeof(type) === 'object') {
-            if(type == 174) this.label('or');
-            else if (type == 173) this.label('and');
-            else if (type == 238) this.label('not');
+            if(type == 174) this.label('OR');
+            else if (type == 173) this.label('AND');
+            else if (type == 238) this.label('NOT');
             else if (type == 225) this.label('τ');
         }
         if(this.label() == 'τ'){
@@ -4462,11 +4466,21 @@ var getSBOForMarkerId = function(id) {
      *
      * @extends bui.RectangularNode
      * @constructor
-     */
+     **/
+
+    var sizeChanged = function(node, width, height) {
+        this.topRadius(height/2);
+        this.bottomRadius(height/2);
+        this.formChanged(this);
+    };
     bui.VariableValue = function() {
         bui.VariableValue.superClazz.apply(this, arguments);
         this.topRadius(7);
         this.bottomRadius(7);
+        /*this.bind(bui.Node.ListenerType.size,
+                sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        */
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass('VariableValue');
@@ -4908,8 +4922,20 @@ var getSBOForMarkerId = function(id) {
         identifier : function() {
             return identifier;
         },
-        _minWidth : 80,
-        _minHeight : 60,
+        _minWidth : 40,
+        _minHeight : 30,
+        orientation : function(type){
+            var centerpos = this.absolutePositionCenter();
+            if(type=='down'){
+                this._privates(identifier).path.setAttributeNS(null, 'transform', 'rotate(90,'+centerpos.x+','+centerpos.y+')');
+            }else if(type=='up'){
+                this._privates(identifier).path.setAttributeNS(null, 'transform', 'rotate(270,'+centerpos.x+','+centerpos.y+')');
+            }else if(type=='left'){
+                this._privates(identifier).path.setAttributeNS(null, 'transform', 'rotate(180,'+centerpos.x+','+centerpos.y+')');
+            }else if(type=='right'){
+                //this._privates(identifier).path.setAttributeNS(null, 'transform', 'roatet(0)');
+            }
+        }
     };
 
     bui.util.setSuperClass(bui.Tag, bui.Labelable);
@@ -5409,12 +5435,16 @@ var getSBOForMarkerId = function(id) {
      * @extends bui.RectangularNode
      * @constructor
      */
-    bui.Process = function() {
+    bui.Process = function(type) {
         bui.Process.superClazz.apply(this, arguments);
 
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass(bui.settings.css.classes.process);
+        if (typeof(type) === 'object') {
+            if(type == 379) this.label('\\\\');
+            else if(type == 396) this.label('?');
+        }
                 
     };
 
@@ -6717,7 +6747,6 @@ var getSBOForMarkerId = function(id) {
         var privates = this._privates(identifier);
         
         if((privates.handles.length > 0) && (privates.lines[0].source() != null) && (privates.lines[privates.lines.length - 1].target() != null)){
-            //log('source is: '+privates.lines[0].source().label());//+' target is: '+privates.lines[privates.lines.length-1].target().label());
             var sp = privates.lines[0].source().absoluteCenter();
             var tp = privates.lines[privates.lines.length - 1].target().absoluteCenter();
             var devby = 1/(privates.handles.length+3);
@@ -6797,7 +6826,13 @@ var getSBOForMarkerId = function(id) {
             redrawLines.call(this);
             return handle;
         },
-
+        recalculatePoints : function(){
+            recalculatePoints.call(this)
+        },
+        handles : function(){
+            var privates = this._privates(identifier);
+            return privates.handles;
+        },
         edgeHandlesVisible : function(visible) {
             var privates = this._privates(identifier);
 
@@ -6904,34 +6939,35 @@ var getSBOForMarkerId = function(id) {
  */
 
 addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
-addMapping(nodeMapping, [247, 240], bui.SimpleChemical);
+addMapping(nodeMapping, [247, 240, 245], bui.SimpleChemical);
 addMapping(nodeMapping, [245, 252], bui.Macromolecule);
 addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
 addMapping(nodeMapping, [405, 347], bui.Perturbation);
 addMapping(nodeMapping, [358], bui.Phenotype);
 addMapping(nodeMapping, [253], bui.Complex);
 addMapping(nodeMapping, [290], bui.Compartment);
-addMapping(nodeMapping, [375, 167], bui.Process);
+addMapping(nodeMapping, [375, 167, 379, 396], bui.Process);
 addMapping(nodeMapping, [-1], bui.Helper);
 addMapping(nodeMapping, [110001], bui.VariableValue);
 addMapping(nodeMapping, [110002], bui.Tag);
+addMapping(nodeMapping, [412,110003], bui.RectangularNode);//Annotation
 addMapping(nodeMapping, [177], bui.Association);
 addMapping(nodeMapping, [180], bui.Dissociation);
 addMapping(nodeMapping, [174,173,238,225], bui.LogicalOperator);
 addMapping(nodeMapping, [291], bui.EmptySet);
 
 addMapping(processNodeMapping, [375, 167], bui.Process);
-addMapping(processNodeMapping, [-1], bui.Helper);
+addMapping(processNodeMapping, [-1], bui.EdgeHandle);
 
 
 
 
-addMapping(edgeMarkerMapping, [19], bui.connectingArcs.modulation.id);
-addMapping(edgeMarkerMapping, [20], bui.connectingArcs.inhibition.id);
+addMapping(edgeMarkerMapping, [19, 168], bui.connectingArcs.control.id);
+addMapping(edgeMarkerMapping, [20, 169], bui.connectingArcs.inhibition.id);
 addMapping(edgeMarkerMapping, [407], bui.connectingArcs.absoluteInhibition.id);
 addMapping(edgeMarkerMapping, [464,342], bui.connectingArcs.assignment.id);
 //addMapping(edgeMarkerMapping, [342], bui.connectingArcs.interaction.id);
-addMapping(edgeMarkerMapping, [459,462], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [459,462, 170], bui.connectingArcs.stimulation.id);
 addMapping(edgeMarkerMapping, [15], bui.connectingArcs.substrate.id);
 addMapping(edgeMarkerMapping, [11], bui.connectingArcs.product.id);
 addMapping(edgeMarkerMapping, [461], bui.connectingArcs.necessaryStimulation.id);
@@ -6974,7 +7010,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
     var defaultNodeGenerator = function(graph, nodeType, nodeJSON) {
        
         var node;
-        if (nodeJSON.sbo == 174 || nodeJSON.sbo == 173 || nodeJSON.sbo == 238 || nodeJSON.sbo == 225){
+        if (nodeJSON.sbo == 174 || nodeJSON.sbo == 173 || nodeJSON.sbo == 238 || nodeJSON.sbo == 225 || nodeJSON.sbo == 396 || nodeJSON.sbo == 379){
             node = graph.add(nodeType.klass, [nodeJSON.sbo]);
         }else{
             node = graph.add(nodeType.klass);
@@ -6983,6 +7019,13 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'label'])) {
             if (node.label !== undefined) {
                 node.label(nodeJSON.data.label);
+            }
+        }
+        if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'orientation'])) {
+            try{
+                node.orientation(nodeJSON.data.orientation);
+            } catch (e) {
+                log('FIXME orientation only for Tag at the moment: '+e);
             }
         }
 
@@ -7055,12 +7098,11 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                         .json(variables[i]);//FIXME needs to be added to json, no clue what this does
                 if(bui.settings.SBGNlang == 'ER'){
                     statevar.size(60,14)
-                    if(variables[i] == 'existance'){
-                        statevar.label('').addClass('existance').size(14,14);
+                    if(variables[i] == 'existence'){
+                        statevar.label('').addClass('existence').size(14,14);
                     }
                     if(variables[i] == 'location'){
                         statevar.label('').addClass('location').size(14,14);
-                        //statevar.privates.labelElement.setAttributeNS(null, 'transform', 'rotate(-45,7,7)');
                     }
                 }
             }
@@ -7296,19 +7338,24 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
 
             if (edgeJSON.sbo !== undefined) {
                 if ((edgeJSON.source.split(':')[0] == edgeJSON.target.split(':')[0])&&(edgeJSON.sbo == 342)){//SBO:0000342 molecular or genetic interaction
-                    log(JSON.stringify(edgeJSON));
+                    //log(JSON.stringify(edgeJSON));
                     // source and tartget are the same molecule add cis/trans infobox 
                     var pos = edge.source().absoluteCenter();
-                    var handle = graph.add(bui.RectangularNode).visible(true).size(50,20).label(edgeJSON.data.cis_trans);
-                    handle.positionCenter(pos.x+80, pos.y);
+                    var size = edge.source().size();
+                    var cis_trans = 'cis_trans';
+                    if (edgeJSON.data.cis_trans !== undefined){
+                        cis_trans = edgeJSON.data.cis_trans;
+                    }
+                    var handle = graph.add(bui.RectangularNode).visible(true).size(50,20).label(cis_trans);
+                    handle.positionCenter(pos.x+size.width+30, pos.y);
                     edge.json(edgeJSON).source(handle).target(target);
                     back_edge = graph.add(bui.Edge);
                     back_edge.json(edgeJSON).source(handle).target(source);
                     var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
                     back_edge.marker(marker.klass);
                     edge.marker(marker.klass);
-                    back_edge.addPoint(pos.x+80, pos.y-20);
-                    edge.addPoint(pos.x+80, pos.y+20);
+                    back_edge.addPoint(pos.x+size.width+30, pos.y-20);
+                    edge.addPoint(pos.x+size.width+30, pos.y+20)
                 }else{
                     try {
                         var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
@@ -7331,8 +7378,8 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         var last_len = edge_stack.length + 1;
         //alert(edge_stack.length);
         while ((edge_stack.length > 0) && (edge_stack.length<last_len)){
+            last_len = edge_stack.length;
             for(var i = 0; i<edge_stack.length;i++){
-                last_len = edge_stack.length;
                 var edgeJSON = edge_stack[i];
                 //alert(edge_stack.length+'Processing '+JSON.stringify(edgeJSON));
                 //---------------------------
@@ -7349,17 +7396,12 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                             }
                         }
                     }
-                }else{
-                    target = generatedNodes[edgeJSON.target];
-                }
+                }else{ target = generatedNodes[edgeJSON.target]; }
+
                 if(target === undefined){
                     var target_edge = generatedEdges[edgeJSON.target];
-                    if (target_edge === undefined){
-                        continue;
-                    } 
-                    var sp = target_edge.source().absoluteCenter();
-                    var tp = target_edge.target().absoluteCenter();
-                    target = target_edge.addPoint((sp.x+tp.x)/2, (sp.y+tp.y)/2);
+                    if (target_edge === undefined) continue;  
+                    target = target_edge.addPoint(0,0);
                 }
                 //---------------------------
                 var source = undefined; 
@@ -7375,17 +7417,12 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                             }
                         }
                     }
-                }else{
-                    source = generatedNodes[edgeJSON.source];
-                }
+                }else{ source = generatedNodes[edgeJSON.source]; }
+
                 if(source===undefined){
                     var source_edge = generatedEdges[edgeJSON.source];
-                    if (source_edge === undefined){
-                        continue;
-                    } 
-                    var sp = source_edge.source().absoluteCenter();
-                    var tp = source_edge.target().absoluteCenter();
-                    source = source_edge.addPoint((sp.x+tp.x)/2, (sp.y+tp.y)/2, 'Outcome');//FIXME this does not give the proper positions ... y???
+                    if (source_edge === undefined) continue;  
+                    source = source_edge.addPoint(0,0, 'Outcome');//FIXME this does not give the proper positions ... y???
                 }
                 //---------------------------
                 //---------------------------
@@ -7399,18 +7436,29 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 generatedEdges[edgeJSON.id] = edge;
             }
         }
-        //alert(edge_stack.length);
-        /*for(edge_id in generatedEdges){
+        //recalculate all edge points this should be prevented if points were specified
+        for(edge_id in generatedEdges){
             edge = generatedEdges[edge_id];
-            edge.recalculatePoints();//FIXME how to implement this in edge.js???
-        }*/
+            handles = edge.handles();
+            for(var i=0; i<handles.length; i++){
+                var curpos = handles[i].positionCenter(); 
+                if(curpos.x==0 && curpos.y==0){
+                    edge.recalculatePoints();
+                    break;
+                }
+            }
+        }
         for(var i = 0; i<edge_stack.length; i++){
+            var flag = true;
             if ((generatedNodes[edge_stack[i].source] === undefined) && (generatedEdges[edge_stack[i].source] === undefined)){
-                log('Edge source '+edge_stack[i].source+' could not be found. '+edge_stack[i].id);
+                log('Edge source '+edge_stack[i].source+' could not be found. Edge ID: '+edge_stack[i].id);
+                flag = false;
             }
             if ((generatedNodes[edge_stack[i].target] === undefined) && (generatedEdges[edge_stack[i].target] === undefined)){
-                log('Edge target '+edge_stack[i].target+' could not be found. '+edge_stack[i].id);
+                log('Edge target '+edge_stack[i].target+' could not be found. Edge ID: '+edge_stack[i].id);
+                flag = false;
             }
+            if (flag) log('found but not added: '+JSON.stringify(edge_stack[i]));
             //log('Edge source '+edge_stack[i].source+' or target ' + edge_stack[i].target + ' could not be found.');
         } 
         log('Edge stack still contains '+String(edge_stack.length)+' edges');

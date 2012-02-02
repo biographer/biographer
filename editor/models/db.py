@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
+import sys
 # http://www.web2py.com/book/default/chapter/06
 
 db = DAL('sqlite://cache.sqlite')
@@ -9,6 +10,9 @@ db.define_table('BioModels',    Field('BIOMD','string'),    Field('Title','strin
 db.define_table('Reactome', Field('ST_ID','string'),    Field('Title','string'),    Field('File','string') )
 
 
+#########################################################################
+APP_URL = request.env.http_host+'/biographer'
+#APP_URL = 'biographer.biologie.hu-berlin.de'
 #########################################################################
 #this is a config helper 
 db.define_table('config',
@@ -149,6 +153,7 @@ def download_Reactome( ReactomeStableIdentifier ):
 
     import httplib
 
+    #page = _download('http://www.reactome.org/cgi-bin/eventbrowser_st_id?ST_ID='+ReactomeStableIdentifier')
     connection = httplib.HTTPConnection("www.reactome.org")
     connection.request("GET", '/cgi-bin/eventbrowser_st_id?ST_ID='+ReactomeStableIdentifier, None, {"Cookie":"ClassicView=1"} )
     page = connection.getresponse().read()
@@ -393,19 +398,29 @@ def sbgnml2json(sbgnml_str):
     class2sbo = {
             'compartment' : 290,
             'macromolecule' : 245,
+            'macromolecule multimer' : 245,#FIXME
             'simple chemical' : 247,
+            'simple chemical multimer' : 247,#FIXME
             'complex' : 253,
             'process' : 375,
+            'omitted process' : 379,
+            'uncertain process' : 396,
+            'annotation' : 110003,
             'phenotype' : 358,
             'nucleic acid feature' : 250,
+            'nucleic acid feature multimer' : 250,#FIXME
             'association' : 177,
             'dissociation' : 180,
+            'entity' : 245,
             'submap' : 285,#FIXME this is not correct but our json lib does not have this node type
+            'perturbing agent' : 405,
+            'variable value': 110001,
+            'implicit xor': -1,
             'tag' : 110002,
             'and' : 173,
             'or' : 174,
             'not' : 238,
-            'delay' : 255,
+            'delay' : 225,
             'source and sink' : 291,
             #addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
             #addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
@@ -416,6 +431,18 @@ def sbgnml2json(sbgnml_str):
             'equivalence arc' : 15,
             'logic arc' : 15,
             'necessary stimulation': 461,
+            'assignment' : 464,
+            'interaction' : 342,
+            'absolute inhibition': 407,
+            'modulation' : 168,
+            'inhibition' : 169,
+            'absolute stimulation' : 411,
+            #AF------------------
+            'biological activity' : 412,
+            'unknown influence' : 168,
+            'positive influence' : 170,
+            'negative influence' : 169,
+            'perturbation' : 405,
             }
     def get_node(node):
         '''
@@ -437,6 +464,9 @@ def sbgnml2json(sbgnml_str):
         if hasattr(node, 'label'):
             node_item['data']['label'] = node.label[0].text
         #---------
+        if hasattr(node, 'orientation'):
+            node_item['data']['orientation'] = node.orientation
+        #---------
         if hasattr(node, 'clone'):
             node_item['data']['clone_marker'] = True
         #---------
@@ -444,7 +474,15 @@ def sbgnml2json(sbgnml_str):
             node.glyph
             node_item['data']['subnodes'] = []
             for sub_node in node.glyph:
-                if sub_node.get('class') == 'state variable':
+                if sub_node.get('class') == 'location':
+                    try: node_item['data']['statevariable'].append( 'location' )
+                    except KeyError: node_item['data']['statevariable'] = ['location']
+                    port2node[sub_node.id] = '%s:%s'%(node.id,'location')
+                if sub_node.get('class') == 'existence':
+                    try: node_item['data']['statevariable'].append( 'existence' )
+                    except KeyError: node_item['data']['statevariable'] = ['existence']
+                    port2node[sub_node.id] = '%s:%s'%(node.id,'existence')
+                elif sub_node.get('class') == 'state variable':
                     try: var = sub_node.state[0].get('variable')
                     except AttributeError: var = ''
                     try: val = sub_node.state[0].get('value')
@@ -456,11 +494,14 @@ def sbgnml2json(sbgnml_str):
 
                     try: node_item['data']['statevariable'].append( state )
                     except KeyError: node_item['data']['statevariable'] = [state]
-                if sub_node.get('class') == 'unit of information':
+                    if state:
+                        port2node[sub_node.id] = '%s:%s'%(node.id,state)
+                elif sub_node.get('class') == 'unit of information':
+                    label = sub_node.label[0].text if hasattr(sub_node, 'label') else ''
                     try:
-                        node_item['data']['unitofinformation'].append( sub_node.label[0].text )
+                        node_item['data']['unitofinformation'].append( label )
                     except KeyError:
-                        node_item['data']['unitofinformation'] = [sub_node.label[0].text]
+                        node_item['data']['unitofinformation'] = [label]
                 elif sub_node.get('class') in class2sbo.keys():
                     get_node(sub_node)
                     node_item['data']['subnodes'].append(sub_node.id)
@@ -474,28 +515,179 @@ def sbgnml2json(sbgnml_str):
     for node in xml.root.map[0].glyph:
         get_node(node)
     count = 0
-    for edge in xml.root.map[0].arc:
-        source = edge.source if edge.source not in port2node else port2node[edge.source]
-        target = edge.target if edge.target not in port2node else port2node[edge.target]
-        edge_item = dict(
-            id = 'edge%s'%count,
-            source = source,
-                target = target,
-            sbo = class2sbo[edge.get('class')]
-            )
-        count += 1
-        if hasattr(edge, 'next'):
-            for point in edge.get('next'):
-                x = float(point.x)
-                y = float(point.y)
-                try:
-                    edge_item['data']['points'].insert(0, x)
-                    edge_item['data']['points'].insert(0, y)
-                except KeyError:
-                    edge_item['data'] = dict(points = [x, y])
-        graph['edges'].append(edge_item)
+    if hasattr(xml.root.map[0], 'arc'):
+        for edge in xml.root.map[0].arc:
+            if hasattr(edge, 'glyph'):
+                for glyph in edge.glyph:
+                    port2node[glyph.id] = edge.id
+            if hasattr(edge, 'port'):
+                for port in edge.port:
+                    port2node[port.id] = edge.id
+    if hasattr(xml.root.map[0], 'arc'):
+        for edge in xml.root.map[0].arc:
+            source = edge.source if edge.source not in port2node else port2node[edge.source]
+            target = edge.target if edge.target not in port2node else port2node[edge.target]
+            edge_item = dict(
+                id = edge.id,
+                source = source,
+                    target = target,
+                sbo = class2sbo[edge.get('class')]
+                )
+            count += 1
+            if hasattr(edge, 'next'):
+                for point in edge.get('next'):
+                    x = float(point.x)
+                    y = float(point.y)
+                    try:
+                        edge_item['data']['points'].insert(0, y)
+                        edge_item['data']['points'].insert(0, x)
+                    except KeyError:
+                        edge_item['data'] = dict(points = [x, y])
+            if hasattr(edge, 'glyph'):
+                for glyph in edge.glyph:
+                    if glyph.get('class') == 'cardinality':
+                        try:
+                            edge_item['data']['cis_trans'] = glyph.label[0].text
+                        except KeyError:
+                            edge_item['data'] = dict(cis_trans = glyph.label[0].text)
+            graph['edges'].append(edge_item)
+
     #print graph
+    lang2lang = {'entity relationship': 'ER', 'process description': 'PD', 'activity flow': 'AF'}
+    graph['sbgnlang'] = lang2lang[xml.root.map[0].language]
     return graph
+
+class ContentTooShortError(Exception):
+    def __init__(self,message):
+        self.errorMessage = 'Bla: %s'% message
+
+status_fkt = lambda message,close=False: sys.stderr.write(message)
+
+def download_status_fkt(size_known,num_done,start=False,stop=False,url=''):
+    ''' internal default function if no external UI functions were set (see L{setUIFunctions})'''
+    if size_known: 
+        percent = int(num_done*100/size_known)
+    else:
+        percent = int(num_done)
+    if start: sys.stderr.write("Loading %s\n"%url)
+    elif stop: 
+        sys.stderr.write("\nLoading Finished\n")
+        return
+    if not size_known: sys.stderr.write("%s B\r"%percent)
+    else: sys.stderr.write( str(percent) + "% \r")
+    sys.stdout.flush()
+
+def _download(url,post_data=None):
+    '''
+    Function download is downloading and returning the database flatfiles.
+    @param url     : url of a database flatfile
+    @type url      : string            
+    @param post_data : data for POST requests e.g. {'submit':'Download'}
+    @type post_data : dict
+    @return: downloaded page
+    @rtype: str
+    '''
+    #-----------------------------------------------------
+    #create a realistic user agent
+    import urllib2
+    headers = {
+    'User-Agent' : 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
+    'Accept' :
+    'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
+    'Accept-Language' : 'fr-fr,en-us;q=0.7,en;q=0.3',
+    'Accept-Charset' : 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'
+    }
+    #-----------------------------------------------------
+    #check if we got an internet connetction
+    #self.status_fkt('Checking connection ...')
+    #if not self.checkConnection(): raise DatabaseError('No Internet Connection')
+    #-----------------------------------------------------
+    status_fkt("Loading %s\n"%url)
+    #-----------------------------------------------------
+    reqObj = urllib2.Request(url, post_data, headers)
+    fp = urllib2.urlopen(reqObj)
+    headers = fp.info()
+    ##    This function returns a file-like object with two additional methods:
+    ##    * geturl() -- return the URL of the resource retrieved
+    ##    * info() -- return the meta-information of the page, as a dictionary-like object
+    ##Raises URLError on errors.
+    ##Note that None may be returned if no handler handles the request (though the default installed global OpenerDirector uses UnknownHandler to ensure this never happens). 
+    #-----------------------------------------------------
+    #read & write fileObj to filename
+    filename = 'outfile'
+    outcontents=''
+    result = filename, headers
+    bs = 1024*8
+    size = -1
+    read = 0
+    blocknum = 0
+    #-----------------------------------------------------
+    size_known = "content-length" in headers
+    if size_known: 
+        size_known = int(headers["Content-Length"])
+        size = int(headers["Content-Length"])
+    download_status_fkt(size_known,0,True,url=url)
+    #-----------------------------------------------------
+    while 1:
+        block = fp.read(bs)
+        if block == "":
+            break
+        read += len(block)
+        outcontents+=block
+        blocknum += 1
+        #-------------------------------------------
+        download_status_fkt(size_known,(blocknum*bs),False,False)
+    #-----------------------------------------------------
+    download_status_fkt(size_known,size_known,False,True) 
+    fp.close()
+    del fp
+    #-----------------------------------------------------
+    # raise exception if actual size does not match content-length header
+    if size >= 0 and read < size:
+        raise ContentTooShortError("retrieval incomplete: got only %i out of %i bytes %s" % (read, size))
+
+    #-----------------------------------------------------
+    # taking care of gzipped content
+    if url.endswith(".gz"):
+        import StringIO, gzip
+        stream = StringIO.StringIO(outcontents)
+        zfile = gzip.GzipFile(fileobj=stream)
+        outcontents = zfile.read()
+    #-----------------------------------------------------
+
+    return outcontents
+
+def import_file(file_content, file_name = ''):
+    action = ''
+    graph = {}
+    if file_content.startswith('{') and file_content.endswith('}'):#basic check
+        json_string = file_content
+        try:
+            graph = simplejson.loads(file_content)
+        except simplejson.JSONDecodeError:
+            action = 'loaded %s but could not parse json'%file_name
+            graph = dict(nodes = [], edges = [])
+        else:
+            action = 'loaded %s'%file_name
+    elif ('http://sbgn.org/libsbgn/' in file_content):
+        graph = sbgnml2json(file_content)
+        json_string = simplejson.dumps(graph)
+        action = 'loaded %s'%file_name
+    elif 'http://www.sbml.org/sbml/' in file_content:
+        import biographer
+        bioGraph = biographer.Graph()
+        bioGraph.import_SBML( file_content )
+        json_string = bioGraph.exportJSON()
+        #print 'sbml2json: ',json_string
+        graph = simplejson.loads(json_string)
+        action = 'loaded %s'%file_name
+    if action and graph and json_string:
+        return action, graph, json_string
+    else:
+        print 'action: ',action
+        print 'graph: ',graph
+        print 'sbgnml? :',('http://sbgn.org/libsbgn/pd' in file_content) or ('http://sbgn.org/libsbgn/0.2' in file_content)
+        #print 'file_content: ',file_content
 
 #########################################################################
 #########################################################################

@@ -315,7 +315,30 @@ function layout(algorithm){
     });
 }
 //-------------------------------------------
+//-------------------------------------------
+var graphData =  {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
+   nodes : [
+/*      {
+         "data" : {
+            "label" : "ATP",
+            "modification" : [],
+            "x" : 50,
+            "y" : 50
+         },
+         "id" : "Reactome:29358",
+         "is_abstract" : false,
+         "sbo" : 247,
+         "type" : "SimpleCompound"
+      },
+  */ ],
+   edges : []
+   }{{pass}};
+var history_undo = {{if session.editor_histroy_undo:}}  {{=XML([i['action'] for i in session.editor_histroy_undo])}} {{else:}} []{{pass}};
+var history_redo = {{if session.editor_histroy_redo:}}  {{=XML([i['action'] for i in session.editor_histroy_redo])}} {{else:}} []{{pass}};
+//-------------------------------------------
+//-------------------------------------------
 $(document).ready(function() {
+    //=========================
     showUndoRedo();
     //=========================
     $('#vertical_gaps_equal, #horizontal_gaps_equal').click(function(){
@@ -581,5 +604,29 @@ $(document).ready(function() {
             }
         }
         }, 
+    });
+});
+//=========================
+bui.ready(function() {
+    bui.settings.css.stylesheetUrl = '{{=URL(request.application, 'static/css', 'visualization-svg.css')}}'
+    graph = new bui.Graph($('#canvas')[0]);
+    bui.importFromJSON(graph, graphData);
+    //=========================
+    //doHeartBeat();
+    //=========================
+    //add edge select listner to all nodes 
+    all_drawables = graph.drawables(); 
+    for (var key in all_drawables) {
+    all_drawables[key].bind(bui.Node.ListenerType.click, drawableSelect);
+    }
+    $('#canvas').droppable({ 
+    hoverClass: 'drop_hover',
+    drop: function(event, ui){dropFkt(event, ui, this);},
+    });
+    $('.Complex, .Compartment').droppable({ 
+    hoverClass: 'drop_hover',
+    over : function(){$('#canvas').droppable("disable");},
+    out : function(){$('#canvas').droppable("enable");},
+    drop: function(event, ui){dropFkt(event, ui, this);},
     });
 });

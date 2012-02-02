@@ -31,7 +31,7 @@ ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect, g.pertur
 g.cloneMarker > path, g.cloneMarker > circle, g.cloneMarker > rect {
     fill: url(#cloneMarker);
 }
-g.existance > path {
+g.existence > path {
     fill: url(#stateVariableExistence);
 }
 g.location > path {
@@ -55,7 +55,7 @@ line {
 	font-size: 10px;
 }
 
-.stimulation, .catalysis, .modulation, .necessaryStimulation {
+.stimulation, .catalysis, .control, .necessaryStimulation {
     fill: white;
     stroke: black;
 }
@@ -84,11 +84,10 @@ line {
 	fill: white;
 	stroke: black;
 }
-/*.LogicalOperator.delay tspan {
-    font-family: Verdana;
-    font-size: 16px;
-    fill: black;
-}*/
+.delay tspan {
+    font-family: "DejaVu Serif";
+    font-size: 20px;
+}
 .Outcome circle {
 	fill: black;
 	stroke: black;

@@ -16,36 +16,19 @@ def index():
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     response.files.append(URL(request.application, 'static/js', 'jquery.simplemodal.1.4.1.min.js'))
     #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))
-    response.files.append(URL('script.js'))
-    if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph:
+    #response.files.append(URL('script.js'))
+    if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph or request.vars.jsbgn:
         action,graph,json_string = None,None,None
-        if request.vars.jgraph:
-            json_string = request.vars.jgraph
-            graph = simplejson.loads(json_string)
+        if request.vars.jgraph or request.vars.jsbgn:
+            json_string = request.vars.jgraph or request.vars.jsbgn
+            try:
+                graph = simplejson.loads(json_string)
+            except simplejson.JSONDecodeError, e:
+                response.flash = 'JSBGN: error importing JSON %s'%e
+                return dict()
             action = 'Imported JSON graph'
         else:
-            file_content = request.vars.import_file.file.read().strip()
-            if file_content.startswith('{') and file_content.endswith('}'):#basic check
-                json_string = file_content
-                try:
-                    graph = simplejson.loads(file_content)
-                except simplejson.JSONDecodeError:
-                    action = 'loaded %s but could not parse json'%request.vars.import_file.filename
-                    graph = dict(nodes = [], edges = [])
-                else:
-                    action = 'loaded %s'%request.vars.import_file.filename
-            elif file_content.startswith('<?xml'):
-                if 'http://sbgn.org/libsbgn/pd' in file_content:
-                    graph = sbgnml2json(file_content)
-                    json_string = simplejson.dumps(graph)
-                else:
-                    import biographer
-                    bioGraph = biographer.Graph()
-                    bioGraph.import_SBML( file_content )
-                    json_string = bioGraph.exportJSON()
-                    #print 'sbml2json: ',json_string
-                    graph = simplejson.loads(json_string)
-                action = 'loaded %s'%request.vars.import_file.filename
+            action, graph, json_string = import_file(request.vars.import_file.file.read().strip(), request.vars.import_file.filename)
         if action and graph and json_string:
             undoRegister(action, graph, json_string)
     return dict()
@@ -192,6 +175,48 @@ def export():
     response.headers['Content-disposition'] = "attachment filename=\"%s\"" % filename
     return out
     response.write(out,escape=False)
+
+def render():
+    in_url = request.args(0) or request.vars.q
+    try:
+        #import urllib2
+        file_content = _download(in_url)
+    except urllib2.HTTPError, e:
+        return 'error getting %s: %s'%(in_url,e)
+    action, graph, json_string = import_file(file_content,'')
+    if action and graph and json_string:
+        undoRegister(action, graph, json_string)
+    response.files.append(URL(request.application, 'static/css', 'visualization-html.css'))
+    response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
+    return dict()
+
+def sbgnml_test():
+    import os
+    test_path = os.path.join(request.folder, 'static', 'test-files')
+    items = []
+    for dn in ['PD', 'ER', 'AF']:
+        subitems = []
+        items.append(H1(dn))
+        for fn in os.listdir(os.path.join(test_path, dn)):
+            if fn.endswith('.sbgn'):
+                subitems.append(
+                        TR( TH( A(fn, _href=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _target="_blank"), _colspan=2)),
+                    )
+                subitems.append(
+                    #IMG(_src=URL(request.application, 'static/test-files/%s'%dn, ), _alt='sbgn image')
+                    TR(
+                        TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
+                        TD(IFRAME(_src=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0")),
+                        ),
+                    )
+                subitems.append(
+                    TR(TH(HR(),_colspan=2)),
+                    )
+        items.append(TABLE(subitems))
+        items.append(HR())
+    response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
+    return dict(table = TAG[''](items))
+
 
 def user():
     """

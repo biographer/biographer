@@ -52,6 +52,7 @@
 		<li><a href="http://code.google.com/p/biographer/source/browse/?repo=server">Source Code</a></li>
         {{if auth.is_logged_in():}}<li><a href="{{=URL(request.application, 'plugin_release', 'status')}}">Update</a></li>{{pass}}
         <li><a href="{{=URL(request.application, 'plugin_release', 'download')}}">Download</a></li>
+        <li><a href="{{=URL(request.application, 'default', 'sbgnml_test')}}">SBGN-ML Test</a></li>
 	</UL>
     <ul id="menu-right">
         <li><a href="{{=URL(request.application, 'default', 'user', args='login')}}">login</a></li>
