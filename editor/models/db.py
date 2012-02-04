@@ -11,8 +11,8 @@ db.define_table('Reactome', Field('ST_ID','string'),    Field('Title','string'),
 
 
 #########################################################################
-APP_URL = request.env.http_host+'/biographer'
-#APP_URL = 'biographer.biologie.hu-berlin.de'
+#APP_URL = request.env.http_host+'/biographer'
+APP_URL = 'biographer.biologie.hu-berlin.de'
 #########################################################################
 #this is a config helper 
 db.define_table('config',
