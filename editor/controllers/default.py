@@ -217,6 +217,28 @@ def sbgnml_test():
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     return dict(table = TAG[''](items))
 
+def sbtml_test():
+    import os
+    test_path = os.path.join(request.folder, 'static', 'sbml-test')
+    items = []
+    for fn in os.listdir(os.path.join(test_path, dn)):
+        if fn.startswith('BIOMD') and fn.endswith('.xml'):
+            subitems.append(
+                    TR( TH( A(fn, _href=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _target="_blank"), _colspan=2)),
+                )
+            subitems.append(
+                TR(
+                    TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
+                    TD(IFRAME(_src=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0")),
+                    ),
+                )
+            subitems.append(
+                TR(TH(HR(),_colspan=2)),
+                )
+    items.append(TABLE(subitems))
+    items.append(HR())
+    response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
+    return dict(table = TAG[''](items))
 
 def user():
     """

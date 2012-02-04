@@ -206,11 +206,6 @@ def reset_current_session():
     from defaults import progress
     session.bioGraph = Graph(verbosity=progress)    # new graph
 
-def import_JSON( JSONstring ):
-    global session
-    reset_current_session()
-    session.bioGraph.importJSON( JSONstring )
-
 def export_JSON():                  # workaround for web2py bug
     from copy import deepcopy
     global session
@@ -219,11 +214,6 @@ def export_JSON():                  # workaround for web2py bug
     del session.bioGraph
     session.bioGraph = temp
     return session.bioGraph.JSON
-
-def import_SBML( SBMLstring ):
-    global session
-    reset_current_session()
-    session.bioGraph.importSBML( SBMLstring )
 
 def import_BioModel( BioModelsID ):
     global session, request, db
@@ -390,7 +380,142 @@ def import_Layout(graph, lines):
             node['data']['y'] -= graph['nodes'][cp]['data']['y']
 #########################################################################
 
-def sbgnml2json(sbgnml_str):
+def sbml2jsbgn(sbml_str):
+    import libsbml
+    doc = libsbml.readSBMLFromString(sbml_str)
+    model = doc.getModel()
+    graph = dict(nodes = [], edges = [])
+    compartment2species = {}
+    seen_species = set()
+    #------------------------------------------
+    name_or_id = lambda x : x.getName() or x.getId()
+    #------------------------------------------
+    def add_node(species_id, source_id, target_id, edge_sbo):
+        species = model.getSpecies(species_id)
+        if species_id not in seen_species:
+            seen_species.add(species_id)
+            #-------------------------------------
+            if 'sink' in species_id or name_or_id(species).lower() == 'emptyset':
+                sbo = 291
+                label = ''
+            else:
+                sbo = 285
+                #-------------------------------------
+                #guess sbo
+                for n in range(species.getNumCVTerms()):
+                    cvt = species.getCVTerm(n)
+                    res = cvt.getResources()
+                    for m in range(res.getLength()):
+                        resource = res.getValue(m)
+                        if 'urn:miriam:obo.chebi' in resource:
+                            sbo = 247
+                            break
+                        if 'urn:miriam:pubchem' in resource:
+                            sbo = 247
+                            break
+                        if 'urn:miriam:uniprot' in resource:
+                            sbo = 245
+                            break
+                if 'rna' in name_or_id(species).lower():
+                    sbo = 250
+                #if 'complex' in name_or_id(species).lower():
+                #    sbo = 253
+                label = name_or_id(species)
+            #-------------------------------------
+            #create node
+            node_item = dict(
+                id = species_id,
+                sbo = sbo,
+                is_abstract = 0,
+                data = dict (
+                    x = 0.0,
+                    y = 0.0,
+                    width = 60,
+                    height = 60,
+                    )
+                )
+            if label:
+                node_item['data']['label'] = label
+            #-------------------------------------
+            graph['nodes'].append(node_item)
+        #-------------------------------------
+        #create edge
+        edge_item = dict(
+            id = 'x',
+            source = source_id,
+            target = target_id,
+            sbo = edge_sbo,
+            )
+        graph['edges'].append(edge_item)
+        #-------------------------------------
+        #add compartment (compartments are linked from the compartment as subnodes)
+        if species:
+            #node_item['data']['compartment'] = species.getCompartment()
+            try:
+                compartment2species[species.getCompartment()].append(species.getId())
+            except KeyError:
+                compartment2species[species.getCompartment()] = [species.getId()]
+            return species.getCompartment()
+    #------------------------------------------
+    for reaction in model.getListOfReactions():
+        node_item = dict(
+            id = reaction.getId(),
+            sbo = 375,
+            is_abstract = 0,
+            data = dict (
+                x = 0.0,
+                y = 0.0,
+                label = name_or_id(reaction),
+                width = 20,
+                height = 20,
+                )
+            )
+        graph['nodes'].append(node_item)
+        #---------------
+        #reactands
+        if len(reaction.getListOfReactants())==0:
+            add_node(reaction.getId()+'sink', reaction.getId()+'sink', reaction.getId(), 394)
+        else:
+            for substrate in reaction.getListOfReactants():
+                comp = add_node(substrate.getSpecies(), substrate.getSpecies(), reaction.getId(), 394)
+                if comp:
+                    compartment2species[comp].append(reaction.getId())
+        #---------------
+        #products
+        if len(reaction.getListOfProducts())==0:
+            add_node(reaction.getId()+'sink', reaction.getId(), reaction.getId()+'sink', 394)
+        else:
+            for product in reaction.getListOfProducts():
+                comp = add_node(product.getSpecies(), reaction.getId(), product.getSpecies(), 393)
+                if comp:
+                    compartment2species[comp].append(reaction.getId())
+        #---------------
+        #modifiers
+        for modifier in reaction.getListOfModifiers():
+            #FIXME check sbo for edge_sbo
+            add_node(modifier.getSpecies(), modifier.getSpecies(), reaction.getId(), 168)
+    #------------------------------------------
+    for compartment in model.getListOfCompartments():
+        node_item = dict(
+            id = compartment.getId(),
+            sbo = 290,
+            is_abstract = 0,
+            data = dict (
+                x = 10.0,
+                y = 10.0,
+                label = name_or_id(compartment),
+                height = 200,
+                width = 200,
+                )
+            )
+        if compartment.getId() in compartment2species:
+            node_item['data']['subnodes'] = list(set(compartment2species[compartment.getId()]))
+        graph['nodes'].append(node_item)
+    for i in range(len(graph['edges'])):
+        graph['edges'][i]['id'] = 'edge%s'%i
+    return graph
+
+def sbgnml2jsbgn(sbgnml_str):
     graph = dict(nodes = [], edges = [])
     import xmlobject
     xml = xmlobject.XMLFile(raw=sbgnml_str)
@@ -426,7 +551,7 @@ def sbgnml2json(sbgnml_str):
             #addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
             'stimulation' : 459,
             'consumption' : 15,
-            'production' : 11,
+            'production' : 393,
             'catalysis' : 13,
             'equivalence arc' : 15,
             'logic arc' : 15,
@@ -670,16 +795,12 @@ def import_file(file_content, file_name = ''):
         else:
             action = 'loaded %s'%file_name
     elif ('http://sbgn.org/libsbgn/' in file_content):
-        graph = sbgnml2json(file_content)
+        graph = sbgnml2jsbgn(file_content)
         json_string = simplejson.dumps(graph)
         action = 'loaded %s'%file_name
     elif 'http://www.sbml.org/sbml/' in file_content:
-        import biographer
-        bioGraph = biographer.Graph()
-        bioGraph.import_SBML( file_content )
-        json_string = bioGraph.exportJSON()
-        #print 'sbml2json: ',json_string
-        graph = simplejson.loads(json_string)
+        graph = sbml2jsbgn(file_content)
+        json_string = simplejson.dumps(graph)
         action = 'loaded %s'%file_name
     if action and graph and json_string:
         return action, graph, json_string

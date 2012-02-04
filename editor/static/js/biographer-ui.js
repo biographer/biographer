@@ -437,13 +437,14 @@ var circularShapeLineEndCalculationHookWithoutPadding =
         if (escape === undefined) {
             escape = true;
         }
-        //use fallback if it chant be calculated because we use node.js with jsdom that cannot calculate word sized automatically
-        if (precalc !== undefined){
+        //use fallback if it can't be calculated because we use node.js with jsdom that cannot calculate word sized automatically
+        if (bui.settings.staticSVG || precalc !== undefined){
             var letter2width = bui.util.precalcLetterWidth();
             var text_length = 0;
             for(var i=0; i<text.length; i++){
                 text_length += letter2width[text.charAt(i)];
             }
+            if (text_length<=1) text_length=1;
             return { width : text_length, height : 16};
         }
 
@@ -570,12 +571,14 @@ var circularShapeLineEndCalculationHookWithoutPadding =
     /**
      * Calculate the width for each letter, if this is not possible, used a default output
      **/
+    var precalcHash=undefined;
     bui.util.precalcLetterWidth = function(){
+        if (precalcHash) return precalcHash;
         var letters = 'abcdefghijklmnopqrstuvwzxz';
         var numbers = '1234567890_-@.:';
         var out = {};
         var elem = document.createElement('span');
-        $(elem).html(letters.charAt(0));
+        $(elem).html('A');
         //test if we can get the length of a char
         if( $(elem).width() > 1 ){
             for(var i = 0; i<letters.length; i++){
@@ -591,9 +594,11 @@ var circularShapeLineEndCalculationHookWithoutPadding =
                 $(elem).html(numbers.charAt(i));
                 out[numbers.charAt(i)]=$(elem).width();
             }
-            return out
+            precalcHash=out;
+            return out;
         }else{
-            return {"0":8,"1":8,"2":8,"3":8,"4":8,"5":8,"6":8,"7":8,"8":8,"9":8,"a":8,"b":8,"c":7,"d":8,"e":8,"f":4,"g":8,"h":8,"i":3,"j":3,"k":7,"l":3,"m":13,"n":8,"o":8,"p":8,"q":8,"r":5,"s":7,"t":5,"u":8,"v":7,"w":9,"z":7,"x":7,"A":9,"B":9,"C":9,"D":10,"E":8,"F":7,"G":10,"H":10,"I":3,"J":3,"K":8,"L":7,"M":11,"N":10,"O":10,"P":8,"Q":10,"R":8,"S":9,"T":7,"U":10,"V":9,"W":11,"Z":10,"X":8}
+            precalcHash={"0":8,"1":8,"2":8,"3":8,"4":8,"5":8,"6":8,"7":8,"8":8,"9":8,"a":8,"b":8,"c":7,"d":8,"e":8,"f":4,"g":8,"h":8,"i":3,"j":3,"k":7,"l":3,"m":13,"n":8,"o":8,"p":8,"q":8,"r":5,"s":7,"t":5,"u":8,"v":7,"w":9,"z":7,"x":7,"A":9,"B":9,"C":9,"D":10,"E":8,"F":7,"G":10,"H":10,"I":3,"J":3,"K":8,"L":7,"M":11,"N":10,"O":10,"P":8,"Q":10,"R":8,"S":9,"T":7,"U":10,"V":9,"W":11,"Z":10,"X":8};
+            return precalcHash;
         }
     };
     /**
@@ -1358,7 +1363,7 @@ var getSBOForMarkerId = function(id) {
 
 
     /**
-    * Generator for a product connecting arc.
+    * Generator for a production connecting arc.
     *
     * This generates a simple triangle.
     *
@@ -1366,15 +1371,15 @@ var getSBOForMarkerId = function(id) {
     *   property holds the id of the marker and the element property the
     *   generated element.
     */
-    bui.connectingArcs.product = function() {
+    bui.connectingArcs.production = function() {
        return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
-                                 bui.settings.css.classes.connectingArcs.product);
+                                 bui.settings.css.classes.connectingArcs.production);
     };
     
     /**
     * @field Identifier for this connecting arc type.
     */
-    bui.connectingArcs.product.id = 'product';
+    bui.connectingArcs.production.id = 'production';
     
     
     /**
@@ -3119,7 +3124,7 @@ var getSBOForMarkerId = function(id) {
                         y -= diffY;
                         setTimeout(arguments.callee, timeOffset);
                     } else {
-		      if (finishedListener) finishedlistener();
+		      if (finishedListener) finishedListener();
 		    }
                 })();
             }
@@ -6967,9 +6972,9 @@ addMapping(edgeMarkerMapping, [20, 169], bui.connectingArcs.inhibition.id);
 addMapping(edgeMarkerMapping, [407], bui.connectingArcs.absoluteInhibition.id);
 addMapping(edgeMarkerMapping, [464,342], bui.connectingArcs.assignment.id);
 //addMapping(edgeMarkerMapping, [342], bui.connectingArcs.interaction.id);
-addMapping(edgeMarkerMapping, [459,462, 170], bui.connectingArcs.stimulation.id);
-addMapping(edgeMarkerMapping, [15], bui.connectingArcs.substrate.id);
-addMapping(edgeMarkerMapping, [11], bui.connectingArcs.product.id);
+addMapping(edgeMarkerMapping, [459, 462, 170], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [15, 394], bui.connectingArcs.substrate.id);
+addMapping(edgeMarkerMapping, [11, 393], bui.connectingArcs.production.id);
 addMapping(edgeMarkerMapping, [461], bui.connectingArcs.necessaryStimulation.id);
 addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
 addMapping(edgeMarkerMapping, [411], bui.connectingArcs.absoluteStimulation.id);
@@ -7109,7 +7114,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         }
         if (bui.util.propertySetAndNotNull(nodeJSON,
                 ['data', 'modification'])) {
-            alert ('xyrock');
+            //alert ('xyrock');
             var modifications = nodeJSON.data.modification;
 
             for (var i = 0; i < modifications.length; i++) {
@@ -7582,6 +7587,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         }
 
         var nodesJSON = data.nodes, i;
+	var listener_set=false;
         for (i = 0; i < nodesJSON.length; i++) {
             var nodeJSON = nodesJSON[i],
                     node = optimizedDrawables[nodeJSON.id];
@@ -7611,8 +7617,9 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             var x = nodeJSON.data.x,
                     y = nodeJSON.data.y,
                     currentPosition = node.position();
-	    if (i==nodesJSON.length-1){
+	    if (!listener_set){
 	      node.move(x - currentPosition.x, y - currentPosition.y, duration, finishListener); // the last node will call the finishListener
+	      listener_set=true;
 	    } else {
 	      node.move(x - currentPosition.x, y - currentPosition.y, duration);
 	    }
