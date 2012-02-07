@@ -55,6 +55,9 @@
     };
 
     bui.Association.prototype = {
+        identifier : function() {
+            return 'Association';
+        },
         includeInJSON : false,
         _circle : null,
         _forceRectangular : true,

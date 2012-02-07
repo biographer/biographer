@@ -151,7 +151,7 @@
 
 
     /**
-    * Generator for a product connecting arc.
+    * Generator for a production connecting arc.
     *
     * This generates a simple triangle.
     *
@@ -159,15 +159,15 @@
     *   property holds the id of the marker and the element property the
     *   generated element.
     */
-    bui.connectingArcs.product = function() {
+    bui.connectingArcs.production = function() {
        return createPathWithData('M0,0L20,10L0,20Z', 20, 10, 20, 20,
-                                 bui.settings.css.classes.connectingArcs.product);
+                                 bui.settings.css.classes.connectingArcs.production);
     };
     
     /**
     * @field Identifier for this connecting arc type.
     */
-    bui.connectingArcs.product.id = 'product';
+    bui.connectingArcs.production.id = 'production';
     
     
     /**

@@ -15,13 +15,13 @@ addMapping(nodeMapping, [290], bui.Compartment);
 addMapping(nodeMapping, [375, 167, 379, 396], bui.Process);
 addMapping(nodeMapping, [-1], bui.Helper);
 addMapping(nodeMapping, [110001], bui.VariableValue);
-addMapping(nodeMapping, [110002], bui.Tag);
-addMapping(nodeMapping, [412,110003], bui.RectangularNode);//Annotation
+addMapping(nodeMapping, [110002, 110004], bui.Tag);
+//SBO:0000395 ! encapsulating process
+addMapping(nodeMapping, [395, 412,110003], bui.RectangularNode);//Annotation
 addMapping(nodeMapping, [177], bui.Association);
 addMapping(nodeMapping, [180], bui.Dissociation);
 addMapping(nodeMapping, [174,173,238,225], bui.LogicalOperator);
 addMapping(nodeMapping, [291], bui.EmptySet);
-
 addMapping(processNodeMapping, [375, 167], bui.Process);
 addMapping(processNodeMapping, [-1], bui.EdgeHandle);
 
@@ -33,9 +33,9 @@ addMapping(edgeMarkerMapping, [20, 169], bui.connectingArcs.inhibition.id);
 addMapping(edgeMarkerMapping, [407], bui.connectingArcs.absoluteInhibition.id);
 addMapping(edgeMarkerMapping, [464,342], bui.connectingArcs.assignment.id);
 //addMapping(edgeMarkerMapping, [342], bui.connectingArcs.interaction.id);
-addMapping(edgeMarkerMapping, [459,462, 170], bui.connectingArcs.stimulation.id);
-addMapping(edgeMarkerMapping, [15], bui.connectingArcs.substrate.id);
-addMapping(edgeMarkerMapping, [11], bui.connectingArcs.product.id);
+addMapping(edgeMarkerMapping, [459, 462, 170], bui.connectingArcs.stimulation.id);
+addMapping(edgeMarkerMapping, [15, 394], bui.connectingArcs.substrate.id);
+addMapping(edgeMarkerMapping, [11, 393], bui.connectingArcs.production.id);
 addMapping(edgeMarkerMapping, [461], bui.connectingArcs.necessaryStimulation.id);
 addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
 addMapping(edgeMarkerMapping, [411], bui.connectingArcs.absoluteStimulation.id);

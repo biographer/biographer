@@ -59,6 +59,9 @@
     };
 
     bui.Dissociation.prototype = {
+        identifier : function() {
+            return 'Dissociation';
+        },
         includeInJSON : false,
         _circle : null,
         _forceRectangular : true,

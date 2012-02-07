@@ -24,11 +24,7 @@
             }
         }
         if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'orientation'])) {
-            try{
-                node.orientation(nodeJSON.data.orientation);
-            } catch (e) {
-                log('FIXME orientation only for Tag at the moment: '+e);
-            }
+            if(node.hasOwnProperty('orientation')) node.orientation(nodeJSON.data.orientation);
         }
 
         nodeJSON.data = nodeJSON.data || {};
@@ -441,12 +437,14 @@
         //recalculate all edge points this should be prevented if points were specified
         for(edge_id in generatedEdges){
             edge = generatedEdges[edge_id];
-            handles = edge.handles();
-            for(var i=0; i<handles.length; i++){
-                var curpos = handles[i].positionCenter(); 
-                if(curpos.x==0 && curpos.y==0){
-                    edge.recalculatePoints();
-                    break;
+            if edge.hasOwnProperty('handles'){
+                handles = edge.handles();
+                for(var i=0; i<handles.length; i++){
+                    var curpos = handles[i].positionCenter(); 
+                    if(curpos.x==0 && curpos.y==0){
+                        edge.recalculatePoints();
+                        break;
+                    }
                 }
             }
         }
