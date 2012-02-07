@@ -24,7 +24,7 @@
             }
         }
         if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'orientation'])) {
-            if(node.hasOwnProperty('orientation')) node.orientation(nodeJSON.data.orientation);
+            if(node.identifier()=='bui.Tag') node.orientation(nodeJSON.data.orientation);
         }
 
         nodeJSON.data = nodeJSON.data || {};
@@ -437,7 +437,7 @@
         //recalculate all edge points this should be prevented if points were specified
         for(edge_id in generatedEdges){
             edge = generatedEdges[edge_id];
-            if (edge.hasOwnProperty('handles')){
+            if (edge.identifier() == 'bui.Edge'){
                 handles = edge.handles();
                 for(var i=0; i<handles.length; i++){
                     var curpos = handles[i].positionCenter(); 

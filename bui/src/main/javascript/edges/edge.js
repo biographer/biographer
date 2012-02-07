@@ -290,7 +290,9 @@
     };
 
     bui.Edge.prototype = {
-
+        identifier : function() {
+            return identifier;
+        },
         addPoint : function(x, y, type){
             var privates = this._privates(identifier);
             var handle = undefined
