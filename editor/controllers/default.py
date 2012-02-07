@@ -17,6 +17,7 @@ def index():
     response.files.append(URL(request.application, 'static/js', 'jquery.simplemodal.1.4.1.min.js'))
     #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))
     #response.files.append(URL('script.js'))
+    print request.vars
     if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph or request.vars.jsbgn:
         action,graph,json_string = None,None,None
         if request.vars.jgraph or request.vars.jsbgn:
@@ -31,6 +32,41 @@ def index():
             action, graph, json_string = import_file(request.vars.import_file.file.read().strip(), request.vars.import_file.filename)
         if action and graph and json_string:
             undoRegister(action, graph, json_string)
+    #----------------------------------
+    elif request.vars.biomodel_id:
+        biomodel_id = None
+        import re
+        if re.match('^(BIOMD|MODEL)\d{10}$', request.vars.biomodel_id):
+            biomodel_id = request.vars.biomodel_id
+        else:
+            try:
+                int_id = request.vars.biomodel_id
+                biomodel_id = 'BIOMD%.10d'%int_id
+            except TypeError:
+                response.error = 'Invalid BioModel Id. The id should be a number or follow the pattern ^(BIOMD|MODEL)\d{10}$'
+        #----------------------------------
+        if biomodel_id:
+            model_content = None
+            model_path = os.path.join(request.folder, 'static', 'data_models')
+            if not os.path.exists(model_path):
+                os.mkdir(model_path)
+            if biomodel_id+'.xml' in os.listdir(model_path) and not request.vars.force:
+                model_content = open(os.path.join(model_path, biomodel_id+'.xml'), 'r').read()
+                response.flash = 'Loaded %s from cache.'%biomodel_id
+            else:
+                try:
+                    model_content = _download('http://www.ebi.ac.uk/biomodels-main/download?mid=%s'%biomodel_id)
+                    if model_content:
+                        open(os.path.join(model_path, biomodel_id+'.xml'), 'w').write(model_content)
+                except ContentTooShortError:
+                    response.flash = 'Failed downloading %s: Content Too Short'%biomodel_id
+            #----------------------------------
+            if model_content:
+                action, graph, json_string  = import_file(model_content, biomodel_id)
+                if action and graph and json_string:
+                    undoRegister(action, graph, json_string)
+
+
     return dict()
 
 def debug():
@@ -45,12 +81,7 @@ def script():
 def import_graph():
     response.generic_patterns = ['json']
     action,graph,json_string = None,None,None
-    if request.vars.type=='biomodel':
-        import_BioModel( request.vars.identifier )
-        json_string = session.bioGraph.exportJSON()
-        graph = simplejson.loads(json_string)
-        action = 'Imported BioModel: %s'%request.vars.identifier
-    elif request.vars.type == 'reactome_id':
+    if request.vars.type == 'reactome_id':
         import_Reactome( request.vars.identifier )
         json_string = session.bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
@@ -60,7 +91,6 @@ def import_graph():
     if action and graph and json_string:
         return undoRegister(action, graph, json_string)
     raise HTTP(500, 'could not import')
-
 
 def layout():
     response.generic_patterns = ['html','json']
@@ -194,16 +224,19 @@ def sbgnml_test():
     import os
     test_path = os.path.join(request.folder, 'static', 'test-files')
     items = []
+    #for dn in ['PD']:
     for dn in ['PD', 'ER', 'AF']:
         subitems = []
         items.append(H1(dn))
         for fn in os.listdir(os.path.join(test_path, dn)):
             if fn.endswith('.sbgn'):
+                if fn == 'mapk_cascade.sbgn':#FIXME
+                    print sbgnml2jsbgn(open(os.path.join(test_path,dn,fn),'r').read())
+                    continue
                 subitems.append(
                         TR( TH( A(fn, _href=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _target="_blank"), _colspan=2)),
                     )
                 subitems.append(
-                    #IMG(_src=URL(request.application, 'static/test-files/%s'%dn, ), _alt='sbgn image')
                     TR(
                         TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
                         TD(IFRAME(_src=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0")),

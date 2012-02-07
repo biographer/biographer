@@ -36,39 +36,31 @@
 </head>
 
 <body id=body>
-<div class="flash">{{=response.flash or ''}}</div> <!-- notification div -->
-    
-<div id="container">                        
-      
-<div id="wrapper">        
-<!-- re-occuring, identical style definitions, which are defined globally below -->
-<div id="page"> <!-- Here my central body -->     
-
-	<div id="content" {{=XML(style_content)}}>
-<div id="editor-header">
-    <div id="logo"> <a href="{{=URL(request.application, 'default', 'index')}}">BioGrapher</a> </div>
-	<UL>
-		<li><a href="http://code.google.com/p/biographer/">About</a></li>
-		<li><a href="http://code.google.com/p/biographer/source/browse/?repo=server">Source Code</a></li>
-        {{if auth.is_logged_in():}}<li><a href="{{=URL(request.application, 'plugin_release', 'status')}}">Update</a></li>{{pass}}
-        <li><a href="{{=URL(request.application, 'plugin_release', 'download')}}">Download</a></li>
-        <li><a href="{{=URL(request.application, 'default', 'sbgnml_test')}}">SBGN-ML Test</a></li>
-	</UL>
-    <ul id="menu-right">
-        <li><a href="{{=URL(request.application, 'default', 'user', args='login')}}">login</a></li>
-    </ul>
-</div>
-		{{include}} 
-	</div>
-
-</div><!-- page -->                         
-
-</div><!-- wrapper -->
-<br/>
-
-</div><!-- container -->        
-
-
+    <div class="flash">{{=response.flash or ''}}</div> <!-- notification div -->
+    <div id="container">                        
+        <div id="wrapper">        
+            <!-- re-occuring, identical style definitions, which are defined globally below -->
+            <div id="page"> <!-- Here my central body -->     
+                <div id="content" {{=XML(style_content)}}>
+                    <div id="editor-header">
+                        <div id="logo"> <a href="{{=URL(request.application, 'default', 'index')}}">BioGrapher</a> </div>
+                        <UL>
+                            <li><a href="http://code.google.com/p/biographer/">About</a></li>
+                            <li><a href="http://code.google.com/p/biographer/source/browse/?repo=editor">Source Code</a></li>
+                            {{if auth.is_logged_in():}}<li><a href="{{=URL(request.application, 'plugin_release', 'status')}}">Update</a></li>{{pass}}
+                            <li><a href="{{=URL(request.application, 'plugin_release', 'download')}}">Download</a></li>
+                            <li><a href="{{=URL(request.application, 'default', 'sbgnml_test')}}">SBGN-ML Test</a></li>
+                        </UL>
+                        <ul id="menu-right">
+                            <li><a href="{{=URL(request.application, 'default', 'user', args='login')}}">login</a></li>
+                        </ul>
+                    </div>
+                    {{include}} 
+                </div>
+            </div><!-- page -->                         
+        </div><!-- wrapper -->
+        <br/>
+    </div><!-- container -->        
 </body>
 
 </html>

@@ -173,11 +173,11 @@ function drawableSelect(drawable, select_status) {
 function nodeModal (drawable, action) {
     //do not add lable to complex but anything else
     $('#action').html(action);
-    if(drawable.identifier()!='Complex'){
+    if((drawable.identifier()=='Complex') || (drawable.identifier()=="Association") || (drawable.identifier()=="Dissociation")){
+        $('#node_label_row').hide()
+    }else{
         $('#node_label_row').show();
         $('#node_label').val(drawable.label());
-    }else{
-        $('#node_label_row').hide()
     }
     //-----------------
     $('.current_id').attr('id', drawable.id());
@@ -187,6 +187,9 @@ function nodeModal (drawable, action) {
         onClose: function(){
             if(drawable.identifier()!='Complex'){
                 if ( $('#node_label').val() != '' ) drawable.label($('#node_label').val()).adaptSizeToLabel();
+            }
+            if((drawable.identifier()=="Association") || (drawable.identifier()=="Dissociation")){
+                drawable.size(20,20)
             }
             $('.unit_of_information').each(function(){
                 if($(this).val()){
@@ -488,8 +491,8 @@ $(document).ready(function() {
 
     });
     //=========================
-    $("#import_file_input").change(function(){
-        $('#import_form').submit();
+    $("#import_file_input, #biomodel").change(function(){
+        $(this).closest("form").submit();
     });
     //===
     $('#import_file').click(function() {
@@ -624,9 +627,10 @@ bui.ready(function() {
     drop: function(event, ui){dropFkt(event, ui, this);},
     });
     $('.Complex, .Compartment').droppable({ 
-    hoverClass: 'drop_hover',
-    over : function(){$('#canvas').droppable("disable");},
-    out : function(){$('#canvas').droppable("enable");},
-    drop: function(event, ui){dropFkt(event, ui, this);},
+        hoverClass: 'drop_hover',
+        over : function(){$('#canvas').droppable("disable");},
+        out : function(){$('#canvas').droppable("enable");},
+        drop: function(event, ui){dropFkt(event, ui, this);},
     });
+    var x = 1;
 });

@@ -238,8 +238,28 @@
 				<img src="{{=URL(request.application, 'static/images/editor', 'Complex.png')}}" id="Complex" class="tool node"/>
 				</li>
 				<li>
+				<div>EmptySet (drag me)</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'EmptySet.png')}}" id="EmptySet" class="tool node"/>
+				</li>
+				<li>
 				<div>Process (drag me)</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'Process.png')}}" id="Process" class="tool node no_drop_complex"/>
+				</li>
+				<li>
+				<div>Tag (drag me)</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'Tag.png')}}" id="Tag" class="tool node"/>
+				</li>
+				<li>
+				<div>LogicalOperator (drag me)</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'LogicalOperator.png')}}" id="LogicalOperator" class="tool node"/>
+				</li>
+				<li>
+				<div>Association (drag me)</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'Association.png')}}" id="Association" class="tool node"/>
+				</li>
+				<li>
+				<div>Dissociation (drag me)</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'Dissociation.png')}}" id="Dissociation" class="tool node"/>
 				</li>
 			</ul>
 		</td>
@@ -272,12 +292,14 @@
                 </td>
 			</tr>
 			<tr>
-				<th> <a href="http://www.ebi.ac.uk/biomodels-main/"> BioModels.net </th> </a> <td>
-					<select id="biomodel_input">
-						{{for i in range(1,255):}} <option value="{{=i}}">BIOMD{{='%.10d'%i}}</option> {{pass}}
-					</select>
-					<button class="load" id="biomodel">load</button>
-				</td>
+                <th> <a href="http://www.ebi.ac.uk/biomodels-main/"> BioModels.net </th> </a> <td>
+                    <form id='import' method="post" enctype="multipart/form-data">
+                        <select name="biomodel_id" id="biomodel_id">
+                            {{for i in range(1,403):}} <option>BIOMD{{='%.10d'%i}}</option> {{pass}}
+                        </select>
+                        <button id="biomodel">load</button>
+                    </form>
+                </td>
 			</tr>
 			<tr>
                 <th> <a href="http://www.reactome.org/">Reactome</a> <br /> stable identifier </th>
@@ -363,9 +385,9 @@
 						<div> production </div>
 						<img src="{{=URL(request.application, 'static/images/editor', 'production.png')}}"/> 
 					</div>
-					<div class="marker_select" id="modulation">
-						<div> modulation </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'modulation.png')}}"/> 
+					<div class="marker_select" id="control">
+						<div> control </div>
+						<img src="{{=URL(request.application, 'static/images/editor', 'control.png')}}"/> 
 					</div>
 					<div class="marker_select" id="inhibition">
 						<div> inhibition </div>

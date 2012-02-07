@@ -259,7 +259,7 @@ button {  width: auto; overflow: visible; }
 
 
 /*********** add bottom line to table rows ***********/
-th, td { padding: 0.1em 0.5em 0.1em 0.5em;}
+th, td { padding: 0 0.5em 0.1em 0.5em;}
 
 /*********** labels bold and occasionally centered ***********/
 label {

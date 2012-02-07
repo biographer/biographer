@@ -103,28 +103,6 @@ if not auth.is_logged_in() and db(db.auth_user.id>0).count() and not os.path.exi
 #########################################################################
 #########################################################################
 #Cache functions
-def BioModel_to_cache(SBML, ID):
-    global db
-
-    key = 'name="'
-    p = SBML.find(key)
-    if p > -1:
-        p += len(key)
-        q = SBML.find('"',p)
-        title = SBML[p:q].replace("_"," ")
-
-        if len( db( db.BioModels.BIOMD==ID ).select() ) == 0:
-            db.BioModels.insert( BIOMD=ID, Title=title, File=SBML )
-
-def BioModel_from_cache( BioModelID ):
-    global db
-
-    select = db( db.BioModels.BIOMD==BioModelID ).select()
-
-    if len( select ) == 1:
-        return select[0].File
-    else:
-        return None
 
 def Reactome_to_cache(SBML, ID):
     global db
@@ -178,20 +156,6 @@ def download_Reactome( ReactomeStableIdentifier ):
 
     return None
 
-def download_BioModel( BioModelsID ):
-
-    import httplib
-
-    connection = httplib.HTTPConnection("www.ebi.ac.uk")
-    connection.request("GET", "/biomodels-main/download?mid=BIOMD"+str(BioModelsID).rjust(10, "0"))
-    Model = connection.getresponse().read()
-    connection.close()
-
-    if Model.find("There is no model associated") > -1: # no such model
-        return None
-    else:                           # SBML download successful
-        return Model
-
 def reset_current_session():
     global session
 
@@ -214,34 +178,6 @@ def export_JSON():                  # workaround for web2py bug
     del session.bioGraph
     session.bioGraph = temp
     return session.bioGraph.JSON
-
-def import_BioModel( BioModelsID ):
-    global session, request, db
-
-    BioModelsID = BioModelsID.rjust(10, "0")    # adjust BioModel's ID
-    print "BioModel requested: BIOMD"+BioModelsID
-
-    model = BioModel_from_cache( BioModelsID )
-    if model is None:
-        print "Not in cache. Downloading ..."
-        model = download_BioModel( BioModelsID )
-        if model is None:
-            print "Error: Download failed"
-            session.flash = "Error: BioModel download failed"
-            return False
-        else:
-            print "Downloaded successful."
-            session.flash = "BioModel downloaded"
-            BioModel_to_cache( model, BioModelsID )
-    else:
-        print "Loaded from cache."
-        session.flash = "BioModel loaded from cache"
-    
-    reset_current_session()
-    session.BioModelsID = BioModelsID
-    session.SBML = model
-    session.bioGraph.importSBML( session.SBML )
-    return model
 
 def import_Reactome( ReactomeStableIdentifier ):
     global session, request, db
@@ -379,9 +315,11 @@ def import_Layout(graph, lines):
             node['data']['x'] -= graph['nodes'][cp]['data']['x']
             node['data']['y'] -= graph['nodes'][cp]['data']['y']
 #########################################################################
-
 def sbml2jsbgn(sbml_str):
-    import libsbml
+    try:
+        import libsbml
+    except ImportError:
+        raise HTTP(500, 'Your need to install libsbml-python to use this function. For Debian/Ubuntu see http://sbos.eu/doku.php?id=installation_instructions')
     doc = libsbml.readSBMLFromString(sbml_str)
     model = doc.getModel()
     graph = dict(nodes = [], edges = [])
@@ -537,7 +475,8 @@ def sbgnml2jsbgn(sbgnml_str):
             'association' : 177,
             'dissociation' : 180,
             'entity' : 245,
-            'submap' : 285,#FIXME this is not correct but our json lib does not have this node type
+            'submap' : 395,
+            'terminal' : 110004,
             'perturbing agent' : 405,
             'variable value': 110001,
             'implicit xor': -1,
@@ -547,8 +486,6 @@ def sbgnml2jsbgn(sbgnml_str):
             'not' : 238,
             'delay' : 225,
             'source and sink' : 291,
-            #addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
-            #addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
             'stimulation' : 459,
             'consumption' : 15,
             'production' : 393,
@@ -569,18 +506,24 @@ def sbgnml2jsbgn(sbgnml_str):
             'negative influence' : 169,
             'perturbation' : 405,
             }
-    def get_node(node):
+    def get_node(node, parent = None):
         '''
         recursive funciton to get one node/glyph and its sub nodes/glyphs
         '''
+
+        x = float(node.bbox[0].x)
+        y = float(node.bbox[0].y)
+        if parent:
+            x -= parent['data']['x']
+            y -= parent['data']['y']
         node_item = dict(
             id = node.id,
             sbo = class2sbo[node.get('class')],
             is_abstract = 0,
             #type = node.get('class'),
             data = dict (
-                x = float(node.bbox[0].x),
-                y = float(node.bbox[0].y),
+                x = x,
+                y = y,
                 height = float(node.bbox[0].h),
                 width = float(node.bbox[0].w),
                 )
@@ -628,7 +571,7 @@ def sbgnml2jsbgn(sbgnml_str):
                     except KeyError:
                         node_item['data']['unitofinformation'] = [label]
                 elif sub_node.get('class') in class2sbo.keys():
-                    get_node(sub_node)
+                    get_node(sub_node, parent = node_item)
                     node_item['data']['subnodes'].append(sub_node.id)
         if hasattr(node, 'port'):
             for port in node.port:
@@ -681,6 +624,7 @@ def sbgnml2jsbgn(sbgnml_str):
     lang2lang = {'entity relationship': 'ER', 'process description': 'PD', 'activity flow': 'AF'}
     graph['sbgnlang'] = lang2lang[xml.root.map[0].language]
     return graph
+#########################################################################
 
 class ContentTooShortError(Exception):
     def __init__(self,message):

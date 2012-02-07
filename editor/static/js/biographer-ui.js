@@ -4008,6 +4008,9 @@ var getSBOForMarkerId = function(id) {
     };
 
     bui.Association.prototype = {
+        identifier : function() {
+            return 'Association';
+        },
         includeInJSON : false,
         _circle : null,
         _forceRectangular : true,
@@ -4081,6 +4084,9 @@ var getSBOForMarkerId = function(id) {
     };
 
     bui.Dissociation.prototype = {
+        identifier : function() {
+            return 'Dissociation';
+        },
         includeInJSON : false,
         _circle : null,
         _forceRectangular : true,
@@ -6795,7 +6801,9 @@ var getSBOForMarkerId = function(id) {
     };
 
     bui.Edge.prototype = {
-
+        identifier : function() {
+            return identifier;
+        },
         addPoint : function(x, y, type){
             var privates = this._privates(identifier);
             var handle = undefined
@@ -6954,13 +6962,13 @@ addMapping(nodeMapping, [290], bui.Compartment);
 addMapping(nodeMapping, [375, 167, 379, 396], bui.Process);
 addMapping(nodeMapping, [-1], bui.Helper);
 addMapping(nodeMapping, [110001], bui.VariableValue);
-addMapping(nodeMapping, [110002], bui.Tag);
-addMapping(nodeMapping, [412,110003], bui.RectangularNode);//Annotation
+addMapping(nodeMapping, [110002, 110004], bui.Tag);
+//SBO:0000395 ! encapsulating process
+addMapping(nodeMapping, [395, 412,110003], bui.RectangularNode);//Annotation
 addMapping(nodeMapping, [177], bui.Association);
 addMapping(nodeMapping, [180], bui.Dissociation);
 addMapping(nodeMapping, [174,173,238,225], bui.LogicalOperator);
 addMapping(nodeMapping, [291], bui.EmptySet);
-
 addMapping(processNodeMapping, [375, 167], bui.Process);
 addMapping(processNodeMapping, [-1], bui.EdgeHandle);
 
@@ -7027,11 +7035,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             }
         }
         if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'orientation'])) {
-            try{
-                node.orientation(nodeJSON.data.orientation);
-            } catch (e) {
-                log('FIXME orientation only for Tag at the moment: '+e);
-            }
+            if(node.identifier()=='bui.Tag') node.orientation(nodeJSON.data.orientation);
         }
 
         nodeJSON.data = nodeJSON.data || {};
@@ -7444,12 +7448,14 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         //recalculate all edge points this should be prevented if points were specified
         for(edge_id in generatedEdges){
             edge = generatedEdges[edge_id];
-            handles = edge.handles();
-            for(var i=0; i<handles.length; i++){
-                var curpos = handles[i].positionCenter(); 
-                if(curpos.x==0 && curpos.y==0){
-                    edge.recalculatePoints();
-                    break;
+            if (edge.identifier() == 'bui.Edge'){
+                handles = edge.handles();
+                for(var i=0; i<handles.length; i++){
+                    var curpos = handles[i].positionCenter(); 
+                    if(curpos.x==0 && curpos.y==0){
+                        edge.recalculatePoints();
+                        break;
+                    }
                 }
             }
         }
