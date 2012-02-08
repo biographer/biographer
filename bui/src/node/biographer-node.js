@@ -1,8 +1,8 @@
 var jsdom  = require('jsdom');
 var fs     = require('fs');
 var exec   = require('child_process').exec;
-//var jquery = fs.readFileSync("./jquery-1.7.js").toString();
-var jquery = fs.readFileSync("./jquery-1.6.min.js").toString();
+var jquery = fs.readFileSync("./jquery-1.7.js").toString();
+//var jquery = fs.readFileSync("./jquery-1.6.min.js").toString();
 var biog   = fs.readFileSync("./biographer-ui.js").toString();
 var css    = fs.readFileSync("./visualization-svg.css").toString();
 var fn     = process.argv[2];
@@ -65,7 +65,7 @@ function makeLayouterFormat(bui,jdata){
             case (bui.connectingArcs.substrate.id) :
                type="Substrate";
                break;
-            case (bui.connectingArcs.product.id) :
+            case (bui.connectingArcs.production.id) :
                type="Product";
                break;
             case (bui.connectingArcs.catalysis.id) :
@@ -169,14 +169,17 @@ jsdom.env({
     var graph=new bui.Graph(div);
     bui.importFromJSON(graph,jdata);
     if (layouter){
-      var fmt=makeLayouterFormat(bui,jdata);
+      //var fmt=makeLayouterFormat(bui,jdata);
+      var fmt=bui.layouter.makeLayouterFormat(jdata);
       var fnt="/tmp/biographer-node"+process.pid;
       fs.writeFileSync(fnt+"in.tmp",fmt,0);
       exec(layouter+" "+fnt+"in.tmp "+fnt+"out.tmp",{maxBuffer: 5000*1024},function(error,stdout,stderr){
          console.log(stdout+stderr);
          //if (error!=0) process.exit(1);
          var fmt2 = fs.readFileSync(fnt+"out.tmp").toString();
-         fromLayouterFormat(bui,jdata,fmt2);
+         //fromLayouterFormat(bui,jdata,fmt2);
+         bui.layouter.fromLayouterFormat(jdata,fmt2);
+         debugger;
          graph.clear();
          bui.importFromJSON(graph,jdata);
          fs.writeFileSync(out,graph.cssSVG(css));

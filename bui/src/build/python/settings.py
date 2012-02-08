@@ -63,6 +63,7 @@ modules = ['intro',
            os.path.join(edges_sub_dir, 'edge.js'),
            'sboMappings.js',
            'importer.js',
+           'layouter.js',
            'outro']
 
 
