@@ -7,3 +7,4 @@ databases/*
 sessions/*
 */*.swp
 static/BioModels.net/*
+static/data_models/*
