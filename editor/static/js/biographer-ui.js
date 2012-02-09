@@ -4161,6 +4161,7 @@ var getSBOForMarkerId = function(id) {
         if(this.label() == 'τ'){
             this.addClass('delay');
         }
+        this.addClass('LogicalOperator');
 
 
         var widthHeight = bui.settings.style.edgeHandleRadius * 2;

@@ -19,7 +19,10 @@ text.small, tspan.small, text.small tspan {
     font-size: 10px;
     bottom: 3px;
 }
-
+.LogicalOperator tspan {
+    font-size: 12px;
+    top: 3px;
+}
 g.VariableValue > text {
    top: 5px;
 }
