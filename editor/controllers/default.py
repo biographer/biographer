@@ -15,23 +15,24 @@ def index():
     response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     response.files.append(URL(request.application, 'static/js', 'jquery.simplemodal.1.4.1.min.js'))
-    #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))
-    #response.files.append(URL('script.js'))
-    print request.vars
+    response.files.append(URL(request.application, 'static/js', 'd3.js'))
+    response.files.append(URL(request.application, 'static/js', 'd3.layout.js'))
+    response.files.append(URL(request.application, 'static/js', 'd3.geom.js'))
+    #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))#import in view
+    #response.files.append(URL('script.js'))#import in view
+    #print request.vars
     if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph or request.vars.jsbgn:
         action,graph,json_string = None,None,None
         if request.vars.jgraph or request.vars.jsbgn:
-            json_string = request.vars.jgraph or request.vars.jsbgn
-            try:
-                graph = simplejson.loads(json_string)
-            except simplejson.JSONDecodeError, e:
-                response.flash = 'JSBGN: error importing JSON %s'%e
-                return dict()
-            action = 'Imported JSON graph'
+            result = import_file(request.vars.jgraph or request.vars.jsbgn)
         else:
-            action, graph, json_string = import_file(request.vars.import_file.file.read().strip(), request.vars.import_file.filename)
-        if action and graph and json_string:
-            undoRegister(action, graph, json_string)
+            result = import_file(request.vars.import_file.file.read().strip(), request.vars.import_file.filename)
+        if result:
+            action, graph, json_string = result
+            if action and graph and json_string:
+                undoRegister(action, graph, json_string)
+        else:
+            response.flash = 'failed importing %s'%request.vars.import_file.filename
     #----------------------------------
     elif request.vars.biomodel_id:
         biomodel_id = None
@@ -74,6 +75,12 @@ def debug():
         session.debug = True;
     else:
         session.debug = not session.debug
+    redirect(URL('index'))
+def reset():
+    session.editor_autosave = None
+    session.editor_histroy_undo = None
+    session.editor_histroy_redo = None
+    redirect(URL('index'))
 
 def script():
     return dict()
@@ -97,33 +104,25 @@ def layout():
     if not request.vars.layout:
         raise HTTP(500, 'not layout algorithm specified')
     #-------------------
-    import biographer
     import os
     import subprocess
-    reload(biographer)#TODO remove in production mode
-    bioGraph = biographer.Graph()
-    bioGraph.importJSON( session.editor_autosave )
     #-------------------
     if request.vars.layout == "biographer":
         infile = os.path.join(request.folder, "static","tmp.bgin")
         outfile = os.path.join(request.folder, "static","tmp.bgout")
-        open(infile, 'w').write(bioGraph.exportLayout())
-        print 'infile written'
-        #return bioGraph.exportLayout()
+        print request.vars.data
+        open(infile, 'w').write(request.vars.data)
         executable = os.path.join(request.folder, "static","layout")
-        #executable = os.path.join(request.folder, "static","Layouter","build", "layout")
         p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         p.communicate()
         layout_output = open(outfile, 'r').readlines()
-        graph = simplejson.loads(bioGraph.exportJSON())
-        import_Layout(graph, layout_output)
-        json_string = simplejson.dumps(graph)
-        #return PRE(XML(simplejson.dumps(graph)))
-        #print 'exit'
-        #bioGraph.importLayout( open(outfile, 'r').read() )					# import STDOUT
+        return layout_output
 
     elif request.vars.layout == 'graphviz':
-        pass
+        import biographer
+        reload(biographer)#TODO remove in production mode
+        bioGraph = biographer.Graph()
+        bioGraph.importJSON( session.editor_autosave )
         bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
         #-------------------
         json_string = bioGraph.exportJSON()
@@ -132,10 +131,6 @@ def layout():
     return undoRegister(action, graph, json_string)
     #-------------------
 
-def clear():
-    session.editor_autosave = None
-    session.editor_histroy_undo = None
-    session.editor_histroy_redo = None
 
 def autosave():
     session.editor_autosave = request.vars.json

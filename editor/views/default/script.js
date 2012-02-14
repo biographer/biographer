@@ -4,7 +4,7 @@
 var url_undo_push = '{{=URL("undo_push")}}';
 var url_undo = '{{=URL('undo.json')}}';
 var url_redo = '{{=URL('redo.json')}}';
-var url_layout = '{{=URL('layout.json')}}';
+var url_layout = '{{=URL('layout')}}';
 var url_import = '{{=URL('import_graph.json')}}';
 
 //-------------------------------------------
@@ -309,14 +309,6 @@ function dropFkt(event, ui, element){
         $('#canvas').droppable("enable");
     }
 }
-function layout(algorithm){
-    $.getJSON(url_layout+'?layout='+algorithm, function(data) {
-        history_undo.push(data.action);
-        showUndoRedo();
-        bui.importUpdatedNodePositionsFromJSON(graph, data.graph, 300)
-        //redrawGraph(data.graph);
-    });
-}
 //-------------------------------------------
 //-------------------------------------------
 var graphData =  {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
@@ -343,6 +335,17 @@ var history_redo = {{if session.editor_histroy_redo:}}  {{=XML([i['action'] for 
 $(document).ready(function() {
     //=========================
     showUndoRedo();
+    //=========================
+    $('#straighten_and_distribute').click(function(){
+        if($(this).hasClass('fkt_active')){
+            $(this).removeClass('fkt_active');
+            bui.settings.straightenEdges = false;
+        } else {
+            $(this).addClass('fkt_active');
+            bui.settings.straightenEdges = true;
+        } 
+
+    });
     //=========================
     $('#vertical_gaps_equal, #horizontal_gaps_equal').click(function(){
         // collect selected drawables
@@ -446,12 +449,71 @@ $(document).ready(function() {
         //graph.clear();//FIXME this does not work 
     });
     //=========================
+    $('#layout_force').click(function(){
+      
+        var nodes = [], links = [];
+        var all_drawables = graph.drawables();
+        var count = 0;
+        for (var key in all_drawables) {
+            drawable = all_drawables[key];
+            drawable.index = count;
+            ++count;
+            if ((drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')){
+                //ignore
+            }else if (drawable.drawableType()=='node'){
+                //alert('idf '+drawable.identifier());
+                var pos = drawable.absolutePosition();
+                drawable.x = pos.x;
+                drawable.y = pos.y;
+                nodes.push(drawable);
+            }else if(drawable.identifier() == 'bui.Edge'){
+                links.push(drawable);
+            }
+        }
+        //alert('in nodes '+nodes.length);
+        bui.settings.straightenEdges = false;
+        var force = d3.layout.force()
+          .charge(-800)
+          .linkDistance(150)
+          .nodes(nodes)
+          .links(links)
+          .size([$('#canvas').width(), $('#canvas').height()])
+          .start();
+        
+    });
+    //=========================
     $('#layout_grahviz').click(function(){
-        layout('graphviz');
+        $.getJSON(url_layout+'.json?layout=graphviz', function(data) {
+            history_undo.push(data.action);
+            showUndoRedo();
+            bui.importUpdatedNodePositionsFromJSON(graph, data.graph, 300)
+            //redrawGraph(data.graph);
+        });
     });
     //=========================
     $('#layout_biographer').click(function(){
-        layout('biographer');
+        var orig_html = $('#layout_biographer').html()
+        $('#layout_biographer').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}')
+        graphData=graph.toJSON();
+        $.ajax({
+            url: url_layout,
+            data: {layout: 'biographer', data:bui.layouter.makeLayouterFormat(graphData)}, 
+            type: 'POST',
+            success: function(data) {
+                //console.log(data);
+                bui.layouter.fromLayouterFormat(graphData,data)
+                undoRegister('applied automatic biographer layout', graphData)
+                try{
+                    redrawGraph(graphData);
+                }catch(e){
+                    jQuery('.flash').html('FAILED '+e).fadeIn();
+                }
+                //bui.importUpdatedNodePositionsFromJSON(graph, graphData, 300)
+                },
+            complete: function(){
+            $('#layout_biographer').html(orig_html);
+            }
+        });
     });
     //=========================
     $('#undo').click(function(){
@@ -527,6 +589,7 @@ $(document).ready(function() {
     //=========================
     $('#fit_to_screen').click(function() {
         graph.fitToPage();
+        graph.reduceTopLeftWhitespace(100);
         return false;
     });
     //=========================

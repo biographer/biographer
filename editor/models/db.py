@@ -354,7 +354,7 @@ def sbml2jsbgn(sbml_str):
                         if 'urn:miriam:uniprot' in resource:
                             sbo = 245
                             break
-                if 'rna' in name_or_id(species).lower():
+                if ('rna' in name_or_id(species).lower()) or ('dna' in name_or_id(species).lower()):
                     sbo = 250
                 #if 'complex' in name_or_id(species).lower():
                 #    sbo = 253
@@ -727,6 +727,7 @@ def _download(url,post_data=None):
     return outcontents
 
 def import_file(file_content, file_name = ''):
+    file_content = file_content.strip()
     action = ''
     graph = {}
     if file_content.startswith('{') and file_content.endswith('}'):#basic check

@@ -210,7 +210,7 @@ h3.section.down {
 .tools_group li:hover {
     background-color: #ddd;
 }
-.tools_group li.active {
+.tools_group li.active, li.fkt_active {
     background-color: #eee;
     border-radius: 5px;
 }

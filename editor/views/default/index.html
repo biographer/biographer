@@ -23,6 +23,18 @@
 				</li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
+				<li id="bug"> 
+				<div>switch to debug mode</div>
+                <a href="{{=URL('debug')}}"><img src="{{=URL(request.application, 'static/images/editor', 'bug.png')}}"/></a>
+				&nbsp;
+				</li>
+				<li id="reset"> 
+				<div>reset biographer</div>
+                <a href="{{=URL('reset')}}"><img src="{{=URL(request.application, 'static/images/editor', 'reset.png')}}"/></a>
+				&nbsp;
+				</li>
+				<!-- ---------------------------------------------------------------- -->
+				<li class="spacer"></li>
 				<li id="undo"> 
 				<div>undo</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'undo.png')}}"/> 
@@ -64,6 +76,11 @@
 				</li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
+				</li>
+				<li id="layout_force"> 
+				<div>apply <b>D3 force based</b> layout in browser</div>
+			    <img src="{{=URL(request.application, 'static/images/editor', 'd3_force.png')}}"/> 	
+				&nbsp;
 				</li>
 				<li id="layout_biographer"> 
 				<div>apply automatic <b>biographer</b> layout</div>
@@ -150,6 +167,12 @@
 				<li id='vertical_gaps_equal'> 
 				<div>make the distances of vertical gaps between nodes equal</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'vertical_gaps_equal.png')}}"/> 
+				&nbsp;
+				</li>
+				</li>
+				<li id='straighten_and_distribute' class="fkt_active"> 
+                <div>enable/disable: straighten edges and distributen all points on edges equally</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'straighten_and_distribute.png')}}"/> 
 				&nbsp;
 				</li>
 				<!-- ---------------------------------------------------------------- -->
