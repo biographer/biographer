@@ -7,12 +7,18 @@
       var idx={};
       var cpidx={};
       var s=""; // string to be passed to layouter (as a file)
+      var cphash={};
       for (var i=0;i<jdata.nodes.length;i++){ // create node indexes; write output for compartments
          var n=jdata.nodes[i];
          if (n.is_abstract) continue; // abstract nodes are not send to the layouter
          if (bui.nodeMapping[n.sbo].klass === bui.Compartment){
             cpidx[n.id]=ccc;
             s = s + ccc + " " + n.id + "\n";
+            if (n.data.subnodes){
+               for (var i in n.data.subnodes){
+                  cphash[n.data.subnodes[i]]=ccc;
+               }
+            }
             ccc++;
          } else {
             idx[n.id]=cc;
@@ -28,7 +34,7 @@
          s = s + idx[n.id] + "\n";
          s = s + (bui.nodeMapping[n.sbo].klass === bui.Process ? 'Reaction' : 'Compound') + "\n";
          s = s + n.id + "\n";
-         s = s + (n.data.compartment ? cpidx[n.data.compartment] : 0) + "\n";
+         s = s + (n.data.compartment ? cpidx[n.data.compartment] : (cphash[n.id] ? cphash[n.id] : 0)) + "\n";
          s = s + (n.data.x ? n.data.x : 0) + "\n";
          s = s + (n.data.y ? n.data.y : 0) + "\n";
          s = s + (n.data.width ? n.data.width : 0) + "\n";
