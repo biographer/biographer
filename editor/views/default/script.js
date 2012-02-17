@@ -334,6 +334,27 @@ var history_redo = {{if session.editor_histroy_redo:}}  {{=XML([i['action'] for 
 //-------------------------------------------
 $(document).ready(function() {
     //=========================
+    var $_GET = {};
+
+    document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function () {
+        function decode(s) { return decodeURIComponent(s.split("+").join(" ")); }
+        $_GET[decode(arguments[1])] = decode(arguments[2]);
+    });
+
+    if('layout' in $_GET){
+        $.ajax({
+            url: url_layout,
+            data: {jsbgn: JSON.stringify(graphData), layout: 'biographer', data:bui.layouter.makeLayouterFormat(graphData), filename: $_GET['filename']}, 
+            type: 'POST',
+            success: function(data) {
+                //console.log(data);
+                bui.layouter.fromLayouterFormat(graphData,data)
+                undoRegister('applied automatic biographer layout', graphData)
+                redrawGraph(graphData);
+                //bui.importUpdatedNodePositionsFromJSON(graph, graphData, 300)
+                },
+        });
+    }
     showUndoRedo();
     //=========================
     $('#straighten_and_distribute').click(function(){
@@ -458,14 +479,16 @@ $(document).ready(function() {
             drawable = all_drawables[key];
             drawable.index = count;
             ++count;
-            if ((drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')){
+            if ((drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')){
                 //ignore
             }else if (drawable.drawableType()=='node'){
-                //alert('idf '+drawable.identifier());
-                var pos = drawable.absolutePosition();
-                drawable.x = pos.x;
-                drawable.y = pos.y;
-                nodes.push(drawable);
+                var dparent = drawable.parent();
+                if (dparent.identifier()!='Complex'){
+                    var pos = drawable.absolutePositionCenter();
+                    drawable.x = pos.x;
+                    drawable.y = pos.y;
+                    nodes.push(drawable);
+                }
             }else if(drawable.identifier() == 'bui.Edge'){
                 links.push(drawable);
             }

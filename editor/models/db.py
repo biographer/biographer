@@ -315,7 +315,7 @@ def import_Layout(graph, lines):
             node['data']['x'] -= graph['nodes'][cp]['data']['x']
             node['data']['y'] -= graph['nodes'][cp]['data']['y']
 #########################################################################
-def sbml2jsbgn(sbml_str):
+def sbml2jsbgn(sbml_str, rxncon=False):
     try:
         import libsbml
     except ImportError:
@@ -326,6 +326,18 @@ def sbml2jsbgn(sbml_str):
     compartment2species = {}
     seen_species = set()
     #------------------------------------------
+    if rxncon or request.vars.rxncon:
+        import re
+        pattern_nd = re.compile('(.+)\(([^\)]*)\)')
+    def modification2statevariable(mod):
+        if '~' in mod:
+            mod_split = mod.split('~')
+            if mod_split[0]=='bd':
+                return mod_split[1]
+            else:
+                return '%s@%s'%(mod_split[1],mod_split[0])
+        return ''
+    #------------------------------------------
     name_or_id = lambda x : x.getName() or x.getId()
     #------------------------------------------
     def add_node(species_id, source_id, target_id, edge_sbo):
@@ -333,49 +345,72 @@ def sbml2jsbgn(sbml_str):
         if species_id not in seen_species:
             seen_species.add(species_id)
             #-------------------------------------
-            if 'sink' in species_id or name_or_id(species).lower() == 'emptyset':
-                sbo = 291
-                label = ''
+            if rxncon or request.vars.rxncon:
+                if '.' in species.getName():
+                    complex_item = dict( id = species_id, sbo = 253, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60,subnodes=[]))
+                    for subnode_id in species.getName().split('.'):
+                        match = re.search(pattern_nd, subnode_id)
+                        subnode_id, mods = match.group(1),match.group(2)
+                        node_item = dict( id = species_id+subnode_id, sbo = 252, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60, label=subnode_id))
+                        if mods:
+                            show_mods = [modification2statevariable(mod) for mod in mods.split(',') if '!' not in mod]
+                            node_item['data']['statevariable'] = [x for x in show_mods if x]
+                        complex_item['data']['subnodes'].append(species_id+subnode_id)
+                        graph['nodes'].append(node_item)
+                    graph['nodes'].append(complex_item)
+                else:
+                    match = re.search(pattern_nd, species.getName())
+                    spec_id, mods = match.group(1),match.group(2)
+                    node_item = dict( id = species_id, sbo = 252, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60, label=spec_id))
+                    if mods:
+                        show_mods = [modification2statevariable(mod) for mod in mods.split(',') if '!' not in mod]
+                        node_item['data']['statevariable'] = [x for x in show_mods if x]
+                    graph['nodes'].append(node_item)
+                    #-------------------------------------
             else:
-                sbo = 285
+                if 'sink' in species_id or name_or_id(species).lower() == 'emptyset':
+                    sbo = 291
+                    label = ''
+                else:
+                    sbo = 285
+                    #-------------------------------------
+                    #guess sbo
+                    for n in range(species.getNumCVTerms()):
+                        cvt = species.getCVTerm(n)
+                        res = cvt.getResources()
+                        for m in range(res.getLength()):
+                            resource = res.getValue(m)
+                            if 'urn:miriam:obo.chebi' in resource:
+                                sbo = 247
+                                break
+                            if 'urn:miriam:pubchem' in resource:
+                                sbo = 247
+                                break
+                            if 'urn:miriam:uniprot' in resource:
+                                sbo = 245
+                                break
+                    if ('rna' in name_or_id(species).lower()) or ('dna' in name_or_id(species).lower()):
+                        sbo = 250
+                    #if 'complex' in name_or_id(species).lower():
+                    #    sbo = 253
+                    label = name_or_id(species)
                 #-------------------------------------
-                #guess sbo
-                for n in range(species.getNumCVTerms()):
-                    cvt = species.getCVTerm(n)
-                    res = cvt.getResources()
-                    for m in range(res.getLength()):
-                        resource = res.getValue(m)
-                        if 'urn:miriam:obo.chebi' in resource:
-                            sbo = 247
-                            break
-                        if 'urn:miriam:pubchem' in resource:
-                            sbo = 247
-                            break
-                        if 'urn:miriam:uniprot' in resource:
-                            sbo = 245
-                            break
-                if ('rna' in name_or_id(species).lower()) or ('dna' in name_or_id(species).lower()):
-                    sbo = 250
-                #if 'complex' in name_or_id(species).lower():
-                #    sbo = 253
-                label = name_or_id(species)
-            #-------------------------------------
-            #create node
-            node_item = dict(
-                id = species_id,
-                sbo = sbo,
-                is_abstract = 0,
-                data = dict (
-                    x = 0.0,
-                    y = 0.0,
-                    width = 60,
-                    height = 60,
+                #create node
+                node_item = dict(
+                    id = species_id,
+                    sbo = sbo,
+                    is_abstract = 0,
+                    data = dict (
+                        x = 0.0,
+                        y = 0.0,
+                        width = 60,
+                        height = 60,
+                        )
                     )
-                )
-            if label:
-                node_item['data']['label'] = label
-            #-------------------------------------
-            graph['nodes'].append(node_item)
+                if label:
+                    node_item['data']['label'] = label
+                #-------------------------------------
+                graph['nodes'].append(node_item)
         #-------------------------------------
         #create edge
         edge_item = dict(

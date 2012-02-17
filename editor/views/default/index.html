@@ -23,7 +23,7 @@
 				</li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
-				<li id="bug"> 
+                <li id="bug" {{="class=fkt_active" if session.debug else ""}}> 
 				<div>switch to debug mode</div>
                 <a href="{{=URL('debug')}}"><img src="{{=URL(request.application, 'static/images/editor', 'bug.png')}}"/></a>
 				&nbsp;

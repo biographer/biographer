@@ -327,6 +327,7 @@ d3.layout.force = function() {
 
     if((alpha *= .99) < .005) {
         bui.settings.straightenEdges = true;
+        return true 
     }
     // simulated annealing, basically
     return (alpha *= .99) < .00499999;

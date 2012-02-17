@@ -32,7 +32,7 @@ def index():
             if action and graph and json_string:
                 undoRegister(action, graph, json_string)
         else:
-            response.flash = 'failed importing %s'%request.vars.import_file.filename
+            response.flash = 'failed importing'
     #----------------------------------
     elif request.vars.biomodel_id:
         biomodel_id = None
@@ -108,15 +108,18 @@ def layout():
     import subprocess
     #-------------------
     if request.vars.layout == "biographer":
-        infile = os.path.join(request.folder, "static","tmp.bgin")
-        outfile = os.path.join(request.folder, "static","tmp.bgout")
-        print request.vars.data
+        filename = request.vars.filename or 'tmp'
+        if request.vars.jsbgn:
+            open(os.path.join(request.folder, "static","%s.jsbgn"%filename), 'w').write(request.vars.jsbgn)
+        infile = os.path.join(request.folder, "static","%s.bgin"%filename)
+        outfile = os.path.join(request.folder, "static","%s.bgout"%filename)
         open(infile, 'w').write(request.vars.data)
-        executable = os.path.join(request.folder, "static","layout")
-        p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-        p.communicate()
-        layout_output = open(outfile, 'r').readlines()
-        return layout_output
+        if not session.debug:
+            executable = os.path.join(request.folder, "static","layout")
+            p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            p.communicate()
+            layout_output = open(outfile, 'r').readlines()
+            return layout_output
 
     elif request.vars.layout == 'graphviz':
         import biographer
@@ -245,28 +248,36 @@ def sbgnml_test():
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     return dict(table = TAG[''](items))
 
-def sbtml_test():
+def sbml_test():
     import os
-    test_path = os.path.join(request.folder, 'static', 'sbml-test')
+    #test_path = os.path.join(request.folder, 'static', 'sbml-test')
+    test_path = os.path.join(request.folder, 'static', 'data_models')
     items = []
-    for fn in os.listdir(os.path.join(test_path, dn)):
+    count = 0
+    for fn in os.listdir(test_path):
         if fn.startswith('BIOMD') and fn.endswith('.xml'):
-            subitems.append(
-                    TR( TH( A(fn, _href=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _target="_blank"), _colspan=2)),
+            if count>300:
+                break
+            count += 1
+            if count<280:
+                continue
+            items.append(
+                    TR( TH( A(fn, _href=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/data_models',fn)), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
                 )
-            subitems.append(
+            items.append(
                 TR(
-                    TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
-                    TD(IFRAME(_src=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0")),
+                    #TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
+                    TD( PRE(
+                        '%s'%IFRAME(_src=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/data_models',fn)), layout="biographer")), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"),
+                        _class='show_iframe'
+                        ),DIV()),
                     ),
                 )
-            subitems.append(
+            items.append(
                 TR(TH(HR(),_colspan=2)),
                 )
-    items.append(TABLE(subitems))
-    items.append(HR())
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
-    return dict(table = TAG[''](items))
+    return dict(table = TAG[''](TABLE(items)))
 
 def user():
     """
