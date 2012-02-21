@@ -77,6 +77,11 @@
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
 				</li>
+				<li id="layout_grid"> 
+				<div>apply <b>grid based</b> layout in browser</div>
+                GRID<br/>...
+				&nbsp;
+				</li>
 				<li id="layout_force"> 
 				<div>apply <b>D3 force based</b> layout in browser</div>
 			    <img src="{{=URL(request.application, 'static/images/editor', 'd3_force.png')}}"/> 	
@@ -202,7 +207,7 @@
 		<td>
 			<ul class="tools_group tools_click">
 				<li class="active" id='cursor'>
-				<div>select<br />double click to move and resize</div>
+				<div>select<br />ctrl+click to move and resize</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'cursor.png')}}" id="cursor" class="tool"/>
 				</li>
 				<li id='edit'>
@@ -243,6 +248,10 @@
 				<li>
 				<div>UnspecifiedEntity (drag me)</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'UnspecifiedEntity.png')}}" id="UnspecifiedEntity" class="tool node"/>
+				</li>
+				<li>
+				<div>Entity (drag me)</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'Process.png')}}" id="RectangularNode" class="tool node"/>
 				</li>
 				<li>
 				<div>Perturbation (drag me)</div>
@@ -467,5 +476,6 @@
 <script type="text/javascript">
 //-------------------------------------------
 {{include 'default/script.js'}}
+{{include 'default/grid.js'}}
 //-------------------------------------------
 </script>
