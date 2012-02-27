@@ -34,10 +34,11 @@ bui.clone = function(degree){
                     if ((edge.identifier() == 'bui.Edge')&&((edge.source().id() == old_node_id)||(edge.target().id() == old_node_id))){
 			// create a new node
 			++auto_indent;
-			var new_node = graph.add(bui.SimpleChemical) ///////////////////////////////////////////FIXME: put in the correct node type
+			var new_node = graph.add(bui[drawable.identifier().substr(4)]) 
 			    .visible(true)
 			    .label(drawable.label())
-			    //.addClass('cloneMarker')
+                .parent(drawable.parent())
+			    .addClass('cloneMarker')
 			    .position(drawable.position().x, drawable.position().y)
 			    .size(drawable.size().height, drawable.size().width);
 			// reroute the edge
