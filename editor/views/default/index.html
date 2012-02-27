@@ -92,6 +92,11 @@
 				<img src="{{=URL(request.application, 'static/images/editor', 'biographer.png')}}"/> 
 				&nbsp;
 				</li>
+				<li id="clone"> 
+                <div>clone objects with deg &gt; 3</div>
+			    Clone<br/>...	
+				&nbsp;
+				</li>
 				<!-- li id="layout_grahviz"> 
 				<div>apply automatic <b>graphviz</b> layout</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'graphviz.png')}}"/> 
@@ -477,5 +482,6 @@
 //-------------------------------------------
 {{include 'default/script.js'}}
 {{include 'default/grid.js'}}
+{{include 'default/bui.clone.js'}}
 //-------------------------------------------
 </script>

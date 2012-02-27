@@ -11,8 +11,10 @@ db.define_table('Reactome', Field('ST_ID','string'),    Field('Title','string'),
 
 
 #########################################################################
-#APP_URL = request.env.http_host+'/biographer'
-APP_URL = 'biographer.biologie.hu-berlin.de'
+if session.debug:
+    APP_URL = request.env.http_host+'/biographer'
+else:
+    APP_URL = 'biographer.biologie.hu-berlin.de'
 #########################################################################
 #this is a config helper 
 db.define_table('config',
@@ -486,6 +488,7 @@ def sbml2jsbgn(sbml_str, rxncon=False):
         graph['nodes'].append(node_item)
     for i in range(len(graph['edges'])):
         graph['edges'][i]['id'] = 'edge%s'%i
+    print graph
     return graph
 
 def sbgnml2jsbgn(sbgnml_str):

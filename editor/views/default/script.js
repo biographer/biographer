@@ -504,6 +504,10 @@ $(document).ready(function() {
         $('#layout_grid').html(orig_html);
     });
     //=========================
+    $('#clone').click(function(){
+        bui.clone(3);
+    });
+    //=========================
     $('#layout_force').click(function(){
      
         orig_html = $('#layout_force').html()
