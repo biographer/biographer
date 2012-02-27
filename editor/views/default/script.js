@@ -505,7 +505,7 @@ $(document).ready(function() {
     });
     //=========================
     $('#clone').click(function(){
-        bui.clone(3);
+        bui.clone(5);
     });
     //=========================
     $('#layout_force').click(function(){
