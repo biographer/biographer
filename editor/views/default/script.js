@@ -310,6 +310,30 @@ function dropFkt(event, ui, element){
     }
 }
 //-------------------------------------------
+function get_nodes_edges(){
+        var nodes = [], edges = [];
+        var all_drawables = graph.drawables();
+        var count = 0;
+        for (var key in all_drawables) {
+            drawable = all_drawables[key];
+            drawable.index = count;
+            ++count;
+            if ((drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')){
+                //ignore
+            }else if (drawable.drawableType()=='node'){
+                var dparent = drawable.parent();
+                if (('absolutePositionCenter' in drawable)&& (!('identifier' in dparent) || dparent.identifier() != 'Complex')){
+                    var pos = drawable.absolutePositionCenter();
+                    drawable.x = pos.x;
+                    drawable.y = pos.y;
+                    nodes.push(drawable);
+                }
+            }else if(drawable.identifier() == 'bui.Edge'){
+                edges.push(drawable);
+            }
+        }
+        return {nodes:nodes, edges:edges}
+}
 //-------------------------------------------
 var graphData =  {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
    nodes : [
@@ -470,36 +494,29 @@ $(document).ready(function() {
         //graph.clear();//FIXME this does not work 
     });
     //=========================
+    $('#layout_grid').click(function(){
+        nodes_edges = get_nodes_edges();
+        orig_html = $('#layout_grid').html()
+        $('#layout_grid').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}')
+        bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
+        //bui.grid.layout();
+        //bui.grid.num_intersections();
+        $('#layout_grid').html(orig_html);
+    });
+    //=========================
     $('#layout_force').click(function(){
-      
+     
+        orig_html = $('#layout_force').html()
+        $('#layout_force').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}')
+        nodes_edges = get_nodes_edges();
         var nodes = [], links = [];
-        var all_drawables = graph.drawables();
-        var count = 0;
-        for (var key in all_drawables) {
-            drawable = all_drawables[key];
-            drawable.index = count;
-            ++count;
-            if ((drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')){
-                //ignore
-            }else if (drawable.drawableType()=='node'){
-                var dparent = drawable.parent();
-                if (dparent.identifier()!='Complex'){
-                    var pos = drawable.absolutePositionCenter();
-                    drawable.x = pos.x;
-                    drawable.y = pos.y;
-                    nodes.push(drawable);
-                }
-            }else if(drawable.identifier() == 'bui.Edge'){
-                links.push(drawable);
-            }
-        }
         //alert('in nodes '+nodes.length);
         bui.settings.straightenEdges = false;
         var force = d3.layout.force()
           .charge(-800)
           .linkDistance(150)
-          .nodes(nodes)
-          .links(links)
+          .nodes(nodes_edges.nodes)
+          .links(nodes_edges.edges)
           .size([$('#canvas').width(), $('#canvas').height()])
           .start();
         
@@ -588,7 +605,7 @@ $(document).ready(function() {
     });
     //=========================
     $('#load_json_string').click(function(){
-        redrawGraph();
+        redrawGraph(JSON.parse($('#json_string').val()));
         undoPush('loaded graph from JSON string');
         $.modal.close()
     });

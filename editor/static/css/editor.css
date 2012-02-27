@@ -1,4 +1,6 @@
-
+pre {
+    background-color: #eee;
+}
 div.flash {
     font-weight: bold;
     display: none;

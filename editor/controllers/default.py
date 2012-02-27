@@ -114,12 +114,11 @@ def layout():
         infile = os.path.join(request.folder, "static","%s.bgin"%filename)
         outfile = os.path.join(request.folder, "static","%s.bgout"%filename)
         open(infile, 'w').write(request.vars.data)
-        if not session.debug:
-            executable = os.path.join(request.folder, "static","layout")
-            p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-            p.communicate()
-            layout_output = open(outfile, 'r').readlines()
-            return layout_output
+        executable = os.path.join(request.folder, "static","layout")
+        p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        p.communicate()
+        layout_output = open(outfile, 'r').readlines()
+        return layout_output
 
     elif request.vars.layout == 'graphviz':
         import biographer
@@ -254,28 +253,29 @@ def sbml_test():
     test_path = os.path.join(request.folder, 'static', 'data_models')
     items = []
     count = 0
-    for fn in os.listdir(test_path):
-        if fn.startswith('BIOMD') and fn.endswith('.xml'):
-            if count>300:
-                break
-            count += 1
-            if count<280:
-                continue
-            items.append(
-                    TR( TH( A(fn, _href=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/data_models',fn)), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
-                )
-            items.append(
-                TR(
-                    #TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
-                    TD( PRE(
-                        '%s'%IFRAME(_src=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/data_models',fn)), layout="biographer")), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"),
-                        _class='show_iframe'
-                        ),DIV()),
-                    ),
-                )
-            items.append(
-                TR(TH(HR(),_colspan=2)),
-                )
+    filenames = [fn for fn in os.listdir(test_path) if fn.startswith('BIOMD') and fn.endswith('.xml')]
+    filenames.sort()
+    for fn in filenames:
+        #if count>380:
+        #    break
+        #count += 1
+        #if count<360:
+        #    continue
+        items.append(
+                TR( TH( A(fn, _href=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/data_models',fn)), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
+            )
+        items.append(
+            TR(
+                #TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
+                TD( PRE(
+                    '%s'%IFRAME(_src=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/data_models',fn)), layout="biographer")), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"),
+                    _class='show_iframe'
+                    ),DIV()),
+                ),
+            )
+        items.append(
+            TR(TH(HR(),_colspan=2)),
+            )
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     return dict(table = TAG[''](TABLE(items)))
 

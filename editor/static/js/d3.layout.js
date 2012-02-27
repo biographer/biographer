@@ -327,6 +327,7 @@ d3.layout.force = function() {
 
     if((alpha *= .99) < .005) {
         bui.settings.straightenEdges = true;
+        $('#layout_force').html(orig_html);
         return true 
     }
     // simulated annealing, basically
@@ -494,7 +495,8 @@ d3.layout.force = function() {
     d3_layout_forceDragForce = force;
   }
 
-  return d3.rebind(force, event, "on");
+  //return d3.rebind(force, event, "on");
+  return force
 };
 
 var d3_layout_forceDragForce,
