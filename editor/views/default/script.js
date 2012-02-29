@@ -505,7 +505,17 @@ $(document).ready(function() {
     });
     //=========================
     $('#clone').click(function(){
-        bui.clone(5);
+        var selected_drawables = {};
+        var flag = false;
+        for (var key in all_drawables) {
+            drawable = all_drawables[key]
+            if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
+                flag = true;
+                selected_drawables[drawable.id()] = 1;
+            }
+        }
+        if(flag == false) bui.clone(5);
+        else bui.clone(5, selected_drawables)
     });
     //=========================
     $('#layout_force').click(function(){
