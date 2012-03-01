@@ -57,7 +57,7 @@
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
                 listenerIdentifier(this));
-        var privates = this._privates(identifier);
+        //var privates = this._privates(identifier);
 
         initialPaint.call(this);
 

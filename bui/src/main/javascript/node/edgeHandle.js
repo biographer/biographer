@@ -54,6 +54,9 @@
     };
 
     bui.EdgeHandle.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         includeInJSON : false,
         _circle : null,
         _forceRectangular : true,

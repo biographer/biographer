@@ -129,7 +129,7 @@
      *   generated element.
      */
     bui.connectingArcs.absoluteStimulation = function() {
-        return createPathWithData('M0,0 L0,20 L10,15 L10,5 L0,0 Z M10,0 L10,20 L30,10Z', 20, 10, 40, 20,
+        return createPathWithData('M0,0 L0,20 L10,15 L10,5 L0,0 Z M10,0 L10,20 L25,10Z', 25, 10, 35, 20,
                 bui.settings.css.classes.connectingArcs.stimulation);
     };
     bui.connectingArcs.absoluteStimulation.id = 'absoluteStimulation';
@@ -200,7 +200,7 @@
      *   generated element.
      */
     bui.connectingArcs.inhibition = function() {
-        return createPathWithData('M0,0V20H1V0Z', 0, 10, 20, 20);
+        return createPathWithData('M0,0 V20 H1 V0 ZM22,0', 2, 10, 20, 22);
     };
     
     /**

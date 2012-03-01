@@ -15,8 +15,8 @@
             cpidx[n.id]=ccc;
             s = s + ccc + " " + n.id + "\n";
             if (n.data.subnodes){
-               for (var i in n.data.subnodes){
-                  cphash[n.data.subnodes[i]]=ccc;
+               for (var j in n.data.subnodes){
+                  cphash[n.data.subnodes[j]]=ccc;
                }
             }
             ccc++;
@@ -67,10 +67,10 @@
                case (bui.connectingArcs.stimulation.id) :
                   type="Activator";
                   break;
-               case (bui.connectingArcs.necessarystimulation.id) :
+               case (bui.connectingArcs.necessaryStimulation.id) :
                   type="Activator";
                   break;
-               case (bui.connectingArcs.modulation.id) :
+               case (bui.connectingArcs.control.id) :
                   type="Activator";
             }
          }

@@ -317,8 +317,8 @@
         identifier : function() {
             return identifier;
         },
-        _minWidth : 10,
-        _minHeight : 10,
+        _minWidth : 1,
+        _minHeight : 1,
         _forceRectangular : false,
         _enableResizing : true,
         _enableDragging : true,

@@ -574,7 +574,7 @@
          * @return {Object} The exported graph.
          */
         toJSON : function(useDataObject) {
-            var json = {}, edges = [], nodes = [];
+            var json = {sbgnlang:bui.settings.SBGNlang}, edges = [], nodes = [];
 
             var dataFormat = bui.settings.dataFormat;
             updateJson(json, dataFormat.nodes, nodes);

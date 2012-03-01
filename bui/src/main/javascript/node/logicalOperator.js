@@ -60,6 +60,7 @@
         if(this.label() == 'τ'){
             this.addClass('delay');
         }
+        this.addClass('LogicalOperator');
 
 
         var widthHeight = bui.settings.style.edgeHandleRadius * 2;
@@ -67,6 +68,9 @@
     };
 
     bui.LogicalOperator.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         _minWidth : 14,
         _minHeight : 14,
         includeInJSON : false,

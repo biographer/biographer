@@ -144,6 +144,9 @@
     };
 
     bui.Labelable.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         _label : '',
         _adaptSizeToLabel : false,
         _svgClasses : '',

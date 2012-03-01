@@ -41,7 +41,7 @@
 
     /**
      * @class
-     * Class for SBGN simple chemicals. Please note that the width and height
+     * Class for SBGN empty set. Please note that the width and height
      * values must be equal.
      *
      * @extends bui.Labelable

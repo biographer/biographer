@@ -69,7 +69,18 @@
                 privates.edgeHandlesVisible === true;
         var handles = privates.handles;
         for (var i = 0; i < handles.length; i++) {
-            handles[i].visible(edgeHandlesVisible);
+            //handles[i].visible(edgeHandlesVisible);
+            //FIXME horrible horrible hack, but the whole edge disappears if the node is set to invisible!
+            var size = handles[i].size();
+            if (size.width == 1){
+                if(! handles[i].hasClass('Outcome')) handles[i].size(12,12);
+            } else{
+                if(! handles[i].hasClass('Outcome')) handles[i].size(1,1);
+            }
+        }
+        var lines = privates.lines;
+        for (var i = 0; i < lines.length; i++) {
+            lines[i].visible(true);
         }
     };
 
@@ -211,7 +222,6 @@
      * @private line clicked listener
      */
     var lineClicked = function(line, event) {
-        // deactivated functionality based on Falko's request
         if (event.ctrlKey === true) {
             this.edgeHandlesVisible(!this.edgeHandlesVisible());
         }
@@ -244,18 +254,20 @@
      *
      */
     var recalculatePoints = function() {
-        var privates = this._privates(identifier);
-        
-        if((privates.handles.length > 0) && (privates.lines[0].source() != null) && (privates.lines[privates.lines.length - 1].target() != null)){
-            var sp = privates.lines[0].source().absoluteCenter();
-            var tp = privates.lines[privates.lines.length - 1].target().absoluteCenter();
-            var devby = 1/(privates.handles.length+3);
-            var lx = tp.x-sp.x;
-            var ly = tp.y-sp.y;
-            for(var i = 0; i<privates.handles.length; i++){
-                privates.handles[i].positionCenter(sp.x+((i+2)*devby*lx),sp.y+((i+2)*devby*ly));
+        if (bui.settings.straightenEdges){
+            var privates = this._privates(identifier);
+            
+            if((privates.handles.length > 0) && (privates.lines[0].source() != null) && (privates.lines[privates.lines.length - 1].target() != null)){
+                var sp = privates.lines[0].source().absoluteCenter();
+                var tp = privates.lines[privates.lines.length - 1].target().absoluteCenter();
+                var devby = 1/(privates.handles.length+3);
+                var lx = tp.x-sp.x;
+                var ly = tp.y-sp.y;
+                for(var i = 0; i<privates.handles.length; i++){
+                    privates.handles[i].positionCenter(sp.x+((i+2)*devby*lx),sp.y+((i+2)*devby*ly));
+                }
+                redrawLines.call(this);
             }
-            redrawLines.call(this);
         }
     }
 
@@ -287,6 +299,7 @@
         this.bind(bui.Drawable.ListenerType.visible,
                 visibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
+        
     };
 
     bui.Edge.prototype = {
@@ -304,6 +317,7 @@
                 //-----------------------------
                 handle = this.graph()
                     .add(bui.EdgeHandle)
+                    //.bind(bui.Node.ListenerType.absolutePosition, listener, listenerIdentifier(this))
                     .size(12,12)
                     .visible(true);
                 handle.addClass('Outcome');// the stylesheet mus fill the circle black
@@ -318,7 +332,8 @@
             } else{
                 handle = this.graph()
                     .add(bui.EdgeHandle)
-                    .visible(privates.edgeHandlesVisible);
+                    //.bind(bui.Node.ListenerType.absolutePosition, listener, listenerIdentifier(this))
+                    .visible(true);
                 handle.addClass('edgeHandle');//let the stylesheet make it grey
             }
             handle.positionCenter(x, y);

@@ -20,6 +20,13 @@ bui.settings = {
      * this makes minor differnces in e.g. how StateVariable will be drawn
      */
     SBGNlang : 'PD',
+
+    /**
+     * @field
+     *  if this is true all handles on edges (not splines) will be distributed equally on a straight line from source to target as soon as the source or target are moved
+     */
+    straightenEdges : true,
+
     /**
      * @field
      * Whether or not the bui.Graph will be initialised in high or low

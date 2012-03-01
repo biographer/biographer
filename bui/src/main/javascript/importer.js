@@ -378,6 +378,8 @@
         while ((edge_stack.length > 0) && (edge_stack.length<last_len)){
             last_len = edge_stack.length;
             for(var i = 0; i<edge_stack.length;i++){
+                var source_edge = undefined;
+                var target_edge = undefined;
                 var edgeJSON = edge_stack[i];
                 //alert(edge_stack.length+'Processing '+JSON.stringify(edgeJSON));
                 //---------------------------
@@ -397,7 +399,7 @@
                 }else{ target = generatedNodes[edgeJSON.target]; }
 
                 if(target === undefined){
-                    var target_edge = generatedEdges[edgeJSON.target];
+                    target_edge = generatedEdges[edgeJSON.target];
                     if (target_edge === undefined) continue;  
                     target = target_edge.addPoint(0,0);
                 }
@@ -418,7 +420,7 @@
                 }else{ source = generatedNodes[edgeJSON.source]; }
 
                 if(source===undefined){
-                    var source_edge = generatedEdges[edgeJSON.source];
+                    source_edge = generatedEdges[edgeJSON.source];
                     if (source_edge === undefined) continue;  
                     source = source_edge.addPoint(0,0, 'Outcome');//FIXME this does not give the proper positions ... y???
                 }
@@ -427,6 +429,10 @@
                 if ((source === undefined)||(target === undefined)) continue
                 rm_elem = edge_stack.splice(i,1);
                 //alert('success '+JSON.stringify(rm_elem));
+                //check if edge source and target produce overlaying edges
+                /*if(source_edge != undefined || target_edge != undefined){
+                    if source_edge.source()
+                }*/
                 edge = graph.add(bui.Edge);
                 edge.source(source).target(target);//.json(edgeJSON);
                 var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
