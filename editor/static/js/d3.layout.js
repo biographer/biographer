@@ -328,6 +328,13 @@ d3.layout.force = function() {
     if((alpha *= .99) < .005) {
         bui.settings.straightenEdges = true;
         $('#layout_force').html(orig_html);
+        var all_drawables = graph.drawables();
+        for (var key in all_drawables) {
+            drawable = all_drawables[key];
+            if(drawable.identifier() == 'bui.Edge'){
+                drawable.recalculatePoints()
+            }
+        }
         return true 
     }
     // simulated annealing, basically

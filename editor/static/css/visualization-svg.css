@@ -71,6 +71,9 @@ line {
     fill: none;
     stroke: black;
 }
+.line.mRED {
+    stroke: #f00;
+}
 
 .lineHover {
     stroke-width: 4;
@@ -120,7 +123,7 @@ g.Silver > path,g.Silver > circle,g.Silver > rect {
 g.Gray > path,g.Gray > circle,g.Gray > rect {
 	fill: #808080;
 }
-g.Red > path,g.Red > circle,g.Red > rect {
+g.Red > path,g.Red > circle,g.Red > rect, g.Red >ellipse {
 	fill: #FF0000;
 }
 g.Maroon > path,g.Maroon > circle,g.Maroon > rect {

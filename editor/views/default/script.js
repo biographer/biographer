@@ -318,7 +318,7 @@ function get_nodes_edges(){
             drawable = all_drawables[key];
             drawable.index = count;
             ++count;
-            if ((drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')){
+            if ((drawable.identifier()=='bui.EdgeHandle')||(drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')){
                 //ignore
             }else if (drawable.drawableType()=='node'){
                 var dparent = drawable.parent();

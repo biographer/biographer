@@ -62,6 +62,5 @@ bui.clone = function(degree, select_drawables){
                 }
             }
         }
-        alert('done');
         graph.unsuspendRedraw(suspendHandle);
 } 

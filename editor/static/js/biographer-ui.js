@@ -2817,8 +2817,8 @@ var getSBOForMarkerId = function(id) {
         identifier : function() {
             return identifier;
         },
-        _minWidth : 10,
-        _minHeight : 10,
+        _minWidth : 1,
+        _minHeight : 1,
         _forceRectangular : false,
         _enableResizing : true,
         _enableDragging : true,
@@ -3952,6 +3952,9 @@ var getSBOForMarkerId = function(id) {
     };
 
     bui.EdgeHandle.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         includeInJSON : false,
         _circle : null,
         _forceRectangular : true,
@@ -6595,7 +6598,18 @@ var getSBOForMarkerId = function(id) {
                 privates.edgeHandlesVisible === true;
         var handles = privates.handles;
         for (var i = 0; i < handles.length; i++) {
-            handles[i].visible(edgeHandlesVisible);
+            //handles[i].visible(edgeHandlesVisible);
+            //FIXME horrible horrible hack, but the whole edge disappears if the node is set to invisible!
+            var size = handles[i].size();
+            if (size.width == 1){
+                if(! handles[i].hasClass('Outcome')) handles[i].size(12,12);
+            } else{
+                if(! handles[i].hasClass('Outcome')) handles[i].size(1,1);
+            }
+        }
+        var lines = privates.lines;
+        for (var i = 0; i < lines.length; i++) {
+            lines[i].visible(true);
         }
     };
 
@@ -6737,7 +6751,6 @@ var getSBOForMarkerId = function(id) {
      * @private line clicked listener
      */
     var lineClicked = function(line, event) {
-        // deactivated functionality based on Falko's request
         if (event.ctrlKey === true) {
             this.edgeHandlesVisible(!this.edgeHandlesVisible());
         }
@@ -6815,6 +6828,7 @@ var getSBOForMarkerId = function(id) {
         this.bind(bui.Drawable.ListenerType.visible,
                 visibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
+        
     };
 
     bui.Edge.prototype = {
@@ -6832,6 +6846,7 @@ var getSBOForMarkerId = function(id) {
                 //-----------------------------
                 handle = this.graph()
                     .add(bui.EdgeHandle)
+                    //.bind(bui.Node.ListenerType.absolutePosition, listener, listenerIdentifier(this))
                     .size(12,12)
                     .visible(true);
                 handle.addClass('Outcome');// the stylesheet mus fill the circle black
@@ -6846,7 +6861,8 @@ var getSBOForMarkerId = function(id) {
             } else{
                 handle = this.graph()
                     .add(bui.EdgeHandle)
-                    .visible(privates.edgeHandlesVisible);
+                    //.bind(bui.Node.ListenerType.absolutePosition, listener, listenerIdentifier(this))
+                    .visible(false);
                 handle.addClass('edgeHandle');//let the stylesheet make it grey
             }
             handle.positionCenter(x, y);
@@ -7406,6 +7422,8 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         while ((edge_stack.length > 0) && (edge_stack.length<last_len)){
             last_len = edge_stack.length;
             for(var i = 0; i<edge_stack.length;i++){
+                var source_edge = undefined;
+                var target_edge = undefined;
                 var edgeJSON = edge_stack[i];
                 //alert(edge_stack.length+'Processing '+JSON.stringify(edgeJSON));
                 //---------------------------
@@ -7425,7 +7443,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 }else{ target = generatedNodes[edgeJSON.target]; }
 
                 if(target === undefined){
-                    var target_edge = generatedEdges[edgeJSON.target];
+                    target_edge = generatedEdges[edgeJSON.target];
                     if (target_edge === undefined) continue;  
                     target = target_edge.addPoint(0,0);
                 }
@@ -7446,7 +7464,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 }else{ source = generatedNodes[edgeJSON.source]; }
 
                 if(source===undefined){
-                    var source_edge = generatedEdges[edgeJSON.source];
+                    source_edge = generatedEdges[edgeJSON.source];
                     if (source_edge === undefined) continue;  
                     source = source_edge.addPoint(0,0, 'Outcome');//FIXME this does not give the proper positions ... y???
                 }
@@ -7455,6 +7473,10 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 if ((source === undefined)||(target === undefined)) continue
                 rm_elem = edge_stack.splice(i,1);
                 //alert('success '+JSON.stringify(rm_elem));
+                //check if edge source and target produce overlaying edges
+                /*if(source_edge != undefined || target_edge != undefined){
+                    if source_edge.source()
+                }*/
                 edge = graph.add(bui.Edge);
                 edge.source(source).target(target);//.json(edgeJSON);
                 var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
