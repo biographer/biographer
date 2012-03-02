@@ -4510,9 +4510,9 @@ var getSBOForMarkerId = function(id) {
         var pathData = [
             'M', height/2,height,         // topleft
             'L', width-height/2, height, //draw _ on top
-            'C', width+height/3, height, width+height/3,0, width-height/2, 0,
+            'C', width+height/4, height, width+height/4,0, width-height/2, 0,
             'L', height/2, 0,          //draw _ to left
-            'C', -height/3, 0, -height/3, height, height/2, height, 
+            'C', -height/4, 0, -height/4, height, height/2, height, 
             'Z'].join(' '); //draw \ to middle left
 
         this._privates(identifier).path.setAttributeNS(null, 'd', pathData);
@@ -4539,13 +4539,13 @@ var getSBOForMarkerId = function(id) {
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass('VariableValue');
-        this.adaptSizeToLabel(true);
+        //this.adaptSizeToLabel(true);
     };
     bui.VariableValue.prototype = {
         identifier : function() {
             return identifier;
         },
-        _minWidth : 1,
+        _minWidth : 10,
         _minHeight : 14,
         _enableResizing : true,
         _adaptSizeToLabel : false,
@@ -5238,8 +5238,6 @@ var getSBOForMarkerId = function(id) {
      */
     bui.StateVariableER = function() {
         bui.StateVariableER.superClazz.apply(this, arguments);
-        this.topRadius(7);
-        this.bottomRadius(7);
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass(bui.settings.css.classes.statevariable);
@@ -5249,11 +5247,11 @@ var getSBOForMarkerId = function(id) {
         identifier : function() {
             return identifier;
         },
-        _minWidth : 14,
+        _minWidth : 10,
         _minHeight : 14,
         auxiliaryUnit : true,
         includeInJSON : false,
-        _enableResizing : false,
+        _enableResizing : true,
 
         // override
         toJSON : function() {
@@ -5276,7 +5274,7 @@ var getSBOForMarkerId = function(id) {
             return json;
         }
     };
-    bui.util.setSuperClass(bui.StateVariableER, bui.RectangularNode);
+    bui.util.setSuperClass(bui.StateVariableER, bui.VariableValue);
 })(bui);
 
 (function(bui) {
@@ -7511,9 +7509,9 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         }
         //recalculate all edge points this should be prevented if points were specified
         for(edge_id in generatedEdges){
-            edge = generatedEdges[edge_id];
+            var edge = generatedEdges[edge_id];
             if (edge.identifier() == 'bui.Edge'){
-                handles = edge.handles();
+                var handles = edge.handles();
                 for(var i=0; i<handles.length; i++){
                     var curpos = handles[i].positionCenter(); 
                     if(curpos.x==0 && curpos.y==0){

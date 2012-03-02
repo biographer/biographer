@@ -381,6 +381,17 @@ $(document).ready(function() {
     }
     showUndoRedo();
     //=========================
+    $('#hide_handles').click(function(){
+        var all_drawables = graph.drawables();
+        for (var key in all_drawables) {
+            drawable = all_drawables[key]
+            if (drawable.identifier()=='bui.Edge'){
+                drawable.edgeHandlesVisible(false)
+            }
+            //drawable.recalculatePoints();
+        }
+    });
+    //=========================
     $('#straighten_and_distribute').click(function(){
         if($(this).hasClass('fkt_active')){
             $(this).removeClass('fkt_active');
