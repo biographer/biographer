@@ -7021,12 +7021,13 @@ addMapping(nodeMapping, [110001], bui.VariableValue);
 addMapping(nodeMapping, [110002, 110004], bui.Tag);
 //SBO:0000395 ! encapsulating process
 addMapping(nodeMapping, [395, 412,110003], bui.RectangularNode);//Annotation
-addMapping(nodeMapping, [177], bui.Association);
+//SBO:0000409 ! interaction outcome
+addMapping(nodeMapping, [177,409], bui.Association);
 addMapping(nodeMapping, [180], bui.Dissociation);
 addMapping(nodeMapping, [174,173,238,225], bui.LogicalOperator);
 addMapping(nodeMapping, [291], bui.EmptySet);
+addMapping(nodeMapping, [110005], bui.EdgeHandle);
 addMapping(processNodeMapping, [375, 167], bui.Process);
-addMapping(processNodeMapping, [-1], bui.EdgeHandle);
 
 
 

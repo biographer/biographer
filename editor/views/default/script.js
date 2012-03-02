@@ -318,7 +318,7 @@ function get_nodes_edges(){
             drawable = all_drawables[key];
             drawable.index = count;
             ++count;
-            if ((drawable.identifier()=='bui.EdgeHandle')||(drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')){
+            if ((drawable.identifier()=='bui.EdgeHandle')||(drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')||(drawable.identifier() == 'bui.StateVariableER')){
                 //ignore
             }else if (drawable.drawableType()=='node'){
                 var dparent = drawable.parent();
@@ -329,6 +329,17 @@ function get_nodes_edges(){
                     nodes.push(drawable);
                 }
             }else if(drawable.identifier() == 'bui.Edge'){
+                if(drawable.source().identifier() == 'bui.StateVariableER'){
+                    alert('sv, p '+drawable.source().parent().label());
+                    drawable.lsource = drawable.source().parent();
+                }else {
+                    drawable.lsource = drawable.source()
+                }
+                if(drawable.target().identifier() == 'bui.StateVariableER'){
+                    drawable.ltarget = drawable.target().parent();
+                }else {
+                    drawable.ltarget = drawable.target()
+                }
                 edges.push(drawable);
             }
         }

@@ -269,8 +269,8 @@ d3.layout.force = function() {
     // gauss-seidel relaxation for links
     for (i = 0; i < m; ++i) {
       o = links[i];
-      s = o.source();
-      t = o.target();
+      s = o.lsource;
+      t = o.ltarget;
       x = t.x - s.x;
       y = t.y - s.y;
       if (l = (x * x + y * y)) {
@@ -318,14 +318,18 @@ d3.layout.force = function() {
       }
     }
     //biographer interface, set node positions
-    for(var i=0; i<n; ++i){
+    /*for(var i=0; i<n; ++i){
         o = nodes[i];
         o.absolutePositionCenter(o.x,o.y)
-    }
+    }*/
     console.log('alpha: '+alpha);
     //event.tick({type: "tick", alpha: alpha});
 
     if((alpha *= .99) < .005) {
+        for(var i=0; i<n; ++i){
+            o = nodes[i];
+            o.absolutePositionCenter(o.x,o.y)
+        }
         bui.settings.straightenEdges = true;
         $('#layout_force').html(orig_html);
         var all_drawables = graph.drawables();
@@ -417,12 +421,12 @@ d3.layout.force = function() {
     strengths = [];
     for (i = 0; i < m; ++i) {
       o = links[i];
-      if (typeof o.source() == "number") o.source() = nodes[o.source()];
-      if (typeof o.target() == "number") o.target() = nodes[o.target()];
+      if (typeof o.lsource == "number") o.lsource = nodes[o.lsource];
+      if (typeof o.ltarget == "number") o.ltarget = nodes[o.ltarget];
       distances[i] = linkDistance.call(this, o, i);
       strengths[i] = linkStrength.call(this, o, i);
-      ++o.source().weight;
-      ++o.target().weight;
+      ++o.lsource.weight;
+      ++o.ltarget.weight;
     }
 
     for (i = 0; i < n; ++i) {
@@ -463,8 +467,8 @@ d3.layout.force = function() {
         }
         for (j = 0; j < m; ++j) {
           var o = links[j];
-          neighbors[o.source().index].push(o.target());
-          neighbors[o.target().index].push(o.source());
+          neighbors[o.lsource.index].push(o.ltarget);
+          neighbors[o.ltarget.index].push(o.lsource);
         }
       }
       return neighbors[i];
