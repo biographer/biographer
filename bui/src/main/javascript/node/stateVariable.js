@@ -115,8 +115,6 @@
      */
     bui.StateVariableER = function() {
         bui.StateVariableER.superClazz.apply(this, arguments);
-        this.topRadius(7);
-        this.bottomRadius(7);
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass(bui.settings.css.classes.statevariable);
@@ -126,11 +124,11 @@
         identifier : function() {
             return identifier;
         },
-        _minWidth : 14,
+        _minWidth : 10,
         _minHeight : 14,
         auxiliaryUnit : true,
         includeInJSON : false,
-        _enableResizing : false,
+        _enableResizing : true,
 
         // override
         toJSON : function() {
@@ -153,5 +151,5 @@
             return json;
         }
     };
-    bui.util.setSuperClass(bui.StateVariableER, bui.RectangularNode);
+    bui.util.setSuperClass(bui.StateVariableER, bui.VariableValue);
 })(bui);

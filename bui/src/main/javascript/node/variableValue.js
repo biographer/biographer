@@ -22,9 +22,9 @@
         var pathData = [
             'M', height/2,height,         // topleft
             'L', width-height/2, height, //draw _ on top
-            'C', width+height/3, height, width+height/3,0, width-height/2, 0,
+            'C', width+height/4, height, width+height/4,0, width-height/2, 0,
             'L', height/2, 0,          //draw _ to left
-            'C', -height/3, 0, -height/3, height, height/2, height, 
+            'C', -height/4, 0, -height/4, height, height/2, height, 
             'Z'].join(' '); //draw \ to middle left
 
         this._privates(identifier).path.setAttributeNS(null, 'd', pathData);
@@ -51,13 +51,13 @@
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass('VariableValue');
-        this.adaptSizeToLabel(true);
+        //this.adaptSizeToLabel(true);
     };
     bui.VariableValue.prototype = {
         identifier : function() {
             return identifier;
         },
-        _minWidth : 1,
+        _minWidth : 10,
         _minHeight : 14,
         _enableResizing : true,
         _adaptSizeToLabel : false,
