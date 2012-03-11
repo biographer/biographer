@@ -527,6 +527,8 @@ $(document).ready(function() {
     });
     //=========================
     $('#clone').click(function(){
+        orig_html = $('#clone').html()
+        $('#clone').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}')
         var selected_drawables = {};
         var flag = false;
         for (var key in all_drawables) {
@@ -538,6 +540,7 @@ $(document).ready(function() {
         }
         if(flag == false) bui.clone(5);
         else bui.clone(5, selected_drawables)
+        $('#clone').html(orig_html);
     });
     //=========================
     $('#layout_force').click(function(){
