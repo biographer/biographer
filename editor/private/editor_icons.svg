@@ -170,14 +170,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6568544"
-     inkscape:cx="429.67186"
-     inkscape:cy="799.95152"
+     inkscape:zoom="8.0000002"
+     inkscape:cx="509.1626"
+     inkscape:cy="619.77632"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1054"
+     inkscape:window-width="1366"
+     inkscape:window-height="713"
      inkscape:window-x="0"
      inkscape:window-y="26"
      inkscape:window-maximized="1" />
@@ -948,13 +948,13 @@
            style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
       </g>
       <image
-         sodipodi:absref="/home/fkrause/Dev/biographer-editor/private/json160.gif"
+         sodipodi:absref="/home/select/Dev/biographer-editor/private/json160.gif"
          xlink:href="json160.gif"
-         width="16.282143"
-         height="16.282143"
-         id="image4606"
+         y="355.62958"
          x="441.27188"
-         y="355.62958" />
+         id="image4606"
+         height="16.282143"
+         width="16.282143" />
       <g
          transform="matrix(0.82646749,0,0,0.82646749,71.126843,64.96684)"
          id="g3226">
@@ -973,13 +973,13 @@
              style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
         </g>
         <image
-           sodipodi:absref="/home/fkrause/Dev/biographer-editor/private/json160.gif"
+           sodipodi:absref="/home/select/Dev/biographer-editor/private/json160.gif"
            xlink:href="json160.gif"
-           width="19.700888"
-           height="19.700888"
-           id="image3224"
+           y="351.69287"
            x="447.86401"
-           y="351.69287" />
+           id="image3224"
+           height="19.700888"
+           width="19.700888" />
       </g>
     </g>
     <g
@@ -3716,5 +3716,81 @@
        d="m 488.98726,273.98271 16.77544,12.25898"
        id="path4916-4"
        inkscape:connector-curvature="0" />
+    <g
+       id="g4865"
+       transform="translate(-0.43751,1.12499)" />
+    <g
+       id="g4900"
+       inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/grid.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <path
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+         d="m 550.75,418.61221 0,24"
+         id="path4816"
+         inkscape:connector-curvature="0"
+         transform="translate(-0.43751,1.12499)" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+         d="m 544.3125,442.61221 0,-24"
+         id="rect4037"
+         inkscape:connector-curvature="0"
+         transform="translate(-0.43751,1.12499)" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+         d="m 537.875,442.61221 0,-24"
+         id="rect4037-8"
+         inkscape:connector-curvature="0"
+         transform="translate(-0.43751,1.12499)" />
+      <g
+         transform="matrix(0,1,-1,0,960.61219,-109.13779)"
+         id="g4860">
+        <path
+           style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+           d="m 547.31249,404.7372 0,24"
+           id="path4816-9"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+           d="m 540.87499,428.7372 0,-24"
+           id="rect4037-2"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0"
+           d="m 534.43749,428.7372 0,-24"
+           id="rect4037-8-9"
+           inkscape:connector-curvature="0" />
+      </g>
+      <path
+         transform="matrix(0.96189874,0,0,1.0306058,37.430501,-25.709771)"
+         d="m 522.625,443.86221 a 2.8125,2.625 0 1 1 -5.625,0 2.8125,2.625 0 1 1 5.625,0 z"
+         sodipodi:ry="2.625"
+         sodipodi:rx="2.8125"
+         sodipodi:cy="443.86221"
+         sodipodi:cx="519.8125"
+         id="path4870"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="arc" />
+      <path
+         transform="matrix(0.96189874,0,0,1.0306058,43.868001,-32.147271)"
+         d="m 522.625,443.86221 a 2.8125,2.625 0 1 1 -5.625,0 2.8125,2.625 0 1 1 5.625,0 z"
+         sodipodi:ry="2.625"
+         sodipodi:rx="2.8125"
+         sodipodi:cy="443.86221"
+         sodipodi:cx="519.8125"
+         id="path4870-7"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="arc" />
+      <path
+         transform="matrix(0.96189874,0,0,1.0306058,50.305501,-19.272271)"
+         d="m 522.625,443.86221 a 2.8125,2.625 0 1 1 -5.625,0 2.8125,2.625 0 1 1 5.625,0 z"
+         sodipodi:ry="2.625"
+         sodipodi:rx="2.8125"
+         sodipodi:cy="443.86221"
+         sodipodi:cx="519.8125"
+         id="path4870-9"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="arc" />
+    </g>
   </g>
 </svg>

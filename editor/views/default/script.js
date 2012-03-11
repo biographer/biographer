@@ -521,9 +521,13 @@ $(document).ready(function() {
         orig_html = $('#layout_grid').html()
         $('#layout_grid').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}')
         bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
-        //bui.grid.layout();
-        //bui.grid.num_intersections();
+        bui.grid.layout();
         $('#layout_grid').html(orig_html);
+    });
+    //=========================
+    $('#get_grid').click(function(){
+        nodes_edges = get_nodes_edges();
+        bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
     });
     //=========================
     $('#clone').click(function(){
