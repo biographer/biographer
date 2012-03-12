@@ -330,7 +330,7 @@ function get_nodes_edges(){
                 }
             }else if(drawable.identifier() == 'bui.Edge'){
                 if(drawable.source().identifier() == 'bui.StateVariableER'){
-                    alert('sv, p '+drawable.source().parent().label());
+                    //alert('sv, p '+drawable.source().parent().label());
                     drawable.lsource = drawable.source().parent();
                 }else {
                     drawable.lsource = drawable.source()
