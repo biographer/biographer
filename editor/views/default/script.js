@@ -318,7 +318,7 @@ function get_nodes_edges(){
             drawable = all_drawables[key];
             drawable.index = count;
             ++count;
-            if ((drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')){
+            if ((drawable.identifier()=='bui.EdgeHandle')||(drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')||(drawable.identifier() == 'bui.StateVariableER')){
                 //ignore
             }else if (drawable.drawableType()=='node'){
                 var dparent = drawable.parent();
@@ -329,6 +329,17 @@ function get_nodes_edges(){
                     nodes.push(drawable);
                 }
             }else if(drawable.identifier() == 'bui.Edge'){
+                if(drawable.source().identifier() == 'bui.StateVariableER'){
+                    //alert('sv, p '+drawable.source().parent().label());
+                    drawable.lsource = drawable.source().parent();
+                }else {
+                    drawable.lsource = drawable.source()
+                }
+                if(drawable.target().identifier() == 'bui.StateVariableER'){
+                    drawable.ltarget = drawable.target().parent();
+                }else {
+                    drawable.ltarget = drawable.target()
+                }
                 edges.push(drawable);
             }
         }
@@ -380,6 +391,17 @@ $(document).ready(function() {
         });
     }
     showUndoRedo();
+    //=========================
+    $('#hide_handles').click(function(){
+        var all_drawables = graph.drawables();
+        for (var key in all_drawables) {
+            drawable = all_drawables[key]
+            if (drawable.identifier()=='bui.Edge'){
+                drawable.edgeHandlesVisible(false)
+            }
+            //drawable.recalculatePoints();
+        }
+    });
     //=========================
     $('#straighten_and_distribute').click(function(){
         if($(this).hasClass('fkt_active')){
@@ -499,12 +521,18 @@ $(document).ready(function() {
         orig_html = $('#layout_grid').html()
         $('#layout_grid').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}')
         bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
-        //bui.grid.layout();
-        //bui.grid.num_intersections();
+        bui.grid.layout();
         $('#layout_grid').html(orig_html);
     });
     //=========================
+    $('#get_grid').click(function(){
+        nodes_edges = get_nodes_edges();
+        bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
+    });
+    //=========================
     $('#clone').click(function(){
+        orig_html = $('#clone').html()
+        $('#clone').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}')
         var selected_drawables = {};
         var flag = false;
         for (var key in all_drawables) {
@@ -514,8 +542,9 @@ $(document).ready(function() {
                 selected_drawables[drawable.id()] = 1;
             }
         }
-        if(flag == false) bui.clone(1);
-        else bui.clone(1, selected_drawables)
+        if(flag == false) bui.clone(5);
+        else bui.clone(5, selected_drawables)
+        $('#clone').html(orig_html);
     });
     //=========================
     $('#clombine').click(function(){
