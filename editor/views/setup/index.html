@@ -1,0 +1,15 @@
+{{extend 'layout.html'}}
+<h1>Setup</h1>
+
+<h2>First User</h2>
+This application features authorized file access, for this you will need to setup a user. 
+<br />
+If you use this application as a desktop application you will automatically be logged in 
+<br />
+(as the first user - if you access it directly from you computer and you will not have to remember your password :D)
+{{=form}}
+<h2>SMTP</h2>
+Set this for outgoing email notifications. 
+<br />
+This is optional, and you will most likely not need this.
+{{=LOAD('setup', 'setup_smtp', ajax=True)}}

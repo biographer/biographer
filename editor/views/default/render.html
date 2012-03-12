@@ -1,0 +1,51 @@
+<html class="no-js"><!-- no-js need it for modernzr -->
+
+<head>
+    <meta charset="utf-8" />        
+    <title>{{=response.title or request.application}}</title>
+    <meta name="application-name" content="{{=request.application}}" /> 
+    <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+    <script src="{{=URL('static','js/modernizr-1.7.min.js')}}"> </script>
+    {{response.files.append(URL('static','css/base.css'))}}
+    {{response.files.append(URL(request.application, 'static/css', 'editor.css'))}}
+    {{#------ include web2py specific js code (jquery, calendar, form stuff) ------}}
+    {{include 'web2py_ajax.html'}}
+</head>
+
+<body id=body style="overflow: hidden;">
+{{if session.debug:}}
+<script type="text/javascript">
+    {{include 'default/biographer-ui.js'}}
+</script>
+{{else:}}
+<script type="text/javascript" src="{{=URL(request.application, 'static/js', 'biographer-ui.js')}}"></script>
+{{pass}}
+<div id="biog" style="position: fixed; display: none">
+    <form name='all_your_base_are_belong_to_us' action="http://{{=APP_URL}}" method="POST" target="_blank">
+        <a style="cursor:pointer" onclick="document['all_your_base_are_belong_to_us'].submit()">Edit this @ Biographer</a> 
+        <input type="hidden" name="jsbgn" value='{{=XML(session.editor_autosave)}}'/>
+    </form>
+				
+</div>
+<div id="canvas" class='droppable' style="width: 99%; height: 99%;"></div>
+<script type="text/javascript">
+//-------------------------------------------
+//-------------------------------------------
+{{include 'default/script.js'}}
+$('body').hover(
+    function(){
+        $('#biog').fadeIn();
+        },
+    function(){
+        $('#biog').fadeOut();
+    }
+);
+bui.ready(function() {
+        graph.fitToPage();
+});
+
+//-------------------------------------------
+//-------------------------------------------
+</script>
+</body>
+</html>

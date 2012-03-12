@@ -1,0 +1,10 @@
+syntax: glob
+*/*.pyc
+errors/*
+*/*~
+*.pyc
+databases/*
+sessions/*
+*/*.swp
+static/BioModels.net/*
+static/data_models/*
