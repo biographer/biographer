@@ -70,7 +70,7 @@ bui.clombine = function(select_drawables){
         var suspendHandle = graph.suspendRedraw(20000);
         all_drawables = graph.drawables();
         // create new node
-        var drawable = all_drawables[select_drawables[0]];
+        var drawable = all_drawables[Object.keys(select_drawables)[0]];
         var new_node = graph.add(bui[drawable.identifier().substr(4)]) 
 	                    .visible(true)
 			    .label(drawable.label())
