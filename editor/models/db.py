@@ -334,6 +334,9 @@ def sbml2jsbgn(sbml_str, rxncon=False):
     def modification2statevariable(mod):
         if '~' in mod:
             mod_split = mod.split('~')
+            if mod_split[1] == 'U':
+                mod_split[1] = ' '
+                print 'replaced U'
             if mod_split[0]=='bd':
                 return mod_split[1]
             else:
@@ -448,8 +451,11 @@ def sbml2jsbgn(sbml_str, rxncon=False):
         graph['nodes'].append(node_item)
         #---------------
         #reactands
+        comp = None
+        has_sink = False
         if len(reaction.getListOfReactants())==0:
             add_node(reaction.getId()+'sink', reaction.getId()+'sink', reaction.getId(), 394)
+            has_sink = reaction.getId()+'sink'
         else:
             for substrate in reaction.getListOfReactants():
                 comp = add_node(substrate.getSpecies(), substrate.getSpecies(), reaction.getId(), 394)
@@ -458,12 +464,15 @@ def sbml2jsbgn(sbml_str, rxncon=False):
         #---------------
         #products
         if len(reaction.getListOfProducts())==0:
-            add_node(reaction.getId()+'sink', reaction.getId(), reaction.getId()+'sink', 394)
+            add_node(reaction.getId()+'sink', reaction.getId(), reaction.getId()+'sink', 393)
+            has_sink = reaction.getId()+'sink'
         else:
             for product in reaction.getListOfProducts():
                 comp = add_node(product.getSpecies(), reaction.getId(), product.getSpecies(), 393)
                 if comp:
                     compartment2species[comp].append(reaction.getId())
+        if has_sink:
+            compartment2species[comp].append(has_sink)
         #---------------
         #modifiers
         for modifier in reaction.getListOfModifiers():
@@ -488,7 +497,7 @@ def sbml2jsbgn(sbml_str, rxncon=False):
         graph['nodes'].append(node_item)
     for i in range(len(graph['edges'])):
         graph['edges'][i]['id'] = 'edge%s'%i
-    print graph
+    #print graph
     return graph
 
 def sbgnml2jsbgn(sbgnml_str):

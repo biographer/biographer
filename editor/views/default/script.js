@@ -543,7 +543,7 @@ $(document).ready(function() {
             }
         }
         if(flag == false) bui.clone(5);
-        else bui.clone(5, selected_drawables)
+        else bui.clone(2, selected_drawables)
         $('#clone').html(orig_html);
     });
     //=========================

@@ -159,29 +159,28 @@ bui.grid.layout = function(){
     var num_empty_fields = bui.grid.width*bui.grid.height - nodes.length;
     node_idx2nodes_idx = {};
     node_idx2edges_idx = {};
+    node_idx2nodes_in = {};
+    node_idx2nodes_out = {};
     //-----------------------
     //important init buckets!
     //bui.grid.init_buckets();//FIXME this crashes from time to time
     //-----------------------
+    for(var i=0; i<nodes.length; ++i){
+        node_idx2nodes_in[i] = [];
+        node_idx2nodes_out[i] = [];
+        node_idx2nodes_idx[i] = [];
+        node_idx2edges_idx[i] = {};
+    }
     for(var ce=0; ce<edges.length; ++ce){
         var s = edges[ce].source_idx;
         var t = edges[ce].target_idx;
-        if(s in node_idx2nodes_idx){
-            node_idx2nodes_idx[s].push(t);
-            node_idx2edges_idx[s][ce] = 1;
-        } else{
-            node_idx2nodes_idx[s] = [t];
-            node_idx2edges_idx[s] = {};
-            node_idx2edges_idx[s][ce] = 1;
-        } 
-        if(t in node_idx2nodes_idx){
-            node_idx2nodes_idx[t].push(s);
-            node_idx2edges_idx[t][ce] = 1;
-        } else{
-            node_idx2nodes_idx[t] = [s];
-            node_idx2edges_idx[t] = {};
-            node_idx2edges_idx[t][ce] = 1;
-        }
+
+        node_idx2nodes_out[s].push(edges[ce].target());
+        node_idx2nodes_in[t].push(edges[ce].source());
+        node_idx2nodes_idx[s].push(t);
+        node_idx2nodes_idx[t].push(s);
+        node_idx2edges_idx[s][ce] = 1;
+        node_idx2edges_idx[t][ce] = 1;
     }
     //------------------------------------------------
     //------------------------------------------------
@@ -217,6 +216,8 @@ bui.grid.layout = function(){
         min_ni += bui.grid.node_intersections_fromto(cni, node, node_idx2nodes_idx[cni]);
         //distance
         min_ni += 0.1*bui.grid.edge_distance(node, node_idx2nodes_idx[cni]);
+        //flow
+        min_ni += 30*bui.grid.flow_fromto(node, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
         //----------------------------------------
         var cx = node.x;
         var cy = node.y;
@@ -238,6 +239,7 @@ bui.grid.layout = function(){
                 tmp_ni = bui.grid.edge_intersections_fromto({ x : cx, y : cy }, node_idx2nodes_idx[cni], node_idx2edges_idx[cni]);
                 tmp_ni += bui.grid.node_intersections_fromto(cni, { x : cx, y : cy}, node_idx2nodes_idx[cni]);
                 tmp_ni += 0.1*bui.grid.edge_distance({ x : cx, y : cy }, node_idx2nodes_idx[cni]);
+                tmp_ni += 30*bui.grid.flow_fromto({ x : cx, y : cy }, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
                 //--------------------------------------
                 if(tmp_ni<min_ni){
                     node.x>cx ? taxi_x = node.x-cx : taxi_x = cx-node.x;
@@ -439,6 +441,58 @@ bui.grid.set_nodes_as_edges = function(node_index){
     }
 }
 
+//=====================================================
+bui.grid.flow_fromto = function(from_node, to_nodes_in, to_nodes_out, common_edge){
+    //bui.grid.flow_fromto({x:1,y:1},[{x:1,y:0}],[{x:2,y:2}],{x:2,y:2})
+    if(common_edge == undefined) common_edge = bui.grid.common_edge(from_node, to_nodes_in, to_nodes_out);
+    if(common_edge.x == from_node.x && common_edge.y == from_node.y){
+        console.log('problem: common edge node is from_node')
+        return 'problem'
+    }
+    var score = 0;
+    common_edge_norm = Math.sqrt(Math.pow(common_edge.x,2)+Math.pow(common_edge.y,2))
+    //console.log(common_edge_norm);
+    for(var i=0; i<to_nodes_out.length; ++i){
+        tmp_x = to_nodes_out[i].x-from_node.x;
+        tmp_y = to_nodes_out[i].y-from_node.y;
+        score += (1-(tmp_x*common_edge.x+tmp_y*common_edge.y)/ (Math.sqrt(Math.pow(tmp_x,2)+Math.pow(tmp_y,2))*common_edge_norm))/2;
+        //console.log('out'+score);
+    }
+    for(var i=0; i<to_nodes_in.length; ++i){
+        tmp_x = from_node.x-to_nodes_in[i].x;
+        tmp_y = from_node.y-to_nodes_in[i].y;
+        score += (1-(tmp_x*common_edge.x+tmp_y*common_edge.y)/ (Math.sqrt(Math.pow(tmp_x,2)+Math.pow(tmp_y,2))*common_edge_norm))/2;
+        //console.log('in'+score);
+    }
+    return score
+};
+bui.grid.common_edge = function(from_node, to_nodes_in, to_nodes_out){
+    var x = 0;
+    var y = 0;
+    var edge_length;
+    for(var i=0; i<to_nodes_in.length; ++i){
+        
+        tmp_x = from_node.x-to_nodes_in[i].x;
+        tmp_y = from_node.y-to_nodes_in[i].y;
+        edge_length = Math.sqrt(Math.pow(tmp_x,2)+Math.pow(tmp_y,2));
+        x += (tmp_x)/edge_length;
+        y += (tmp_y)/edge_length;
+    }
+    for(var i=0; i<to_nodes_out.length; ++i){
+        tmp_x = to_nodes_out[i].x-from_node.x;
+        tmp_y = to_nodes_out[i].y-from_node.y;
+        edge_length = Math.sqrt(Math.pow(tmp_x,2)+Math.pow(tmp_y,2));
+        x += (tmp_x)/edge_length;
+        y += (tmp_y)/edge_length;
+    }
+    return {x: x, y: y}
+}
+
+bui.grid.angle = function angle(center, p1) {
+ //http://beradrian.wordpress.com/2009/03/23/calculating-the-angle-between-two-points-on-a-circle/
+ var p0 = {x: center.x, y: center.y - Math.sqrt(Math.abs(p1.x - center.x) * Math.abs(p1.x - center.x) + Math.abs(p1.y - center.y) * Math.abs(p1.y - center.y))};
+ return (2 * Math.atan2(p1.y - p0.y, p1.x - p0.x)) * 180 / Math.PI;
+}
 //=====================================================
 bui.grid.ccw = function(A,B,C){
     return (C.y-A.y)*(B.x-A.x) > (B.y-A.y)*(C.x-A.x)

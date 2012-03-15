@@ -7726,6 +7726,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
       var cpidx={};
       var s=""; // string to be passed to layouter (as a file)
       var cphash={};
+      var cphashid={};
       for (var i=0;i<jdata.nodes.length;i++){ // create node indexes; write output for compartments
          var n=jdata.nodes[i];
          if (n.is_abstract) continue; // abstract nodes are not send to the layouter
@@ -7735,6 +7736,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             if (n.data.subnodes){
                for (var j in n.data.subnodes){
                   cphash[n.data.subnodes[j]]=ccc;
+                  cphashid[n.data.subnodes[j]]=n.id;
                }
             }
             ccc++;
@@ -7753,6 +7755,9 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
          s = s + (bui.nodeMapping[n.sbo].klass === bui.Process ? 'Reaction' : 'Compound') + "\n";
          s = s + n.id + "\n";
          s = s + (n.data.compartment ? cpidx[n.data.compartment] : (cphash[n.id] ? cphash[n.id] : 0)) + "\n";
+         if (!n.data.compartment && cphash[n.id]){
+               n.data.compartment=cphashid[n.id]; // set data.compartment property as defined by compartments subnode property
+         }
          s = s + (n.data.x ? n.data.x : 0) + "\n";
          s = s + (n.data.y ? n.data.y : 0) + "\n";
          s = s + (n.data.width ? n.data.width : 0) + "\n";
@@ -7853,6 +7858,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             if (n.data.y != undefined) n.data.y-=cp.data.y;
          }
       }
+      return jdata;
    }
 
 
