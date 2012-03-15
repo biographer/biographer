@@ -189,7 +189,17 @@ bui.grid.layout = function(){
     var step = 0;
     console.log('line crossings before: '+bui.grid.num_intersections());
     console.log('node crossings before: '+bui.grid.num_node_intersections());
-    while(true){
+    //------------------------------------------------
+    //------------------------------------------------
+    //randomize node order for sum more fun :D and better results
+    nodes_idx_list = [];
+    for(var i = 0; i<nodes.length; ++i) nodes_idx_list.push(i);
+    nodes_idx_list.sort(function() {return 0.5 - Math.random()});
+    var cni;
+    //------------------------------------------------
+    //------------------------------------------------
+    for(var nix=0; nix<nodes.length; ++nix){
+        cni = nodes_idx_list[nix];
         var node = nodes[cni];
         //console.log('step '+step+' curnode'+cni+'/'+nodes.length+'---'+node.id());
         //--------------------------------------
@@ -217,14 +227,17 @@ bui.grid.layout = function(){
         //distance
         min_ni += 0.1*bui.grid.edge_distance(node, node_idx2nodes_idx[cni]);
         //flow
-        min_ni += 30*bui.grid.flow_fromto(node, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
+        min_ni += 2*bui.grid.flow_fromto(node, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
+        //90deg angle
+        min_ni += 0.5*bui.grid.deg90_fromto(node, node_idx2nodes_idx[cni]);
+        //node.addClass('Red');
+        //alert('min_ni '+min_ni);
         //----------------------------------------
         var cx = node.x;
         var cy = node.y;
         var counter = 0;
         var best_x = undefined;
         var best_y = undefined;
-        var taxi_x, taxi_y;
         var stop_distance = undefined;
         var fields_visited = 0;
         while(true){
@@ -239,20 +252,17 @@ bui.grid.layout = function(){
                 tmp_ni = bui.grid.edge_intersections_fromto({ x : cx, y : cy }, node_idx2nodes_idx[cni], node_idx2edges_idx[cni]);
                 tmp_ni += bui.grid.node_intersections_fromto(cni, { x : cx, y : cy}, node_idx2nodes_idx[cni]);
                 tmp_ni += 0.1*bui.grid.edge_distance({ x : cx, y : cy }, node_idx2nodes_idx[cni]);
-                tmp_ni += 30*bui.grid.flow_fromto({ x : cx, y : cy }, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
+                tmp_ni += 2*bui.grid.flow_fromto({ x : cx, y : cy }, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
+                tmp_ni += 0.5*bui.grid.deg90_fromto({ x : cx, y : cy }, node_idx2nodes_idx[cni]);
                 //--------------------------------------
                 if(tmp_ni<min_ni){
-                    node.x>cx ? taxi_x = node.x-cx : taxi_x = cx-node.x;
-                    node.y>cy ? taxi_y = node.y-cy : taxi_y = cx-node.y;
                     min_ni = tmp_ni;
                     best_x = cx;
                     best_y = cy;
-                    stop_distance = taxi_x+taxi_y; 
+                    stop_distance = Math.abs(node.x-cx)+Math.abs(node.y-cy);
                 }
                 if (stop_distance != undefined){
-                    node.x>cx ? taxi_x = node.x-cx : taxi_x = cx-node.x
-                    node.y>cy ? taxi_y = node.y-cy : taxi_y = cx-node.y
-                    if((taxi_x+taxi_y)*2>stop_distance){
+                    if((Math.abs(node.x-cx)+Math.abs(node.y-cy))*2>stop_distance){
                         //console.log('taxi stop');
                         break
                     }
@@ -291,13 +301,8 @@ bui.grid.render_current = function(){
 bui.grid.edge_distance = function(from_node, to_nodes){
     distance = 0;
     var nodes = bui.grid.nodes;
-    var taxi_x, taxi_y;
     for(var i=0;i<to_nodes.length; ++i){
-        cx = nodes[to_nodes[i]].x;
-        cy = nodes[to_nodes[i]].y;
-        from_node.x>cx ? taxi_x = from_node.x-cx : taxi_x = cx-from_node.x;
-        from_node.y>cy ? taxi_y = from_node.y-cy : taxi_y = cx-from_node.y;
-        distance += taxi_x+taxi_y; 
+        distance += Math.abs(from_node.x-nodes[to_nodes[i]].x)+Math.abs(from_node.y-nodes[to_nodes[i]].y)
     }
     return distance;
 }
@@ -440,14 +445,34 @@ bui.grid.set_nodes_as_edges = function(node_index){
                 ];
     }
 }
-
+//=====================================================
+bui.grid.deg90_fromto = function(from_node, to_nodes){
+    var score = 0;
+    var nodes = bui.grid.nodes;
+    for(var i=0; i<to_nodes.length; ++i){
+        if (nodes[to_nodes[i]].x==from_node.x) score += 0
+        else if (nodes[to_nodes[i]].y == from_node.y) score += 0.1;
+        else score +=1;
+    }
+    return score
+}
 //=====================================================
 bui.grid.flow_fromto = function(from_node, to_nodes_in, to_nodes_out, common_edge){
+    if (to_nodes_in.length==0 || to_nodes_out.length == 0) return 0
     //bui.grid.flow_fromto({x:1,y:1},[{x:1,y:0}],[{x:2,y:2}],{x:2,y:2})
     if(common_edge == undefined) common_edge = bui.grid.common_edge(from_node, to_nodes_in, to_nodes_out);
+    //console.log(JSON.stringify(common_edge));
     if(common_edge.x == from_node.x && common_edge.y == from_node.y){
+        bui.grid.render_current();
+        console.log(from_node.x+' '+from_node.y)
+        for(var i =0; i<to_nodes_out.length; ++i) 
+            console.log( to_nodes_out[i].x+' '+to_nodes_out[i].x)
+        for(var i =0; i<to_nodes_in.length; ++i) 
+            console.log( to_nodes_in[i].x+' '+to_nodes_in[i].x)
+            //to_nodes_out[i].addClass('Red');
+        //alert('stop');
         console.log('problem: common edge node is from_node')
-        return 'problem'
+        return 0;
     }
     var score = 0;
     common_edge_norm = Math.sqrt(Math.pow(common_edge.x,2)+Math.pow(common_edge.y,2))
