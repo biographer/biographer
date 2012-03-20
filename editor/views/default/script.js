@@ -329,13 +329,42 @@ function get_nodes_edges(){
                     nodes.push(drawable);
                 }
             }else if(drawable.identifier() == 'bui.Edge'){
-                if(drawable.source().identifier() == 'bui.StateVariableER'){
-                    //alert('sv, p '+drawable.source().parent().label());
+                //----------------------------------
+                if (drawable.source().identifier() == 'bui.EdgeHandle'){
+                    if(drawable.source().lparent.target().identifier() == 'bui.StateVariableER'){
+                        drawable.lsource = drawable.source().lparent.target().parent();
+
+                    }else if(drawable.source().lparent.target().identifier() == 'bui.EdgeHandle'){ 
+                        if(drawable.source().lparent.target().lparent.target().identifier() == 'bui.StateVariableER'){
+                            drawable.lsource = drawable.source().lparent.target().lparent.target().parent();
+                        }else {
+                            drawable.lsource = drawable.source().lparent.target().lparent.target();
+                        }
+                    }else {
+                        drawable.lsource = drawable.source().lparent.target();
+                    }
+                }else if(drawable.source().identifier() == 'bui.StateVariableER'){
                     drawable.lsource = drawable.source().parent();
                 }else {
                     drawable.lsource = drawable.source()
                 }
-                if(drawable.target().identifier() == 'bui.StateVariableER'){
+                //----------------------------------
+                if (drawable.target().identifier() == 'bui.EdgeHandle'){
+                    if(drawable.target().lparent.target().identifier() == 'bui.StateVariableER'){
+                        drawable.ltarget = drawable.target().lparent.target().parent();
+
+                    }else if(drawable.target().lparent.target().identifier() == 'bui.EdgeHandle'){ 
+                        if(drawable.target().lparent.target().lparent.target().identifier() == 'bui.StateVariableER'){
+                            drawable.ltarget = drawable.target().lparent.target().lparent.target().parent();
+                        }else {
+                            drawable.ltarget = drawable.target().lparent.target().lparent.target();
+                        }
+
+                    }else{
+                        drawable.ltarget = drawable.target().lparent.target();
+                    }
+
+                }else if(drawable.target().identifier() == 'bui.StateVariableER'){
                     drawable.ltarget = drawable.target().parent();
                 }else {
                     drawable.ltarget = drawable.target()
@@ -518,10 +547,11 @@ $(document).ready(function() {
     //=========================
     $('#layout_grid').click(function(){
         nodes_edges = get_nodes_edges();
-        orig_html = $('#layout_grid').html()
-        $('#layout_grid').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}')
+        orig_html = $('#layout_grid').html();
+        $('#layout_grid').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}').ready(function(){
         bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
         bui.grid.layout();
+        });
         $('#layout_grid').html(orig_html);
     });
     //=========================

@@ -6888,6 +6888,7 @@ var getSBOForMarkerId = function(id) {
                     .visible(true);
                 handle.addClass('edgeHandle');//let the stylesheet make it grey
             }
+            handle.lparent = this;
             handle.positionCenter(x, y);
             
             index = 0;

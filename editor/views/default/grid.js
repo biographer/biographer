@@ -44,15 +44,15 @@ bui.grid.spiral = function(length){
 bui.grid.add_padding = function(){
     var nodes = bui.grid.nodes;
     var matrix_nodes = bui.grid.matrix_nodes;
-    var move = 0;
     var i;
-    console.log(JSON.stringify(matrix_nodes));
-    for(i=0;i<bui.grid.width; ++i){
-        if(matrix_nodes[i][0] != undefined){
-            console.log('check1i '+bui.grid.width);
-            for(i=0; i<bui.grid.width; ++i) matrix_nodes[i].push(undefined);
+    //FIXME must create new buckets too!!!!
+    for(i=0;i<bui.grid.height; ++i){
+        if(matrix_nodes[0][i] != undefined){
+            //---------
+            matrix_nodes.push([]);
+            for(i=0; i<bui.grid.height; ++i) matrix_nodes[bui.grid.width].push(undefined);
             ++bui.grid.width;
-            console.log('check2i');
+            //---------
             for(i=0; i<nodes.length; ++i){
                 matrix_nodes[nodes[i].x][nodes[i].y] = undefined;
                 ++nodes[i].x;
@@ -61,15 +61,12 @@ bui.grid.add_padding = function(){
             break;
         }
     } 
-    console.log('now height');
-    console.log(JSON.stringify(matrix_nodes));
-    for(i=0;i<bui.grid.height; ++i){
-        if(matrix_nodes[0][i] != undefined){
-            matrix_nodes.push([]);
+    for(i=0;i<bui.grid.width; ++i){
+        if(matrix_nodes[i][0] != undefined){
+            //---------
+            for(i=0; i<bui.grid.width; ++i) matrix_nodes[i].push(undefined);
             ++bui.grid.height;
-            console.log('check1');
-            for(i=0; i<bui.grid.height; ++i) matrix_nodes[bui.grid.width-1].push(undefined);
-            console.log('check2');
+            //---------
             for(i=0; i<nodes.length; ++i){
                 matrix_nodes[nodes[i].x][nodes[i].y] = undefined;
                 ++nodes[i].y;
@@ -78,6 +75,25 @@ bui.grid.add_padding = function(){
             break;
         }
     } 
+    //----------------------
+    //---------------
+    for(i=0;i<bui.grid.height; ++i){
+        if(matrix_nodes[bui.grid.width-1][i] != undefined){
+            matrix_nodes.push([]);
+            for(i=0; i<bui.grid.height; ++i) matrix_nodes[bui.grid.width].push(undefined);
+            ++bui.grid.width;
+        }
+    }
+    for(i=0;i<bui.grid.width; ++i){
+        if(matrix_nodes[i][bui.grid.height-1] != undefined){
+            for(i=0; i<bui.grid.width; ++i) matrix_nodes[i].push(undefined);
+            ++bui.grid.height;
+        }
+    }
+    //---------------
+    //----------------------
+    
+    //bui.grid.matrix_nodes = matrix_nodes;
     bui.grid.render_current();
 };
 //=====================================================
@@ -86,8 +102,8 @@ bui.grid.init = function(nodes, edges, width, height){
     var node_id2node_idx = {};
     for(var i=0; i<nodes.length; ++i) node_id2node_idx[nodes[i].id()]=i;
     for(var i=0; i<edges.length; ++i){
-        edges[i].source_idx = node_id2node_idx[edges[i].source().id()];
-        edges[i].target_idx = node_id2node_idx[edges[i].target().id()];
+        edges[i].source_idx = node_id2node_idx[edges[i].lsource.id()];
+        edges[i].target_idx = node_id2node_idx[edges[i].ltarget.id()];
     }
     //-------------------------------------------------------
     bui.grid.nodes = nodes;
@@ -121,6 +137,24 @@ bui.grid.init = function(nodes, edges, width, height){
             matrix_nodes[x].push(undefined);
     }
     //-------------------------------------------------------
+    //-------------------------------------------------------
+    //compartements
+    var compartements = []
+    var source_id, target_id;
+    for(var i=0; i<edges.length; ++i){
+        var edge = edges[i];
+        if(edge.lsource.parent() == undefined) source_id = undefined
+        else source_id = edge.lsource.parent().id()
+        if(edge.ltarget.parent() == undefined) target_id = undefined
+        else target_id = edge.ltarget.parent().id()
+
+        if(target_id != source_id){
+            // we got two compartments!
+            console.log('two compartments detected '+source_id+' and '+target_id);
+        }
+    }
+    //-------------------------------------------------------
+    //-------------------------------------------------------
     //position elements on grid, only one element is allowed on each grid point
     var cp,cur_x,cur_y,loop;
     for(i=0; i<nodes.length; ++i){
@@ -131,7 +165,7 @@ bui.grid.init = function(nodes, edges, width, height){
         var count = 0;
         while(true){
             if(cur_x>=0 && cur_x<=max_x && cur_y>=0 && cur_y<=max_y && matrix_nodes[cur_x][cur_y] == undefined){
-                matrix_nodes[cur_x][cur_y] = 1;
+                matrix_nodes[cur_x][cur_y] = i;
                 nodes[i].x = cur_x;
                 nodes[i].y = cur_y;
                 break;
@@ -159,13 +193,16 @@ bui.grid.layout = function(){
     var num_empty_fields = bui.grid.width*bui.grid.height - nodes.length;
     node_idx2nodes_idx = {};
     node_idx2edges_idx = {};
+    node_idx2nodes_in_idx = {};
     node_idx2nodes_in = {};
     node_idx2nodes_out = {};
     //-----------------------
     //important init buckets!
     //bui.grid.init_buckets();//FIXME this crashes from time to time
+    bui.grid.init_nbuckets();
     //-----------------------
     for(var i=0; i<nodes.length; ++i){
+        node_idx2nodes_in_idx[i] = [];
         node_idx2nodes_in[i] = [];
         node_idx2nodes_out[i] = [];
         node_idx2nodes_idx[i] = [];
@@ -175,8 +212,10 @@ bui.grid.layout = function(){
         var s = edges[ce].source_idx;
         var t = edges[ce].target_idx;
 
-        node_idx2nodes_out[s].push(edges[ce].target());
-        node_idx2nodes_in[t].push(edges[ce].source());
+        node_idx2nodes_out[s].push(edges[ce].ltarget);
+        node_idx2nodes_in[t].push(edges[ce].lsource);
+        node_idx2nodes_in_idx[t].push(s);
+        
         node_idx2nodes_idx[s].push(t);
         node_idx2nodes_idx[t].push(s);
         node_idx2edges_idx[s][ce] = 1;
@@ -189,6 +228,8 @@ bui.grid.layout = function(){
     var step = 0;
     console.log('line crossings before: '+bui.grid.num_intersections());
     console.log('node crossings before: '+bui.grid.num_node_intersections());
+    //------------------------------------------------
+    bui.grid.add_padding();
     //------------------------------------------------
     //------------------------------------------------
     //randomize node order for sum more fun :D and better results
@@ -226,10 +267,13 @@ bui.grid.layout = function(){
         min_ni += bui.grid.node_intersections_fromto(cni, node, node_idx2nodes_idx[cni]);
         //distance
         min_ni += 0.1*bui.grid.edge_distance(node, node_idx2nodes_idx[cni]);
+        min_ni += 0.05*bui.grid.edge_distance(node, node_idx2nodes_in_idx[cni]);
         //flow
-        min_ni += 2*bui.grid.flow_fromto(node, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
+        min_ni += 5*bui.grid.flow_fromto(node, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
         //90deg angle
         min_ni += 0.5*bui.grid.deg90_fromto(node, node_idx2nodes_idx[cni]);
+        //graviation
+        min_ni += 0.1*bui.grid.graviation_from(node);
         //node.addClass('Red');
         //alert('min_ni '+min_ni);
         //----------------------------------------
@@ -252,8 +296,10 @@ bui.grid.layout = function(){
                 tmp_ni = bui.grid.edge_intersections_fromto({ x : cx, y : cy }, node_idx2nodes_idx[cni], node_idx2edges_idx[cni]);
                 tmp_ni += bui.grid.node_intersections_fromto(cni, { x : cx, y : cy}, node_idx2nodes_idx[cni]);
                 tmp_ni += 0.1*bui.grid.edge_distance({ x : cx, y : cy }, node_idx2nodes_idx[cni]);
-                tmp_ni += 2*bui.grid.flow_fromto({ x : cx, y : cy }, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
+                tmp_ni += 0.05*bui.grid.edge_distance({ x : cx, y : cy }, node_idx2nodes_in_idx[cni]);
+                tmp_ni += 5*bui.grid.flow_fromto({ x : cx, y : cy }, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
                 tmp_ni += 0.5*bui.grid.deg90_fromto({ x : cx, y : cy }, node_idx2nodes_idx[cni]);
+                tmp_ni += 0.1*bui.grid.graviation_from({ x : cx, y : cy });
                 //--------------------------------------
                 if(tmp_ni<min_ni){
                     min_ni = tmp_ni;
@@ -274,11 +320,13 @@ bui.grid.layout = function(){
         }
         //--------------------------------------
         if(best_x != undefined){
-            matrix_nodes[best_x][best_y] = 1;
+            bui.grid.set_nbuckets(cni,node.x, node.y, best_x, best_y);
+            matrix_nodes[best_x][best_y] = cni;
             matrix_nodes[node.x][node.y] = undefined;
             node.x=best_x;
             node.y=best_y;
             bui.grid.set_nodes_as_edges(cni);
+            bui.grid.add_padding();
             //for(var i=0; i<node_idx2edges_idx[cni].length; ++i) bui.grid.set_buckets(node_idx2edges_idx[cni][i],'clear');
         }
         //--------------------------------------
@@ -314,13 +362,6 @@ bui.grid.edge_intersections_fromto = function(from_node, to_nodes, to_edges){
     for(var i=0;i<to_nodes.length; ++i){
         for(var j=0; j<edges.length; ++j){
             if(!(j in to_edges)){
-                /*if ('id' in from_node)
-                console.log(JSON.stringify([
-                            {x:from_node.x,y:from_node.y},from_node.id(),
-                            {x:nodes[to_nodes[i]].x,y:nodes[to_nodes[i]].y},nodes[to_nodes[i]].id(),
-                            {x:edges[j].lsource.x,y:edges[j].lsource.y},
-                            {x:edges[j].ltarget.x,y:edges[j].ltarget.y}]))
-                */
                 if( bui.grid.intersect(from_node, nodes[to_nodes[i]], edges[j].lsource, edges[j].ltarget) ){
                     ++counter;
                 }
@@ -337,66 +378,14 @@ bui.grid.edge_intersections_fromto = function(from_node, to_nodes, to_edges){
     return counter;
 }
 //=====================================================
-bui.grid.num_intersections = function(edges_index, mark){
-    var counter = 0;
-    var crossing_edges = [];
-    for(var i=0; i<bui.grid.edges.length; ++i){
-        for(var j=i+1; j<bui.grid.edges.length; ++j){
-            if(bui.grid.intersect(bui.grid.edges[i].lsource,bui.grid.edges[i].ltarget,bui.grid.edges[j].lsource,bui.grid.edges[j].ltarget, mark) == true){
-                if(edges_index != undefined){
-                    if(i in edges_index){
-                        crossing_edges.push(j);
-                        if(mark != undefined){
-                            /*console.log(JSON.stringify([
-                            {x:bui.grid.edges[i].lsource.x,y:bui.grid.edges[i].lsource.y},
-                            {x:bui.grid.edges[i].ltarget.x,y:bui.grid.edges[i].ltarget.y},
-                            {x:bui.grid.edges[j].lsource.x,y:bui.grid.edges[j].lsource.y},
-                            {x:bui.grid.edges[j].ltarget.x,y:bui.grid.edges[j].ltarget.y},
-                            ]));*/
-                            bui.grid.edges[j].addPoint(1,1,'Outcome');
-                            bui.grid.edges[j].recalculatePoints();
-                        }
-                    }else if (j in edges_index){
-                        crossing_edges.push(i);
-                        if(mark != undefined){
-                            bui.grid.edges[i].addPoint(1,1,'Outcome');
-                            bui.grid.edges[i].recalculatePoints();
-                        }
-                    }
-                }
-                ++counter;
-            }
-        }
-    }
-    if(edges_index != undefined){
-        return crossing_edges;
-    } 
-    return counter
-}
-//=====================================================
-bui.grid.num_node_intersections = function(edges_index, mark){
-    var counter = 0;
-    var edges = bui.grid.edges;
-    for(var i=0; i<edges.length; ++i){
-        for(var j=0; j<bui.grid.nodes.length; ++j){
-            if(j != edges[i].source_idx && j != edges[i].target_idx){
-                var nae = bui.grid.nodes_as_edges[j];
-                if(bui.grid.intersect(edges[i].source(), edges[i].target(), nae[0].source, nae[0].target)){
-                    ++counter;
-                }else if(bui.grid.intersect(edges[i].source(), edges[i].target(), nae[1].source, nae[1].target)){
-                    ++counter;
-                }
-            }
-        }
-    }
-    return counter
-}
-//=====================================================
 bui.grid.node_intersections_fromto = function(from_node_index, from_node, to_nodes){
     var counter = 0;
     var nodes = bui.grid.nodes;
+    var candidates,j;
     for(var i=0;i<to_nodes.length; ++i){
-        for(var j=0; j<nodes.length; ++j){
+        candidates = bui.grid.node_intersections_getnodes(from_node,to_nodes[i]);
+        for(var ji=0; ji<candidates.length; ++ji){
+            j = candidates[ji];
             if(j!=from_node_index && j != to_nodes[i]){
                 var nae = bui.grid.nodes_as_edges[j];
                 if(bui.grid.intersect(from_node, nodes[to_nodes[i]], nae[0].source, nae[0].target)){
@@ -408,6 +397,57 @@ bui.grid.node_intersections_fromto = function(from_node_index, from_node, to_nod
         }
     }
     return counter;
+}
+bui.grid.node_intersections_getnodes = function(from_node, to_node){
+    var matrix_nodes = bui.grid.matrix_nodes;
+    var minx,miny,maxx,maxy;
+    if (from_node.x<to_node.x){
+        minx=from_node.x;
+        maxx=to_node.x
+    }else{
+        minx=to_node.x;
+        maxx=from_node.x
+    }
+    if (from_node.y<to_node.y){
+        miny=from_node.y;
+        maxy=to_node.y
+    }else{
+        miny=to_node.y;
+        maxy=from_node.y
+    }
+    var i;
+    var xnodes = {};
+    for(i=minx; i<=maxx; ++i)
+        for( key in bui.grid.nbucketx[i] )
+            xnodes[key] = 1;
+    out_nodes = []
+    for(i=miny; i<=maxy; ++i)
+        for (key in bui.grid.nbuckety[i] )
+            if(key in xnodes)
+                out_nodes.push(key)
+
+    return out_nodes
+}
+bui.grid.init_nbuckets = function(){
+    var nodes = bui.grid.nodes;
+    var nbucketx = [];
+    var nbuckety = [];
+    var i;
+    for(i=0; i<bui.grid.width; ++i) nbucketx.push({});
+    for(i=0; i<bui.grid.height; ++i) nbuckety.push({});
+    for(i=0; i<nodes.length; ++i){
+        nbucketx[nodes[i].x][i] = 1;
+        nbuckety[nodes[i].y][i] = 1;
+    }
+    bui.grid.nbucketx = nbucketx;
+    bui.grid.nbuckety = nbuckety;
+
+}
+bui.grid.set_nbuckets = function(node_idx, oldx, oldy, newx, newy){
+    delete bui.grid.nbucketx[oldx][node_idx]
+    delete bui.grid.nbuckety[oldy][node_idx]
+    bui.grid.nbucketx[newx][node_idx] = 1;//FIXME fail here, newx not available
+    bui.grid.nbuckety[newy][node_idx] = 1;
 }
 //=====================================================
 bui.grid.set_nodes_as_edges = function(node_index){
@@ -512,11 +552,21 @@ bui.grid.common_edge = function(from_node, to_nodes_in, to_nodes_out){
     }
     return {x: x, y: y}
 }
-
 bui.grid.angle = function angle(center, p1) {
  //http://beradrian.wordpress.com/2009/03/23/calculating-the-angle-between-two-points-on-a-circle/
  var p0 = {x: center.x, y: center.y - Math.sqrt(Math.abs(p1.x - center.x) * Math.abs(p1.x - center.x) + Math.abs(p1.y - center.y) * Math.abs(p1.y - center.y))};
  return (2 * Math.atan2(p1.y - p0.y, p1.x - p0.x)) * 180 / Math.PI;
+}
+//=====================================================
+bui.grid.graviation_from = function(from_node){
+    bui.grid.centerx = Math.round(bui.grid.width/2);
+    bui.grid.centery = Math.round(bui.grid.height/2);
+    var distance = Math.abs(from_node.x-bui.grid.centerx)+Math.abs(from_node.y-bui.grid.centery)
+    return distance / (bui.grid.width+bui.grid.height)*2
+}
+//=====================================================
+bui.grid.node_swap = function(node1, to_nodes1, node2, to_nodes2){
+    //TODO not so easy to implement since both nodes need to be moved and node/edge intersections have to be calculated without the original nodes
 }
 //=====================================================
 bui.grid.ccw = function(A,B,C){
@@ -571,4 +621,61 @@ bui.grid.intersect = function(A,B,C,D, mark){
         return bui.grid.ccw(A,C,D) != bui.grid.ccw(B,C,D) && bui.grid.ccw(A,B,C) != bui.grid.ccw(A,B,D);
     }
 
+}
+
+//=====================================================
+//=====================================================
+bui.grid.num_intersections = function(edges_index, mark){
+    var counter = 0;
+    var crossing_edges = [];
+    for(var i=0; i<bui.grid.edges.length; ++i){
+        for(var j=i+1; j<bui.grid.edges.length; ++j){
+            if(bui.grid.intersect(bui.grid.edges[i].lsource,bui.grid.edges[i].ltarget,bui.grid.edges[j].lsource,bui.grid.edges[j].ltarget, mark) == true){
+                if(edges_index != undefined){
+                    if(i in edges_index){
+                        crossing_edges.push(j);
+                        if(mark != undefined){
+                            /*console.log(JSON.stringify([
+                            {x:bui.grid.edges[i].lsource.x,y:bui.grid.edges[i].lsource.y},
+                            {x:bui.grid.edges[i].ltarget.x,y:bui.grid.edges[i].ltarget.y},
+                            {x:bui.grid.edges[j].lsource.x,y:bui.grid.edges[j].lsource.y},
+                            {x:bui.grid.edges[j].ltarget.x,y:bui.grid.edges[j].ltarget.y},
+                            ]));*/
+                            bui.grid.edges[j].addPoint(1,1,'Outcome');
+                            bui.grid.edges[j].recalculatePoints();
+                        }
+                    }else if (j in edges_index){
+                        crossing_edges.push(i);
+                        if(mark != undefined){
+                            bui.grid.edges[i].addPoint(1,1,'Outcome');
+                            bui.grid.edges[i].recalculatePoints();
+                        }
+                    }
+                }
+                ++counter;
+            }
+        }
+    }
+    if(edges_index != undefined){
+        return crossing_edges;
+    } 
+    return counter
+}
+//=====================================================
+bui.grid.num_node_intersections = function(edges_index, mark){
+    var counter = 0;
+    var edges = bui.grid.edges;
+    for(var i=0; i<edges.length; ++i){
+        for(var j=0; j<bui.grid.nodes.length; ++j){
+            if(j != edges[i].source_idx && j != edges[i].target_idx){
+                var nae = bui.grid.nodes_as_edges[j];
+                if(bui.grid.intersect(edges[i].source(), edges[i].target(), nae[0].source, nae[0].target)){
+                    ++counter;
+                }else if(bui.grid.intersect(edges[i].source(), edges[i].target(), nae[1].source, nae[1].target)){
+                    ++counter;
+                }
+            }
+        }
+    }
+    return counter
 }

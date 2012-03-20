@@ -61,7 +61,6 @@ bui.grid.init_buckets = function(){
         bui.grid.set_buckets(ne);
     }
 }
-
 //=====================================================
 bui.grid.set_buckets = function(edge_index, clear){
     var i;
