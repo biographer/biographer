@@ -69,7 +69,7 @@
                             <li><a href="{{=URL(request.application, 'default', 'sbml_test')}}">SBML Test</a></li>
                         </UL>
                         <ul id="menu-right">
-                            <li><a href="{{=URL(request.application, 'default', 'user', args='login')}}">login</a></li>
+				<li><a href="{{=URL(request.application, 'default', 'user', args='login' if not auth.is_logged_in() else 'logout')}}">{{='login' if not auth.is_logged_in() else 'logout'}}</a></li>
                         </ul>
                     </div>
                     {{include}} 
