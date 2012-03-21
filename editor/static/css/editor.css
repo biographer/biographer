@@ -71,6 +71,8 @@ th {
 	text-align: left;
 }
 #canvas {
+    z-index: 2;
+    margin-top: 50px;
     width: 92%;
     height: 90%;
     border: solid 1px #ddd;
@@ -149,9 +151,12 @@ h3.section.down {
     margin-bottom: 4px;
 }
 .editor_menu {
-	
-    display: inline-block;
-    margin-left: 0;
+    z-index: 3;
+    background-color: white;
+    position: fixed;
+    display: block;
+    min-width: 1350px;
+    margin-left: 0px;
     padding: 0 10px 0 10px;
     height: 40px;
 }

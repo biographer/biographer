@@ -10,6 +10,7 @@ def undoRegister(action, graph, json_string):
     return item
 
 def index():
+    check_first_user()
     response.files.append(URL(request.application, 'static/css', 'visualization-html.css'))
     response.files.append(URL(request.application, 'static/css', 'jquery-ui-1.8.13.css'))
     response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))
@@ -20,7 +21,6 @@ def index():
     response.files.append(URL(request.application, 'static/js', 'd3.geom.js'))
     #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))#import in view
     #response.files.append(URL('script.js'))#import in view
-    #print request.vars
     if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph or request.vars.jsbgn:
         action,graph,json_string = None,None,None
         if request.vars.jgraph or request.vars.jsbgn:
