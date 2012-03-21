@@ -282,9 +282,9 @@
            var dl=positions.length/2-privates.points.length;
            if (dl<0){
               for (var i=privates.points.length-dl;i<privates.points.length;i++){
-                 privates.points[i].splineHandle.delete();
-                 privates.points[i].helperLine.delete();
-                 privates.points[i].point.delete();
+                 delete privates.points[i].splineHandle;
+                 delete privates.points[i].helperLine;
+                 delete privates.points[i].point;
               }
            }
            if (dl>0){

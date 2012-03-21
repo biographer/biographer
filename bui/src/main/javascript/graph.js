@@ -187,6 +187,10 @@
         var privates = this._privates(identifier);
         privates.id = bui.settings.idPrefix.graph + graphCounter++;
         privates.container = container;
+	if ( container == null ) {	// don't break here, just throw a message
+		console.error('Warning: Invalid container element specified. Using document.body instead.');
+		privates.container = document.body;
+		}
         privates.drawables = {};
         privates.idCounter = 0;
         privates.scale = 1;
