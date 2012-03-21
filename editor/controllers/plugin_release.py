@@ -229,17 +229,18 @@ def update():
     #copy site-packages 
     w2p_sitep_path = os.path.join(request.env.web2py_path, 'site-packages')
     app_sitep_path = os.path.join(request.folder, 'site-packages')
-    for p in os.listdir(app_sitep_path):
-        w2p_p = os.path.join(w2p_sitep_path, p)
-        app_p = os.path.join(app_sitep_path, p)
-        if os.path.isdir(app_p): #dir 
-            if os.path.exists(w2p_p):
-                shutil.rmtree(w2p_p)
-            shutil.copytree(app_p, w2p_p)
-        else: #file
-            if os.path.exists(w2p_p):
-                os.unlink(w2p_p)
-            shutil.copy(app_p, w2p_p)
+    if os.path.exists(app_sitep_path):
+        for p in os.listdir(app_sitep_path):
+            w2p_p = os.path.join(w2p_sitep_path, p)
+            app_p = os.path.join(app_sitep_path, p)
+            if os.path.isdir(app_p): #dir 
+                if os.path.exists(w2p_p):
+                    shutil.rmtree(w2p_p)
+                shutil.copytree(app_p, w2p_p)
+            else: #file
+                if os.path.exists(w2p_p):
+                    os.unlink(w2p_p)
+                shutil.copy(app_p, w2p_p)
     #-------------------------------------------
     session.app_current_version = None
     response.headers['web2py-component-flash'] = 'Updated %s. Some changes may require a restart of the server!'%APPLICATION_NAME
@@ -289,7 +290,8 @@ python web2py/web2py.py''')
     elif release_type == 'osx':
         pass#no clue what to do for osx to make it look nice
     #move site-packages 
-    shutil.copytree(os.path.join(request.folder, 'site-packages'), os.path.join(release_web2py_base, 'site-packages'))
+    if os.path.exists(os.path.join(request.folder, 'site-packages')):
+        shutil.copytree(os.path.join(request.folder, 'site-packages'), os.path.join(release_web2py_base, 'site-packages'))
     #move and modify files for osx release
     #if release_type == 'osx':
     #    shutil.move()
@@ -486,7 +488,7 @@ def core_release():
     #-------------------------------------------
     tarname = os.path.join(RELEASE_FOLDER,APPLICATION_NAME + '.tar')
     tar = tarfile.TarFile(tarname, 'w')
-    for rdir in 'controllers cron languages models modules static views site-packages'.split():
+    for rdir in 'controllers cron languages models modules static views'.split():
         compress(os.path.join(request.folder,rdir), tar, request.folder, 'tar')
         #tar.add(os.path.join(request.folder, rdir), rdir, exclude = glob_match)
     for rdir in 'databases cache'.split():
