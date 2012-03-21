@@ -56,10 +56,14 @@
                         <UL>
                             <li><a href="http://code.google.com/p/biographer/">About</a></li>
                             <li><a href="http://code.google.com/p/biographer/source/browse/?repo=editor">Source Code</a></li>
-			    {{if auth.is_logged_in():}}
-			    <li><a href="{{=URL(request.application, 'plugin_release', 'status')}}">Update</a></li>
+                            {{if os.path.exists(RELEASE_FOLDER):}}
                             <li><a href="{{=URL(request.application, 'plugin_release', 'download')}}">Download</a></li>
-			    {{pass}}
+                                {{if auth.is_logged_in():}}
+                                <li><a href="{{=URL(request.application, 'plugin_release', 'status')}}">Up/Pckg</a></li>
+                                {{pass}}
+                            {{elif auth.is_logged_in():}}
+                            <li><a href="{{=URL(request.application, 'plugin_release', 'status')}}">Update</a></li>
+                            {{pass}}
                             <li><a href="http://code.google.com/p/biographer/issues/list">Bugs/Features</a></li>
                             <li><a href="{{=URL(request.application, 'default', 'sbgnml_test')}}">SBGN-ML Test</a></li>
                             <li><a href="{{=URL(request.application, 'default', 'sbml_test')}}">SBML Test</a></li>
