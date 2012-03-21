@@ -45,13 +45,18 @@ bui.grid.add_padding = function(){
     var nodes = bui.grid.nodes;
     var matrix_nodes = bui.grid.matrix_nodes;
     var i;
-    //FIXME must create new buckets too!!!!
+    var nbucketx = bui.grid.nbucketx;
+    var nbuckety = bui.grid.nbuckety;
+    var ebucketx = bui.grid.ebucketx;
+    var ebuckety = bui.grid.ebuckety;
     for(i=0;i<bui.grid.height; ++i){
         if(matrix_nodes[0][i] != undefined){
             //---------
             matrix_nodes.push([]);
             for(i=0; i<bui.grid.height; ++i) matrix_nodes[bui.grid.width].push(undefined);
             ++bui.grid.width;
+            nbucketx.push({});
+            ebucketx.push({});
             //---------
             for(i=0; i<nodes.length; ++i){
                 matrix_nodes[nodes[i].x][nodes[i].y] = undefined;
@@ -66,6 +71,8 @@ bui.grid.add_padding = function(){
             //---------
             for(i=0; i<bui.grid.width; ++i) matrix_nodes[i].push(undefined);
             ++bui.grid.height;
+            nbuckety.push({});
+            ebuckety.push({});
             //---------
             for(i=0; i<nodes.length; ++i){
                 matrix_nodes[nodes[i].x][nodes[i].y] = undefined;
@@ -82,12 +89,16 @@ bui.grid.add_padding = function(){
             matrix_nodes.push([]);
             for(i=0; i<bui.grid.height; ++i) matrix_nodes[bui.grid.width].push(undefined);
             ++bui.grid.width;
+            nbucketx.push({});
+            ebucketx.push({});
         }
     }
     for(i=0;i<bui.grid.width; ++i){
         if(matrix_nodes[i][bui.grid.height-1] != undefined){
             for(i=0; i<bui.grid.width; ++i) matrix_nodes[i].push(undefined);
             ++bui.grid.height;
+            nbuckety.push({});
+            ebuckety.push({});
         }
     }
     //---------------
@@ -198,7 +209,7 @@ bui.grid.layout = function(){
     node_idx2nodes_out = {};
     //-----------------------
     //important init buckets!
-    //bui.grid.init_buckets();//FIXME this crashes from time to time
+    bui.grid.init_ebuckets();
     bui.grid.init_nbuckets();
     //-----------------------
     for(var i=0; i<nodes.length; ++i){
@@ -326,8 +337,8 @@ bui.grid.layout = function(){
             node.x=best_x;
             node.y=best_y;
             bui.grid.set_nodes_as_edges(cni);
+            for(var i=0; i<node_idx2edges_idx[cni].length; ++i) bui.grid.set_ebuckets(node_idx2edges_idx[cni][i],'clear');
             bui.grid.add_padding();
-            //for(var i=0; i<node_idx2edges_idx[cni].length; ++i) bui.grid.set_buckets(node_idx2edges_idx[cni][i],'clear');
         }
         //--------------------------------------
         ++cni;
@@ -360,7 +371,7 @@ bui.grid.edge_intersections_fromto = function(from_node, to_nodes, to_edges){
     var edges = bui.grid.edges;
     var nodes = bui.grid.nodes;
     for(var i=0;i<to_nodes.length; ++i){
-        for(var j=0; j<edges.length; ++j){
+        for(var j in bui.grid.edge_intersections_getedges(from_node, nodes[to_nodes[i]])){
             if(!(j in to_edges)){
                 if( bui.grid.intersect(from_node, nodes[to_nodes[i]], edges[j].lsource, edges[j].ltarget) ){
                     ++counter;
@@ -376,6 +387,77 @@ bui.grid.edge_intersections_fromto = function(from_node, to_nodes, to_edges){
         }
     }
     return counter;
+}
+bui.grid.edge_intersections_getedges = function(node1, node2){
+    var min,max,i,key;
+    var edge_collectionx = {};
+    var edge_collection = {};
+    //x-------------------
+    if(node1.x<node2.x){
+        min=node1.x;
+        max=node2.x;
+    }else{
+        max=node1.x;
+        min=node2.x;
+    }
+    for(i=min; i<=max; ++i)
+        for(key in bui.grid.ebucketx[i])
+            edge_collectionx[key] = 1;
+    //y-------------------
+    if(node1.y<node2.y){
+        min=node1.y;
+        max=node2.y;
+    }else{
+        max=node1.y;
+        min=node2.y;
+    }
+    for(i=min; i<=max; ++i)
+        for(key in bui.grid.ebuckety[i])
+            if(key in edge_collectionx) 
+                edge_collection[key] = 1;
+    return edge_collection
+}
+bui.grid.init_ebuckets = function(){
+    var edges = bui.grid.edges;
+    var ebucketx = [];
+    var ebuckety = [];
+    for(var x=0; x<bui.grid.width; ++x) ebucketx.push({});
+    for(var y=0; y<bui.grid.height; ++y) ebuckety.push({});
+    bui.grid.ebucketx = ebucketx;
+    bui.grid.ebuckety = ebuckety;
+    for(var ne=0;ne<edges.length; ++ne){
+        bui.grid.set_ebuckets(ne);
+    }
+}
+bui.grid.set_ebuckets = function(edge_index, clear){
+    var i,min,max;
+    var ebucketx = bui.grid.ebucketx;
+    var ebuckety = bui.grid.ebuckety;
+    var edge = bui.grid.edges[edge_index];
+    //-------------------------
+    if(clear != undefined){
+        for(i=0;i<ebucketx.length; ++i) if(edge_index in ebucketx[i]) delete ebucketx[i][edge_index];
+        for(i=0;i<ebuckety.length; ++i) if(edge_index in ebuckety[i]) delete ebuckety[i][edge_index];
+    }
+    //x-----------------------
+    if(edge.lsource.x<edge.ltarget.x){
+        min=edge.lsource.x;
+        max=edge.ltarget.x;
+    }else{
+        max=edge.lsource.x;
+        min=edge.ltarget.x;
+    }
+    console.log(ebucketx.length);
+    for(i=min;i<=max; ++i) ebucketx[i][edge_index] = 1//FIXME !!1!!!1111 edge_index seems to be out of range
+    //y-----------------------
+    if(edge.lsource.y<edge.ltarget.y){
+        min=edge.lsource.y;
+        max=edge.ltarget.y;
+    }else{
+        max=edge.lsource.y;
+        min=edge.ltarget.y;
+    }
+    for(i=min;i<=max; ++i) ebuckety[i][edge_index] = 1;
 }
 //=====================================================
 bui.grid.node_intersections_fromto = function(from_node_index, from_node, to_nodes){
@@ -669,9 +751,9 @@ bui.grid.num_node_intersections = function(edges_index, mark){
         for(var j=0; j<bui.grid.nodes.length; ++j){
             if(j != edges[i].source_idx && j != edges[i].target_idx){
                 var nae = bui.grid.nodes_as_edges[j];
-                if(bui.grid.intersect(edges[i].source(), edges[i].target(), nae[0].source, nae[0].target)){
+                if(bui.grid.intersect(edges[i].lsource, edges[i].ltarget, nae[0].source, nae[0].target)){
                     ++counter;
-                }else if(bui.grid.intersect(edges[i].source(), edges[i].target(), nae[1].source, nae[1].target)){
+                }else if(bui.grid.intersect(edges[i].lsource, edges[i].ltarget, nae[1].source, nae[1].target)){
                     ++counter;
                 }
             }
