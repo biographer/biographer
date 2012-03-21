@@ -31,10 +31,8 @@
         var graphHtmlPosition = this.graph().htmlTopLeft();
         var correction = bui.settings.style.placeholderCorrection.position;
         var scale = this.graph().scale();
-        privates.placeholder.style.left = (absolutePosition.x * scale +
-                graphHtmlPosition.x + correction.x) + 'px';
-        privates.placeholder.style.top = (absolutePosition.y * scale +
-                graphHtmlPosition.y + correction.y) + 'px';
+        privates.placeholder.style.left = Math.round( absolutePosition.x * scale + graphHtmlPosition.x + correction.x ) + 'px';
+        privates.placeholder.style.top = Math.round( absolutePosition.y * scale + graphHtmlPosition.y + correction.y ) + 'px';
 
         correction = bui.settings.style.placeholderCorrection.size;
         privates.placeholder.style.width = (privates.width * scale +

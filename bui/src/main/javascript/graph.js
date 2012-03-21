@@ -43,13 +43,13 @@
     var __initialPaintGraph = function() {
         var privates = this._privates(identifier);
 
-        var div = document.createElement('div');
-        privates.container.appendChild(div);
+//        var div = document.createElement('div');
+//        privates.container.appendChild(div);
 
         privates.root = document.createElementNS(bui.svgns, 'svg');
         privates.root.setAttribute('xmlns', bui.svgns);
         privates.root.setAttribute('id', privates.id);
-        div.appendChild(privates.root);
+        privates.container.appendChild(privates.root);
 
         var offset = jQuery(privates.root).offset();
         privates.rootOffset = {
@@ -80,9 +80,9 @@
         privates.edgeGroup = document.createElementNS(bui.svgns, 'g');
         privates.rootGroup.appendChild(privates.edgeGroup);
 
-        privates.placeholderContainer = document.createElement('div');
-        document.getElementsByTagName('body')[0]
-                .appendChild(privates.placeholderContainer);
+        privates.placeholderContainer = privates.container;  //document.createElement('div');
+//        document.getElementsByTagName('body')[0]
+//                .appendChild(privates.placeholderContainer);
 
         privates.connectingArcs = {};
 
