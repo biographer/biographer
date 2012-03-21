@@ -493,7 +493,7 @@ def core_release():
         #tar.add(os.path.join(request.folder, rdir), rdir, exclude = glob_match)
     for rdir in 'databases cache'.split():
         tar.add(os.path.join(request.folder, rdir), rdir, False)
-    for rfile in 'VERSION __init__.py ABOUT LICENSE'.split():
+    for rfile in 'VERSION LICENSE'.split():
         tar.add(os.path.join(request.folder, rfile), rfile)
     tar.close()
 
