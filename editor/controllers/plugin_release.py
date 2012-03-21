@@ -274,7 +274,7 @@ def create(sub_release_folder, release_type, release_web2py_base, update_web2py 
         except:
             pass
         shutil.copytree(os.path.join(request.folder, rdir), os.path.join(new_app_dir, rdir), ignore=apply(shutil.ignore_patterns, IGNORE_PATTERNS))
-    for rfile in 'VERSION __init__.py ABOUT LICENSE'.split():
+    for rfile in 'VERSION LICENSE'.split():
         shutil.copy(os.path.join(request.folder, rfile), os.path.join(new_app_dir, rfile))
     #clean up
     for rdir in 'private errors uploads sessions errors databases'.split():
