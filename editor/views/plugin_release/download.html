@@ -16,8 +16,12 @@ Here you can download <i>{{=APPLICATION_NAME}}</i> version {{=LOAD('plugin_relea
         <td>{{=A('Download', _href=URL(request.application, 'static', '%s_win.%s'%(APPLICATION_NAME,extension)))}}</td>
 	</tr>
 	<tr>
-		<td>Os X</td>
+		<td>Os X (experimental)</td>
         <td>{{=A('Download', _href=URL(request.application, 'static', '%s_osx.%s'%(APPLICATION_NAME,extension)))}}</td>
+	</tr>
+	<tr>
+		<td>HTML5 (no server included, experimental)</td>
+        <td>{{=A('Download', _href=URL(request.application, 'static', '%s_html5.%s'%(APPLICATION_NAME,extension)))}}</td>
 	</tr>
 </table>
 <br />

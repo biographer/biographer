@@ -12,8 +12,12 @@
     <h2>Create Releases</h2>
     <div id="show"></div>
     {{=TABLE([TR(TD(type),TD(DIV('create', _onclick=XML("web2py_component('%s','show')"%URL(request.application, 'plugin_release', 'full_release', vars=dict(type = type))), _class="button"))) for type in 'win src osx'.split()], _id="create_release_table")}}
-    <br />
+    <p>
     {{=DIV('create w2p package', _onclick=XML("web2py_component('%s','show')"%URL(request.application, 'plugin_release', 'core_release')), _class="button")}}
+    </p>
+    <p>
+    {{=DIV('create html5 package', _onclick=XML("web2py_component('%s','show')"%URL(request.application, 'plugin_release', 'release_html5')), _class="button")}}
+    </p>
     {{=LOAD('plugin_release', 'edit_version', ajax=True)}}
     {{=DIV('Mercurial Pull/Update', _onclick=XML("web2py_component('%s','show')"%URL(request.application, 'plugin_release', 'hg_update')), _class="button")}}
 {{pass}}

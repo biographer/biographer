@@ -205,14 +205,15 @@ def export():
 
 def render():
     in_url = request.args(0) or request.vars.q
-    try:
-        #import urllib2
-        file_content = _download(in_url)
-    except urllib2.HTTPError, e:
-        return 'error getting %s: %s'%(in_url,e)
-    action, graph, json_string = import_file(file_content,'')
-    if action and graph and json_string:
-        undoRegister(action, graph, json_string)
+    if in_url:
+        try:
+            #import urllib2
+            file_content = _download(in_url)
+        except urllib2.HTTPError, e:
+            return 'error getting %s: %s'%(in_url,e)
+        action, graph, json_string = import_file(file_content,'')
+        if action and graph and json_string:
+            undoRegister(action, graph, json_string)
     response.files.append(URL(request.application, 'static/css', 'visualization-html.css'))
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     return dict()
