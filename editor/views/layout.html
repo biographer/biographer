@@ -45,7 +45,7 @@
 </head>
 
 <body id=body>
-    <div class="flash">{{=response.flash or ''}}</div> <!-- notification div -->
+    <div class="flash">{{=XML(response.flash) or ''}}</div> <!-- notification div -->
     <div id="container">                        
         <div id="wrapper">        
             <!-- re-occuring, identical style definitions, which are defined globally below -->

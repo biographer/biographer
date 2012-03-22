@@ -80,7 +80,7 @@ function init_edit(){
                 $('#errors'+issue_id).show();
                 jQuery.ajax({'type':'get','url':'{{=URL(request.application, 'plugin_issue', 'errors', args=request.args)}}',
                     'beforeSend':function() {
-                            $('#errors'+issue_id).html('{{=IMG(_src=URL(request.application, 'static/img', 'loading.gif'), _alt="... loading error tickets")}}');
+                            $('#errors'+issue_id).html('{{=IMG(_src=URL(request.application, 'static/imgages', 'loading.gif'), _alt="... loading error tickets")}}');
                         },
                         'complete':function(xhr,text){
                             $('#errors'+issue_id).html(xhr.responseText);
