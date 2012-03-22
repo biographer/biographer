@@ -61,10 +61,13 @@
                                 {{if auth.is_logged_in():}}
                                 <li><a href="{{=URL(request.application, 'plugin_release', 'status')}}">Up/Pckg</a></li>
                                 {{pass}}
-                            {{elif auth.is_logged_in():}}
+			    {{elif auth.has_membership('admin'):}}
                             <li><a href="{{=URL(request.application, 'plugin_release', 'status')}}">Update</a></li>
                             {{pass}}
-                            <li><a href="http://code.google.com/p/biographer/issues/list">Bugs/Features</a></li>
+			    <li><a href="{{=URL(request.application, 'plugin_issue', 'index') if IS_ISSUE_SERVER else '%s/plugin_issue/index'%APPLICATION_URL}}">Bugs/Features</a></li>
+			    {{if auth.has_membership('admin'):}}
+			    <li><a href="{{=URL(request.application, 'setup', 'index')}}">Configure</a></li>
+			    {{pass}}
                             <li><a href="{{=URL(request.application, 'default', 'sbgnml_test')}}">SBGN-ML Test</a></li>
                             <li><a href="{{=URL(request.application, 'default', 'sbml_test')}}">SBML Test</a></li>
                         </UL>

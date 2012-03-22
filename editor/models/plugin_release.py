@@ -21,7 +21,7 @@ RELEASE_FOLDER = os.path.join(request.folder, 'private', 'release')
 APPLICATION_URL = "http://biographer.biologie.hu-berlin.de/biographer"
 WEB2PY_URL = 'http://web2py.com'
 WEB2PY_VERSION_URL = WEB2PY_URL+'/examples/default/version'
-IGNORE_PATTERNS = ('*web2py.app.*', '*.sw?', '*~', '*.pyc', 'CVS', '^.git', '.svn', '*%s_*.zip'%APPLICATION_NAME, '*%s_*.tar*'%APPLICATION_NAME)
+IGNORE_PATTERNS = ('*BIOMD*', '*web2py.app.*', '*.sw?', '*~', '*.pyc', 'CVS', '^.git', '.svn', '*%s_*.zip'%APPLICATION_NAME, '*%s_*.tar*'%APPLICATION_NAME)
 ##########################################
 '''
 if auth.has_membership('admin'):

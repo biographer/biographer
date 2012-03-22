@@ -283,8 +283,11 @@ def create(sub_release_folder, release_type, release_web2py_base, update_web2py 
         except:
             pass
     if release_type == 'src':
-        open(os.path.join(sub_release_folder, '%s.sh'%APPLICATION_NAME), 'w').write('''#!/usr/bin/env bash
-python web2py/web2py.py''')
+        open(os.path.join(sub_release_folder, '%s'%APPLICATION_NAME), 'w').write('''#!/usr/bin/env bash
+python web2py/applications/init/static/plugin_release/open_browser.py&
+python web2py/web2py.py -p 8000 -a test -R ./application/init/open_browser.py''')
+        import stat
+        os.chmod(os.path.join(sub_release_folder, '%s'%APPLICATION_NAME), stat.S_IRWXU)
     elif release_type == 'win':
         shutil.copy(os.path.join(request.folder,'static', 'plugin_release', 'start.bat'), os.path.join(sub_release_folder, '%s.bat'%APPLICATION_NAME))
     elif release_type == 'osx':
