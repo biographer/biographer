@@ -11,17 +11,20 @@
 		<td></td>
 		<td>
 			<ul class="editor_menu">
+				{{if not request.vars.html5only:}}
 				<li id="save_to_session"> 
 				<div>save current network to session</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'disk.png')}}"/> 
 				&nbsp;
 				</li>
+				{{pass}}
 				<li id="clear"> 
 				<div>clear the canvas</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'trash.png')}}"/> 
 				&nbsp;
 				</li>
 				<!-- ---------------------------------------------------------------- -->
+				{{if not request.vars.html5only:}}
 				<li class="spacer"></li>
                 <li id="bug" {{="class=fkt_active" if session.debug else ""}}> 
 				<div>switch to debug mode</div>
@@ -45,27 +48,31 @@
 				<img src="{{=URL(request.application, 'static/images/editor', 'redo.png')}}"/> 
 				&nbsp;
 				</li>
+				{{pass}}
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
+				{{if not request.vars.html5only:}}
 				<li id="import_file"> 
 				<div><b>import</b> graph from : JSON file, SBML file, BioModels.net, Reactome </div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'import_file.png')}}"/> 
 				&nbsp;
 				</li>
+				{{pass}}
 				<li id="import_str"> 
 				<div><b>import</b> JSON graph <b>from string</b></div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'import_string.png')}}"/> 
 				&nbsp;
 				</li>
 				<li class="spacer"></li>
+				<li id="export_json"> 
+				<div>export current graph as jSBGN (JSON)</div>
+				<img src="{{=URL(request.application, 'static/images/editor', 'export_json.png')}}"/> 
+				&nbsp;
+				</li>
+			    	{{if not request.vars.html5only:}}
 				<li id="export_svg"> 
 				<div>export current graph as SVG</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'export_svg.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id="export_json"> 
-				<div>export current graph as JSON</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'export_json.png')}}"/> 
 				&nbsp;
 				</li>
 				</li>
@@ -74,6 +81,7 @@
 				<img src="{{=URL(request.application, 'static/images/editor', 'export.png')}}"/> 
 				&nbsp;
 				</li>
+				{{pass}}
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
 				<li id="layout_grid"> 
@@ -86,11 +94,13 @@
 				<img src="{{=URL(request.application, 'static/images/editor', 'd3_force.png')}}"/> 	
 				&nbsp;
 				</li>
+				{{if not request.vars.html5only:}}
 				<li id="layout_biographer"> 
 				<div>apply automatic <b>biographer</b> layout</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'biographer.png')}}"/> 
 				&nbsp;
 				</li>
+				{{pass}}
 				<li id="clone"> 
 				<div>clone selected objects (or all) with with edge degree &gt; 5</div>
 				<img src="{{=URL(request.application, 'static/images/editor', 'clone.png')}}"/> 

@@ -515,21 +515,24 @@ def release_html5():
     if not os.path.exists(RELEASE_FOLDER):
         os.mkdir(RELEASE_FOLDER)
     sub_release_folder = os.path.join(RELEASE_FOLDER, 'html5')
-    if not os.path.exists(sub_release_folder):
+    if os.path.exists(sub_release_folder):
+        shutil.rmtree(sub_release_folder)
+        os.mkdir(sub_release_folder)
+    else:
         os.mkdir(sub_release_folder)
     #-------------------------------------------
 
     import re
-    index_html = _download('http://'+request.env.http_host+URL(request.application, 'default', 'index'))
+    index_html = _download('http://'+request.env.http_host+URL(request.application, 'default', 'index', vars=dict(html5only = 1)))
     index_html = re.sub('/biographer/static/', '', index_html)
     open(os.path.join(RELEASE_FOLDER, 'html5', 'index.html'), 'w').write(index_html)
-    embedd_html = _download('http://'+request.env.http_host+URL(request.application, 'default', 'render'))
-    index_html = re.sub('/biographer/static/', '', index_html)
-    open(os.path.join(RELEASE_FOLDER, 'html5', 'embed.html'), 'w').write(index_html)
+    #embed_html = _download('http://'+request.env.http_host+URL(request.application, 'default', 'render'))
+    #embed_html = re.sub('/biographer/static/', '', embed_html)
+    #open(os.path.join(RELEASE_FOLDER, 'html5', 'embed.html'), 'w').write(index_html)
 
     for static_dir in 'css js images'.split():
-        if os.path.exists(os.path.join(RELEASE_FOLDER, 'html5', static_dir)):
-            shutil.rmtree(os.path.join(RELEASE_FOLDER, 'html5', static_dir))
+        #if os.path.exists(os.path.join(RELEASE_FOLDER, 'html5', static_dir)):
+        #    shutil.rmtree(os.path.join(RELEASE_FOLDER, 'html5', static_dir))
         shutil.copytree(os.path.join(request.folder, 'static', static_dir), os.path.join(RELEASE_FOLDER, 'html5', static_dir), ignore=apply(shutil.ignore_patterns, IGNORE_PATTERNS) )
     targzit(sub_release_folder, os.path.join(request.folder, 'static','%s_%s.tar.gz'%(APPLICATION_NAME, 'html5')))
     download_location = URL(request.application, 'static', '%s_%s.tar.gz'%(APPLICATION_NAME, 'html5'))
