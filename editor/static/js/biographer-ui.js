@@ -1699,6 +1699,10 @@ var getSBOForMarkerId = function(id) {
         var privates = this._privates(identifier);
         privates.id = bui.settings.idPrefix.graph + graphCounter++;
         privates.container = container;
+	if ( container == null ) {	// don't break here, just throw a message
+		console.error('Warning: Invalid container element specified. Using document.body instead.');
+		privates.container = document.body;
+		}
         privates.drawables = {};
         privates.idCounter = 0;
         privates.scale = 1;
@@ -2432,7 +2436,7 @@ var getSBOForMarkerId = function(id) {
          * @param {String|String[]} path The property name which should be
          *   updated. Pass a string array to handle property chains.
          * @param {Object} value The property's value.
-         * @returh {bui.Drawable} Fluent interface
+         * @return {bui.Drawable} Fluent interface
          */
         updateJson : function(path, value) {
             var privates = this._privates(identifier);
@@ -3550,18 +3554,19 @@ var getSBOForMarkerId = function(id) {
             var auxUnits = this.auxiliaryUnits();
             if (auxUnits.length > 0) {
                 var auxUnitsJson = [];
-                updateJson(json, dataFormat.node.modifications, auxUnitsJson);
 
                 for (i = 0; i < auxUnits.length; i++) {
                     var auxUnit = auxUnits[i];
 
                     if (auxUnit instanceof bui.StateVariable) {
+                    
                         auxUnitsJson.push(auxUnit.toJSON());
                     } else {
                         log('Warning: Can\'t export units of information to ' +
                                 'JSON.');
                     }
                 }
+                updateJson(json, dataFormat.node.statevariable, auxUnitsJson);
             }
 
             return json;
@@ -5193,12 +5198,15 @@ var getSBOForMarkerId = function(id) {
 
         // override
         toJSON : function() {
+            return this.label();
+
+            /*
             // is actually an override but won't call the superclass because
             // units of information aren't considered as nodes in the JSON
             // data format. We are also assuming that only the state variable's
             // label can be edited and that therefore the JSON data needs to
             // be extracted from the label.
-
+            
             var json = [null, ''];
 
             var labelParts = this.label().split('@');
@@ -5210,6 +5218,7 @@ var getSBOForMarkerId = function(id) {
             }
 
             return json;
+            */
         }
     };
     bui.util.setSuperClass(bui.StateVariable, bui.Labelable);
@@ -5263,15 +5272,7 @@ var getSBOForMarkerId = function(id) {
 
             var json = [null, ''];
 
-            var labelParts = this.label().split('@');
-
-            json[0] = getModificationSBOForLabel(labelParts[0]);
-
-            if (labelParts.length > 1) {
-                json[1] = labelParts[1];
-            }
-
-            return json;
+            return this.label();
         }
     };
     bui.util.setSuperClass(bui.StateVariableER, bui.VariableValue);
@@ -6457,9 +6458,9 @@ var getSBOForMarkerId = function(id) {
            var dl=positions.length/2-privates.points.length;
            if (dl<0){
               for (var i=privates.points.length-dl;i<privates.points.length;i++){
-                 privates.points[i].splineHandle.delete();
-                 privates.points[i].helperLine.delete();
-                 privates.points[i].point.delete();
+                 delete privates.points[i].splineHandle;
+                 delete privates.points[i].helperLine;
+                 delete privates.points[i].point;
               }
            }
            if (dl>0){
@@ -6550,6 +6551,7 @@ var getSBOForMarkerId = function(id) {
 
     bui.util.setSuperClass(bui.Spline, bui.AbstractLine);
 })(bui);
+
 (function(bui) {
     var identifier = 'bui.Edge';
 

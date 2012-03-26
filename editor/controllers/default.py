@@ -263,13 +263,13 @@ def sbml_test():
         #if count<360:
         #    continue
         items.append(
-                TR( TH( A(fn, _href=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/data_models',fn)), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
+                TR( TH( A(fn, _href=URL('render', vars = dict(q=URL(request.application, 'static/data_models',fn), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
             )
         items.append(
             TR(
                 #TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
                 TD( PRE(
-                    '%s'%IFRAME(_src=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/data_models',fn)), layout="biographer")), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"),
+                    '%s'%IFRAME(_src=URL('render', vars = dict(q=URL(request.application, 'static/data_models',fn), layout="biographer")), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"),
                     _class='show_iframe'
                     ),DIV()),
                 ),
