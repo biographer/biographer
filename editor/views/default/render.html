@@ -20,14 +20,13 @@
 {{else:}}
 <script type="text/javascript" src="{{=URL(request.application, 'static/js', 'biographer-ui.js')}}"></script>
 {{pass}}
-<div id="biog" style="position: fixed; display: none">
+<div id="biog" style="position: absolute; display: none; z-index:999;">
     <form name='all_your_base_are_belong_to_us' action="http://{{=APP_URL}}" method="POST" target="_blank">
         <a style="cursor:pointer" onclick="document['all_your_base_are_belong_to_us'].submit()">Edit this @ Biographer</a> 
         <input type="hidden" name="jsbgn" value='{{=XML(session.editor_autosave)}}'/>
     </form>
-				
 </div>
-<div id="canvas" class='droppable' style="width: 99%; height: 99%;"></div>
+<div id="canvas" class='droppable' style="width: 99%; height: 99%; margin-top: 0px;"></div>
 <script type="text/javascript">
 //-------------------------------------------
 //-------------------------------------------
