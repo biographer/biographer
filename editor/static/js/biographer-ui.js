@@ -1901,10 +1901,10 @@ var getSBOForMarkerId = function(id) {
          *   constructor.
          * @return {bui.Drawable} The constructed drawable object.
          */
-        add : function(constructor, params) {
+        add : function(constructor, id, params) {
             var privates = this._privates(identifier);
             var drawable = null;
-            var id = privates.idCounter++;
+            //var id = privates.idCounter++;
 
             if (params === undefined) {
                 params = {};
@@ -2106,6 +2106,7 @@ var getSBOForMarkerId = function(id) {
                     if (drawable.drawableType() === 'node') {
                         nodes.push(drawable.toJSON());
                     } else {
+                        console.log(drawable.id());
                         edges.push(drawable.toJSON());
                     }
                 }
@@ -2776,7 +2777,7 @@ var getSBOForMarkerId = function(id) {
      *   part of.
      */
     bui.Node = function(args) {
-        args.id = bui.settings.idPrefix.node + args.id;
+        //args.id = bui.settings.idPrefix.node + args.id;
         bui.Node.superClazz.call(this, args);
         this._addType(bui.Node.ListenerType);
 
@@ -5101,7 +5102,6 @@ var getSBOForMarkerId = function(id) {
                     privates = this._privates(identifier),
                     dataFormat = bui.settings.dataFormat;
             updateJson(json, dataFormat.node.label, privates.label.label());
-            console.log('json is'+JSON.stringify(json))
 
             return json;
         }
@@ -5682,10 +5682,18 @@ var getSBOForMarkerId = function(id) {
                     privates = this._privates(identifier);
 
             if (privates.source !== null) {
-                updateJson(json, dataFormat.edge.source, privates.source.id());
+                if (privates.source.identifier() == 'bui.EdgeHandle'){
+                    updateJson(json, dataFormat.edge.source, privates.source.lparent.id());
+                }else{
+                    updateJson(json, dataFormat.edge.source, privates.source.id());
+                }
             }
             if (privates.target !== null) {
-                updateJson(json, dataFormat.edge.target, privates.target.id());
+                if (privates.target.identifier() == 'bui.EdgeHandle'){
+                    updateJson(json, dataFormat.edge.target, privates.target.lparent.id());
+                }else{
+                    updateJson(json, dataFormat.edge.target, privates.target.id());
+                }
             }
 
             return json;
@@ -5705,6 +5713,7 @@ var getSBOForMarkerId = function(id) {
         target : bui.util.createListenerTypeId()
     };
 })(bui);
+
 (function(bui) {
     var identifier = 'bui.AbstractLine';
 
@@ -5876,7 +5885,7 @@ var getSBOForMarkerId = function(id) {
      *   part of.
      */
     bui.AbstractLine = function(args){
-        args.id = bui.settings.idPrefix.edge + args.id;
+        //args.id = bui.settings.idPrefix.edge + args.id;
         bui.AbstractLine.superClazz.call(this, args);
         this._addType(bui.AbstractLine.ListenerType);
 
@@ -6987,14 +6996,14 @@ var getSBOForMarkerId = function(id) {
             }
 
             if (privates.handles.length > 0) {
-                log('toJSON called iterating handles');
+                //log('toJSON called iterating handles');
                 var handles = [];
 
                 for (var i = 0; i < privates.handles.length; i++) {
                     var position = privates.handles[i].absoluteCenter();
                     handles.push(position);
                 }
-                log('got this ')
+                //log('got this '+JSON.stringify(handles));
                 updateJson(json, dataFormat.edge.handles, handles);
             }
 
@@ -7005,6 +7014,7 @@ var getSBOForMarkerId = function(id) {
                     updateJson(json, dataFormat.drawable.sbo, sbo);
                 }
             }
+            console.log('rock edge '+JSON.stringify(json));
 
             return json;
         }
@@ -7093,9 +7103,9 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
        
         var node;
         if (nodeJSON.sbo == 174 || nodeJSON.sbo == 173 || nodeJSON.sbo == 238 || nodeJSON.sbo == 225 || nodeJSON.sbo == 396 || nodeJSON.sbo == 379){
-            node = graph.add(nodeType.klass, [nodeJSON.sbo]);
+            node = graph.add(nodeType.klass, nodeJSON.id, [nodeJSON.sbo]);
         }else{
-            node = graph.add(nodeType.klass);
+            node = graph.add(nodeType.klass, nodeJSON.id);
         }
 
         if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'label'])) {
@@ -7392,7 +7402,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             edgeJSON.data = edgeJSON.data || {};
 
             if (edgeJSON.data.handles !== undefined && edgeJSON.data.handles.length>=4) {
-                edge = graph.add(bui.Spline)
+                edge = graph.add(bui.Spline, edgeJSON.id)
                     .layoutElementsVisible(false);
 
                 edge.json(edgeJSON).source(source).target(target);
@@ -7404,7 +7414,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                     edge.setSplineHandlePositions(edgeJSON.data.handles);
                 }
             } else {
-                edge = graph.add(bui.Edge);
+                edge = graph.add(bui.Edge, edgeJSON.id);
                 edge.json(edgeJSON).source(source).target(target);
                 if(edgeJSON.data.points !== undefined){
                     for(var j=0; j<edgeJSON.data.points.length; j += 2){
@@ -7427,7 +7437,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                     var handle = graph.add(bui.RectangularNode).visible(true).size(50,20).label(cis_trans);
                     handle.positionCenter(pos.x+size.width+30, pos.y);
                     edge.json(edgeJSON).source(handle).target(target);
-                    back_edge = graph.add(bui.Edge);
+                    back_edge = graph.add(bui.Edge, edgeJSON.id+'_back');
                     back_edge.json(edgeJSON).source(handle).target(source);
                     var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
                     back_edge.marker(marker.klass);
@@ -7513,7 +7523,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 /*if(source_edge != undefined || target_edge != undefined){
                     if source_edge.source()
                 }*/
-                edge = graph.add(bui.Edge);
+                edge = graph.add(bui.Edge, edgeJSON.id);
                 edge.source(source).target(target);//.json(edgeJSON);
                 var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
                 edge.marker(marker.klass);
