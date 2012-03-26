@@ -356,7 +356,11 @@ def sbml2jsbgn(sbml_str, rxncon=False):
                     for subnode_id in species.getName().split('.'):
                         match = re.search(pattern_nd, subnode_id)
                         subnode_id, mods = match.group(1),match.group(2)
-                        node_item = dict( id = species_id+subnode_id, sbo = 252, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60, label=subnode_id))
+                        if ('rna' in subnode_id.lower()) or ('dna' in subnode_id.lower()):
+                            sbo = 250
+                        else:
+                            sbo = 252
+                        node_item = dict( id = species_id+subnode_id, sbo = sbo, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60, label=subnode_id))
                         if mods:
                             show_mods = [modification2statevariable(mod) for mod in mods.split(',') if '!' not in mod]
                             node_item['data']['statevariable'] = [x for x in show_mods if x]
@@ -366,7 +370,11 @@ def sbml2jsbgn(sbml_str, rxncon=False):
                 else:
                     match = re.search(pattern_nd, species.getName())
                     spec_id, mods = match.group(1),match.group(2)
-                    node_item = dict( id = species_id, sbo = 252, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60, label=spec_id))
+                    if ('rna' in spec_id.lower()) or ('dna' in spec_id.lower()):
+                        sbo = 250
+                    else:
+                        sbo = 252
+                    node_item = dict( id = species_id, sbo = sbo, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60, label=spec_id))
                     if mods:
                         show_mods = [modification2statevariable(mod) for mod in mods.split(',') if '!' not in mod]
                         node_item['data']['statevariable'] = [x for x in show_mods if x]
