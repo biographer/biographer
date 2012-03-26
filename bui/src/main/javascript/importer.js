@@ -13,9 +13,9 @@
        
         var node;
         if (nodeJSON.sbo == 174 || nodeJSON.sbo == 173 || nodeJSON.sbo == 238 || nodeJSON.sbo == 225 || nodeJSON.sbo == 396 || nodeJSON.sbo == 379){
-            node = graph.add(nodeType.klass, [nodeJSON.sbo]);
+            node = graph.add(nodeType.klass, nodeJSON.id, [nodeJSON.sbo]);
         }else{
-            node = graph.add(nodeType.klass);
+            node = graph.add(nodeType.klass, nodeJSON.id);
         }
 
         if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'label'])) {
@@ -312,7 +312,7 @@
             edgeJSON.data = edgeJSON.data || {};
 
             if (edgeJSON.data.handles !== undefined && edgeJSON.data.handles.length>=4) {
-                edge = graph.add(bui.Spline)
+                edge = graph.add(bui.Spline, edgeJSON.id)
                     .layoutElementsVisible(false);
 
                 edge.json(edgeJSON).source(source).target(target);
@@ -324,7 +324,7 @@
                     edge.setSplineHandlePositions(edgeJSON.data.handles);
                 }
             } else {
-                edge = graph.add(bui.Edge);
+                edge = graph.add(bui.Edge, edgeJSON.id);
                 edge.json(edgeJSON).source(source).target(target);
                 if(edgeJSON.data.points !== undefined){
                     for(var j=0; j<edgeJSON.data.points.length; j += 2){
@@ -347,7 +347,7 @@
                     var handle = graph.add(bui.RectangularNode).visible(true).size(50,20).label(cis_trans);
                     handle.positionCenter(pos.x+size.width+30, pos.y);
                     edge.json(edgeJSON).source(handle).target(target);
-                    back_edge = graph.add(bui.Edge);
+                    back_edge = graph.add(bui.Edge, edgeJSON.id+'_back');
                     back_edge.json(edgeJSON).source(handle).target(source);
                     var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
                     back_edge.marker(marker.klass);
@@ -433,7 +433,7 @@
                 /*if(source_edge != undefined || target_edge != undefined){
                     if source_edge.source()
                 }*/
-                edge = graph.add(bui.Edge);
+                edge = graph.add(bui.Edge, edgeJSON.id);
                 edge.source(source).target(target);//.json(edgeJSON);
                 var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
                 edge.marker(marker.klass);

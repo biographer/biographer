@@ -424,14 +424,14 @@
             }
 
             if (privates.handles.length > 0) {
-                log('toJSON called iterating handles');
+                //log('toJSON called iterating handles');
                 var handles = [];
 
                 for (var i = 0; i < privates.handles.length; i++) {
                     var position = privates.handles[i].absoluteCenter();
                     handles.push(position);
                 }
-                log('got this ')
+                //log('got this '+JSON.stringify(handles));
                 updateJson(json, dataFormat.edge.handles, handles);
             }
 
@@ -442,6 +442,7 @@
                     updateJson(json, dataFormat.drawable.sbo, sbo);
                 }
             }
+            //console.log('rock edge '+JSON.stringify(json));
 
             return json;
         }

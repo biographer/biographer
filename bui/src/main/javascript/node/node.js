@@ -272,7 +272,7 @@
      *   part of.
      */
     bui.Node = function(args) {
-        args.id = bui.settings.idPrefix.node + args.id;
+        //args.id = bui.settings.idPrefix.node + args.id;
         bui.Node.superClazz.call(this, args);
         this._addType(bui.Node.ListenerType);
 

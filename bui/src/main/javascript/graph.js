@@ -389,10 +389,10 @@
          *   constructor.
          * @return {bui.Drawable} The constructed drawable object.
          */
-        add : function(constructor, params) {
+        add : function(constructor, id, params) {
             var privates = this._privates(identifier);
             var drawable = null;
-            var id = privates.idCounter++;
+            //var id = privates.idCounter++;
 
             if (params === undefined) {
                 params = {};

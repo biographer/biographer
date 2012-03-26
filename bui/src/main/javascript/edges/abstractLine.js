@@ -169,7 +169,7 @@
      *   part of.
      */
     bui.AbstractLine = function(args){
-        args.id = bui.settings.idPrefix.edge + args.id;
+        //args.id = bui.settings.idPrefix.edge + args.id;
         bui.AbstractLine.superClazz.call(this, args);
         this._addType(bui.AbstractLine.ListenerType);
 

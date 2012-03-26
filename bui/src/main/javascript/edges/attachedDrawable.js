@@ -156,10 +156,18 @@
                     privates = this._privates(identifier);
 
             if (privates.source !== null) {
-                updateJson(json, dataFormat.edge.source, privates.source.id());
+                if (privates.source.identifier() == 'bui.EdgeHandle'){
+                    updateJson(json, dataFormat.edge.source, privates.source.lparent.id());
+                }else{
+                    updateJson(json, dataFormat.edge.source, privates.source.id());
+                }
             }
             if (privates.target !== null) {
-                updateJson(json, dataFormat.edge.target, privates.target.id());
+                if (privates.target.identifier() == 'bui.EdgeHandle'){
+                    updateJson(json, dataFormat.edge.target, privates.target.lparent.id());
+                }else{
+                    updateJson(json, dataFormat.edge.target, privates.target.id());
+                }
             }
 
             return json;
