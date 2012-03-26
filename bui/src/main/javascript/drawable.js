@@ -251,7 +251,7 @@
          * @param {String|String[]} path The property name which should be
          *   updated. Pass a string array to handle property chains.
          * @param {Object} value The property's value.
-         * @returh {bui.Drawable} Fluent interface
+         * @return {bui.Drawable} Fluent interface
          */
         updateJson : function(path, value) {
             var privates = this._privates(identifier);

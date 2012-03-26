@@ -1050,18 +1050,19 @@
             var auxUnits = this.auxiliaryUnits();
             if (auxUnits.length > 0) {
                 var auxUnitsJson = [];
-                updateJson(json, dataFormat.node.modifications, auxUnitsJson);
 
                 for (i = 0; i < auxUnits.length; i++) {
                     var auxUnit = auxUnits[i];
 
                     if (auxUnit instanceof bui.StateVariable) {
+                    
                         auxUnitsJson.push(auxUnit.toJSON());
                     } else {
                         log('Warning: Can\'t export units of information to ' +
                                 'JSON.');
                     }
                 }
+                updateJson(json, dataFormat.node.statevariable, auxUnitsJson);
             }
 
             return json;
