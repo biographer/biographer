@@ -421,6 +421,25 @@ $(document).ready(function() {
     }
     showUndoRedo();
     //=========================
+    /*
+    // Check for the various File API support.
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+      // Great success! All the File APIs are supported.
+      document.querySelector('.file_upload_button').addEventListener('click', function(evt) {
+        //file processing here
+        var files = evt.target.files; // FileList object
+        var reader = new FileReader();
+        var file_content = reader.readAsText(evt.target.files[0]);
+        redrawGraph(JSON.parse(file_content));
+        undoPush('loaded graph from JSON string');
+        //$.modal.close()
+
+      }, false);
+    } else {
+        alert('The File APIs are not fully supported in this browser.');
+    }
+    */
+    //=========================
     $('#hide_handles').click(function(){
         var all_drawables = graph.drawables();
         for (var key in all_drawables) {
@@ -545,19 +564,16 @@ $(document).ready(function() {
         //graph.clear();//FIXME this does not work 
     });
     //=========================
-    $('#layout_grid').click(function(){
+    $('#layout_grid').click(function(evnt){
         nodes_edges = get_nodes_edges();
         orig_html = $('#layout_grid').html();
         $('#layout_grid').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}').ready(function(){
         bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
-        bui.grid.layout();
+        if (!evnt.ctrlKey){
+            bui.grid.layout();
+        }
         });
         $('#layout_grid').html(orig_html);
-    });
-    //=========================
-    $('#get_grid').click(function(){
-        nodes_edges = get_nodes_edges();
-        bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
     });
     //=========================
     $('#clone').click(function(){
