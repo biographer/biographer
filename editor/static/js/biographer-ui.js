@@ -5095,6 +5095,15 @@ var getSBOForMarkerId = function(id) {
         labelPosition : function() {
             var label = this._privates(identifier).label;
             return label.position.apply(label, arguments);
+        },
+        toJSON : function() {
+            var json = bui.Compartment.superClazz.prototype.toJSON.call(this),
+                    privates = this._privates(identifier),
+                    dataFormat = bui.settings.dataFormat;
+            updateJson(json, dataFormat.node.label, privates.label.label());
+            console.log('json is'+JSON.stringify(json))
+
+            return json;
         }
     };
 
