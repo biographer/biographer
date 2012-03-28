@@ -392,13 +392,16 @@
         add : function(constructor, id, params) {
             var privates = this._privates(identifier);
             var drawable = null;
-            //var id = privates.idCounter++;
+            var counter_id = privates.idCounter++;
 
             if (params === undefined) {
                 params = {};
             }
 
-            params.id = id;
+            if (id == undefined)
+                params.id = 'drawable'+counter_id
+            else
+                params.id = id;
             params.graph = this;
 
             drawable = new constructor(params);
