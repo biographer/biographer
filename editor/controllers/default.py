@@ -89,12 +89,16 @@ def import_graph():
     response.generic_patterns = ['json']
     action,graph,json_string = None,None,None
     if request.vars.type == 'reactome_id':
-        import_Reactome( request.vars.identifier )
-        json_string = session.bioGraph.exportJSON()
-        graph = simplejson.loads(json_string)
+        #FIXME implement caching
+        #model_path = os.path.join(request.folder, 'static', 'data_models')
+        #if not os.path.exists(model_path):
+        #    os.mkdir(model_path)
+        #if request.vars.identifier+'.jsbgn' in os.listdir(model_path) and not request.vars.force:
+        #    model_content = open(os.path.join(model_path, biomodel_id+'.xml'), 'r').read()
+        #    response.flash = 'Loaded %s from cache.'%biomodel_id
+        graph = reactome_id2jsbgn( request.vars.identifier )
+        json_string = simplejson.dumps(graph)
         action = 'Imported Reactome Id: %s'%request.vars.identifier
-        print 'reactome_id xxx ',action, json_string
-
     if action and graph and json_string:
         return undoRegister(action, graph, json_string)
     raise HTTP(500, 'could not import')
@@ -185,7 +189,7 @@ def export():
         out = fix_svg(request.vars.svg)
     elif request.vars.format in 'png jpg pdf tiff'.split():
         file_type = request.vars.format
-        java = "/usr/bin/java"  # FIXME java executable, this should be configurable shomewhere
+        java = app_config.get('java', 'path')
         import os
         from subprocess import Popen, PIPE
         from shlex import split

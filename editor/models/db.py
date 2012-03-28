@@ -29,6 +29,7 @@ class Config:
         self.create('smtp','login','user:password')
         self.create('smtp','server','server:portx')
         self.create('smtp','sender','name@server.org')
+        self.create('java','path', '/usr/bin/java')
     def get(self, section, option):
         '''get a value'''
         record = db(db.config.option == option)(db.config.section == section).select(db.config.value).first()
@@ -38,23 +39,19 @@ class Config:
     def create(self, section, option, value):
         '''create value if it does not exist'''
         if not db(db.config.option == option)(db.config.section == section).count():
-            print 'create: ',option,section,value
             db.config.insert(section = section, option = option, value = value)
 
     def set(self, section, option, value):
         '''set or update a value'''
         record = db(db.config.option == option)(db.config.section == section).select().first()
         if record:
-            print 'setting val',record
             #record.update_record(value = value)
             db.config[record.id] = dict(section = section, option = option, value = value)
         else:
-            print 'inserting val'
             db.config.insert(section = section, option = option, value = value)
-        print 'fuuuuck',db.config[record.id]
     def write(self):
         pass
-config = Config()
+app_config = Config()
 #########################################################################
 
 from gluon.tools import *
@@ -65,9 +62,9 @@ crud = Crud(globals(),db)                      # for CRUD helpers using auth
 service = Service(globals())                   # for json, xml, jsonrpc, xmlrpc, amfrpc
 plugins = PluginManager()
 
-mail.settings.server = config.get('smtp', 'server') # your SMTP server
-mail.settings.sender = config.get('smtp', 'sender') # your email
-mail.settings.login = config.get('smtp', 'login') # your credentials or None
+mail.settings.server = app_config.get('smtp', 'server') # your SMTP server
+mail.settings.sender = app_config.get('smtp', 'sender') # your email
+mail.settings.login = app_config.get('smtp', 'login') # your credentials or None
 
 auth.settings.hmac_key = 'sha512:96779a30-57c0-40a7-a874-0b464c56e825'   # before define_tables()
 auth.define_tables()                           # creates all needed tables
@@ -106,107 +103,6 @@ if not auth.is_logged_in() and db(db.auth_user.id>0).count() and not os.path.exi
 #########################################################################
 #Cache functions
 
-def Reactome_to_cache(SBML, ID):
-    global db
-
-    key = 'name="'
-    p = SBML.find(key)
-    if p > -1:
-        p += len(key)
-        q = SBML.find('"',p)
-        title = SBML[p:q].replace("_"," ")
-
-        if len( db( db.Reactome.ST_ID==ID ).select() ) == 0:
-            db.Reactome.insert( ST_ID=ID, Title=title, File=SBML )
-
-def Reactome_from_cache( ReactomeStableIdentifier ):
-    global db
-
-    select = db( db.Reactome.ST_ID==ReactomeStableIdentifier ).select()
-
-    if len( select ) == 1:
-        return select[0].File
-    else:
-        return None
-
-def download_Reactome( ReactomeStableIdentifier ):
-
-    import httplib
-
-    #page = _download('http://www.reactome.org/cgi-bin/eventbrowser_st_id?ST_ID='+ReactomeStableIdentifier')
-    connection = httplib.HTTPConnection("www.reactome.org")
-    connection.request("GET", '/cgi-bin/eventbrowser_st_id?ST_ID='+ReactomeStableIdentifier, None, {"Cookie":"ClassicView=1"} )
-    page = connection.getresponse().read()
-
-    p = page.find('/cgi-bin/sbml_export?')
-    if p > -1:
-        q = page.find('"', p)
-        connection.request("GET", page[p:q])                    # download SBML
-        return connection.getresponse().read()
-
-    if page.find('has been updated in the most recent release of Reactome') > -1:
-
-        print 'This Reactome model is superseded.'
-
-        key = '="eventbrowser_st_id?ST_ID='
-        p = page.find(key)+len(key)
-        q = page.find('"', p)
-        new_RSI = page[p:q]
-        if new_RSI.find('REACT_') == 0:
-            print 'New RSI is '+new_RSI+'.'
-            return download_Reactome( new_RSI )
-
-    return None
-
-def reset_current_session():
-    global session
-
-    session.JSON = None             # reset
-    session.SBML = None
-    session.BioModelsID = None
-
-    if session.bioGraph is not None:        # delete old graph
-        del session.bioGraph
-
-    from graph import Graph
-    from defaults import progress
-    session.bioGraph = Graph(verbosity=progress)    # new graph
-
-def export_JSON():                  # workaround for web2py bug
-    from copy import deepcopy
-    global session
-    session.bioGraph.exportJSON()
-    temp = deepcopy( session.bioGraph )
-    del session.bioGraph
-    session.bioGraph = temp
-    return session.bioGraph.JSON
-
-def import_Reactome( ReactomeStableIdentifier ):
-    global session, request, db
-
-    print "Request for RSI:"+ReactomeStableIdentifier
-
-    model = Reactome_from_cache( ReactomeStableIdentifier )
-    if model is None:
-        print "Not in cache. Downloading ..."
-        model = download_Reactome( ReactomeStableIdentifier )
-        if model is None:
-            print "Error: Download failed"
-            session.flash = "Error: Reactome download failed"
-            return False
-        else:
-            print "Downloaded successful."
-            session.flash = "Reactome model downloaded"
-            Reactome_to_cache( model, ReactomeStableIdentifier )
-    else:
-        print "Loaded from cache."
-        session.flash = "Reactome model loaded from cache"
-
-    reset_current_session()
-    session.ST_ID = ReactomeStableIdentifier
-    session.SBML = model
-    session.bioGraph.importSBML( session.SBML )
-    return model
 
 #########################################################################
 #########################################################################
@@ -682,6 +578,21 @@ def sbgnml2jsbgn(sbgnml_str):
     lang2lang = {'entity relationship': 'ER', 'process description': 'PD', 'activity flow': 'AF'}
     graph['sbgnlang'] = lang2lang[xml.root.map[0].language]
     return graph
+
+def reactome_id2jsbgn( reactome_stable_identifier ):
+    page = _download('http://www.reactome.org/cgi-bin/eventbrowser_st_id?ST_ID='+reactome_stable_identifier)
+    sbml = ''
+    import re
+    if 'out of date' in page:
+        match = re.search('eventbrowser_st_id?ST_ID=([^"]+)"', page)
+        if match:
+            return reactome_id2jsbgn( match.group(1) )
+    else:
+        match = re.search(r'PATHWAY_ID=(\d+)&ID=\1',page)
+        if match:
+            sbml = _download('http://www.reactome.org/ReactomeGWT/entrypoint/sbmlRetrieval?ID=%s'%match.group(1))
+    if sbml:
+        return sbml2jsbgn(sbml)
 #########################################################################
 
 class ContentTooShortError(Exception):

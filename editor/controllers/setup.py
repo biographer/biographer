@@ -45,13 +45,23 @@ def setup_smtp():
     if not auth.has_membership(role = 'admin'):
         return 'You need to login as admin to configure the SMTP server.'
     form = form_factory(
-            Field('server', default = config.get('smtp','server')),
-            Field('login', default = config.get('smtp', 'login'), widget=SQLFORM.widgets.password.widget, label="Login (user:pass)"),
-            Field('sender', default = config.get('smtp', 'sender')),
+            Field('server', default = app_config.get('smtp','server')),
+            Field('login', default = app_config.get('smtp', 'login'), widget=SQLFORM.widgets.password.widget, label="Login (user:pass)"),
+            Field('sender', default = app_config.get('smtp', 'sender')),
             )
     if form.accepts(request.vars, keepvalues = True):
-        config.set('smtp','server', form.vars.server)
-        config.set('smtp', 'login', form.vars.login)
-        config.set('smtp', 'sender', form.vars.sender)
+        app_config.set('smtp','server', form.vars.server)
+        app_config.set('smtp', 'login', form.vars.login)
+        app_config.set('smtp', 'sender', form.vars.sender)
         response.flash = 'smtp config saved'
+    return form
+def setup_java():
+    if not auth.has_membership(role = 'admin'):
+        return 'You need to login as admin to configure the JAVA path'
+    form = form_factory(
+            Field('java_path', default = app_config.get('java','path')),
+            )
+    if form.accepts(request.vars, keepvalues = True):
+        app_config.set('java','path', form.vars.java_path)
+        response.flash = 'JAVA path saved'
     return form
