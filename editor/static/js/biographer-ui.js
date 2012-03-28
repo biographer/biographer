@@ -1904,13 +1904,17 @@ var getSBOForMarkerId = function(id) {
         add : function(constructor, id, params) {
             var privates = this._privates(identifier);
             var drawable = null;
-            //var id = privates.idCounter++;
+            var counter_id = privates.idCounter++;
 
             if (params === undefined) {
                 params = {};
             }
 
-            params.id = id;
+            if (id == undefined)
+                params.id = 'drawable'+counter_id
+            else
+                params.id = id;
+            console.log('add fkt id: '+params.id);
             params.graph = this;
 
             drawable = new constructor(params);
@@ -2106,7 +2110,6 @@ var getSBOForMarkerId = function(id) {
                     if (drawable.drawableType() === 'node') {
                         nodes.push(drawable.toJSON());
                     } else {
-                        console.log(drawable.id());
                         edges.push(drawable.toJSON());
                     }
                 }
@@ -7014,7 +7017,7 @@ var getSBOForMarkerId = function(id) {
                     updateJson(json, dataFormat.drawable.sbo, sbo);
                 }
             }
-            console.log('rock edge '+JSON.stringify(json));
+            //console.log('rock edge '+JSON.stringify(json));
 
             return json;
         }
