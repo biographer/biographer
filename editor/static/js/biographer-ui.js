@@ -1248,7 +1248,7 @@ var getSBOForMarkerId = function(id) {
      * @return {SVGMarkerElement} The generated marker element.
      */
     var createMarker = function(id, data, refX, refY, width, height, classes,
-                                markerWidthCorrection) {
+                                markerWidthCorrection, fill) {
         if (markerWidthCorrection === undefined) {
             markerWidthCorrection = 1;
         }
@@ -1271,6 +1271,12 @@ var getSBOForMarkerId = function(id) {
         if (typeof(data) == 'string') {
             var path = document.createElementNS(bui.svgns, 'path');
             path.setAttributeNS(null, 'd', data);
+            console.log('fill', fill)
+            if(classes == bui.settings.css.classes.connectingArcs.assignment || classes == bui.settings.css.classes.connectingArcs.production)
+                path.setAttributeNS(null, 'fill', 'black');
+            else
+                path.setAttributeNS(null, 'fill', 'white');
+            path.setAttributeNS(null, 'stroke', 'black');
             marker.appendChild(path);
         } else {
             marker.appendChild(jQuery(data).clone(false)[0]);
@@ -1298,17 +1304,17 @@ var getSBOForMarkerId = function(id) {
      *   properties. The id property holds the marker's id and the element
      *   property the SVGMarkerElement.
      */
-    var createPathWithData = function(data, refX, refY, width, height, classes)
+    var createPathWithData = function(data, refX, refY, width, height, classes, fill)
     {
         var id = (bui.settings.idPrefix.connectingArc +
                 connectingArcIdCounter++),
                 hoverId = bui.util.getHoverId(id);
 
         var element = createMarker(id, data, refX, refY, width, height,
-                classes),
+                classes, fill),
                 hoverElement = createMarker(hoverId, data, refX, refY,
                         width, height, classes,
-                        bui.settings.style.markerWidthCorrection);
+                        bui.settings.style.markerWidthCorrection, fill);
 
         return {
             id : id,
@@ -1914,7 +1920,6 @@ var getSBOForMarkerId = function(id) {
                 params.id = 'drawable'+counter_id
             else
                 params.id = id;
-            console.log('add fkt id: '+params.id);
             params.graph = this;
 
             drawable = new constructor(params);
@@ -3562,7 +3567,7 @@ var getSBOForMarkerId = function(id) {
                 for (i = 0; i < auxUnits.length; i++) {
                     var auxUnit = auxUnits[i];
 
-                    if (auxUnit instanceof bui.StateVariable) {
+                    if (auxUnit instanceof bui.StateVariable || auxUnit instanceof bui.StateVariableER) {
                     
                         auxUnitsJson.push(auxUnit.toJSON());
                     } else {
@@ -5276,15 +5281,12 @@ var getSBOForMarkerId = function(id) {
 
         // override
         toJSON : function() {
-            // is actually an override but won't call the superclass because
-            // units of information aren't considered as nodes in the JSON
-            // data format. We are also assuming that only the state variable's
-            // label can be edited and that therefore the JSON data needs to
-            // be extracted from the label.
-
-            var json = [null, ''];
-
-            return this.label();
+            if (this.hasClass('existence')) 
+                return 'existence'
+            else if (this.hasClass('location'))
+                return 'location'
+            else 
+                return this.label();
         }
     };
     bui.util.setSuperClass(bui.StateVariableER, bui.VariableValue);
@@ -5687,6 +5689,8 @@ var getSBOForMarkerId = function(id) {
             if (privates.source !== null) {
                 if (privates.source.identifier() == 'bui.EdgeHandle'){
                     updateJson(json, dataFormat.edge.source, privates.source.lparent.id());
+                }else if (privates.source.identifier() == 'bui.StateVariableER'|| privates.source.identifier() == 'bui.StateVariable'){
+                    updateJson(json, dataFormat.edge.source, privates.source.parent().id()+':'+privates.source.toJSON());
                 }else{
                     updateJson(json, dataFormat.edge.source, privates.source.id());
                 }
@@ -5694,6 +5698,8 @@ var getSBOForMarkerId = function(id) {
             if (privates.target !== null) {
                 if (privates.target.identifier() == 'bui.EdgeHandle'){
                     updateJson(json, dataFormat.edge.target, privates.target.lparent.id());
+                }else if (privates.target.identifier() == 'bui.StateVariableER'|| privates.target.identifier() == 'bui.StateVariable'){
+                    updateJson(json, dataFormat.edge.target, privates.target.parent().id()+':'+privates.target.toJSON());
                 }else{
                     updateJson(json, dataFormat.edge.target, privates.target.id());
                 }
@@ -7395,7 +7401,6 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
             }else{
                 target = generatedNodes[edgeJSON.target];
             }
-
             if ((source === undefined)||(target === undefined)) {
                 edge_stack.push(edgeJSON);
                 continue;
@@ -7422,6 +7427,12 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 if(edgeJSON.data.points !== undefined){
                     for(var j=0; j<edgeJSON.data.points.length; j += 2){
                         edge.addPoint(edgeJSON.data.points[j], edgeJSON.data.points[j+1])
+                    }
+                }
+                if(edgeJSON.data.handles !== undefined){
+                    for(var eh=0; eh<edgeJSON.data.handles.length; ++eh){
+                        var pos = edgeJSON.data.handles[eh];
+                        edge.addPoint(pos.x, pos.y);
                     }
                 }
             }
@@ -7467,7 +7478,7 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         }
 
         var last_len = edge_stack.length + 1;
-        //alert(edge_stack.length);
+        //console.log('edge_stack: ',edge_stack.length);
         while ((edge_stack.length > 0) && (edge_stack.length<last_len)){
             last_len = edge_stack.length;
             for(var i = 0; i<edge_stack.length;i++){
@@ -7530,6 +7541,12 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
                 edge.source(source).target(target);//.json(edgeJSON);
                 var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
                 edge.marker(marker.klass);
+                if(edgeJSON.data.handles !== undefined){
+                    for(var eh=0; eh<edgeJSON.data.handles.length; ++eh){
+                        var pos = edgeJSON.data.handles[eh];
+                        edge.addPoint(pos.x, pos.y);
+                    }
+                }
                 generatedEdges[edgeJSON.id] = edge;
             }
         }

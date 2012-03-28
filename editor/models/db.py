@@ -351,7 +351,10 @@ def sbml2jsbgn(sbml_str, rxncon=False):
             seen_species.add(species_id)
             #-------------------------------------
             if rxncon or request.vars.rxncon:
-                if '.' in species.getName():
+                if 'sink' in species_id:
+                    node_item = dict( id = species_id, sbo = 291, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60))
+                    graph['nodes'].append(node_item)
+                elif '.' in species.getName():
                     complex_item = dict( id = species_id, sbo = 253, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60,subnodes=[]))
                     for subnode_id in species.getName().split('.'):
                         match = re.search(pattern_nd, subnode_id)

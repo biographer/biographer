@@ -376,20 +376,7 @@ function get_nodes_edges(){
 }
 //-------------------------------------------
 var graphData =  {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
-   nodes : [
-/*      {
-         "data" : {
-            "label" : "ATP",
-            "modification" : [],
-            "x" : 50,
-            "y" : 50
-         },
-         "id" : "Reactome:29358",
-         "is_abstract" : false,
-         "sbo" : 247,
-         "type" : "SimpleCompound"
-      },
-  */ ],
+   nodes : [],
    edges : []
    }{{pass}};
 var history_undo = {{if session.editor_histroy_undo:}}  {{=XML([i['action'] for i in session.editor_histroy_undo])}} {{else:}} []{{pass}};
