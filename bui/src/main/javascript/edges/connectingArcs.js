@@ -52,6 +52,11 @@
         if (typeof(data) == 'string') {
             var path = document.createElementNS(bui.svgns, 'path');
             path.setAttributeNS(null, 'd', data);
+            if(classes == bui.settings.css.classes.connectingArcs.assignment || classes == bui.settings.css.classes.connectingArcs.production)
+                path.setAttributeNS(null, 'fill', 'black');
+            else
+                path.setAttributeNS(null, 'fill', 'white');
+            path.setAttributeNS(null, 'stroke', 'black');
             marker.appendChild(path);
         } else {
             marker.appendChild(jQuery(data).clone(false)[0]);

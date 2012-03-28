@@ -158,6 +158,8 @@
             if (privates.source !== null) {
                 if (privates.source.identifier() == 'bui.EdgeHandle'){
                     updateJson(json, dataFormat.edge.source, privates.source.lparent.id());
+                }else if (privates.source.identifier() == 'bui.StateVariableER'|| privates.source.identifier() == 'bui.StateVariable'){
+                    updateJson(json, dataFormat.edge.source, privates.source.parent().id()+':'+privates.source.toJSON());
                 }else{
                     updateJson(json, dataFormat.edge.source, privates.source.id());
                 }
@@ -165,6 +167,8 @@
             if (privates.target !== null) {
                 if (privates.target.identifier() == 'bui.EdgeHandle'){
                     updateJson(json, dataFormat.edge.target, privates.target.lparent.id());
+                }else if (privates.target.identifier() == 'bui.StateVariableER'|| privates.target.identifier() == 'bui.StateVariable'){
+                    updateJson(json, dataFormat.edge.target, privates.target.parent().id()+':'+privates.target.toJSON());
                 }else{
                     updateJson(json, dataFormat.edge.target, privates.target.id());
                 }

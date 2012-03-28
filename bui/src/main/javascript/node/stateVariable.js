@@ -136,15 +136,12 @@
 
         // override
         toJSON : function() {
-            // is actually an override but won't call the superclass because
-            // units of information aren't considered as nodes in the JSON
-            // data format. We are also assuming that only the state variable's
-            // label can be edited and that therefore the JSON data needs to
-            // be extracted from the label.
-
-            var json = [null, ''];
-
-            return this.label();
+            if (this.hasClass('existence')) 
+                return 'existence'
+            else if (this.hasClass('location'))
+                return 'location'
+            else 
+                return this.label();
         }
     };
     bui.util.setSuperClass(bui.StateVariableER, bui.VariableValue);

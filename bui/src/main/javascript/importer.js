@@ -302,7 +302,6 @@
             }else{
                 target = generatedNodes[edgeJSON.target];
             }
-
             if ((source === undefined)||(target === undefined)) {
                 edge_stack.push(edgeJSON);
                 continue;
@@ -329,6 +328,12 @@
                 if(edgeJSON.data.points !== undefined){
                     for(var j=0; j<edgeJSON.data.points.length; j += 2){
                         edge.addPoint(edgeJSON.data.points[j], edgeJSON.data.points[j+1])
+                    }
+                }
+                if(edgeJSON.data.handles !== undefined){
+                    for(var eh=0; eh<edgeJSON.data.handles.length; ++eh){
+                        var pos = edgeJSON.data.handles[eh];
+                        edge.addPoint(pos.x, pos.y);
                     }
                 }
             }
@@ -374,7 +379,7 @@
         }
 
         var last_len = edge_stack.length + 1;
-        //alert(edge_stack.length);
+        //console.log('edge_stack: ',edge_stack.length);
         while ((edge_stack.length > 0) && (edge_stack.length<last_len)){
             last_len = edge_stack.length;
             for(var i = 0; i<edge_stack.length;i++){
@@ -437,6 +442,12 @@
                 edge.source(source).target(target);//.json(edgeJSON);
                 var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
                 edge.marker(marker.klass);
+                if(edgeJSON.data.handles !== undefined){
+                    for(var eh=0; eh<edgeJSON.data.handles.length; ++eh){
+                        var pos = edgeJSON.data.handles[eh];
+                        edge.addPoint(pos.x, pos.y);
+                    }
+                }
                 generatedEdges[edgeJSON.id] = edge;
             }
         }

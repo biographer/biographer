@@ -1054,7 +1054,7 @@
                 for (i = 0; i < auxUnits.length; i++) {
                     var auxUnit = auxUnits[i];
 
-                    if (auxUnit instanceof bui.StateVariable) {
+                    if (auxUnit instanceof bui.StateVariable || auxUnit instanceof bui.StateVariableER) {
                     
                         auxUnitsJson.push(auxUnit.toJSON());
                     } else {
