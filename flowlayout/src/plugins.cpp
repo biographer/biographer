@@ -602,7 +602,7 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
       }
       if(state.nw.nodes[i].y+state.nw.nodes[i].height/2+d>state.nw.compartments[comp].ymax){
          w=state.nw.compartments[comp].ymax-state.nw.nodes[i].y-state.nw.nodes[i].height/2-d;
-         vec.y+=w*scale*factor*(1+9*(1-temp));
+         vec.y+=w*scale*factor*(1+9*(1-temp)); // FIXME if factor is not 1/10 the 9 is not correct anymore
       }
       state.mov[i]+=vec;
       state.force[i]+=manh(vec);
