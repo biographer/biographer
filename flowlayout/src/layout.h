@@ -54,6 +54,9 @@ class Layouter{
       double avgsize;
       int progress_step;
       bool show_progress;
+      bool manual;
+      string manual_cmd;
+      int manual_it;
    protected:
       Plugins& plugins;
       void initStep(int step);

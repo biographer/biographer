@@ -4,6 +4,7 @@
 double avg_sizes(Layouter &l);
 void get_ideal_distances(Layouter &l,VF &dij);
 void get_degrees(Layouter &l,VI &deg);
+void domanual(Layouter &l,bool &manual_cont, int &s);
 #ifdef SHOWPROGRESS
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), debug(vector<vector<forcevec> >(nw.nodes.size())), plugins(_pgs), nd(NetDisplay(_nw,debug)){
 #else
@@ -141,10 +142,12 @@ void Layouter::execute(){
    init();
    int prs=program.size();
    int totalcc=0;
+   manual_it=0;
    for (s=0;s<prs;s++){
       #ifdef SHOWPROGRESS
       int skip=1;
       nd.waitKeyPress=true;
+      if (manual) nd.waitKeyPress=false;
       #endif
       double temp=1.0; // some notion of temperature 1=hot;0=cold; should go rather linear from 1 to 0, which is of course difficult to achieve
       double maxForce,totalForce,maxMov,totalMov,lastForce=-1;
@@ -157,117 +160,127 @@ void Layouter::execute(){
          printf("%s ",plugins.get(program[s].actplugins[p]).name.c_str());
       }
       printf("\n");
-      while (!end){
-         // apply mov plugins
-         for (p=0;p<pls;p++){
-            int pidx=program[s].actplugins[p];
-            plugin &pg=plugins.get(pidx);
-            if (pg.type!=T_mov) continue;
-/*            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
-            if (pg.mod_rot) pg_rot.assign(num,0.0);*/
-            double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
-            pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
-/*            for (i=0;i<num;i++){
-               mov[i]+=pg_mov[i]*program[s].scales[p];
-               force[i]+=fabs(pg_mov[i].x*program[s].scales[p]);
-               force[i]+=fabs(pg_mov[i].y*program[s].scales[p]);
-//               if (pg.mod_rot) rot[i]+=pg_rot[i]*program[s].scales[p];
-            }*/
+      bool manual_cont=false;
+      do {
+         while (!end){
+            // apply mov plugins
+            for (p=0;p<pls;p++){
+               int pidx=program[s].actplugins[p];
+               plugin &pg=plugins.get(pidx);
+               if (pg.type!=T_mov) continue;
+   /*            if (pg.mod_mov) pg_mov.assign(num,Point(0.0,0.0));
+               if (pg.mod_rot) pg_rot.assign(num,0.0);*/
+               double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
+               pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
+   /*            for (i=0;i<num;i++){
+                  mov[i]+=pg_mov[i]*program[s].scales[p];
+                  force[i]+=fabs(pg_mov[i].x*program[s].scales[p]);
+                  force[i]+=fabs(pg_mov[i].y*program[s].scales[p]);
+   //               if (pg.mod_rot) rot[i]+=pg_rot[i]*program[s].scales[p];
+               }*/
+               
+            }
+            // apply limiting plugins   
+            for (p=0;p<pls;p++){
+               int pidx=program[s].actplugins[p];
+               plugin &pg=plugins.get(pidx);
+               if (pg.type!=T_limit) continue;
+               double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
+               pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
+            }
             
+            totalForce=0.0;
+            totalMov=0.0;
+            maxForce=0.0;
+            maxMov=0.0;
+            for (i=0;i<num;i++){
+               if (maxForce<force[i]) maxForce=force[i];
+            }
+            for (i=0;i<num;i++){ // calculated tension
+               totalForce+=force[i];
+         if (!nw.nodes[i].fixed){
+            double mv=manh(mov[i]);
+            totalMov+=mv;
+            if (mv>maxMov) maxMov=mv;
          }
-         // apply limiting plugins   
-         for (p=0;p<pls;p++){
-            int pidx=program[s].actplugins[p];
-            plugin &pg=plugins.get(pidx);
-            if (pg.type!=T_limit) continue;
-            double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
-            pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
-         }
-         
-         totalForce=0.0;
-         totalMov=0.0;
-         maxForce=0.0;
-         maxMov=0.0;
-         for (i=0;i<num;i++){
-            if (maxForce<force[i]) maxForce=force[i];
-         }
-         for (i=0;i<num;i++){ // calculated tension
-            totalForce+=force[i];
-	    if (!nw.nodes[i].fixed){
-	      double mv=manh(mov[i]);
-	      totalMov+=mv;
-	      if (mv>maxMov) maxMov=mv;
-	    }
-            tension[i]=false;
-            if (force[i]>0.8*maxForce){ // high relative force on node
-               if (manh(mov[i])/force[i]<0.1){ // effective force is low compared to added up force (force equilibrium)
-                  tension[i]=true;
+               tension[i]=false;
+               if (force[i]>0.8*maxForce){ // high relative force on node
+                  if (manh(mov[i])/force[i]<0.1){ // effective force is low compared to added up force (force equilibrium)
+                     tension[i]=true;
+                  }
                }
             }
-         }
-         //printf("\rstep: %i, it: %i, tot.force: %0.4f, tot.mov: %0.4f, temp: %0.4f, max.force: %0.4f, max.mov: %0.4f, forceIncCC: %d",s,cc,totalForce,totalMov,temp,maxForce,maxMov,program[s].c_totForceIncCC);fflush(stdout);
-         if (lastForce<0) lastForce=2*totalForce; //workaround for first loop where lastForce is not yet defined
-         if (totalForce!=totalForce) break; // emergency break (nan)
-         if (totalMov!=totalMov) break; // emergency break (nan)
-         if (lastForce>0 && totalForce==0) break; // immidiate break ( there exist plugins which do not use force at all -> check lastForce)
-         if (totalMov==0 && !(program[s].endc & C_iterations)) break; // immidiate break
+            //printf("\rstep: %i, it: %i, tot.force: %0.4f, tot.mov: %0.4f, temp: %0.4f, max.force: %0.4f, max.mov: %0.4f, forceIncCC: %d",s,cc,totalForce,totalMov,temp,maxForce,maxMov,program[s].c_totForceIncCC);fflush(stdout);
+            if (lastForce<0) lastForce=2*totalForce; //workaround for first loop where lastForce is not yet defined
+            if (totalForce!=totalForce) break; // emergency break (nan)
+            if (totalMov!=totalMov) break; // emergency break (nan)
+            if (lastForce>0 && totalForce==0) break; // immidiate break ( there exist plugins which do not use force at all -> check lastForce)
+            if (totalMov==0 && !(program[s].endc & C_iterations)) break; // immidiate break
 
 
-#ifdef SHOWPROGRESS
-         if (--skip<=0) {
-            #ifdef OUTPNG
-            char fn[20];
-            sprintf(fn,"ani_s%02d_i%04d.png",s,totalcc);
-            skip=nd.show(fn);
-            #else
-            skip=nd.show();
-            #endif
-         }
-         for (i=0;i<num;i++){
-            debug[i].clear();
-         }
-#endif
-         moveNodes();
-         
-         // apply position changing plugins
-         for (p=0;p<pls;p++){
-            int pidx=program[s].actplugins[p];
-            plugin &pg=plugins.get(pidx);
-            if (pg.type!=T_pos) continue;
-            double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
-            pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
-         }
-         
-                     
-         if (program[s].endc & C_iterations) end|=(cc>=program[s].c_iterations); // limited number of iterations
-         if (program[s].endc & C_totForceInc) {
-            if (lastForce<totalForce){
-               program[s].c_totForceIncCC-=3;
-            } else {
-               program[s].c_totForceIncCC++;
-               if (program[s].c_totForceIncCC>program[s].c_totForceInc) program[s].c_totForceIncCC=program[s].c_totForceInc;
+   #ifdef SHOWPROGRESS
+            if ((--skip<=0) && !manual) {
+               #ifdef OUTPNG
+               char fn[20];
+               sprintf(fn,"ani_s%02d_i%04d.png",s,totalcc);
+               skip=nd.show(fn);
+               #else
+               skip=nd.show();
+               #endif
             }
-            end|=(program[s].c_totForceIncCC<=0);
+            for (i=0;i<num;i++){
+               debug[i].clear();
+            }
+   #endif
+            moveNodes();
+            
+            // apply position changing plugins
+            for (p=0;p<pls;p++){
+               int pidx=program[s].actplugins[p];
+               plugin &pg=plugins.get(pidx);
+               if (pg.type!=T_pos) continue;
+               double ttemp=(program[s].temps[p]>=0 ? program[s].temps[p] : temp);
+               pg.pfunc(*this,pg,program[s].scales[p],cc,ttemp,(dodebug[pidx]? pidx:0));
+            }
+            
+                        
+            if (manual){
+               end|=(cc>=manual_it); // in manual mode, always do as many iterations as specified
+            } else {
+               if (program[s].endc & C_iterations) end|=(cc>=program[s].c_iterations); // limited number of iterations
+               if (program[s].endc & C_totForceInc) {
+                  if (lastForce<totalForce){
+                     program[s].c_totForceIncCC-=3;
+                  } else {
+                     program[s].c_totForceIncCC++;
+                     if (program[s].c_totForceIncCC>program[s].c_totForceInc) program[s].c_totForceIncCC=program[s].c_totForceInc;
+                  }
+                  end|=(program[s].c_totForceIncCC<=0);
+               }
+               if (program[s].endc & C_relForceDiff) end|=(fabs(lastForce-totalForce)/totalForce<program[s].c_relForceDiff); // relative change in total force
+               if (program[s].endc & C_avgMovLimit) end|=(totalMov/num/avgsize<program[s].c_avgMovLimit); //avg movement compared to avg size
+               if (program[s].endc & C_maxMovLimit) end|=(maxMov/avgsize<program[s].c_maxMovLimit); //avg movement compared to avg size
+                     
+               if (end && program[s].endc & C_temp){
+                  temp-=1.0/(double)program[s].c_tempSteps;// decrease temperature if one of the other conditions is fullfilled
+                  lastForce=-1; // reset 
+                  cc=0; // reset
+                  program[s].c_totForceIncCC=program[s].c_totForceInc; // reset
+                  if (temp>0) end=false;
+               }
+            }
+            lastForce=totalForce;
+            if (show_progress && (cc>0 || s>0)) showProgress(cc);
+            cc++;
+            totalcc++;
          }
-         if (program[s].endc & C_relForceDiff) end|=(fabs(lastForce-totalForce)/totalForce<program[s].c_relForceDiff); // relative change in total force
-         if (program[s].endc & C_avgMovLimit) end|=(totalMov/num/avgsize<program[s].c_avgMovLimit); //avg movement compared to avg size
-         if (program[s].endc & C_maxMovLimit) end|=(maxMov/avgsize<program[s].c_maxMovLimit); //avg movement compared to avg size
-               
-         if (end && program[s].endc & C_temp){
-            temp-=1.0/(double)program[s].c_tempSteps;// decrease temperature if one of the other conditions is fullfilled
-            lastForce=-1; // reset 
-            cc=0; // reset
-            program[s].c_totForceIncCC=program[s].c_totForceInc; // reset
-            if (temp>0) end=false;
-         }
-         lastForce=totalForce;
-         if (show_progress && (cc>0 || s>0)) showProgress(cc);
-         cc++;
-         totalcc++;
-      }
+         manual_it=cc;
+         nd.show();
+         if (manual) domanual(*this,manual_cont,s);
+         end=false;
+      } while (manual_cont);
       printf("\n");
       if (show_progress) showProgress(0);
-      
    }
 }
 
@@ -371,5 +384,41 @@ double avg_sizes(Layouter &l){
    }
    return size/(2*n);
 }
+void domanual(Layouter &l,bool &manual_cont, int &s){
+   string cmd;
+   cout << ">";
+   cin >> cmd;
+   if (cmd=="n"){
+      manual_cont=false;
+      l.manual_it=0;
+      return;
+   } else if (cmd=="c"){
+      int iter;
+      cin >> iter;
+      l.manual_it+=iter;
+      manual_cont=true;
+      return;
+   } else if (cmd=="pc"){
+      int idx;
+      cin >> idx;
+      if (idx<l.nw.compartments.size()) l.nw.compartments[idx].print();
+      return domanual(l,manual_cont,s);
+   }
+   getline(cin,cmd);
+}
   
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+   std::stringstream ss(s);
+   std::string item;
+   while(std::getline(ss, item, delim)) {
+      elems.push_back(item);
+   }
+   return elems;
+}
+
+
+std::vector<std::string> split(const std::string &s, char delim) {
+   std::vector<std::string> elems;
+   return split(s, delim, elems);
+}
   

@@ -10,9 +10,14 @@ int main(int argc,char *argv[]){
    Network nw=Network();
    int shiftcmd=0;
    bool showProgress=false;
-   if (!strcmp(argv[1],"-p")){ // parameter for showing progress
+   bool manual=false;
+   if (!strcmp(argv[1+shiftcmd],"-p")){ // parameter for showing progress
       shiftcmd++;
       showProgress=true;
+   }
+   if (!strcmp(argv[1+shiftcmd],"-m")){ // parameter for showing progress
+      shiftcmd++;
+      manual=true;
    }
    if (argc>=2+shiftcmd){
       nw.read(argv[1+shiftcmd]);
@@ -23,6 +28,8 @@ int main(int argc,char *argv[]){
    Plugins& pgs=register_plugins();
    Layouter l(nw,pgs);
 
+   l.manual=manual;
+   
    l.addStep();
    l.addPlugins(P_init_layout, P_limit_mov);
    l.addEndCondition(C_maxMovLimit,0.005);
