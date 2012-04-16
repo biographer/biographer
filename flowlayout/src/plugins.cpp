@@ -414,8 +414,8 @@ void expand(Layouter &state,plugin& pg, double scale, int iter, double temp, int
          state.force[n1]+=manh(vec);
          state.force[n2]+=manh(vec);
          #ifdef SHOWPROGRESS
-         if (debug) state.debug[n1].push_back(forcevec(-vec,debug));
-         if (debug) state.debug[n2].push_back(forcevec(vec,debug));
+//         if (debug) state.debug[n1].push_back(forcevec(-vec,debug));
+//         if (debug) state.debug[n2].push_back(forcevec(vec,debug));
          #endif
       }
    }
