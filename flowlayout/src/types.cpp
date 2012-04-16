@@ -147,7 +147,9 @@ int min_four(int a1,int a2,int a3,int a4){
    if(a4<a1)a1=a4;
    return a1;
 }
-      
+void Compartment::print(){
+   printf("%s %0.3f,%0.3f,%0.3f,%0.3f %s\n",name.c_str(),xmin, ymin, xmax, ymax,(fixed ? "!" :""));
+}
   
 /*int bitpos(unsigned long val){
    int scan=1;

@@ -153,6 +153,7 @@ public:
    Compartment(double _xmin, double _ymin, double _xmax, double _ymax, string _name, bool _fx=false):Rect(_xmin,_ymin,_xmax,_ymax), name(_name),fixed(_fx){   
    //construct a compartment with all attributes given.
    }
+   void print();
    string name; //name of the node.
    bool fixed;
 };
