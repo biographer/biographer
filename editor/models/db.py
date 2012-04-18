@@ -224,15 +224,14 @@ def sbml2jsbgn(sbml_str, rxncon=False):
     compartment2species = {}
     seen_species = set()
     #------------------------------------------
-    if rxncon or request.vars.rxncon:
+    if 'rxncon.org' in sbml_str:
         import re
         pattern_nd = re.compile('(.+)\(([^\)]*)\)')
     def modification2statevariable(mod):
         if '~' in mod:
             mod_split = mod.split('~')
             if mod_split[1] == 'U':
-                mod_split[1] = ' '
-                print 'replaced U'
+                return mod_split[0]
             if mod_split[0]=='bd':
                 return mod_split[1]
             else:
@@ -246,9 +245,13 @@ def sbml2jsbgn(sbml_str, rxncon=False):
         if species_id not in seen_species:
             seen_species.add(species_id)
             #-------------------------------------
-            if rxncon or request.vars.rxncon:
+            if 'rxncon.org' in sbml_str:
+                print species.getName()
                 if 'sink' in species_id:
                     node_item = dict( id = species_id, sbo = 291, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60))
+                    graph['nodes'].append(node_item)
+                elif species.getName().startswith('xXx') and species.getName().endswith('xXx()'):
+                    node_item = dict( id = species_id, sbo = 347, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 90, height = 60, label=species.getName()[3:-5]))
                     graph['nodes'].append(node_item)
                 elif '.' in species.getName():
                     complex_item = dict( id = species_id, sbo = 253, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60,subnodes=[]))

@@ -109,6 +109,7 @@ bui.grid.add_padding = function(){
 };
 //=====================================================
 bui.grid.init = function(nodes, edges, width, height){
+    var grid_space = bui.grid.grid_space;
     //-------------------------------------------------------
     var node_id2node_idx = {};
     for(var i=0; i<nodes.length; ++i) node_id2node_idx[nodes[i].id()]=i;
@@ -119,16 +120,65 @@ bui.grid.init = function(nodes, edges, width, height){
     //-------------------------------------------------------
     bui.grid.nodes = nodes;
     bui.grid.edges = edges;
-    bui.grid.spiral_setps = bui.grid.spiral(10000);
-    var spiral_setps = bui.grid.spiral_setps;
+    bui.grid.spiral_steps = bui.grid.spiral(10000);
+    var spiral_steps = bui.grid.spiral_steps;
     if(width==undefined || height==undefined){
-        width = 2*Math.sqrt(nodes.length)
-            height = 3*Math.sqrt(nodes.length)
+        width = 2*Math.sqrt(nodes.length);
+        height = 3*Math.sqrt(nodes.length);
     }
     var max_x = Math.round(width);
     var max_y = Math.round(height);
-    var grid_space = bui.grid.grid_space;
     var pos,i;
+    //-------------------------------------------------------
+    //compartments
+    var compartments_border = [];
+    var node_idx2cborder = [];
+    var c_id2c_idx = {};
+    var c_idx2num_nodes = {};
+    var c_idx2max_nodes = {};
+    for (var i=0; i<nodes.length; ++i){
+        var node_parent = nodes[i].parent();
+        if (node_parent.identifier() == 'Compartment'){
+            if (! (node_parent.id() in c_id2c_idx)){
+                c_id2c_idx[node_parent.id()] = compartments_border.length;
+                c_idx2num_nodes[compartments_border.length] = 0;
+                var tl = node_parent.topLeft();
+                if (tl.x<0) node_parent.position(1, tl.y);//move into view area
+                tl = node_parent.topLeft();
+                if (tl.y<0) node_parent.position(tl.x, 1);//move into view area
+                tl = node_parent.topLeft();
+                var br = node_parent.bottomRight();
+                compartments_border.push({
+                    left: Math.ceil(tl.x/grid_space), 
+                    top: Math.ceil(tl.y/grid_space), 
+                    bottom: Math.floor(br.y/grid_space), 
+                    right: Math.floor(br.x/grid_space), 
+                });
+                var c_idx = compartments_border.length-1;
+                c_idx2max_nodes[c_idx] = (compartments_border[c_idx].right-compartments_border[c_idx].left+1) * (compartments_border[c_idx].bottom-compartments_border[c_idx].top+1);
+                //check if max_x/y is smaller than the bottom right pos of the compartment
+                if(br.x>max_x*grid_space) max_x = Math.round(br.x/grid_space);
+                if(br.y>max_y*grid_space) max_y = Math.round(br.y/grid_space);
+            }
+            var c_idx = c_id2c_idx[node_parent.id()];
+            node_idx2cborder[i] = compartments_border[c_idx];
+            c_idx2num_nodes[c_idx] += 1;
+            if (c_idx2num_nodes[c_idx]>c_idx2max_nodes[c_idx]){
+                alert('Compartment '+node_parent.label()+' is to small! Current maximum number of nodes is '+c_idx2max_nodes[c_idx]+'. Please resize it to make room for more nodes.');
+                return
+            }
+        }else{
+            console.log('node parent is not compartment! '+node_parent.identifier())
+        }
+    }
+    bui.grid.node_idx2comp_empty_fields = {}
+    for(var i=0; i<nodes.length; ++i){
+        if (nodes[i].parent().id() in c_id2c_idx){
+            c_idx = c_id2c_idx[nodes[i].parent().id()];
+            bui.grid.node_idx2comp_empty_fields[i] = c_idx2max_nodes[c_idx]-c_idx2num_nodes[c_idx];
+        }
+    }
+    bui.grid.node_idx2cborder = node_idx2cborder;
     //-------------------------------------------------------
     //check if max_x is smaller than the max_x pos of the max x node pos
     //same for max_y
@@ -149,23 +199,6 @@ bui.grid.init = function(nodes, edges, width, height){
     }
     //-------------------------------------------------------
     //-------------------------------------------------------
-    //compartements
-    var compartements = []
-    var source_id, target_id;
-    for(var i=0; i<edges.length; ++i){
-        var edge = edges[i];
-        if(edge.lsource.parent() == undefined) source_id = undefined
-        else source_id = edge.lsource.parent().id()
-        if(edge.ltarget.parent() == undefined) target_id = undefined
-        else target_id = edge.ltarget.parent().id()
-
-        if(target_id != source_id){
-            // we got two compartments!
-            console.log('two compartments detected '+source_id+' and '+target_id);
-        }
-    }
-    //-------------------------------------------------------
-    //-------------------------------------------------------
     //position elements on grid, only one element is allowed on each grid point
     var cp,cur_x,cur_y,loop;
     for(i=0; i<nodes.length; ++i){
@@ -175,16 +208,27 @@ bui.grid.init = function(nodes, edges, width, height){
         //----------------------------
         var count = 0;
         while(true){
-            if(cur_x>=0 && cur_x<=max_x && cur_y>=0 && cur_y<=max_y && matrix_nodes[cur_x][cur_y] == undefined){
-                matrix_nodes[cur_x][cur_y] = i;
-                nodes[i].x = cur_x;
-                nodes[i].y = cur_y;
-                break;
+            if(i in node_idx2cborder){
+                if(!(cur_x>=node_idx2cborder[i].left && cur_x<=node_idx2cborder[i].right && cur_y>=node_idx2cborder[i].top && cur_y<=node_idx2cborder[i].bottom && matrix_nodes[cur_x][cur_y] == undefined)){
+                    spiral_step = spiral_steps[count];
+                    cur_x += spiral_step[0];
+                    cur_y += spiral_step[1];
+                    ++count;
+                    continue;
+                }
+            }else{
+                if(!(cur_x>=0 && cur_x<=max_x && cur_y>=0 && cur_y<=max_y && matrix_nodes[cur_x][cur_y] == undefined)){
+                    spiral_step = spiral_steps[count];
+                    cur_x += spiral_step[0];
+                    cur_y += spiral_step[1];
+                    ++count;
+                    continue;
+                }
             }
-            spiral_setp = spiral_setps[count];
-            cur_x += spiral_setp[0];
-            cur_y += spiral_setp[1];
-            ++count;
+            matrix_nodes[cur_x][cur_y] = i;
+            nodes[i].x = cur_x;
+            nodes[i].y = cur_y;
+            break;
         }
     }
     bui.grid.render_current();
@@ -199,8 +243,10 @@ bui.grid.layout = function(){
     var edges = bui.grid.edges;
     var grid_space = bui.grid.grid_space;
     var matrix_nodes = bui.grid.matrix_nodes;
+    var node_idx2cborder = bui.grid.node_idx2cborder;
+    var node_idx2comp_empty_fields = bui.grid.node_idx2comp_empty_fields;
     var i;
-    var spiral_setps = bui.grid.spiral_setps;
+    var spiral_steps = bui.grid.spiral_steps;
     var num_empty_fields = bui.grid.width*bui.grid.height - nodes.length;
     node_idx2nodes_idx = {};
     node_idx2edges_idx = {};
@@ -240,7 +286,7 @@ bui.grid.layout = function(){
     console.log('line crossings before: '+bui.grid.num_intersections());
     console.log('node crossings before: '+bui.grid.num_node_intersections());
     //------------------------------------------------
-    bui.grid.add_padding();
+    //bui.grid.add_padding();
     //------------------------------------------------
     //------------------------------------------------
     //randomize node order for sum more fun :D and better results
@@ -297,36 +343,46 @@ bui.grid.layout = function(){
         var fields_visited = 0;
         while(true){
             //-----------------------
-            if ( num_empty_fields==fields_visited ) break;
-            cx += spiral_setps[counter][0];
-            cy += spiral_setps[counter][1];
+            //console.log(counter);
+            cx += spiral_steps[counter][0];
+            cy += spiral_steps[counter][1];
             ++counter;
             //-----------------------
-            if(cx>=0 && cx<bui.grid.width && cy>=0 && cy<bui.grid.height && matrix_nodes[cx][cy] == undefined){
-                ++fields_visited;
-                tmp_ni = bui.grid.edge_intersections_fromto({ x : cx, y : cy }, node_idx2nodes_idx[cni], node_idx2edges_idx[cni]);
-                tmp_ni += bui.grid.node_intersections_fromto(cni, { x : cx, y : cy}, node_idx2nodes_idx[cni]);
-                tmp_ni += 0.1*bui.grid.edge_distance({ x : cx, y : cy }, node_idx2nodes_idx[cni]);
-                tmp_ni += 0.05*bui.grid.edge_distance({ x : cx, y : cy }, node_idx2nodes_in_idx[cni]);
-                tmp_ni += 5*bui.grid.flow_fromto({ x : cx, y : cy }, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
-                tmp_ni += 0.5*bui.grid.deg90_fromto({ x : cx, y : cy }, node_idx2nodes_idx[cni]);
-                tmp_ni += 0.1*bui.grid.graviation_from({ x : cx, y : cy });
-                //--------------------------------------
-                if(tmp_ni<min_ni){
-                    min_ni = tmp_ni;
-                    best_x = cx;
-                    best_y = cy;
-                    stop_distance = Math.abs(node.x-cx)+Math.abs(node.y-cy);
+            if(i in node_idx2cborder){
+                if ( node_idx2comp_empty_fields[cni]==fields_visited ) break;
+                if(!(cx>=node_idx2cborder[cni].left && cx<=node_idx2cborder[cni].right && cy>=node_idx2cborder[cni].top && cy<=node_idx2cborder[cni].bottom && matrix_nodes[cx][cy] == undefined)){
+                    continue;
                 }
-                if (stop_distance != undefined){
-                    if((Math.abs(node.x-cx)+Math.abs(node.y-cy))*2>stop_distance){
-                        //console.log('taxi stop');
-                        break
-                    }
+            }else{
+                if ( num_empty_fields==fields_visited ) break;
+                if(!(cx>=0 && cx<bui.grid.width && cy>=0 && cy<bui.grid.height && matrix_nodes[cx][cy] == undefined)){
+                    continue;
                 }
-                if(tmp_ni==0){
-                    break;
+            }
+            //-----------------------
+            ++fields_visited;
+            tmp_ni = bui.grid.edge_intersections_fromto({ x : cx, y : cy }, node_idx2nodes_idx[cni], node_idx2edges_idx[cni]);
+            tmp_ni += bui.grid.node_intersections_fromto(cni, { x : cx, y : cy}, node_idx2nodes_idx[cni]);
+            tmp_ni += 0.1*bui.grid.edge_distance({ x : cx, y : cy }, node_idx2nodes_idx[cni]);
+            tmp_ni += 0.05*bui.grid.edge_distance({ x : cx, y : cy }, node_idx2nodes_in_idx[cni]);
+            tmp_ni += 5*bui.grid.flow_fromto({ x : cx, y : cy }, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
+            tmp_ni += 0.5*bui.grid.deg90_fromto({ x : cx, y : cy }, node_idx2nodes_idx[cni]);
+            tmp_ni += 0.1*bui.grid.graviation_from({ x : cx, y : cy });
+            //--------------------------------------
+            if(tmp_ni<min_ni){
+                min_ni = tmp_ni;
+                best_x = cx;
+                best_y = cy;
+                stop_distance = Math.abs(node.x-cx)+Math.abs(node.y-cy);
+            }
+            if (stop_distance != undefined){
+                if((Math.abs(node.x-cx)+Math.abs(node.y-cy))*2>stop_distance){
+                    //console.log('taxi stop');
+                    break
                 }
+            }
+            if(tmp_ni==0){
+                break;
             }
         }
         //--------------------------------------
@@ -338,7 +394,7 @@ bui.grid.layout = function(){
             node.y=best_y;
             bui.grid.set_nodes_as_edges(cni);
             for(var i=0; i<node_idx2edges_idx[cni].length; ++i) bui.grid.set_ebuckets(node_idx2edges_idx[cni][i],'clear');
-            bui.grid.add_padding();
+            //bui.grid.add_padding();
         }
         //--------------------------------------
         ++cni;
@@ -447,7 +503,6 @@ bui.grid.set_ebuckets = function(edge_index, clear){
         max=edge.lsource.x;
         min=edge.ltarget.x;
     }
-    console.log(ebucketx.length);
     for(i=min;i<=max; ++i) ebucketx[i][edge_index] = 1//FIXME !!1!!!1111 edge_index seems to be out of range
     //y-----------------------
     if(edge.lsource.y<edge.ltarget.y){
