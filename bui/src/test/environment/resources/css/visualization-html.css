@@ -6,7 +6,7 @@ body {
 .placeholder {
     position: absolute;
     background: #eee;
-    border: 2px dashed #ff8c00;
+    border: 2px dashed green;/*#ff8c00;*/
     opacity: 0.5;
     cursor: move;
 }
@@ -24,8 +24,8 @@ body {
 }
 
 .defaultText {
-    font-family: Verdana;
-    font-size: 16px;
+    font-family: "Times-Roman";
+    font-size: 19px;
 }
 
 .smallText {
