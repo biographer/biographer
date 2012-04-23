@@ -218,7 +218,7 @@ void NetDisplay::draw(){
       cairo_stroke(c);*/
       cairo_set_dash (c,NULL,0,0);
       if (hasforces){
-         for (j=0;j<forces[i].size();j++){
+         for (j=0;j<(int)forces[i].size();j++){
             int col=forces[i][j].col;
             const Point &v=forces[i][j].vec;
             cairo_set_source_rgb(c,fcols[col][0],fcols[col][1],fcols[col][2]);
@@ -309,7 +309,7 @@ void NetDisplay::draw(){
          }
       }
    }
-   for (i=0;i<dbglines.size();i++){
+   for (i=0;i<(int)dbglines.size();i++){
       dbgline &d=dbglines[i];
       cairo_set_dash (c,NULL,0,0);
       if (d.dotted) cairo_set_dash (c,(double[6]){2/scale,2/scale,4/scale,4/scale,6/scale,6/scale},6,0);

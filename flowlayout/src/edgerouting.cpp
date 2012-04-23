@@ -30,7 +30,7 @@ void smooth_path(Network &nw,VI &path,double cutoff){
    // remove points from path which are too close to each other
    int i=1;
    int last=0;
-   while (i<path.size()){
+   while (i<(int)path.size()){
       if (norm(nw.nodes[path[i]]-nw.nodes[path[last]])<cutoff){
          path.erase(path.begin()+i);
       } else {
@@ -191,11 +191,11 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
       for (j=i+1;j<n+4;j++){
          if (edge_crossings[i][j].size() ==0 ) continue;
          sort(edge_crossings[i][j].begin(),edge_crossings[i][j].end(),ccp); // sort cross points on line
-         for (k=0;k<edge_crossings[i][j].size();k++){
+         for (k=0;k<(int)edge_crossings[i][j].size();k++){
             int n1=edge_crossings[i][j][k];
             if (i<n) nodemap[i].push_back(n1); // register voronoi node to be adjacent to original node i (if not virtual node)
             if (j<n) nodemap[j].push_back(n1);
-            if (k==edge_crossings[i][j].size()-1) break; // for the last crosspoint we do not create an edge
+            if (k==((int)edge_crossings[i][j].size())-1) break; // for the last crosspoint we do not create an edge
             int n2=edge_crossings[i][j][k+1];
             nv.addEdge(n1,n2,undirected);
             if (iter<=1) debugline(nv.nodes[n1].x,nv.nodes[n1].y,nv.nodes[n2].x,nv.nodes[n2].y,0,0,0,true);
@@ -221,7 +221,7 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
          smooth_path(nv,path,state.avgsize/4);
          e.splinepoints.clear();
          e.splinehandles.clear();
-         double alpha,beta;
+         double beta;
          Point vec;
          double dd1=(path.size()>1 ? 
             (norm(nv.nodes[path[0]]-state.nw.nodes[n1])-max(state.nw.nodes[n1].width,state.nw.nodes[n1].height)/2)/2 :
@@ -269,9 +269,9 @@ void route_edges(Layouter &state,plugin& pg, double scale, int iter, double temp
          }
          if (path.size()>1){
             //debugline(state.nw.nodes[n1].x,state.nw.nodes[n1].y,nv.nodes[path.front()].x,nv.nodes[path.front()].y,255,100,100);
-            for (j=0;j<path.size();j++){
+            for (j=0;j<(int)path.size();j++){
                Point before=(j==0 ? state.nw.nodes[n1] : nv.nodes[path[j-1]]);
-               Point &after=(j==path.size()-1 ? state.nw.nodes[n2] : nv.nodes[path[j+1]]);
+               Point &after=(j==((int)path.size())-1 ? state.nw.nodes[n2] : nv.nodes[path[j+1]]);
                Point &cur=nv.nodes[path[j]];
                if (after==cur) continue;
                if (before==cur) {

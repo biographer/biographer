@@ -28,6 +28,7 @@ public:
    VN nodes;
    VE edges;
    VCP compartments;
+   vector<VCPB> compartment_borders;
    bool hasfixed; // note this only consitently updated if addNode is used with the _fx parameter
      
    void addEdge(int from, int to, Edgetype type); //add in an edge "from"-->"to" of type "type".

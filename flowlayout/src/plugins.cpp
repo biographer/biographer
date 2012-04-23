@@ -397,7 +397,7 @@ void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp,
 
 void expand(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int n1,n2,n=state.nw.nodes.size();
-   double d,ideal;
+   double d;
    Point vec;
    
    for(n1=0;n1<n;n1++){
@@ -457,7 +457,7 @@ void limit_mov(Layouter &state,plugin& pg, double scale, int iter, double temp, 
 }
 void node_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int n=state.nw.nodes.size(),n1,n2;
-   bool repeat=true;
+//   bool repeat=true;
    double d=MARGIN;
 /*   while (repeat){
       repeat=false;*/
@@ -616,7 +616,6 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
 void compartment_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int i,comp;
    int n=state.nw.nodes.size();
-   double w;
    double d=MARGIN;
    for(i=0;i<n;i++){
       comp=state.nw.nodes[i].compartment; //the compartment which node-i belongs to.
@@ -783,7 +782,7 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
    int i,j;  
    for(i=1;i<cn;i++){
       for (j=i+1;j<cn;j++){
-         //adjusting the compartments so that there is no gap between adjacent ones.
+         //adjusting the compartments so that there is no overlap between them.
          // Note: there is no force to bring compartments together if they don't overlap. this force should come from the connections between the compartments
          const Compartment &cpi=state.nw.compartments[i];
          const Compartment &cpj=state.nw.compartments[j];
@@ -880,7 +879,7 @@ void __move(Layouter &state, double pos, double d, __dir what){
    }
    sort(ps.begin(),ps.end());
    i=0;
-   while (i<ps.size() && ps[i]<pos) i++;
+   while (i<(int)ps.size() && ps[i]<pos) i++;
    double pos2=pos+d;
    if (d<0){
       i--;
@@ -889,7 +888,7 @@ void __move(Layouter &state, double pos, double d, __dir what){
          i--;
       }
    } else {
-      while (i<ps.size() && ps[i]<pos2) { // same for range pos .. pos +|d|
+      while (i<(int)ps.size() && ps[i]<pos2) { // same for range pos .. pos +|d|
          pos2=ps[i]+d;
          i++;
       }

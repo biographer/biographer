@@ -86,7 +86,7 @@ void Layouter::stepPluginScale(int step, enumP pg,double scale){
    initStep(step);
    const VI &pgns=program[step].actplugins;
    int pos=find(pgns.begin(),pgns.end(),pg)-pgns.begin();
-   if (pos==pgns.size()) throw "plugin not found";
+   if (pos==(int)pgns.size()) throw "plugin not found";
    program[step].scales[pos]=scale; // does only find the first plugin (but each one should there only be once)
 }
 void Layouter::fixPluginTemp(enumP pg,double temp){
@@ -96,7 +96,7 @@ void Layouter::stepFixPluginTemp(int step, enumP pg,double temp){
    initStep(step);
    const VI &pgns=program[step].actplugins;
    int pos=find(pgns.begin(),pgns.end(),pg)-pgns.begin();
-   if (pos==pgns.size()) throw "plugin not found";
+   if (pos==(int)pgns.size()) throw "plugin not found";
    program[step].temps[pos]=temp; // does only find the first plugin (but each one should there only be once)
 }
 void Layouter::addEndCondition(conditions cond, double param, double param2){ // warning: cond should code for only one condition
@@ -401,7 +401,7 @@ void domanual(Layouter &l,bool &manual_cont, int &s){
    } else if (cmd=="pc"){
       int idx;
       cin >> idx;
-      if (idx<l.nw.compartments.size()) l.nw.compartments[idx].print();
+      if (idx<(int)l.nw.compartments.size()) l.nw.compartments[idx].print();
       return domanual(l,manual_cont,s);
    }
    getline(cin,cmd);
