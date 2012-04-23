@@ -275,7 +275,9 @@ void Layouter::execute(){
             totalcc++;
          }
          manual_it=cc;
+         #ifdef SHOWPROGRESS
          nd.show();
+         #endif
          if (manual) domanual(*this,manual_cont,s);
          end=false;
       } while (manual_cont);
