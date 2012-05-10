@@ -83,8 +83,16 @@ typedef vector<Point> VP;
 
 class Rect{
    public:
-      Rect():  xmin(0), ymin(0), xmax(0), ymax(0){}
-      Rect(double _xmin, double _ymin, double _xmax, double _ymax):  xmin(_xmin), ymin(_ymin), xmax(_xmax), ymax(_ymax){}
+      Rect():  xmin(0), ymin(0), xmax(0), ymax(0),left(xmin),top(ymin),right(xmax),bottom(ymax){}
+      Rect(double _xmin, double _ymin, double _xmax, double _ymax):  xmin(_xmin), ymin(_ymin), xmax(_xmax), ymax(_ymax),left(xmin),top(ymin),right(xmax),bottom(ymax){}
+      Rect(const Rect &cp): xmin(cp.xmin), ymin(cp.ymin), xmax(cp.xmax), ymax(cp.ymax),left(xmin),top(ymin),right(xmax),bottom(ymax){}
+      Rect& operator=(const Rect &cp){
+         xmin=cp.xmin;
+         ymin=cp.ymin;
+         xmax=cp.xmax;
+         ymax=cp.ymax;
+         return *this;
+      }
       void translate(double x,double y){
          xmin+=x;
          xmax+=x;
@@ -136,10 +144,34 @@ class Rect{
          return vec;
       }
       bool contains(const Point &p){
-	return xmin<p.x && xmax>p.x && ymin<p.y && ymax>p.y;
+         return xmin<p.x && xmax>p.x && ymin<p.y && ymax>p.y;
       }
-      double xmin, ymin, xmax, ymax;
+      double xmin, ymin, xmax, ymax; // WARNING never change order
+      double &left,&top,&right,&bottom; // aliases for xmin...ymax
+      double& acs(int index){
+         switch (index) {
+            case 0: return xmin;
+            case 1: return ymin;
+            case 2: return xmax;
+            case 3: return ymax;
+            default: abort();
+         }
+      } // array accession of xmin,ymin,xmax,ymax
 
+};
+class CompartmentBorderIndexes{ // contains indexes to compartmentborders of the network (if common border with other compartment) or -1 if on edge of network
+   public:
+      CompartmentBorderIndexes():left(-1),top(-1),right(-1),bottom(-1){}
+      int& acs(int index){
+         switch (index) {
+            case 0: return left;
+            case 1: return top;
+            case 2: return right;
+            case 3: return bottom;
+            default: abort();
+         }
+      } // array accession of xmin,ymin,xmax,ymax
+      int left,top,right,bottom;
 };
 
 class Compartment : public Rect{
@@ -156,8 +188,16 @@ public:
    void print();
    string name; //name of the node.
    bool fixed;
+   CompartmentBorderIndexes border_index;
 };
 
+class CompartmentBorder{
+   public:
+      CompartmentBorder():compartment(0),dir(0){}
+      CompartmentBorder(int cp, int d): compartment(cp), dir(d){}
+      int compartment;
+      int dir;
+};  
 class Edge {
    public:
       Edge(){
@@ -212,6 +252,7 @@ typedef vector<Node> VN;
 typedef vector<Edge> VE;
 typedef vector<Rect> VR;
 typedef vector<Compartment> VCP;
+typedef vector<CompartmentBorder> VCPB;
 inline double sign(double x){
    return (x < 0) ? -1 : (x > 0);
 }
