@@ -777,6 +777,51 @@ void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, dou
       }
    }
 }
+enum adj {left,top,right,bottom}; // WARNING this needs to be the same order as xmin,ymin,xmax,ymax of Rect
+class Adjacency{
+   public:
+      Adjacency():left(VI()),top(VI()),right(VI()),bottom(VI()){};
+      VI& acs(int idx){
+         switch (idx) {
+            case 0: return left;
+            case 1: return top;
+            case 2: return right;
+            case 3: return bottom;
+            default: abort();
+         }
+      }
+      VI left,top,right,bottom;
+};
+
+VCPB* adjline(vector<Adjacency> &a, int idx, int dir, vector<VI>& visit){
+   if (visit.size()<a.size()) visit.resize(a.size());
+   if (visit[idx].size()<4) visit[idx].resize(4);
+   if (visit[idx][dir]) return NULL;
+   VCPB* ret=new VCPB;
+   ret->push_back(CompartmentBorder(idx,dir));
+   visit[idx][dir]=1;
+   VI& neigh=a[idx].acs(dir);
+   
+   for (int i=0,is=neigh.size();i<is;i++){ // find neighbor compartments assigned to current copmartment and direction
+      VCPB* sub=adjline(a,neigh[i],(dir+2) % 4,visit);
+      if (sub) {
+         ret->insert(ret->end(),sub->begin(),sub->end());
+         delete sub;
+      }
+   }
+   for (int i=1,is=a.size();i<is;i++){ // find compartments which have current compartment and direction assigned as neighbor#
+      VI& neigh2=a[i].acs((dir+2) % 4);
+      if (find(neigh2.begin(),neigh2.end(),idx)!=neigh2.end()){ // found current compartment
+         VCPB* sub=adjline(a,i,(dir+2) % 4,visit);
+         if (sub) {
+            ret->insert(ret->end(),sub->begin(),sub->end());
+            delete sub;
+         }
+      }
+   }
+   //sort(ret->begin(),ret->end());
+   return ret;
+}
 void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int cn=state.nw.compartments.size();
    int i,j;  
@@ -814,6 +859,7 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          }
       }
    }
+   //state.nd.show(); // FIXME this is just for debug; remove!!
    // expanding compartments as much as possible
    double xmin=DBL_MAX,xmax=-DBL_MAX,ymin=DBL_MAX,ymax=-DBL_MAX;
    for(i=1;i<cn;i++){
@@ -823,6 +869,8 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
       if (cpi.xmin<xmin) xmin=cpi.xmin;
       if (cpi.ymin<ymin) ymin=cpi.ymin;
    }
+   vector<Adjacency> a(cn); // which compartments are adjacent on which size of compartment
+   double d=state.avgsize/10000; // all compartment borders that are situated in a -d,+d environment are assumed to be on one line
    for(i=1;i<cn;i++){
       Compartment &cpi=state.nw.compartments[i];
       double where=xmin;
@@ -830,7 +878,11 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if exapnding
-            if (cpj.xmin<cpi.xmax && cpj.xmax>where) where=cpj.xmax;
+            if (cpj.xmin<cpi.xmax && cpj.xmax>=where-d) {
+               if (cpj.xmax>where+d) a[i].left.clear();
+               a[i].left.push_back(j);
+               where=cpj.xmax;
+            }
          }
       }
       if (where<cpi.xmin) cpi.xmin=where; // move to left
@@ -839,7 +891,11 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if exapnding
-            if (cpj.xmax>cpi.xmin && cpj.xmin<where) where=cpj.xmin;
+            if (cpj.xmax>cpi.xmin && cpj.xmin<=where+d) {
+               if (cpj.xmin<where-d) a[i].right.clear();
+               a[i].right.push_back(j);
+               where=cpj.xmin;
+            }
          }
       }
       if (where>cpi.xmax) cpi.xmax=where; // move to right
@@ -848,38 +904,76 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.xmax>cpi.xmin && cpj.xmin<cpi.xmax){ // could collide if exapnding
-            if (cpj.ymin<cpi.ymax && cpj.ymax>where) where=cpj.ymax;
+            if (cpj.ymin<cpi.ymax && cpj.ymax>=where-d) {
+               if (cpj.ymax>where+d) a[i].top.clear();
+               a[i].top.push_back(j);
+               where=cpj.ymax;
+            }
          }
       }
-      if (where<cpi.ymin) cpi.ymin=where; // move to left
+      if (where<cpi.ymin) cpi.ymin=where; // move to top
       where=ymax;
       for (j=1;j<cn;j++){
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.xmax>cpi.xmin && cpj.xmin<cpi.xmax){ // could collide if exapnding
-            if (cpj.ymax>cpi.ymin && cpj.ymin<where) where=cpj.ymin;
+            if (cpj.ymax>cpi.ymin && cpj.ymin<=where+d) {
+               if (cpj.ymin<where-d) a[i].bottom.clear();
+               a[i].bottom.push_back(j);
+               where=cpj.ymin;
+            }
          }
       }
-      if (where>cpi.ymax) cpi.ymax=where; // move to right
+      if (where>cpi.ymax) cpi.ymax=where; // move to bottom
    }
+   state.nw.compartment_borders.clear();
+   vector<VI> visit;
+   for(i=1;i<cn;i++){ // create inner compartment border lines
+      for (int j=0;j<4;j++){
+         VCPB* line=adjline(a,i,j,visit);
+         if (line && line->size()>1) {
+            int idx=state.nw.compartment_borders.size();
+            for (int k=0,kn=line->size();k<kn;k++){
+               state.nw.compartments[(*line)[k].compartment].border_index.acs((*line)[k].dir)=idx; //setting compartment vorder index to corresponding compartments
+            }
+            state.nw.compartment_borders.push_back(*line); // store compartment border
+         }
+         if (line) delete line;
+      }
+   }
+   for (int j=0;j<4;j++){ // create outer compartment border lines
+      VCPB line;
+      int idx=state.nw.compartment_borders.size();
+      for(i=1;i<cn;i++){
+         if (a[i].acs(j).size()==0){ // an outer border
+            line.push_back(CompartmentBorder(i,j));
+            state.nw.compartments[i].border_index.acs(j)=idx;
+         }
+      }
+      state.nw.compartment_borders.push_back(line); // store compartment border
+   }
+   //state.nd.show(); // FIXME this is just for debug; remove!!
+   
 }
-enum __dir {
-   dir_LR,dir_TB
-};
-void __move(Layouter &state, double pos, double d, __dir what){
+void __move(Layouter &state, double pos, double d, int dir){
    // moves compartment borders within a certain range of pos by d in the direction of what
    int i;
    int cn=state.nw.compartments.size();
+   if (dir>=2) dir-=2; // only x or y direction
    VF ps; // all positions
    for(i=1;i<cn;i++){
-      if (what==dir_LR) ps.push_back(state.nw.compartments[i].xmin);
-      if (what==dir_LR) ps.push_back(state.nw.compartments[i].xmax);
-      if (what==dir_TB) ps.push_back(state.nw.compartments[i].ymin);
-      if (what==dir_TB) ps.push_back(state.nw.compartments[i].ymax);
+      if (dir==0) { // x direction
+         ps.push_back(state.nw.compartments[i].xmin);
+         ps.push_back(state.nw.compartments[i].xmax);
+      } else { // y direction
+         ps.push_back(state.nw.compartments[i].ymin);
+         ps.push_back(state.nw.compartments[i].ymax);
+      }
    }
    sort(ps.begin(),ps.end());
+   int psn=ps.size() ;
    i=0;
-   while (i<(int)ps.size() && ps[i]<pos) i++;
+   while (i<psn && ps[i]<pos) i++;
    double pos2=pos+d;
    if (d<0){
       i--;
@@ -888,7 +982,7 @@ void __move(Layouter &state, double pos, double d, __dir what){
          i--;
       }
    } else {
-      while (i<(int)ps.size() && ps[i]<pos2) { // same for range pos .. pos +|d|
+      while (i<psn && ps[i]<pos2) { // same for range pos .. pos +|d|
          pos2=ps[i]+d;
          i++;
       }
@@ -896,35 +990,108 @@ void __move(Layouter &state, double pos, double d, __dir what){
    if (pos>pos2) swap(pos,pos2);
    for(i=1;i<cn;i++){ //the 0-th compartment is the infinite plane, so we start from index 1.
       Compartment &cp=state.nw.compartments[i];
-      if (what==dir_LR && cp.xmin>=pos && cp.xmin<=pos2) cp.xmin+=d;
-      if (what==dir_LR && cp.xmax>=pos && cp.xmax<=pos2) cp.xmax+=d;
-      if (what==dir_TB && cp.ymin>=pos && cp.ymin<=pos2) cp.ymin+=d;
-      if (what==dir_TB && cp.ymax>=pos && cp.ymax<=pos2) cp.ymax+=d;
+      if (dir==0) { // x direction
+         if (cp.xmin>=pos && cp.xmin<=pos2) cp.xmin+=d; // move compartment borders in range pos..pos2 by d
+         if (cp.xmax>=pos && cp.xmax<=pos2) cp.xmax+=d;
+      } else { // y direction
+         if (cp.ymin>=pos && cp.ymin<=pos2) cp.ymin+=d;
+         if (cp.ymax>=pos && cp.ymax<=pos2) cp.ymax+=d;
+      }
    }
 }
+void __moveall(Layouter &state, double where, double diff, int dir){ // moves everything left or right (dependent on sgn d) by d
+   where-=diff/1000; // just to be shure to get also all borders exactly at where
+   int cn=state.nw.compartments.size();
+   for (int c=1;c<cn;c++){ // shifting all compartment borders on the corresponding side of 'where' to the corresponding side
+      Compartment &cp=state.nw.compartments[c];
+      if ((cp.acs(dir)-where)*diff>0) cp.acs(dir)+=diff;
+      if ((cp.acs((dir+2) % 4)-where)*diff>0) cp.acs((dir +2) % 4)+=diff; // the other border on the same axis
+   }
+/*   if (dir>=2) dir-=2; // for nodes we only have x,y coordinates (not xmin,ymin,xmay,ymax)
+   int n=state.nw.nodes.size();
+   for (int i=0;i<n;i++){ // shifting all nodes on the corresponding side of 'where' to the corresponding side
+      Node &nd=state.nw.nodes[i];
+      if (dir==0){
+         if ((nd.x-where)*diff>0) nd.x+=diff;
+      } else {
+         if ((nd.y-where)*diff>0) nd.y+=diff;
+      }
+   }*/
+   
+}
 void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
-   int n=state.nw.nodes.size(),cn=state.nw.compartments.size();
+   int n=state.nw.nodes.size(),cn=state.nw.compartments.size(),cbn=state.nw.compartment_borders.size();
    int i,c;  
    VCP newpos(cn);
+   VCP forces(cn);
+   vector<VI> numbers(cn);
    double d=MARGIN; // minimum distance to node boundaries
    for(c=1;c<cn;c++){ //the 0-th compartment is the infinite plane, so we start from index 1.
-      //initialization the rectangles.
       newpos[c].xmin=newpos[c].ymin=DBL_MAX;
       newpos[c].xmax=newpos[c].ymax=-DBL_MAX;
+      numbers[c].resize(4);
    }
-   double xmin=DBL_MAX,ymin=DBL_MAX,xmax=-DBL_MAX,ymax=-DBL_MAX;
+   numbers.resize(cn);
    for(i=0;i<n;i++){
-      //getting bbox of contained nodes; considering node sizes
+      //get forces from nodes outside of their compartments
       c=state.nw.nodes[i].compartment;
-      if(c==0)continue;
-      if(state.nw.nodes[i].x-state.nw.nodes[i].width/2-d<newpos[c].xmin) newpos[c].xmin=state.nw.nodes[i].x-state.nw.nodes[i].width/2-d;
-      if(state.nw.nodes[i].x+state.nw.nodes[i].width/2+d>newpos[c].xmax) newpos[c].xmax=state.nw.nodes[i].x+state.nw.nodes[i].width/2+d;
-      if(state.nw.nodes[i].y-state.nw.nodes[i].height/2-d<newpos[c].ymin) newpos[c].ymin=state.nw.nodes[i].y-state.nw.nodes[i].height/2-d;
-      if(state.nw.nodes[i].y+state.nw.nodes[i].height/2+d>newpos[c].ymax) newpos[c].ymax=state.nw.nodes[i].y+state.nw.nodes[i].height/2+d;
-      if (newpos[c].xmin<xmin) xmin=newpos[c].xmin;
-      if (newpos[c].ymin<ymin) ymin=newpos[c].ymin;
-      if (newpos[c].xmax>xmax) xmax=newpos[c].xmax;
-      if (newpos[c].ymax>ymax) ymax=newpos[c].ymax;
+      if (c==0) continue;
+      Compartment &cpo=state.nw.compartments[c];
+      Rect rnode=state.nw.nodes[i].rect();
+      rnode.extend(d);
+      for (int j=0;j<4;j++){ // loop over all directions
+         double size=(j % 2==0 ? state.nw.nodes[i].width/2+d : state.nw.nodes[i].height/2+d);
+         if (j<2) size=-size; // left and top direction -> size negative
+         double diff=rnode.acs(j)-cpo.acs(j);
+         if (j<2 ? diff<0 : diff>0) {
+            forces[c].acs(j)+=diff;
+            numbers[c][j]++;
+            if (j<2 ? newpos[c].acs(j)>cpo.acs(j)+diff : newpos[c].acs(j)<cpo.acs(j)+diff ){
+               newpos[c].acs(j)=cpo.acs(j)+diff; // optimal position of border to include all nodes
+            }
+         }
+      }
+   }
+   for (c=0;c<cbn;c++){ // loop through compartment border lines; adding all forces by nodes on the compartment borders adjacent to this inner comparmtnet boder line
+      double shift=0;
+      const VCPB &cbs=state.nw.compartment_borders[c];
+      int count=0;
+      for (i=0;i<(int)cbs.size();i++){
+         shift+=forces[cbs[i].compartment].acs(cbs[i].dir);
+         count+=numbers[cbs[i].compartment][cbs[i].dir];
+      }
+      shift/=count; // divide by number of out of compartment nodes for this border
+      if (shift!=0.0) __move(state,state.nw.compartments[cbs[0].compartment].acs(cbs[0].dir),shift,cbs[0].dir);
+      //state.nd.show(); // FIXME this is just for debug; remove!!
+      
+   }
+   
+   // shrink outer boundaries
+   
+   for (c=cbn-4;c<cbn;c++){ // only outer borders
+      int dir=c+4-cbn; // get direction from index order (they are added in exactly this order)
+      int sgn=(dir>=2 ? -1 : 1);
+      const VCPB &cbs=state.nw.compartment_borders[c];
+      for (i=0;i<(int)cbs.size();i++){
+         if (cbs[i].dir!=dir) throw "direction error";
+         state.nw.compartments[cbs[i].compartment].acs(dir)+=sgn*state.avgsize/4;
+         state.nw.compartments[0].acs(dir)=state.nw.compartments[cbs[i].compartment].acs(dir); // set compartment 0 boundaries to network boundaries
+      }
+   }
+/*   double limits[4];
+   limits[0]=limits[1]=DBL_MAX;
+   limits[2]=limits[3]=-DBL_MAX;
+   double &xmin=limits[0];
+   double &ymin=limits[1];
+   double &xmax=limits[2];
+   double &ymax=limits[3];
+   
+   for(c=1;c<cn;c++){
+      Compartment &cpo=state.nw.compartments[c];
+      for (i=0;i<4;i++){
+         if (i<2 && cpo.acs(i)<limits[i]) limits[i]=cpo.acs(i); // set xmin,ymin
+         if (i>=2 && cpo.acs(i)>limits[i]) limits[i]=cpo.acs(i); // set xmax,ymax
+      }
    }
    for(c=1;c<cn;c++){
       Compartment &cpo=state.nw.compartments[c];
@@ -934,15 +1101,15 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
       if (cpo.ymin>cpn.ymin) __move(state, cpo.ymin,(cpn.ymin-cpo.ymin)*factor*scale,dir_TB);
       if (cpo.ymax<cpn.ymax) __move(state, cpo.ymax,(cpn.ymax-cpo.ymax)*factor*scale,dir_TB);
    }
-   // clip all compartments to networks bbox
-/*   for(c=1;c<cn;c++){
+   // clip all compartments to networks bbox (in particular compartment 0)
+   for(c=0;c<cn;c++){
       Compartment &cp=state.nw.compartments[c];
       if (cp.xmin<xmin) cp.xmin=xmin;
       if (cp.ymin<ymin) cp.ymin=ymin;
       if (cp.xmax>xmax) cp.xmax=xmax;
       if (cp.ymax>ymax) cp.ymax=ymax;
    }*/
-   fix_compartments(state,pg,scale,iter,temp,debug); // FIXME this is just a hotfix
+//   fix_compartments(state,pg,scale,iter,temp,debug); // FIXME this is just a hotfix
 }
 template <typename T>void vassign(vector<T>& v,const vector<T>& v2){
    v.assign(v2.begin(),v2.end());
