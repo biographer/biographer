@@ -1027,8 +1027,9 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
    vector<VI> numbers(cn);
    double d=MARGIN; // minimum distance to node boundaries
    for(c=1;c<cn;c++){ //the 0-th compartment is the infinite plane, so we start from index 1.
-      newpos[c].xmin=newpos[c].ymin=DBL_MAX;
-      newpos[c].xmax=newpos[c].ymax=-DBL_MAX;
+      for (i=0;i<4;i++){
+         newpos[c].acs(i)=state.nw.compartments[c].acs(i);
+      }
       numbers[c].resize(4);
    }
    numbers.resize(cn);
