@@ -192,6 +192,9 @@ void NetDisplay::draw(){
       if (i<10) cairo_set_source_rgba(c,ccols[i][0],ccols[i][1],ccols[i][2],0.2);
       cairo_rectangle(c,cp.xmin,cp.ymin,cp.xmax-cp.xmin,cp.ymax-cp.ymin);
       cairo_fill(c);
+      cairo_move_to(c,cp.xmin,cp.ymax);
+      cairo_set_source_rgba(c,0,0,0,0.5);
+      cairo_show_text(c,cp.name.c_str());
 //      printf("Compartment %s: (%f,%f - %f,%f) (org)\n",cp.name.c_str(),cp.xmin,cp.ymin,cp.xmax,cp.ymax);
    }
    // draw nodes
