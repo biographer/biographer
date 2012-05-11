@@ -400,10 +400,30 @@ void domanual(Layouter &l,bool &manual_cont, int &s){
       l.manual_it+=iter;
       manual_cont=true;
       return;
-   } else if (cmd=="pc"){
+   } else if (cmd=="pc"){ // print compartment
       int idx;
       cin >> idx;
       if (idx<(int)l.nw.compartments.size()) l.nw.compartments[idx].print();
+      return domanual(l,manual_cont,s);
+   } else if (cmd=="ac"){
+      for (int i=0, n=l.nw.compartments.size();i<n;i++){
+         cout << i << ":";
+         l.nw.compartments[i].print();
+      }
+      return domanual(l,manual_cont,s);
+   } else if (cmd=="sc"){ // set compartment
+      int idx;
+      double xmin,ymin,xmax,ymax;
+      cin >> idx >> xmin >> ymin >> xmax >> ymax;
+      cout << "setting compartment " << idx << " to " << xmin << "," << ymin << "," << xmax << "," << ymax << " (y/n)?\n";
+      cin >> cmd;
+      if ((cmd=="y") || (cmd=="Y")){
+         l.nw.compartments[idx].xmin=xmin;
+         l.nw.compartments[idx].ymin=ymin;
+         l.nw.compartments[idx].xmax=xmax;
+         l.nw.compartments[idx].ymax=ymax;
+         cout << "set.\n";
+      }
       return domanual(l,manual_cont,s);
    }
    getline(cin,cmd);
