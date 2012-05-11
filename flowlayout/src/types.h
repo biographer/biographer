@@ -1,6 +1,7 @@
 #ifndef th_headers_h
 #define th_headers_h
-
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>

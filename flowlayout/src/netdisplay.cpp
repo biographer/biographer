@@ -154,12 +154,21 @@ void NetDisplay::draw(){
    cairo_set_source_rgb (c, 0.5,0.5,0.5); 
    cairo_set_line_width(c,0.5/scale);
    cairo_set_dash (c,(double[2]){3/scale,3/scale},2,0);
+   cairo_set_font_size(c,grid/5);
    double l=grid*floor(xmin/grid);
    while (l<=xmax){
       cairo_set_source_rgb (c, 0.5,0.5,0.5); 
       if (l==0) cairo_set_source_rgb (c, 0,0,0); 
       cairo_move_to(c,l,ymin);
       cairo_line_to(c,l,ymax);
+      char num[10];
+      sprintf(num,"%6.0f",l);
+      cairo_save(c);
+      cairo_translate(c,l,ymax);
+      cairo_rotate(c,-M_PI/2);
+      cairo_move_to(c,0,0);
+      cairo_show_text(c,num);
+      cairo_restore(c);
       l+=grid;
    }
    l=grid*floor(ymin/grid);
@@ -168,6 +177,10 @@ void NetDisplay::draw(){
       if (l==0) cairo_set_source_rgb (c, 0,0,0); 
       cairo_move_to(c,xmin,l);
       cairo_line_to(c,xmax,l);
+      char num[10];
+      sprintf(num,"%6.0f",l);
+      cairo_move_to(c,xmin,l);
+      cairo_show_text(c,num);
       l+=grid;
    }
    cairo_stroke(c);
