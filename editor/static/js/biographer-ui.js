@@ -135,7 +135,7 @@ bui.settings = {
      * The url from which the CSS file should be imported and CSS classes
      */
     css : {
-        stylesheetUrl : 'resources/css/visualization-svg.css',
+        stylesheetUrl : '../static/bui/css/visualization-svg.css',
         classes : {
             invisible : 'hidden',
             selected : 'selected',
@@ -1248,7 +1248,7 @@ var getSBOForMarkerId = function(id) {
      * @return {SVGMarkerElement} The generated marker element.
      */
     var createMarker = function(id, data, refX, refY, width, height, classes,
-                                markerWidthCorrection, fill) {
+                                markerWidthCorrection) {
         if (markerWidthCorrection === undefined) {
             markerWidthCorrection = 1;
         }
@@ -1271,7 +1271,6 @@ var getSBOForMarkerId = function(id) {
         if (typeof(data) == 'string') {
             var path = document.createElementNS(bui.svgns, 'path');
             path.setAttributeNS(null, 'd', data);
-            console.log('fill', fill)
             if(classes == bui.settings.css.classes.connectingArcs.assignment || classes == bui.settings.css.classes.connectingArcs.production)
                 path.setAttributeNS(null, 'fill', 'black');
             else
@@ -1304,17 +1303,17 @@ var getSBOForMarkerId = function(id) {
      *   properties. The id property holds the marker's id and the element
      *   property the SVGMarkerElement.
      */
-    var createPathWithData = function(data, refX, refY, width, height, classes, fill)
+    var createPathWithData = function(data, refX, refY, width, height, classes)
     {
         var id = (bui.settings.idPrefix.connectingArc +
                 connectingArcIdCounter++),
                 hoverId = bui.util.getHoverId(id);
 
         var element = createMarker(id, data, refX, refY, width, height,
-                classes, fill),
+                classes),
                 hoverElement = createMarker(hoverId, data, refX, refY,
                         width, height, classes,
-                        bui.settings.style.markerWidthCorrection, fill);
+                        bui.settings.style.markerWidthCorrection);
 
         return {
             id : id,
@@ -7669,6 +7668,20 @@ addModificationMapping([111100], 'PTM_sumoylation', 'S');
         graph.unsuspendRedraw(suspendHandle);
         var elapsed = new Date().getTime() - start;
         log('## Complete import took ' + elapsed + 'ms.');
+        for (var key in generatedNodes) {
+            if (generatedNodes.hasOwnProperty(key)) {
+                var node = generatedNodes[key];
+                var pos = node.position();
+                var nparent = node.parent();
+                if ('identifier' in nparent){
+                    if (nparent.identifier() == "Compartment"){
+                        var pos_parent = nparent.position();
+                        node.position(pos.x-pos_parent.x, pos.y-pos_parent.y);
+                        console.log('reset pos');
+                    }
+                }
+            }
+        }
     };
 
     /**

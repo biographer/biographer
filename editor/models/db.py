@@ -246,17 +246,18 @@ def sbml2jsbgn(sbml_str, rxncon=False):
             seen_species.add(species_id)
             #-------------------------------------
             if 'rxncon.org' in sbml_str:
-                print species.getName()
+                #print species.getName()
                 if 'sink' in species_id:
                     node_item = dict( id = species_id, sbo = 291, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60))
                     graph['nodes'].append(node_item)
                 elif species.getName().startswith('xXx') and species.getName().endswith('xXx()'):
                     node_item = dict( id = species_id, sbo = 347, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 90, height = 60, label=species.getName()[3:-5]))
                     graph['nodes'].append(node_item)
-                elif '.' in species.getName():
+                elif '__' in species.getName():
                     complex_item = dict( id = species_id, sbo = 253, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60,subnodes=[]))
-                    for subnode_id in species.getName().split('.'):
+                    for subnode_id in species.getName().split('__'):
                         match = re.search(pattern_nd, subnode_id)
+                        print 'subnode_id',subnode_id
                         subnode_id, mods = match.group(1),match.group(2)
                         if ('rna' in subnode_id.lower()) or ('dna' in subnode_id.lower()):
                             sbo = 250

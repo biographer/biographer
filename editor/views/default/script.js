@@ -553,14 +553,14 @@ $(document).ready(function() {
     //=========================
     $('#layout_grid').click(function(evnt){
         nodes_edges = get_nodes_edges();
-        orig_html = $('#layout_grid').html();
-        $('#layout_grid').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}').ready(function(){
+        //orig_html = $('#layout_grid').html();
+        //$('#layout_grid').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}').ready(function(){
         bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
         if (!evnt.ctrlKey){
             bui.grid.layout();
         }
-        });
-        $('#layout_grid').html(orig_html);
+        //});
+        //$('#layout_grid').html(orig_html);
     });
     //=========================
     $('#clone').click(function(){
