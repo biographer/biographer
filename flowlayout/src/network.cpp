@@ -349,7 +349,7 @@ void Network::dumpNodes(FILE* out){
    n=compartments.size();
    double cpminy=inf;
    double cpmaxy=-inf;
-   int cpmin,cpmax;
+   int cpmin=0,cpmax=0;
    for(i=0;i<n;i++){
       if (compartments[i].ymin<cpminy){
          cpmin=i;
