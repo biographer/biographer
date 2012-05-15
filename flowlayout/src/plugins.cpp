@@ -1068,7 +1068,9 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
          shift+=forces[cbs[i].compartment].acs(cbs[i].dir);
          count+=numbers[cbs[i].compartment][cbs[i].dir];
       }
-      shift/=count; // divide by number of out of compartment nodes for this border
+      if (count) shift/=count; // divide by number of out of compartment nodes for this border
+      if (shift>2*state.avgsize) shift=2*state.avgsize; // limit border movement to 2 * avg. size
+      if (shift<-2*state.avgsize) shift=-2*state.avgsize;
       if (shift!=0.0) __move(state,state.nw.compartments[cbs[0].compartment].acs(cbs[0].dir),shift,cbs[0].dir);
       //state.nd.show(); // FIXME this is just for debug; remove!!
       
@@ -1080,12 +1082,16 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
       int dir=c+4-cbn; // get direction from index order (they are added in exactly this order)
       int sgn=(dir>=2 ? -1 : 1);
       const VCPB &cbs=state.nw.compartment_borders[c];
-      for (i=0;i<(int)cbs.size();i++){
+      for (i=0,n=cbs.size();i<n;i++){
          if (cbs[i].dir!=dir) throw "direction error";
          state.nw.compartments[cbs[i].compartment].acs(dir)+=sgn*state.avgsize/4;
          state.nw.compartments[0].acs(dir)=state.nw.compartments[cbs[i].compartment].acs(dir); // set compartment 0 boundaries to network boundaries
       }
    }
+   
+   // FIXME add sanity check that outer borders are note to far of the actual nodes
+
+
 /*   double limits[4];
    limits[0]=limits[1]=DBL_MAX;
    limits[2]=limits[3]=-DBL_MAX;
