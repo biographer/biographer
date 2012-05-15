@@ -4,7 +4,7 @@
 double avg_sizes(Layouter &l);
 void get_ideal_distances(Layouter &l,VF &dij);
 void get_degrees(Layouter &l,VI &deg);
-void domanual(Layouter &l,bool &manual_cont, int &s);
+void domanual(Layouter &l,bool &manual_cont, int &s, double &temp);
 #ifdef SHOWPROGRESS
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), debug(vector<vector<forcevec> >(nw.nodes.size())), plugins(_pgs), nd(NetDisplay(_nw,debug)){
 #else
@@ -278,7 +278,7 @@ void Layouter::execute(){
          #ifdef SHOWPROGRESS
          nd.show();
          #endif
-         if (manual) domanual(*this,manual_cont,s);
+         if (manual) domanual(*this,manual_cont,s,temp);
          end=false;
       } while (manual_cont);
       printf("\n");
@@ -386,7 +386,7 @@ double avg_sizes(Layouter &l){
    }
    return size/(2*n);
 }
-void domanual(Layouter &l,bool &manual_cont, int &s){
+void domanual(Layouter &l,bool &manual_cont, int &s, double &temp){
    string cmd;
    cout << ">";
    cin >> cmd;
@@ -400,17 +400,24 @@ void domanual(Layouter &l,bool &manual_cont, int &s){
       l.manual_it+=iter;
       manual_cont=true;
       return;
+   } else if (cmd=="t"){
+      double t;
+      cin >> t;
+      cout << "Temp: " << temp;
+      if (t>=0 && t<=1) temp=t;
+      cout << " -> " << temp << endl;
+      return domanual(l,manual_cont,s,temp);
    } else if (cmd=="pc"){ // print compartment
       int idx;
       cin >> idx;
       if (idx<(int)l.nw.compartments.size()) l.nw.compartments[idx].print();
-      return domanual(l,manual_cont,s);
+      return domanual(l,manual_cont,s,temp);
    } else if (cmd=="ac"){
       for (int i=0, n=l.nw.compartments.size();i<n;i++){
          cout << i << ":";
          l.nw.compartments[i].print();
       }
-      return domanual(l,manual_cont,s);
+      return domanual(l,manual_cont,s,temp);
    } else if (cmd=="sc"){ // set compartment
       int idx;
       double xmin,ymin,xmax,ymax;
@@ -424,7 +431,7 @@ void domanual(Layouter &l,bool &manual_cont, int &s){
          l.nw.compartments[idx].ymax=ymax;
          cout << "set.\n";
       }
-      return domanual(l,manual_cont,s);
+      return domanual(l,manual_cont,s,temp);
    }
    getline(cin,cmd);
 }
