@@ -966,6 +966,9 @@ void __move(Layouter &state, double pos, double d, int dir){
    // moves compartment borders within a certain range of pos by d in the direction of what
    int i;
    int cn=state.nw.compartments.size();
+   int n=state.nw.nodes.size();
+   pos-=d/1000; // just to be sure to get also all borders exactly at pos
+   double d2=d+(d<0 ? -state.avgsize: state.avgsize); // d plus some buffer zone
    if (dir>=2) dir-=2; // only x or y direction
    VF ps; // all positions
    for(i=1;i<cn;i++){
@@ -977,20 +980,27 @@ void __move(Layouter &state, double pos, double d, int dir){
          ps.push_back(state.nw.compartments[i].ymax);
       }
    }
+   for(i=1;i<n;i++){
+      if (dir==0) { // x direction
+         ps.push_back(state.nw.nodes[i].x);
+      } else { // y direction
+         ps.push_back(state.nw.nodes[i].y);
+      }
+   }
    sort(ps.begin(),ps.end());
    int psn=ps.size() ;
    i=0;
    while (i<psn && ps[i]<pos) i++;
-   double pos2=pos+d;
+   double pos2=pos+d2;
    if (d<0){
       i--;
       while (i>=0 && ps[i]>pos2) { // find all lines in range pos-|d| .. pos; if found, extend range to ps[i]-|d| .. pos
-         pos2=ps[i]+d;
+         pos2=ps[i]+d2;
          i--;
       }
    } else {
       while (i<psn && ps[i]<pos2) { // same for range pos .. pos +|d|
-         pos2=ps[i]+d;
+         pos2=ps[i]+d2;
          i++;
       }
    }
@@ -1005,9 +1015,17 @@ void __move(Layouter &state, double pos, double d, int dir){
          if (cp.ymax>=pos && cp.ymax<=pos2) cp.ymax+=d;
       }
    }
+   for (int i=0;i<n;i++){ // shifting all nodes on the corresponding side of 'pos' to the corresponding side
+      Node &nd=state.nw.nodes[i];
+      if (dir==0){
+         if (nd.x>=pos && nd.x<=pos2) nd.x+=d;
+      } else {
+         if (nd.y>=pos && nd.y<=pos2) nd.y+=d;
+      }
+   }
 }
 void __moveall(Layouter &state, double where, double diff, int dir){ // moves everything left or right (dependent on sgn d) by d
-   where-=diff/1000; // just to be shure to get also all borders exactly at where
+   where-=diff/1000; // just to be sure to get also all borders exactly at where
    int cn=state.nw.compartments.size();
    for (int c=1;c<cn;c++){ // shifting all compartment borders on the corresponding side of 'where' to the corresponding side
       Compartment &cp=state.nw.compartments[c];
