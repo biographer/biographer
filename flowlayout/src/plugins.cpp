@@ -59,6 +59,9 @@ int _find(VI* nd,int idx);
 double _getwidths(Network &nw,VI* nd);
 double _getheights(Network &nw,VI* nd);
 double sign(double x);
+Point rndvec(){ // return small random vector
+   return Point(zero*(rand() % 10000)/10000,zero*(rand() % 10000)/10000);
+}
 #ifdef STACKX
 #define M_INIDIM _getheights
 #define M_INIDIR1 y
@@ -399,16 +402,20 @@ void expand(Layouter &state,plugin& pg, double scale, int iter, double temp, int
    int n1,n2,n=state.nw.nodes.size();
    double d;
    Point vec;
+   double thr=state.avgsize*2;
    
    for(n1=0;n1<n;n1++){
       for(n2=n1+1;n2<n;n2++){
          if (state.nw.isNeighbor(n1,n2)) continue;
-         double thr=state.avgsize*2;
          vec=state.nw.nodes[n2]-state.nw.nodes[n1]; //the vector from node-n1 to node-n2.
          d=norm(vec);
-         if (d<thr) continue; //expansion only for distant nodes
+         if (d<zero) {
+            state.nw.nodes[n1]+=rndvec();
+            continue;
+         }
+         if (d>state.avgsize*10) continue; // avoid force over too large distances
          //vec=unit(vec)*max(0.0,min(norm(vec)/thr,1-(norm(vec)-thr)/4))*state.avgsize*scale;
-         vec=(unit(vec)*min(state.avgsize,norm(vec)-thr)+(1-temp)*state.avgsize)*scale;
+         vec=(unit(vec)*min(state.avgsize,max(0.0,norm(vec)-thr))+(1-temp)*state.avgsize)*scale;
          state.mov[n1]-=vec;
          state.mov[n2]+=vec;
          state.force[n1]+=manh(vec);
