@@ -4,6 +4,9 @@ XINC=-Isrc
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DUSEJSON `pkg-config --cflags glib-2.0`  -lglib-2.0 -rpath=/local/home/handorf/lib -I/local/home/handorf/hg/biographer-layout/json-glib-0.12.6/ -L/local/home/handorf/lib -ljson-glib-1.0
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX
 CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo
+ifeq ($(MAKECMDGOALS),testlayout)
+CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo
+endif
 ifeq ($(MAKECMDGOALS),)
 CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
 endif
@@ -37,6 +40,8 @@ netdisplay.o: netdisplay.cpp netdisplay.h network.h types.h
 #	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o -o $(BDIR)test $<
 #
 testlayout: testlayout.cpp $(OBJS)
+	$(CC) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)testlayout $< $(CCFLAGS)
+testlayout-dbg: testlayout.cpp $(OBJS)
 	$(CC) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)testlayout $< $(CCFLAGS)
 test_dist_edges: test_dist_edges.cpp $(OBJS)
 	$(CC) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_dist_edges $< $(CCFLAGS)
