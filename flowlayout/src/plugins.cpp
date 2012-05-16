@@ -695,7 +695,7 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
 //         if (beta==PI) beta=0; // don't know in which directions; may cause problems in some cases so silently ignored
          d=dist(state.nw.nodes[(*neighbors)[i]],baseNode);
          if (state.nw.nodes[k].type==reaction) beta*=strength_rea;
-         Point mv=(to_left(vec,beta*factor*scale)-vec);
+         Point mv=(scale>1 ? (to_left(vec,beta*factor)-vec)*scale : to_left(vec,beta*factor*scale)-vec);
 //         Point mvj=(to_left(vecj,-beta*factor*scale)-vecj)/2;
 //         Point mvjj=(to_left(vecjj,-beta*factor*scale)-vecjj)/2;
          state.mov[(*neighbors)[i]]+=mv;
