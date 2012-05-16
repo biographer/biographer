@@ -89,8 +89,8 @@ int main(int argc,char *argv[]){
    l.addEndCondition(C_iterations,1);
    
    l.addStep();
-   l.addPlugins(P_force_adj, P_force_nadj, P_torque_adj, P_distribute_edges, P_min_edge_crossing_multi, P_adjust_compartments_fixed, 
-                    P_force_compartments, P_limit_mov);
+   l.addPlugins(P_force_adj, P_force_nadj, P_torque_adj, P_distribute_edges, P_min_edge_crossing_multi, P_force_compartments, 
+                P_adjust_compartments_fixed, P_limit_mov);
    l.addEndCondition(C_relForceDiff,0.005);
    l.addEndCondition(C_temp,10);
    //l.pluginScale(P_min_edge_crossing_multi, 0.1);
@@ -102,8 +102,8 @@ int main(int argc,char *argv[]){
    l.addEndCondition(C_iterations,1);
    
    l.addStep();
-   l.addPlugins(P_force_adj, P_force_nadj, P_torque_adj, P_distribute_edges, P_min_edge_crossing_multi, P_adjust_compartments_fixed, 
-                    P_force_compartments, P_limit_mov, P_node_collision);
+   l.addPlugins(P_force_adj, P_force_nadj, P_torque_adj, P_distribute_edges, P_min_edge_crossing_multi, P_force_compartments, 
+                P_adjust_compartments_fixed, P_limit_mov, P_node_collision);
    //l.pluginScale(P_min_edge_crossing_multi, 0.1);
    //l.pluginScale(P_force_compartments, 10);
    l.addEndCondition(C_maxMovLimit,0.005);
