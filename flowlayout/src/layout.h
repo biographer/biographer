@@ -61,6 +61,7 @@ class Layouter{
       Plugins& plugins;
       void initStep(int step);
       void moveNodes();
+      void resetVars();
       void init();
       vector<step> program;
       bool forked_viewer;

@@ -164,6 +164,7 @@ void Layouter::execute(){
       do {
          while (!end){
             // apply mov plugins
+            resetVars();
             for (p=0;p<pls;p++){
                int pidx=program[s].actplugins[p];
                plugin &pg=plugins.get(pidx);
@@ -285,7 +286,13 @@ void Layouter::execute(){
       if (show_progress) showProgress(0);
    }
 }
-
+void Layouter::resetVars(){ // resetting mov and force to zero
+   int n=nw.nodes.size();
+   for(int i=0;i<n;i++){
+      mov[i].x=mov[i].y=0.0; //set to zero.
+      force[i]=0.0;
+   }
+}
 void Layouter::moveNodes(){
    /*The function moves the nodes to a new position according the the movements (dispalcement vectors)computed, and then set all displacement vectors to 0.
    It also adjustes the default direction of reaction nodes.
@@ -298,14 +305,14 @@ void Layouter::moveNodes(){
          nw.nodes[i].x+=mov[i].x; //update position
          nw.nodes[i].y+=mov[i].y; //update position
       }
-      mov[i].x=mov[i].y=0.0; //set to zero.
+//      mov[i].x=mov[i].y=0.0; //set to zero.
       
 //      if (rot[i]>0.25*PI) rot[i]=0.25*PI;  // limit rotation
 //      if (rot[i]<-0.25*PI) rot[i]=-0.25*PI;
 //      nw.nodes[i].dir=lim(nw.nodes[i].dir+rot[i]); //adjustes default direction.
 //      rot[i]=0.0; //set to zero.
       
-      force[i]=0.0;
+//      force[i]=0.0;
    }
    
 }
