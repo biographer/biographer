@@ -75,10 +75,11 @@ int main(int argc,char *argv[]){
    l.addEndCondition(C_iterations,1);
    
    l.addStep();
-   l.addPlugins(P_force_adj, P_force_compartments, P_adjust_compartments_fixed, P_expand, P_limit_mov);
+   l.addPlugins(P_force_adj, P_distribute_edges, P_force_compartments, P_adjust_compartments_fixed, P_expand, P_limit_mov);
    l.pluginScale(P_force_adj, 10);
    l.fixPluginTemp(P_force_compartments,0);
    l.pluginScale(P_expand, 1.0/l.nw.nodes.size());
+   l.pluginScale(P_distribute_edges, 10);
    l.addEndCondition(C_avgMovLimit,0.05);
    l.addEndCondition(C_temp,3);
    l.addEndCondition(C_iterations,100);
