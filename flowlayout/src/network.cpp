@@ -416,6 +416,30 @@ Rect Network::getBB(bool includeCompartments){
    }
    return Rect(xmin,ymin,xmax,ymax);
 }
+
+int Network::edgeCycles(int edge){ // number of cycles an edge takes part in (not combinatorically)
+   VI visited=VI(edges.size()); // vector of visited edges;
+   visited[edge]=1; // current edge is visited
+   int found=0;
+   edgeCyclesRec(edges[edge].from,edges[edge].to,visited,found);
+   return found;
+}
+void Network::edgeCyclesRec(int node, int target, VI &visited, int &found){
+   VI &neigh=nodes[node].neighbors;
+   for (int i=0,n=neigh.size();i<n;i++){
+      if (visited[neigh[i]]) continue;
+      int other=edges[neigh[i]].from;
+      if (node==other) other=edges[neigh[i]].to; // get other node of edge
+      visited[neigh[i]]=1;
+      if (other==target) {
+         found++;
+         return;
+      }
+      edgeCyclesRec(other,target,visited,found);
+   }
+}
+
+
 #ifdef USEJSON
 
 double json_object_get_number_member(JsonObject* jobj,const gchar *name){
@@ -582,4 +606,5 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
    
    
 }
+
 #endif

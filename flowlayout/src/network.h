@@ -50,6 +50,7 @@ public:
    Rect getBB(bool includeCompartments=false); // get bounding box
    void calcEdgeLengths();
    void unfixAll();
+   int  edgeCycles(int edge);
 #ifdef USEJSON   
    JSONcontext* readJSON(const char * file=NULL);
    void writeJSON(JSONcontext* ctx,const char* file=NULL);
@@ -57,6 +58,7 @@ public:
    
 protected:
    char* infile; // the filename the network is read from (only for the text input format)
+   void edgeCyclesRec(int node, int target, VI &visited, int &found);
 };
    
 #endif
