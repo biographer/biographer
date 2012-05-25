@@ -42,9 +42,10 @@ int main(int argc,char *argv[]){
    l.addEndCondition(C_iterations,1550);
    
    l.addStep();
-   l.addPlugins(P_force_adj, P_expand, P_limit_mov);
+   l.addPlugins(P_force_adj, P_distribute_edges, P_expand, P_limit_mov);
    l.pluginScale(P_force_adj, 10);
    l.pluginScale(P_expand, 1.0/l.nw.nodes.size());
+   l.pluginScale(P_distribute_edges, 10);
    l.addEndCondition(C_avgMovLimit,0.05);
    l.addEndCondition(C_relForceDiff,0.005);
    l.addEndCondition(C_iterations,500);
