@@ -47,6 +47,8 @@ class Layouter{
       VF hardlim;
       VI deg;
       VI cycles;
+      VVI components;
+      VI nodecomponents;
       vector<bool> tension;
       bool dodebug[P_count-1];
 #ifdef SHOWPROGRESS

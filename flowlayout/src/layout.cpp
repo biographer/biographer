@@ -5,6 +5,8 @@ double avg_sizes(Layouter &l);
 void get_ideal_distances(Layouter &l);
 void get_degrees(Layouter &l);
 void domanual(Layouter &l,bool &manual_cont, int &s, double &temp);
+void get_components(Layouter &l);
+void get_component(Network nw,int n, int cidx, VI &component, VI &nodecomponents);
 #ifdef SHOWPROGRESS
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), debug(vector<vector<forcevec> >(nw.nodes.size())), plugins(_pgs), nd(NetDisplay(_nw,debug)){
 #else
@@ -44,6 +46,7 @@ void Layouter::init(){
    avgsize=avg_sizes(*this);
    get_ideal_distances(*this);
    get_degrees(*this);
+   get_components(*this);
 }
 void Layouter::addStep(){ // adds one more step to the program
    initStep(program.size());
@@ -395,6 +398,28 @@ double avg_sizes(Layouter &l){
       size+=l.nw.nodes[i].height;
    }
    return size/(2*n);
+}
+void get_components(Layouter &l){ // connected components as in undirected graphs (i.e. not strongly connected)
+   int n=l.nw.nodes.size();
+   l.nodecomponents.assign(n,-1); // -1 indicates not assigned to a component
+   l.components.clear();
+   for (int i=0;i<n;i++){
+      if (l.nodecomponents[i]>-1) continue; // node is already assigned to a component
+      int cidx=l.components.size(); // index of new component
+      l.components.push_back(VI());
+      get_component(l.nw,i,cidx,l.components[cidx],l.nodecomponents); // get the full component associated with that node
+   }
+}
+void get_component(Network nw,int n, int cidx, VI &component, VI &nodecomponents){
+   VI &neigh=nw.nodes[n].neighbors;
+   nodecomponents[n]=cidx;
+   component.push_back(n);
+   for (int i=0,li=neigh.size();i<li;i++){
+      int other=nw.edges[neigh[i]].from; // get thew other node from edge
+      if (other==n) other=nw.edges[neigh[i]].to;
+      if (nodecomponents[other]>-1) continue; // node already visited
+      get_component(nw,other,cidx,component,nodecomponents);
+   }
 }
 void domanual(Layouter &l,bool &manual_cont, int &s, double &temp){
    string cmd;

@@ -254,6 +254,7 @@ typedef vector<Edge> VE;
 typedef vector<Rect> VR;
 typedef vector<Compartment> VCP;
 typedef vector<CompartmentBorder> VCPB;
+typedef vector<VI> VVI;
 inline double sign(double x){
    return (x < 0) ? -1 : (x > 0);
 }
