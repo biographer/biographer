@@ -10,6 +10,7 @@
 
 #include "network.h"
 
+
 class forcevec{
    public:
       forcevec(const Point &v): vec(v), col(0){};
@@ -46,4 +47,9 @@ void debugline(double x1,double y1, double x2, double y2, int r, int g, int b, b
 void debugline(Point p1, Point p2, int r, int g, int b, bool dotted=false);
 void debugrect(Rect re, int r, int g, int b, bool dotted=false);
 void debugpoint(Point p, double size,int r, int g, int b, bool dotted=false);
+
+namespace netdisplay{
+   extern vector<string> pluginnames;
+}
+
 #endif

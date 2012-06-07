@@ -2,8 +2,16 @@
 #include "netdisplay.h"
 #define SIZEX 1280
 #define SIZEY 720
+
+
+
 static const vector<vector<forcevec> > dummy;
 static const double fstretch=2;
+const float ccols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0.5,0.5,0},{0,0.5,1},{0,1,0.5}};
+//const unsigned short fcols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0.5,0.5,0},{0,0.5,1},{0,1,0.5}};
+const float fcols[25][3]={{0,0,0},{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0.5,1,0},{0,0.5,1},{1,0.5,0},
+                                   {1,0,0.5},{0,1,0.5},{0.5,0.5,1},{0.5,1,0.5},{1,0.5,0.5},{0,0.5,0.5},{0.5,0,0.5},{0.5,0.5,0},
+                                   {1,1,0.5},{1,0.5,1},{0.5,1,1},{0,0.5,0.75},{0,0.75,0.5},{0.5,0.75,0}};
 class dbgline{
    public:
       dbgline(double _x1,double _y1, double _x2, double _y2, int _r, int _g, int _b, int _d):x1(_x1),y1(_y1),x2(_x2),y2(_y2),r(_r),g(_g),b(_b),dotted(_d){};
@@ -12,6 +20,7 @@ class dbgline{
       bool dotted;
 };
 static vector<dbgline> dbglines;
+vector<string> netdisplay::pluginnames;
 
 void debugline(double x1,double y1, double x2, double y2, int r, int g, int b, bool dotted){
    dbglines.push_back(dbgline(x1,y1,x2,y2,r,g,b,dotted));
@@ -98,8 +107,6 @@ int NetDisplay::show(const char* fn){
    if (stepnum>1) printf("progressing %i steps\n",stepnum);
    return stepnum;
 }
-const unsigned short ccols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0.5,0.5,0},{0,0.5,1},{0,1,0.5}};
-const unsigned short fcols[10][3]={{0,0,1},{0,1,0},{1,0,0},{1,1,0},{0,1,1},{1,0,1},{0.5,0,1},{0.5,0.5,0},{0,0.5,1},{0,1,0.5}};
 void NetDisplay::draw(){
    printf(".");
    cairo_t *c;
@@ -184,6 +191,15 @@ void NetDisplay::draw(){
       l+=grid;
    }
    cairo_stroke(c);
+   
+   // show plugin names and colors (if any)
+   
+   for (int i=0,n=netdisplay::pluginnames.size();i<n;i++){
+      cairo_set_source_rgb (c, fcols[i][0],fcols[i][1],fcols[i][2]); 
+      cairo_move_to(c,xmin,ymin+i*grid/5);
+      cairo_show_text(c,netdisplay::pluginnames[i].c_str());
+   }
+   
    cairo_set_dash (c,NULL,0,0);
    cairo_set_line_width (c, 1/scale);
    // draw compartments

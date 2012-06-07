@@ -153,6 +153,14 @@ void Layouter::execute(){
    int prs=program.size();
    int totalcc=0;
    manual_it=0;
+   #ifdef SHOWPROGRESS
+   // write plugin names to list in NetDisplay
+   int ps=plugins.size();
+   netdisplay::pluginnames.resize(ps);
+   for (i=0;i<ps;i++){
+      netdisplay::pluginnames[i]=plugins.get(i).name;
+   }
+   #endif
    for (s=0;s<prs;s++){
       #ifdef SHOWPROGRESS
       int skip=1;
