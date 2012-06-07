@@ -987,6 +987,13 @@ void __move(Layouter &state, double pos, double d, int dir){
    pos-=d/1000; // just to be sure to get also all borders exactly at pos
    double d2=d+(d<0 ? -state.avgsize: state.avgsize); // d plus some buffer zone
    if (dir>=2) dir-=2; // only x or y direction
+   VI pushcomp(cn); // indicate which coompartment will be pushed
+   for(i=1;i<cn;i++){ // check whether compartments are on the side that is pushed away
+      Compartment &cp=state.nw.compartments[i];
+      pushcomp[i]=0;
+      if (dir==0 && cp.xmin-pos*d>0 && cp.xmax-pos*d>0) pushcomp[i]=1;
+      if (dir==1 && cp.ymin-pos*d>0 && cp.ymax-pos*d>0) pushcomp[i]=1;
+   }
    VF ps; // all positions
    for(i=1;i<cn;i++){
       if (dir==0) { // x direction
@@ -998,10 +1005,12 @@ void __move(Layouter &state, double pos, double d, int dir){
       }
    }
    for(i=1;i<n;i++){
-      if (dir==0) { // x direction
-         ps.push_back(state.nw.nodes[i].x);
+      Node &nd=state.nw.nodes[i];
+      if (nd.compartment==0 || pushcomp[nd.compartment]==0) continue; // don't consider nodes from compartments that are not pushed
+         if (dir==0) { // x direction
+         ps.push_back(nd.x);
       } else { // y direction
-         ps.push_back(state.nw.nodes[i].y);
+         ps.push_back(nd.y);
       }
    }
    sort(ps.begin(),ps.end());
@@ -1034,6 +1043,7 @@ void __move(Layouter &state, double pos, double d, int dir){
    }
    for (int i=0;i<n;i++){ // shifting all nodes on the corresponding side of 'pos' to the corresponding side
       Node &nd=state.nw.nodes[i];
+      if (nd.compartment==0 || pushcomp[nd.compartment]==0) continue; // don't consider nodes from compartments that are not pushed
       if (dir==0){
          if (nd.x>=pos && nd.x<=pos2) nd.x+=d;
       } else {
@@ -1074,7 +1084,6 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
       }
       numbers[c].resize(4);
    }
-   numbers.resize(cn);
    for(i=0;i<n;i++){
       //get forces from nodes outside of their compartments
       c=state.nw.nodes[i].compartment;
