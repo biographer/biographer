@@ -15,6 +15,7 @@ Plugins glob_pgs;
 Plugins& register_plugins(){
    if (glob_pgs.size()) return glob_pgs; // already initialized
    glob_pgs.registerPlugin(P_force_adj,"force_adj",force_adj);
+   glob_pgs.registerPlugin(P_force_adj_strong,"force_adj_strong",force_adj_strong);
    glob_pgs.registerPlugin(P_torque_adj,"torque_adj",torque_adj);
    glob_pgs.registerPlugin(P_force_nadj,"force_nadj",force_nadj);
    glob_pgs.registerPlugin(P_expand,"expand",expand);
@@ -150,12 +151,12 @@ void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp
 }
 
 
-void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+void __force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug, int strong){
    /* This function calculates the force induced by edges (or adjacent nodes), and updates the displacements (movements) of nodes accordingly.
       the force induced by an edge at its ideal length is 0. Otherwise, force=(ideal_length-length)^2.
       we move both the compounds and the reaction along the edge such that the edge tends to its ideal length.
    */
-   double d,ideal;
+   double d;
    Point vec; //vector from state.nw.nodes[n1] to state.nw.nodes[n2];
    int n1,n2,m,n,i;
    Edgetype _type;
@@ -169,20 +170,19 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, 
       _type=state.nw.edges[i].type; //edge type.
       
       vec=state.nw.nodes[n2]-state.nw.nodes[n1];
-      ideal=state.dij[i]; //ideal length of edge-i.
       d=dist(state.nw.nodes[n1],state.nw.nodes[n2]); //length of edge-i.
       
       //distantal movements;
       if(fabs(d)<zero){
 //         if(_type==substrate)state.mov[n2].y+=(ideal/n); //substrates at top;
-         if(_type==substrate){state.mov[n2].y-=ideal*factor*scale;} //substrates at top;
-         else if(_type==product){state.mov[n2].y+=ideal*factor*scale;}  //products at bottom;
+         if(_type==substrate){state.mov[n2].y-=state.dij[i]*factor*scale;} //substrates at top;
+         else if(_type==product){state.mov[n2].y+=state.dij[i]*factor*scale;}  //products at bottom;
          else{
             //others on two sides.
             if(_left) {
-               state.mov[n2].x-=ideal*factor*scale;
+               state.mov[n2].x-=state.dij[i]*factor*scale;
             } else {
-               state.mov[n2].x+=ideal*factor*scale;
+               state.mov[n2].x+=state.dij[i]*factor*scale;
             }
             _left=!_left;
          }
@@ -194,7 +194,18 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, 
          //state.mov[n2].x+=(vec.x/d*(ideal-d)/n);
 /*         double nonlin=(ideal-d)/ideal*10;
          nonlin*=nonlin;*/
-         Point mv=vec/d*(ideal-d)*factor*scale;//*nonlin;
+         Point mv;
+         if (strong){
+            double d2=d-state.hardlim[i];
+            double ideal=state.dij[i]-state.hardlim[i];
+            if (d2<=0){ // within hardlimit i.e. node collision
+               mv=vec/d*state.avgsize*1000*scale;
+            } else { 
+               mv=-vec/d*(1/(d2/ideal)*log(d2/ideal))*ideal*factor*scale*(state.cycles[i]==0 ? 10 : 1); // nonlinear force
+            }
+         } else {
+            mv=vec/d*(state.dij[i]-d)*factor*scale;;
+         }
          state.mov[n2]+=mv;
          state.mov[n1]-=mv;
          state.force[n1]+=manh(mv);
@@ -206,6 +217,12 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, 
          
       }
    }
+}
+void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   __force_adj(state,pg,scale,iter,temp,debug,0);
+}
+void force_adj_strong(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   __force_adj(state,pg,scale,iter,temp,debug,1);
 }
 void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function calculates the force induced by edges (or adjacent nodes), and updates the displacements (movements) of nodes accordingly.
