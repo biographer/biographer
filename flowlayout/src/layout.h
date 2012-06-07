@@ -44,7 +44,9 @@ class Layouter{
       VP mov;
       VF force;
       VF dij;
+      VF hardlim;
       VI deg;
+      VI cycles;
       vector<bool> tension;
       bool dodebug[P_count-1];
 #ifdef SHOWPROGRESS

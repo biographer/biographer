@@ -2,8 +2,8 @@
 #include "defines.h"
 
 double avg_sizes(Layouter &l);
-void get_ideal_distances(Layouter &l,VF &dij);
-void get_degrees(Layouter &l,VI &deg);
+void get_ideal_distances(Layouter &l);
+void get_degrees(Layouter &l);
 void domanual(Layouter &l,bool &manual_cont, int &s, double &temp);
 #ifdef SHOWPROGRESS
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), debug(vector<vector<forcevec> >(nw.nodes.size())), plugins(_pgs), nd(NetDisplay(_nw,debug)){
@@ -11,6 +11,7 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), debug(vector<vector<forc
 Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
 #endif
 /* create a Layouter object */
+   manual=false;
    show_progress=false;
    progress_step=1;
    forked_viewer=false;
@@ -28,15 +29,21 @@ Layouter::Layouter(Network& _nw,Plugins& _pgs):nw(_nw), plugins(_pgs){
 }
 void Layouter::init(){
 //   rot.resize(nw.nodes.size());
-   tension.resize(nw.nodes.size());
-   mov.resize(nw.nodes.size());
-   force.resize(nw.nodes.size());
+   int n=nw.nodes.size();
+   int m=nw.edges.size();
+   tension.resize(n);
+   mov.resize(n);
+   force.resize(n);
+   deg.resize(n);
+   cycles.resize(m);
+   dij.resize(m);
+   hardlim.resize(m);
 #ifdef SHOWPROGRESS
-   debug.resize(nw.nodes.size());
+   debug.resize(n);
 #endif 
    avgsize=avg_sizes(*this);
-   get_ideal_distances(*this,dij);
-   get_degrees(*this,deg);
+   get_ideal_distances(*this);
+   get_degrees(*this);
 }
 void Layouter::addStep(){ // adds one more step to the program
    initStep(program.size());
@@ -354,32 +361,28 @@ void Layouter::showProgress(int cc){ // this is certainly highly system dependen
 }
 
    
-double get_dij(Layouter &l,int i, int j){ 
-   //ideal distance between adjacent nodes;
-   double x=l.nw.nodes[i].width * l.nw.nodes[i].width + l.nw.nodes[i].height * l.nw.nodes[i].height;
-   double y=l.nw.nodes[j].width * l.nw.nodes[j].width + l.nw.nodes[j].height * l.nw.nodes[j].height;
-   return (sqrt(x)+sqrt(y))*0.5+l.avgsize/2*(log(1+l.nw.degree(i)+l.nw.degree(j))-log(3));
-}
-void get_ideal_distances(Layouter &l,VF &dij){
+void get_ideal_distances(Layouter &l){
    /* This procedure computes the ideal lengths of edges (the ideal distances between adjacent nodes): dij[i],
    */
    int m=l.nw.edges.size(), i,n1,n2;
-   dij.resize(m);
    
    for(i=0;i<m;i++){
       //ideal length of edge-i.
       n1=l.nw.edges[i].from;
       n2=l.nw.edges[i].to;
-      dij[i]=get_dij(l,n1,n2);
+      l.cycles[i]=l.nw.edgeCycles(i);
+      double d1=l.nw.nodes[n1].width * l.nw.nodes[n1].width + l.nw.nodes[n1].height * l.nw.nodes[n1].height;
+      double d2=l.nw.nodes[n2].width * l.nw.nodes[n2].width + l.nw.nodes[n2].height * l.nw.nodes[n2].height;
+      l.hardlim[i]=(sqrt(d1)+sqrt(d2))*0.5;
+      l.dij[i]=l.hardlim[i]+l.avgsize*(0.2+l.cycles[i])+l.avgsize/2*(log(1+l.nw.degree(n1)+l.nw.degree(n2))-log(3));
    }
    
 }
-void get_degrees(Layouter &l,VI &deg){
+void get_degrees(Layouter &l){
    int n=l.nw.nodes.size(),i;
-   deg.resize(n);
    
    for(i=0;i<n;i++){
-      deg[i]=l.nw.degree(i);
+      l.deg[i]=l.nw.degree(i);
    }
       
 }
