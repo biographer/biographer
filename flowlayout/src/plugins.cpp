@@ -1178,6 +1178,9 @@ void push_components(Layouter &state,plugin& pg, double scale, int iter, double 
    // calculate bboxes of all components
    VR cbox(cn);
    for (int i=0;i<cn;i++){
+      cbox[i].inv_inf(); // initialize with inverse infinite rectangle
+   }
+   for (int i=0;i<cn;i++){
       int n=state.components[i].size();
       for (int j=0;j<n;j++){
          Node &nd=state.nw.nodes[state.components[i][j]];
@@ -1192,22 +1195,19 @@ void push_components(Layouter &state,plugin& pg, double scale, int iter, double 
    for (int i=0;i<cn;i++){
       for (int j=i+1;j<cn;j++){
          double dx=cbox[j].center().x-cbox[i].center().x;
-         double sgnx=1;
-         if (dx<0){
-            dx=-dx;
-            sgnx=-1;
-         }
+         double sgnx=(dx<0 ? -1 : 1);
+         dx=fabs(dx);
          double w=(cbox[i].width()+cbox[j].width())/2+state.avgsize;
-         double fx=sgnx*min(max(0.0,w-dx),dx);
 
          double dy=cbox[j].center().y-cbox[i].center().y;
-         double sgny=1;
-         if (dy<0){
-            dy=-dy;
-            sgny=-1;
-         }
+         double sgny=(dy<0 ? -1 : 1);
+         dy=fabs(dy);
          double h=(cbox[i].height()+cbox[j].height())/2+state.avgsize;
+
+         double fx=sgnx*min(max(0.0,w-dx),dx);
          double fy=sgny*min(max(0.0,h-dy),dy);
+         
+         
          force[i]-=Point(fx,fy)*scale*factor;
          force[j]+=Point(fx,fy)*scale*factor;
       }
