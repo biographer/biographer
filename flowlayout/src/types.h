@@ -106,6 +106,12 @@ class Rect{
       Point size() const{
          return Point(fabs(xmax-xmin),fabs(ymax-ymin));
       }
+      double width() const{
+         return fabs(xmax-xmin);
+      }
+      double height() const{
+         return fabs(ymax-ymin);
+      }
       void extend(double val){
          extend(val,val,val,val);
       }
