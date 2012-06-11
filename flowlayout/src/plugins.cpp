@@ -1177,6 +1177,7 @@ void push_components(Layouter &state,plugin& pg, double scale, int iter, double 
    int cn=state.components.size();
    // calculate bboxes of all components
    VR cbox(cn);
+   if (cn<2) return;
    for (int i=0;i<cn;i++){
       cbox[i].inv_inf(); // initialize with inverse infinite rectangle
    }
