@@ -425,13 +425,14 @@ void expand(Layouter &state,plugin& pg, double scale, int iter, double temp, int
    for(n1=0;n1<n;n1++){
       for(n2=n1+1;n2<n;n2++){
          if (state.nw.isNeighbor(n1,n2)) continue;
+         if (state.nodecomponents[n1]!=state.nodecomponents[n2]) continue; // do not separate completely unconnected nodes
          vec=state.nw.nodes[n2]-state.nw.nodes[n1]; //the vector from node-n1 to node-n2.
          d=norm(vec);
          if (d<zero) {
             state.nw.nodes[n1]+=rndvec();
             continue;
          }
-         if (d>state.avgsize*10) continue; // avoid force over too large distances
+//         if (d>state.avgsize*10) continue; // avoid force over too large distances
          //vec=unit(vec)*max(0.0,min(norm(vec)/thr,1-(norm(vec)-thr)/4))*state.avgsize*scale;
          vec=(unit(vec)*min(state.avgsize,max(0.0,norm(vec)-thr))+(1-temp)*state.avgsize)*scale;
          state.mov[n1]-=vec;
