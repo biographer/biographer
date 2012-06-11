@@ -114,7 +114,7 @@ int main(int argc,char *argv[]){
    
    l.addStep();
    l.addPlugins(P_force_adj_strong, P_force_nadj, P_torque_adj, P_distribute_edges, P_min_edge_crossing_multi, 
-                P_force_compartments, P_compartment_collision, P_node_collision);
+                P_force_compartments, P_limit_mov, P_compartment_collision, P_node_collision);
    //l.pluginScale(P_min_edge_crossing_multi, 0.1);
    l.addEndCondition(C_maxMovLimit,0.005);
    l.pluginScale(P_force_adj_strong, 0.5);
