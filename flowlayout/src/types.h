@@ -153,6 +153,12 @@ class Rect{
       bool contains(const Point &p){
          return xmin<p.x && xmax>p.x && ymin<p.y && ymax>p.y;
       }
+      void inv_inf(){ // initialize with inverse infite rectangle
+         xmin=DBL_MAX;
+         ymin=DBL_MAX;
+         xmax=-DBL_MAX;
+         ymax=-DBL_MAX;
+      }
       double xmin, ymin, xmax, ymax; // WARNING never change order
       double &left,&top,&right,&bottom; // aliases for xmin...ymax
       double& acs(int index){
