@@ -25,6 +25,7 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_adjust_compartments,"adjust_compartments",adjust_compartments);
    glob_pgs.registerPlugin(P_adjust_compartments_fixed,"adjust_compartments_fixed",adjust_compartments_fixed);
    glob_pgs.registerPlugin(P_fix_compartments,"fix_compartments",fix_compartments);
+   glob_pgs.registerPlugin(P_push_components,"push_components",push_components);
    glob_pgs.registerPlugin(P_init_layout,"init_layout",init_layout);
    glob_pgs.registerPlugin(P_min_edge_crossing,"min_edge_crossing",min_edge_crossing);
    glob_pgs.registerPlugin(P_min_edge_crossing_multi,"min_edge_crossing_multi",min_edge_crossing_multi);
@@ -1169,6 +1170,61 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
    }*/
 //   fix_compartments(state,pg,scale,iter,temp,debug); // FIXME this is just a hotfix
 }
+
+
+void push_components(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int cn=state.components.size();
+   // calculate bboxes of all components
+   VR cbox(cn);
+   for (int i=0;i<cn;i++){
+      int n=state.components[i].size();
+      for (int j=0;j<n;j++){
+         Node &nd=state.nw.nodes[state.components[i][j]];
+         if (cbox[i].xmin>nd.x-nd.width/2) cbox[i].xmin=nd.x-nd.width/2;
+         if (cbox[i].xmax<nd.x+nd.width/2) cbox[i].xmax=nd.x+nd.width/2;
+         if (cbox[i].ymin>nd.y-nd.height/2) cbox[i].ymin=nd.y-nd.height/2;
+         if (cbox[i].ymax<nd.y+nd.height/2) cbox[i].ymax=nd.y+nd.height/2;
+      }
+   }
+   // calculate forces between all components
+   VP force(cn);
+   for (int i=0;i<cn;i++){
+      for (int j=i+1;j<cn;j++){
+         double dx=cbox[j].center().x-cbox[i].center().x;
+         double sgnx=1;
+         if (dx<0){
+            dx=-dx;
+            sgnx=-1;
+         }
+         double w=(cbox[i].width()+cbox[j].width())/2+state.avgsize;
+         double fx=sgnx*min(max(0.0,w-dx),dx);
+
+         double dy=cbox[j].center().y-cbox[i].center().y;
+         double sgny=1;
+         if (dy<0){
+            dy=-dy;
+            sgny=-1;
+         }
+         double h=(cbox[i].height()+cbox[j].height())/2+state.avgsize;
+         double fy=sgny*min(max(0.0,h-dy),dy);
+         force[i]-=Point(fx,fy)*scale*factor;
+         force[j]+=Point(fx,fy)*scale*factor;
+      }
+      force[i]/=(cn-1);
+   }
+   // apply component forces to all contained nodes
+   for (int i=0,n=state.nw.nodes.size();i<n;i++){
+      Point mv=force[state.nodecomponents[i]];
+      state.mov[i]+=mv;
+      state.force[i]+=manh(mv);
+      #ifdef SHOWPROGRESS
+      if (debug) state.debug[i].push_back(forcevec(mv,debug));
+      #endif
+      
+   }
+}
+
+
 template <typename T>void vassign(vector<T>& v,const vector<T>& v2){
    v.assign(v2.begin(),v2.end());
 }

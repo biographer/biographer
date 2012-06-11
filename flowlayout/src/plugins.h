@@ -4,7 +4,7 @@
 
 enum enumP {
    P_force_adj=1, P_force_adj_strong, P_torque_adj, P_force_nadj, P_expand, P_separate_nodes, P_force_compartments, P_fix_compartments, P_distribute_edges, 
-   P_adjust_compartments, P_adjust_compartments_fixed, P_init_layout, P_min_edge_crossing, P_min_edge_crossing_multi, P_limit_mov, 
+   P_adjust_compartments, P_adjust_compartments_fixed, P_push_components, P_init_layout, P_min_edge_crossing, P_min_edge_crossing_multi, P_limit_mov, 
    P_node_collision, P_compartment_collision, P_rotate, P_stack_rotate, P_unfix_all, 
    P_route_edges,P_route_edges2,
    P_count // Note: P_count is just for retrieving the number of plugins; must be the last one
@@ -46,6 +46,7 @@ void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, dou
 void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
 void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
 void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
+void push_components(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
 void swap_reactants(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
 void min_edge_crossing(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
 void min_edge_crossing_multi(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug);
