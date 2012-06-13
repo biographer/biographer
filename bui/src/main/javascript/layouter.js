@@ -1,3 +1,4 @@
+
 (function(bui){
    bui.layouter={};
    /* creates a string from the json data which serves as input for the layouter */
@@ -88,11 +89,27 @@
       return s;
    };
    /* extracts position information from layouter output and includes it into json data */
-   bui.layouter.fromLayouterFormat = function(jdata,lt){ // jdata - original json input data, lt - layouter output
-      var nh={};
-      for (var i=0;i<jdata.nodes.length;i++){
+   bui.layouter.fromLayouterFormat = function(jdata,lt,nosplines){ // jdata - original json input data, lt - layouter output, nosplines - do not setup spline data in jdata
+      var nh={}; 
+      for (var i=0;i<jdata.nodes.length;i++){ // create node hash
          var n=jdata.nodes[i];
          nh[n.id]=i;
+      }
+      for (var i=0;i<jdata.nodes.length;i++){ // fix data.compartment settings
+         var n=jdata.nodes[i];
+         if (n.is_abstract) continue; // abstract nodes are not send to the layouter
+         if (bui.nodeMapping[n.sbo].klass === bui.Compartment){
+            if (n.data.subnodes){
+               for (var j in n.data.subnodes){
+                  jdata.nodes[nh[n.data.subnodes[j]]].data.compartment=n.id;
+               }
+            }
+         }
+      }
+      var eh={};
+      for (var i=0;i<jdata.edges.length;i++){ // create edge hash
+         var e=jdata.edges[i];
+         eh[nh[e.source]+'->'+nh[e.target]]=i;
       }
       var lines=lt.split("\n");
       var minx=1000000000000000000;
@@ -139,6 +156,34 @@
             if (n.data.x != undefined) n.data.x-=cp.data.x;
             if (n.data.y != undefined) n.data.y-=cp.data.y;
          }
+      }
+      if (nosplines) return jdata;
+      // import edges (splines);
+      while (lines.length){
+         var l=lines.shift();
+         var parts=l.split(' ');
+         if (parts.length<3) continue; // empty line?
+         var key=parts[1]+'->'+parts[2];
+         if (!eh.hasOwnProperty(key)) throw "Edge "+key+" not found";
+         var eidx=eh[key];
+         var handles=parts[3].split(',');
+         if (handles.length<2) handles=[];
+         var isx=1;
+         for (var i=0;i<handles.length;i++){
+            handles[i]*=(isx ? 1 : -1); 
+            isx=1-isx;
+         }
+         var points=parts[4].split(',');
+         if (points.length<2) points=[];
+         isx=1;
+         for (var i=0;i<points.length;i++){ // alternating x and y coordinates
+            points[i]*=(isx ? 1 : -1); 
+            points[i]-=(isx ? minx : miny); // make positions positive
+            isx=1-isx;
+         }
+         if (!jdata.edges[eidx].data) jdata.edges[eidx].data={};
+         if (handles.length) jdata.edges[eidx].data.handles=handles;
+         if (points.length) jdata.edges[eidx].data.points=points;
       }
       return jdata;
    }
