@@ -202,8 +202,13 @@ void __force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp
             if (d2<=0){ // within hardlimit i.e. node collision
                mv=vec/d*state.avgsize*1000*scale;
             } else { 
-               mv=-vec/d*(1/(d2/ideal)*log(d2/ideal))*ideal*factor*scale*(state.cycles[i]==0 ? 10 : 1); // nonlinear force
-            }
+               if (state.cycles[i]==0){
+                  mv=-vec/d*(1/(d2/ideal)*(d2/ideal-1)*(d2/ideal-1)*(d2/ideal-1))*ideal*factor*scale*10; // nonlinear force
+               } else {
+                  mv=-vec/d*(-1/(d2/ideal)+log(d2/ideal))*ideal*factor*scale/state.cycles[i];
+                  //mv=-vec/d*(1/(d2/ideal)*log(d2/ideal))*ideal*factor*scale/state.cycles[i]; // nonlinear force
+               }
+               }
          } else {
             mv=vec/d*(state.dij[i]-d)*factor*scale;;
          }
