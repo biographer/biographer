@@ -210,7 +210,7 @@ void __force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp
                }
                }
          } else {
-            mv=vec/d*(state.dij[i]-d)*factor*scale;;
+            mv=vec/d*(state.dij[i]-d)*factor*scale;
          }
          state.mov[n2]+=mv;
          state.mov[n1]-=mv;
@@ -242,36 +242,61 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
    int m,n,i,j;
    m=state.nw.edges.size();
    n=state.nw.nodes.size();
-   for (i=0;i<n;i++){ // set direction of reactions
-      if (state.nw.nodes[i].type!=reaction) continue;
+   for (i=0;i<n;i++){ // set direction of reactions & compounds
       const VI &nb=state.nw.nodes[i].neighbors;
       int s=nb.size();
       Point dvec(0,0);
-      for (j=0;j<s;j++){
-         Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
-         int n2=state.nw.edges[nb[j]].to; // reactant index
-         Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
-         if (_type==substrate) {
-            dvec+=to_left(vec,-0.5*PI); // could be unit vector, but we just try with full vector (preferres longer edges)
-         } else if (_type==product) {
-            dvec+=to_left(vec,+0.5*PI);
-         } else {
-            // ignoring modulators (as we don't know which side is better)
-         }
-      }
-      for (j=0;j<s;j++){ // now do the modulators as we now can decide which side is better (based on what we know from substrates and products)
-         Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
-         int n2=state.nw.edges[nb[j]].to; // reactant index
-         Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
-         if (_type==catalyst || _type==activator || _type==inhibitor){
-            if (scalar(vec,dvec)>=0){
-               dvec+=vec;
+      if (state.nw.nodes[i].type==reaction){
+         for (j=0;j<s;j++){
+            Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+            int n2=state.nw.edges[nb[j]].to; // reactant index
+            Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+            if (_type==substrate) {
+               dvec+=to_left(vec,-0.5*PI); // could be unit vector, but we just try with full vector (preferres longer edges)
+            } else if (_type==product) {
+               dvec+=to_left(vec,+0.5*PI);
             } else {
-               dvec-=vec;
+               // ignoring modulators (as we don't know which side is better)
             }
          }
+         for (j=0;j<s;j++){ // now do the modulators as we now can decide which side is better (based on what we know from substrates and products)
+            Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+            int n2=state.nw.edges[nb[j]].to; // reactant index
+            Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+            if (_type==catalyst || _type==activator || _type==inhibitor){
+               if (scalar(vec,dvec)>=0){
+                  dvec+=vec;
+               } else {
+                  dvec-=vec;
+               }
+            }
+         }
+         state.nw.nodes[i].dir=angle(dvec);
+      } else {
+         for (j=0;j<s;j++){
+            Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+            int n2;
+            if (_type==substrate || _type==catalyst || _type==inhibitor || _type==activator){
+               n2=state.nw.edges[nb[j]].from;
+               Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+               dvec+=to_left(vec,0.5*PI);
+            } else if (_type==product){ 
+               n2=state.nw.edges[nb[j]].from;
+               Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+               dvec+=to_left(vec,-0.5*PI);
+            } else if (_type==directed){ 
+               n2=state.nw.edges[nb[j]].to;
+               int sgn=1;
+               if (n2==i) {
+                  n2=state.nw.edges[nb[j]].from;
+                  sgn=-1;
+               }
+               Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+               dvec+=to_left(vec,sgn*0.5*PI);
+            }
+         }
+         state.nw.nodes[i].dir=angle(dvec);
       }
-      state.nw.nodes[i].dir=angle(dvec);
    }
 /*   for (i=0;i<n;i++){ // set direction of reactions
       if (state.nw.nodes[i].type!=reaction) continue;
@@ -321,7 +346,9 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
 
       double alpha=angle(vec); //angle of the edge w.r.t. the +x axis. i_alpha is the corresponding ideal angle.
       double i_alpha;
-      double beta;
+      double beta=0;
+      
+      // reaction forces;
       if(_type==substrate){
          //substates in above.
          i_alpha=0.5*PI+state.nw.nodes[n1].dir;
@@ -332,7 +359,7 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
          i_alpha=1.5*PI+state.nw.nodes[n1].dir;
          beta=lim(i_alpha-alpha);
       }
-      else{ 
+      else if (_type==catalyst || _type==activator || _type==inhibitor){ 
          //other compounds, rotating to the nearer side.
          i_alpha=state.nw.nodes[n1].dir; beta=lim(i_alpha-alpha);
          double i_alpha1=PI+state.nw.nodes[n1].dir, beta1=lim(i_alpha1-alpha);
@@ -341,11 +368,6 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
             i_alpha=i_alpha1;
          }
       }
-      // adding some noise for large angles; this results in nodes turning around in reverse direction (especially for large betas)
-/*      if (rand() % (360^2) < (fabs(beta) *180 / PI)^2){ // for beta==PI -> 25:75
-         if (beta<0) beta+=2*PI;
-         if (beta>0) beta-=2*PI;
-      }*/
 /*      if (fabs(beta)>PI/2 && state.tension[n2] && rand()%10==1){ // node is locked and cannot turn around -> mirror node on desired direction. + invert beta
          double delta;
          if (beta<0) delta=beta+PI;
@@ -358,14 +380,33 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
          Point mv=to_left(vec,factor*scale*beta)-vec;
          state.mov[n2]+=mv;//angular movement; 
          state.mov[n1]-=mv;
-//         state.rot[n1]-=(factor*scale*beta); //adjust the default direction of the reaction a little bit (to the opposite direaction).
          state.force[n2]+=manh(mv);
          state.force[n1]+=manh(mv);
 #ifdef SHOWPROGRESS
          if (debug) state.debug[n2].push_back(forcevec(mv,debug));
          if (debug) state.debug[n1].push_back(forcevec(-mv,debug));
 #endif
-         
+      //compound forces
+      if (_type==substrate || _type==catalyst || _type==inhibitor || _type==activator){
+         i_alpha=0.5*PI+state.nw.nodes[n2].dir;
+         beta=lim(i_alpha-alpha);
+      } else if (_type==product){
+         i_alpha=-0.5*PI+state.nw.nodes[n2].dir;
+         beta=lim(i_alpha-alpha);
+      } else if (_type==directed){ // note: this has to account for both nodes at once
+         i_alpha=angle(Point(-0.5*PI+state.nw.nodes[n1].dir)+Point(-0.5*PI+state.nw.nodes[n2].dir));
+         beta=lim(i_alpha-alpha);
+      }
+      mv=to_left(vec,factor*scale*beta)-vec;
+      state.mov[n2]+=mv;//angular movement; 
+      state.mov[n1]-=mv;
+      state.force[n2]+=manh(mv);
+      state.force[n1]+=manh(mv);
+      #ifdef SHOWPROGRESS
+      if (debug) state.debug[n2].push_back(forcevec(mv,debug));
+      if (debug) state.debug[n1].push_back(forcevec(-mv,debug));
+      #endif
+      
 //      }
    }
    
