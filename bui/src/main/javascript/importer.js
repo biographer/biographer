@@ -570,6 +570,21 @@
         graph.unsuspendRedraw(suspendHandle);
         var elapsed = new Date().getTime() - start;
         log('## Complete import took ' + elapsed + 'ms.');
+        //FIXME horrible hack but neede to make the import work
+        for (var key in generatedNodes) {
+            if (generatedNodes.hasOwnProperty(key)) {
+                var node = generatedNodes[key];
+                var pos = node.position();
+                var nparent = node.parent();
+                if ('identifier' in nparent){
+                    if (nparent.identifier() == "Compartment"){
+                        var pos_parent = nparent.position();
+                        node.position(pos.x-pos_parent.x, pos.y-pos_parent.y);
+                        console.log('reset pos');
+                    }
+                }
+            }
+        }
     };
 
     /**

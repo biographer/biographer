@@ -139,6 +139,9 @@
 
     bui.RectangularNode.prototype = {
         
+        identifier : function() {
+            return identifier;
+        },
         /**
          * Set this node's radius for both upper corners in pixel.
          *
