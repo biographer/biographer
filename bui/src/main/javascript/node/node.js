@@ -23,27 +23,6 @@
     };
 
     /**
-     * @private
-     */
-    var positionPlaceHolder = function() {
-        var privates = this._privates(identifier);
-        var absolutePosition = this.absolutePosition();
-        var graphHtmlPosition = this.graph().htmlTopLeft();
-        var correction = bui.settings.style.placeholderCorrection.position;
-        var scale = this.graph().scale();
-        privates.placeholder.style.left = (absolutePosition.x * scale +
-                graphHtmlPosition.x + correction.x) + 'px';
-        privates.placeholder.style.top = (absolutePosition.y * scale +
-                graphHtmlPosition.y + correction.y) + 'px';
-
-        correction = bui.settings.style.placeholderCorrection.size;
-        privates.placeholder.style.width = (privates.width * scale +
-                correction.width) + 'px';
-        privates.placeholder.style.height = (privates.height * scale +
-                correction.height) + 'px';
-    };
-
-    /**
      * @private position changed listener
      */
     var positionChanged = function() {
@@ -58,86 +37,8 @@
             ')'].join('');
         privates.nodeGroup.setAttributeNS(null, 'transform', attrValue);
 
-        positionPlaceHolder.call(this);
-
         this.fire(bui.Node.ListenerType.absolutePosition,
                 [this, position.x, position.y]);
-    };
-
-    /**
-     * @private jQuery UI drag stop listener
-     */
-    var placeholderDragStop = function() {
-        var privates = this._privates(identifier);
-        var scale = 1 / this.graph().scale();
-        var placeholderOffset = jQuery(privates.placeholder).offset();
-        var x = placeholderOffset.left;
-        var y = placeholderOffset.top;
-
-        var graphOffset = this.graph().htmlTopLeft();
-        x -= graphOffset.x;
-        y -= graphOffset.y;
-
-        x *= scale;
-        y *= scale;
-
-        var parentTopLeft = privates.parent.absolutePosition();
-        x -= parentTopLeft.x;
-        y -= parentTopLeft.y;
-
-        var correction = bui.settings.style.placeholderCorrection.position;
-        x += correction.x * -1;
-        y += correction.y * -1;
-
-        var suspendHandle = this.graph().suspendRedraw(200);
-        this.position(x, y);
-        this.graph().unsuspendRedraw(suspendHandle);
-    };
-
-    /**
-     * @private jQuery UI drag listener
-     */
-    var placeholderDrag = function() {
-        if (this.graph().highPerformance() === true) {
-            placeholderDragStop.call(this);
-        }
-    };
-
-    /**
-     * @private jQuery UI resize stop listener
-     */
-    var placeholderResizeStop = function() {
-        var privates = this._privates(identifier);
-        var scale = 1 / this.graph().scale();
-        var width = jQuery(privates.placeholder).width() * scale;
-        var height = jQuery(privates.placeholder).height() * scale;
-
-        var correction = bui.settings.style.placeholderCorrection.size;
-
-        width -= correction.width;
-        height -= correction.height;
-
-        var suspendHandle = this.graph().suspendRedraw(200);
-        this.size(width, height);
-        this.graph().unsuspendRedraw(suspendHandle);
-    };
-
-    var placeholderResize = function() {
-        if (this.graph().highPerformance() === true) {
-            placeholderResizeStop.call(this);
-        }
-    };
-
-    /**
-     * @private visibility listener
-     */
-    var visibilityChanged = function(node, visible) {
-        if (visible === true) {
-            this.removeClass(bui.settings.css.classes.invisible);
-        } else {
-            this.addClass(bui.settings.css.classes.invisible);
-            this.placeholderVisible(false);
-        }
     };
 
     /**
@@ -147,9 +48,6 @@
         var privates = this._privates(identifier);
         var nodeGroup = privates.nodeGroup;
         nodeGroup.parentNode.removeChild(nodeGroup);
-
-        var placeholder = privates.placeholder;
-        placeholder.parentNode.removeChild(placeholder);
     };
 
     /**
@@ -197,19 +95,12 @@
         }
     };
 
+// ~~~ ***
     var mouseClick = function(event) {
-       if (event.ctrlKey === true && (bui.settings.enableModificationSupport === true)) {
-          this.placeholderVisible(!this.placeholderVisible());
-       } else if (!this.placeholderVisible()) {
-          this.fire(bui.Node.ListenerType.click, [this, event]);
-       }
-    };
-    var dblclick = function(event) {
-       if (bui.settings.enableModificationSupport === true){
-          this.placeholderVisible(!this.placeholderVisible());
-       }
+        this.fire(bui.Node.ListenerType.click, [this, event]);
     };
     
+
     /**
      * @private
      * Initial paint of the placeholder node and group node
@@ -219,7 +110,6 @@
 
         privates.nodeGroup = document.createElementNS(bui.svgns, 'g');
         privates.nodeGroup.setAttributeNS(null, 'id', this.id());
-        visibilityChanged.call(this, this, this.visible());
         this.graph().nodeGroup().appendChild(privates.nodeGroup);
 
         privates.placeholder = document.createElement('div');
@@ -229,34 +119,17 @@
                 'placeholder_'+this.id());
         this.graph().placeholderContainer().appendChild(privates.placeholder);
 
-        positionPlaceHolder.call(this);
         positionChanged.call(this);
 
         if (bui.settings.enableModificationSupport === true) {
 
             jQuery(privates.nodeGroup)
                     .add(privates.placeholder);
-
-            if (this._enableDragging === true) {
-                jQuery(privates.placeholder).draggable({
-                            stop : placeholderDragStop.createDelegate(this),
-                            drag : placeholderDrag.createDelegate(this)
-                        });
-            }
-
-            if (this._enableResizing === true) {
-                jQuery(privates.placeholder).resizable({
-                            stop : placeholderResizeStop.createDelegate(this),
-                            resize : placeholderResize.createDelegate(this),
-                            aspectRatio : (this._forceRectangular ? 1 : false)
-                        });
-            }
         }
-        
+
         jQuery(privates.nodeGroup)
             .click(mouseClick.createDelegate(this))
-            .dblclick(dblclick.createDelegate(this));
-        
+
     };
 
     /**
@@ -283,13 +156,9 @@
         privates.height = this._minHeight;
         privates.parent = this.graph();
         privates.children = [];
-        privates.placeholderVisible = false;
 
         this.bind(bui.Drawable.ListenerType.remove,
                 nodeRemoved.createDelegate(this),
-                listenerIdentifier(this));
-        this.bind(bui.Drawable.ListenerType.visible,
-                visibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Node.ListenerType.parent,
                 parentChanged.createDelegate(this),
@@ -297,17 +166,11 @@
         this.bind(bui.Node.ListenerType.position,
                 positionChanged.createDelegate(this),
                 listenerIdentifier(this));
-        this.bind(bui.Node.ListenerType.size,
-                positionPlaceHolder.createDelegate(this),
-                listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.classes,
                 classesChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.select,
                 selectChanged.createDelegate(this),
-                listenerIdentifier(this));
-        this.graph().bind(bui.Graph.ListenerType.scale,
-                positionPlaceHolder.createDelegate(this),
                 listenerIdentifier(this));
 
         initialPaint.call(this);
@@ -677,7 +540,7 @@
 
             return this;
         },
- 
+
         /**
          * @description
          * Use this function to move the node.
@@ -709,9 +572,9 @@
          */
         moveAbsoluteCenter : function(x, y, duration) {
             var size = this.size();
-            
+
             this.moveAbsolute(x - size.width / 2, y - size.height / 2);
-            
+
         },
         /**
          * Retrieve the current parent or set it
@@ -983,9 +846,9 @@
          * @param {Boolean} [correctGraphHTMLOffset] Whether or not the graph's
          *   HTML offset should be taken into account. Defaults to false.
          * @return {bui.Node} Fluent interface.
-         */
+         
         startDragging : function(x, y) {
-            this.placeholderVisible(true);
+//            this.placeholderVisible(true);
 
             var placeholder = this._privates(identifier).placeholder;
             jQuery(placeholder).simulate("mousedown", {
@@ -995,7 +858,7 @@
 
             return this;
         },
-
+*/
         /**
          * Automatically position the node's auxiliary units.
          *
@@ -1055,7 +918,7 @@
                     var auxUnit = auxUnits[i];
 
                     if (auxUnit instanceof bui.StateVariable || auxUnit instanceof bui.StateVariableER) {
-                    
+
                         auxUnitsJson.push(auxUnit.toJSON());
                     } else {
                         log('Warning: Can\'t export units of information to ' +
@@ -1113,3 +976,4 @@
         click : bui.util.createListenerTypeId()
     };
 })(bui);
+
