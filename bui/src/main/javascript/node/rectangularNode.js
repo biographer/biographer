@@ -122,7 +122,6 @@
         // add event listeners
         privates.rect.addEventListener('interactresizemove', interactResizeMove);
         privates.rect.addEventListener('interactdragmove', interactDragMove);
-        
     };
 
     /**

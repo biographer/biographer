@@ -41,6 +41,25 @@
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.path);
+        // set as interactable
+        interact.set(privates.path,
+            {drag: this._enableDragging, resize: this._enableResizing});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position();
+            this.position(position.x + event.detail.dx, position.y + event.detail.dy);
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size();
+            this.size(size.width + event.detail.dx, size.height + event.detail.dy);
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.path.addEventListener('interactresizemove', interactResizeMove);
+        privates.path.addEventListener('interactdragmove', interactDragMove);
+
     };
 
     /**

@@ -34,6 +34,25 @@
         var size = this.size();
         sizeChanged.call(this, this, size.width, size.height);
         this.nodeGroup().appendChild(privates.ellipse);
+
+        // set as interactable
+        interact.set(privates.ellipse,
+            {drag: this._enableDragging, resize: this._enableResizing});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position();
+            this.position(position.x + event.detail.dx, position.y + event.detail.dy);
+        }).createDelegate(this);
+        
+        interactResizeMove = (function (event) {
+            var size = this.size();
+            this.size(size.width + event.detail.dx, size.height + event.detail.dy);
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.ellipse.addEventListener('interactresizemove', interactResizeMove);
+        privates.ellipse.addEventListener('interactdragmove', interactDragMove);
     };
 
 

@@ -37,6 +37,25 @@
         sizeChanged.call(this, this, this.size().width);
         container.appendChild(privates.circle);
         container.appendChild(privates.dash);
+
+        // set as interactable
+        interact.set(privates.circle,
+            {drag: this._enableDragging, resize: this._enableResizing});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position();
+            this.position(position.x + event.detail.dx, position.y + event.detail.dy);
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size();
+            this.size(size.width + event.detail.dx, size.height + event.detail.dy);
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.circle.addEventListener('interactresizemove', interactResizeMove);
+        privates.circle.addEventListener('interactdragmove', interactDragMove);
     };
 
     /**
