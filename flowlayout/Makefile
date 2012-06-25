@@ -3,15 +3,17 @@ XINC=-Isrc
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DPROGRESSLINUX -DUSEJSON `pkg-config --cflags glib-2.0 json-glib-1.0` -lglib-2.0 -ljson-glib-1.0
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DUSEJSON `pkg-config --cflags glib-2.0`  -lglib-2.0 -rpath=/local/home/handorf/lib -I/local/home/handorf/hg/biographer-layout/json-glib-0.12.6/ -L/local/home/handorf/lib -ljson-glib-1.0
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX
-CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo
+CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo -DSTACKX
 ifeq ($(MAKECMDGOALS),testlayout)
-CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo
+CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo -DSTACKX
 endif
 ifeq ($(MAKECMDGOALS),)
-CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
+CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC)
+#CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
 endif
 ifeq ($(MAKECMDGOALS),layout)
-CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
+CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC)
+#CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
 endif
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX -DSHOWPROGRESS -DOUTPNG `pkg-config --cflags cairo` -lcairo
 SRC=src/
