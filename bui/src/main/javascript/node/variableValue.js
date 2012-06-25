@@ -46,13 +46,17 @@
 
         // create eventListener delegate functions
         interactDragMove = (function (event) {
-            var position = this.position();
-            this.position(position.x + event.detail.dx, position.y + event.detail.dy);
+            var position = this.position(),
+                scale = this.graph().scale();
+                
+            this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
         }).createDelegate(this);
-        
+
         interactResizeMove = (function (event) {
-            var size = this.size();
-            this.size(size.width + event.detail.dx, size.height + event.detail.dy);
+            var size = this.size(),
+                scale = this.graph().scale();
+                
+            this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
         }).createDelegate(this);
 
         // add event listeners
