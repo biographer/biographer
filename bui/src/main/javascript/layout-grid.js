@@ -111,7 +111,6 @@ bui.grid.add_padding = function(){
 };
 //=====================================================
 bui.grid.find_circles = function(){
-
 }
 //=====================================================
 bui.grid.init = function(nodes, edges, width, height, put_on_grid){
@@ -176,7 +175,7 @@ bui.grid.init = function(nodes, edges, width, height, put_on_grid){
                 return
             }
         }else{
-            console.log('node parent is not compartment! ');
+            //console.log('node parent is not compartment! ');
         }
     }
     bui.grid.node_idx2comp_empty_fields = {}
@@ -208,16 +207,16 @@ bui.grid.init = function(nodes, edges, width, height, put_on_grid){
     //------------------------------------------------
     //------------------------------------------------
     bui.grid.matrix_nodes = matrix_nodes;
-    //if(put_on_grid != undefined){
-    //    bui.grid.put_on_grid();
-    //    bui.grid.render_current();
-    //}
-    for(var cni=0; cni<nodes.length; ++cni){
+    if(put_on_grid != undefined){
+        bui.grid.put_on_grid();
+        bui.grid.render_current();
+    }
+    /*for(var cni=0; cni<nodes.length; ++cni){
         pos = nodes[cni].absolutePositionCenter();
         nodes[cni].x = Math.round(pos.x/grid_space);
         nodes[cni].y = Math.round(pos.y/grid_space);
         matrix_nodes[nodes[cni].x][nodes[cni].y] = i;
-    }
+    }*/
     // TODO insert empty padding around matrix
     //------------------------------------------------
     bui.grid.centerx = Math.round(bui.grid.width/2);
@@ -264,13 +263,14 @@ bui.grid.init = function(nodes, edges, width, height, put_on_grid){
 }
 //=====================================================
 bui.grid.put_on_grid = function(node_idx){
-    var matrix_nodes = bui.grid.matrix_nodes;
+    //var matrix_nodes = bui.grid.matrix_nodes;
     var node_idx2cborder = bui.grid.node_idx2cborder;
     var spiral_steps = bui.grid.spiral_steps;
     var nodes = bui.grid.nodes;
     var grid_space = bui.grid.grid_space;
     var max_x = bui.grid.max_x;
     var max_y = bui.grid.max_y;
+    //console.log('matrix nodes '+JSON.stringify(bui.grid.matrix_nodes));
     //-------------------------------------------------------
     //-------------------------------------------------------
     //position elements on grid, only one element is allowed on each grid point
@@ -278,7 +278,7 @@ bui.grid.put_on_grid = function(node_idx){
         pos = nodes[i].absolutePositionCenter();
         cx = Math.round(pos.x/grid_space);
         cy = Math.round(pos.y/grid_space);
-        matrix_nodes[cx][cy] = undefined;
+        //matrix_nodes[cx][cy] = undefined;
         //console.log(nodes[i].label());
         //----------------------------
         var count = 0;
@@ -293,7 +293,7 @@ bui.grid.put_on_grid = function(node_idx){
                     continue;
                 }
             }else{
-                if(!(cx>=0 && cx<=max_x && cy>=0 && cy<=max_y && matrix_nodes[cx][cy] == undefined)){
+                if(!(cx>=0 && cx<=max_x && cy>=0 && cy<=max_y && bui.grid.matrix_nodes[cx][cy] == undefined)){
                     spiral_step = spiral_steps[count];
                     cx += spiral_step[0];
                     cy += spiral_step[1];
@@ -301,7 +301,8 @@ bui.grid.put_on_grid = function(node_idx){
                     continue;
                 }
             }
-            matrix_nodes[cx][cy] = i;
+            //console.log('placed node '+cx+' '+cy+'->'+i);
+            bui.grid.matrix_nodes[cx][cy] = i;
             nodes[i].x = cx;
             nodes[i].y = cy;
             break;
@@ -315,6 +316,8 @@ bui.grid.put_on_grid = function(node_idx){
     }else{
         place(node_idx)
     }
+    //console.log('matrix nodes '+JSON.stringify(bui.grid.matrix_nodes));
+
 }
 //=====================================================
 bui.grid.layout = function(node_idx){
@@ -330,6 +333,7 @@ bui.grid.layout = function(node_idx){
     var i;
     var spiral_steps = bui.grid.spiral_steps;
     var num_empty_fields = bui.grid.width*bui.grid.height - nodes.length;
+    //console.log('num_empty_fields: '+num_empty_fields);
     var node_idx2nodes_idx = bui.grid.node_idx2nodes_idx;
     var node_idx2edges_idx = bui.grid.node_idx2edges_idx;
     var node_idx2nodes_in_idx = bui.grid.node_idx2nodes_in_idx;
@@ -338,6 +342,7 @@ bui.grid.layout = function(node_idx){
     //------------------------------------------------
     //------------------------------------------------
     var cni = 0;//current node index
+    var current_energy = 0.0;
     var tmp_ni,min_ni;
     var step = 0;
     console.log('line crossings before: '+bui.grid.num_intersections());
@@ -356,7 +361,7 @@ bui.grid.layout = function(node_idx){
     for(var nix=0; nix<nodes.length; ++nix){
         cni = nodes_idx_list[nix];
         var node = nodes[cni];
-        //console.log('step '+step+' curnode'+cni+'/'+nodes.length+'---'+node.id());
+        //console.log('step '+step+' curnode '+cni+'/'+nodes.length+' --- '+node.id());
         //--------------------------------------
         ++step;
         if(step>nodes.length) break;
@@ -382,14 +387,17 @@ bui.grid.layout = function(node_idx){
         //distance
         min_ni += 0.1*bui.grid.edge_distance(node, node_idx2nodes_idx[cni]);
         min_ni += 0.05*bui.grid.edge_distance(node, node_idx2nodes_in_idx[cni]);
-        //flow
+        //flow 
         min_ni += 5*bui.grid.flow_fromto(node, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
         //90deg angle
         min_ni += 0.5*bui.grid.deg90_fromto(node, node_idx2nodes_idx[cni]);
         //graviation
         min_ni += 0.1*bui.grid.graviation_from(node);
+        //----------------------------------------
         //node.addClass('Red');
         //alert('min_ni '+min_ni);
+        //console.log('min ni '+min_ni);
+        current_energy += min_ni;
         //----------------------------------------
         var cx = node.x;
         var cy = node.y;
@@ -400,18 +408,18 @@ bui.grid.layout = function(node_idx){
         var fields_visited = 0;
         while(true){
             //-----------------------
-            //console.log(counter);
+            if (counter>9990) console.log('counter too high: '+counter);
             cx += spiral_steps[counter][0];
             cy += spiral_steps[counter][1];
             ++counter;
             //-----------------------
             if(i in node_idx2cborder){
-                if ( node_idx2comp_empty_fields[cni]==fields_visited ) break;
+                if ( node_idx2comp_empty_fields[cni] == fields_visited ) break;
                 if(!(cx>=node_idx2cborder[cni].left && cx<=node_idx2cborder[cni].right && cy>=node_idx2cborder[cni].top && cy<=node_idx2cborder[cni].bottom && matrix_nodes[cx][cy] == undefined)){
                     continue;
                 }
             }else{
-                if ( num_empty_fields==fields_visited ) break;
+                if ( num_empty_fields <= fields_visited ) break;
                 if(!(cx>=0 && cx<bui.grid.width && cy>=0 && cy<bui.grid.height && matrix_nodes[cx][cy] == undefined)){
                     continue;
                 }
@@ -461,6 +469,8 @@ bui.grid.layout = function(node_idx){
     bui.grid.render_current();
     console.log('line crossings after: '+bui.grid.num_intersections());
     console.log('node crossings after: '+bui.grid.num_node_intersections());
+    console.log('current_energy: '+current_energy);
+    return current_energy;
 }
 //=====================================================
 bui.grid.render_current = function(){
@@ -468,10 +478,10 @@ bui.grid.render_current = function(){
     var grid_space = bui.grid.grid_space;
     var spacing_x = 0;
     var spacing_y = 0;
-    /*for(i=0; i<nodes.length; ++i){
+    for(i=0; i<nodes.length; ++i){
         if (nodes[i].x == 0) spacing_x = grid_space;
         if (nodes[i].y == 0) spacing_y = grid_space;
-    }*/
+    }
     for(i=0; i<nodes.length; ++i) 
         nodes[i].absolutePositionCenter(nodes[i].x*grid_space+spacing_x,nodes[i].y*grid_space+spacing_y); 
 }
@@ -567,9 +577,9 @@ bui.grid.set_ebuckets = function(edge_index, clear){
         max=edge.lsource.x;
         min=edge.ltarget.x;
     }
-    console.log('ebucketx min max '+min+' '+max);
+    //console.log('ebucketx min max '+min+' '+max);
     for(i=min;i<=max; ++i){
-        console.log('set ebucketx '+i);
+        //console.log('set ebucketx '+i);
         ebucketx[i][edge_index] = 1;//FIXME !!1!!!1111 edge_index seems to be out of range
     }
     //y-----------------------
@@ -708,8 +718,8 @@ bui.grid.flow_fromto = function(from_node, to_nodes_in, to_nodes_out, common_edg
     if(common_edge == undefined) common_edge = bui.grid.common_edge(from_node, to_nodes_in, to_nodes_out);
     //console.log(JSON.stringify(common_edge));
     if(common_edge.x == from_node.x && common_edge.y == from_node.y){
-        bui.grid.render_current();
-        console.log(from_node.x+' '+from_node.y)
+        //bui.grid.render_current();
+        /*console.log(from_node.x+' '+from_node.y)
         for(var i =0; i<to_nodes_out.length; ++i) 
             console.log( to_nodes_out[i].x+' '+to_nodes_out[i].x)
         for(var i =0; i<to_nodes_in.length; ++i) 
@@ -717,6 +727,7 @@ bui.grid.flow_fromto = function(from_node, to_nodes_in, to_nodes_out, common_edg
             //to_nodes_out[i].addClass('Red');
         //alert('stop');
         console.log('problem: common edge node is from_node')
+        */
         return 0;
     }
     var score = 0;
@@ -734,7 +745,8 @@ bui.grid.flow_fromto = function(from_node, to_nodes_in, to_nodes_out, common_edg
         score += (1-(tmp_x*common_edge.x+tmp_y*common_edge.y)/ (Math.sqrt(Math.pow(tmp_x,2)+Math.pow(tmp_y,2))*common_edge_norm))/2;
         //console.log('in'+score);
     }
-    return score
+    if (isNaN(score)) return 0;
+    return score;
 };
 bui.grid.common_edge = function(from_node, to_nodes_in, to_nodes_out){
     var x = 0;
