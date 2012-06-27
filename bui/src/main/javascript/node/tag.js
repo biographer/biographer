@@ -43,7 +43,7 @@
         container.appendChild(privates.path);
         // set as interactable
         interact.set(privates.path,
-            {drag: this._enableDragging, resize: this._enableResizing});
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
 
         // create eventListener delegate functions
         interactDragMove = (function (event) {
