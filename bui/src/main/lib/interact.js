@@ -478,6 +478,9 @@ window.interact = (function () {
             dragEvent.initCustomEvent('interactdragstart', true, true, detail);
             target.element.dispatchEvent(dragEvent);
             dragging = true;
+            if (target.order) {
+                bringToFront(target.element);
+            }
         } else {
             dragEvent = document.createEvent('CustomEvent');
             detail = {
@@ -546,10 +549,6 @@ window.interact = (function () {
 
                 document.documentElement.style.cursor = target.element.style.cursor = actions[action].cursor;
                 actions[action].ready();
-                
-                if (action === 'drag') {
-                    bringToFront(target.element);
-                }
             }
         }
     }
@@ -721,7 +720,7 @@ window.interact = (function () {
             resize: ('resize' in options)? options.resize : false,
             squareResize: ('squareResize' in options)? options.squareResize : false,
             getAction: (typeof options.actionChecker === 'function')? options.actionChecker: autoCheck,
-            order: ('order' in options)? options.order : true
+            order: ('order' in options)? options.order : false
         };
 
         if (indexOfElement !== -1) {

@@ -51,20 +51,28 @@
         interactDragMove = (function (event) {
             var position = this.position(),
                 scale = this.graph().scale();
-                
-            this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
         }).createDelegate(this);
 
         interactResizeMove = (function (event) {
             var size = this.size(),
                 scale = this.graph().scale();
-                
-            this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
         }).createDelegate(this);
 
         // add event listeners
         privates.path.addEventListener('interactresizemove', interactResizeMove);
         privates.path.addEventListener('interactdragmove', interactDragMove);
+        privates.path.addEventListener('interactresizeend', interactResizeMove);
+        privates.path.addEventListener('interactdragend', interactDragMove);
     };
 
     /**
