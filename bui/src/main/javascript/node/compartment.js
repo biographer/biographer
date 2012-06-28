@@ -66,6 +66,19 @@
         privates.rect.addEventListener('interactdragmove', interactDragMove);
         privates.rect.addEventListener('interactresizeend', interactResizeMove);
         privates.rect.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.rect);
+
+            privates.rect.removeEventListener('interactresizemove', interactResizeMove);
+            privates.rect.removeEventListener('interactdragmove', interactDragMove);
+            privates.rect.removeEventListener('interactresizeend', interactResizeMove);
+            privates.rect.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
     /**

@@ -65,6 +65,19 @@
         privates.ellipse.addEventListener('interactdragmove', interactDragMove);
         privates.ellipse.addEventListener('interactresizeend', interactResizeMove);
         privates.ellipse.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.ellipse);
+
+            privates.ellipse.removeEventListener('interactresizemove', interactResizeMove);
+            privates.ellipse.removeEventListener('interactdragmove', interactDragMove);
+            privates.ellipse.removeEventListener('interactresizeend', interactResizeMove);
+            privates.ellipse.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
 
