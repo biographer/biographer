@@ -2,16 +2,6 @@
 
     var identifier = 'bui.Node';
 
-    var placeholderClass = function(visible) {
-        var klass = bui.settings.css.classes.placeholder;
-
-        if (visible === false) {
-            klass += ' ' + bui.settings.css.classes.invisible;
-        }
-
-        return klass;
-    };
-
     /**
      * @private
      * Function used for the generation of listener identifiers
@@ -102,7 +92,7 @@
 
     /**
      * @private
-     * Initial paint of the placeholder node and group node
+     * Initial paint of the node and group node
      */
     var initialPaint = function() {
         var privates = this._privates(identifier);
@@ -111,20 +101,7 @@
         privates.nodeGroup.setAttributeNS(null, 'id', this.id());
         this.graph().nodeGroup().appendChild(privates.nodeGroup);
 
-        privates.placeholder = document.createElement('div');
-        privates.placeholder.setAttribute('class',
-                placeholderClass(false)+' '+this.identifier());
-        privates.placeholder.setAttribute('id',
-                'placeholder_'+this.id());
-        this.graph().placeholderContainer().appendChild(privates.placeholder);
-
         positionChanged.call(this);
-
-        if (bui.settings.enableModificationSupport === true) {
-
-            jQuery(privates.nodeGroup)
-                    .add(privates.placeholder);
-        }
 
         jQuery(privates.nodeGroup)
             .click(mouseClick.createDelegate(this))
@@ -806,34 +783,6 @@
                 adjacent : adjacent,
                 opposite : Math.tan(hitAngle) * adjacent
             };
-        },
-
-        /**
-         * Show or hide the placeholder which  is used for modification
-         * of the node's position and size.
-         *
-         * @param {Boolean} [visible] Show or hide the placeholder
-         * @return {bui.Node|Boolean} Fluent interface or the current
-         *   visibility in case you don't pass a parameter
-         */
-        placeholderVisible : function(visible) {
-            var privates = this._privates(identifier);
-
-            if (visible !== undefined) {
-                privates.placeholderVisible = visible;
-
-                if (visible === true) {
-                    jQuery(privates.placeholder)
-                            .removeClass(bui.settings.css.classes.invisible);
-                } else {
-                    jQuery(privates.placeholder)
-                            .addClass(bui.settings.css.classes.invisible);
-                }
-
-                return this;
-            }
-
-            return privates.placeholderVisible;
         },
 
         /**
