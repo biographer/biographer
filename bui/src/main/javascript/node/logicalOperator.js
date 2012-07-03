@@ -113,7 +113,7 @@
         },
         _minWidth : 14,
         _minHeight : 14,
-        includeInJSON : false,
+        includeInJSON : true,
         _circle : null,
         _forceRectangular : true,
         _enableResizing : false,

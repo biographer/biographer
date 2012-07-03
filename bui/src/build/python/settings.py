@@ -64,6 +64,7 @@ modules = ['intro',
            'sboMappings.js',
            'importer.js',
            'layouter.js',
+           'layout-grid.js',
            'outro']
 
 

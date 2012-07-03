@@ -12,20 +12,27 @@
     <script type="text/javascript" src="resources/js/jquery.simulate.js"></script>
 	<script type="text/javascript" src="resources/js/jquery-ui-1.8.21.custom.min.js"></script>
     <script type="text/javascript" src="resources/js/biographer-ui.js"></script>
-    <script type="text/javascript" src="resources/examples/simple_cp.js"></script>
+    <script type="text/javascript" src="resources/examples/showcase.js"></script>
 
     <script type="text/javascript">
-
-
         bui.ready(function() {
-            graph = new bui.Graph(document.getElementsByTagName('body')[0]);
+            
+            var canvas = document.getElementById('canvas');
+            graph = new bui.Graph(canvas);
+            var importHandle = graph.suspendRedraw(20000);
+            bui.importFromJSON(graph, showcaseJSON); 
+            setTimeout(function() {
+                alert('Hi');
+                graph.unsuspendRedraw(importHandle);
+              }, 2000);
 
-            bui.importFromJSON(graph, simpleExample);
-            console.log(simpleExample);
-            console.log(graph.toJSON());
-        });
+        })
     </script>
 </head>
 <body>
+<div id="canvas">
+
+</div>
 </body>
 </html>
+
