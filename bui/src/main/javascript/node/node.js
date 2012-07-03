@@ -786,6 +786,21 @@
         },
 
         /**
+         * Start the dragging process on the placeholder element at the given
+         * position.
+         *
+         * @param {Number} x X-coordinate on which to start the dragging
+         * @param {Number} y Y-coordinate on which to start the dragging
+         * @return {bui.Node} Fluent interface.
+         */
+        startDragging : function(x, y) {
+            var element = this._privates(identifier).nodeGroup.childNodes[0];
+            interact.simulate('drag', element, {pageX: x, pageY: y});
+
+            return this;
+        },
+
+        /**
          * Automatically position the node's auxiliary units.
          *
          * @return {bui.Node} Fluent interface
