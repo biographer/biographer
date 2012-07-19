@@ -180,7 +180,7 @@
             handles[i]*=(isx ? 1 : -1); 
             isx=1-isx;
          }
-         var points=(parts.length=>5 ? parts[4].split(',') : []);
+         var points=(parts.length>=5 ? parts[4].split(',') : []);
          if (points.length<2) points=[]; // there shouldn't be a single number here
          isx=1;
          for (var i=0;i<points.length;i++){ // alternating x and y coordinates
