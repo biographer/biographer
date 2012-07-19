@@ -1,7 +1,6 @@
 
 (function(bui){
    bui.layouter={};
-   bui.layouter.nodescale=1.2;
    /* creates a string from the json data which serves as input for the layouter */
    bui.layouter.makeLayouterFormat = function(jdata){
       var cc=0; // node index counter
@@ -44,8 +43,8 @@
          }
          s = s + (n.data.x ? n.data.x : 0) + "\n";
          s = s + (n.data.y ? n.data.y : 0) + "\n";
-         s = s + (n.data.width ? n.data.width*bui.layouter.nodescale : 0) + "\n";
-         s = s + (n.data.height ? n.data.height*bui.layouter.nodescale : 0) + "\n";
+         s = s + (n.data.width ? n.data.width : 0) + "\n";
+         s = s + (n.data.height ? n.data.height : 0) + "\n";
          s = s + (n.data.dir ? n.data.dir : 0) + "\n";
       }
       s = s + "///\n";
