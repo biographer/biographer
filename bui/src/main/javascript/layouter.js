@@ -91,9 +91,15 @@
    /* extracts position information from layouter output and includes it into json data */
    bui.layouter.fromLayouterFormat = function(jdata,lt,nosplines){ // jdata - original json input data, lt - layouter output, nosplines - do not setup spline data in jdata
       var nh={}; 
+      var idx={};
+      var cc=0;
       for (var i=0;i<jdata.nodes.length;i++){ // create node hash
          var n=jdata.nodes[i];
          nh[n.id]=i;
+         if (n.is_abstract) continue; // abstract nodes are not send to the layouter
+         if (bui.nodeMapping[n.sbo].klass === bui.Compartment) continue;
+         idx[n.id]=cc;
+         cc++;
       }
       for (var i=0;i<jdata.nodes.length;i++){ // fix data.compartment settings
          var n=jdata.nodes[i];
@@ -109,7 +115,7 @@
       var eh={};
       for (var i=0;i<jdata.edges.length;i++){ // create edge hash
          var e=jdata.edges[i];
-         eh[nh[e.source]+'->'+nh[e.target]]=i;
+         eh[idx[e.source]+'->'+idx[e.target]]=i;
       }
       var lines=lt.split("\n");
       var minx=1000000000000000000;
