@@ -1,6 +1,7 @@
 
 (function(bui){
    bui.layouter={};
+   bui.layouter.nodescale=1.2;
    /* creates a string from the json data which serves as input for the layouter */
    bui.layouter.makeLayouterFormat = function(jdata){
       var cc=0; // node index counter
@@ -43,8 +44,8 @@
          }
          s = s + (n.data.x ? n.data.x : 0) + "\n";
          s = s + (n.data.y ? n.data.y : 0) + "\n";
-         s = s + (n.data.width ? n.data.width : 0) + "\n";
-         s = s + (n.data.height ? n.data.height : 0) + "\n";
+         s = s + (n.data.width ? n.data.width*bui.layouter.nodescale : 0) + "\n";
+         s = s + (n.data.height ? n.data.height*bui.layouter.nodescale : 0) + "\n";
          s = s + (n.data.dir ? n.data.dir : 0) + "\n";
       }
       s = s + "///\n";
@@ -168,19 +169,19 @@
       while (lines.length){
          var l=lines.shift();
          var parts=l.split(' ');
-         if (parts.length<3) continue; // empty line?
+         if (parts.length<=3) continue; // non spline edge or empty line
          var key=parts[1]+'->'+parts[2];
          if (!eh.hasOwnProperty(key)) throw "Edge "+key+" not found";
          var eidx=eh[key];
          var handles=parts[3].split(',');
-         if (handles.length<2) handles=[];
+         if (handles.length<2) handles=[]; // there shouldn't be a single number here
          var isx=1;
          for (var i=0;i<handles.length;i++){
             handles[i]*=(isx ? 1 : -1); 
             isx=1-isx;
          }
-         var points=parts[4].split(',');
-         if (points.length<2) points=[];
+         var points=(parts.length=>5 ? parts[4].split(',') : []);
+         if (points.length<2) points=[]; // there shouldn't be a single number here
          isx=1;
          for (var i=0;i<points.length;i++){ // alternating x and y coordinates
             points[i]*=(isx ? 1 : -1); 
