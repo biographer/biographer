@@ -1176,6 +1176,18 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
       int dir=c+4-cbn; // get direction from index order (they are added in exactly this order)
       int sgn=(dir>=2 ? -1 : 1);
       const VCPB &cbs=state.nw.compartment_borders[c];
+      bool toosmall=false;
+      for (i=0,n=cbs.size();i<n;i++){
+         if (cbs[i].dir!=dir) throw "direction error";
+         if (dir%2==0 && state.nw.compartments[cbs[i].compartment].width()<=state.avgsize) { // x dir
+            toosmall=true;
+            break;
+         } else if (dir%2==1 && state.nw.compartments[cbs[i].compartment].height()<=state.avgsize) { // y dir
+            toosmall=true;
+            break;
+         }
+      }
+      if (toosmall) continue; // don't shrink
       for (i=0,n=cbs.size();i<n;i++){
          if (cbs[i].dir!=dir) throw "direction error";
          state.nw.compartments[cbs[i].compartment].acs(dir)+=sgn*state.avgsize/4;
