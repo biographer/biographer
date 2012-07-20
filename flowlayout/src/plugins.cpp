@@ -951,9 +951,9 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
       for (j=1;j<cn;j++){
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
-         if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if exapnding
-            if (cpj.xmin<cpi.xmax && cpj.xmax>=where-d) {
-               if (cpj.xmax>where+d) a[i].left.clear();
+         if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if expanding; FIXME do we need to let close compartment "glide" in a d environment?
+            if (cpj.xmax<cpi.xmin+d && cpj.xmax>=where-d) { // is compartment j left of compartment i and is it closer than where
+               if (cpj.xmax>where+d) a[i].left.clear(); // this is a new position so forget about all other neighbors we collected so far
                a[i].left.push_back(j);
                where=cpj.xmax;
             }
@@ -965,7 +965,7 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if exapnding
-            if (cpj.xmax>cpi.xmin && cpj.xmin<=where+d) {
+            if (cpj.xmin>cpi.xmax-d && cpj.xmin<=where+d) {
                if (cpj.xmin<where-d) a[i].right.clear();
                a[i].right.push_back(j);
                where=cpj.xmin;
@@ -978,7 +978,7 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.xmax>cpi.xmin && cpj.xmin<cpi.xmax){ // could collide if exapnding
-            if (cpj.ymin<cpi.ymax && cpj.ymax>=where-d) {
+            if (cpj.ymax<cpi.ymin+d && cpj.ymax>=where-d) {
                if (cpj.ymax>where+d) a[i].top.clear();
                a[i].top.push_back(j);
                where=cpj.ymax;
@@ -991,7 +991,7 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.xmax>cpi.xmin && cpj.xmin<cpi.xmax){ // could collide if exapnding
-            if (cpj.ymax>cpi.ymin && cpj.ymin<=where+d) {
+            if (cpj.ymin>cpi.ymax-d && cpj.ymin<=where+d) {
                if (cpj.ymin<where-d) a[i].bottom.clear();
                a[i].bottom.push_back(j);
                where=cpj.ymin;
