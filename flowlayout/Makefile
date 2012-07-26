@@ -3,17 +3,28 @@ XINC=-Isrc
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DPROGRESSLINUX -DUSEJSON `pkg-config --cflags glib-2.0 json-glib-1.0` -lglib-2.0 -ljson-glib-1.0
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DUSEJSON `pkg-config --cflags glib-2.0`  -lglib-2.0 -rpath=/local/home/handorf/lib -I/local/home/handorf/hg/biographer-layout/json-glib-0.12.6/ -L/local/home/handorf/lib -ljson-glib-1.0
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX
-CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo -DSTACKX
+CCFLAGS=-fPIC -g -O3 -ansi -pedantic -W -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo -DSTACKX
 ifeq ($(MAKECMDGOALS),testlayout)
 CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo -DSTACKX
 endif
+ifeq ($(MAKECMDGOALS),layout_nocomp)
+CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSHOWPROGRESS `pkg-config --cflags cairo` -lcairo -DSTACKX
+endif
 ifeq ($(MAKECMDGOALS),)
-CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC)
-#CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
+#CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC)
+CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
 endif
 ifeq ($(MAKECMDGOALS),layout)
-CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC)
-#CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
+#CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC)
+CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
+endif
+ifeq ($(MAKECMDGOALS),routeonly)
+#CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC)
+CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
+endif
+ifeq ($(MAKECMDGOALS),routecomp)
+#CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC)
+CCFLAGS=-fPIC -O3 -Wall -fno-rtti $(XINC) -DSTACKX
 endif
 #CCFLAGS=-fPIC -g -O0 -Wall -fno-rtti $(XINC) -DSTACKX -DSHOWPROGRESS -DOUTPNG `pkg-config --cflags cairo` -lcairo
 SRC=src/
@@ -25,6 +36,10 @@ layout: dolayout.cpp reactionlayout.cpp $(OBJS)
 	$(CC)  $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o -o $(BDIR)layout $< $(CCFLAGS)
 layoutp: dolayout.cpp reactionlayout.cpp $(OBJS)
 	$(CC)  $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)layoutp $< $(CCFLAGS)
+routeonly: routeonly.cpp $(OBJS)
+	$(CC)  $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o -o $(BDIR)routeonly $< $(CCFLAGS)
+routecomp: routecomp.cpp $(OBJS)
+	$(CC)  $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o -o $(BDIR)routecomp $< $(CCFLAGS)
 #json:	layout_json.cpp network.o layout.o types.o
 #	$(CC)  $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o -o $(BDIR)layoutJson $<
 network.o: network.cpp network.h types.h
@@ -65,3 +80,5 @@ test_push_components: test_push_components.cpp $(OBJS)
 	$(CC) $(CCFLAGS) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)test_push_components $< $(CCFLAGS)
 
 	
+layout_nocomp: layout_nocomp.cpp $(OBJS)
+	$(CC) $(BDIR)network.o $(BDIR)layout.o $(BDIR)types.o $(BDIR)plugins.o $(BDIR)netdisplay.o -o $(BDIR)layout_nocomp $< $(CCFLAGS)
