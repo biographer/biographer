@@ -111,27 +111,41 @@
         interact.set(container, {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
 
         // create eventListener delegate functions
+        var interactDragStart = (function (event) {
+            this.dragPosition = this.position();
+        }).createDelegate(this);
+        
         var interactDragMove = (function (event) {
-            var position = this.position(),
-                scale = this.graph().scale();
+            var scale = this.graph().scale();
+            
+            this.dragPosition.x += event.detail.dx / scale;
+            this.dragPosition.y += event.detail.dy / scale;
 
             if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
                 (event.type === 'interactdragend' && !this.graph().highPerformance())) {
-                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+                this.position(this.dragPosition.x, this.dragPosition.y);
             }
+        }).createDelegate(this);
+        
+        var interactResizeStart = (function (event) {
+            this.resizeSize = this.size();
         }).createDelegate(this);
 
         var interactResizeMove = (function (event) {
-            var size = this.size(),
-                scale = this.graph().scale();
+            var scale = this.graph().scale();
+            
+            this.resizeSize.width += event.detail.dx / scale;
+            this.resizeSize.height += event.detail.dy / scale;
             
             if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
                 (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
-                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+                this.size(this.resizeSize.width, this.resizeSize.height);
             }
         }).createDelegate(this);
         
         // add event listeners
+        container.addEventListener('interactresizestart', interactResizeStart);
+        container.addEventListener('interactdragstart', interactDragStart);
         container.addEventListener('interactresizemove', interactResizeMove);
         container.addEventListener('interactdragmove', interactDragMove);
         container.addEventListener('interactresizeend', interactResizeMove);
@@ -838,8 +852,7 @@
          * @return {bui.Node} Fluent interface.
          */
         startDragging : function(x, y) {
-            var element = this._privates(identifier).nodeGroup.childNodes[0];
-            interact.simulate('drag', element, {pageX: x, pageY: y});
+            interact.simulate('drag', this.nodeGroup(), {pageX: x, pageY: y});
 
             return this;
         },
