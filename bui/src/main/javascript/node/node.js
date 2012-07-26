@@ -106,6 +106,50 @@
         jQuery(privates.nodeGroup)
             .click(mouseClick.createDelegate(this))
 
+        // set as interactable
+        var container = privates.nodeGroup;
+        interact.set(container, {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        var interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        var interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+        
+        // add event listeners
+        container.addEventListener('interactresizemove', interactResizeMove);
+        container.addEventListener('interactdragmove', interactDragMove);
+        container.addEventListener('interactresizeend', interactResizeMove);
+        container.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(container);
+
+            container.removeEventListener('interactresizemove', interactResizeMove);
+            container.removeEventListener('interactdragmove', interactDragMove);
+            container.removeEventListener('interactresizeend', interactResizeMove);
+            container.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
+
     };
 
     /**
