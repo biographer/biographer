@@ -512,6 +512,7 @@
             jQuery.ajax({
                         url : bui.settings.css.stylesheetUrl,
                         async : false,
+                        dataType : 'text',
                         success : function(data) {
                             css = data;
                         }
