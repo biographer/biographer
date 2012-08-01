@@ -114,11 +114,10 @@ bui.settings = {
      * The url from which the CSS file should be imported and CSS classes
      */
     css : {
-        stylesheetUrl : 'resources/css/visualization-svg.css',
+        stylesheetUrl : '../static/bui/css/visualization-svg.css',
         classes : {
             invisible : 'hidden',
             selected : 'selected',
-            placeholder : 'placeholder',
             rectangle : 'rect',
             complex : 'complex',
             compartment : 'compartment',
@@ -156,19 +155,6 @@ bui.settings = {
      * Various styles that can not be realized using CSS
      */
     style : {
-        /**
-         * @field Correction of the placeholder positioning and size
-         */
-        placeholderCorrection : {
-            position : {
-                x : -1,
-                y : -1
-            },
-            size : {
-                width : -2,
-                height : -2
-            }
-        },
         graphReduceCanvasPadding : 30,
         edgeHandleRadius : 4,
         nodeCornerRadius : 15,
