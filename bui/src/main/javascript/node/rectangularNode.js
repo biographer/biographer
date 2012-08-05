@@ -95,6 +95,15 @@
     };
 
     /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.rect.style.setProperty('fill', color.background);
+    };
+
+    /**
      * @private used from the constructor to improve readability
      */
     var initialPaint = function() {
@@ -103,6 +112,7 @@
         privates.rect = document.createElementNS(bui.svgns, 'path');
         var size = this.size();
         formChanged.call(this, this, size.width, size.height);
+		colorChanged.call(this, this, this.color()), 
         container.appendChild(privates.rect);
     };
 
@@ -118,6 +128,8 @@
         this._addType(bui.RectangularNode.ListenerType);
 
         var listener = formChanged.createDelegate(this);
+        var colorChangedListener = colorChanged.createDelegate(this);
+        
         this.bind(bui.Node.ListenerType.size,
                 listener,
                 listenerIdentifier(this));
@@ -126,6 +138,9 @@
                 listenerIdentifier(this));
         this.bind(bui.RectangularNode.ListenerType.bottomRadius,
                 listener,
+                listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
+                colorChangedListener,
                 listenerIdentifier(this));
 
         var privates = this._privates(identifier);
