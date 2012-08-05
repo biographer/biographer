@@ -22,6 +22,15 @@
     };
 
     /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.path.style.setProperty('fill', color.background);
+    };
+
+    /**
      * @private
      * Function used for the generation of listener identifiers
      * @param {bui.RectangularNode} RectangularNode
@@ -40,6 +49,7 @@
         var privates = this._privates(identifier);
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
+		colorChanged.call(this, this, this.color()), 
         container.appendChild(privates.path);
 
     };
@@ -54,8 +64,13 @@
     bui.Tag = function() {
         bui.Tag.superClazz.apply(this, arguments);
 
+        var colorChangedListener = colorChanged.createDelegate(this);
+
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
+                colorChangedListener,
                 listenerIdentifier(this));
         var privates = this._privates(identifier);
 

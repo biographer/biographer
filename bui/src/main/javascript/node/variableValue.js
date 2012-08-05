@@ -6,9 +6,11 @@
      * @param {bui.RectangularNode} RectangularNode
      * @return {String} listener identifier
      */
+     
     var listenerIdentifier = function(Node) {
         return identifier + Node.id();
     };
+    
     /**
      * @class
      * A node with the shape of an rectangle and a label inside.
@@ -29,6 +31,16 @@
 
         this._privates(identifier).path.setAttributeNS(null, 'd', pathData);
     };
+
+    /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.path.style.setProperty('fill', color.background);
+    };
+    
     /**
      * @private used from the constructor to improve readability
      */
@@ -38,12 +50,20 @@
         var privates = this._privates(identifier);
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
+		colorChanged.call(this, this, this.color()), 
         container.appendChild(privates.path);
     };
+    
     bui.VariableValue = function() {
         bui.VariableValue.superClazz.apply(this, arguments);
+
+        var colorChangedListener = colorChanged.createDelegate(this);
+        
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
+                colorChangedListener,
                 listenerIdentifier(this));
         
         initialPaint.call(this);
@@ -51,8 +71,10 @@
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass('VariableValue');
+        var privates = this._privates(identifier);
         //this.adaptSizeToLabel(true);
     };
+    
     bui.VariableValue.prototype = {
         identifier : function() {
             return identifier;

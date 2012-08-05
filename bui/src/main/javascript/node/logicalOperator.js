@@ -23,6 +23,15 @@
     };
 
     /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.circle.style.setProperty('fill', color.background);
+    };
+
+    /**
      * @private
      */
     var initialPaint = function() {
@@ -30,6 +39,7 @@
 
         privates.circle = document.createElementNS(bui.svgns, 'circle');
         sizeChanged.call(this, this, this.size().width);
+		colorChanged.call(this, this, this.color()),
         this.nodeGroup().appendChild(privates.circle);
     };
     
@@ -43,8 +53,13 @@
     bui.LogicalOperator = function(type) {
         bui.LogicalOperator.superClazz.apply(this, arguments);
 
+        var colorChangedListener = colorChanged.createDelegate(this);
+        
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
+                colorChangedListener,
                 listenerIdentifier(this));
 
         initialPaint.call(this);

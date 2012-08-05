@@ -26,6 +26,15 @@
     };
 
     /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.ellipse.style.setProperty('fill', color.background);
+    };
+
+    /**
      * @private used from the constructor to improve readability
      */
     var initialPaint = function() {
@@ -34,6 +43,7 @@
         privates.ellipse = document.createElementNS(bui.svgns, 'ellipse');
         var size = this.size();
         sizeChanged.call(this, this, size.width, size.height);
+		colorChanged.call(this, this, this.color()), 
         container.appendChild(privates.ellipse);
     };
 
@@ -47,9 +57,15 @@
     bui.UnspecifiedEntity = function() {
         bui.UnspecifiedEntity.superClazz.apply(this, arguments);
 
+        var colorChangedListener = colorChanged.createDelegate(this);
+
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
                 listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
+                colorChangedListener,
+                listenerIdentifier(this));
+        var privates = this._privates(identifier);
 
         initialPaint.call(this);
     };
