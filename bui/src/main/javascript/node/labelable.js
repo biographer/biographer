@@ -33,6 +33,7 @@
                     aggregatedText.join(' ')));
             tspan.setAttributeNS(null, 'x', line.horizontalIndention);
             tspan.setAttributeNS(null, 'dy', previousHeight);
+			tspan.style.setProperty('fill', privates.color.label);
             privates.labelElement.appendChild(tspan);
 
             previousHeight = line.maxHeight;
@@ -75,6 +76,7 @@
         this.size(totalWidth, nodeHeight);
         privates.labelElement.setAttributeNS(null, 'x', padding.left);
         privates.labelElement.setAttributeNS(null, 'y', maxHeight);
+		privates.labelElement.style.setProperty('fill', privates.color.label);
     };
 
     /**
@@ -125,11 +127,18 @@
         privates.label = this._label;
         privates.adaptSizeToLabel = this._adaptSizeToLabel;
         privates.labelElement = null;
+		privates.color = {
+			background: '',
+			label: ''
+		};
         privates.svgClasses = this._svgClasses;
         privates.calculationClasses = this._calculationClasses;
 
         var listener = labelableLabelChanged.createDelegate(this);
         this.bind(bui.Labelable.ListenerType.label,
+                listener,
+                listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
                 listener,
                 listenerIdentifier(this));
         this.bind(bui.Labelable.ListenerType.adaptSizeToLabel,
@@ -176,6 +185,38 @@
 
             return privates.label;
         },
+		
+        /**
+         * Set or retrieve the current color
+         *
+         * @param {Object} [options] object with propertied background and/or label
+         * which are the new colors to be set. Omit to retrieve current colors.
+         * @return {bui.Labelable|Object} Current colors are returned when you
+         *   don't pass any parameter, fluent interface otherwise.
+         */
+		color : function(options) {
+            var privates = this._privates(identifier),
+			changed = false;
+			
+			if (!options || !(options.background || options.label)) {
+				// Return object giving background and text color
+				return privates.color;
+			}
+			if (options.background !== null || options.background !== null) {
+				changed = changed || options.background !== privates.color.background;
+				privates.color.background = options.background;
+			}
+			if (options.label !== null || options.label !== null) {
+				changed = changed || options.label !== privates.color.label;
+				privates.color.label = options.label;
+			}
+			if(changed) {
+				//Fire the colorchanged
+				this.fire(bui.Labelable.ListenerType.color, [this]);
+			}
+			
+			return this;
+		},
 
         /**
          * Set or retrieve whether the node adapts to the label size
@@ -277,6 +318,8 @@
         /** @field */
         adaptSizeToLabel : bui.util.createListenerTypeId(),
         /** @field */
-        labelClass : bui.util.createListenerTypeId()
+        labelClass : bui.util.createListenerTypeId(),
+        /** @field */
+		color : bui.util.createListenerTypeId()
     };
 })(bui);
