@@ -45,7 +45,7 @@
      */
     var parentRemoved = function() {
         this.parent(this.graph());
-	this.remove();
+        this.remove();
     };
 
     /**
@@ -108,7 +108,33 @@
 
         // set as interactable
         var container = privates.nodeGroup;
-        interact.set(container, {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+        
+        var interactActionCheck = (function (event) {
+            var position = this.absolutePosition(),
+                size = this.size(),
+                scale = this.graph().scale(),
+                graphPosition = this.graph().htmlTopLeft(),
+                margin = interact.margin(),
+                x = ((event.touches? event.touches[0]: event).pageX - window.scrollX - graphPosition.x) / scale,
+                y = ((event.touches? event.touches[0]: event).pageY - window.scrollY - graphPosition.y) / scale,
+                
+                right = (x - position.x) > (size.width - margin),
+                bottom = (y - position.y) > (size.height - margin),
+                
+                resizeAxes = (right?'x': '') + (bottom?'y': ''),
+                action = (resizeAxes && this._enableResizing)?
+                        'resize' + resizeAxes:
+                        'drag';
+
+            return action;
+        }).createDelegate(this);
+        
+        interact.set(container, {
+                drag: this._enableDragging,
+                resize: this._enableResizing,
+                squareResize: this._forceRectangular,
+                actionChecker: interactActionCheck
+            });
 
         // create eventListener delegate functions
         var interactDragStart = (function (event) {
@@ -528,8 +554,8 @@
                         y -= diffY;
                         setTimeout(arguments.callee, timeOffset);
                     } else {
-		      if (finishedListener) finishedListener();
-		    }
+              if (finishedListener) finishedListener();
+            }
                 })();
             }
 
