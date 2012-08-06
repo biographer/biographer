@@ -557,7 +557,11 @@ $(document).ready(function() {
         //$('#layout_grid').html('{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}').ready(function(){
         bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
         if (!evnt.ctrlKey){
+            bui.grid.put_on_grid();
             bui.grid.layout();
+        }else{
+            bui.grid.put_on_grid();
+            bui.grid.render_current();
         }
         //});
         //$('#layout_grid').html(orig_html);
@@ -576,11 +580,11 @@ $(document).ready(function() {
             }
         }
         if(flag == false) bui.clone(5);
-        else bui.clone(2, selected_drawables)
+        else bui.util.clone(2, selected_drawables)
         $('#clone').html(orig_html);
     });
     //=========================
-    $('#clombine').click(function(){
+    $('#combine').click(function(){
         var selected_drawables = {};
         var flag = false;
         for (var key in all_drawables) {
@@ -590,7 +594,7 @@ $(document).ready(function() {
                 selected_drawables[drawable.id()] = 1;
             }
         }
-        if(flag == true) bui.clombine(selected_drawables);
+        if(flag == true) bui.util.combine(selected_drawables);
     });
     //=========================
     $('#layout_force').click(function(){
@@ -704,6 +708,17 @@ $(document).ready(function() {
             overlayClose:true,
             opacity:20,
         });
+    });
+    $('#canvas').bind('mousewheel', function(event,delta){
+        var rate;
+        if (delta > 0) {
+            // mousewheel is going up; 
+            rate = 0.1;
+        } else {
+            rate = -0.1;
+            // mousewheel is going down 
+        }
+        graph.scale(graph.scale() + rate);
     });
     //=========================
     $('.scale').click(function() {
