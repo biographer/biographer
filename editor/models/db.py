@@ -232,7 +232,7 @@ def sbml2jsbgn(sbml_str, rxncon=False):
             mod_split = mod.split('~')
             if mod_split[1] == 'U':
                 return mod_split[0]
-            if mod_split[0]=='bd':
+            if mod_split[0] == 'bd':
                 return mod_split[1]
             else:
                 return '%s@%s'%(mod_split[1],mod_split[0])
@@ -251,14 +251,14 @@ def sbml2jsbgn(sbml_str, rxncon=False):
                     node_item = dict( id = species_id, sbo = 291, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60))
                     graph['nodes'].append(node_item)
                 elif species.getName().startswith('xXx') and species.getName().endswith('xXx()'):
-                    node_item = dict( id = species_id, sbo = 347, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 90, height = 60, label=species.getName()[3:-5]))
+                    node_item = dict(id = species_id, sbo = 347, is_abstract = 0, data = dict( x = 0.0, y = 0.0, width = 90, height = 60, label=species.getName()[3:-5]))
                     graph['nodes'].append(node_item)
                 elif '__' in species.getName():
-                    complex_item = dict( id = species_id, sbo = 253, is_abstract = 0, data = dict ( x = 0.0, y = 0.0, width = 60, height = 60,subnodes=[]))
+                    complex_item = dict(id = species_id, sbo = 253, is_abstract = 0, data = dict(x = 0.0, y = 0.0, width = 60, height = 60, subnodes=[]))
                     for subnode_id in species.getName().split('__'):
                         match = re.search(pattern_nd, subnode_id)
-                        print 'subnode_id',subnode_id
-                        subnode_id, mods = match.group(1),match.group(2)
+                        print 'subnode_id', subnode_id
+                        subnode_id, mods = match.group(1), match.group(2)
                         if ('rna' in subnode_id.lower()) or ('dna' in subnode_id.lower()):
                             sbo = 250
                         else:
