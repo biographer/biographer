@@ -284,7 +284,7 @@ bui.grid.put_on_grid = function(node_idx){
         var count = 0;
         while(true){
             if(i in node_idx2cborder){
-                if(!(cx>=node_idx2cborder[i].left && cx<=node_idx2cborder[i].right && cy>=node_idx2cborder[i].top && cy<=node_idx2cborder[i].bottom && matrix_nodes[cx][cy] == undefined)){
+                if(!(cx>=node_idx2cborder[i].left && cx<=node_idx2cborder[i].right && cy>=node_idx2cborder[i].top && cy<=node_idx2cborder[i].bottom && bui.grid.matrix_nodes[cx][cy] == undefined)){
                     spiral_step = spiral_steps[count];
                     //if(count>9997) console.log(nodes[i].label()+' spiral_step, count '+spiral_step +', '+count);
                     cx += spiral_step[0];
