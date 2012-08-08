@@ -41,11 +41,11 @@
     
     var interactGestureMove = function(event) {
         var privates = this._privates(identifier),
-            newScale = this.scale() + event.detail.ds;
-//            translate = this.translate(),
-//            dimensions = privates.rootDimensions,
-//            dx = dimensions.width * event.detail.ds,
-//            dy = dimensions.height * event.detail.ds;
+            newScale = this.scale() + event.detail.ds,
+            translate = this.translate(),
+            dimensions = privates.rootDimensions,
+            dx = dimensions.width * event.detail.ds,
+            dy = dimensions.height * event.detail.ds;
         
         // Do nothing if the event is propagating from a child element
         if (event.target !== privates.root) {
@@ -55,11 +55,14 @@
         if (newScale > 0) {
             this.scale(newScale);
         }
-//        this.translate(
-            // Values need to be adjusted by ~0.13 probably due to rounding
-            // errors when calculating event detail properties
-//            event.detail.dx + 0.13 - dx / 2,
-//            event.detail.dy + 0.13 - dx / 2);
+        
+        // So that the graph scales out from touch center instead of
+        // from the lop left corner of the container
+        dx += (event.detail.pageX - privates.rootOffset.x) * event.detail.ds;
+        dy += (event.detail.pageY- privates.rootOffset.y) * event.detail.ds;
+        this.translate(
+            translate.x + event.detail.dx - dx / 2,
+            translate.y + event.detail.dy - dy / 2);
      };
      
     // create eventListener delegate functions
@@ -757,6 +760,8 @@
         /** @field */
         add : bui.util.createListenerTypeId(),
         /** @field */
-        scale : bui.util.createListenerTypeId()
+        scale : bui.util.createListenerTypeId(),
+        /** @field */
+        translate : bui.util.createListenerTypeId()
     };
 })(bui);
