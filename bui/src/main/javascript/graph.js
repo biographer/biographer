@@ -22,7 +22,10 @@
      */
     var __setTransformString = function() {
         var privates = this._privates(identifier);
-        var value = ['scale(', privates.scale.toString(), ')'].join('');
+        var value = [
+                ['scale(', privates.scale.toString(), ')'].join(''),
+                ['translate(', privates.x, ', ', privates.y, ')'].join('')
+            ].join(' ');
 
         privates.rootGroup.setAttribute('transform', value);
     };
@@ -34,6 +37,58 @@
      */
     var __getStylesheetContents = function() {
         return '@import url("' + bui.settings.css.stylesheetUrl + '\");';
+    };
+    
+    var interactGestureMove = function(event) {
+        var privates = this._privates(identifier),
+            newScale = this.scale() + event.detail.ds;
+//            translate = this.translate(),
+//            dimensions = privates.rootDimensions,
+//            dx = dimensions.width * event.detail.ds,
+//            dy = dimensions.height * event.detail.ds;
+        
+        // Do nothing if the event is propagating from a child element
+        if (event.target !== privates.root) {
+            return event;
+        }
+
+        if (newScale > 0) {
+            this.scale(newScale);
+        }
+//        this.translate(
+            // Values need to be adjusted by ~0.13 probably due to rounding
+            // errors when calculating event detail properties
+//            event.detail.dx + 0.13 - dx / 2,
+//            event.detail.dy + 0.13 - dx / 2);
+     };
+     
+    // create eventListener delegate functions
+    var interactDragStart = function (event) {
+        var privates = this._privates(identifier);
+        
+        // Do nothing if the event is propagating from a child element
+        if (event.target !== privates.root) {
+            return event;
+        }
+        privates.panPosition = this.translate();
+    };
+    
+    var interactDragMove = function (event) {
+        var privates = this._privates(identifier),
+            scale = this.scale();
+        
+        // Do nothing if the event is propagating from a child element
+        if (event.target !== privates.root) {
+            return event;
+        }
+        
+        privates.panPosition.x += event.detail.dx / scale;
+        privates.panPosition.y += event.detail.dy / scale;
+
+        if ((event.type === 'interactdragmove' && this.highPerformance()) ||
+            (event.type === 'interactdragend' && !this.highPerformance())) {
+            this.translate(privates.panPosition.x, privates.panPosition.y);
+        }
     };
 
     /**
@@ -183,16 +238,30 @@
         var privates = this._privates(identifier);
         privates.id = bui.settings.idPrefix.graph + graphCounter++;
         privates.container = container;
-	if ( container == null ) {	// don't break here, just throw a message
-		console.error('Warning: Invalid container element specified. Using document.body instead.');
-		privates.container = document.body;
-		}
+    if ( container == null ) {    // don't break here, just throw a message
+        console.error('Warning: Invalid container element specified. Using document.body instead.');
+        privates.container = document.body;
+        }
         privates.drawables = {};
         privates.idCounter = 0;
         privates.scale = 1;
+        privates.x = 0;
+        privates.y = 0;
         privates.highPerformance = bui.settings.initialHighPerformance;
 
         __initialPaintGraph.call(this);
+        
+        //create interact listener function delegates
+        var gestureMove = interactGestureMove.createDelegate(this),
+            dragStart = interactDragStart.createDelegate(this),
+            dragMove = interactDragMove.createDelegate(this);  
+        
+        // add event listeners
+        interact.set(privates.root, {gesture: true, drag: true});
+        privates.root.addEventListener('interactgesturemove', gestureMove);
+        privates.root.addEventListener('interactdragstart', dragStart);
+        privates.root.addEventListener('interactdragmove', dragMove);
+        privates.root.addEventListener('interactdragend', dragMove);
     };
 
     bui.Graph.prototype = {
@@ -343,6 +412,38 @@
         },
 
         /**
+         * @description
+         * Transate the graph or retrieve the current translation
+         *
+         * @param {Number} [x] The new translation in x-axis.
+         * @param {Number} [y] The new translation in y-axis.
+         * @return {bui.Graph|Number} Fluent interface if you pass a parameter,
+         *   otherwise the current translation is returned
+         */
+        translate : function(x, y) {
+            var privates = this._privates(identifier);
+
+            if (x !== undefined && y !== undefined) {
+                if (x !== privates.x && y !== privates.y) {
+                    privates.x = x;
+                    privates.y = y;
+
+                    __setTransformString.call(this);
+                    this.reduceCanvasSize();
+
+                    this.fire(bui.Graph.ListenerType.translate, [this, {x: x, y: y}]);
+                }
+
+                return this;
+            }
+
+            return {
+                x: privates.x,
+                y: privates.y
+            };
+        },
+
+        /**
          * Fit the Graph to the viewport, i.e. scale the graph down to show
          * the whole graph or (in the case  of a very small graph) scale it
          * up.
@@ -358,6 +459,7 @@
             var scale = Math.min(viewportWidth / dimensions.width,
                     viewportHeight / dimensions.height);
             this.scale(scale);
+            this.translate(0,0);
 
             return this;
         },
@@ -453,8 +555,8 @@
             }
 
             var padding = bui.settings.style.graphReduceCanvasPadding;
-            maxX += padding;
-            maxY += padding;
+            maxX += padding + privates.x;
+            maxY += padding + privates.y;
 
             privates.rootDimensions.width = maxX;
             privates.root.setAttribute('width', maxX * privates.scale);
