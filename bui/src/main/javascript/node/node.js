@@ -95,9 +95,12 @@
             size = this.size(),
             scale = this.graph().scale(),
             graphPosition = this.graph().htmlTopLeft(),
+            graphTranslate = this.graph().translate(),
             margin = interact.margin(),
-            x = ((event.touches? event.touches[0]: event).pageX - graphPosition.x) / scale,
-            y = ((event.touches? event.touches[0]: event).pageY - graphPosition.y) / scale,
+            x = ((event.touches? event.touches[0]: event)
+                    .pageX - graphPosition.x - graphTranslate.x) / scale,
+            y = ((event.touches? event.touches[0]: event)
+                    .pageY - graphPosition.y - graphTranslate.y) / scale,
             
             right = (x - position.x) > (size.width - margin),
             bottom = (y - position.y) > (size.height - margin),
@@ -120,11 +123,12 @@
         var privates = this._privates(identifier);
         var scale = this.graph().scale();
         
-        privates.dragPosition.x += event.detail.dx / scale;
-        privates.dragPosition.y += event.detail.dy / scale;
-
         if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
             (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+            
+        privates.dragPosition.x += event.detail.dx / scale;
+        privates.dragPosition.y += event.detail.dy / scale;
+        
             this.position(privates.dragPosition.x, privates.dragPosition.y);
         }
     };
@@ -138,11 +142,12 @@
         var privates = this._privates(identifier);
         var scale = this.graph().scale();
         
-        privates.resizeSize.width += event.detail.dx / scale;
-        privates.resizeSize.height += event.detail.dy / scale;
-        
         if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
             (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+            
+            privates.resizeSize.width += event.detail.dx / scale;
+            privates.resizeSize.height += event.detail.dy / scale;
+        
             this.size(privates.resizeSize.width, privates.resizeSize.height);
         }
     };
