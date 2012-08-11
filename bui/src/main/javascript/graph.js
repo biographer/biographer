@@ -41,9 +41,9 @@
     
     var interactGestureMove = function(event) {
         var privates = this._privates(identifier),
-            scale = this.scale(),
-            newScale = scale + event.detail.ds,
-            translate = this.translate();
+            newScale = privates.scale * (1 + event.detail.ds),
+			dx,
+			dy;
         
         // Do nothing if the event is propagating from a child element
         if (event.target !== privates.root) {
@@ -51,16 +51,23 @@
         }
 
         if (newScale > 0) {
-            this.scale(newScale);
+			// Scaling the graph calls reduceCanvasSize(). This brings it back to place.
+			dx = privates.x;
+			dy = privates.y;
+			
+			// So that the graph follows the gesture
+			dx += event.detail.dx / newScale;
+			dy += event.detail.dy / newScale;
+		
+			// So that the graph is scaled with the gesture cordinate as the center
+            dx -= ((event.detail.pageX - privates.rootOffset.x) * event.detail.ds) / newScale;
+            dy -= ((event.detail.pageY - privates.rootOffset.y) * event.detail.ds) / newScale;
             
-            dx = (event.detail.pageX - privates.rootOffset.x + translate.x) * event.detail.ds / newScale;
-            dy = (event.detail.pageX - privates.rootOffset.y + translate.y) * event.detail.ds / newScale;
-        } else {
-            dx = dy = 0;
+            this.scale(newScale);
+			this.translate(
+				dx,
+				dy);
         }
-        this.translate(
-            translate.x + event.detail.dx / newScale - dx / 2,
-            translate.y + event.detail.dy / newScale - dy / 2);
      };
      
     // create eventListener delegate functions
@@ -426,7 +433,7 @@
             var privates = this._privates(identifier);
 
             if (x !== undefined && y !== undefined) {
-                if (x !== privates.x && y !== privates.y) {
+                if (x !== privates.x || y !== privates.y) {
                     privates.x = x;
                     privates.y = y;
 
