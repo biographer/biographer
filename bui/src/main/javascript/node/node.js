@@ -937,7 +937,10 @@
          * @return {bui.Node} Fluent interface.
          */
         startDragging : function(x, y) {
-            interact.simulate('drag', this.nodeGroup(), {pageX: x, pageY: y});
+            jQuery(this.nodeGroup()).simulate("mousedown", {
+                        pageX : x,
+                        pageY : y
+                    });
 
             return this;
         },
