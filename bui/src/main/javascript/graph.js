@@ -260,6 +260,7 @@
         interact.set(privates.root, {
                 gesture: true,
                 drag: true,
+                autoScroll: false,
                 actionCheck: function (event) {
                     return 'drag';
                 }
