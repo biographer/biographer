@@ -62,6 +62,10 @@
     var dragEnd = function(event) {
         this.fire(bui.Graph.ListenerType.dragEnd, [this, event]);
     };
+
+    var mouseWheel = function(event) {
+        this.fire(bui.Graph.ListenerType.wheel, [this, event]);
+    };
     
     var gesturePanAndZoom = function(graph, event) {
         var privates = graph._privates(identifier),
@@ -119,6 +123,30 @@
             privates.panPosition.y += event.detail.dy / scale;
 
             this.translate(privates.panPosition.x, privates.panPosition.y);
+        }
+    };
+    
+    var wheelZoom = function (graph, event) {
+        event.preventDefault();
+        
+        var privates = graph._privates(identifier),
+            wheelDelta = event.wheelDelta || event.detail,
+            ds = 0.2 * (wheelDelta > 0? 1: -1),
+            newScale = privates.scale * (1 + ds),
+            dx,
+            dy;
+
+        if (newScale > 0 && wheelDelta !== 0) {
+            // Scaling the graph calls reduceCanvasSize(). This brings it back to place.
+            dx = privates.x;
+            dy = privates.y;
+        
+            // So that the graph is scaled with the gesture cordinate as the center
+            dx -= ((event.pageX - privates.rootOffset.x) * ds) / newScale;
+            dy -= ((event.pageY - privates.rootOffset.y) * ds) / newScale;
+            
+            graph.scale(newScale);
+            graph.translate(dx, dy);
         }
     };
 
@@ -220,6 +248,8 @@
             }
         }
         
+        privates.root.addEventListener('mousewheel', mouseWheel.createDelegate(this));
+            
         // Add interact.js event listeners
         privates.root.addEventListener('interactgesturemove', gestureMove.createDelegate(this));
         privates.root.addEventListener('interactdragstart', dragStart.createDelegate(this));
@@ -306,6 +336,9 @@
                 listenerIdentifier(this));
         this.bind(bui.Graph.ListenerType.gestureMove,
                 gesturePanAndZoom.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Graph.ListenerType.wheel,
+                wheelZoom.createDelegate(this),
                 listenerIdentifier(this));
 
         __initialPaintGraph.call(this);
@@ -819,6 +852,8 @@
         /** @field */
         gestureMove : bui.util.createListenerTypeId(),
         /** @field */
-        gestureEnd : bui.util.createListenerTypeId()
+        gestureEnd : bui.util.createListenerTypeId(),
+        /** @field */
+        wheel : bui.util.createListenerTypeId()
     };
 })(bui);
