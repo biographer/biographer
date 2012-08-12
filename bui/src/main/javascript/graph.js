@@ -38,12 +38,36 @@
     var __getStylesheetContents = function() {
         return '@import url("' + bui.settings.css.stylesheetUrl + '\");';
     };
+
+    var gestureStart = function(event) {
+        this.fire(bui.Graph.ListenerType.gestureStart, [this, event]);
+    };
+
+    var gestureMove = function(event) {
+        this.fire(bui.Graph.ListenerType.gestureMove, [this, event]);
+    };
+
+    var gestureEnd = function(event) {
+        this.fire(bui.Graph.ListenerType.gestureEnd, [this, event]);
+    };
+
+    var dragStart = function(event) {
+        this.fire(bui.Graph.ListenerType.dragStart, [this, event]);
+    };
+
+    var dragMove = function(event) {
+        this.fire(bui.Graph.ListenerType.dragMove, [this, event]);
+    };
+
+    var dragEnd = function(event) {
+        this.fire(bui.Graph.ListenerType.dragEnd, [this, event]);
+    };
     
-    var interactGestureMove = function(event) {
-        var privates = this._privates(identifier),
+    var gesturePanAndZoom = function(graph, event) {
+        var privates = graph._privates(identifier),
             newScale = privates.scale * (1 + event.detail.ds),
-			dx,
-			dy;
+            dx,
+            dy;
         
         // Do nothing if the event is propagating from a child element
         if (event.target !== privates.root) {
@@ -51,39 +75,37 @@
         }
 
         if (newScale > 0) {
-			// Scaling the graph calls reduceCanvasSize(). This brings it back to place.
-			dx = privates.x;
-			dy = privates.y;
-			
-			// So that the graph follows the gesture
-			dx += event.detail.dx / newScale;
-			dy += event.detail.dy / newScale;
-		
-			// So that the graph is scaled with the gesture cordinate as the center
+            // Scaling the graph calls reduceCanvasSize(). This brings it back to place.
+            dx = privates.x;
+            dy = privates.y;
+            
+            // So that the graph follows the gesture
+            dx += event.detail.dx / newScale;
+            dy += event.detail.dy / newScale;
+        
+            // So that the graph is scaled with the gesture cordinate as the center
             dx -= ((event.detail.pageX - privates.rootOffset.x) * event.detail.ds) / newScale;
             dy -= ((event.detail.pageY - privates.rootOffset.y) * event.detail.ds) / newScale;
             
-            this.scale(newScale);
-			this.translate(
-				dx,
-				dy);
+            graph.scale(newScale);
+            graph.translate(dx, dy);
         }
      };
      
     // create eventListener delegate functions
-    var interactDragStart = function (event) {
-        var privates = this._privates(identifier);
+    var panStart = function (graph, event) {
+        var privates = graph._privates(identifier);
         
         // Do nothing if the event is propagating from a child element
         if (event.target !== privates.root) {
             return event;
         }
-        privates.panPosition = this.translate();
+        privates.panPosition = graph.translate();
     };
     
-    var interactDragMove = function (event) {
-        var privates = this._privates(identifier),
-            scale = this.scale();
+    var panMove = function (graph, event) {
+        var privates = graph._privates(identifier),
+            scale = graph.scale();
         
         // Do nothing if the event is propagating from a child element
         if (event.target !== privates.root) {
@@ -197,6 +219,21 @@
                 privates.defsGroup.appendChild(ca.hoverElement);
             }
         }
+        
+        // Add interact.js event listeners
+        privates.root.addEventListener('interactgesturemove', gestureMove.createDelegate(this));
+        privates.root.addEventListener('interactdragstart', dragStart.createDelegate(this));
+        privates.root.addEventListener('interactdragmove', dragMove.createDelegate(this));
+        privates.root.addEventListener('interactdragend', dragMove.createDelegate(this));
+        
+        // Set as interactable
+        interact.set(privates.root, {
+                gesture: true,
+                drag: true,
+                actionCheck: function (event) {
+                    return 'drag';
+                }
+            });
     };
 
     /**
@@ -247,9 +284,9 @@
         var privates = this._privates(identifier);
         privates.id = bui.settings.idPrefix.graph + graphCounter++;
         privates.container = container;
-    if ( container == null ) {    // don't break here, just throw a message
-        console.error('Warning: Invalid container element specified. Using document.body instead.');
-        privates.container = document.body;
+        if ( container == null ) {    // don't break here, just throw a message
+            console.error('Warning: Invalid container element specified. Using document.body instead.');
+            privates.container = document.body;
         }
         privates.drawables = {};
         privates.idCounter = 0;
@@ -258,19 +295,20 @@
         privates.y = 0;
         privates.highPerformance = bui.settings.initialHighPerformance;
 
+        this.bind(bui.Graph.ListenerType.dragStart,
+                panStart.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Graph.ListenerType.dragMove,
+                panMove.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Graph.ListenerType.dragEnd,
+                panMove.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Graph.ListenerType.gestureMove,
+                gesturePanAndZoom.createDelegate(this),
+                listenerIdentifier(this));
+
         __initialPaintGraph.call(this);
-        
-        //create interact listener function delegates
-        var gestureMove = interactGestureMove.createDelegate(this),
-            dragStart = interactDragStart.createDelegate(this),
-            dragMove = interactDragMove.createDelegate(this);  
-        
-        // add event listeners
-        interact.set(privates.root, {gesture: true, drag: true});
-        privates.root.addEventListener('interactgesturemove', gestureMove);
-        privates.root.addEventListener('interactdragstart', dragStart);
-        privates.root.addEventListener('interactdragmove', dragMove);
-        privates.root.addEventListener('interactdragend', dragMove);
     };
 
     bui.Graph.prototype = {
@@ -769,6 +807,18 @@
         /** @field */
         scale : bui.util.createListenerTypeId(),
         /** @field */
-        translate : bui.util.createListenerTypeId()
+        translate : bui.util.createListenerTypeId(),
+        /** @field */
+        dragStart : bui.util.createListenerTypeId(),
+        /** @field */
+        dragMove : bui.util.createListenerTypeId(),
+        /** @field */
+        dragEnd : bui.util.createListenerTypeId(),
+        /** @field */
+        gestureStart : bui.util.createListenerTypeId(),
+        /** @field */
+        gestureMove : bui.util.createListenerTypeId(),
+        /** @field */
+        gestureEnd : bui.util.createListenerTypeId()
     };
 })(bui);

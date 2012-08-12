@@ -297,7 +297,6 @@ window.interact = (function (window) {
                 cursor: '',
                 ready: function () {
                    if (target.gesture) {
-                        console.log('Gesture starting', target.element.id);
                         events.add(docTarget, moveEvent, gestureMove);
                         addClass(target.element, 'interact-target interact-gesturing');
                         event.preventDefault();
@@ -508,6 +507,8 @@ window.interact = (function (window) {
      * @private
      */
     function resizeMove(event) {
+        event.preventDefault();
+        
         var detail,
             resizeEvent,
             page = getPageXY(event),
@@ -577,6 +578,8 @@ window.interact = (function (window) {
      * @private
      */
     function dragMove(event) {
+        event.preventDefault();
+        
         var detail,
             dragEvent,
             page = getPageXY(event),
@@ -625,6 +628,11 @@ window.interact = (function (window) {
     }
     
     function gestureMove(event) {
+        if (event.touhces < 2) {
+            return;
+        }
+        event.preventDefault();
+        
         var detail,
             gestureEvent,
             page = touchAverage(event),
@@ -654,6 +662,7 @@ window.interact = (function (window) {
                 dy: pageY - y0,
                 pageX: pageX,
                 pageY: pageY,
+                touches: event.touches,
                 distance: distance,
                 scale: gesture.scale,
                 ds: 0,
@@ -685,6 +694,7 @@ window.interact = (function (window) {
                 dy: pageY - prevY,
                 pageX: pageX,
                 pageY: pageY,
+                touches: event.touches,
                 distance: distance,
                 scale: scale,
                 ds: scale - gesture.scale,
@@ -704,9 +714,6 @@ window.interact = (function (window) {
 		} else {
 		//	gesture.scale = 1;
 		}
-
-        // No more auto check once gesture is ready to move
-        // events.remove(docTarget, downEvent, mouseDown)
     }
 
     /**
@@ -719,7 +726,7 @@ window.interact = (function (window) {
 
         // Check if target element or it's parent is interactable
         if (!mouseIsDown && (target = getInteractNode(event.target) || getInteractNode(event.target.parentNode))) {
-            if (target.resize) {
+            if (target.resize || target.drag) {
                 removeClass(target.element, 'interact-resizexy interact-resizex interact-resizey');
 
                 action = target.getAction(event);
@@ -747,8 +754,8 @@ window.interact = (function (window) {
 
         mouseIsDown = true;
         
-        // If it is a multi-touch gesture, keep the target the same
-        if (!(event.touches && event.touches.length > 1 && target)) {
+        // If it is the second touch of a multi-touch gesture, keep the target the same
+        if ((event.touches && event.touches.length < 2) || !target) {
             target = getInteractNode(this) || getInteractNode(event.target);
 		}
 		
@@ -841,6 +848,7 @@ window.interact = (function (window) {
                 dy: pageY - y0,
                 pageX: pageX,
                 pageY: pageY,
+                touches: event.touches,
                 distance: gesture.prevDistance,
                 scale: gesture.scale,
                 ds: gesture.scale,
@@ -899,7 +907,9 @@ window.interact = (function (window) {
 
         classNames = classNames.split(' ');
         for (i = 0; i < classNames.length; i++) {
-            element.classList.add(classNames[i]);
+            if (classNames[i] !== '') {
+                element.classList.add(classNames[i]);
+            }
         }
     }
 
@@ -913,14 +923,16 @@ window.interact = (function (window) {
 
         classNames = classNames.split(' ');
         for (i = 0; i < classNames.length; i++) {
-            element.classList.remove(classNames[i]);
+            if (classNames[i] !== '') {
+                element.classList.remove(classNames[i]);
+            }
         }
     }
 
     /** @private */
     function clearTarget() {
         if (target) {
-            removeClass(target.element, 'interact-target interact-dragging interact-resizing interact-resizexy interact-resizex interact-resizexy');
+            removeClass(target.element, 'interact-target interact-dragging interact-resizing interact-resizex interact-resizey interact-resizexy');
         }
         target = null;
     }
@@ -940,7 +952,7 @@ window.interact = (function (window) {
     /**
      * @function
      * @description Add an element to the list of interact nodes
-     * @param {Object HTMLElement | Object SVGElement} element The DOM Element that will be added
+     * @param {HTMLElement | SVGElement} element The DOM Element that will be added
      * @param {Object} options An object whose properties are the drag/resize options
      */
     interact.set = function (element, options) {
@@ -969,13 +981,18 @@ window.interact = (function (window) {
             interactNodes.push(newNode);
         }
 
-        addClass(element, 'interact-node' + (newNode.resize? ' interact-resizeable': '') + (newNode.drag? ' interact-dragable': ''));
+        addClass(element, [
+                'interact-node',
+                newNode.drag? 'interact-dragable': '',
+                newNode.resize? 'interact-resizeable': '',
+                newNode.gesture? 'interact-gestureable': ''
+            ].join(' '));
     };
 
     /**
      * @function
      * @description Remove an element from the list of interact nodes
-     * @param {Object HTMLElement | Object SVGElement} element The DOM Element that will be removed
+     * @param {HTMLElement | SVGElement} element The DOM Element that will be removed
      */
     interact.unset = function (element) {
         var i = interactNodes.indexOf(element);
@@ -991,7 +1008,7 @@ window.interact = (function (window) {
     /**
      * @function
      * @description Check if an element has been set
-     * @param {Object HTMLElement | Object SVGElement} element The DOM Element that will be searched for
+     * @param {HTMLElement | SVGElement} element The DOM Element that will be searched for
      * @returns bool
      */
     interact.isSet = function(element) {
@@ -1002,8 +1019,8 @@ window.interact = (function (window) {
      * @function
      * @description Simulate mouse down to begin drag/resize on an interactable element
      * @param {String} action The action to be performed - drag, resize, resizex, resizey;
-     * @param {Object HTMLElement | Object SVGElement} element The DOM Element to resize/drag
-     * @param {MouseEvent} [mouseEvent] A mouse event whose pageX/Y coordinates will be the starting point of the interact drag/resize
+     * @param {HTMLElement | SVGElement} element The DOM Element to resize/drag
+     * @param {MouseEvent | TouchEvent} [mouseEvent] A mouse event whose pageX/Y coordinates will be the starting point of the interact drag/resize
      */
     interact.simulate = function (action, element, mouseEvent) {
         var event = {},
