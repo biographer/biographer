@@ -1,7 +1,7 @@
 #ifndef th_layout_h
 #define th_layout_h
 #include "network.h"
-#include "functions.h"
+#include "types.h"
 #include "plugins.h"
 #ifdef SHOWPROGRESS
 #include "netdisplay.h"
@@ -44,7 +44,11 @@ class Layouter{
       VP mov;
       VF force;
       VF dij;
+      VF hardlim;
       VI deg;
+      VI cycles;
+      VVI components;
+      VI nodecomponents;
       vector<bool> tension;
       bool dodebug[P_count-1];
 #ifdef SHOWPROGRESS
@@ -54,10 +58,14 @@ class Layouter{
       double avgsize;
       int progress_step;
       bool show_progress;
+      bool manual;
+      string manual_cmd;
+      int manual_it;
    protected:
       Plugins& plugins;
       void initStep(int step);
       void moveNodes();
+      void resetVars();
       void init();
       vector<step> program;
       bool forked_viewer;

@@ -1,7 +1,7 @@
 #ifndef th_paramedge_h
 #define th_paramedge_h
 #include "types.h"
-#include "functions.h"
+
 #include "network.h"
 class ParamEdge {
    public:
@@ -40,6 +40,29 @@ class ParamEdge {
          double p=cross_param(e2);
          return Point(ref.x+dx*p,ref.y+dy*p);
       }
+      bool cross(const Rect &r){
+         if (cross(ParamEdge(r.TL(),r.TR()))) return true;
+         if (cross(ParamEdge(r.TR(),r.BR()))) return true;
+         if (cross(ParamEdge(r.BR(),r.BL()))) return true;
+         if (cross(ParamEdge(r.BL(),r.TL()))) return true;
+         return false;
+      }
+      double cross_param_smallest(const Rect &re){
+         ParamEdge t(re.TL(),re.TR());
+         ParamEdge r(re.TR(),re.BR());
+         ParamEdge b(re.BR(),re.BL());
+         ParamEdge l(re.BL(),re.TL());
+         double p=DBL_MAX,minp=DBL_MAX;
+         if (cross(t)) p=cross_param(t);
+         if (p<minp) minp=p;
+         if (cross(r)) p=cross_param(r);
+         if (p<minp) minp=p;
+         if (cross(b)) p=cross_param(b);
+         if (p<minp) minp=p;
+         if (cross(l)) p=cross_param(l);
+         if (p<minp) minp=p;
+         return minp;
+      }
       inline double length(){
          return end-start;
       }
@@ -54,7 +77,7 @@ class ParamEdge {
       void re_ref(const Point &p){
          ref=p;
       }
-      Point dist_vec(Point &p){ // points from p to nearst point on line defined by edge
+      Point dist_vec(const Point &p){ // points from p to nearst point on line defined by edge
          return (ref-p)-(unit()*scalar(ref-p,unit()));
       }
       inline Point p(double p){ // Point on edge by parameter p

@@ -6,6 +6,7 @@ const Nodetype inodetypes[]={none,reaction,compound,compound,compound,compound,o
 Network::Network(){
    //default network constructor.
    infile=NULL;
+   hasfixed=false;
 }
 
 
@@ -82,15 +83,11 @@ void Network::addNode(int index, Nodetype _type){
    nodes[index]=Node(_type);
 }
 
-void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir){
-   if((size_t) index>=nodes.size())nodes.resize(index+1);
-   nodes[index]=Node(_type, _name, _width, _height, _x, _y, _dir);
-}
-
-void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir, int _comp){
+void Network::addNode(int index, Nodetype _type, string _name, double _width, double _height, double _x, double _y, double _dir, int _comp, bool _fx){
    //add in a node with all node properties specified (prefered in the algorithms).
    if((size_t) index>=nodes.size())nodes.resize(index+1);
-   nodes[index]=Node(_type, _name, _width, _height, _x, _y, _dir, _comp);
+   nodes[index]=Node(_type, _name, _width, _height, _x, _y, _dir, _comp, _fx);
+   if (_fx) hasfixed=true;
 }
 
 void Network::addCompartment(int index, string _name){
@@ -99,10 +96,11 @@ void Network::addCompartment(int index, string _name){
    compartments[index]=(Compartment(_name));
 }
 
-void Network::addCompartment(int index, double _xmin, double _ymin, double _xmax, double _ymax, string _name){
+void Network::addCompartment(int index, double _xmin, double _ymin, double _xmax, double _ymax, string _name, bool _fx){
    //add in a compartment with all attributes specified.
    if((size_t) index>=compartments.size())compartments.resize(index+1);
-   compartments[index]=(Compartment(_xmin,_ymin,_xmax,_ymax,_name));
+   compartments[index]=(Compartment(_xmin,_ymin,_xmax,_ymax,_name,_fx));
+   if (_fx) hasfixed=true;
 }
 
 void Network::addReaction(int index, const VI* substrates,const VI* products, const VI* catalysts, const VI* activators, const VI* inhibitors){
@@ -182,9 +180,10 @@ void Network::dump(){
 
 
 char scanerr[200];
-#define MSCANF(f,v) if(!(scanf(f,v))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
-#define MSCANF2(f,v,x) if(!(scanf(f,v,x))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
-#define MSCANF3(f,v,x,y) if(!(scanf(f,v,x,y))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
+#define MSCANF(fd,f,v) if(!(fscanf(fd,f,v))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
+#define MSCANF2(fd,f,v,x) if(!(fscanf(fd,f,v,x))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
+#define MSCANF3(fd,f,v,x,y) if(!(fscanf(fd,f,v,x,y))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
+#define MSCANF4(fd,f,v,x,y,z) if(!(fscanf(fd,f,v,x,y,z))){sprintf(scanerr,"error reading %s line %i in %s",f,__LINE__,__FILE__);throw scanerr;}
 void Network::read(const char* file){
    try {
       int numc,ci,i,n,m,p,q,k,_index;
@@ -195,11 +194,12 @@ void Network::read(const char* file){
 //      FILE* old_stdin=stdin;
       printf("importing network\n");
       infile=(char *) file;
-      if (file) freopen(file,"r",stdin);
+      FILE *fd=stdin;
+      if (file) fd=fopen(file,"r");
       ret=1;
-      while (ret>0){ret=scanf(" #%[^\n]",s);}; // remove comment lines
+      while (ret>0){ret=fscanf(fd," #%[^\n]",s);}; // remove comment lines
       if (ret<0) throw "error reading input";
-      MSCANF(" %d\n",&numc); // num compartments
+      MSCANF(fd," %d\n",&numc); // num compartments
       if (numc>2000){
          fprintf(stderr,"too many compartments %d",numc);
          abort();
@@ -207,41 +207,53 @@ void Network::read(const char* file){
       addCompartment(0,"unknown"); //first compartment is witout constraints (you can overwrite its name though)
       printf("number of compartments: %d\n",numc);
       for(i=0;i<numc;i++){
-         MSCANF2(" %d %s\n",&_index,t);
+         MSCANF2(fd," %d %s\n",&_index,t);
+         char fc[2];
+         float _xmin,_ymin,_xmax,_ymax;
+         if (fscanf(fd," %[!]",fc)){
+            MSCANF4(fd,"%f%f%f%f",&_xmin,&_ymin,&_xmax,&_ymax);
+            addCompartment(_index,_xmin,_ymin,_xmax,_ymax,t,true);
+         } else {
+            addCompartment(_index,t);
+         }
          if (_index>numc+1){ // not starting at zero
             fprintf(stderr,"compartment index out of bound %d",_index);
             abort();
          }
-         addCompartment(_index,t);
       }  
       numc++;
-      MSCANF(" %s\n",s); // "///"  
-      MSCANF(" %d",&n); //number of nodes
+      MSCANF(fd," %s\n",s); // "///"  
+      MSCANF(fd," %d",&n); //number of nodes
       printf("number of nodes: %d\n",n);
       if (n>10000){
          fprintf(stderr,"too many nodes %d",n);
          abort();
       }
       for(i=0;i<n;i++){
-         MSCANF(" %d\n",&_index);
+         MSCANF(fd," %d\n",&_index);
          if (_index>=n){
             fprintf(stderr,"node index out of bound %d",_index);
             abort();
          }
-         MSCANF(" %s\n",t);
+         MSCANF(fd," %s\n",t);
          if(strcmp(t,"Compound")==0)_type=compound;
          else if(strcmp(t,"Reaction")==0)_type=reaction;
          else if(strcmp(t,"Other")==0)_type=other;
          else _type=none;
-         MSCANF("%s\n",s);
-         MSCANF("%d\n",&ci); 
-         MSCANF2("%f%f",&_x,&_y);
-         MSCANF3("%f%f%f",& _width,& _height,& _dir);      
-         addNode(_index, _type, s, _width, _height, _x, _y, _dir,ci);
+         MSCANF(fd,"%s\n",s);
+         MSCANF(fd,"%d\n",&ci); 
+         char fc[2];
+         bool fix=false;
+         if (fscanf(fd," %[!]",fc)) fix=true;
+         MSCANF(fd,"%f",&_x);
+         if (fscanf(fd," %[!]",fc)) fix=true;
+         MSCANF(fd,"%f",&_y);
+         MSCANF3(fd,"%f%f%f",& _width,& _height,& _dir);      
+         addNode(_index, _type, s, _width, _height, _x, _y, _dir,ci,fix);
          printf("added %s %s %i\n",t,s,_index);
       }
-      MSCANF(" %s\n",s); // "///"
-      MSCANF(" %d\n",&m); // numer of edges
+      MSCANF(fd," %s\n",s); // "///"
+      MSCANF(fd," %d\n",&m); // numer of edges
       printf("number of edges: %d\n",m);
       if (m>40000){
          fprintf(stderr,"too many edges %d",m);
@@ -249,7 +261,7 @@ void Network::read(const char* file){
       }
       fflush(stdout);
       for(i=0;i<m;i++){
-         MSCANF3("%s %d %d\n",s,&p,&q);
+         MSCANF3(fd,"%s %d %d\n",s,&p,&q);
          if (p>=n){
             fprintf(stderr,"edge node index out of bound %d",p);
             abort();
@@ -266,7 +278,7 @@ void Network::read(const char* file){
          }
          addEdge(p,q,(Edgetype)k);
       }
-      freopen("/dev/tty","r",stdin);
+      //freopen("/dev/tty","r",stdin);
    } catch (char* err){
       cout << err <<endl;
       abort();
@@ -337,7 +349,7 @@ void Network::dumpNodes(FILE* out){
    n=compartments.size();
    double cpminy=inf;
    double cpmaxy=-inf;
-   int cpmin,cpmax;
+   int cpmin=0,cpmax=0;
    for(i=0;i<n;i++){
       if (compartments[i].ymin<cpminy){
          cpmin=i;
@@ -404,6 +416,30 @@ Rect Network::getBB(bool includeCompartments){
    }
    return Rect(xmin,ymin,xmax,ymax);
 }
+
+int Network::edgeCycles(int edge){ // number of cycles an edge takes part in (not combinatorically)
+   VI visited=VI(edges.size()); // vector of visited edges;
+   visited[edge]=1; // current edge is visited
+   int found=0;
+   edgeCyclesRec(edges[edge].from,edges[edge].to,visited,found);
+   return found;
+}
+void Network::edgeCyclesRec(int node, int target, VI &visited, int &found){
+   VI &neigh=nodes[node].neighbors;
+   for (int i=0,n=neigh.size();i<n;i++){
+      if (visited[neigh[i]]) continue;
+      int other=edges[neigh[i]].from;
+      if (node==other) other=edges[neigh[i]].to; // get other node of edge
+      visited[neigh[i]]=1;
+      if (other==target) {
+         found++;
+         return;
+      }
+      edgeCyclesRec(other,target,visited,found);
+   }
+}
+
+
 #ifdef USEJSON
 
 double json_object_get_number_member(JsonObject* jobj,const gchar *name){
@@ -570,4 +606,5 @@ void Network::writeJSON(JSONcontext* ctx,const char* file){
    
    
 }
+
 #endif

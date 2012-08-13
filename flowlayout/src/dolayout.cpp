@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 int main(int argc,char *argv[]){
+   srand ( 100112 );
    clock_t start_time, end_time;
    start_time=clock();
    //freopen("newdata.txt","r",stdin);

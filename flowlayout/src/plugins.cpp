@@ -4,15 +4,18 @@
 #ifdef SHOWPROGRESS
 #include "netdisplay.h"
 #endif
+#define MARGIN state.avgsize/2
+
+
 #include "paramedge.cpp"
 #include "edgerouting.cpp"
 
-#define MARGIN state.avgsize/2
 
 Plugins glob_pgs;
 Plugins& register_plugins(){
    if (glob_pgs.size()) return glob_pgs; // already initialized
    glob_pgs.registerPlugin(P_force_adj,"force_adj",force_adj);
+   glob_pgs.registerPlugin(P_force_adj_strong,"force_adj_strong",force_adj_strong);
    glob_pgs.registerPlugin(P_torque_adj,"torque_adj",torque_adj);
    glob_pgs.registerPlugin(P_force_nadj,"force_nadj",force_nadj);
    glob_pgs.registerPlugin(P_expand,"expand",expand);
@@ -22,6 +25,7 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_adjust_compartments,"adjust_compartments",adjust_compartments);
    glob_pgs.registerPlugin(P_adjust_compartments_fixed,"adjust_compartments_fixed",adjust_compartments_fixed);
    glob_pgs.registerPlugin(P_fix_compartments,"fix_compartments",fix_compartments);
+   glob_pgs.registerPlugin(P_push_components,"push_components",push_components);
    glob_pgs.registerPlugin(P_init_layout,"init_layout",init_layout);
    glob_pgs.registerPlugin(P_min_edge_crossing,"min_edge_crossing",min_edge_crossing);
    glob_pgs.registerPlugin(P_min_edge_crossing_multi,"min_edge_crossing_multi",min_edge_crossing_multi);
@@ -31,6 +35,8 @@ Plugins& register_plugins(){
    glob_pgs.registerPlugin(P_rotate,"rotate",rotate,T_pos);
    glob_pgs.registerPlugin(P_stack_rotate,"stack_rotate",stack_rotate,T_pos);
    glob_pgs.registerPlugin(P_route_edges,"route_edges",route_edges,T_pos);
+   glob_pgs.registerPlugin(P_route_edges2,"route_edges2",route_edges2,T_pos);
+   glob_pgs.registerPlugin(P_unfix_all,"unfix_all",unfix_all,T_pos);
    return glob_pgs;
 }
 void Plugins::registerPlugin(enumP pgn, string name, plugin_func_ptr pfunc, enumPT type, void* persist){
@@ -55,6 +61,9 @@ int _find(VI* nd,int idx);
 double _getwidths(Network &nw,VI* nd);
 double _getheights(Network &nw,VI* nd);
 double sign(double x);
+Point rndvec(){ // return small random vector
+   return Point(zero*(rand() % 10000)/10000,zero*(rand() % 10000)/10000);
+}
 #ifdef STACKX
 #define M_INIDIM _getheights
 #define M_INIDIR1 y
@@ -143,12 +152,12 @@ void init_layout(Layouter &state,plugin& pg, double scale, int iter, double temp
 }
 
 
-void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+void __force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug, int strong){
    /* This function calculates the force induced by edges (or adjacent nodes), and updates the displacements (movements) of nodes accordingly.
       the force induced by an edge at its ideal length is 0. Otherwise, force=(ideal_length-length)^2.
       we move both the compounds and the reaction along the edge such that the edge tends to its ideal length.
    */
-   double d,ideal;
+   double d;
    Point vec; //vector from state.nw.nodes[n1] to state.nw.nodes[n2];
    int n1,n2,m,n,i;
    Edgetype _type;
@@ -162,20 +171,19 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, 
       _type=state.nw.edges[i].type; //edge type.
       
       vec=state.nw.nodes[n2]-state.nw.nodes[n1];
-      ideal=state.dij[i]; //ideal length of edge-i.
       d=dist(state.nw.nodes[n1],state.nw.nodes[n2]); //length of edge-i.
       
       //distantal movements;
       if(fabs(d)<zero){
 //         if(_type==substrate)state.mov[n2].y+=(ideal/n); //substrates at top;
-         if(_type==substrate){state.mov[n2].y-=ideal*factor*scale;} //substrates at top;
-         else if(_type==product){state.mov[n2].y+=ideal*factor*scale;}  //products at bottom;
+         if(_type==substrate){state.mov[n2].y-=state.dij[i]*factor*scale;} //substrates at top;
+         else if(_type==product){state.mov[n2].y+=state.dij[i]*factor*scale;}  //products at bottom;
          else{
             //others on two sides.
             if(_left) {
-               state.mov[n2].x-=ideal*factor*scale;
+               state.mov[n2].x-=state.dij[i]*factor*scale;
             } else {
-               state.mov[n2].x+=ideal*factor*scale;
+               state.mov[n2].x+=state.dij[i]*factor*scale;
             }
             _left=!_left;
          }
@@ -187,7 +195,25 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, 
          //state.mov[n2].x+=(vec.x/d*(ideal-d)/n);
 /*         double nonlin=(ideal-d)/ideal*10;
          nonlin*=nonlin;*/
-         Point mv=vec/d*(ideal-d)*factor*scale;//*nonlin;
+         Point mv;
+         if (strong){
+            double d2=d-state.hardlim[i];
+            double ideal=state.dij[i]-state.hardlim[i];
+            if (d2<=0){ // within hardlimit i.e. node collision
+               mv=vec/d*state.avgsize*1000*scale;
+            } else { 
+               mv=-vec/d*(1/(d2/ideal)*(d2/ideal-1)*(d2/ideal-1)*(d2/ideal-1))*ideal*factor*scale*10/(state.cycles[i]+1); // nonlinear force
+               
+/*               if (state.cycles[i]==0){
+                  mv=-vec/d*(1/(d2/ideal)*(d2/ideal-1)*(d2/ideal-1)*(d2/ideal-1))*ideal*factor*scale*10; // nonlinear force
+               } else {
+                  mv=-vec/d*(-1/(d2/ideal)+log(d2/ideal))*ideal*factor*scale/state.cycles[i];
+                  //mv=-vec/d*(1/(d2/ideal)*log(d2/ideal))*ideal*factor*scale/state.cycles[i]; // nonlinear force
+               }*/
+            }
+         } else {
+            mv=vec/d*(state.dij[i]-d)*factor*scale;
+         }
          state.mov[n2]+=mv;
          state.mov[n1]-=mv;
          state.force[n1]+=manh(mv);
@@ -199,6 +225,12 @@ void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, 
          
       }
    }
+}
+void force_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   __force_adj(state,pg,scale,iter,temp,debug,0);
+}
+void force_adj_strong(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   __force_adj(state,pg,scale,iter,temp,debug,1);
 }
 void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    /* This function calculates the force induced by edges (or adjacent nodes), and updates the displacements (movements) of nodes accordingly.
@@ -212,36 +244,61 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
    int m,n,i,j;
    m=state.nw.edges.size();
    n=state.nw.nodes.size();
-   for (i=0;i<n;i++){ // set direction of reactions
-      if (state.nw.nodes[i].type!=reaction) continue;
+   for (i=0;i<n;i++){ // set direction of reactions & compounds
       const VI &nb=state.nw.nodes[i].neighbors;
       int s=nb.size();
       Point dvec(0,0);
-      for (j=0;j<s;j++){
-         Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
-         int n2=state.nw.edges[nb[j]].to; // reactant index
-         Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
-         if (_type==substrate) {
-            dvec+=to_left(vec,-0.5*PI); // could be unit vector, but we just try with full vector (preferres longer edges)
-         } else if (_type==product) {
-            dvec+=to_left(vec,+0.5*PI);
-         } else {
-            // ignoring modulators (as we don't know which side is better)
-         }
-      }
-      for (j=0;j<s;j++){ // now do the modulators as we now can decide which side is better (based on what we know from substrates and products)
-         Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
-         int n2=state.nw.edges[nb[j]].to; // reactant index
-         Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
-         if (_type==catalyst || _type==activator || _type==inhibitor){
-            if (scalar(vec,dvec)>=0){
-               dvec+=vec;
+      if (state.nw.nodes[i].type==reaction){
+         for (j=0;j<s;j++){
+            Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+            int n2=state.nw.edges[nb[j]].to; // reactant index
+            Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+            if (_type==substrate) {
+               dvec+=to_left(vec,-0.5*PI); // could be unit vector, but we just try with full vector (preferres longer edges)
+            } else if (_type==product) {
+               dvec+=to_left(vec,+0.5*PI);
             } else {
-               dvec-=vec;
+               // ignoring modulators (as we don't know which side is better)
             }
          }
+         for (j=0;j<s;j++){ // now do the modulators as we now can decide which side is better (based on what we know from substrates and products)
+            Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+            int n2=state.nw.edges[nb[j]].to; // reactant index
+            Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+            if (_type==catalyst || _type==activator || _type==inhibitor){
+               if (scalar(vec,dvec)>=0){
+                  dvec+=vec;
+               } else {
+                  dvec-=vec;
+               }
+            }
+         }
+         state.nw.nodes[i].dir=angle(dvec);
+      } else {
+         for (j=0;j<s;j++){
+            Edgetype _type=state.nw.edges[nb[j]].type; //edge type.
+            int n2;
+            if (_type==substrate || _type==catalyst || _type==inhibitor || _type==activator){
+               n2=state.nw.edges[nb[j]].from;
+               Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+               dvec+=to_left(vec,0.5*PI);
+            } else if (_type==product){ 
+               n2=state.nw.edges[nb[j]].from;
+               Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+               dvec+=to_left(vec,-0.5*PI);
+            } else if (_type==directed){ 
+               n2=state.nw.edges[nb[j]].to;
+               int sgn=1;
+               if (n2==i) {
+                  n2=state.nw.edges[nb[j]].from;
+                  sgn=-1;
+               }
+               Point vec=state.nw.nodes[n2]-state.nw.nodes[i];
+               dvec+=to_left(vec,sgn*0.5*PI);
+            }
+         }
+         state.nw.nodes[i].dir=angle(dvec);
       }
-      state.nw.nodes[i].dir=angle(dvec);
    }
 /*   for (i=0;i<n;i++){ // set direction of reactions
       if (state.nw.nodes[i].type!=reaction) continue;
@@ -291,7 +348,9 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
 
       double alpha=angle(vec); //angle of the edge w.r.t. the +x axis. i_alpha is the corresponding ideal angle.
       double i_alpha;
-      double beta;
+      double beta=0;
+      
+      // reaction forces;
       if(_type==substrate){
          //substates in above.
          i_alpha=0.5*PI+state.nw.nodes[n1].dir;
@@ -302,7 +361,7 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
          i_alpha=1.5*PI+state.nw.nodes[n1].dir;
          beta=lim(i_alpha-alpha);
       }
-      else{ 
+      else if (_type==catalyst || _type==activator || _type==inhibitor){ 
          //other compounds, rotating to the nearer side.
          i_alpha=state.nw.nodes[n1].dir; beta=lim(i_alpha-alpha);
          double i_alpha1=PI+state.nw.nodes[n1].dir, beta1=lim(i_alpha1-alpha);
@@ -311,11 +370,6 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
             i_alpha=i_alpha1;
          }
       }
-      // adding some noise for large angles; this results in nodes turning around in reverse direction (especially for large betas)
-/*      if (rand() % (360^2) < (fabs(beta) *180 / PI)^2){ // for beta==PI -> 25:75
-         if (beta<0) beta+=2*PI;
-         if (beta>0) beta-=2*PI;
-      }*/
 /*      if (fabs(beta)>PI/2 && state.tension[n2] && rand()%10==1){ // node is locked and cannot turn around -> mirror node on desired direction. + invert beta
          double delta;
          if (beta<0) delta=beta+PI;
@@ -328,14 +382,33 @@ void torque_adj(Layouter &state,plugin& pg, double scale, int iter, double temp,
          Point mv=to_left(vec,factor*scale*beta)-vec;
          state.mov[n2]+=mv;//angular movement; 
          state.mov[n1]-=mv;
-//         state.rot[n1]-=(factor*scale*beta); //adjust the default direction of the reaction a little bit (to the opposite direaction).
          state.force[n2]+=manh(mv);
          state.force[n1]+=manh(mv);
 #ifdef SHOWPROGRESS
          if (debug) state.debug[n2].push_back(forcevec(mv,debug));
          if (debug) state.debug[n1].push_back(forcevec(-mv,debug));
 #endif
-         
+      //compound forces
+      if (_type==substrate || _type==catalyst || _type==inhibitor || _type==activator){
+         i_alpha=0.5*PI+state.nw.nodes[n2].dir;
+         beta=lim(i_alpha-alpha);
+      } else if (_type==product){
+         i_alpha=-0.5*PI+state.nw.nodes[n2].dir;
+         beta=lim(i_alpha-alpha);
+      } else if (_type==directed){ // note: this has to account for both nodes at once
+         i_alpha=angle(Point(-0.5*PI+state.nw.nodes[n1].dir)+Point(-0.5*PI+state.nw.nodes[n2].dir));
+         beta=lim(i_alpha-alpha);
+      }
+      mv=to_left(vec,factor*scale*beta)-vec;
+      state.mov[n2]+=mv;//angular movement; 
+      state.mov[n1]-=mv;
+      state.force[n2]+=manh(mv);
+      state.force[n1]+=manh(mv);
+      #ifdef SHOWPROGRESS
+      if (debug) state.debug[n2].push_back(forcevec(mv,debug));
+      if (debug) state.debug[n1].push_back(forcevec(-mv,debug));
+      #endif
+      
 //      }
    }
    
@@ -393,25 +466,30 @@ void force_nadj(Layouter &state,plugin& pg, double scale, int iter, double temp,
 
 void expand(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int n1,n2,n=state.nw.nodes.size();
-   double d,ideal;
+   double d;
    Point vec;
+   double thr=state.avgsize*2;
    
    for(n1=0;n1<n;n1++){
       for(n2=n1+1;n2<n;n2++){
          if (state.nw.isNeighbor(n1,n2)) continue;
-         double thr=state.avgsize*2;
+         if (state.nodecomponents[n1]!=state.nodecomponents[n2]) continue; // do not separate completely unconnected nodes
          vec=state.nw.nodes[n2]-state.nw.nodes[n1]; //the vector from node-n1 to node-n2.
          d=norm(vec);
-         if (d<thr) continue; //expansion only for distant nodes
+         if (d<zero) {
+            state.nw.nodes[n1]+=rndvec();
+            continue;
+         }
+//         if (d>state.avgsize*10) continue; // avoid force over too large distances
          //vec=unit(vec)*max(0.0,min(norm(vec)/thr,1-(norm(vec)-thr)/4))*state.avgsize*scale;
-         vec=(unit(vec)*min(state.avgsize,norm(vec)-thr)+(1-temp)*state.avgsize)*scale;
+         vec=(unit(vec)*min(state.avgsize,max(0.0,norm(vec)-thr))+(1-temp)*state.avgsize)*scale;
          state.mov[n1]-=vec;
          state.mov[n2]+=vec;
          state.force[n1]+=manh(vec);
          state.force[n2]+=manh(vec);
          #ifdef SHOWPROGRESS
-         if (debug) state.debug[n1].push_back(forcevec(-vec,debug));
-         if (debug) state.debug[n2].push_back(forcevec(vec,debug));
+//         if (debug) state.debug[n1].push_back(forcevec(-vec,debug));
+//         if (debug) state.debug[n2].push_back(forcevec(vec,debug));
          #endif
       }
    }
@@ -453,7 +531,7 @@ void limit_mov(Layouter &state,plugin& pg, double scale, int iter, double temp, 
 }
 void node_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int n=state.nw.nodes.size(),n1,n2;
-   bool repeat=true;
+//   bool repeat=true;
    double d=MARGIN;
 /*   while (repeat){
       repeat=false;*/
@@ -503,6 +581,14 @@ void node_collision(Layouter &state,plugin& pg, double scale, int iter, double t
       }
    //}   
 }
+void unfix_all(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   for (int i=0,n=state.nw.nodes.size();i<n;i++){
+      state.nw.nodes[i].fixed=false;
+   }
+   state.nw.hasfixed=false;
+   
+}
+
 void rotate(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int n=state.nw.nodes.size();
    Point com(0,0); // center of mass
@@ -590,7 +676,7 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
       }
       if(state.nw.nodes[i].y+state.nw.nodes[i].height/2+d>state.nw.compartments[comp].ymax){
          w=state.nw.compartments[comp].ymax-state.nw.nodes[i].y-state.nw.nodes[i].height/2-d;
-         vec.y+=w*scale*factor*(1+9*(1-temp));
+         vec.y+=w*scale*factor*(1+9*(1-temp)); // FIXME if factor is not 1/10 the 9 is not correct anymore
       }
       state.mov[i]+=vec;
       state.force[i]+=manh(vec);
@@ -604,7 +690,6 @@ void force_compartments(Layouter &state,plugin& pg, double scale, int iter, doub
 void compartment_collision(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int i,comp;
    int n=state.nw.nodes.size();
-   double w;
    double d=MARGIN;
    for(i=0;i<n;i++){
       comp=state.nw.nodes[i].compartment; //the compartment which node-i belongs to.
@@ -677,7 +762,7 @@ void distribute_edges(Layouter &state,plugin& pg, double scale, int iter, double
 //         if (beta==PI) beta=0; // don't know in which directions; may cause problems in some cases so silently ignored
          d=dist(state.nw.nodes[(*neighbors)[i]],baseNode);
          if (state.nw.nodes[k].type==reaction) beta*=strength_rea;
-         Point mv=(to_left(vec,beta*factor*scale)-vec);
+         Point mv=(scale>1 ? (to_left(vec,beta*factor)-vec)*scale : to_left(vec,beta*factor*scale)-vec);
 //         Point mvj=(to_left(vecj,-beta*factor*scale)-vecj)/2;
 //         Point mvjj=(to_left(vecjj,-beta*factor*scale)-vecjj)/2;
          state.mov[(*neighbors)[i]]+=mv;
@@ -766,12 +851,57 @@ void adjust_compartments(Layouter &state,plugin& pg, double scale, int iter, dou
       }
    }
 }
+enum adj {left,top,right,bottom}; // WARNING this needs to be the same order as xmin,ymin,xmax,ymax of Rect
+class Adjacency{
+   public:
+      Adjacency():left(VI()),top(VI()),right(VI()),bottom(VI()){};
+      VI& acs(int idx){
+         switch (idx) {
+            case 0: return left;
+            case 1: return top;
+            case 2: return right;
+            case 3: return bottom;
+            default: abort();
+         }
+      }
+      VI left,top,right,bottom;
+};
+
+VCPB* adjline(vector<Adjacency> &a, int idx, int dir, vector<VI>& visit){
+   if (visit.size()<a.size()) visit.resize(a.size());
+   if (visit[idx].size()<4) visit[idx].resize(4);
+   if (visit[idx][dir]) return NULL;
+   VCPB* ret=new VCPB;
+   ret->push_back(CompartmentBorder(idx,dir));
+   visit[idx][dir]=1;
+   VI& neigh=a[idx].acs(dir);
+   
+   for (int i=0,is=neigh.size();i<is;i++){ // find neighbor compartments assigned to current copmartment and direction
+      VCPB* sub=adjline(a,neigh[i],(dir+2) % 4,visit);
+      if (sub) {
+         ret->insert(ret->end(),sub->begin(),sub->end());
+         delete sub;
+      }
+   }
+   for (int i=1,is=a.size();i<is;i++){ // find compartments which have current compartment and direction assigned as neighbor#
+      VI& neigh2=a[i].acs((dir+2) % 4);
+      if (find(neigh2.begin(),neigh2.end(),idx)!=neigh2.end()){ // found current compartment
+         VCPB* sub=adjline(a,i,(dir+2) % 4,visit);
+         if (sub) {
+            ret->insert(ret->end(),sub->begin(),sub->end());
+            delete sub;
+         }
+      }
+   }
+   //sort(ret->begin(),ret->end());
+   return ret;
+}
 void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
    int cn=state.nw.compartments.size();
    int i,j;  
    for(i=1;i<cn;i++){
       for (j=i+1;j<cn;j++){
-         //adjusting the compartments so that there is no gap between adjacent ones.
+         //adjusting the compartments so that there is no overlap between them.
          // Note: there is no force to bring compartments together if they don't overlap. this force should come from the connections between the compartments
          const Compartment &cpi=state.nw.compartments[i];
          const Compartment &cpj=state.nw.compartments[j];
@@ -803,6 +933,7 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          }
       }
    }
+   //state.nd.show(); // FIXME this is just for debug; remove!!
    // expanding compartments as much as possible
    double xmin=DBL_MAX,xmax=-DBL_MAX,ymin=DBL_MAX,ymax=-DBL_MAX;
    for(i=1;i<cn;i++){
@@ -812,14 +943,20 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
       if (cpi.xmin<xmin) xmin=cpi.xmin;
       if (cpi.ymin<ymin) ymin=cpi.ymin;
    }
+   vector<Adjacency> a(cn); // which compartments are adjacent on which size of compartment
+   double d=state.avgsize/10000; // all compartment borders that are situated in a -d,+d environment are assumed to be on one line
    for(i=1;i<cn;i++){
       Compartment &cpi=state.nw.compartments[i];
       double where=xmin;
       for (j=1;j<cn;j++){
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
-         if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if exapnding
-            if (cpj.xmin<cpi.xmax && cpj.xmax>where) where=cpj.xmax;
+         if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if expanding; FIXME do we need to let close compartment "glide" in a d environment?
+            if (cpj.xmax<cpi.xmin+d && cpj.xmax>=where-d) { // is compartment j left of compartment i and is it closer than where
+               if (cpj.xmax>where+d) a[i].left.clear(); // this is a new position so forget about all other neighbors we collected so far
+               a[i].left.push_back(j);
+               where=cpj.xmax;
+            }
          }
       }
       if (where<cpi.xmin) cpi.xmin=where; // move to left
@@ -828,7 +965,11 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.ymax>cpi.ymin && cpj.ymin<cpi.ymax){ // could collide if exapnding
-            if (cpj.xmax>cpi.xmin && cpj.xmin<where) where=cpj.xmin;
+            if (cpj.xmin>cpi.xmax-d && cpj.xmin<=where+d) {
+               if (cpj.xmin<where-d) a[i].right.clear();
+               a[i].right.push_back(j);
+               where=cpj.xmin;
+            }
          }
       }
       if (where>cpi.xmax) cpi.xmax=where; // move to right
@@ -837,83 +978,240 @@ void fix_compartments(Layouter &state,plugin& pg, double scale, int iter, double
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.xmax>cpi.xmin && cpj.xmin<cpi.xmax){ // could collide if exapnding
-            if (cpj.ymin<cpi.ymax && cpj.ymax>where) where=cpj.ymax;
+            if (cpj.ymax<cpi.ymin+d && cpj.ymax>=where-d) {
+               if (cpj.ymax>where+d) a[i].top.clear();
+               a[i].top.push_back(j);
+               where=cpj.ymax;
+            }
          }
       }
-      if (where<cpi.ymin) cpi.ymin=where; // move to left
+      if (where<cpi.ymin) cpi.ymin=where; // move to top
       where=ymax;
       for (j=1;j<cn;j++){
          if (i==j) continue;
          const Compartment &cpj=state.nw.compartments[j];
          if (cpj.xmax>cpi.xmin && cpj.xmin<cpi.xmax){ // could collide if exapnding
-            if (cpj.ymax>cpi.ymin && cpj.ymin<where) where=cpj.ymin;
+            if (cpj.ymin>cpi.ymax-d && cpj.ymin<=where+d) {
+               if (cpj.ymin<where-d) a[i].bottom.clear();
+               a[i].bottom.push_back(j);
+               where=cpj.ymin;
+            }
          }
       }
-      if (where>cpi.ymax) cpi.ymax=where; // move to right
+      if (where>cpi.ymax) cpi.ymax=where; // move to bottom
    }
+   state.nw.compartment_borders.clear();
+   vector<VI> visit;
+   for(i=1;i<cn;i++){ // create inner compartment border lines
+      for (int j=0;j<4;j++){
+         VCPB* line=adjline(a,i,j,visit);
+         if (line && line->size()>1) {
+            int idx=state.nw.compartment_borders.size();
+            for (int k=0,kn=line->size();k<kn;k++){
+               state.nw.compartments[(*line)[k].compartment].border_index.acs((*line)[k].dir)=idx; //setting compartment vorder index to corresponding compartments
+            }
+            state.nw.compartment_borders.push_back(*line); // store compartment border
+         }
+         if (line) delete line;
+      }
+   }
+   for (int j=0;j<4;j++){ // create outer compartment border lines
+      VCPB line;
+      int idx=state.nw.compartment_borders.size();
+      for(i=1;i<cn;i++){
+         if (a[i].acs(j).size()==0){ // an outer border
+            line.push_back(CompartmentBorder(i,j));
+            state.nw.compartments[i].border_index.acs(j)=idx;
+         }
+      }
+      state.nw.compartment_borders.push_back(line); // store compartment border
+   }
+   //state.nd.show(); // FIXME this is just for debug; remove!!
+   
 }
-enum __dir {
-   dir_LR,dir_TB
-};
-void __move(Layouter &state, double pos, double d, __dir what){
+void __move(Layouter &state, double pos, double d, int dir){
    // moves compartment borders within a certain range of pos by d in the direction of what
    int i;
    int cn=state.nw.compartments.size();
+   int n=state.nw.nodes.size();
+   pos-=d/1000; // just to be sure to get also all borders exactly at pos
+   double d2=d+(d<0 ? -state.avgsize: state.avgsize); // d plus some buffer zone
+   if (dir>=2) dir-=2; // only x or y direction
+   VI pushcomp(cn); // indicate which coompartment will be pushed
+   for(i=1;i<cn;i++){ // check whether compartments are on the side that is pushed away
+      Compartment &cp=state.nw.compartments[i];
+      pushcomp[i]=0;
+      if (dir==0 && cp.xmin-pos*d>0 && cp.xmax-pos*d>0) pushcomp[i]=1;
+      if (dir==1 && cp.ymin-pos*d>0 && cp.ymax-pos*d>0) pushcomp[i]=1;
+   }
    VF ps; // all positions
    for(i=1;i<cn;i++){
-      if (what==dir_LR) ps.push_back(state.nw.compartments[i].xmin);
-      if (what==dir_LR) ps.push_back(state.nw.compartments[i].xmax);
-      if (what==dir_TB) ps.push_back(state.nw.compartments[i].ymin);
-      if (what==dir_TB) ps.push_back(state.nw.compartments[i].ymax);
+      if (dir==0) { // x direction
+         ps.push_back(state.nw.compartments[i].xmin);
+         ps.push_back(state.nw.compartments[i].xmax);
+      } else { // y direction
+         ps.push_back(state.nw.compartments[i].ymin);
+         ps.push_back(state.nw.compartments[i].ymax);
+      }
+   }
+   for(i=1;i<n;i++){
+      Node &nd=state.nw.nodes[i];
+      if (nd.compartment==0 || pushcomp[nd.compartment]==0) continue; // don't consider nodes from compartments that are not pushed
+         if (dir==0) { // x direction
+         ps.push_back(nd.x);
+      } else { // y direction
+         ps.push_back(nd.y);
+      }
    }
    sort(ps.begin(),ps.end());
+   int psn=ps.size() ;
    i=0;
-   while (i<ps.size() && ps[i]<pos) i++;
-   double pos2=pos+d;
+   while (i<psn && ps[i]<pos) i++;
+   double pos2=pos+d2;
    if (d<0){
       i--;
       while (i>=0 && ps[i]>pos2) { // find all lines in range pos-|d| .. pos; if found, extend range to ps[i]-|d| .. pos
-         pos2=ps[i]+d;
+         pos2=ps[i]+d2;
          i--;
       }
    } else {
-      while (i<ps.size() && ps[i]<pos2) { // same for range pos .. pos +|d|
-         pos2=ps[i]+d;
+      while (i<psn && ps[i]<pos2) { // same for range pos .. pos +|d|
+         pos2=ps[i]+d2;
          i++;
       }
    }
    if (pos>pos2) swap(pos,pos2);
    for(i=1;i<cn;i++){ //the 0-th compartment is the infinite plane, so we start from index 1.
       Compartment &cp=state.nw.compartments[i];
-      if (what==dir_LR && cp.xmin>=pos && cp.xmin<=pos2) cp.xmin+=d;
-      if (what==dir_LR && cp.xmax>=pos && cp.xmax<=pos2) cp.xmax+=d;
-      if (what==dir_TB && cp.ymin>=pos && cp.ymin<=pos2) cp.ymin+=d;
-      if (what==dir_TB && cp.ymax>=pos && cp.ymax<=pos2) cp.ymax+=d;
+      if (dir==0) { // x direction
+         if (cp.xmin>=pos && cp.xmin<=pos2) cp.xmin+=d; // move compartment borders in range pos..pos2 by d
+         if (cp.xmax>=pos && cp.xmax<=pos2) cp.xmax+=d;
+      } else { // y direction
+         if (cp.ymin>=pos && cp.ymin<=pos2) cp.ymin+=d;
+         if (cp.ymax>=pos && cp.ymax<=pos2) cp.ymax+=d;
+      }
+   }
+   for (int i=0;i<n;i++){ // shifting all nodes on the corresponding side of 'pos' to the corresponding side
+      Node &nd=state.nw.nodes[i];
+      if (nd.compartment==0 || pushcomp[nd.compartment]==0) continue; // don't consider nodes from compartments that are not pushed
+      if (dir==0){
+         if (nd.x>=pos && nd.x<=pos2) nd.x+=d;
+      } else {
+         if (nd.y>=pos && nd.y<=pos2) nd.y+=d;
+      }
    }
 }
+void __moveall(Layouter &state, double where, double diff, int dir){ // moves everything left or right (dependent on sgn d) by d
+   where-=diff/1000; // just to be sure to get also all borders exactly at where
+   int cn=state.nw.compartments.size();
+   for (int c=1;c<cn;c++){ // shifting all compartment borders on the corresponding side of 'where' to the corresponding side
+      Compartment &cp=state.nw.compartments[c];
+      if ((cp.acs(dir)-where)*diff>0) cp.acs(dir)+=diff;
+      if ((cp.acs((dir+2) % 4)-where)*diff>0) cp.acs((dir +2) % 4)+=diff; // the other border on the same axis
+   }
+/*   if (dir>=2) dir-=2; // for nodes we only have x,y coordinates (not xmin,ymin,xmay,ymax)
+   int n=state.nw.nodes.size();
+   for (int i=0;i<n;i++){ // shifting all nodes on the corresponding side of 'where' to the corresponding side
+      Node &nd=state.nw.nodes[i];
+      if (dir==0){
+         if ((nd.x-where)*diff>0) nd.x+=diff;
+      } else {
+         if ((nd.y-where)*diff>0) nd.y+=diff;
+      }
+   }*/
+   
+}
 void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
-   int n=state.nw.nodes.size(),cn=state.nw.compartments.size();
+   int n=state.nw.nodes.size(),cn=state.nw.compartments.size(),cbn=state.nw.compartment_borders.size();
    int i,c;  
    VCP newpos(cn);
+   VCP forces(cn);
+   vector<VI> numbers(cn);
    double d=MARGIN; // minimum distance to node boundaries
    for(c=1;c<cn;c++){ //the 0-th compartment is the infinite plane, so we start from index 1.
-      //initialization the rectangles.
-      newpos[c].xmin=newpos[c].ymin=DBL_MAX;
-      newpos[c].xmax=newpos[c].ymax=-DBL_MAX;
+      for (i=0;i<4;i++){
+         newpos[c].acs(i)=state.nw.compartments[c].acs(i);
+      }
+      numbers[c].resize(4);
    }
-   double xmin=DBL_MAX,ymin=DBL_MAX,xmax=-DBL_MAX,ymax=-DBL_MAX;
    for(i=0;i<n;i++){
-      //getting bbox of contained nodes; considering node sizes
+      //get forces from nodes outside of their compartments
       c=state.nw.nodes[i].compartment;
-      if(c==0)continue;
-      if(state.nw.nodes[i].x-state.nw.nodes[i].width/2-d<newpos[c].xmin) newpos[c].xmin=state.nw.nodes[i].x-state.nw.nodes[i].width/2-d;
-      if(state.nw.nodes[i].x+state.nw.nodes[i].width/2+d>newpos[c].xmax) newpos[c].xmax=state.nw.nodes[i].x+state.nw.nodes[i].width/2+d;
-      if(state.nw.nodes[i].y-state.nw.nodes[i].height/2-d<newpos[c].ymin) newpos[c].ymin=state.nw.nodes[i].y-state.nw.nodes[i].height/2-d;
-      if(state.nw.nodes[i].y+state.nw.nodes[i].height/2+d>newpos[c].ymax) newpos[c].ymax=state.nw.nodes[i].y+state.nw.nodes[i].height/2+d;
-      if (newpos[c].xmin<xmin) xmin=newpos[c].xmin;
-      if (newpos[c].ymin<ymin) ymin=newpos[c].ymin;
-      if (newpos[c].xmax>xmax) xmax=newpos[c].xmax;
-      if (newpos[c].ymax>ymax) ymax=newpos[c].ymax;
+      if (c==0) continue;
+      Compartment &cpo=state.nw.compartments[c];
+      Rect rnode=state.nw.nodes[i].rect();
+      rnode.extend(d);
+      for (int j=0;j<4;j++){ // loop over all directions
+         double size=(j % 2==0 ? state.nw.nodes[i].width/2+d : state.nw.nodes[i].height/2+d);
+         if (j<2) size=-size; // left and top direction -> size negative
+         double diff=rnode.acs(j)-cpo.acs(j);
+         if (j<2 ? diff<0 : diff>0) {
+            forces[c].acs(j)+=diff;
+            numbers[c][j]++;
+            if (j<2 ? newpos[c].acs(j)>cpo.acs(j)+diff : newpos[c].acs(j)<cpo.acs(j)+diff ){
+               newpos[c].acs(j)=cpo.acs(j)+diff; // optimal position of border to include all nodes
+            }
+         }
+      }
+   }
+   for (c=0;c<cbn;c++){ // loop through compartment border lines; adding all forces by nodes on the compartment borders adjacent to this inner comparmtnet boder line
+      double shift=0;
+      const VCPB &cbs=state.nw.compartment_borders[c];
+      int count=0;
+      for (i=0;i<(int)cbs.size();i++){
+         shift+=forces[cbs[i].compartment].acs(cbs[i].dir);
+         count+=numbers[cbs[i].compartment][cbs[i].dir];
+      }
+      if (count) shift/=count; // divide by number of out of compartment nodes for this border
+      if (shift>2*state.avgsize) shift=2*state.avgsize; // limit border movement to 2 * avg. size
+      if (shift<-2*state.avgsize) shift=-2*state.avgsize;
+      if (shift!=0.0) __move(state,state.nw.compartments[cbs[0].compartment].acs(cbs[0].dir),shift,cbs[0].dir);
+      //state.nd.show(); // FIXME this is just for debug; remove!!
+      
+   }
+   
+   // shrink outer boundaries
+   
+   for (c=cbn-4;c<cbn;c++){ // only outer borders
+      int dir=c+4-cbn; // get direction from index order (they are added in exactly this order)
+      int sgn=(dir>=2 ? -1 : 1);
+      const VCPB &cbs=state.nw.compartment_borders[c];
+      bool toosmall=false;
+      for (i=0,n=cbs.size();i<n;i++){
+         if (cbs[i].dir!=dir) throw "direction error";
+         if (dir%2==0 && state.nw.compartments[cbs[i].compartment].width()<=state.avgsize) { // x dir
+            toosmall=true;
+            break;
+         } else if (dir%2==1 && state.nw.compartments[cbs[i].compartment].height()<=state.avgsize) { // y dir
+            toosmall=true;
+            break;
+         }
+      }
+      if (toosmall) continue; // don't shrink
+      for (i=0,n=cbs.size();i<n;i++){
+         if (cbs[i].dir!=dir) throw "direction error";
+         state.nw.compartments[cbs[i].compartment].acs(dir)+=sgn*state.avgsize/4;
+         state.nw.compartments[0].acs(dir)=state.nw.compartments[cbs[i].compartment].acs(dir); // set compartment 0 boundaries to network boundaries
+      }
+   }
+   
+   // FIXME add sanity check that outer borders are note to far of the actual nodes
+
+
+/*   double limits[4];
+   limits[0]=limits[1]=DBL_MAX;
+   limits[2]=limits[3]=-DBL_MAX;
+   double &xmin=limits[0];
+   double &ymin=limits[1];
+   double &xmax=limits[2];
+   double &ymax=limits[3];
+   
+   for(c=1;c<cn;c++){
+      Compartment &cpo=state.nw.compartments[c];
+      for (i=0;i<4;i++){
+         if (i<2 && cpo.acs(i)<limits[i]) limits[i]=cpo.acs(i); // set xmin,ymin
+         if (i>=2 && cpo.acs(i)>limits[i]) limits[i]=cpo.acs(i); // set xmax,ymax
+      }
    }
    for(c=1;c<cn;c++){
       Compartment &cpo=state.nw.compartments[c];
@@ -923,16 +1221,72 @@ void adjust_compartments_fixed(Layouter &state,plugin& pg, double scale, int ite
       if (cpo.ymin>cpn.ymin) __move(state, cpo.ymin,(cpn.ymin-cpo.ymin)*factor*scale,dir_TB);
       if (cpo.ymax<cpn.ymax) __move(state, cpo.ymax,(cpn.ymax-cpo.ymax)*factor*scale,dir_TB);
    }
-   // clip all compartments to networks bbox
-/*   for(c=1;c<cn;c++){
+   // clip all compartments to networks bbox (in particular compartment 0)
+   for(c=0;c<cn;c++){
       Compartment &cp=state.nw.compartments[c];
       if (cp.xmin<xmin) cp.xmin=xmin;
       if (cp.ymin<ymin) cp.ymin=ymin;
       if (cp.xmax>xmax) cp.xmax=xmax;
       if (cp.ymax>ymax) cp.ymax=ymax;
    }*/
-   fix_compartments(state,pg,scale,iter,temp,debug); // FIXME this is just a hotfix
+//   fix_compartments(state,pg,scale,iter,temp,debug); // FIXME this is just a hotfix
 }
+
+
+void push_components(Layouter &state,plugin& pg, double scale, int iter, double temp, int debug){
+   int cn=state.components.size();
+   // calculate bboxes of all components
+   VR cbox(cn);
+   if (cn<2) return;
+   for (int i=0;i<cn;i++){
+      cbox[i].inv_inf(); // initialize with inverse infinite rectangle
+   }
+   for (int i=0;i<cn;i++){
+      int n=state.components[i].size();
+      for (int j=0;j<n;j++){
+         Node &nd=state.nw.nodes[state.components[i][j]];
+         if (cbox[i].xmin>nd.x-nd.width/2) cbox[i].xmin=nd.x-nd.width/2;
+         if (cbox[i].xmax<nd.x+nd.width/2) cbox[i].xmax=nd.x+nd.width/2;
+         if (cbox[i].ymin>nd.y-nd.height/2) cbox[i].ymin=nd.y-nd.height/2;
+         if (cbox[i].ymax<nd.y+nd.height/2) cbox[i].ymax=nd.y+nd.height/2;
+      }
+   }
+   // calculate forces between all components
+   VP force(cn);
+   for (int i=0;i<cn;i++){
+      for (int j=i+1;j<cn;j++){
+         double dx=cbox[j].center().x-cbox[i].center().x;
+         double sgnx=(dx<0 ? -1 : 1);
+         dx=fabs(dx);
+         double w=(cbox[i].width()+cbox[j].width())/2+state.avgsize;
+
+         double dy=cbox[j].center().y-cbox[i].center().y;
+         double sgny=(dy<0 ? -1 : 1);
+         dy=fabs(dy);
+         double h=(cbox[i].height()+cbox[j].height())/2+state.avgsize;
+
+         double fx=sgnx*min(max(0.0,w-dx),dx);
+         double fy=sgny*min(max(0.0,h-dy),dy);
+         
+         
+         force[i]-=Point(fx,fy)*scale*factor;
+         force[j]+=Point(fx,fy)*scale*factor;
+      }
+      force[i]/=(cn-1);
+   }
+   // apply component forces to all contained nodes
+   for (int i=0,n=state.nw.nodes.size();i<n;i++){
+      Point mv=force[state.nodecomponents[i]];
+      state.mov[i]+=mv;
+      state.force[i]+=manh(mv);
+      #ifdef SHOWPROGRESS
+      if (debug) state.debug[i].push_back(forcevec(mv,debug));
+      #endif
+      
+   }
+}
+
+
 template <typename T>void vassign(vector<T>& v,const vector<T>& v2){
    v.assign(v2.begin(),v2.end());
 }

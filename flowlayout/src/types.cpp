@@ -80,6 +80,9 @@ Point operator/(const Point& p1, const double scalar){
 bool operator==(const Point& p1, const Point& p2){
    return (p1.x==p2.x && p1.y==p2.y);
 }
+bool operator!=(const Point& p1, const Point& p2){
+   return (p1.x!=p2.x || p1.y!=p2.y);
+}
 Point unit(const Point& p1){
    double len=norm(p1);
    Point p=p1;
@@ -144,7 +147,9 @@ int min_four(int a1,int a2,int a3,int a4){
    if(a4<a1)a1=a4;
    return a1;
 }
-      
+void Compartment::print(){
+   printf("%s %0.3f,%0.3f,%0.3f,%0.3f %s borders: [ %d %d %d %d ]\n",name.c_str(),xmin, ymin, xmax, ymax,(fixed ? "!" :""),border_index.left,border_index.top,border_index.right,border_index.bottom);
+}
   
 /*int bitpos(unsigned long val){
    int scan=1;
