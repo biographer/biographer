@@ -212,7 +212,7 @@
 			}
 			if(changed) {
 				//Fire the colorchanged
-				this.fire(bui.Labelable.ListenerType.color, [this]);
+				this.fire(bui.Labelable.ListenerType.color, [this, options]);
 			}
 			
 			return this;

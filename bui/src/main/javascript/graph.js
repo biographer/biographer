@@ -512,7 +512,7 @@
                     __setTransformString.call(this);
                     this.reduceCanvasSize();
 
-                    this.fire(bui.Graph.ListenerType.translate, [this, {x: x, y: y}]);
+                    this.fire(bui.Graph.ListenerType.translate, [this, x, y]);
                 }
 
                 return this;
