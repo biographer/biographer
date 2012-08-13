@@ -112,6 +112,44 @@ test('observable.unbindAll', function() {
     equal(callCounter, 0);
 });
 
+test('static.listeners', function() {
+    expect(12);
+
+    var type1 = 'foo', type2 = 'bar', expectedType, expectedInstance;
+
+    var generateTypeListener = function(type) {
+        var associatedType = type;
+
+        return function(source) {
+            equal(associatedType, expectedType);
+            equal(source, expectedInstance);
+            equal(this, expectedInstance);
+        };
+    };
+
+    var instance1 = new bui.Observable();
+    instance1._addType({ first : type1, second : type2});
+
+    bui.Observable.bindStatic(type1, generateTypeListener(type1));
+    bui.Observable.bindStatic(type2, generateTypeListener(type2));
+
+    var instance2 = new bui.Observable();
+    instance2._addType({ first : type1, second : type2});
+
+    expectedType = type1;
+    expectedInstance = instance1;
+    expectedInstance.fire(expectedType);
+
+    expectedInstance = instance2;
+    expectedInstance.fire(expectedType);
+
+    expectedType = type2;
+    expectedInstance.fire(expectedType);
+
+    expectedInstance = instance1;
+    expectedInstance.fire(expectedType);
+});
+
 module('Inheritance');
 
 test('inheritance.basic', function() {
