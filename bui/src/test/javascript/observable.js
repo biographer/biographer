@@ -17,12 +17,12 @@ function testObservable(observable) {
         .bind(type2, generateTypeListener(type2), type2);
 
     expectedType = type1;
-    ok(observable.fire(type1));
+    ok(observable.fire(expectedType));
 
     expectedType = type2;
-    ok(observable.fire(type2));
+    ok(observable.fire(expectedType));
 
-    ok(observable.unbind(type1, type1).fire(type1));
+    ok(observable.unbind(type1).fire(type1));
 
     expectedType = type2;
     ok(observable.fire(type2));
@@ -113,6 +113,7 @@ test('observable.unbindAll', function() {
 });
 
 test('static.listeners', function() {
+    bui.Observable._unbindAllStatic();
     expect(12);
 
     var type1 = 'foo', type2 = 'bar', expectedType, expectedInstance;
@@ -153,10 +154,12 @@ test('static.listeners', function() {
 module('Inheritance');
 
 test('inheritance.basic', function() {
+    bui.Observable._unbindAllStatic();
     testObservable(new bui.Graph(document.getElementById('dummy')))
 });
 
 test('inheritance.static', function() {
+    bui.Observable._unbindAllStatic();
     expect(1);
     var called = false;
 
@@ -167,5 +170,5 @@ test('inheritance.static', function() {
     var graph = new bui.Graph(document.getElementById('dummy'));
     graph.fire(bui.Graph.ListenerType.scale);
 
-    equal(called, true);
+    ok(called);
 });

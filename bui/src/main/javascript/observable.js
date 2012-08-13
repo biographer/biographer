@@ -51,6 +51,16 @@
         listener[identification] = callback;
     };
 
+    /**
+     * @description
+     * Function which can be used to unbind ALL static listeners.
+     * This method should seldomly be used and if used, it should only
+     * be used with care.
+     */
+    bui.Observable._unbindAllStatic = function() {
+        staticListeners = {};
+    };
+
     bui.Observable.prototype = {
         /**
          * @description
