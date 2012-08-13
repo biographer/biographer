@@ -155,3 +155,17 @@ module('Inheritance');
 test('inheritance.basic', function() {
     testObservable(new bui.Graph(document.getElementById('dummy')))
 });
+
+test('inheritance.static', function() {
+    expect(1);
+    var called = false;
+
+    bui.Graph.bindStatic(bui.Graph.ListenerType.scale, function() {
+        called = true;
+    });
+
+    var graph = new bui.Graph(document.getElementById('dummy'));
+    graph.fire(bui.Graph.ListenerType.scale);
+
+    equal(called, true);
+});
