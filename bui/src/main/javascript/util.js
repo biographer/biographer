@@ -202,7 +202,7 @@
                 if (currentLine.words.length !== 0) {
                     addLine();
                 }
-                
+
                 addWord(word);
             }
         }
@@ -270,6 +270,12 @@
             if (prototype.hasOwnProperty(i)) {
                 var member = prototype[i];
                 prototype[i] = bui.util.createPrototypeValue(member);
+            }
+        }
+
+        for(var i in superClazz) {
+            if (superClazz.hasOwnProperty(i) && !clazz.hasOwnProperty(i)) {
+                clazz[i] = superClazz[i];
             }
         }
 
@@ -341,7 +347,7 @@
      */
     bui.util.propertySetAndNotNull = function() {
         var obj = arguments[0];
-        
+
         for(var i = 1; i < arguments.length; i++) {
 
             var property = arguments[i];
@@ -591,8 +597,8 @@ var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {},
    bui.modificationMapping = modificationMapping;
    bui.edgeMarkerMapping = edgeMarkerMapping;
 })(bui);
-        
-        
+
+
 /**
  * Add mappings to the mappings object.
  *
@@ -669,7 +675,7 @@ var getSBOForInstance = function(mapping, instance) {
  */
 var getModificationSBOForLabel = function(label) {
     label = label.toLowerCase();
-    
+
     for (var sbo in modificationMapping) {
         if (modificationMapping.hasOwnProperty(sbo)) {
             var mapping = modificationMapping[sbo];

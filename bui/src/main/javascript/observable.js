@@ -14,6 +14,53 @@
         this._getPrivateMembers(identifier).listener = {};
     };
 
+    var staticListeners = {};
+
+    /**
+     * @description
+     * Get static listeners for the specific type
+     *
+     * @param {Object} type The type for which a collection of static listeners
+     *   should be returned.
+     *
+     * @return {Object} Hash of static listeners.
+     */
+    var getStaticListeners = function(type) {
+        return staticListeners[type] = staticListeners[type] || {};
+    };
+
+    /**
+     * @description
+     * Bind listeners to class-level events, i.e., receive the specific event
+     * from all instances of the class.
+     *
+     * @param {String} type The type of event that should be observed
+     * @param {Function} callback Method to be called
+     * @param {Object} [identification] An identifier used to identify the
+     *   listener in the list of all over listeners. Should be unique for
+     *   the listener type. When ommited the callback will be used for
+     *   identification purposes.
+     */
+    bui.Observable.bindStatic = function(type, callback, identification) {
+        var listener = getStaticListeners(type);
+
+        if (identification === undefined || identification === null) {
+            identification = callback;
+        }
+
+        listener[identification] = callback;
+    };
+
+    /**
+     * @description
+     * Function which can be used to unbind ALL static listeners.
+     * This method should seldomly be used and if used, it should only
+     * be used with care.
+     */
+    bui.Observable._unbindAllStatic = function() {
+        staticListeners = {};
+    };
+
     bui.Observable.prototype = {
         /**
          * @description
@@ -67,7 +114,7 @@
             }
 
             listener[identification] = callback;
-            
+
             return this;
         },
 
@@ -130,18 +177,20 @@
          *   false, false otherwise.
          */
         fire : function(type, params) {
+            var i, listener;
+
             if (params === undefined) {
                 params = [];
             }
 
-            var listener = this._getPrivateMembers(identifier).listener[type];
+            listener = this._getPrivateMembers(identifier).listener[type];
 
             // fail silently when the listener type is not registered
             if (listener === undefined) {
                 return true;
             }
 
-            for (var i in listener) {
+            for (i in listener) {
                 if (listener.hasOwnProperty(i)) {
                     var status = listener[i].apply(this, params);
 
@@ -150,6 +199,25 @@
                     }
                 }
             }
+
+            listener = getStaticListeners(type);
+
+            if (params.length === 0) {
+                params = [this];
+            } else if (params[0] !== this) {
+                params.unshift(this);
+            }
+
+            for (i in listener) {
+                if (listener.hasOwnProperty(i)) {
+                    var status = listener[i].apply(this, params);
+
+                    if (status === false) {
+                        return false;
+                    }
+                }
+            }
+
 
             return true;
         }
