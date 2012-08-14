@@ -199,14 +199,18 @@
 			changed = false;
 			
 			if (!options || !(options.background || options.label)) {
-				// Return object giving background and text color
+				// Return object giving background and label text color
 				return privates.color;
 			}
-			if (options.background !== null || options.background !== null) {
+			
+			
+			if (typeof options.background === 'string') {
+				options.background = options.background.toLowerCase();
 				changed = changed || options.background !== privates.color.background;
 				privates.color.background = options.background;
 			}
-			if (options.label !== null || options.label !== null) {
+			if (typeof options.label === 'string') {
+				options.label = options.label.toLowerCase();
 				changed = changed || options.label !== privates.color.label;
 				privates.color.label = options.label;
 			}
