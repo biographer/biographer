@@ -530,7 +530,7 @@ def release_html5():
     #embed_html = re.sub('/biographer/static/', '', embed_html)
     #open(os.path.join(RELEASE_FOLDER, 'html5', 'embed.html'), 'w').write(index_html)
 
-    for static_dir in 'css js images'.split():
+    for static_dir in 'css js images biographer-editor'.split():
         #if os.path.exists(os.path.join(RELEASE_FOLDER, 'html5', static_dir)):
         #    shutil.rmtree(os.path.join(RELEASE_FOLDER, 'html5', static_dir))
         shutil.copytree(os.path.join(request.folder, 'static', static_dir), os.path.join(RELEASE_FOLDER, 'html5', static_dir), ignore=apply(shutil.ignore_patterns, IGNORE_PATTERNS) )

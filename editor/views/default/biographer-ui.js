@@ -1,1 +1,1 @@
-../../static/js/biographer-ui.js
+../../static/biographer-editor/js/biographer-ui.js

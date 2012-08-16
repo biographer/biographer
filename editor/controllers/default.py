@@ -1,28 +1,30 @@
 from gluon.contrib import simplejson
 
+
 def undoRegister(action, graph, json_string):
     if session.editor_histroy_undo == None:
         session.editor_histroy_undo = []
-    item = dict(action = action, graph = graph)
+    item = dict(action=action, graph=graph)
     session.editor_histroy_redo = []
-    session.editor_histroy_undo.append( item )
+    session.editor_histroy_undo.append(item)
     session.editor_autosave = json_string
     return item
 
+
 def index():
     check_first_user()
-    response.files.append(URL(request.application, 'static/css', 'visualization-html.css'))
-    response.files.append(URL(request.application, 'static/css', 'jquery-ui-1.8.13.css'))
-    response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))
-    response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
-    response.files.append(URL(request.application, 'static/js', 'jquery.simplemodal.1.4.1.min.js'))
-    response.files.append(URL(request.application, 'static/js', 'd3.js'))
-    response.files.append(URL(request.application, 'static/js', 'd3.layout.js'))
-    response.files.append(URL(request.application, 'static/js', 'd3.geom.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
+    response.files.append(URL(request.application, 'static/biographer-editor/css', 'jquery-ui-1.8.13.css'))
+    #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery-ui-1.8.15.custom.min.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery.simplemodal.1.4.1.min.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.layout.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.geom.js'))
     #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))#import in view
     #response.files.append(URL('script.js'))#import in view
     if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph or request.vars.jsbgn:
-        action,graph,json_string = None,None,None
+        action, graph, json_string = None, None, None
         if request.vars.jgraph or request.vars.jsbgn:
             result = import_file(request.vars.jgraph or request.vars.jsbgn)
         else:
@@ -42,7 +44,7 @@ def index():
         else:
             try:
                 int_id = request.vars.biomodel_id
-                biomodel_id = 'BIOMD%.10d'%int_id
+                biomodel_id = 'BIOMD%.10d' % int_id
             except TypeError:
                 response.error = 'Invalid BioModel Id. The id should be a number or follow the pattern ^(BIOMD|MODEL)\d{10}$'
         #----------------------------------
@@ -51,43 +53,46 @@ def index():
             model_path = os.path.join(request.folder, 'static', 'data_models')
             if not os.path.exists(model_path):
                 os.mkdir(model_path)
-            if biomodel_id+'.xml' in os.listdir(model_path) and not request.vars.force:
-                model_content = open(os.path.join(model_path, biomodel_id+'.xml'), 'r').read()
-                response.flash = 'Loaded %s from cache.'%biomodel_id
+            if biomodel_id + '.xml' in os.listdir(model_path) and not request.vars.force:
+                model_content = open(os.path.join(model_path, biomodel_id + '.xml'), 'r').read()
+                response.flash = 'Loaded %s from cache.' % biomodel_id
             else:
                 try:
-                    model_content = _download('http://www.ebi.ac.uk/biomodels-main/download?mid=%s'%biomodel_id)
+                    model_content = _download('http://www.ebi.ac.uk/biomodels-main/download?mid=%s' % biomodel_id)
                     if model_content:
-                        open(os.path.join(model_path, biomodel_id+'.xml'), 'w').write(model_content)
+                        open(os.path.join(model_path, biomodel_id + '.xml'), 'w').write(model_content)
                 except ContentTooShortError:
-                    response.flash = 'Failed downloading %s: Content Too Short'%biomodel_id
+                    response.flash = 'Failed downloading %s: Content Too Short' % biomodel_id
             #----------------------------------
             if model_content:
-                action, graph, json_string  = import_file(model_content, biomodel_id)
+                action, graph, json_string = import_file(model_content, biomodel_id)
                 if action and graph and json_string:
                     undoRegister(action, graph, json_string)
-
-
     return dict()
+
 
 def debug():
     if session.debug == None:
-        session.debug = True;
+        session.debug = True
     else:
         session.debug = not session.debug
     redirect(URL('index'))
+
+
 def reset():
     session.editor_autosave = None
     session.editor_histroy_undo = None
     session.editor_histroy_redo = None
     redirect(URL('index'))
 
+
 def script():
     return dict()
 
+
 def import_graph():
     response.generic_patterns = ['json']
-    action,graph,json_string = None,None,None
+    action, graph, json_string = None, None, None
     if request.vars.type == 'reactome_id':
         #FIXME implement caching
         #model_path = os.path.join(request.folder, 'static', 'data_models')
@@ -96,15 +101,16 @@ def import_graph():
         #if request.vars.identifier+'.jsbgn' in os.listdir(model_path) and not request.vars.force:
         #    model_content = open(os.path.join(model_path, biomodel_id+'.xml'), 'r').read()
         #    response.flash = 'Loaded %s from cache.'%biomodel_id
-        graph = reactome_id2jsbgn( request.vars.identifier )
+        graph = reactome_id2jsbgn(request.vars.identifier)
         json_string = simplejson.dumps(graph)
-        action = 'Imported Reactome Id: %s'%request.vars.identifier
+        action = 'Imported Reactome Id: %s' % request.vars.identifier
     if action and graph and json_string:
         return undoRegister(action, graph, json_string)
     raise HTTP(500, 'could not import')
 
+
 def layout():
-    response.generic_patterns = ['html','json']
+    response.generic_patterns = ['html', 'json']
     if not request.vars.layout:
         raise HTTP(500, 'not layout algorithm specified')
     #-------------------
@@ -114,22 +120,22 @@ def layout():
     if request.vars.layout == "biographer":
         filename = request.vars.filename or 'tmp'
         if request.vars.jsbgn:
-            open(os.path.join(request.folder, "static","%s.jsbgn"%filename), 'w').write(request.vars.jsbgn)
-        infile = os.path.join(request.folder, "static","%s.bgin"%filename)
-        outfile = os.path.join(request.folder, "static","%s.bgout"%filename)
+            open(os.path.join(request.folder, "static", "%s.jsbgn" % filename), 'w').write(request.vars.jsbgn)
+        infile = os.path.join(request.folder, "static", "%s.bgin" % filename)
+        outfile = os.path.join(request.folder, "static", "%s.bgout" % filename)
         open(infile, 'w').write(request.vars.data)
-        executable = os.path.join(request.folder, "static","layout")
-        p = subprocess.Popen([executable,infile,outfile],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        executable = os.path.join(request.folder, "static", "layout")
+        p = subprocess.Popen([executable, infile, outfile], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.communicate()
         layout_output = open(outfile, 'r').readlines()
         return layout_output
 
     elif request.vars.layout == 'graphviz':
         import biographer
-        reload(biographer)#TODO remove in production mode
+        reload(biographer)  # TODO remove in production mode
         bioGraph = biographer.Graph()
-        bioGraph.importJSON( session.editor_autosave )
-        bioGraph.exportGraphviz( folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True )
+        bioGraph.importJSON(session.editor_autosave)
+        bioGraph.exportGraphviz(folder=os.path.join(request.folder, "static/graphviz"), useCache=True, updateNodeProperties=True)
         #-------------------
         json_string = bioGraph.exportJSON()
         graph = simplejson.loads(json_string)
@@ -141,6 +147,7 @@ def layout():
 def autosave():
     session.editor_autosave = request.vars.json
 
+
 def undo_push():
     session.editor_autosave = request.vars.graph
     #create history
@@ -148,10 +155,11 @@ def undo_push():
         session.editor_histroy_undo = []
     session.editor_histroy_redo = []
     #pop if history is "full"
-    if len(session.editor_histroy_undo)>=100:
+    if len(session.editor_histroy_undo) >= 100:
         session.editor_histroy_undo.pop(0)
     #add current result to history
-    session.editor_histroy_undo.append( dict(action = request.vars.action, graph = simplejson.loads(request.vars.graph)) )
+    session.editor_histroy_undo.append(dict(action=request.vars.action, graph=simplejson.loads(request.vars.graph)))
+
 
 def undo():
     response.generic_patterns = ['json']
@@ -159,11 +167,12 @@ def undo():
         item = session.editor_histroy_undo.pop()
         session.editor_histroy_redo.append(item)
     if not session.editor_histroy_undo:
-        last_graph = dict(nodes = [], edges = [])
+        last_graph = dict(nodes=[], edges=[])
     else:
         last_graph = session.editor_histroy_undo[-1]['graph']
     session.editor_autosave = simplejson.dumps(last_graph)
     return last_graph
+
 
 def redo():
     response.generic_patterns = ['json']
@@ -172,15 +181,16 @@ def redo():
     session.editor_autosave = simplejson.dumps(item['graph'])
     return item
 
+
 def export():
-    import gluon.contenttype
     file_type = False
+
     def fix_svg(svg_data):
         import re
         import os
-        stylesheet_contents = open(os.path.join(request.folder, 'static' , 'css', 'visualization-svg.css'), 'r').read()
+        stylesheet_contents = open(os.path.join(request.folder, 'static', 'biographer-editor/css', 'visualization-svg.css'), 'r').read()
         out = re.sub('@import url[^<]*', stylesheet_contents, svg_data)
-        return '<?xml version="1.0" encoding="UTF-8"?>\n%s'%out
+        return '<?xml version="1.0" encoding="UTF-8"?>\n%s' % out
     if request.vars.json:
         file_type = 'json'
         out = request.vars.json
@@ -193,19 +203,20 @@ def export():
         import os
         from subprocess import Popen, PIPE
         from shlex import split
-        jar = os.path.join( request.folder, "static","Exporter","svg-export-0.2.jar" )
-        applet = java+" -jar "+jar+" -si -so -f "+request.vars.format
+        jar = os.path.join(request.folder, "static", "Exporter", "svg-export-0.2.jar")
+        applet = java + " -jar " + jar + " -si -so -f " + request.vars.format
         result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(fix_svg(request.vars.svg_data))      # call Ben's Java Exporter Applet
-        out = result[0] # stdout
-        print "image export errors: ",result[1]	# stderr
+        out = result[0]  # stdout
+        print "image export errors: ", result[1]  # stderr
 
     if not file_type:
         return ''
-    response.headers['Content-Type'] = gluon.contenttype.contenttype(".%s"%file_type)
+    import gluon.contenttype
+    response.headers['Content-Type'] = gluon.contenttype.contenttype("%s" % file_type)
     filename = "%s.%s" % ('graph', file_type)
-    response.headers['Content-disposition'] = "attachment filename=\"%s\"" % filename
+    response.headers['Content-disposition'] = "attachment; filename=\"%s\"" % filename
     return out
-    response.write(out,escape=False)
+
 
 def render():
     in_url = request.args(0) or request.vars.q
@@ -214,13 +225,14 @@ def render():
             #import urllib2
             file_content = _download(in_url)
         except urllib2.HTTPError, e:
-            return 'error getting %s: %s'%(in_url,e)
-        action, graph, json_string = import_file(file_content,'')
+            return 'error getting %s: %s' % (in_url, e)
+        action, graph, json_string = import_file(file_content, '')
         if action and graph and json_string:
             undoRegister(action, graph, json_string)
     response.files.append(URL(request.application, 'static/css', 'visualization-html.css'))
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     return dict()
+
 
 def sbgnml_test():
     import os
@@ -232,32 +244,33 @@ def sbgnml_test():
         items.append(H1(dn))
         for fn in os.listdir(os.path.join(test_path, dn)):
             if fn.endswith('.sbgn'):
-                if fn == 'mapk_cascade.sbgn':#FIXME
-                    print sbgnml2jsbgn(open(os.path.join(test_path,dn,fn),'r').read())
+                if fn == 'mapk_cascade.sbgn':  # FIXME
+                    print sbgnml2jsbgn(open(os.path.join(test_path, dn, fn), 'r').read())
                     continue
                 subitems.append(
-                        TR( TH( A(fn, _href=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _target="_blank"), _colspan=2)),
+                        TR(TH(A(fn, _href=URL('render', vars=dict(q='http://%s%s' % (request.env.http_host, URL(request.application,  'static/test-files/%s' % dn, fn)))),  _target="_blank"),  _colspan=2)),
                     )
                 subitems.append(
                     TR(
-                        TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
-                        TD(IFRAME(_src=URL('render', vars = dict(q='http://%s%s'%(request.env.http_host,URL(request.application, 'static/test-files/%s'%dn,fn)))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0")),
+                        TD(IMG(_src=URL(request.application, 'static/test-files/' + dn, fn[:-5] + '.png'), _alt='sbgn image', _style='max-width: 300px')),
+                        TD(IFRAME(_src=URL('render', vars=dict(q='http://%s%s' % (request.env.http_host, URL(request.application, 'static/test-files/%s' % dn, fn)))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0")),
                         ),
                     )
                 subitems.append(
-                    TR(TH(HR(),_colspan=2)),
+                    TR(TH(HR(), _colspan=2)),
                     )
         items.append(TABLE(subitems))
         items.append(HR())
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
-    return dict(table = TAG[''](items))
+    return dict(table=TAG[''](items))
+
 
 def sbml_test():
     import os
     #test_path = os.path.join(request.folder, 'static', 'sbml-test')
     test_path = os.path.join(request.folder, 'static', 'data_models')
     items = []
-    count = 0
+    #count = 0
     filenames = [fn for fn in os.listdir(test_path) if fn.startswith('BIOMD') and fn.endswith('.xml')]
     filenames.sort()
     for fn in filenames:
@@ -267,27 +280,28 @@ def sbml_test():
         #if count<360:
         #    continue
         items.append(
-                TR( TH( A(fn, _href=URL('render', vars = dict(q=URL(request.application, 'static/data_models',fn), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
+                TR(TH(A(fn, _href=URL('render', vars=dict(q=URL(request.application, 'static/data_models', fn), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
             )
         items.append(
             TR(
                 #TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
-                TD( PRE(
-                    '%s'%IFRAME(_src=URL('render', vars = dict(q=URL(request.application, 'static/data_models',fn), layout="biographer")), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"),
+                TD(PRE(
+                    '%s' % IFRAME(_src=URL('render', vars=dict(q=URL(request.application, 'static/data_models', fn), layout="biographer")), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"),
                     _class='show_iframe'
-                    ),DIV()),
+                    ), DIV()),
                 ),
             )
         items.append(
-            TR(TH(HR(),_colspan=2)),
+            TR(TH(HR(), _colspan=2)),
             )
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
-    return dict(table = TAG[''](TABLE(items)))
+    return dict(table=TAG[''](TABLE(items)))
+
 
 def user():
     """
     exposes:
-    http://..../[app]/default/user/login 
+    http://..../[app]/default/user/login
     http://..../[app]/default/user/logout
     http://..../[app]/default/user/register
     http://..../[app]/default/user/profile
@@ -299,4 +313,3 @@ def user():
     to decorate functions that need access control
     """
     return dict(form=auth())
-

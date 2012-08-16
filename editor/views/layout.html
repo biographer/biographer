@@ -20,7 +20,7 @@
     
     {{#------  require CSS and JS files for this page (read info in base.css) ------}}
     {{response.files.append(URL('static','css/base.css'))}}
-    {{response.files.append(URL(request.application, 'static/css', 'editor.css'))}}
+    {{response.files.append(URL(request.application, 'static/biographer-editor/css', 'editor.css'))}}
     {{#------ include web2py specific js code (jquery, calendar, form stuff) ------}}
     {{include 'web2py_ajax.html'}}
 

@@ -4,7 +4,7 @@
     {{include 'default/biographer-ui.js'}}
 </script>
 {{else:}}
-<script type="text/javascript" src="{{=URL(request.application, 'static/js', 'biographer-ui.js')}}"></script>
+<script type="text/javascript" src="{{=URL(request.application, 'static/biographer-editor/js', 'biographer-ui.js')}}"></script>
 {{pass}}
 <table>
 	<tr>
@@ -497,8 +497,37 @@
 </div>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
+<script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'biographer.editor.js')}}'></script>
 <script type="text/javascript">
-//-------------------------------------------
-{{include 'default/script.js'}}
-//-------------------------------------------
+	//-------------------------------------------
+	editor_config = {
+		url_undo_push : '{{=URL("undo_push")}}',
+		url_undo : '{{=URL('undo.json')}}',
+		url_redo : '{{=URL('redo.json')}}',
+		url_layout : '{{=URL('layout')}}',
+		url_import : '{{=URL('import_graph.json')}}',
+	    	loading_img : '{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}',
+	    	images_base_path: '/{{=request.application}}/static/images/editor/',
+	 	bui_visualization_css_file : '{{=URL(request.application, "static/biographer-editor/css", "visualization-svg.css")}}',
+	 	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
+	    		nodes : [],
+	    		edges : []
+	    	}{{pass}},
+	    	history_undo: {{if session.editor_histroy_undo:}}  {{=XML([i['action'] for i in session.editor_histroy_undo])}} {{else:}} []{{pass}},
+	    	history_redo: {{if session.editor_histroy_redo:}}  {{=XML([i['action'] for i in session.editor_histroy_redo])}} {{else:}} []{{pass}}
+	}
+	//=========================
+	editor = new Editor();
+	bui.ready(function() {
+		bui.settings.css.stylesheetUrl = editor_config.bui_visualization_css_file;
+		editor.graph = new bui.Graph($('#canvas')[0]);
+		bui.importFromJSON(editor.graph, editor_config.graphData);
+		//add edge select listner to all nodes 
+		var all_drawables = editor.graph.drawables();
+		for (var key in all_drawables) {
+		    	all_drawables[key].bind(bui.Node.ListenerType.click, editor.drawableSelect);
+		}
+		
+	});
+	//-------------------------------------------
 </script>
