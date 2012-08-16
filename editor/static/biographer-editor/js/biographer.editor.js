@@ -105,16 +105,17 @@ Editor.prototype = {
             this_editor.redrawGraph(data);
             var action = editor_config.history_undo.pop();
             editor_config.history_redo.push(action);
-            showUndoRedo();
+            this_editor.showUndoRedo();
 
         });
     },
     redo: function(){
+        var this_editor = this;
         $.getJSON(editor_config.url_redo, function(data) {
             var action = editor_config.history_redo.pop();
             editor_config.history_undo.push(action);
-            showUndoRedo();
-            redrawGraph(data.graph);
+            this_editor.showUndoRedo();
+            this_editor.redrawGraph(data.graph);
         });
     },
     //-------------------------------------------
