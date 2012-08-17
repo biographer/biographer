@@ -124,6 +124,9 @@
     };
     
     var interactActionCheck = function (event) {
+        if (!bui.settings.enableModificationSupport)
+            return '';
+        }
         var position = this.absolutePosition(),
             size = this.size(),
             scale = this.graph().scale(),
