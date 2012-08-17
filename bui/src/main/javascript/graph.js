@@ -80,10 +80,6 @@
         privates.edgeGroup = document.createElementNS(bui.svgns, 'g');
         privates.rootGroup.appendChild(privates.edgeGroup);
 
-        privates.placeholderContainer = document.createElement('div');
-        document.getElementsByTagName('body')[0]
-                .appendChild(privates.placeholderContainer);
-
         privates.connectingArcs = {};
 
         privates.cloneMarker = document.createElementNS(bui.svgns, 'pattern');
@@ -256,17 +252,6 @@
          */
         container : function() {
             return this._privates(identifier).container;
-        },
-
-        /**
-         * @description
-         * Retrieve the container for placeholder elements. Placeholder
-         * elements are used while dragging or resizing to improve performance.
-         *
-         * @return {HTMLDIVElement} The container for placeholder elements
-         */
-        placeholderContainer : function() {
-            return this._privates(identifier).placeholderContainer;
         },
 
         /**
@@ -512,6 +497,7 @@
             jQuery.ajax({
                         url : bui.settings.css.stylesheetUrl,
                         async : false,
+                        dataType : 'text',
                         success : function(data) {
                             css = data;
                         }

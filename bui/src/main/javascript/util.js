@@ -693,8 +693,8 @@ var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {},
    bui.modificationMapping = modificationMapping;
    bui.edgeMarkerMapping = edgeMarkerMapping;
 })(bui);
-        
-        
+
+
 /**
  * Add mappings to the mappings object.
  *
@@ -771,7 +771,7 @@ var getSBOForInstance = function(mapping, instance) {
  */
 var getModificationSBOForLabel = function(label) {
     label = label.toLowerCase();
-    
+
     for (var sbo in modificationMapping) {
         if (modificationMapping.hasOwnProperty(sbo)) {
             var mapping = modificationMapping[sbo];
