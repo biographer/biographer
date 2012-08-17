@@ -799,12 +799,17 @@ Editor.prototype = {
         //=========================
         $('#export_json').click(function(){
             //alert(JSON.stringify(graph.toJSON()));
-            $('#export_form').html('<input type="hidden" name="json" value=\''+JSON.stringify(this_editor.graph.toJSON())+'\' />').submit();
+            //$('#export_form').html('<input type="hidden" name="json" value=\''+JSON.stringify(this_editor.graph.toJSON())+'\' />').submit();
+            window.location.href="data:text/json;charset=UTF-8," + JSON.stringify(this_editor.graph.toJSON());
         });
         //=========================
         $('#export_svg').click(function(){
             //alert($('#canvas svg').parent().html());
-            $('#export_form').html('<input type="hidden" name="svg" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
+            //$('#export_form').html('<input type="hidden" name="svg" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
+            //window.location.href="data:text/data;base64," + btoa(ne_graph.rawSVG());
+            $.get(editor_config.bui_visualization_css_file, function(viscss) {
+                window.location.href="data:text/svg;charset=UTF-8," + encodeURIComponent($('#canvas svg').parent().html().replace(/@import url[^<]*/, viscss));
+            });
         });
         //=========================
         $('#export_other').click(function() {
