@@ -1,11 +1,4 @@
 {{extend 'layout.html'}}
-{{if session.debug:}}
-<script type="text/javascript">
-    {{include 'default/biographer-ui.js'}}
-</script>
-{{else:}}
-<script type="text/javascript" src="{{=URL(request.application, 'static/biographer-editor/js', 'biographer-ui.js')}}"></script>
-{{pass}}
 <table>
 	<tr>
 		<td></td>
@@ -14,13 +7,13 @@
 				{{if not request.vars.html5only:}}
 				<li id="save_to_session"> 
 				<div>save current network to session</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'disk.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'disk.png')}}"/> 
 				&nbsp;
 				</li>
 				{{pass}}
 				<li id="clear"> 
 				<div>clear the canvas</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'trash.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'trash.png')}}"/> 
 				&nbsp;
 				</li>
 				<!-- ---------------------------------------------------------------- -->
@@ -28,24 +21,24 @@
 				<li class="spacer"></li>
                 <li id="bug" {{="class=fkt_active" if session.debug else ""}}> 
 				<div>switch to debug mode</div>
-                <a href="{{=URL('debug')}}"><img src="{{=URL(request.application, 'static/images/editor', 'bug.png')}}"/></a>
+                <a href="{{=URL('debug')}}"><img src="{{=URL(request.application, 'static/biographer-editor/img', 'bug.png')}}"/></a>
 				&nbsp;
 				</li>
 				<li id="reset"> 
 				<div>reset biographer</div>
-                <a href="{{=URL('reset')}}"><img src="{{=URL(request.application, 'static/images/editor', 'reset.png')}}"/></a>
+                <a href="{{=URL('reset')}}"><img src="{{=URL(request.application, 'static/biographer-editor/img', 'reset.png')}}"/></a>
 				&nbsp;
 				</li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
 				<li id="undo"> 
 				<div>undo</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'undo.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'undo.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id="redo"> 
 				<div>redo</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'redo.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'redo.png')}}"/> 
 				&nbsp;
 				</li>
 				{{pass}}
@@ -54,31 +47,31 @@
 				{{if not request.vars.html5only:}}
 				<li id="import_file"> 
 				<div><b>import</b> graph from : JSON file, SBML file, BioModels.net, Reactome </div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'import_file.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'import_file.png')}}"/> 
 				&nbsp;
 				</li>
 				{{pass}}
 				<li id="import_str"> 
 				<div><b>import</b> JSON graph <b>from string</b></div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'import_string.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'import_string.png')}}"/> 
 				&nbsp;
 				</li>
 				<li class="spacer"></li>
 				<li id="export_json"> 
 				<div>export current graph as jSBGN (JSON)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'export_json.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_json.png')}}"/> 
 				&nbsp;
 				</li>
 			    	{{if not request.vars.html5only:}}
 				<li id="export_svg"> 
 				<div>export current graph as SVG</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'export_svg.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_svg.png')}}"/> 
 				&nbsp;
 				</li>
 				</li>
 				<li id="export_other"> 
 				<div>export current graph as: png,jpeg,pdf,tiff</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'export.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export.png')}}"/> 
 				&nbsp;
 				</li>
 				{{pass}}
@@ -86,121 +79,121 @@
 				<li class="spacer"></li>
 				<li id="layout_grid"> 
 				<div>apply <b>grid based</b> layout in browser (if ctrl+click the grid is only initialized)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'grid.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'grid.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id="layout_force"> 
 				<div>apply <b>D3 force based</b> layout in browser</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'd3_force.png')}}"/> 	
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'd3_force.png')}}"/> 	
 				&nbsp;
 				</li>
 				{{if not request.vars.html5only:}}
 				<li id="layout_biographer"> 
 				<div>apply automatic <b>biographer</b> layout</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'biographer.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'biographer.png')}}"/> 
 				&nbsp;
 				</li>
 				{{pass}}
 				<li id="clone"> 
 				<div>clone selected objects (or all) with with edge degree &gt; 5</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'clone.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'clone.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id="combine"> 
 				<div>combine selected objects</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'combine.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'combine.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='straighten_and_distribute' class="fkt_active"> 
 				<div>enable/disable: straighten edges and distributen all points on edges equally</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'straighten_and_distribute.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'straighten_and_distribute.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='hide_handles'> 
 				<div>hide/show all edge handles</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'hide_handle.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'hide_handle.png')}}"/> 
 				&nbsp;
 				</li>
 				<!-- li id="layout_grahviz"> 
 				<div>apply automatic <b>graphviz</b> layout</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'graphviz.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'graphviz.png')}}"/> 
 				&nbsp;
 				</li -->
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
 				<li class="scale" data-rate='0.1'> 
 				<div>zoom in</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'zoom_in.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_in.png')}}"/> 
 				&nbsp;
 				</li>
 				<li class="scale" data-rate='-0.1'> 
 				<div>zoom out</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'zoom_out.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_out.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='scale1'> 
 				<div>scale to default size</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'one.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'one.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id="fit_to_screen"> 
 				<div>fit to page</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'fit_to_screen.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'fit_to_screen.png')}}"/> 
 				&nbsp;
 				</li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
 				<li id='edit_all_nodes'> 
 				<div>resize/move all nodes</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'select_all.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'select_all.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='edit_no_nodes'> 
 				<div>resize/move no nodes</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'select_none.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'select_none.png')}}"/> 
 				&nbsp;
 				</li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
 				<li id='align_vertical'> 
 				<div>align selected nodes vertically</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'align_vertical.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_vertical.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='align_hoizontal'> 
 				<div>align selected nodes horizontally</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'align_hoizontal.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_hoizontal.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='align_left'> 
 				<div>align selected nodes left</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'align_left.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_left.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='align_top'> 
 				<div>align selected nodes top</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'align_top.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_top.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='align_right'> 
 				<div>align selected nodes right</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'align_right.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_right.png')}}"/> 
 				&nbsp;
 				</li>
 				</li>
 				<li id='align_bottom'> 
 				<div>align selected nodes bottom</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'align_bottom.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_bottom.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='horizontal_gaps_equal'> 
 				<div>make the distances of horizontal gaps between nodes equal</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'horizontal_gaps_equal.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'horizontal_gaps_equal.png')}}"/> 
 				&nbsp;
 				</li>
 				<li id='vertical_gaps_equal'> 
 				<div>make the distances of vertical gaps between nodes equal</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'vertical_gaps_equal.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'vertical_gaps_equal.png')}}"/> 
 				&nbsp;
 				</li>
 				</li>
@@ -221,7 +214,7 @@
 					</table>
 					yes the help is a bit sparse, contact us if you need further help
 				</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'help.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'help.png')}}"/> 
 				&nbsp;
 				</li>
 			</ul>
@@ -232,100 +225,100 @@
 			<ul class="tools_group tools_click">
 				<li class="active" id='cursor'>
 				<div>select<br />ctrl+click to move and resize</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'cursor.png')}}" id="cursor" class="tool"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cursor.png')}}" id="cursor" class="tool"/>
 				</li>
 				<li id='edit'>
 				<div>edit</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'wrench.png')}}" id="edit" class="tool"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'wrench.png')}}" id="edit" class="tool"/>
 				</li>
 				<li id='Edge'>
 				<div>draw edge</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'edge.png')}}" id="Edge" class="tool"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'edge.png')}}" id="Edge" class="tool"/>
 				</li>
 				<li id='Spline'>
 				<div>draw spline</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'spline.png')}}" id="Spline" class="tool"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'spline.png')}}" id="Spline" class="tool"/>
 				</li>
 				<li id='del'>
 				<div>delete node</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'cross.png')}}" id="cross" class="tool"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cross.png')}}" id="cross" class="tool"/>
 				</li>
 				<li id="focus"> 
 				<div>focus to node</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'focus.png')}}"/> 
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus.png')}}"/> 
 				&nbsp;
 				</li>
 			</ul>
 			<ul class="tools_group tools_drag">
 				<li>
 				<div>SimpleChemical (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'SimpleChemical.png')}}" id="SimpleChemical" class="tool node PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'SimpleChemical.png')}}" id="SimpleChemical" class="tool node PD"/>
 				</li>
 				<li>
 				<div>Macromolecule (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'Macromolecule.png')}}" id="Macromolecule" class="tool node PD ER"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Macromolecule.png')}}" id="Macromolecule" class="tool node PD ER"/>
 				</li>
 				<li>
 				<div>NucleicAcidFeature (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'NucleicAcidFeature.png')}}" id="NucleicAcidFeature" class="tool node PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'NucleicAcidFeature.png')}}" id="NucleicAcidFeature" class="tool node PD"/>
 				</li>
 				<li>
 				<div>UnspecifiedEntity (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'UnspecifiedEntity.png')}}" id="UnspecifiedEntity" class="tool node PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'UnspecifiedEntity.png')}}" id="UnspecifiedEntity" class="tool node PD"/>
 				</li>
 				<li>
 				<div>Entity (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'RectangularNode.png')}}" id="RectangularNode" class="tool node ER AF"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'RectangularNode.png')}}" id="RectangularNode" class="tool node ER AF"/>
 				</li>
 				<li>
 				<div>Perturbation (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'Perturbation.png')}}" id="Perturbation" class="tool node PD ER"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Perturbation.png')}}" id="Perturbation" class="tool node PD ER"/>
 				</li>
 				<li>
 				<div>Phenotype (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'Phenotype.png')}}" id="Phenotype" class="tool node PD ER"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Phenotype.png')}}" id="Phenotype" class="tool node PD ER"/>
 				</li>
 				<li>
 				<div>Compartment (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'Compartment.png')}}" id="Compartment" class="tool node no_drop_complex PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Compartment.png')}}" id="Compartment" class="tool node no_drop_complex PD"/>
 				</li>
 				<li>
 				<div>Complex (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'Complex.png')}}" id="Complex" class="tool node PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Complex.png')}}" id="Complex" class="tool node PD"/>
 				</li>
 				<li>
 				<div>EmptySet (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'EmptySet.png')}}" id="EmptySet" class="tool node PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'EmptySet.png')}}" id="EmptySet" class="tool node PD"/>
 				</li>
 				<li>
 				<div>Process (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'Process.png')}}" id="Process" class="tool node no_drop_complex PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Process.png')}}" id="Process" class="tool node no_drop_complex PD"/>
 				</li>
 				<li>
 				<div>Tag (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'Tag.png')}}" id="Tag" class="tool node PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Tag.png')}}" id="Tag" class="tool node PD"/>
 				</li>
 				<li>
 				<div>LogicalOperator (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'LogicalOperator.png')}}" id="LogicalOperator" class="tool node PD ER"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'LogicalOperator.png')}}" id="LogicalOperator" class="tool node PD ER"/>
 				</li>
 				<li>
 				<div>Association (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'Association.png')}}" id="Association" class="tool node PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Association.png')}}" id="Association" class="tool node PD"/>
 				</li>
 				<li>
 				<div>Dissociation (drag me)</div>
-				<img src="{{=URL(request.application, 'static/images/editor', 'Dissociation.png')}}" id="Dissociation" class="tool node PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Dissociation.png')}}" id="Dissociation" class="tool node PD"/>
 				</li>
 			</ul>
 		</td>
 		<td>
 			<div id="outer_canvas">
-				<img src="{{=URL(request.application, 'static/images/editor', 'cross.png')}}" id="follow_cross" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/images/editor', 'wrench.png')}}" id="follow_wrench" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/images/editor', 'edge.png')}}" id="follow_edge" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/images/editor', 'spline.png')}}" id="follow_spline" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/images/editor', 'focus_.png')}}" id="follow_focus" class='follow' style="position: fixed;"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cross.png')}}" id="follow_cross" class='follow' style="position: fixed;"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'wrench.png')}}" id="follow_wrench" class='follow' style="position: fixed;"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'edge.png')}}" id="follow_edge" class='follow' style="position: fixed;"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'spline.png')}}" id="follow_spline" class='follow' style="position: fixed;"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus_.png')}}" id="follow_focus" class='follow' style="position: fixed;"/>
 				<div id="canvas" class='droppable'></div>
 			</div>
 		</td>
@@ -343,7 +336,6 @@
                 <td>
                     <form id='import_form' method="post" enctype="multipart/form-data">
                         <input name="import_file" type="file" id="import_file_input"/>
-                        <input name='test' type="hidden" value='lala'/>
                     </form>
                 </td>
 			</tr>
@@ -391,7 +383,7 @@
 				<div id="uoi_group">
 					<input type="text" placeholder="mt:prot" class='unit_of_information' /> 
 				</div>
-				<img src="{{=URL(request.application, 'static/images/editor/ico', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img/ico', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
 			</td>
 		</tr>
 		<tr>
@@ -435,41 +427,41 @@
 				<div id="marker_select">
 					<div class="marker_select" id="">
 						<div> none </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'slide_down.png')}}"/> 
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'slide_down.png')}}"/> 
 					</div>
 					<div class="marker_select" id="production">
 						<div> production </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'production.png')}}"/> 
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'production.png')}}"/> 
 					</div>
 					<div class="marker_select" id="control">
 						<div> control </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'control.png')}}"/> 
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'control.png')}}"/> 
 					</div>
 					<div class="marker_select" id="inhibition">
 						<div> inhibition </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'inhibition.png')}}"/> 
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'inhibition.png')}}"/> 
 					</div>
 					<div class="marker_select" id="catalysis">
 						<div> catalysis </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'catalysis.png')}}"/> 
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'catalysis.png')}}"/> 
 					</div>
 					<div class="marker_select" id="stimulation">
 						<div> stimulation </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'stimulation.png')}}"/> 
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'stimulation.png')}}"/> 
 					</div>
 					<div class="marker_select" id="assignment">
 						<div> assignment </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'assignment.png')}}"/> 
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'assignment.png')}}"/> 
 					</div>
 					<div class="marker_select" id="necessaryStimulation">
 						<div> necessaryStimulation </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'necessaryStimulation.png')}}"/> </div>
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'necessaryStimulation.png')}}"/> </div>
 					<div class="marker_select" id="absoluteStimulation">
 						<div> absoluteStimulation </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'absoluteStimulation.png')}}"/> </div>
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteStimulation.png')}}"/> </div>
 					<div class="marker_select" id="absoluteInhibition">
 						<div> absoluteInhibition </div>
-						<img src="{{=URL(request.application, 'static/images/editor', 'absoluteInhibition.png')}}"/> </div>
+						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteInhibition.png')}}"/> </div>
 				</div>
 			</td>
 		</tr>
@@ -496,38 +488,38 @@
 	<button class='sc_but' id='cancel_modal_input'>cancel</button> or press <b>ESC</b>
 </div>
 <!-- --------------------------------------------------------------------------------- -->
-<!-- --------------------------------------------------------------------------------- -->
-<script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'biographer.editor.js')}}'></script>
+{{if session.debug:}}
 <script type="text/javascript">
-	//-------------------------------------------
-	editor_config = {
-		url_undo_push : '{{=URL("undo_push")}}',
-		url_undo : '{{=URL('undo.json')}}',
-		url_redo : '{{=URL('redo.json')}}',
-		url_layout : '{{=URL('layout')}}',
-		url_import : '{{=URL('import_graph.json')}}',
-	    	loading_img : '{{=TAG[''](IMG(_alt="processing layout",_src=URL(request.application, "static/images", "loading.gif")),BR(),"...")}}',
-	    	images_base_path: '/{{=request.application}}/static/images/editor/',
-	 	bui_visualization_css_file : '{{=URL(request.application, "static/biographer-editor/css", "visualization-svg.css")}}',
-	 	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
-	    		nodes : [],
-	    		edges : []
-	    	}{{pass}},
-	    	history_undo: {{if session.editor_histroy_undo:}}  {{=XML([i['action'] for i in session.editor_histroy_undo])}} {{else:}} []{{pass}},
-	    	history_redo: {{if session.editor_histroy_redo:}}  {{=XML([i['action'] for i in session.editor_histroy_redo])}} {{else:}} []{{pass}}
-	}
-	//=========================
-	editor = new Editor();
-	bui.ready(function() {
-		bui.settings.css.stylesheetUrl = editor_config.bui_visualization_css_file;
-		editor.graph = new bui.Graph($('#canvas')[0]);
-		bui.importFromJSON(editor.graph, editor_config.graphData);
-		//add edge select listner to all nodes 
-		var all_drawables = editor.graph.drawables();
-		for (var key in all_drawables) {
-		    	all_drawables[key].bind(bui.Node.ListenerType.click, editor.drawableSelect);
-		}
-		
-	});
-	//-------------------------------------------
+    {{include 'default/biographer-ui.js'}}
+</script>
+{{else:}}
+<script type="text/javascript" src="{{=URL(request.application, 'static/biographer-editor/js', 'biographer-ui.js')}}"></script>
+{{pass}}
+<script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'biographer.editor.js')}}'></script>
+<script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'libSBGN.js')}}'></script>
+<!-- --------------------------------------------------------------------------------- -->
+<script type="text/javascript">
+editor_config = {
+	url_undo_push : '{{=URL("undo_push")}}',
+	url_undo : '{{=URL('undo.json')}}',
+	url_redo : '{{=URL('redo.json')}}',
+	url_layout : '{{=URL('layout')}}',
+	url_import : '{{=URL('import_graph.json')}}',
+    	images_base_path: '/{{=request.application}}/static/biographer-editor/img/',
+ 	bui_visualization_css_file : '{{=URL(request.application, "static/biographer-editor/css", "visualization-svg.css")}}',
+ 	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
+    		nodes : [],
+    		edges : []
+    	}{{pass}},
+    	history_undo: {{if session.editor_histroy_undo:}}  {{=XML([i['action'] for i in session.editor_histroy_undo])}} {{else:}} []{{pass}},
+    	history_redo: {{if session.editor_histroy_redo:}}  {{=XML([i['action'] for i in session.editor_histroy_redo])}} {{else:}} []{{pass}}
+}
+//=========================
+editor = new Editor();
+bui.ready(function() {
+	bui.settings.css.stylesheetUrl = editor_config.bui_visualization_css_file;
+	editor.graph = new bui.Graph($('#canvas')[0]);
+	editor.redrawGrap(editor_config.graphData);
+	
+});
 </script>

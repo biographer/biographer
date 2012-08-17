@@ -13,6 +13,7 @@ function Editor(){
     this.x = 1;
     this.canvaspos = $('#canvas').position();
     this.selected_nodes = [];
+    this.loading_img = $('script[src*="js/biographer.editor.js"]').attr('src').replace('js/biographer.editor.js', 'img/loading.gif'); 
     this.init();
 }
 //-------------------------------------------
@@ -42,7 +43,7 @@ Editor.prototype = {
     },
     //-------------------------------------------
     redrawGraph: function(graph_json){
-        all_drawables = this.graph.drawables(); 
+        var all_drawables = this.graph.drawables(); 
         for (var key in all_drawables) {
             all_drawables[key].remove();
         }
@@ -50,6 +51,18 @@ Editor.prototype = {
         $('#canvas').html(''); 
         this.graph = new bui.Graph($('#canvas')[0]);
         bui.importFromJSON(this.graph, graph_json);
+        //add edge select listner to all nodes 
+        var all_drawables = editor.graph.drawables();
+        for (var key in all_drawables) {
+                all_drawables[key].bind(bui.Node.ListenerType.click, editor.drawableSelect);
+        }
+        var this_editor = this;
+        $('.Complex, .Compartment').droppable({ 
+                hoverClass: 'drop_hover',
+                over : function(){$('#canvas').droppable("disable");},
+                out : function(){$('#canvas').droppable("enable");},
+                drop: function(event, ui){this_editor.dropFkt(event, ui, this);},
+        });
     },
     //-------------------------------------------
     showUndoRedo: function(){
@@ -404,35 +417,12 @@ Editor.prototype = {
             });
         }
         this.showUndoRedo();
-        //=========================
-        /*
-        // Check for the various File API support.
-        if (window.File && window.FileReader && window.FileList && window.Blob) {
-          // Great success! All the File APIs are supported.
-          document.querySelector('.file_upload_button').addEventListener('click', function(evt) {
-            //file processing here
-            var files = evt.target.files; // FileList object
-            var reader = new FileReader();
-            var file_content = reader.readAsText(evt.target.files[0]);
-            redrawGraph(JSON.parse(file_content));
-            undoPush('loaded graph from JSON string');
-            //$.modal.close()
-
-          }, false);
-        } else {
-            alert('The File APIs are not fully supported in this browser.');
-        }
-        */
+ 
         $('#canvas').droppable({ 
                 hoverClass: 'drop_hover',
                 drop: function(event, ui){this_editor.dropFkt(event, ui, this);},
         });
-        $('.Complex, .Compartment').droppable({ 
-                hoverClass: 'drop_hover',
-                over : function(){$('#canvas').droppable("disable");},
-                out : function(){$('#canvas').droppable("enable");},
-                drop: function(event, ui){this_editor.dropFkt(event, ui, this);},
-        });
+        
         //=========================
         $('#hide_handles').click(function(){
             var all_drawables = this_editor.graph.drawables();
@@ -561,7 +551,7 @@ Editor.prototype = {
         $('#layout_grid').click(function(evnt){
             nodes_edges = this_editor.get_nodes_edges();
             //orig_html = $('#layout_grid').html();
-            //$('#layout_grid').html(editor_config.loading_img).ready(function(){
+            //$('#layout_grid').html(this_editor.loading_img).ready(function(){
             bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
             if (!evnt.ctrlKey){
                 bui.grid.put_on_grid();
@@ -576,9 +566,10 @@ Editor.prototype = {
         //=========================
         $('#clone').click(function(){
             orig_html = $('#clone').html()
-            $('#clone').html(editor_config.loading_img)
+            $('#clone').html(this_editor.loading_img)
             var selected_drawables = {};
             var flag = false;
+            var all_drawables = this_editor.graph.drawables();
             for (var key in all_drawables) {
                 drawable = all_drawables[key]
                 if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
@@ -586,14 +577,15 @@ Editor.prototype = {
                     selected_drawables[drawable.id()] = 1;
                 }
             }
-            if(flag == false) bui.clone(5);
-            else bui.util.clone(2, selected_drawables)
+            if(flag == false) bui.util.clone(this_editor.graph, 5);
+            else bui.util.clone(this_editor, 2, selected_drawables)
             $('#clone').html(orig_html);
         });
         //=========================
         $('#combine').click(function(){
             var selected_drawables = {};
             var flag = false;
+            var all_drawables = this_editor.graph.drawables();
             for (var key in all_drawables) {
                 drawable = all_drawables[key]
                 if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
@@ -601,13 +593,13 @@ Editor.prototype = {
                     selected_drawables[drawable.id()] = 1;
                 }
             }
-            if(flag == true) bui.util.combine(selected_drawables);
+            if(flag == true) bui.util.combine(this_editor.graph, selected_drawables);
         });
         //=========================
         $('#layout_force').click(function(){
          
             orig_html = $('#layout_force').html()
-            $('#layout_force').html(editor_config.loading_img)
+            $('#layout_force').html(this_editor.loading_img)
             nodes_edges = this_editor.get_nodes_edges();
             var nodes = [], links = [];
             //alert('in nodes '+nodes.length);
@@ -633,7 +625,7 @@ Editor.prototype = {
         //=========================
         $('#layout_biographer').click(function(){
             var orig_html = $('#layout_biographer').html()
-            $('#layout_biographer').html(editor_config.loading_img)
+            $('#layout_biographer').html(this_editor.loading_img)
             editor_config.graphData=this_editor.graph.toJSON();
             $.ajax({
                 url: editor_config.url_layout,
@@ -693,7 +685,33 @@ Editor.prototype = {
 
         });
         //=========================
-        $("#import_file_input, #biomodel").change(function(){
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            // Great success! All the File APIs are supported.
+            $('#import_file_input').change(function(){
+                var upload_element = $(this)[0]
+                var file = upload_element.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.readAsText(file) //, "UTF-8");//TODO what encoding should be parsed???
+                    reader.onload = function (evt) {
+                        var content = evt.target.result;
+                        //console.log('content: '+content);
+                        var doc = sb.io.read(content);
+                        if(doc == false){}
+                        this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                        this_editor.undoPush('loaded graph from JSON string');
+                        $.modal.close();
+                    }
+                    reader.onerror = function (evt) {
+                        console.log("error reading file");
+                    }
+                }
+                return false;
+            });
+        } else {
+            alert('The File APIs are not fully supported in this browser. You will not be able to upload jSBGN/SBGN-ML/SBML files. Please update your browser.');
+        }
+        $("#biomodel").change(function(){
             $(this).closest("form").submit();
         });
         //===
