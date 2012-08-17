@@ -512,7 +512,7 @@
             }
         }
     };
-    bui.util.clone = function(degree, select_drawables){
+    bui.util.clone = function(graph, degree, select_drawables){
             var suspendHandle = graph.suspendRedraw(20000);
             all_drawables = graph.drawables();
             // create a counting dictionary for the nodes
@@ -580,7 +580,7 @@
     } 
 
 
-    bui.util.combine = function(select_drawables){
+    bui.util.combine = function(graph, select_drawables){
             var suspendHandle = graph.suspendRedraw(20000);
             all_drawables = graph.drawables();
             // create new node
