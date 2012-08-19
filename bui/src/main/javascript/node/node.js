@@ -124,7 +124,7 @@
     };
     
     var interactActionCheck = function (event) {
-        if (!bui.settings.enableModificationSupport)
+        if (!bui.settings.enableModificationSupport) {
             return '';
         }
         var position = this.absolutePosition(),
@@ -134,9 +134,9 @@
             graphTranslate = this.graph().translate(),
             margin = interact.margin(),
             x = ((event.touches? event.touches[0]: event)
-                    .pageX - graphPosition.x - graphTranslate.x) / scale,
+                    .pageX - graphPosition.x) / scale - graphTranslate.x,
             y = ((event.touches? event.touches[0]: event)
-                    .pageY - graphPosition.y - graphTranslate.y) / scale,
+                    .pageY - graphPosition.y) / scale - graphTranslate.y,
             
             right = (x - position.x) > (size.width - margin),
             bottom = (y - position.y) > (size.height - margin),
@@ -211,13 +211,15 @@
         privates.nodeGroup.addEventListener('interactresizemove', privates.interact.resizeMove);
         privates.nodeGroup.addEventListener('interactresizeend', privates.interact.resizeMove);
 
-        // set as interactable
-        interact.set(privates.nodeGroup, {
-                drag: this._enableDragging,
-                resize: this._enableResizing,
-                squareResize: this._forceRectangular,
-                actionChecker: privates.interact.actionCheck
-            });
+        if (bui.settings.enableModificationSupport) {
+            // set as interactable
+            interact.set(privates.nodeGroup, {
+                    drag: this._enableDragging,
+                    resize: this._enableResizing,
+                    squareResize: this._forceRectangular,
+                    actionChecker: privates.interact.actionCheck
+                });
+        }
     };
 
     /**
@@ -417,7 +419,7 @@
                 this.absolutePosition(x - size.width / 2, y - size.height / 2);
                 return this;
             }
-            var pos = this.absolutePosition()
+            var pos = this.absolutePosition();
             return {
                 x : pos.x + size.width / 2,
                 y : pos.y + size.height / 2,

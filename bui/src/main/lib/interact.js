@@ -43,16 +43,16 @@ window.interact = (function (window) {
         },
 
         interactNodes = [],
-        svgTags = {
-            g: 'g',
-            rect: 'rect',
-            circle: 'circle',
-            ellipse: 'ellipse',
-            text: 'text',
-            path: 'path',
-            line: 'line',
-            image: 'image'
-        },
+        svgTags = [
+            'g',
+            'rect',
+            'circle',
+            'ellipse',
+            'text',
+            'path',
+            'line',
+            'image'
+        ],
         scrollMargin = 70,
 
         //All things relating to autoScroll
@@ -299,7 +299,6 @@ window.interact = (function (window) {
                    if (target.gesture) {
                         events.add(docTarget, moveEvent, gestureMove);
                         addClass(target.element, 'interact-target interact-gesturing');
-                        event.preventDefault();
                     }
                 }
             }
@@ -400,7 +399,7 @@ window.interact = (function (window) {
      * @private
      * @returns{String} action to be performed - drag/resize[axes]
      */
-    function autoCheck(event) {
+    function actionCheck(event) {
         var clientRect,
             right,
             bottom,
@@ -412,7 +411,7 @@ window.interact = (function (window) {
                     event.touches[0].pageY:
                     event.pageY;
 
-        clientRect = (target.element.nodeName in svgTags)?
+        clientRect = (svgTags.indexOf(target.element.nodeName) !== -1)?
                 target.element.getBoundingClientRect():
                 clientRect = target.element.getClientRects()[0];
 
@@ -730,9 +729,13 @@ window.interact = (function (window) {
                 removeClass(target.element, 'interact-resizexy interact-resizex interact-resizey');
 
                 action = target.getAction(event);
+
 				if (!action || !(target[action.match('resize') || action])) {
 					return event;
 				}
+                if (action === 'resize') {
+                    action = 'resizexy';
+                }
 
                 target.element.style.cursor = actions[action].cursor;
             } else if (dragging || resizing || gesturing) {
@@ -769,6 +772,10 @@ window.interact = (function (window) {
 			if (!action || !(target[action.match('resize') || action])) {
 				return event;
 			}
+
+            if (action === 'resize') {
+                action = 'resizexy';
+            }
 
 			document.documentElement.style.cursor = target.element.style.cursor = actions[action].cursor;
 			actions[action].ready();
@@ -972,7 +979,7 @@ window.interact = (function (window) {
             autoScroll: ('autoScroll' in options)? options.autoScroll : true,
             getAction: (typeof options.actionChecker === 'function')?
                     options.actionChecker:
-                    autoCheck
+                    actionCheck
         };
 
         if (indexOfElement !== -1) {
@@ -984,7 +991,7 @@ window.interact = (function (window) {
 
         addClass(element, [
                 'interact-node',
-                newNode.drag? 'interact-dragable': '',
+                newNode.drag? 'interact-draggable': '',
                 newNode.resize? 'interact-resizeable': '',
                 newNode.gesture? 'interact-gestureable': ''
             ].join(' '));
@@ -1001,7 +1008,18 @@ window.interact = (function (window) {
         if (i !== -1) {
             events.removeAll(interactNodes[i]);
             interactNodes.splice(i, 1);
-            removeClass(element, 'interact-node interact-target interact-dragging interact-draggable interact-resizeable interact-resize-xy interact-resize-x interact-resize-y');
+            removeClass(element, [
+                    'interact-node',
+                    'interact-target',
+                    'interact-dragging',
+                    'interact-draggable',
+                    'interact-resizeable',
+                    'interact-resize-xy',
+                    'interact-resize-x',
+                    'interact-resize-y',
+                    'interact-gestureable',
+                    'interact-gesturing',
+                ].join(' '));
         }
 
     };
@@ -1035,7 +1053,7 @@ window.interact = (function (window) {
                 }
             }
         } else {
-            clientRect = (element.nodeName in svgTags)?
+            clientRect = (svgTags.indexOf(element.nodeName) !== -1)?
                     element.getBoundingClientRect():
                     clientRect = element.getClientRects()[0];
 
@@ -1073,13 +1091,23 @@ window.interact = (function (window) {
 
         return {
             target: target,
+            dragging: dragging,
+            resizing: resizing,
+            gesturing: gesturing,
             prevX: prevX,
             prevY: prevY,
-            startX: x0,
-            startY: y0,
+            x0: x0,
+            y0: y0,
             nodes: interactNodes,
             mouseIsDown: mouseIsDown,
-            supportsTouch: supportsTouch
+            supportsTouch: supportsTouch,
+            defaultActionCheck: actionCheck,
+            dragMove: dragMove,
+            resizeMove: resizeMove,
+            gestureMove: gestureMove,
+            mouseUp: docMouseUp,
+            mouseDown: mouseDown,
+            mouseMove: mouseMove
         };
     };
 
