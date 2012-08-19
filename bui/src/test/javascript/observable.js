@@ -17,12 +17,12 @@ function testObservable(observable) {
         .bind(type2, generateTypeListener(type2), type2);
 
     expectedType = type1;
-    ok(observable.fire(type1));
+    ok(observable.fire(expectedType));
 
     expectedType = type2;
-    ok(observable.fire(type2));
+    ok(observable.fire(expectedType));
 
-    ok(observable.unbind(type1, type1).fire(type1));
+    ok(observable.unbind(type1).fire(type1));
 
     expectedType = type2;
     ok(observable.fire(type2));
@@ -112,8 +112,63 @@ test('observable.unbindAll', function() {
     equal(callCounter, 0);
 });
 
+test('static.listeners', function() {
+    bui.Observable._unbindAllStatic();
+    expect(12);
+
+    var type1 = 'foo', type2 = 'bar', expectedType, expectedInstance;
+
+    var generateTypeListener = function(type) {
+        var associatedType = type;
+
+        return function(source) {
+            equal(associatedType, expectedType);
+            equal(source, expectedInstance);
+            equal(this, expectedInstance);
+        };
+    };
+
+    var instance1 = new bui.Observable();
+    instance1._addType({ first : type1, second : type2});
+
+    bui.Observable.bindStatic(type1, generateTypeListener(type1));
+    bui.Observable.bindStatic(type2, generateTypeListener(type2));
+
+    var instance2 = new bui.Observable();
+    instance2._addType({ first : type1, second : type2});
+
+    expectedType = type1;
+    expectedInstance = instance1;
+    expectedInstance.fire(expectedType);
+
+    expectedInstance = instance2;
+    expectedInstance.fire(expectedType);
+
+    expectedType = type2;
+    expectedInstance.fire(expectedType);
+
+    expectedInstance = instance1;
+    expectedInstance.fire(expectedType);
+});
+
 module('Inheritance');
 
 test('inheritance.basic', function() {
+    bui.Observable._unbindAllStatic();
     testObservable(new bui.Graph(document.getElementById('dummy')))
+});
+
+test('inheritance.static', function() {
+    bui.Observable._unbindAllStatic();
+    expect(1);
+    var called = false;
+
+    bui.Graph.bindStatic(bui.Graph.ListenerType.scale, function() {
+        called = true;
+    });
+
+    var graph = new bui.Graph(document.getElementById('dummy'));
+    graph.fire(bui.Graph.ListenerType.scale);
+
+    ok(called);
 });
