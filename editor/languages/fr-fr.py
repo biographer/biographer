@@ -47,6 +47,7 @@
 'Query:': 'Query:',
 'Record ID': 'Record ID',
 'Register': 'Register',
+'Registration identifier': 'Registration identifier',
 'Registration key': 'Registration key',
 'Reset Password key': 'Reset Password key',
 'Role': 'Role',
