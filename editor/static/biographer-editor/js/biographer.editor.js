@@ -160,14 +160,14 @@ Editor.prototype = {
         $('.follow').hide();
         $('.active').removeClass('active');
         var mode2id = {'del':'cross', 'edit':'wrench', 'Edge':'edge', 'Spline':'spline', 'focus':'focus'};
-        if ((mode == 'del')||(mode == 'edit')||(mode == 'Edge')||(mode == 'Spline')||(mode == 'focus')){
+        if (mode === undefined){
+            $('#cursor').addClass('active');
+        }else{
             $('#'+mode).addClass('active');
             $('#follow_'+mode2id[mode]).show();
             $("#canvas").mousemove(function(e){
                 $('#follow_'+mode2id[mode]).css('top', e.clientY+15).css('left', e.clientX+15);
             });
-        }else if (mode == 'cursor'){
-            $('#cursor').addClass('active');
         }
     },
     //-------------------------------------------
@@ -883,43 +883,45 @@ Editor.prototype = {
         });
         //=========================
         $('.canvas').click(function(event){
-            if(this_editor.canvas_click != true){
-                this_editor.canvas_click = true;
-                this_editor.selection_rect_pos = {left:event.pageX,top:event.pageY};
-                $('.selection_rect').show().offset({left:event.pageX,top:event.pageY});
-                console.log(this_editor.canvaspos);
-                var borders = {
-                    left: event.pageX - this_editor.canvaspos.left, 
-                    top:  event.pageY - this_editor.canvaspos.top
-                };
-                var cur_elem_pos, key;
-                var all_drawables = this_editor.graph.drawables(); 
-                $('.canvas').mousemove(function(event){
-                    $('.selection_rect').width(event.pageX-this_editor.selection_rect_pos.left).height(event.pageY-this_editor.selection_rect_pos.top);
-                    borders.right = event.pageX - this_editor.canvaspos.left;
-                    borders.bottom = event.pageY - this_editor.canvaspos.top;
-                    console.log(JSON.stringify(borders));
-                    this_editor.selected_nodes = [];
-                    for (key in all_drawables) {
-                        var drawable = all_drawables[key]
-                        if(drawable.drawableType() == 'node'){
-                            cur_elem_pos = drawable.absolutePosition();
-                            if((cur_elem_pos.x>=borders.left)&&(cur_elem_pos.x<=borders.right)&&(cur_elem_pos.y>=borders.top)&&(cur_elem_pos.y<=borders.bottom)){
-                                drawable.addClass('Red');
-                                drawable.selected = true;
-                                this_editor.selected_nodes.push(drawable);
-                            }else{
-                                drawable.removeClass('Red');
-                                drawable.selected = false;
-                            }
-                        } 
-                    }
-                });
-            }else{
-                console.log('mousedown '+event.pageX);
-                this_editor.canvas_click = false;
-                $('.canvas').unbind('mousemove');
-                $('.selection_rect').width(0).height(0).hide();
+            if (this_editor.cur_mode == 'selection'){
+                if(this_editor.canvas_click != true){
+                    this_editor.canvas_click = true;
+                    this_editor.selection_rect_pos = {left:event.pageX,top:event.pageY};
+                    $('.selection_rect').show().offset({left:event.pageX,top:event.pageY});
+                    console.log(this_editor.canvaspos);
+                    var borders = {
+                        left: event.pageX - this_editor.canvaspos.left, 
+                        top:  event.pageY - this_editor.canvaspos.top
+                    };
+                    var cur_elem_pos, key;
+                    var all_drawables = this_editor.graph.drawables(); 
+                    $('.canvas').mousemove(function(event){
+                        $('.selection_rect').width(event.pageX-this_editor.selection_rect_pos.left).height(event.pageY-this_editor.selection_rect_pos.top);
+                        borders.right = event.pageX - this_editor.canvaspos.left;
+                        borders.bottom = event.pageY - this_editor.canvaspos.top;
+                        console.log(JSON.stringify(borders));
+                        this_editor.selected_nodes = [];
+                        for (key in all_drawables) {
+                            var drawable = all_drawables[key]
+                            if(drawable.drawableType() == 'node'){
+                                cur_elem_pos = drawable.absolutePosition();
+                                if((cur_elem_pos.x>=borders.left)&&(cur_elem_pos.x<=borders.right)&&(cur_elem_pos.y>=borders.top)&&(cur_elem_pos.y<=borders.bottom)){
+                                    drawable.addClass('Red');
+                                    drawable.selected = true;
+                                    this_editor.selected_nodes.push(drawable);
+                                }else{
+                                    drawable.removeClass('Red');
+                                    drawable.selected = false;
+                                }
+                            } 
+                        }
+                    });
+                }else{
+                    console.log('mousedown '+event.pageX);
+                    this_editor.canvas_click = false;
+                    $('.canvas').unbind('mousemove');
+                    $('.selection_rect').width(0).height(0).hide();
+                }
             }
         });
     }
