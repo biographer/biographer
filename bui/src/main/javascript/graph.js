@@ -22,7 +22,10 @@
      */
     var __setTransformString = function() {
         var privates = this._privates(identifier);
-        var value = ['scale(', privates.scale.toString(), ')'].join('');
+        var value = [
+                ['scale(', privates.scale.toString(), ')'].join(''),
+                ['translate(', privates.x, ', ', privates.y, ')'].join('')
+            ].join(' ');
 
         privates.rootGroup.setAttribute('transform', value);
     };
@@ -34,6 +37,117 @@
      */
     var __getStylesheetContents = function() {
         return '@import url("' + bui.settings.css.stylesheetUrl + '\");';
+    };
+
+    var gestureStart = function(event) {
+        this.fire(bui.Graph.ListenerType.gestureStart, [this, event]);
+    };
+
+    var gestureMove = function(event) {
+        this.fire(bui.Graph.ListenerType.gestureMove, [this, event]);
+    };
+
+    var gestureEnd = function(event) {
+        this.fire(bui.Graph.ListenerType.gestureEnd, [this, event]);
+    };
+
+    var dragStart = function(event) {
+        this.fire(bui.Graph.ListenerType.dragStart, [this, event]);
+    };
+
+    var dragMove = function(event) {
+        this.fire(bui.Graph.ListenerType.dragMove, [this, event]);
+    };
+
+    var dragEnd = function(event) {
+        this.fire(bui.Graph.ListenerType.dragEnd, [this, event]);
+    };
+
+    var mouseWheel = function(event) {
+        this.fire(bui.Graph.ListenerType.wheel, [this, event]);
+    };
+    
+    var gesturePanAndZoom = function(graph, event) {
+        var privates = graph._privates(identifier),
+            newScale = privates.scale * (1 + event.detail.ds),
+            dx,
+            dy;
+        
+        // Do nothing if the event is propagating from a child element
+        if (event.target !== privates.root) {
+            return event;
+        }
+
+        if (newScale > 0) {
+            // Scaling the graph calls reduceCanvasSize(). This brings it back to place.
+            dx = privates.x;
+            dy = privates.y;
+            
+            // So that the graph follows the gesture
+            dx += event.detail.dx / newScale;
+            dy += event.detail.dy / newScale;
+        
+            // So that the graph is scaled with the gesture cordinate as the center
+            dx -= ((event.detail.pageX - privates.rootOffset.x) * event.detail.ds) / newScale;
+            dy -= ((event.detail.pageY - privates.rootOffset.y) * event.detail.ds) / newScale;
+            
+            graph.scale(newScale);
+            graph.translate(dx, dy);
+        }
+     };
+     
+    // create eventListener delegate functions
+    var panStart = function (graph, event) {
+        var privates = graph._privates(identifier);
+        
+        // Do nothing if the event is propagating from a child element
+        if (event.target !== privates.root) {
+            return event;
+        }
+        privates.panPosition = graph.translate();
+    };
+    
+    var panMove = function (graph, event) {
+        var privates = graph._privates(identifier),
+            scale = graph.scale();
+        
+        // Do nothing if the event is propagating from a child element
+        if (event.target !== privates.root) {
+            return event;
+        }
+        
+        if ((event.type === 'interactdragmove' && this.highPerformance()) ||
+            (event.type === 'interactdragend' && !this.highPerformance())) {
+            
+            privates.panPosition.x += event.detail.dx / scale;
+            privates.panPosition.y += event.detail.dy / scale;
+
+            this.translate(privates.panPosition.x, privates.panPosition.y);
+        }
+    };
+    
+    var wheelZoom = function (graph, event) {
+        event.preventDefault();
+        
+        var privates = graph._privates(identifier),
+            wheelDelta = event.wheelDelta || event.detail,
+            ds = 0.2 * (wheelDelta > 0? 1: -1),
+            newScale = privates.scale * (1 + ds),
+            dx,
+            dy;
+
+        if (newScale > 0 && wheelDelta !== 0) {
+            // Scaling the graph calls reduceCanvasSize(). This brings it back to place.
+            dx = privates.x;
+            dy = privates.y;
+        
+            // So that the graph is scaled with the gesture cordinate as the center
+            dx -= ((event.pageX - privates.rootOffset.x) * ds) / newScale;
+            dy -= ((event.pageY - privates.rootOffset.y) * ds) / newScale;
+            
+            graph.scale(newScale);
+            graph.translate(dx, dy);
+        }
     };
 
     /**
@@ -133,6 +247,24 @@
                 privates.defsGroup.appendChild(ca.hoverElement);
             }
         }
+        
+        privates.root.addEventListener('mousewheel', mouseWheel.createDelegate(this));
+            
+        // Add interact.js event listeners
+        privates.root.addEventListener('interactgesturemove', gestureMove.createDelegate(this));
+        privates.root.addEventListener('interactdragstart', dragStart.createDelegate(this));
+        privates.root.addEventListener('interactdragmove', dragMove.createDelegate(this));
+        privates.root.addEventListener('interactdragend', dragMove.createDelegate(this));
+        
+        // Set as interactable
+        interact.set(privates.root, {
+                gesture: true,
+                drag: true,
+                autoScroll: false,
+                actionCheck: function (event) {
+                    return 'drag';
+                }
+            });
     };
 
     /**
@@ -147,13 +279,13 @@
         var bottomRight = node.absoluteBottomRight();
 
         if (bottomRight.x > privates.rootDimensions.width) {
-            privates.rootDimensions.width = bottomRight.x;
-            privates.root.setAttribute('width', bottomRight.x);
+            privates.rootDimensions.width = bottomRight.x + privates.x;
+            privates.root.setAttribute('width', bottomRight.x + privates.x);
         }
 
         if (bottomRight.y > privates.rootDimensions.height) {
-            privates.rootDimensions.height = bottomRight.y;
-            privates.root.setAttribute('height', bottomRight.y);
+            privates.rootDimensions.height = bottomRight.y + privates.y;
+            privates.root.setAttribute('height', bottomRight.y + privates.y);
         }
     };
 
@@ -183,14 +315,32 @@
         var privates = this._privates(identifier);
         privates.id = bui.settings.idPrefix.graph + graphCounter++;
         privates.container = container;
-	if ( container == null ) {	// don't break here, just throw a message
-		console.error('Warning: Invalid container element specified. Using document.body instead.');
-		privates.container = document.body;
-		}
+        if ( container == null ) {    // don't break here, just throw a message
+            console.error('Warning: Invalid container element specified. Using document.body instead.');
+            privates.container = document.body;
+        }
         privates.drawables = {};
         privates.idCounter = 0;
         privates.scale = 1;
+        privates.x = 0;
+        privates.y = 0;
         privates.highPerformance = bui.settings.initialHighPerformance;
+
+        this.bind(bui.Graph.ListenerType.dragStart,
+                panStart.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Graph.ListenerType.dragMove,
+                panMove.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Graph.ListenerType.dragEnd,
+                panMove.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Graph.ListenerType.gestureMove,
+                gesturePanAndZoom.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Graph.ListenerType.wheel,
+                wheelZoom.createDelegate(this),
+                listenerIdentifier(this));
 
         __initialPaintGraph.call(this);
     };
@@ -343,6 +493,38 @@
         },
 
         /**
+         * @description
+         * Transate the graph or retrieve the current translation
+         *
+         * @param {Number} [x] The new translation in x-axis.
+         * @param {Number} [y] The new translation in y-axis.
+         * @return {bui.Graph|Number} Fluent interface if you pass a parameter,
+         *   otherwise the current translation is returned
+         */
+        translate : function(x, y) {
+            var privates = this._privates(identifier);
+
+            if (x !== undefined && y !== undefined) {
+                if (x !== privates.x || y !== privates.y) {
+                    privates.x = x;
+                    privates.y = y;
+
+                    __setTransformString.call(this);
+                    this.reduceCanvasSize();
+
+                    this.fire(bui.Graph.ListenerType.translate, [this, x, y]);
+                }
+
+                return this;
+            }
+
+            return {
+                x: privates.x,
+                y: privates.y
+            };
+        },
+
+        /**
          * Fit the Graph to the viewport, i.e. scale the graph down to show
          * the whole graph or (in the case  of a very small graph) scale it
          * up.
@@ -351,6 +533,8 @@
          */
         fitToPage : function() {
             var dimensions = this._privates(identifier).rootDimensions;
+            
+            this.translate(0,0);
 
             var viewportWidth = $(window).width();
             var viewportHeight = $(window).height();
@@ -446,21 +630,21 @@
                     if (drawable.bottomRight !== undefined) {
                         var bottomRight = drawable.absoluteBottomRight();
 
-                        maxX = Math.max(maxX, bottomRight.x);
-                        maxY = Math.max(maxY, bottomRight.y);
+                        maxX = Math.max(maxX, bottomRight.x + privates.x);
+                        maxY = Math.max(maxY, bottomRight.y + privates.y);
                     }
                 }
             }
 
             var padding = bui.settings.style.graphReduceCanvasPadding;
-            maxX += padding;
-            maxY += padding;
+            maxX = Math.max((maxX + padding) * privates.scale, padding);
+            maxY = Math.max((maxY + padding) * privates.scale, padding);
 
             privates.rootDimensions.width = maxX;
-            privates.root.setAttribute('width', maxX * privates.scale);
+            privates.root.setAttribute('width', maxX);
 
-            privates.rootDimensions.height = maxY;
-            privates.root.setAttribute('height', maxY * privates.scale);
+            privates.rootDimensions.height = maxY * privates.scale;
+            privates.root.setAttribute('height', maxY);
         },
 
         /**
@@ -656,6 +840,22 @@
         /** @field */
         add : bui.util.createListenerTypeId(),
         /** @field */
-        scale : bui.util.createListenerTypeId()
+        scale : bui.util.createListenerTypeId(),
+        /** @field */
+        translate : bui.util.createListenerTypeId(),
+        /** @field */
+        dragStart : bui.util.createListenerTypeId(),
+        /** @field */
+        dragMove : bui.util.createListenerTypeId(),
+        /** @field */
+        dragEnd : bui.util.createListenerTypeId(),
+        /** @field */
+        gestureStart : bui.util.createListenerTypeId(),
+        /** @field */
+        gestureMove : bui.util.createListenerTypeId(),
+        /** @field */
+        gestureEnd : bui.util.createListenerTypeId(),
+        /** @field */
+        wheel : bui.util.createListenerTypeId()
     };
 })(bui);

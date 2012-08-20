@@ -26,6 +26,15 @@
     };
 
     /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.ellipse.style.setProperty('fill', color.background);
+    };
+
+    /**
      * @private used from the constructor to improve readability
      */
     var initialPaint = function() {
@@ -34,51 +43,8 @@
         privates.ellipse = document.createElementNS(bui.svgns, 'ellipse');
         var size = this.size();
         sizeChanged.call(this, this, size.width, size.height);
+		colorChanged.call(this, this, this.color()), 
         container.appendChild(privates.ellipse);
-
-        // set as interactable
-        interact.set(privates.ellipse,
-            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
-
-        // create eventListener delegate functions
-        interactDragMove = (function (event) {
-            var position = this.position(),
-                scale = this.graph().scale();
-
-            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
-                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
-                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
-            }
-        }).createDelegate(this);
-
-        interactResizeMove = (function (event) {
-            var size = this.size(),
-                scale = this.graph().scale();
-            
-            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
-                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
-                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
-            }
-        }).createDelegate(this);
-
-        // add event listeners
-        privates.ellipse.addEventListener('interactresizemove', interactResizeMove);
-        privates.ellipse.addEventListener('interactdragmove', interactDragMove);
-        privates.ellipse.addEventListener('interactresizeend', interactResizeMove);
-        privates.ellipse.addEventListener('interactdragend', interactDragMove);
-        
-        function interactUnset() {
-            interact.unset(privates.ellipse);
-
-            privates.ellipse.removeEventListener('interactresizemove', interactResizeMove);
-            privates.ellipse.removeEventListener('interactdragmove', interactDragMove);
-            privates.ellipse.removeEventListener('interactresizeend', interactResizeMove);
-            privates.ellipse.removeEventListener('interactdragend', interactDragMove);
-        }
-
-        this.bind(bui.Drawable.ListenerType.remove,
-                interactUnset,
-                listenerIdentifier(this));
     };
 
     /**
@@ -91,9 +57,15 @@
     bui.UnspecifiedEntity = function() {
         bui.UnspecifiedEntity.superClazz.apply(this, arguments);
 
+        var colorChangedListener = colorChanged.createDelegate(this);
+
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
                 listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
+                colorChangedListener,
+                listenerIdentifier(this));
+        var privates = this._privates(identifier);
 
         initialPaint.call(this);
     };
