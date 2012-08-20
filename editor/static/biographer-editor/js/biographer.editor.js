@@ -6,14 +6,15 @@ function Editor(){
     this.timer_is_on=0;
     this.intervall = 60000;//every 60 seconds
     this.last_save = '';
-    this.cur_mode = false;
+    this.cur_mode = 'cursor';
+    this.selected_nodes = [];
+    this.selected_edges = [];
     //=========================
     //doHeartBeat();
     //=========================
     this.x = 1;
     this.canvaspos = $('#canvas').position();
-    this.selected_nodes = [];
-    this.loading_img = $('script[src*="js/biographer.editor.js"]').attr('src').replace('js/biographer.editor.js', 'img/loading.gif'); 
+    this.loading_img = '<img src="'+$('script[src*="js/biographer.editor.js"]').attr('src').replace('js/biographer.editor.js', 'img/loading.gif')+'" alt="loading" >';
     this.init();
 }
 //-------------------------------------------
@@ -54,7 +55,7 @@ Editor.prototype = {
         //add edge select listner to all nodes 
         var all_drawables = editor.graph.drawables();
         for (var key in all_drawables) {
-                all_drawables[key].bind(bui.Node.ListenerType.click, editor.drawableSelect);
+                all_drawables[key].bind(bui.Node.ListenerType.click, editor.drawableSelect());
         }
         var this_editor = this;
         $('.Complex, .Compartment').droppable({ 
@@ -66,23 +67,28 @@ Editor.prototype = {
     },
     //-------------------------------------------
     showUndoRedo: function(){
+        var newArray,html_history;
         if(editor_config.history_undo.length > 0){
             $('#undo').removeClass('disabled');
-            var newArray = editor_config.history_undo.slice();
-            $('#undo>div').html(newArray.reverse().join('<br/>'));
+            newArray = editor_config.history_undo.slice();
+            var html_history = '';
+            for (var i = newArray.length - 1; i >= 0; i--) {
+                html_history += newArray[i].action+'<br/>';
+            }
+            $('#undo>div').html(html_history);
         }else{
             $('#undo').addClass('disabled');
             $('#undo>div').html('undo');
         }
-        if(editor_config.history_redo.length > 0){
+        /*if(editor_config.history_redo.length > 0){
             $('#redo').removeClass('disabled');
             $('#redo>div').html(editor_config.history_redo.join('<br/>'));
-            var newArray = editor_config.history_redo.slice();
+            newArray = editor_config.history_redo.slice();
             $('#redo>div').html(newArray.reverse().join('<br/>'));
         }else{
             $('#redo').addClass('disabled');
             $('#redo>div').html('redo');
-        } 
+        }*/
     },
     //-------------------------------------------
     undoPush: function(action){
@@ -92,101 +98,139 @@ Editor.prototype = {
             $('.flash').html('Saved: nothing changed, woooah').fadeIn().delay(800).fadeOut();
             return false;
         }
+        editor.undoRegister(action, jsong);
         $.ajax({
             url: editor_config.url_undo_push,
             data : {
                 graph: jsong,
-                action: action,
+                action: action
             },
             success: function( data ) {
                 $('.flash').html('Saved '+action).fadeIn().delay(800).fadeOut();
-                editor.undoRegister(action, jsong)
-                return true;
+            },
+            error: function (){
+                $('.flash').html('Could not save last action to session history');
             }
         });
     },
     undoRegister: function(action, graph_str){
-        editor_config.history_undo.push(action)
+        editor_config.history_undo.push({action: action, graph: graph_str});
         editor_config.history_redo = [];
         this.showUndoRedo();
         this.last_save = graph_str;
     },
     //-------------------------------------------
     undo: function(){
-        var this_editor = this;
-        $.getJSON(editor_config.url_undo, function(data) {
-            this_editor.redrawGraph(data);
-            var action = editor_config.history_undo.pop();
-            editor_config.history_redo.push(action);
-            this_editor.showUndoRedo();
-
+        var history_obj = editor_config.history_undo.pop();
+        this.redrawGraph(history_obj.graph);
+        editor_config.history_redo.push(history_obj);
+        this.showUndoRedo();
+        $.ajax({
+            url: editor_config.url_undo,
+            success: function( data ) {
+                $('.flash').html('Undo: '+history_obj.action).fadeIn().delay(800).fadeOut();
+            },
+            error: function (){
+                $('.flash').html('Could not save undo action to session history');
+            }
         });
     },
     redo: function(){
         var this_editor = this;
-        $.getJSON(editor_config.url_redo, function(data) {
-            var action = editor_config.history_redo.pop();
-            editor_config.history_undo.push(action);
-            this_editor.showUndoRedo();
-            this_editor.redrawGraph(data.graph);
+        var history_obj = editor_config.history_redo.pop();
+        editor_config.history_undo.push(history_obj);
+        this_editor.showUndoRedo();
+        this_editor.redrawGraph(history_obj.graph);
+        $.ajax({
+            url: editor_config.url_undo,
+            success: function( data ) {
+                $('.flash').html('Redo: '+history_obj.action).fadeIn().delay(800).fadeOut();
+            },
+            error: function (){
+                $('.flash').html('Could not save redo action to session history');
+            }
         });
     },
     //-------------------------------------------
     setMode: function(mode){
-        if (mode == this.cur_mode) return 
+        if (mode == this.cur_mode) return;
         this.cur_mode = mode;
+        console.log('set cur_mode: '+this.cur_mode);
         $('#canvas').unbind('mousemove');
         $('.follow').hide();
         $('.active').removeClass('active');
-        var mode2id = {'del':'cross', 'edit':'wrench', 'Edge':'edge', 'Spline':'spline', 'focus':'focus'}
+        var mode2id = {'del':'cross', 'edit':'wrench', 'Edge':'edge', 'Spline':'spline', 'focus':'focus'};
         if ((mode == 'del')||(mode == 'edit')||(mode == 'Edge')||(mode == 'Spline')||(mode == 'focus')){
             $('#'+mode).addClass('active');
             $('#follow_'+mode2id[mode]).show();
             $("#canvas").mousemove(function(e){
                 $('#follow_'+mode2id[mode]).css('top', e.clientY+15).css('left', e.clientX+15);
             });
-        }else if (mode == false){
+        }else if (mode == 'cursor'){
             $('#cursor').addClass('active');
         }
     },
     //-------------------------------------------
-    drawableSelect: function(drawable, select_status) {
-        //alert('drawableSelect');
-        if ((this.cur_mode == 'Edge')||(this.cur_mode == 'Spline')){
-            if(drawable.drawableType()=='node') selected_nodes.push(drawable);
-            if (selected_nodes.length>=2){
-                //draw edge now
-                //new_edge = graph.add(bui[$('#select_edge_spline').val()])
-                new_edge = this.graph.add(bui[this.cur_mode])
-                        .source(selected_nodes[0])
-                        .target(selected_nodes[1])
-                        .visible(true);
-                if(this.cur_mode=='Spline') new_edge.setSplineHandlePositions([
-                    {x:selected_nodes[0].position().x-10,y:selected_nodes[0].position().y-20},
-                    {x:selected_nodes[1].position().x-10,y:selected_nodes[1].position().y-20}
-                    ], 300);
-                //set click listener on new edge
-            //FIXME this crashes, but it should work?
-            //script.js:137Uncaught TypeError: Cannot read property 'ListenerType' of undefined
-                //new_node.bind(bui.abstractLine.ListenerType.click, drawableSelect);
+    drawableSelect: function() {
+        var this_editor = this;
+        return function(drawable, select_status){
+            if(drawable.drawableType()=='node'){
+                if ((this_editor.cur_mode == 'cursor')||(this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
+                    if (drawable.selected === true){
+                            for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
+                                if (drawable == this_editor.selected_nodes[i]){
+                                    drawable.selected = false;
+                                    drawable.removeClass('Red');
+                                    this_editor.selected_nodes.splice(i, 1);
+                                }
+                            }
+                    }else{
+                            drawable.addClass('Red');
+                            //drawable.color({background: 'red', label: 'white'});
+                            drawable.selected = true;
+                            this_editor.selected_nodes.push(drawable);
+                    }
+                }
+                if ((this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
+                    if (this_editor.selected_nodes.length>=2){
+                        //draw edge now
+                        new_edge = this_editor.graph.add(bui[this_editor.cur_mode])
+                                .source(this_editor.selected_nodes[0])
+                                .target(this_editor.selected_nodes[1])
+                                .visible(true);
+                        if(this_editor.cur_mode=='Spline') new_edge.setSplineHandlePositions([
+                            {x:this_editor.selected_nodes[0].position().x-10,y:this_editor.selected_nodes[0].position().y-20},
+                            {x:this_editor.selected_nodes[1].position().x-10,y:this_editor.selected_nodes[1].position().y-20}
+                            ], 300);
+                        for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
+                            this_editor.selected_nodes[i].selected = false;
+                            this_editor.selected_nodes[i].removeClass('Red');
+                        }
+                        this_editor.selected_nodes = [];
+                        //set click listener on new edge
+                        //FIXME this crashes, but it should work?
+                        //script.js:137Uncaught TypeError: Cannot read property 'ListenerType' of undefined
+                        //new_node.bind(bui.abstractLine.ListenerType.click, drawableSelect);
 
-                edgeModal(new_edge, 'created '+this.cur_mode);
-                selected_nodes = []
+                        this_editor.edgeModal(new_edge, 'created '+this_editor.cur_mode);
+                        this_editor.selected_nodes = [];
+                    }
+                } else if (this_editor.cur_mode == 'edit'){
+                    if(drawable.drawableType()=='edge'){
+                        this_editor.edgeModal(drawable, 'edited edge');
+                    } else {
+                        var label = 'Complex';
+                        if(drawable.identifier()!='Complex') label = drawable.label();
+                        this_editor.nodeModal(drawable, 'edited node '+label);
+                    }
+                } else if (this_editor.cur_mode == 'del'){
+                    drawable.remove();
+                    undoPush('deleted '+drawable.drawableType());
+                } else if (this_editor.cur_mode == 'focus'){
+                    if(drawable.drawableType()=='node') bui.util.alignCanvas(this_editor.graph, drawable.id());
+                }
             }
-        } else if (this.cur_mode == 'edit'){
-            if(drawable.drawableType()=='edge'){
-                edgeModal(drawable, 'edited edge');
-            } else {
-                var label = 'Complex';
-                if(drawable.identifier()!='Complex') label = drawable.label();
-                nodeModal(drawable, 'edited node '+label);
-            } 
-        } else if (this.cur_mode == 'del'){
-            drawable.remove();
-            undoPush('deleted '+drawable.drawableType());
-        } else if (this.cur_mode == 'focus'){
-            if(drawable.drawableType()=='node') bui.util.alignCanvas(this.graph, drawable.id());
-        }
+        };
     },
     //-------------------------------------------
     nodeModal: function(drawable, action) {
@@ -245,6 +289,7 @@ Editor.prototype = {
         $('#marker_type').html('');
         //-----------------
         $('.current_id').attr('id', drawable.id());
+        var this_editor = this;
         $("#edge_modal_input").modal({
             overlayClose:true,
             opacity:20,
@@ -254,7 +299,7 @@ Editor.prototype = {
                         drawable.marker(bui.connectingArcs[$('#marker_type').html()].id);
                     }
                 }
-                save($('#action').html());
+                this_editor.save($('#action').html());
                 $.modal.close();
             }
         });
@@ -267,17 +312,7 @@ Editor.prototype = {
             }
         });*/
     },
-    //-------------------------------------------
-    placeholdersVisible: function(visible){
-        var all_drawables = this.graph.drawables();
-        for (var key in all_drawables) {
-            drawable = all_drawables[key]
-                if (drawable.drawableType()=='node'){
-                    drawable.placeholderVisible(visible);
-                }
-        }
-    },
-    //-------------------------------------------
+    //-------------------------------------------//
     dropFkt: function(event, ui, element){
         if(ui.helper.hasClass('node_helper')){
             //calculate position of new node
@@ -323,7 +358,7 @@ Editor.prototype = {
                 drop: function(event, ui){dropFkt(event, ui, this);},
             });
             //make all drawables placeholders invisible
-            this.placeholdersVisible(false);
+            //this.placeholdersVisible(false);
             $('#canvas').droppable("enable");
         }
     },
@@ -371,7 +406,7 @@ Editor.prototype = {
                         if(drawable.target().lparent.target().identifier() == 'bui.StateVariableER'){
                             drawable.ltarget = drawable.target().lparent.target().parent();
 
-                        }else if(drawable.target().lparent.target().identifier() == 'bui.EdgeHandle'){ 
+                        }else if(drawable.target().lparent.target().identifier() == 'bui.EdgeHandle'){
                             if(drawable.target().lparent.target().lparent.target().identifier() == 'bui.StateVariableER'){
                                 drawable.ltarget = drawable.target().lparent.target().lparent.target().parent();
                             }else {
@@ -385,12 +420,27 @@ Editor.prototype = {
                     }else if(drawable.target().identifier() == 'bui.StateVariableER'){
                         drawable.ltarget = drawable.target().parent();
                     }else {
-                        drawable.ltarget = drawable.target()
+                        drawable.ltarget = drawable.target();
                     }
                     edges.push(drawable);
                 }
             }
-            return {nodes:nodes, edges:edges}
+            return {nodes:nodes, edges:edges};
+    },
+    select_all: function(all){
+        var all_drawables = this.graph.drawables();
+        this.selected_nodes = [];
+        for (var key in all_drawables) {
+            var drawable = all_drawables[key];
+            if (all){
+                this.selected_nodes.push(drawable);
+                drawable.selected = true;
+                drawable.addClass('Red');
+            }else{
+                drawable.selected = false;
+                drawable.removeClass('Red');
+            }
+        }
     },
     init: function(){
         var this_editor = this;
@@ -494,12 +544,11 @@ Editor.prototype = {
         });
         //=========================
         $('#align_vertical, #align_hoizontal, #align_left, #align_top, #align_right, #align_bottom').click(function(){
-            var all_drawables = this_editor.graph.drawables();
             var pos = undefined;
-            for (var key in all_drawables) {
-                drawable = all_drawables[key]
+            for (var i = 0; i<this_editor.selected_nodes.length; ++i) {
+                drawable = this_editor.selected_nodes[i]
                 var align_type = $(this).attr('id');
-                if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
+                if ((drawable.drawableType()=='node')&&drawable.selected == true){
                     if((align_type == 'align_hoizontal')||(align_type == 'align_vertical')){
                         if(pos === undefined){
                             pos = drawable.absolutePositionCenter();
@@ -537,9 +586,6 @@ Editor.prototype = {
                 }
             }
         });
-        $('#canvas').dblclick(function(){
-                this_editor.placeholdersVisible(false);
-        });
         //=========================
         $('#canvas').resizable();
         //=========================
@@ -567,33 +613,17 @@ Editor.prototype = {
         $('#clone').click(function(){
             orig_html = $('#clone').html()
             $('#clone').html(this_editor.loading_img)
-            var selected_drawables = {};
-            var flag = false;
-            var all_drawables = this_editor.graph.drawables();
-            for (var key in all_drawables) {
-                drawable = all_drawables[key]
-                if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
-                    flag = true;
-                    selected_drawables[drawable.id()] = 1;
-                }
-            }
-            if(flag == false) bui.util.clone(this_editor.graph, 5);
-            else bui.util.clone(this_editor, 2, selected_drawables)
+            var new_nodes;
+            if(this_editor.selected_nodes.length == 0) new_nodes = bui.util.clone(this_editor.graph, 5);
+            else new_nodes = bui.util.clone(this_editor, 2, this_editor.selected_nodes);
+            for (var i = new_nodes.length - 1; i >= 0; i--) {
+                new_nodes[i].bind(bui.Node.ListenerType.click, this_editor.drawableSelect());
+            };
             $('#clone').html(orig_html);
         });
         //=========================
         $('#combine').click(function(){
-            var selected_drawables = {};
-            var flag = false;
-            var all_drawables = this_editor.graph.drawables();
-            for (var key in all_drawables) {
-                drawable = all_drawables[key]
-                if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
-                    flag = true;
-                    selected_drawables[drawable.id()] = 1;
-                }
-            }
-            if(flag == true) bui.util.combine(this_editor.graph, selected_drawables);
+            if(this_editor.selected_nodes.length == 0) bui.util.combine(this_editor.graph, this_editor.selected_nodes);
         });
         //=========================
         $('#layout_force').click(function(){
@@ -697,10 +727,14 @@ Editor.prototype = {
                         var content = evt.target.result;
                         //console.log('content: '+content);
                         var doc = sb.io.read(content);
-                        if(doc == false){}
-                        this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                        this_editor.undoPush('loaded graph from JSON string');
+                        if((doc == null)||(doc == undefined)){
+                            alert('could not import file');
+                        }else{  
+                            console.log(sb.io.write(doc, 'jsbgn'));
+                            this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                            this_editor.undoPush('loaded graph from JSON string');
                         $.modal.close();
+                        }
                     }
                     reader.onerror = function (evt) {
                         console.log("error reading file");
@@ -734,7 +768,7 @@ Editor.prototype = {
                 opacity:20,
             });
         });
-        $('#canvas').bind('mousewheel', function(event,delta){
+        /*$('#canvas').bind('mousewheel', function(event,delta){
             var rate;
             if (delta > 0) {
                 // mousewheel is going up; 
@@ -744,7 +778,7 @@ Editor.prototype = {
                 // mousewheel is going down 
             }
             this_editor.graph.scale(this_editor.graph.scale() + rate);
-        });
+        });*/
         //=========================
         $('.scale').click(function() {
             var rate = bui.util.toNumber($(this).data('rate'));
@@ -773,15 +807,26 @@ Editor.prototype = {
         //=========================
         $('#edit_all_nodes, #edit_no_nodes').click(function(){
                 var visible = $(this).attr('id')=='edit_all_nodes';
-                this_editor.placeholdersVisible(visible);
+                this_editor.select_all(visible);
+        });
+        $('#canvas').dblclick(function(){
+            var visible;
+            var all_drawables = this_editor.graph.drawables();
+            if(this_editor.selected_nodes.length != Object.keys(all_drawables).length) visible = true;
+            else visible = false;
+            this_editor.select_all(visible);
         });
         //=========================
         $('.tools_click li').click(function(){
-            if($(this).attr('id')=='cursor'){
-                this_editor.setMode(false);
-            }else{
-                this_editor.setMode($(this).attr('id'));
+            var mode = $(this).attr('id');
+            if ((mode == 'Edge')||(mode == 'Spline')){
+                for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
+                    this_editor.selected_nodes[i].selected = false;
+                    this_editor.selected_nodes[i].removeClass('Red');
+                };
+                this_editor.selected_nodes = [];
             }
+            this_editor.setMode(mode);
         });
         //=========================
         $('.marker_select').click(function(){
@@ -831,18 +876,51 @@ Editor.prototype = {
             //grid: [ 20,20 ],//does not work, need aling functions
             helper: function() {return '<img src="'+editor_config.images_base_path+$(this).attr('id')+'_helper.png" id="'+$(this).attr('id')+'" class="node_helper"/>'},
             start: function() {
-                this_editor.setMode(false);
+                this_editor.setMode('cursor');
+                this_editor.select_all(false);
                 //make all drawables placeholders visible
-                var all_drawables = this_editor.graph.drawables();
-                for (var key in all_drawables) {
-                    drawable = all_drawables[key]
-                    if (((drawable.identifier()=='Complex')&& !$(this).hasClass('no_drop_complex'))||(drawable.identifier()=='Compartment')){
-                    drawable.placeholderVisible(true);
-                    }else if (drawable.drawableType()=='node'){
-                    drawable.placeholderVisible(false);
-                    }
-                }
             }, 
+        });
+        //=========================
+        $('.canvas').click(function(event){
+            if(this_editor.canvas_click != true){
+                this_editor.canvas_click = true;
+                this_editor.selection_rect_pos = {left:event.pageX,top:event.pageY};
+                $('.selection_rect').show().offset({left:event.pageX,top:event.pageY});
+                console.log(this_editor.canvaspos);
+                var borders = {
+                    left: event.pageX - this_editor.canvaspos.left, 
+                    top:  event.pageY - this_editor.canvaspos.top
+                };
+                var cur_elem_pos, key;
+                var all_drawables = this_editor.graph.drawables(); 
+                $('.canvas').mousemove(function(event){
+                    $('.selection_rect').width(event.pageX-this_editor.selection_rect_pos.left).height(event.pageY-this_editor.selection_rect_pos.top);
+                    borders.right = event.pageX - this_editor.canvaspos.left;
+                    borders.bottom = event.pageY - this_editor.canvaspos.top;
+                    console.log(JSON.stringify(borders));
+                    this_editor.selected_nodes = [];
+                    for (key in all_drawables) {
+                        var drawable = all_drawables[key]
+                        if(drawable.drawableType() == 'node'){
+                            cur_elem_pos = drawable.absolutePosition();
+                            if((cur_elem_pos.x>=borders.left)&&(cur_elem_pos.x<=borders.right)&&(cur_elem_pos.y>=borders.top)&&(cur_elem_pos.y<=borders.bottom)){
+                                drawable.addClass('Red');
+                                drawable.selected = true;
+                                this_editor.selected_nodes.push(drawable);
+                            }else{
+                                drawable.removeClass('Red');
+                                drawable.selected = false;
+                            }
+                        } 
+                    }
+                });
+            }else{
+                console.log('mousedown '+event.pageX);
+                this_editor.canvas_click = false;
+                $('.canvas').unbind('mousemove');
+                $('.selection_rect').width(0).height(0).hide();
+            }
         });
     }
 }

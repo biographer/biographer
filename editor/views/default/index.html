@@ -30,6 +30,7 @@
 				&nbsp;
 				</li>
 				<!-- ---------------------------------------------------------------- -->
+				{{pass}}
 				<li class="spacer"></li>
 				<li id="undo"> 
 				<div>undo</div>
@@ -41,16 +42,13 @@
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'redo.png')}}"/> 
 				&nbsp;
 				</li>
-				{{pass}}
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
-				{{if not request.vars.html5only:}}
 				<li id="import_file"> 
 				<div><b>import</b> graph from : JSON file, SBML file, BioModels.net, Reactome </div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'import_file.png')}}"/> 
 				&nbsp;
 				</li>
-				{{pass}}
 				<li id="import_str"> 
 				<div><b>import</b> JSON graph <b>from string</b></div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'import_string.png')}}"/> 
@@ -324,6 +322,7 @@
 		</td>
 	</tr>
 </table>
+<div class="selection_rect"></div>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
 <form action="{{=URL('export')}}" id='export_form' style='display: none;' method="POST"></form>
@@ -496,6 +495,7 @@
 <script type="text/javascript" src="{{=URL(request.application, 'static/biographer-editor/js', 'biographer-ui.js')}}"></script>
 {{pass}}
 <script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'biographer.editor.js')}}'></script>
+<script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'interact.js')}}'></script>
 <script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'libSBGN.js')}}'></script>
 <!-- --------------------------------------------------------------------------------- -->
 <script type="text/javascript">

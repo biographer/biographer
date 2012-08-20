@@ -318,10 +318,10 @@ d3.layout.force = function() {
       }
     }
     //biographer interface, set node positions
-    /*for(var i=0; i<n; ++i){
+    for(var i=0; i<n; ++i){
         o = nodes[i];
         o.absolutePositionCenter(o.x,o.y)
-    }*/
+    }
     console.log('alpha: '+alpha);
     //event.tick({type: "tick", alpha: alpha});
 
@@ -332,7 +332,7 @@ d3.layout.force = function() {
         }
         bui.settings.straightenEdges = true;
         $('#layout_force').html(orig_html);
-        var all_drawables = graph.drawables();
+        var all_drawables = editor.graph.drawables();
         for (var key in all_drawables) {
             drawable = all_drawables[key];
             if(drawable.identifier() == 'bui.Edge'){

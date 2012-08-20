@@ -66,11 +66,11 @@ bui.settings = {
 
     /**
      * @field
-     * set to disable certain dynamic SVG features (like suspendRedraw) which 
+     * set to disable certain dynamic SVG features (like suspendRedraw) which
      * are not needed or supported by static SVG generation in node.js
      */
     staticSVG : false,
-    
+
     /**
      * @field
      * How many frames per second (FPS) should be used for animations.
@@ -139,7 +139,6 @@ bui.settings = {
         classes : {
             invisible : 'hidden',
             selected : 'selected',
-            placeholder : 'placeholder',
             rectangle : 'rect',
             complex : 'complex',
             compartment : 'compartment',
@@ -177,19 +176,6 @@ bui.settings = {
      * Various styles that can not be realized using CSS
      */
     style : {
-        /**
-         * @field Correction of the placeholder positioning and size
-         */
-        placeholderCorrection : {
-            position : {
-                x : -1,
-                y : -1
-            },
-            size : {
-                width : -2,
-                height : -2
-            }
-        },
         graphReduceCanvasPadding : 30,
         edgeHandleRadius : 4,
         nodeCornerRadius : 15,
@@ -865,9 +851,10 @@ var circularShapeLineEndCalculationHookWithoutPadding =
             }
         }
     };
-    bui.util.clone = function(degree, select_drawables){
+    bui.util.clone = function(graph, degree, select_drawables){
             var suspendHandle = graph.suspendRedraw(20000);
             all_drawables = graph.drawables();
+            var new_nodes = [];
             // create a counting dictionary for the nodes
             var degree_count = {};
             var drawable, edge, old_node_id, new_node;
@@ -883,45 +870,45 @@ var circularShapeLineEndCalculationHookWithoutPadding =
                 if (drawable.identifier() == 'bui.Edge'){
                     if (drawable.source().id() in degree_count){
                         degree_count[drawable.source().id()] = degree_count[drawable.source().id()] + 1;
-                    };
+                    }
                     if (drawable.target().id() in degree_count){
                         degree_count[drawable.target().id()] = degree_count[drawable.target().id()] + 1;
-                    };
+                    }
                 }
             }
             // go through all the nodes with a higher than appreciated degree
             var auto_indent = 1000;
             for (var key in degree_count) {
-                if(select_drawables != undefined && !(key in select_drawables)) continue;
+                if(select_drawables !== undefined && !(key in select_drawables)) continue;
                 drawable = all_drawables[key];
                 if (degree_count[drawable.id()] > degree){
                     old_node_id = drawable.id();
-
                     // create a new node for every time the old node is referenced
                     for (var edge_key in all_drawables){
                         edge = all_drawables[edge_key];
                         if ((edge.identifier() == 'bui.Edge')&&((edge.source().id() == old_node_id)||(edge.target().id() == old_node_id))){
-                // create a new node
-                ++auto_indent;
-                new_node = graph.add(bui[drawable.identifier().substr(4)]) 
-                    .visible(true)
-                    .label(drawable.label())
-                    .parent(drawable.parent())
-                    //.addClass('cloneMarker')
-                    .position(drawable.position().x, drawable.position().y)
-                    .size(drawable.size().height, drawable.size().width);
-                // reroute the edge
-                if (edge.source().id() == old_node_id){
-                    all_drawables[edge_key].source(new_node);
-                } else {
-                    all_drawables[edge_key].target(new_node);
+                            // create a new node
+                            ++auto_indent;
+                            new_node = graph.add(bui[drawable.identifier().substr(4)])
+                                .visible(true)
+                                .label(drawable.label())
+                                .parent(drawable.parent())
+                                //.addClass('cloneMarker')
+                                .position(drawable.position().x, drawable.position().y)
+                                .size(drawable.size().height, drawable.size().width);
+                            // reroute the edge
+                            new_nodes.push(new_node);
+                            if (edge.source().id() == old_node_id){
+                                all_drawables[edge_key].source(new_node);
+                            } else {
+                                all_drawables[edge_key].target(new_node);
+                            }
+                        }
+                    }
                 }
-                }
-            };
-                };
-            };
+            }
             for (var key in all_drawables) {
-                if(select_drawables != undefined && !(key in select_drawables)) continue;
+                if(select_drawables !== undefined && !(key in select_drawables)) continue;
                 drawable = all_drawables[key];
                 if (drawable.id() in degree_count){
                     if (degree_count[drawable.id()] > degree){
@@ -930,10 +917,11 @@ var circularShapeLineEndCalculationHookWithoutPadding =
                 }
             }
             graph.unsuspendRedraw(suspendHandle);
-    } 
+            return new_nodes;
+    };
 
 
-    bui.util.combine = function(select_drawables){
+    bui.util.combine = function(graph, select_drawables){
             var suspendHandle = graph.suspendRedraw(20000);
             all_drawables = graph.drawables();
             // create new node
@@ -1046,8 +1034,8 @@ var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {},
    bui.modificationMapping = modificationMapping;
    bui.edgeMarkerMapping = edgeMarkerMapping;
 })(bui);
-        
-        
+
+
 /**
  * Add mappings to the mappings object.
  *
@@ -1124,7 +1112,7 @@ var getSBOForInstance = function(mapping, instance) {
  */
 var getModificationSBOForLabel = function(label) {
     label = label.toLowerCase();
-    
+
     for (var sbo in modificationMapping) {
         if (modificationMapping.hasOwnProperty(sbo)) {
             var mapping = modificationMapping[sbo];
@@ -1174,6 +1162,53 @@ var getSBOForMarkerId = function(id) {
     bui.Observable = function() {
         bui.Observable.superClazz.call(this);
         this._getPrivateMembers(identifier).listener = {};
+    };
+
+    var staticListeners = {};
+
+    /**
+     * @description
+     * Get static listeners for the specific type
+     *
+     * @param {Object} type The type for which a collection of static listeners
+     *   should be returned.
+     *
+     * @return {Object} Hash of static listeners.
+     */
+    var getStaticListeners = function(type) {
+        return staticListeners[type] = staticListeners[type] || {};
+    };
+
+    /**
+     * @description
+     * Bind listeners to class-level events, i.e., receive the specific event
+     * from all instances of the class.
+     *
+     * @param {String} type The type of event that should be observed
+     * @param {Function} callback Method to be called
+     * @param {Object} [identification] An identifier used to identify the
+     *   listener in the list of all over listeners. Should be unique for
+     *   the listener type. When ommited the callback will be used for
+     *   identification purposes.
+     */
+    bui.Observable.bindStatic = function(type, callback, identification) {
+        var listener = getStaticListeners(type);
+
+        if (identification === undefined || identification === null) {
+            identification = callback;
+        }
+
+        listener[identification] = callback;
+    };
+
+    /**
+     * @description
+     * Function which can be used to unbind ALL static listeners.
+     * This method should seldomly be used and if used, it should only
+     * be used with care.
+     */
+    bui.Observable._unbindAllStatic = function() {
+        staticListeners = {};
     };
 
     bui.Observable.prototype = {
@@ -1229,7 +1264,7 @@ var getSBOForMarkerId = function(id) {
             }
 
             listener[identification] = callback;
-            
+
             return this;
         },
 
@@ -1292,18 +1327,20 @@ var getSBOForMarkerId = function(id) {
          *   false, false otherwise.
          */
         fire : function(type, params) {
+            var i, listener;
+
             if (params === undefined) {
                 params = [];
             }
 
-            var listener = this._getPrivateMembers(identifier).listener[type];
+            listener = this._getPrivateMembers(identifier).listener[type];
 
             // fail silently when the listener type is not registered
             if (listener === undefined) {
                 return true;
             }
 
-            for (var i in listener) {
+            for (i in listener) {
                 if (listener.hasOwnProperty(i)) {
                     var status = listener[i].apply(this, params);
 
@@ -1312,6 +1349,25 @@ var getSBOForMarkerId = function(id) {
                     }
                 }
             }
+
+            listener = getStaticListeners(type);
+
+            if (params.length === 0) {
+                params = [this];
+            } else if (params[0] !== this) {
+                params.unshift(this);
+            }
+
+            for (i in listener) {
+                if (listener.hasOwnProperty(i)) {
+                    var status = listener[i].apply(this, params);
+
+                    if (status === false) {
+                        return false;
+                    }
+                }
+            }
+
 
             return true;
         }
@@ -1699,10 +1755,6 @@ var getSBOForMarkerId = function(id) {
         privates.edgeGroup = document.createElementNS(bui.svgns, 'g');
         privates.rootGroup.appendChild(privates.edgeGroup);
 
-        privates.placeholderContainer = document.createElement('div');
-        document.getElementsByTagName('body')[0]
-                .appendChild(privates.placeholderContainer);
-
         privates.connectingArcs = {};
 
         privates.cloneMarker = document.createElementNS(bui.svgns, 'pattern');
@@ -1875,17 +1927,6 @@ var getSBOForMarkerId = function(id) {
          */
         container : function() {
             return this._privates(identifier).container;
-        },
-
-        /**
-         * @description
-         * Retrieve the container for placeholder elements. Placeholder
-         * elements are used while dragging or resizing to improve performance.
-         *
-         * @return {HTMLDIVElement} The container for placeholder elements
-         */
-        placeholderContainer : function() {
-            return this._privates(identifier).placeholderContainer;
         },
 
         /**
@@ -2131,6 +2172,7 @@ var getSBOForMarkerId = function(id) {
             jQuery.ajax({
                         url : bui.settings.css.stylesheetUrl,
                         async : false,
+                        dataType : 'text',
                         success : function(data) {
                             css = data;
                         }
@@ -2616,16 +2658,6 @@ var getSBOForMarkerId = function(id) {
 
     var identifier = 'bui.Node';
 
-    var placeholderClass = function(visible) {
-        var klass = bui.settings.css.classes.placeholder;
-
-        if (visible === false) {
-            klass += ' ' + bui.settings.css.classes.invisible;
-        }
-
-        return klass;
-    };
-
     /**
      * @private
      * Function used for the generation of listener identifiers
@@ -2634,27 +2666,6 @@ var getSBOForMarkerId = function(id) {
      */
     var listenerIdentifier = function(node) {
         return identifier + node.id();
-    };
-
-    /**
-     * @private
-     */
-    var positionPlaceHolder = function() {
-        var privates = this._privates(identifier);
-        var absolutePosition = this.absolutePosition();
-        var graphHtmlPosition = this.graph().htmlTopLeft();
-        var correction = bui.settings.style.placeholderCorrection.position;
-        var scale = this.graph().scale();
-        privates.placeholder.style.left = (absolutePosition.x * scale +
-                graphHtmlPosition.x + correction.x) + 'px';
-        privates.placeholder.style.top = (absolutePosition.y * scale +
-                graphHtmlPosition.y + correction.y) + 'px';
-
-        correction = bui.settings.style.placeholderCorrection.size;
-        privates.placeholder.style.width = (privates.width * scale +
-                correction.width) + 'px';
-        privates.placeholder.style.height = (privates.height * scale +
-                correction.height) + 'px';
     };
 
     /**
@@ -2672,86 +2683,8 @@ var getSBOForMarkerId = function(id) {
             ')'].join('');
         privates.nodeGroup.setAttributeNS(null, 'transform', attrValue);
 
-        positionPlaceHolder.call(this);
-
         this.fire(bui.Node.ListenerType.absolutePosition,
                 [this, position.x, position.y]);
-    };
-
-    /**
-     * @private jQuery UI drag stop listener
-     */
-    var placeholderDragStop = function() {
-        var privates = this._privates(identifier);
-        var scale = 1 / this.graph().scale();
-        var placeholderOffset = jQuery(privates.placeholder).offset();
-        var x = placeholderOffset.left;
-        var y = placeholderOffset.top;
-
-        var graphOffset = this.graph().htmlTopLeft();
-        x -= graphOffset.x;
-        y -= graphOffset.y;
-
-        x *= scale;
-        y *= scale;
-
-        var parentTopLeft = privates.parent.absolutePosition();
-        x -= parentTopLeft.x;
-        y -= parentTopLeft.y;
-
-        var correction = bui.settings.style.placeholderCorrection.position;
-        x += correction.x * -1;
-        y += correction.y * -1;
-
-        var suspendHandle = this.graph().suspendRedraw(200);
-        this.position(x, y);
-        this.graph().unsuspendRedraw(suspendHandle);
-    };
-
-    /**
-     * @private jQuery UI drag listener
-     */
-    var placeholderDrag = function() {
-        if (this.graph().highPerformance() === true) {
-            placeholderDragStop.call(this);
-        }
-    };
-
-    /**
-     * @private jQuery UI resize stop listener
-     */
-    var placeholderResizeStop = function() {
-        var privates = this._privates(identifier);
-        var scale = 1 / this.graph().scale();
-        var width = jQuery(privates.placeholder).width() * scale;
-        var height = jQuery(privates.placeholder).height() * scale;
-
-        var correction = bui.settings.style.placeholderCorrection.size;
-
-        width -= correction.width;
-        height -= correction.height;
-
-        var suspendHandle = this.graph().suspendRedraw(200);
-        this.size(width, height);
-        this.graph().unsuspendRedraw(suspendHandle);
-    };
-
-    var placeholderResize = function() {
-        if (this.graph().highPerformance() === true) {
-            placeholderResizeStop.call(this);
-        }
-    };
-
-    /**
-     * @private visibility listener
-     */
-    var visibilityChanged = function(node, visible) {
-        if (visible === true) {
-            this.removeClass(bui.settings.css.classes.invisible);
-        } else {
-            this.addClass(bui.settings.css.classes.invisible);
-            this.placeholderVisible(false);
-        }
     };
 
     /**
@@ -2761,9 +2694,6 @@ var getSBOForMarkerId = function(id) {
         var privates = this._privates(identifier);
         var nodeGroup = privates.nodeGroup;
         nodeGroup.parentNode.removeChild(nodeGroup);
-
-        var placeholder = privates.placeholder;
-        placeholder.parentNode.removeChild(placeholder);
     };
 
     /**
@@ -2812,65 +2742,26 @@ var getSBOForMarkerId = function(id) {
     };
 
     var mouseClick = function(event) {
-       if (event.ctrlKey === true && (bui.settings.enableModificationSupport === true)) {
-          this.placeholderVisible(!this.placeholderVisible());
-       } else if (!this.placeholderVisible()) {
-          this.fire(bui.Node.ListenerType.click, [this, event]);
-       }
-    };
-    var dblclick = function(event) {
-       if (bui.settings.enableModificationSupport === true){
-          this.placeholderVisible(!this.placeholderVisible());
-       }
+        this.fire(bui.Node.ListenerType.click, [this, event]);
     };
     
+
     /**
      * @private
-     * Initial paint of the placeholder node and group node
+     * Initial paint of the node and group node
      */
     var initialPaint = function() {
         var privates = this._privates(identifier);
 
         privates.nodeGroup = document.createElementNS(bui.svgns, 'g');
         privates.nodeGroup.setAttributeNS(null, 'id', this.id());
-        visibilityChanged.call(this, this, this.visible());
         this.graph().nodeGroup().appendChild(privates.nodeGroup);
 
-        privates.placeholder = document.createElement('div');
-        privates.placeholder.setAttribute('class',
-                placeholderClass(false)+' '+this.identifier());
-        privates.placeholder.setAttribute('id',
-                'placeholder_'+this.id());
-        this.graph().placeholderContainer().appendChild(privates.placeholder);
-
-        positionPlaceHolder.call(this);
         positionChanged.call(this);
 
-        if (bui.settings.enableModificationSupport === true) {
-
-            jQuery(privates.nodeGroup)
-                    .add(privates.placeholder);
-
-            if (this._enableDragging === true) {
-                jQuery(privates.placeholder).draggable({
-                            stop : placeholderDragStop.createDelegate(this),
-                            drag : placeholderDrag.createDelegate(this)
-                        });
-            }
-
-            if (this._enableResizing === true) {
-                jQuery(privates.placeholder).resizable({
-                            stop : placeholderResizeStop.createDelegate(this),
-                            resize : placeholderResize.createDelegate(this),
-                            aspectRatio : (this._forceRectangular ? 1 : false)
-                        });
-            }
-        }
-        
         jQuery(privates.nodeGroup)
             .click(mouseClick.createDelegate(this))
-            .dblclick(dblclick.createDelegate(this));
-        
+
     };
 
     /**
@@ -2897,13 +2788,9 @@ var getSBOForMarkerId = function(id) {
         privates.height = this._minHeight;
         privates.parent = this.graph();
         privates.children = [];
-        privates.placeholderVisible = false;
 
         this.bind(bui.Drawable.ListenerType.remove,
                 nodeRemoved.createDelegate(this),
-                listenerIdentifier(this));
-        this.bind(bui.Drawable.ListenerType.visible,
-                visibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Node.ListenerType.parent,
                 parentChanged.createDelegate(this),
@@ -2911,17 +2798,11 @@ var getSBOForMarkerId = function(id) {
         this.bind(bui.Node.ListenerType.position,
                 positionChanged.createDelegate(this),
                 listenerIdentifier(this));
-        this.bind(bui.Node.ListenerType.size,
-                positionPlaceHolder.createDelegate(this),
-                listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.classes,
                 classesChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Drawable.ListenerType.select,
                 selectChanged.createDelegate(this),
-                listenerIdentifier(this));
-        this.graph().bind(bui.Graph.ListenerType.scale,
-                positionPlaceHolder.createDelegate(this),
                 listenerIdentifier(this));
 
         initialPaint.call(this);
@@ -3291,7 +3172,7 @@ var getSBOForMarkerId = function(id) {
 
             return this;
         },
- 
+
         /**
          * @description
          * Use this function to move the node.
@@ -3323,9 +3204,9 @@ var getSBOForMarkerId = function(id) {
          */
         moveAbsoluteCenter : function(x, y, duration) {
             var size = this.size();
-            
+
             this.moveAbsolute(x - size.width / 2, y - size.height / 2);
-            
+
         },
         /**
          * Retrieve the current parent or set it
@@ -3561,51 +3442,16 @@ var getSBOForMarkerId = function(id) {
         },
 
         /**
-         * Show or hide the placeholder which  is used for modification
-         * of the node's position and size.
-         *
-         * @param {Boolean} [visible] Show or hide the placeholder
-         * @return {bui.Node|Boolean} Fluent interface or the current
-         *   visibility in case you don't pass a parameter
-         */
-        placeholderVisible : function(visible) {
-            var privates = this._privates(identifier);
-
-            if (visible !== undefined) {
-                privates.placeholderVisible = visible;
-
-                if (visible === true) {
-                    jQuery(privates.placeholder)
-                            .removeClass(bui.settings.css.classes.invisible);
-                } else {
-                    jQuery(privates.placeholder)
-                            .addClass(bui.settings.css.classes.invisible);
-                }
-
-                return this;
-            }
-
-            return privates.placeholderVisible;
-        },
-
-        /**
          * Start the dragging process on the placeholder element at the given
          * position.
          *
          * @param {Number} x X-coordinate on which to start the dragging
          * @param {Number} y Y-coordinate on which to start the dragging
-         * @param {Boolean} [correctGraphHTMLOffset] Whether or not the graph's
-         *   HTML offset should be taken into account. Defaults to false.
          * @return {bui.Node} Fluent interface.
          */
         startDragging : function(x, y) {
-            this.placeholderVisible(true);
-
-            var placeholder = this._privates(identifier).placeholder;
-            jQuery(placeholder).simulate("mousedown", {
-                        clientX : x,
-                        clientY : y
-                    });
+            var element = this._privates(identifier).nodeGroup.childNodes[0];
+            interact.simulate('drag', element, {pageX: x, pageY: y});
 
             return this;
         },
@@ -3669,7 +3515,7 @@ var getSBOForMarkerId = function(id) {
                     var auxUnit = auxUnits[i];
 
                     if (auxUnit instanceof bui.StateVariable || auxUnit instanceof bui.StateVariableER) {
-                    
+
                         auxUnitsJson.push(auxUnit.toJSON());
                     } else {
                         log('Warning: Can\'t export units of information to ' +
@@ -3727,6 +3573,7 @@ var getSBOForMarkerId = function(id) {
         click : bui.util.createListenerTypeId()
     };
 })(bui);
+
 
 (function(bui) {
     var identifier = 'bui.Labelable';
@@ -4044,6 +3891,50 @@ var getSBOForMarkerId = function(id) {
         privates.circle = document.createElementNS(bui.svgns, 'circle');
         sizeChanged.call(this, this, this.size().width);
       this.nodeGroup().appendChild(privates.circle);
+
+        // set as interactable
+        interact.set(privates.circle,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.circle.addEventListener('interactresizemove', interactResizeMove);
+        privates.circle.addEventListener('interactdragmove', interactDragMove);
+        privates.circle.addEventListener('interactresizeend', interactResizeMove);
+        privates.circle.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.circle);
+
+            privates.circle.removeEventListener('interactresizemove', interactResizeMove);
+            privates.circle.removeEventListener('interactdragmove', interactDragMove);
+            privates.circle.removeEventListener('interactresizeend', interactResizeMove);
+            privates.circle.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
     
     /**
@@ -4112,7 +4003,51 @@ var getSBOForMarkerId = function(id) {
 
         privates.circle = document.createElementNS(bui.svgns, 'circle');
         sizeChanged.call(this, this, this.size().width);
-      this.nodeGroup().appendChild(privates.circle);
+        this.nodeGroup().appendChild(privates.circle);
+
+        // set as interactable
+        interact.set(privates.circle,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.circle.addEventListener('interactresizemove', interactResizeMove);
+        privates.circle.addEventListener('interactdragmove', interactDragMove);
+        privates.circle.addEventListener('interactresizeend', interactResizeMove);
+        privates.circle.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.circle);
+
+            privates.circle.removeEventListener('interactresizemove', interactResizeMove);
+            privates.circle.removeEventListener('interactdragmove', interactDragMove);
+            privates.circle.removeEventListener('interactresizeend', interactResizeMove);
+            privates.circle.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
     
     /**
@@ -4190,6 +4125,50 @@ var getSBOForMarkerId = function(id) {
         sizeChanged.call(this, this, this.size().width);
         this.nodeGroup().appendChild(privates.circle);
         this.nodeGroup().appendChild(privates.subcircle);
+
+        // set as interactable
+        interact.set(privates.circle,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.circle.addEventListener('interactresizemove', interactResizeMove);
+        privates.circle.addEventListener('interactdragmove', interactDragMove);
+        privates.circle.addEventListener('interactresizeend', interactResizeMove);
+        privates.circle.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.circle);
+
+            privates.circle.removeEventListener('interactresizemove', interactResizeMove);
+            privates.circle.removeEventListener('interactdragmove', interactDragMove);
+            privates.circle.removeEventListener('interactresizeend', interactResizeMove);
+            privates.circle.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
     
     /**
@@ -4260,7 +4239,47 @@ var getSBOForMarkerId = function(id) {
 
         privates.circle = document.createElementNS(bui.svgns, 'circle');
         sizeChanged.call(this, this, this.size().width);
-      this.nodeGroup().appendChild(privates.circle);
+        this.nodeGroup().appendChild(privates.circle);
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.circle.addEventListener('interactresizemove', interactResizeMove);
+        privates.circle.addEventListener('interactdragmove', interactDragMove);
+        privates.circle.addEventListener('interactresizeend', interactResizeMove);
+        privates.circle.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.circle);
+
+            privates.circle.removeEventListener('interactresizemove', interactResizeMove);
+            privates.circle.removeEventListener('interactdragmove', interactDragMove);
+            privates.circle.removeEventListener('interactresizeend', interactResizeMove);
+            privates.circle.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
     
     /**
@@ -4442,6 +4461,49 @@ var getSBOForMarkerId = function(id) {
         var size = this.size();
         formChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.rect);
+
+        // set as interactable
+        interact.set(privates.rect, {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+        
+        // add event listeners
+        privates.rect.addEventListener('interactresizemove', interactResizeMove);
+        privates.rect.addEventListener('interactdragmove', interactDragMove);
+        privates.rect.addEventListener('interactresizeend', interactResizeMove);
+        privates.rect.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.rect);
+
+            privates.rect.removeEventListener('interactresizemove', interactResizeMove);
+            privates.rect.removeEventListener('interactdragmove', interactDragMove);
+            privates.rect.removeEventListener('interactresizeend', interactResizeMove);
+            privates.rect.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
     /**
@@ -4646,6 +4708,50 @@ var getSBOForMarkerId = function(id) {
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.path);
+
+        // set as interactable
+        interact.set(privates.path,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.path.addEventListener('interactresizemove', interactResizeMove);
+        privates.path.addEventListener('interactdragmove', interactDragMove);
+        privates.path.addEventListener('interactresizeend', interactResizeMove);
+        privates.path.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.path);
+
+            privates.path.removeEventListener('interactresizemove', interactResizeMove);
+            privates.path.removeEventListener('interactdragmove', interactDragMove);
+            privates.path.removeEventListener('interactresizeend', interactResizeMove);
+            privates.path.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
     bui.VariableValue = function() {
         bui.VariableValue.superClazz.apply(this, arguments);
@@ -4675,6 +4781,7 @@ var getSBOForMarkerId = function(id) {
 
     bui.util.setSuperClass(bui.VariableValue, bui.Labelable);
 })(bui);
+
 
 (function(bui) {
     var identifier = 'bui.Complex';
@@ -4716,6 +4823,50 @@ var getSBOForMarkerId = function(id) {
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.path);
+
+        // set as interactable
+        interact.set(privates.path,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.path.addEventListener('interactresizemove', interactResizeMove);
+        privates.path.addEventListener('interactdragmove', interactDragMove);
+        privates.path.addEventListener('interactresizeend', interactResizeMove);
+        privates.path.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.path);
+
+            privates.path.removeEventListener('interactresizemove', interactResizeMove);
+            privates.path.removeEventListener('interactdragmove', interactDragMove);
+            privates.path.removeEventListener('interactresizeend', interactResizeMove);
+            privates.path.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
     /**
@@ -4914,6 +5065,50 @@ var getSBOForMarkerId = function(id) {
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.path);
+
+        // set as interactable
+        interact.set(privates.path,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.path.addEventListener('interactresizemove', interactResizeMove);
+        privates.path.addEventListener('interactdragmove', interactDragMove);
+        privates.path.addEventListener('interactresizeend', interactResizeMove);
+        privates.path.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.path);
+
+            privates.path.removeEventListener('interactresizemove', interactResizeMove);
+            privates.path.removeEventListener('interactdragmove', interactDragMove);
+            privates.path.removeEventListener('interactresizeend', interactResizeMove);
+            privates.path.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
     /**
@@ -4992,6 +5187,50 @@ var getSBOForMarkerId = function(id) {
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.path);
+
+        // set as interactable
+        interact.set(privates.path,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.path.addEventListener('interactresizemove', interactResizeMove);
+        privates.path.addEventListener('interactdragmove', interactDragMove);
+        privates.path.addEventListener('interactresizeend', interactResizeMove);
+        privates.path.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.path);
+
+            privates.path.removeEventListener('interactresizemove', interactResizeMove);
+            privates.path.removeEventListener('interactdragmove', interactDragMove);
+            privates.path.removeEventListener('interactresizeend', interactResizeMove);
+            privates.path.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
     /**
@@ -5069,6 +5308,50 @@ var getSBOForMarkerId = function(id) {
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.path);
+        // set as interactable
+        interact.set(privates.path,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.path.addEventListener('interactresizemove', interactResizeMove);
+        privates.path.addEventListener('interactdragmove', interactDragMove);
+        privates.path.addEventListener('interactresizeend', interactResizeMove);
+        privates.path.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.path);
+
+            privates.path.removeEventListener('interactresizemove', interactResizeMove);
+            privates.path.removeEventListener('interactdragmove', interactDragMove);
+            privates.path.removeEventListener('interactresizeend', interactResizeMove);
+            privates.path.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
+
     };
 
     /**
@@ -5152,6 +5435,50 @@ var getSBOForMarkerId = function(id) {
 
         sizeChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.rect);
+
+        // set as interactable
+        interact.set(privates.rect,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+        
+        // add event listeners
+        privates.rect.addEventListener('interactresizemove', interactResizeMove);
+        privates.rect.addEventListener('interactdragmove', interactDragMove);
+        privates.rect.addEventListener('interactresizeend', interactResizeMove);
+        privates.rect.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.rect);
+
+            privates.rect.removeEventListener('interactresizemove', interactResizeMove);
+            privates.rect.removeEventListener('interactdragmove', interactDragMove);
+            privates.rect.removeEventListener('interactresizeend', interactResizeMove);
+            privates.rect.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
     /**
@@ -5284,6 +5611,50 @@ var getSBOForMarkerId = function(id) {
         var size = this.size();
         sizeChanged.call(this, this, size.width, size.height);
         this.nodeGroup().appendChild(privates.ellipse);
+
+        // set as interactable
+        interact.set(privates.ellipse,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.ellipse.addEventListener('interactresizemove', interactResizeMove);
+        privates.ellipse.addEventListener('interactdragmove', interactDragMove);
+        privates.ellipse.addEventListener('interactresizeend', interactResizeMove);
+        privates.ellipse.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.ellipse);
+
+            privates.ellipse.removeEventListener('interactresizemove', interactResizeMove);
+            privates.ellipse.removeEventListener('interactdragmove', interactDragMove);
+            privates.ellipse.removeEventListener('interactresizeend', interactResizeMove);
+            privates.ellipse.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
 
@@ -5427,6 +5798,50 @@ var getSBOForMarkerId = function(id) {
         privates.circle = document.createElementNS(bui.svgns, 'circle');
         sizeChanged.call(this, this, this.size().width);
         container.appendChild(privates.circle);
+
+        // set as interactable
+        interact.set(privates.circle,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.circle.addEventListener('interactresizemove', interactResizeMove);
+        privates.circle.addEventListener('interactdragmove', interactDragMove);
+        privates.circle.addEventListener('interactresizeend', interactResizeMove);
+        privates.circle.addEventListener('interactdragend', interactDragMove);
+
+        function interactUnset() {
+            interact.unset(privates.circle);
+
+            privates.circle.removeEventListener('interactresizemove', interactResizeMove);
+            privates.circle.removeEventListener('interactdragmove', interactDragMove);
+            privates.circle.removeEventListener('interactresizeend', interactResizeMove);
+            privates.circle.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
     /**
@@ -5497,6 +5912,50 @@ var getSBOForMarkerId = function(id) {
         var size = this.size();
         sizeChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.ellipse);
+
+        // set as interactable
+        interact.set(privates.ellipse,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.ellipse.addEventListener('interactresizemove', interactResizeMove);
+        privates.ellipse.addEventListener('interactdragmove', interactDragMove);
+        privates.ellipse.addEventListener('interactresizeend', interactResizeMove);
+        privates.ellipse.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.ellipse);
+
+            privates.ellipse.removeEventListener('interactresizemove', interactResizeMove);
+            privates.ellipse.removeEventListener('interactdragmove', interactDragMove);
+            privates.ellipse.removeEventListener('interactresizeend', interactResizeMove);
+            privates.ellipse.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
     /**
@@ -5565,6 +6024,50 @@ var getSBOForMarkerId = function(id) {
         sizeChanged.call(this, this, this.size().width);
         container.appendChild(privates.circle);
         container.appendChild(privates.dash);
+
+        // set as interactable
+        interact.set(privates.circle,
+            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
+
+        // create eventListener delegate functions
+        interactDragMove = (function (event) {
+            var position = this.position(),
+                scale = this.graph().scale();
+
+            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
+                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
+                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        interactResizeMove = (function (event) {
+            var size = this.size(),
+                scale = this.graph().scale();
+            
+            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
+            }
+        }).createDelegate(this);
+
+        // add event listeners
+        privates.circle.addEventListener('interactresizemove', interactResizeMove);
+        privates.circle.addEventListener('interactdragmove', interactDragMove);
+        privates.circle.addEventListener('interactresizeend', interactResizeMove);
+        privates.circle.addEventListener('interactdragend', interactDragMove);
+        
+        function interactUnset() {
+            interact.unset(privates.circle);
+
+            privates.circle.removeEventListener('interactresizemove', interactResizeMove);
+            privates.circle.removeEventListener('interactdragmove', interactDragMove);
+            privates.circle.removeEventListener('interactresizeend', interactResizeMove);
+            privates.circle.removeEventListener('interactdragend', interactDragMove);
+        }
+
+        this.bind(bui.Drawable.ListenerType.remove,
+                interactUnset,
+                listenerIdentifier(this));
     };
 
     /**

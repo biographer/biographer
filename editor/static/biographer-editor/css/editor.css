@@ -292,3 +292,10 @@ input[type="text"] {
 .Purple {
 	background-color: #800080;
 }
+
+.selection_rect{
+    background-color: #eee;
+    opacity: .2;
+    border: dashed 1px black;
+    position: absolute;
+}

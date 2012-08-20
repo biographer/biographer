@@ -185,19 +185,7 @@ def redo():
 def export():
     file_type = False
 
-    def fix_svg(svg_data):
-        import re
-        import os
-        stylesheet_contents = open(os.path.join(request.folder, 'static', 'biographer-editor/css', 'visualization-svg.css'), 'r').read()
-        out = re.sub('@import url[^<]*', stylesheet_contents, svg_data)
-        return '<?xml version="1.0" encoding="UTF-8"?>\n%s' % out
-    if request.vars.json:
-        file_type = 'json'
-        out = request.vars.json
-    elif request.vars.svg:
-        file_type = 'svg'
-        out = fix_svg(request.vars.svg)
-    elif request.vars.format in 'png jpg pdf tiff'.split():
+    if request.vars.format in 'png jpg pdf tiff'.split():
         file_type = request.vars.format
         java = app_config.get('java', 'path')
         import os
