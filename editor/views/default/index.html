@@ -225,6 +225,10 @@
 				<div>select<br />ctrl+click to move and resize</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cursor.png')}}" id="cursor" class="tool"/>
 				</li>
+				<li id='move'>
+				<div>move selected items</div>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'move.png')}}" id="move" class="tool"/>
+				</li>
 				<li id='selection'>
 				<div>click to start drawing selection rectangle, click again to finish selection</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'selection.png')}}" id="selection" class="tool"/>
@@ -316,6 +320,8 @@
 		</td>
 		<td>
 			<div id="outer_canvas">
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'move.png')}}" id="follow_move" class='follow' style="position: fixed;"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'selection.png')}}" id="follow_selection" class='follow' style="position: fixed;"/>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cross.png')}}" id="follow_cross" class='follow' style="position: fixed;"/>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'wrench.png')}}" id="follow_wrench" class='follow' style="position: fixed;"/>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'edge.png')}}" id="follow_edge" class='follow' style="position: fixed;"/>
@@ -510,7 +516,6 @@ editor_config = {
 	url_layout : '{{=URL('layout')}}',
 	url_import : '{{=URL('import_graph.json')}}',
     	images_base_path: '/{{=request.application}}/static/biographer-editor/img/',
- 	bui_visualization_css_file : '{{=URL(request.application, "static/biographer-editor/css", "visualization-svg.css")}}',
  	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
     		nodes : [],
     		edges : []
@@ -521,7 +526,7 @@ editor_config = {
 //=========================
 editor = new Editor();
 bui.ready(function() {
-	bui.settings.css.stylesheetUrl = editor_config.bui_visualization_css_file;
+	bui.settings.css.stylesheetUrl = '{{=URL(request.application, "static/biographer-editor/css", "visualization-svg.css")}}';
 	editor.graph = new bui.Graph($('#canvas')[0]);
 	editor.redrawGraph(editor_config.graphData);
 	
