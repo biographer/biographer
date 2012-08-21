@@ -1,7 +1,12 @@
+body {
+    /*font-family: 'lucida grande', tahoma, verdana, arial, sans-serif; */
+    font:13px/1.231 sans-serif; *font-size:small; 
+    font-size: small;
+}
 pre {
     background-color: #eee;
 }
-div.flash {
+.flash {
     font-weight: bold;
     display: none;
     position: fixed;    
@@ -10,15 +15,17 @@ div.flash {
     right: 10%;
     min-width: 280px;
     opacity: 0.85;
-    margin: 0px 0px 10px 10px;    
-    color: #fff;    
+    margin: 0 0 10px 10px;    
+    color: black;    
     vertical-align: middle;
     cursor: pointer;
-    background: #e54d4d;
-    border: 2px solid lightgreen;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    z-index: 2;
+    background: #eee;
+    border: 2px solid #aaa;
+    border-radius: 5px;
+    z-index: 4;
+}
+ul {
+    margin: 0;
 }
 /**********************************/
 #editor-header {
@@ -69,6 +76,9 @@ div.flash {
 /**********************************/
 th {
 	text-align: left;
+}
+td {
+    vertical-align: top;
 }
 #canvas {
     z-index: 0;
@@ -156,7 +166,7 @@ h3.section.down {
     position: fixed;
     display: block;
     min-width: 1350px;
-    margin-left: 0px;
+    margin: 0;
     padding: 0 10px 0 10px;
     height: 40px;
 }
