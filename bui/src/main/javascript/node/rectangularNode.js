@@ -95,6 +95,15 @@
     };
 
     /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.rect.style.setProperty('fill', color.background);
+    };
+
+    /**
      * @private used from the constructor to improve readability
      */
     var initialPaint = function() {
@@ -103,50 +112,8 @@
         privates.rect = document.createElementNS(bui.svgns, 'path');
         var size = this.size();
         formChanged.call(this, this, size.width, size.height);
+		colorChanged.call(this, this, this.color()), 
         container.appendChild(privates.rect);
-
-        // set as interactable
-        interact.set(privates.rect, {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
-
-        // create eventListener delegate functions
-        interactDragMove = (function (event) {
-            var position = this.position(),
-                scale = this.graph().scale();
-
-            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
-                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
-                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
-            }
-        }).createDelegate(this);
-
-        interactResizeMove = (function (event) {
-            var size = this.size(),
-                scale = this.graph().scale();
-            
-            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
-                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
-                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
-            }
-        }).createDelegate(this);
-        
-        // add event listeners
-        privates.rect.addEventListener('interactresizemove', interactResizeMove);
-        privates.rect.addEventListener('interactdragmove', interactDragMove);
-        privates.rect.addEventListener('interactresizeend', interactResizeMove);
-        privates.rect.addEventListener('interactdragend', interactDragMove);
-        
-        function interactUnset() {
-            interact.unset(privates.rect);
-
-            privates.rect.removeEventListener('interactresizemove', interactResizeMove);
-            privates.rect.removeEventListener('interactdragmove', interactDragMove);
-            privates.rect.removeEventListener('interactresizeend', interactResizeMove);
-            privates.rect.removeEventListener('interactdragend', interactDragMove);
-        }
-
-        this.bind(bui.Drawable.ListenerType.remove,
-                interactUnset,
-                listenerIdentifier(this));
     };
 
     /**
@@ -161,6 +128,8 @@
         this._addType(bui.RectangularNode.ListenerType);
 
         var listener = formChanged.createDelegate(this);
+        var colorChangedListener = colorChanged.createDelegate(this);
+        
         this.bind(bui.Node.ListenerType.size,
                 listener,
                 listenerIdentifier(this));
@@ -169,6 +138,9 @@
                 listenerIdentifier(this));
         this.bind(bui.RectangularNode.ListenerType.bottomRadius,
                 listener,
+                listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
+                colorChangedListener,
                 listenerIdentifier(this));
 
         var privates = this._privates(identifier);

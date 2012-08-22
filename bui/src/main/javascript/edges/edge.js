@@ -208,13 +208,15 @@
      */
     var lineMouseDown = function(line, event) {
         if (event.ctrlKey !== true) {
-            var scale = 1 / this.graph().scale();
-            var graphHtmlTopLeft = this.graph().htmlTopLeft();
+            var scale = 1 / this.graph().scale(),
+                graph = this.graph(),
+                graphTranslate = graph.translate(),
+                graphHtmlTopLeft = graph.htmlTopLeft();
 
             addHandleAfter.call(this, line.source(),
-                    (event.pageX - graphHtmlTopLeft.x) * scale ,
-                    (event.pageY - graphHtmlTopLeft.y) * scale)
-                    .startDragging(event.clientX, event.clientY);
+                    ((event.pageX - graphHtmlTopLeft.x) * scale) - graphTranslate.x,
+                    ((event.pageY - graphHtmlTopLeft.y) * scale) - graphTranslate.y)
+                    .startDragging(event.pageX, event.pageY);
         }
     };
 

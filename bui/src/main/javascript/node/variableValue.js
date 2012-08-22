@@ -6,9 +6,11 @@
      * @param {bui.RectangularNode} RectangularNode
      * @return {String} listener identifier
      */
+     
     var listenerIdentifier = function(Node) {
         return identifier + Node.id();
     };
+    
     /**
      * @class
      * A node with the shape of an rectangle and a label inside.
@@ -29,6 +31,16 @@
 
         this._privates(identifier).path.setAttributeNS(null, 'd', pathData);
     };
+
+    /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.path.style.setProperty('fill', color.background);
+    };
+    
     /**
      * @private used from the constructor to improve readability
      */
@@ -38,56 +50,20 @@
         var privates = this._privates(identifier);
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
+		colorChanged.call(this, this, this.color()), 
         container.appendChild(privates.path);
-
-        // set as interactable
-        interact.set(privates.path,
-            {drag: this._enableDragging, resize: this._enableResizing, squareResize: this._forceRectangular});
-
-        // create eventListener delegate functions
-        interactDragMove = (function (event) {
-            var position = this.position(),
-                scale = this.graph().scale();
-
-            if ((event.type === 'interactdragmove' && this.graph().highPerformance()) ||
-                (event.type === 'interactdragend' && !this.graph().highPerformance())) {
-                this.position(position.x + event.detail.dx / scale, position.y + event.detail.dy / scale);
-            }
-        }).createDelegate(this);
-
-        interactResizeMove = (function (event) {
-            var size = this.size(),
-                scale = this.graph().scale();
-            
-            if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
-                (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
-                this.size(size.width + event.detail.dx / scale, size.height + event.detail.dy / scale);
-            }
-        }).createDelegate(this);
-
-        // add event listeners
-        privates.path.addEventListener('interactresizemove', interactResizeMove);
-        privates.path.addEventListener('interactdragmove', interactDragMove);
-        privates.path.addEventListener('interactresizeend', interactResizeMove);
-        privates.path.addEventListener('interactdragend', interactDragMove);
-        
-        function interactUnset() {
-            interact.unset(privates.path);
-
-            privates.path.removeEventListener('interactresizemove', interactResizeMove);
-            privates.path.removeEventListener('interactdragmove', interactDragMove);
-            privates.path.removeEventListener('interactresizeend', interactResizeMove);
-            privates.path.removeEventListener('interactdragend', interactDragMove);
-        }
-
-        this.bind(bui.Drawable.ListenerType.remove,
-                interactUnset,
-                listenerIdentifier(this));
     };
+    
     bui.VariableValue = function() {
         bui.VariableValue.superClazz.apply(this, arguments);
+
+        var colorChangedListener = colorChanged.createDelegate(this);
+        
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
+                colorChangedListener,
                 listenerIdentifier(this));
         
         initialPaint.call(this);
@@ -95,8 +71,10 @@
         this.labelClass(bui.settings.css.classes.smallText,
                 [bui.settings.css.classes.textDimensionCalculation.small]);
         this.addClass('VariableValue');
+        var privates = this._privates(identifier);
         //this.adaptSizeToLabel(true);
     };
+    
     bui.VariableValue.prototype = {
         identifier : function() {
             return identifier;

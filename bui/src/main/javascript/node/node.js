@@ -35,8 +35,18 @@
      * @private remove listener
      */
     var nodeRemoved = function() {
-        var privates = this._privates(identifier);
-        var nodeGroup = privates.nodeGroup;
+        var privates = this._privates(identifier),
+            nodeGroup = privates.nodeGroup;
+        
+        // Unset interactable element and remove Event Listeners
+        interact.unset(nodeGroup);
+        nodeGroup.removeEventListener('interactdragstart', privates.interact.dragStart);
+        nodeGroup.removeEventListener('interactdragmove', privates.interact.dragMove);
+        nodeGroup.removeEventListener('interactdragend', privates.interact.dragMove);
+        nodeGroup.removeEventListener('interactresizestart', privates.interact.resizeStart);
+        nodeGroup.removeEventListener('interactresizemove', privates.interact.resizeMove);
+        nodeGroup.removeEventListener('interactresizeend', privates.interact.resizeMove);
+        
         nodeGroup.parentNode.removeChild(nodeGroup);
     };
 
@@ -45,7 +55,7 @@
      */
     var parentRemoved = function() {
         this.parent(this.graph());
-	this.remove();
+        this.remove();
     };
 
     /**
@@ -88,8 +98,96 @@
     var mouseClick = function(event) {
         this.fire(bui.Node.ListenerType.click, [this, event]);
     };
-    
 
+    var dragStart = function(event) {
+        this.fire(bui.Node.ListenerType.dragStart, [this, event]);
+    };
+
+    var dragMove = function(event) {
+        this.fire(bui.Node.ListenerType.dragMove, [this, event]);
+    };
+
+    var dragEnd = function(event) {
+        this.fire(bui.Node.ListenerType.dragEnd, [this, event]);
+    };
+
+    var resizeStart = function(event) {
+        this.fire(bui.Node.ListenerType.resizeStart, [this, event]);
+    };
+
+    var resizeMove = function(event) {
+        this.fire(bui.Node.ListenerType.resizeMove, [this, event]);
+    };
+
+    var resizeEnd = function(event) {
+        this.fire(bui.Node.ListenerType.resizeEnd, [this, event]);
+    };
+    
+    var interactActionCheck = function (event) {
+        if (!bui.settings.enableModificationSupport) {
+            return '';
+        }
+        var position = this.absolutePosition(),
+            size = this.size(),
+            scale = this.graph().scale(),
+            graphPosition = this.graph().htmlTopLeft(),
+            graphTranslate = this.graph().translate(),
+            margin = interact.margin(),
+            x = ((event.touches? event.touches[0]: event)
+                    .pageX - graphPosition.x) / scale - graphTranslate.x,
+            y = ((event.touches? event.touches[0]: event)
+                    .pageY - graphPosition.y) / scale - graphTranslate.y,
+            
+            right = (x - position.x) > (size.width - margin),
+            bottom = (y - position.y) > (size.height - margin),
+            
+            resizeAxes = (right?'x': '') + (bottom?'y': ''),
+            action = (resizeAxes && this._enableResizing)?
+                    'resize' + resizeAxes:
+                    'drag';
+
+        return action;
+    };
+
+    // create eventListener delegate functions
+    var interactDragStart = function (node, event) {
+        var privates = node._privates(identifier);
+        privates.dragPosition = node.position();
+    };
+    
+    var interactDragMove = function (node, event) {
+        var privates = node._privates(identifier);
+        var scale = node.graph().scale();
+        
+        if ((event.type === 'interactdragmove' && node.graph().highPerformance()) ||
+            (event.type === 'interactdragend' && !node.graph().highPerformance())) {
+            
+        privates.dragPosition.x += event.detail.dx / scale;
+        privates.dragPosition.y += event.detail.dy / scale;
+        
+            this.position(privates.dragPosition.x, privates.dragPosition.y);
+        }
+    };
+    
+    var interactResizeStart = function (node, event) {
+        var privates = node._privates(identifier);
+        privates.resizeSize = node.size();
+    };
+
+    var interactResizeMove = function (node, event) {
+        var privates = this._privates(identifier);
+        var scale = this.graph().scale();
+        
+        if ((event.type === 'interactresizemove' && this.graph().highPerformance()) ||
+            (event.type === 'interactresizeend' && !this.graph().highPerformance())) {
+            
+            privates.resizeSize.width += event.detail.dx / scale;
+            privates.resizeSize.height += event.detail.dy / scale;
+        
+            this.size(privates.resizeSize.width, privates.resizeSize.height);
+        }
+    };
+    
     /**
      * @private
      * Initial paint of the node and group node
@@ -104,8 +202,24 @@
         positionChanged.call(this);
 
         jQuery(privates.nodeGroup)
-            .click(mouseClick.createDelegate(this))
+            .click(mouseClick.createDelegate(this));
+        // interact.js event listeners
+        privates.nodeGroup.addEventListener('interactdragstart', privates.interact.dragStart);
+        privates.nodeGroup.addEventListener('interactdragmove', privates.interact.dragMove);
+        privates.nodeGroup.addEventListener('interactdragend', privates.interact.dragMove);
+        privates.nodeGroup.addEventListener('interactresizestart', privates.interact.resizeStart);
+        privates.nodeGroup.addEventListener('interactresizemove', privates.interact.resizeMove);
+        privates.nodeGroup.addEventListener('interactresizeend', privates.interact.resizeMove);
 
+        if (bui.settings.enableModificationSupport) {
+            // set as interactable
+            interact.set(privates.nodeGroup, {
+                    drag: this._enableDragging,
+                    resize: this._enableResizing,
+                    squareResize: this._forceRectangular,
+                    actionChecker: privates.interact.actionCheck
+                });
+        }
     };
 
     /**
@@ -128,11 +242,26 @@
         var privates = this._privates(identifier);
         privates.x = 0;
         privates.y = 0;
+        privates.dragPosition = this.position();
+        privates.resizeSize = this.size();
         privates.width = this._minWidth;
         privates.height = this._minHeight;
         privates.parent = this.graph();
         privates.children = [];
-
+        
+        // create interact listener function delegates
+        // Done so that when a node is removed, the event listeners
+        // Can be removed from the nodeGroup element
+        privates.interact = {
+            actionCheck: interactActionCheck.createDelegate(this),
+            dragStart: dragStart.createDelegate(this),
+            dragMove: dragMove.createDelegate(this),
+            dragEnd: dragEnd.createDelegate(this),
+            resizeStart: resizeStart.createDelegate(this),
+            resizeMove: resizeMove.createDelegate(this),
+            resizeEnd: resizeEnd.createDelegate(this)
+        };
+        
         this.bind(bui.Drawable.ListenerType.remove,
                 nodeRemoved.createDelegate(this),
                 listenerIdentifier(this));
@@ -149,6 +278,25 @@
                 selectChanged.createDelegate(this),
                 listenerIdentifier(this));
 
+        this.bind(bui.Node.ListenerType.dragStart,
+                interactDragStart.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Node.ListenerType.dragMove,
+                interactDragMove.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Node.ListenerType.dragEnd,
+                interactDragMove.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Node.ListenerType.resizeStart,
+                interactResizeStart.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Node.ListenerType.resizeMove,
+                interactResizeMove.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Node.ListenerType.resizeEnd,
+                interactResizeMove.createDelegate(this),
+                listenerIdentifier(this));
+                
         initialPaint.call(this);
     };
 
@@ -271,7 +419,7 @@
                 this.absolutePosition(x - size.width / 2, y - size.height / 2);
                 return this;
             }
-            var pos = this.absolutePosition()
+            var pos = this.absolutePosition();
             return {
                 x : pos.x + size.width / 2,
                 y : pos.y + size.height / 2,
@@ -470,8 +618,8 @@
                         y -= diffY;
                         setTimeout(arguments.callee, timeOffset);
                     } else {
-		      if (finishedListener) finishedListener();
-		    }
+              if (finishedListener) finishedListener();
+            }
                 })();
             }
 
@@ -794,8 +942,10 @@
          * @return {bui.Node} Fluent interface.
          */
         startDragging : function(x, y) {
-            var element = this._privates(identifier).nodeGroup.childNodes[0];
-            interact.simulate('drag', element, {pageX: x, pageY: y});
+            jQuery(this.nodeGroup()).simulate("mousedown", {
+                        pageX : x,
+                        pageY : y
+                    });
 
             return this;
         },
@@ -914,7 +1064,19 @@
         /** @field */
         size : bui.util.createListenerTypeId(),
         /** @field */
-        click : bui.util.createListenerTypeId()
+        click : bui.util.createListenerTypeId(),
+        /** @field */
+        dragStart : bui.util.createListenerTypeId(),
+        /** @field */
+        dragMove : bui.util.createListenerTypeId(),
+        /** @field */
+        dragEnd : bui.util.createListenerTypeId(),
+        /** @field */
+        resizeStart : bui.util.createListenerTypeId(),
+        /** @field */
+        resizeMove : bui.util.createListenerTypeId(),
+        /** @field */
+        resizeEnd : bui.util.createListenerTypeId()
     };
 })(bui);
 
