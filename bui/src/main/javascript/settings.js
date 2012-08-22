@@ -45,11 +45,11 @@ bui.settings = {
 
     /**
      * @field
-     * set to disable certain dynamic SVG features (like suspendRedraw) which 
+     * set to disable certain dynamic SVG features (like suspendRedraw) which
      * are not needed or supported by static SVG generation in node.js
      */
     staticSVG : false,
-    
+
     /**
      * @field
      * How many frames per second (FPS) should be used for animations.
