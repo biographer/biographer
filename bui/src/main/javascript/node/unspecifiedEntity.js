@@ -32,6 +32,7 @@
         var privates = this._privates(identifier);
         var color = this.color();
         privates.ellipse.style.setProperty('fill', color.background);
+        privates.ellipse.style.setProperty('stroke', color.border);
     };
 
     /**

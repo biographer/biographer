@@ -26,6 +26,16 @@
     };
 
     /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.ellipse.style.setProperty('fill', color.background);
+        privates.ellipse.style.setProperty('stroke', color.border);
+    };
+
+    /**
      * @private used from the constructor to improve readability
      */
     var initialPaint = function() {
@@ -33,6 +43,7 @@
         privates.ellipse = document.createElementNS(bui.svgns, 'ellipse');
         var size = this.size();
         sizeChanged.call(this, this, size.width, size.height);
+		colorChanged.call(this, this, this.color()),
         this.nodeGroup().appendChild(privates.ellipse);
     };
 
@@ -47,8 +58,14 @@
      */
     bui.StateVariable = function() {
         bui.StateVariable.superClazz.apply(this, arguments);
+		
+        var colorChangedListener = colorChanged.createDelegate(this);
+		
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Labelable.ListenerType.color,
+                colorChangedListener,
                 listenerIdentifier(this));
 
         initialPaint.call(this);

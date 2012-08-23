@@ -101,6 +101,7 @@
         var privates = this._privates(identifier);
         var color = this.color();
         privates.rect.style.setProperty('fill', color.background);
+        privates.rect.style.setProperty('stroke', color.border);
     };
 
     /**

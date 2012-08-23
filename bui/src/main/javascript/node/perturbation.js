@@ -29,6 +29,7 @@
         var privates = this._privates(identifier);
         var color = this.color();
         privates.path.style.setProperty('fill', color.background);
+        privates.path.style.setProperty('stroke', color.border);
     };
 
     /**

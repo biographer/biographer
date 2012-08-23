@@ -433,10 +433,10 @@ window.interact = (function (window) {
     // Get event.pageX/Y for mouse and event.touches[0].pageX/Y tor touch
     function getPageXY(event) {
         return {
-            x: (event.touches)?
+            pageX: (event.touches)?
                 event.touches[0].pageX:
                 event.pageX,
-            y: (event.touches)?
+            pageY: (event.touches)?
                 event.touches[0].pageY:
                 event.pageY
         };
@@ -454,8 +454,8 @@ window.interact = (function (window) {
         }
 
         return {
-            x: pageX,
-            y: pageY
+            pageX: pageX,
+            pageY: pageY
         };
     }
 
@@ -511,8 +511,8 @@ window.interact = (function (window) {
         var detail,
             resizeEvent,
             page = getPageXY(event),
-            pageX = page.x,
-            pageY = page.y;
+            pageX = page.pageX,
+            pageY = page.pageY;
 
         if (!resizing) {
             resizeEvent = document.createEvent('CustomEvent');
@@ -582,8 +582,8 @@ window.interact = (function (window) {
         var detail,
             dragEvent,
             page = getPageXY(event),
-            pageX = page.x,
-            pageY = page.y;
+            pageX = page.pageX,
+            pageY = page.pageY;
 
         if (!dragging) {
             dragEvent = document.createEvent('CustomEvent');
@@ -627,7 +627,7 @@ window.interact = (function (window) {
     }
 
     function gestureMove(event) {
-        if (event.touhces < 2) {
+        if (event.touches.length < 2) {
             return;
         }
         event.preventDefault();
@@ -635,8 +635,8 @@ window.interact = (function (window) {
         var detail,
             gestureEvent,
             page = touchAverage(event),
-            pageX = page.x,
-            pageY = page.y,
+            pageX = page.pageX,
+            pageY = page.pageY,
             distance = touchDistance(event),
             scale,
             angle = touchAngle(event),
@@ -646,9 +646,6 @@ window.interact = (function (window) {
             gesture.angle = touchAngle(event);
 
         if (!gesturing) {
-            x0 = pageX;
-            y0 = pageY;
-
             gesture.startDistance = touchDistance(event);
             gesture.startAngle = angle;
             gesture.scale = 1;
@@ -751,9 +748,11 @@ window.interact = (function (window) {
      */
     function mouseDown(event, forceAction) {
         var action = '',
-            page = getPageXY(event),
-            pageX = page.x,
-            pageY = page.y;
+            page = (event.touches)?
+                touchAverage(event):
+                getPageXY(event),
+            pageX = page.pageX,
+            pageY = page.pageY;
 
         mouseIsDown = true;
 

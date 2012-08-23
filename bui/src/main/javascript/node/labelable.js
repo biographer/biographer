@@ -129,7 +129,8 @@
         privates.labelElement = null;
 		privates.color = {
 			background: '',
-			label: ''
+			label: '',
+			border: ''
 		};
         privates.svgClasses = this._svgClasses;
         privates.calculationClasses = this._calculationClasses;
@@ -198,7 +199,7 @@
             var privates = this._privates(identifier),
 			changed = false;
 			
-			if (!options || !(options.background || options.label)) {
+			if (!options || !(options.background || options.label || options.border)) {
 				// Return object giving background and label text color
 				return privates.color;
 			}
@@ -213,6 +214,11 @@
 				options.label = options.label.toLowerCase();
 				changed = changed || options.label !== privates.color.label;
 				privates.color.label = options.label;
+			}
+			if (typeof options.border === 'string') {
+				options.border = options.border.toLowerCase();
+				changed = changed || options.border !== privates.color.border;
+				privates.color.border = options.border;
 			}
 			if(changed) {
 				//Fire the colorchanged
