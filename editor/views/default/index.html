@@ -520,14 +520,15 @@ editor_config = {
     		nodes : [],
     		edges : []
     	}{{pass}},
-    	history_undo: {{if session.editor_histroy_undo:}}  {{=XML([i['action'] for i in session.editor_histroy_undo])}} {{else:}} []{{pass}},
-    	history_redo: {{if session.editor_histroy_redo:}}  {{=XML([i['action'] for i in session.editor_histroy_redo])}} {{else:}} []{{pass}}
+    	history_undo:  [],
+    	history_redo:  []
 }
 //=========================
 editor = new Editor();
 bui.ready(function() {
 	bui.settings.css.stylesheetUrl = '{{=URL(request.application, "static/biographer-editor/css", "visualization-svg.css")}}';
 	editor.graph = new bui.Graph($('#canvas')[0]);
+	//bui.Node.bindStatic(bui.Node.ListenerType.click, editor.drawableSelect());//FIXME this does not work, y?
 	editor.redrawGraph(editor_config.graphData);
 	
 });

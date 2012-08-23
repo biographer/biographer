@@ -69,6 +69,7 @@ Editor.prototype = {
     //-------------------------------------------
     showUndoRedo: function(){
         var newArray,html_history;
+        console.log(editor_config.history_undo);
         if(editor_config.history_undo.length > 0){
             $('#undo').removeClass('disabled');
             newArray = editor_config.history_undo.slice();
@@ -240,7 +241,7 @@ Editor.prototype = {
         //do not add lable to complex but anything else
         $('#action').html(action);
         if((drawable.identifier()=='Complex') || (drawable.identifier()=="Association") || (drawable.identifier()=="Dissociation")){
-            $('#node_label_row').hide()
+            $('#node_label_row').hide();
         }else{
             $('#node_label_row').show();
             $('#node_label').val(drawable.label());
@@ -252,10 +253,10 @@ Editor.prototype = {
             opacity:20,
             onClose: function(){
                 if(drawable.identifier()!='Complex'){
-                    if ( $('#node_label').val() != '' ) drawable.label($('#node_label').val()).adaptSizeToLabel();
+                    if ( $('#node_label').val() !== '' ) drawable.label($('#node_label').val()).adaptSizeToLabel();
                 }
                 if((drawable.identifier()=="Association") || (drawable.identifier()=="Dissociation")){
-                    drawable.size(20,20)
+                    drawable.size(20,20);
                 }
                 $('.unit_of_information').each(function(){
                     if($(this).val()){
@@ -266,8 +267,8 @@ Editor.prototype = {
                         .adaptSizeToLabel(true)
                         .visible(true);
                     }
-                }); 
-                if(($('input[name="node_color"]:checked').val() != 'none')&&($('input[name="node_color"]:checked').val() != undefined)){
+                });
+                if(($('input[name="node_color"]:checked').val() != 'none')&&($('input[name="node_color"]:checked').val() !== undefined)){
                     drawable.removeClass();
                     drawable.addClass($('input[name="node_color"]:checked').val());
                 }
@@ -296,7 +297,7 @@ Editor.prototype = {
             overlayClose:true,
             opacity:20,
             onClose: function(){
-                if($('#marker_type').html() != ''){
+                if($('#marker_type').html() !== ''){
                     if($('#edge_marker').val() !='none'){
                         drawable.marker(bui.connectingArcs[$('#marker_type').html()].id);
                     }
@@ -333,31 +334,31 @@ Editor.prototype = {
             new_node = this.graph.add(bui[ui.helper.attr('id')])
                 .position(pos_left, pos_top)
                 .size(size.h, size.w)
-                .visible(true)
+                .visible(true);
             //add parent if the drop is within a container like complex or compartment
-            if ($(element).attr('id').indexOf('placeholder') == 0){
-                var drawable_parent = this.graph.drawables()[$(element).attr('id').substring(12)]
-                    new_node.parent(drawable_parent)
+            if ($(element).attr('id').indexOf('placeholder') === 0){
+                var drawable_parent = this.graph.drawables()[$(element).attr('id').substring(12)];
+                    new_node.parent(drawable_parent);
                     //alert('parent_id '+parent_id);
                     if (drawable_parent.identifier() == 'Complex'){
                         drawable_parent.tableLayout();
                     } else {
-                        pos_top = pos_top-drawable_parent.position().y
-                            pos_left = pos_left-drawable_parent.position().x
-                            new_node.position(pos_left, pos_top)
+                        pos_top = pos_top-drawable_parent.position().y;
+                        pos_left = pos_left-drawable_parent.position().x;
+                        new_node.position(pos_left, pos_top);
                     }
             }
             //-----------------
             this.nodeModal(new_node, 'created '+ui.helper.attr('id'));
             //-----------------
             //set click listener on new node
-            new_node.bind(bui.Node.ListenerType.click, this.drawableSelect, 'node_select');
+            new_node.bind(bui.Node.ListenerType.click, this.drawableSelect(), 'node_select');
             //set droppable listener on new node
-            $('#placeholder_'+new_node.id()).droppable({ 
+            $('#placeholder_'+new_node.id()).droppable({
                 hoverClass: 'drop_hover',
                 over : function(){$('#canvas').droppable("disable");},
                 out : function(){$('#canvas').droppable("enable");},
-                drop: function(event, ui){dropFkt(event, ui, this);},
+                drop: function(event, ui){dropFkt(event, ui, this);}
             });
             //make all drawables placeholders invisible
             //this.placeholdersVisible(false);
@@ -389,7 +390,7 @@ Editor.prototype = {
                         if(drawable.source().lparent.target().identifier() == 'bui.StateVariableER'){
                             drawable.lsource = drawable.source().lparent.target().parent();
 
-                        }else if(drawable.source().lparent.target().identifier() == 'bui.EdgeHandle'){ 
+                        }else if(drawable.source().lparent.target().identifier() == 'bui.EdgeHandle'){
                             if(drawable.source().lparent.target().lparent.target().identifier() == 'bui.StateVariableER'){
                                 drawable.lsource = drawable.source().lparent.target().lparent.target().parent();
                             }else {
@@ -401,7 +402,7 @@ Editor.prototype = {
                     }else if(drawable.source().identifier() == 'bui.StateVariableER'){
                         drawable.lsource = drawable.source().parent();
                     }else {
-                        drawable.lsource = drawable.source()
+                        drawable.lsource = drawable.source();
                     }
                     //----------------------------------
                     if (drawable.target().identifier() == 'bui.EdgeHandle'){
@@ -444,6 +445,81 @@ Editor.prototype = {
             }
         }
     },
+    disable_selection: function(){
+        //disable listeners
+        console.log('disable_selection now');
+        editor.graph.unbind(bui.Graph.ListenerType.dragStart, 'graphDragStart');
+        editor.graph.unbind(bui.Graph.ListenerType.dragMove, 'graphDragMove');
+        editor.graph.unbind(bui.Graph.ListenerType.dragEnd, 'graphDragEnd');
+        this.graph.enablePanning(true);
+        this.box.style.display = 'none';
+    },
+    enable_selection: function(){
+        var this_editor = this;
+        this.graph.enablePanning(false);
+        if(this_editor.box === undefined){
+            this_editor.box = document.body.appendChild(document.createElement('div'));
+        }
+        var box = this_editor.box;
+        box.id = 'box';
+        box.style.border = 'dashed blue';
+        box.style.position = 'absolute';
+        $('box').hide();
+
+        this.graph.bind(
+            bui.Graph.ListenerType.dragStart,
+            function (graph, event) {
+                $('box').show();
+                box.style.display = '';
+                box.style.left = event.detail.x0;
+                box.style.top = event.detail.y0;
+                box.style.width = Math.max(event.detail.dx, 0) + 'px';
+                box.style.height = Math.max(event.detail.dy, 0) + 'px';
+                this_editor.selection_borders = {
+                    left: event.detail.x0 - this_editor.canvaspos.left,
+                    top:  event.detail.y0 - this_editor.canvaspos.top
+                };
+            },
+            'graphDragStart'
+        );
+
+        this.graph.bind(
+            bui.Graph.ListenerType.dragMove,
+            function (graph, event) {
+                box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
+                box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px';
+                this_editor.selection_borders.right = event.detail.pageX - this_editor.canvaspos.left;
+                this_editor.selection_borders.bottom = event.detail.pageY - this_editor.canvaspos.top;
+                this_editor.selected_nodes = [];
+                var all_drawables = this_editor.graph.drawables();
+                for (var key in all_drawables) {
+                    var drawable = all_drawables[key];
+                    if(drawable.drawableType() == 'node'){
+                        cur_elem_pos = drawable.absolutePosition();
+                        if((cur_elem_pos.x>=this_editor.selection_borders.left)&&(cur_elem_pos.x<=this_editor.selection_borders.right)&&(cur_elem_pos.y>=this_editor.selection_borders.top)&&(cur_elem_pos.y<=this_editor.selection_borders.bottom)){
+                            drawable.addClass('Red');
+                            drawable.selected = true;
+                            this_editor.selected_nodes.push(drawable);
+                        }else{
+                            drawable.removeClass('Red');
+                            drawable.selected = false;
+                        }
+                    }
+                }
+            },
+            'graphDragMove'
+        );
+
+        this.graph.bind(
+            bui.Graph.ListenerType.dragEnd,
+            function (graph, event) {
+                console.log('dragEnd');
+                $('box').hide();
+                box.style.display = 'none';
+            },
+            'graphDragEnd'
+        );
+    },
     init: function(){
         var this_editor = this;
         //=========================
@@ -457,31 +533,31 @@ Editor.prototype = {
         if('layout' in $_GET){
             $.ajax({
                 url: editor_config.url_layout,
-                data: {jsbgn: JSON.stringify(editor_config.graphData), layout: 'biographer', data:bui.layouter.makeLayouterFormat(editor_config.graphData), filename: $_GET['filename']}, 
+                data: {jsbgn: JSON.stringify(editor_config.graphData), layout: 'biographer', data:bui.layouter.makeLayouterFormat(editor_config.graphData), filename: $_GET['filename']},
                 type: 'POST',
                 success: function(data) {
                     //console.log(data);
-                    bui.layouter.fromLayouterFormat(editor_config.graphData,data)
-                    this_editor.undoRegister('applied automatic biographer layout', editor_config.graphData)
+                    bui.layouter.fromLayouterFormat(editor_config.graphData,data);
+                    this_editor.undoRegister('applied automatic biographer layout', editor_config.graphData);
                     this_editor.redrawGraph(editor_config.graphData);
                     //bui.importUpdatedNodePositionsFromJSON(graph, editor_config.graphData, 300)
-                    },
+                    }
             });
         }
         this.showUndoRedo();
  
-        $('#canvas').droppable({ 
+        $('#canvas').droppable({
                 hoverClass: 'drop_hover',
-                drop: function(event, ui){this_editor.dropFkt(event, ui, this);},
+                drop: function(event, ui){this_editor.dropFkt(event, ui, this);}
         });
         
         //=========================
         $('#hide_handles').click(function(){
             var all_drawables = this_editor.graph.drawables();
             for (var key in all_drawables) {
-                drawable = all_drawables[key]
+                drawable = all_drawables[key];
                 if (drawable.identifier()=='bui.Edge'){
-                    drawable.edgeHandlesVisible(false)
+                    drawable.edgeHandlesVisible(false);
                 }
                 //drawable.recalculatePoints();
             }
@@ -494,7 +570,7 @@ Editor.prototype = {
             } else {
                 $(this).addClass('fkt_active');
                 bui.settings.straightenEdges = true;
-            } 
+            }
 
         });
         //=========================
@@ -503,7 +579,7 @@ Editor.prototype = {
             var all_drawables = this_editor.graph.drawables();
             var selected_drawables = [];
             for (var key in all_drawables) {
-                drawable = all_drawables[key]
+                drawable = all_drawables[key];
                 if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
                     selected_drawables.push(drawable);
                 }
@@ -511,16 +587,16 @@ Editor.prototype = {
             // sort drawables
             var sorted_drawables = [];
             for(var i=0; i<selected_drawables.length; i++){
-                sorted_drawables.push( { 
+                sorted_drawables.push({
                 x : selected_drawables[i].absolutePosition().x,
                 y : selected_drawables[i].absolutePosition().y,
                 drawable : selected_drawables[i]
                 });
             }
             if($(this).attr('id')=='vertical_gaps_equal'){
-                sorted_drawables.sort(function(a,b) { return a.y - b.y } );
+                sorted_drawables.sort(function(a,b) { return a.y - b.y; } );
             }else{
-                sorted_drawables.sort(function(a,b) { return a.x - b.x } );
+                sorted_drawables.sort(function(a,b) { return a.x - b.x; } );
             }
             //calculate gap space
             var gap_space = 0;
@@ -532,25 +608,25 @@ Editor.prototype = {
                 }
             }
             //set equal gaps
-            var gap_length = gap_space/(sorted_drawables.length-1)
+            var gap_length = gap_space/(sorted_drawables.length-1);
             for (var i=1; i<sorted_drawables.length-1; i++){
                 if($(this).attr('id')=='vertical_gaps_equal'){
-                    sorted_drawables[i].drawable.absolutePosition(sorted_drawables[i].drawable.absolutePosition().x, sorted_drawables[i-1].drawable.absoluteBottomRight().y+gap_length)
+                    sorted_drawables[i].drawable.absolutePosition(sorted_drawables[i].drawable.absolutePosition().x, sorted_drawables[i-1].drawable.absoluteBottomRight().y+gap_length);
                 }else{
-                    sorted_drawables[i].drawable.absolutePosition(sorted_drawables[i-1].drawable.absoluteBottomRight().x+gap_length, sorted_drawables[i].drawable.absolutePosition().y)
+                    sorted_drawables[i].drawable.absolutePosition(sorted_drawables[i-1].drawable.absoluteBottomRight().x+gap_length, sorted_drawables[i].drawable.absolutePosition().y);
                 }
             }
 
-            var x_vals
-            var max_x = Math.max()
+            var x_vals;
+            var max_x = Math.max();
         });
         //=========================
         $('#align_vertical, #align_hoizontal, #align_left, #align_top, #align_right, #align_bottom').click(function(){
-            var pos = undefined;
+            var pos;
             for (var i = 0; i<this_editor.selected_nodes.length; ++i) {
-                drawable = this_editor.selected_nodes[i]
+                drawable = this_editor.selected_nodes[i];
                 var align_type = $(this).attr('id');
-                if ((drawable.drawableType()=='node')&&drawable.selected == true){
+                if ((drawable.drawableType()=='node')&&drawable.selected === true){
                     if((align_type == 'align_hoizontal')||(align_type == 'align_vertical')){
                         if(pos === undefined){
                             pos = drawable.absolutePositionCenter();
@@ -593,7 +669,7 @@ Editor.prototype = {
         //=========================
         $('#clear').click(function(){
             this_editor.redrawGraph({nodes:[],edges:[]});
-            //this_editor.graph.clear();//FIXME this does not work 
+            //this_editor.graph.clear();//FIXME this does not work
         });
         //=========================
         $('#layout_grid').click(function(evnt){
@@ -613,25 +689,25 @@ Editor.prototype = {
         });
         //=========================
         $('#clone').click(function(){
-            orig_html = $('#clone').html()
-            $('#clone').html(this_editor.loading_img)
+            orig_html = $('#clone').html();
+            $('#clone').html(this_editor.loading_img);
             var new_nodes;
-            if(this_editor.selected_nodes.length == 0) new_nodes = bui.util.clone(this_editor.graph, 5);
+            if(this_editor.selected_nodes.length === 0) new_nodes = bui.util.clone(this_editor.graph, 5);
             else new_nodes = bui.util.clone(this_editor, 2, this_editor.selected_nodes);
             for (var i = new_nodes.length - 1; i >= 0; i--) {
                 new_nodes[i].bind(bui.Node.ListenerType.click, this_editor.drawableSelect());
-            };
+            }
             $('#clone').html(orig_html);
         });
         //=========================
         $('#combine').click(function(){
-            if(this_editor.selected_nodes.length == 0) bui.util.combine(this_editor.graph, this_editor.selected_nodes);
+            if(this_editor.selected_nodes.length === 0) bui.util.combine(this_editor.graph, this_editor.selected_nodes);
         });
         //=========================
         $('#layout_force').click(function(){
          
-            orig_html = $('#layout_force').html()
-            $('#layout_force').html(this_editor.loading_img)
+            orig_html = $('#layout_force').html();
+            $('#layout_force').html(this_editor.loading_img);
             nodes_edges = this_editor.get_nodes_edges();
             var nodes = [], links = [];
             //alert('in nodes '+nodes.length);
@@ -650,23 +726,23 @@ Editor.prototype = {
             $.getJSON(editor_config.url_layout+'.json?layout=graphviz', function(data) {
                 editor_config.history_undo.push(data.action);
                 this_editor.showUndoRedo();
-                bui.importUpdatedNodePositionsFromJSON(this_editor.graph, data.graph, 300)
+                bui.importUpdatedNodePositionsFromJSON(this_editor.graph, data.graph, 300);
                 //redrawGraph(data.graph);
             });
         });
         //=========================
         $('#layout_biographer').click(function(){
-            var orig_html = $('#layout_biographer').html()
-            $('#layout_biographer').html(this_editor.loading_img)
+            var orig_html = $('#layout_biographer').html();
+            $('#layout_biographer').html(this_editor.loading_img);
             editor_config.graphData=this_editor.graph.toJSON();
             $.ajax({
                 url: editor_config.url_layout,
-                data: {layout: 'biographer', data:bui.layouter.makeLayouterFormat(editor_config.graphData)}, 
+                data: {layout: 'biographer', data:bui.layouter.makeLayouterFormat(editor_config.graphData)},
                 type: 'POST',
                 success: function(data) {
                     //console.log(data);
-                    bui.layouter.fromLayouterFormat(editor_config.graphData,data)
-                    this_editor.undoRegister('applied automatic biographer layout', editor_config.graphData)
+                    bui.layouter.fromLayouterFormat(editor_config.graphData,data);
+                    this_editor.undoRegister('applied automatic biographer layout', editor_config.graphData);
                     try{
                         this_editor.redrawGraph(editor_config.graphData);
                     }catch(e){
@@ -690,7 +766,7 @@ Editor.prototype = {
         //=========================
         $('#add_unit_of_information').click(function(){
             $('#uoi_group').append(' <br/><input type="text" placeholder="mt:prot" class="unit_of_information" /> ');
-            $('#simplemodal-container').css('height', parseInt($('#simplemodal-container').css('height'))+20);
+            $('#simplemodal-container').css('height', parseInt($('#simplemodal-container').css('height')) + 20);
         });
         //=========================
         $('.load').click(function(){
@@ -699,13 +775,13 @@ Editor.prototype = {
                 type: 'POST',
                 dataType: 'json',
                 data : {
-                    type : $(this).attr('id'), 
+                    type : $(this).attr('id'),
                     identifier : $('#'+$(this).attr('id')+'_input').val()
                 },
                 success: function( data ) {
-                    this_editor.undoRegister(data.action, data.graph)
-                    this_editor.redrawGraph(data.graph)
-                    $.modal.close()
+                    this_editor.undoRegister(data.action, data.graph);
+                    this_editor.redrawGraph(data.graph);
+                    $.modal.close();
                     return true;
                 },
                 error: function(xhr, textStatus, errorThrown) {
@@ -720,27 +796,27 @@ Editor.prototype = {
         if (window.File && window.FileReader && window.FileList && window.Blob) {
             // Great success! All the File APIs are supported.
             $('#import_file_input').change(function(){
-                var upload_element = $(this)[0]
+                var upload_element = $(this)[0];
                 var file = upload_element.files[0];
                 if (file) {
                     var reader = new FileReader();
-                    reader.readAsText(file) //, "UTF-8");//TODO what encoding should be parsed???
+                    reader.readAsText(file);//, "UTF-8");//TODO what encoding should be parsed???
                     reader.onload = function (evt) {
                         var content = evt.target.result;
                         //console.log('content: '+content);
                         var doc = sb.io.read(content);
-                        if((doc == null)||(doc == undefined)){
+                        if((doc === null)||(doc === undefined)){
                             alert('could not import file');
-                        }else{  
+                        }else{
                             console.log(sb.io.write(doc, 'jsbgn'));
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
                             this_editor.undoPush('loaded graph from JSON string');
                         $.modal.close();
                         }
-                    }
+                    };
                     reader.onerror = function (evt) {
                         console.log("error reading file");
-                    }
+                    };
                 }
                 return false;
             });
@@ -754,30 +830,30 @@ Editor.prototype = {
         $('#import_file').click(function() {
             modal = $("#import_file_modal_input").modal({
                 overlayClose:true,
-                opacity:20,
+                opacity:20
             });
         });
         //=========================
         $('#load_json_string').click(function(){
             this_editor.redrawGraph(JSON.parse($('#json_string').val()));
             this_editor.undoPush('loaded graph from JSON string');
-            $.modal.close()
+            $.modal.close();
         });
         //===
         $('#import_str').click(function() {
             modal = $("#import_string_modal_input").modal({
                 overlayClose:true,
-                opacity:20,
+                opacity:20
             });
         });
         /*$('#canvas').bind('mousewheel', function(event,delta){
             var rate;
             if (delta > 0) {
-                // mousewheel is going up; 
+                // mousewheel is going up;
                 rate = 0.1;
             } else {
                 rate = -0.1;
-                // mousewheel is going down 
+                // mousewheel is going down
             }
             this_editor.graph.scale(this_editor.graph.scale() + rate);
         });*/
@@ -801,7 +877,7 @@ Editor.prototype = {
         $('h3.section').click(function(){
             $(this).parent().find('table').slideToggle();
             if($(this).hasClass('up')){
-                $(this).removeClass('up').addClass('down') 
+                $(this).removeClass('up').addClass('down');
             }else{
                 $(this).removeClass('down').addClass('up');
             }
@@ -821,23 +897,28 @@ Editor.prototype = {
         //=========================
         $('.tools_click li').click(function(){
             var mode = $(this).attr('id');
+            if ((this_editor.cur_mode == 'selection') && (mode !== selection)){
+                this_editor.disable_selection();
+            }
             if ((mode == 'Edge')||(mode == 'Spline')){
                 for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
                     this_editor.selected_nodes[i].selected = false;
                     this_editor.selected_nodes[i].removeClass('Red');
-                };
+                }
                 this_editor.selected_nodes = [];
+            }else if(mode == 'selection'){
+                this_editor.enable_selection();
             }
             this_editor.setMode(mode);
         });
         //=========================
         $('.marker_select').click(function(){
-            $('#marker_type').html($(this).attr('id'))
+        $('#marker_type').html($(this).attr('id'));
         $.modal.close();
         });
         //=========================
         $('#close_modal_input').click(function(){
-            $.modal.close(); 
+            $.modal.close();
         });
         //=========================
         $('#save_to_session').click(function(){
@@ -862,7 +943,7 @@ Editor.prototype = {
         $('#export_other').click(function() {
             modal = $("#export_file_modal_input").modal({
                 overlayClose:true,
-                opacity:20,
+                opacity:20
             });
         });
         //===
@@ -874,14 +955,14 @@ Editor.prototype = {
         //=========================
         $('.node').draggable({
             zIndex: 2,
-            //revert: true, 
+            //revert: true,
             //grid: [ 20,20 ],//does not work, need aling functions
-            helper: function() {return '<img src="'+editor_config.images_base_path+$(this).attr('id')+'_helper.png" id="'+$(this).attr('id')+'" class="node_helper"/>'},
+            helper: function() {return '<img src="'+editor_config.images_base_path+$(this).attr('id')+'_helper.png" id="'+$(this).attr('id')+'" class="node_helper"/>';},
             start: function() {
                 this_editor.setMode('cursor');
                 this_editor.select_all(false);
                 //make all drawables placeholders visible
-            }, 
+            }
         });
         //=========================
         $('.canvas').mousedown(function(event){
@@ -894,44 +975,11 @@ Editor.prototype = {
                 for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) selected_nodes_start_pos[this_editor.selected_nodes[i].id()]= this_editor.selected_nodes[i].absolutePosition();
                 $('.canvas').mousemove(function(event){
                     var move = {x:event.pageX - start_pos.x, y: event.pageY - start_pos.y};
-                    for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) 
+                    for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--)
                         this_editor.selected_nodes[i].absolutePosition( selected_nodes_start_pos[this_editor.selected_nodes[i].id()].x+move.x,  selected_nodes_start_pos[this_editor.selected_nodes[i].id()].y+move.y);
-                });
-            } else if (this_editor.cur_mode == 'selection'){
-                $('.canvas').mouseup(function(){
-                    $('.canvas').unbind('mousemove');
-                    $('.selection_rect').width(0).height(0).hide();
-                });
-                this_editor.selection_rect_pos = {left:event.pageX,top:event.pageY};
-                $('.selection_rect').show().offset({left:event.pageX,top:event.pageY});
-                var borders = {
-                    left: event.pageX - this_editor.canvaspos.left, 
-                    top:  event.pageY - this_editor.canvaspos.top
-                };
-                var cur_elem_pos, key;
-                var all_drawables = this_editor.graph.drawables(); 
-                $('.canvas').mousemove(function(event){
-                    $('.selection_rect').width(event.pageX-this_editor.selection_rect_pos.left).height(event.pageY-this_editor.selection_rect_pos.top);
-                    borders.right = event.pageX - this_editor.canvaspos.left;
-                    borders.bottom = event.pageY - this_editor.canvaspos.top;
-                    this_editor.selected_nodes = [];
-                    for (key in all_drawables) {
-                        var drawable = all_drawables[key]
-                        if(drawable.drawableType() == 'node'){
-                            cur_elem_pos = drawable.absolutePosition();
-                            if((cur_elem_pos.x>=borders.left)&&(cur_elem_pos.x<=borders.right)&&(cur_elem_pos.y>=borders.top)&&(cur_elem_pos.y<=borders.bottom)){
-                                drawable.addClass('Red');
-                                drawable.selected = true;
-                                this_editor.selected_nodes.push(drawable);
-                            }else{
-                                drawable.removeClass('Red');
-                                drawable.selected = false;
-                            }
-                        } 
-                    }
                 });
             }
         });
     }
-}
+};
 
