@@ -40,27 +40,40 @@
     };
 
     var gestureStart = function(event) {
-        this.fire(bui.Graph.ListenerType.gestureStart, [this, event]);
+        // Only fire if event isn't propagating from a child element
+        if (event.target === this._privates(identifier).root) {
+            this.fire(bui.Graph.ListenerType.gestureStart, [this, event]);
+        }
     };
 
     var gestureMove = function(event) {
-        this.fire(bui.Graph.ListenerType.gestureMove, [this, event]);
+        if (event.target === this._privates(identifier).root) {
+            this.fire(bui.Graph.ListenerType.gestureMove, [this, event]);
+        }
     };
 
     var gestureEnd = function(event) {
-        this.fire(bui.Graph.ListenerType.gestureEnd, [this, event]);
+        if (event.target === this._privates(identifier).root) {
+            this.fire(bui.Graph.ListenerType.gestureEnd, [this, event]);
+        }
     };
 
     var dragStart = function(event) {
-        this.fire(bui.Graph.ListenerType.dragStart, [this, event]);
+        if (event.target === this._privates(identifier).root) {
+            this.fire(bui.Graph.ListenerType.dragStart, [this, event]);
+        }
     };
 
     var dragMove = function(event) {
-        this.fire(bui.Graph.ListenerType.dragMove, [this, event]);
+        if (event.target === this._privates(identifier).root) {
+            this.fire(bui.Graph.ListenerType.dragMove, [this, event]);
+        }
     };
 
     var dragEnd = function(event) {
-        this.fire(bui.Graph.ListenerType.dragEnd, [this, event]);
+        if (event.target === this._privates(identifier).root) {
+            this.fire(bui.Graph.ListenerType.dragEnd, [this, event]);
+        }
     };
 
     var mouseWheel = function(event) {
@@ -72,26 +85,25 @@
             newScale = privates.scale * (1 + event.detail.ds),
             dx,
             dy;
-        
-        // Do nothing if the event is propagating from a child element
-        if (event.target !== privates.root) {
-            return event;
-        }
 
         if (newScale > 0) {
             // Scaling the graph calls reduceCanvasSize(). This brings it back to place.
             dx = privates.x;
             dy = privates.y;
             
-            // So that the graph follows the gesture
-            dx += event.detail.dx / newScale;
-            dy += event.detail.dy / newScale;
+            if (privates.enablePanning) {
+                // So that the graph follows the gesture
+                dx += event.detail.dx / newScale;
+                dy += event.detail.dy / newScale;
+            }
         
-            // So that the graph is scaled with the gesture cordinate as the center
-            dx -= ((event.detail.pageX - privates.rootOffset.x) * event.detail.ds) / newScale;
-            dy -= ((event.detail.pageY - privates.rootOffset.y) * event.detail.ds) / newScale;
-            
-            graph.scale(newScale);
+            if (privates.enableZooming) {
+                // So that the graph is scaled with the gesture cordinate as the center
+                dx -= ((event.detail.pageX - privates.rootOffset.x) * event.detail.ds) / newScale;
+                dy -= ((event.detail.pageY - privates.rootOffset.y) * event.detail.ds) / newScale;
+                
+                graph.scale(newScale);
+            }
             graph.translate(dx, dy);
         }
      };
@@ -100,37 +112,39 @@
     var panStart = function (graph, event) {
         var privates = graph._privates(identifier);
         
-        // Do nothing if the event is propagating from a child element
-        if (event.target !== privates.root) {
+        if (!privates.enablePanning) {
             return event;
         }
         privates.panPosition = graph.translate();
     };
     
     var panMove = function (graph, event) {
-        var privates = graph._privates(identifier),
-            scale = graph.scale();
+        var privates = graph._privates(identifier);
         
-        // Do nothing if the event is propagating from a child element
-        if (event.target !== privates.root) {
+        if (!privates.enablePanning) {
             return event;
         }
         
         if ((event.type === 'interactdragmove' && this.highPerformance()) ||
             (event.type === 'interactdragend' && !this.highPerformance())) {
             
-            privates.panPosition.x += event.detail.dx / scale;
-            privates.panPosition.y += event.detail.dy / scale;
+            privates.panPosition.x += event.detail.dx / privates.scale;
+            privates.panPosition.y += event.detail.dy / privates.scale;
 
             this.translate(privates.panPosition.x, privates.panPosition.y);
         }
     };
     
     var wheelZoom = function (graph, event) {
+        var privates = graph._privates(identifier);
+        
+        if (!privates.enableZooming) {
+            return event;
+        }
+        
         event.preventDefault();
         
-        var privates = graph._privates(identifier),
-            wheelDelta = event.wheelDelta || event.detail,
+        var wheelDelta = event.wheelDelta || event.detail,
             ds = 0.2 * (wheelDelta > 0? 1: -1),
             newScale = privates.scale * (1 + ds),
             dx,
@@ -263,7 +277,8 @@
                 autoScroll: false,
                 actionCheck: function (event) {
                     return 'drag';
-                }
+                },
+				checkOnHover: false
             });
     };
 
@@ -324,6 +339,8 @@
         privates.scale = 1;
         privates.x = 0;
         privates.y = 0;
+        privates.enablePanning = true;
+        privates.enableZooming = true;
         privates.highPerformance = bui.settings.initialHighPerformance;
 
         this.bind(bui.Graph.ListenerType.dragStart,
@@ -458,6 +475,59 @@
             }
 
             return this;
+        },
+
+        /**
+         * @description
+         * Used to enable/disable panning of a graph from gesture or dragging
+         *
+         * If you omit the parameter a value for whether panning is
+         * enabled is returned.
+         *
+         * @param {Boolean} [select] True to enable panning or
+         *   false to disable.
+         * @return {bui.Graph|Boolean} Fluent interface when you pass a
+         *   parameter to this function. If not, the current selection state
+         *   will be returned.
+         */
+        enablePanning : function(pan) {
+            var privates = this._privates(identifier);
+
+            if (pan !== undefined) {
+                if (privates.enablePanning !== pan) {
+                    privates.enablePanning = pan;
+                }
+                return this;
+            }
+
+            return privates.enablePanning;
+        },
+
+        /**
+         * @description
+         * Used to enable/disable zooming of a graph from mouse Wheel
+         * or pinch gesture
+         *
+         * If you omit the parameter a value for whether zooming is
+         * enabled is returned.
+         *
+         * @param {Boolean} [select] True to enable zooming or
+         *   false to disable.
+         * @return {bui.Graph|Boolean} Fluent interface when you pass a
+         *   parameter to this function. If not, the current selection state
+         *   will be returned.
+         */
+        enableZooming : function(zoom) {
+            var privates = this._privates(identifier);
+
+            if (zoom !== undefined) {
+                if (privates.enableZooming !== zoom) {
+                    privates.enableZooming = zoom;
+                }
+                return this;
+            }
+
+            return privates.enableZooming;
         },
 
         /**
