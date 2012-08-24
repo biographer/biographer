@@ -1,0 +1,36 @@
+syntax: glob
+
+# project
+target
+.sublime*
+
+
+# unix
+*~
+.*
+
+
+# intellij
+*.iml
+*.ipr
+*.iws
+.idea/
+
+
+# python
+*.pyc
+
+
+# node
+.DS_Store
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+pids
+logs
+results
