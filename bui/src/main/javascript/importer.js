@@ -58,7 +58,17 @@
 
         if (bui.util.propertySetAndNotNull(nodeJSON,
                 ['data', 'cssClasses'])) {
-            node.addClass(nodeJSON.data.cssClasses);
+            if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'cssClasses'])) {
+              // added loop to be able to add more than one class
+                if (nodeJSON.data.cssClasses instanceof Array) {
+                    for (var i=0; i < nodeJSON.data.cssClasses.length; i++) {
+                        node.addClass(nodeJSON.data.cssClasses[i]);
+                    }
+                } else {
+                    log ('Converted cssClasses ' + nodeJSON.data.cssClasses +  ' to String');
+                    node.addClass(nodeJSON.data.cssClasses);
+                }
+            }
         }
 
         if(('clone_marker' in nodeJSON.data)&&(nodeJSON.data.clone_marker == true)){
