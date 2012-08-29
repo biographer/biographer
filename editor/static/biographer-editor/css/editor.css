@@ -199,7 +199,7 @@ h3.section.down {
     border-radius: 2px;
     padding: 2px;
     white-space:nowrap;
-    z-index: 999;
+    z-index: 9999999; /* FIXME this does not work, still hidden in chomium */
 }
 .editor_menu li>div {
     top: 50px;
