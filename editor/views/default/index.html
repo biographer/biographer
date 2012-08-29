@@ -515,18 +515,17 @@ editor_config = {
 	url_redo : '{{=URL('redo.json')}}',
 	url_layout : '{{=URL('layout')}}',
 	url_import : '{{=URL('import_graph.json')}}',
-    	images_base_path: '/{{=request.application}}/static/biographer-editor/img/',
  	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
     		nodes : [],
     		edges : []
     	}{{pass}},
-    	history_undo:  [],
-    	history_redo:  []
+    history_redo:  [],
+    history_undo:  []
 }
 //=========================
 editor = new Editor();
 bui.ready(function() {
-	bui.settings.css.stylesheetUrl = '{{=URL(request.application, "static/biographer-editor/css", "visualization-svg.css")}}';
+	//bui.settings.css.stylesheetUrl = '{{=URL(request.application, "static/biographer-editor/css", "visualization-svg.css")}}';//FIXME this is not working anymore
 	editor.graph = new bui.Graph($('#canvas')[0]);
 	//bui.Node.bindStatic(bui.Node.ListenerType.click, editor.drawableSelect());//FIXME this does not work, y?
 	editor.redrawGraph(editor_config.graphData);

@@ -15,6 +15,8 @@ function Editor(){
     this.x = 1;
     this.canvaspos = $('#canvas').position();
     this.loading_img = '<img src="'+$('script[src*="js/biographer.editor.js"]').attr('src').replace('js/biographer.editor.js', 'img/loading.gif')+'" alt="loading" >';
+    this.bui_visualization_css_file = $('script[src*="js/biographer.editor.js"]').attr('src').replace('js/biographer.editor.js', 'css/visualization-svg.css');
+    this.images_base_path = $('script[src*="js/biographer.editor.js"]').attr('src').replace('js/biographer.editor.js', 'img/');
     this.init();
 }
 //-------------------------------------------
@@ -176,7 +178,6 @@ Editor.prototype = {
     drawableSelect: function() {
         var this_editor = this;
         return function(drawable, select_status){
-            console.log(drawable.drawableType()+' clicked');
             if(drawable.drawableType()=='node'){
                 if ((this_editor.cur_mode == 'cursor')||(this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
                     if (drawable.selected === true){
@@ -460,6 +461,7 @@ Editor.prototype = {
         if(this_editor.box === undefined){
             this_editor.box = document.body.appendChild(document.createElement('div'));
         }
+            
         var box = this_editor.box;
         box.id = 'box';
         box.style.border = 'dashed blue';
@@ -469,16 +471,26 @@ Editor.prototype = {
         this.graph.bind(
             bui.Graph.ListenerType.dragStart,
             function (graph, event) {
-                $('box').show();
-                box.style.display = '';
-                box.style.left = event.detail.x0;
-                box.style.top = event.detail.y0;
-                box.style.width = Math.max(event.detail.dx, 0) + 'px';
-                box.style.height = Math.max(event.detail.dy, 0) + 'px';
                 this_editor.selection_borders = {
                     left: event.detail.x0 - this_editor.canvaspos.left,
                     top:  event.detail.y0 - this_editor.canvaspos.top
                 };
+                if (this_editor.cur_mode == 'selection'){
+                    $('box').show();
+                    box.style.display = 'block';
+                    //box.style.display = '';
+                    box.style.left = event.detail.x0;
+                    box.style.top = event.detail.y0;
+                    box.style.width = Math.max(event.detail.dx, 0) + 'px';
+                    box.style.height = Math.max(event.detail.dy, 0) + 'px';
+                    
+                }else if (this_editor.cur_mode == 'move'){
+                    this_editor.selected_nodes_start_pos = {};
+                    for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--){
+                        var pos = this_editor.selected_nodes[i].absolutePosition();
+                        this_editor.selected_nodes_start_pos[this_editor.selected_nodes[i].id()] = {x: pos.x, y: pos.y};
+                    }
+                }
             },
             'graphDragStart'
         );
@@ -486,24 +498,34 @@ Editor.prototype = {
         this.graph.bind(
             bui.Graph.ListenerType.dragMove,
             function (graph, event) {
-                box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
-                box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px';
-                this_editor.selection_borders.right = event.detail.pageX - this_editor.canvaspos.left;
-                this_editor.selection_borders.bottom = event.detail.pageY - this_editor.canvaspos.top;
-                this_editor.selected_nodes = [];
-                var all_drawables = this_editor.graph.drawables();
-                for (var key in all_drawables) {
-                    var drawable = all_drawables[key];
-                    if(drawable.drawableType() == 'node'){
-                        cur_elem_pos = drawable.absolutePosition();
-                        if((cur_elem_pos.x>=this_editor.selection_borders.left)&&(cur_elem_pos.x<=this_editor.selection_borders.right)&&(cur_elem_pos.y>=this_editor.selection_borders.top)&&(cur_elem_pos.y<=this_editor.selection_borders.bottom)){
-                            drawable.addClass('Red');
-                            drawable.selected = true;
-                            this_editor.selected_nodes.push(drawable);
-                        }else{
-                            drawable.removeClass('Red');
-                            drawable.selected = false;
+                if (this_editor.cur_mode == 'selection'){
+                    box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
+                    box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px';
+                    this_editor.selection_borders.right = event.detail.pageX - this_editor.canvaspos.left;
+                    this_editor.selection_borders.bottom = event.detail.pageY - this_editor.canvaspos.top;
+                    this_editor.selected_nodes = [];
+                    var all_drawables = this_editor.graph.drawables();
+                    for (var key in all_drawables) {
+                        var drawable = all_drawables[key];
+                        if(drawable.drawableType() == 'node'){
+                            cur_elem_pos = drawable.absolutePosition();
+                            if((cur_elem_pos.x>=this_editor.selection_borders.left)&&(cur_elem_pos.x<=this_editor.selection_borders.right)&&(cur_elem_pos.y>=this_editor.selection_borders.top)&&(cur_elem_pos.y<=this_editor.selection_borders.bottom)){
+                                drawable.addClass('Red');
+                                drawable.selected = true;
+                                this_editor.selected_nodes.push(drawable);
+                            }else{
+                                drawable.removeClass('Red');
+                                drawable.selected = false;
+                            }
                         }
+                    }
+                }else if (this_editor.cur_mode == 'move'){
+                    var move = {x:event.detail.pageX - this_editor.selection_borders.left, y: event.detail.pageY - this_editor.selection_borders.top};
+                    for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--){
+                        this_editor.selected_nodes[i].absolutePosition(
+                            this_editor.selected_nodes_start_pos[this_editor.selected_nodes[i].id()].x+move.x,
+                            this_editor.selected_nodes_start_pos[this_editor.selected_nodes[i].id()].y+move.y
+                            );
                     }
                 }
             },
@@ -897,7 +919,7 @@ Editor.prototype = {
         //=========================
         $('.tools_click li').click(function(){
             var mode = $(this).attr('id');
-            if ((this_editor.cur_mode == 'selection') && (mode !== selection)){
+            if ( ((this_editor.cur_mode == 'selection') && (mode !== 'selection')) || ((this_editor.cur_mode == 'move') && (mode !== 'move')) ){
                 this_editor.disable_selection();
             }
             if ((mode == 'Edge')||(mode == 'Spline')){
@@ -906,7 +928,7 @@ Editor.prototype = {
                     this_editor.selected_nodes[i].removeClass('Red');
                 }
                 this_editor.selected_nodes = [];
-            }else if(mode == 'selection'){
+            }else if ((mode == 'selection')||(mode == 'move')){
                 this_editor.enable_selection();
             }
             this_editor.setMode(mode);
@@ -935,7 +957,7 @@ Editor.prototype = {
             //alert($('#canvas svg').parent().html());
             //$('#export_form').html('<input type="hidden" name="svg" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
             //window.location.href="data:text/data;base64," + btoa(ne_graph.rawSVG());
-            $.get(editor_config.bui_visualization_css_file, function(viscss) {
+            $.get(this_editor.bui_visualization_css_file, function(viscss) {
                 window.location.href="data:text/svg;charset=UTF-8," + encodeURIComponent($('#canvas svg').parent().html().replace(/@import url[^<]*/, viscss));
             });
         });
@@ -957,27 +979,11 @@ Editor.prototype = {
             zIndex: 2,
             //revert: true,
             //grid: [ 20,20 ],//does not work, need aling functions
-            helper: function() {return '<img src="'+editor_config.images_base_path+$(this).attr('id')+'_helper.png" id="'+$(this).attr('id')+'" class="node_helper"/>';},
+            helper: function() {return '<img src="'+this_editor.images_base_path+$(this).attr('id')+'_helper.png" id="'+$(this).attr('id')+'" class="node_helper"/>';},
             start: function() {
                 this_editor.setMode('cursor');
                 this_editor.select_all(false);
                 //make all drawables placeholders visible
-            }
-        });
-        //=========================
-        $('.canvas').mousedown(function(event){
-            if(this_editor.cur_mode == 'move'){
-                $('.canvas').mouseup(function(){
-                    $('.canvas').unbind('mousemove');
-                });
-                var start_pos= {x:event.pageX, y: event.pageY};
-                var selected_nodes_start_pos = {};
-                for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) selected_nodes_start_pos[this_editor.selected_nodes[i].id()]= this_editor.selected_nodes[i].absolutePosition();
-                $('.canvas').mousemove(function(event){
-                    var move = {x:event.pageX - start_pos.x, y: event.pageY - start_pos.y};
-                    for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--)
-                        this_editor.selected_nodes[i].absolutePosition( selected_nodes_start_pos[this_editor.selected_nodes[i].id()].x+move.x,  selected_nodes_start_pos[this_editor.selected_nodes[i].id()].y+move.y);
-                });
             }
         });
     }
