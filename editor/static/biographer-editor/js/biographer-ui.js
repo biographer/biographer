@@ -1623,6 +1623,8 @@ var getSBOForMarkerId = function(id) {
         circle.setAttributeNS(null, 'cx', 10);
         circle.setAttributeNS(null, 'cy', 10);
         circle.setAttributeNS(null, 'r', 10);
+        circle.setAttributeNS(null, 'fill', 'white');
+        circle.setAttributeNS(null, 'stroke', 'black');
 
         return createPathWithData(circle, 20, 10, 20, 20,
             bui.settings.css.classes.connectingArcs.catalysis);
@@ -1943,7 +1945,7 @@ var getSBOForMarkerId = function(id) {
         privates.root.addEventListener('interactgesturemove', gestureMove.createDelegate(this));
         privates.root.addEventListener('interactdragstart', dragStart.createDelegate(this));
         privates.root.addEventListener('interactdragmove', dragMove.createDelegate(this));
-        privates.root.addEventListener('interactdragend', dragMove.createDelegate(this));
+        privates.root.addEventListener('interactdragend', dragEnd.createDelegate(this));
         
         // Set as interactable
         interact.set(privates.root, {
