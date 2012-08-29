@@ -1,28 +1,17 @@
 from gluon.contrib import simplejson
 
 
-def undoRegister(action, graph, json_string):
-    if session.editor_histroy_undo == None:
-        session.editor_histroy_undo = []
-    item = dict(action=action, graph=graph)
-    session.editor_histroy_redo = []
-    session.editor_histroy_undo.append(item)
-    session.editor_autosave = json_string
-    return item
-
-
 def index():
     check_first_user()
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
+    response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-svg.css'))
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'jquery-ui-1.8.13.css'))
-    #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))
+    #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))  #FIXME why was this imported?
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery-ui-1.8.15.custom.min.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery.simplemodal.1.4.1.min.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.layout.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.geom.js'))
-    #response.files.append(URL(request.application, 'static/js', 'biographer-ui.js'))#import in view
-    #response.files.append(URL('script.js'))#import in view
     if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph or request.vars.jsbgn:
         action, graph, json_string = None, None, None
         if request.vars.jgraph or request.vars.jsbgn:
@@ -49,6 +38,7 @@ def index():
                 response.error = 'Invalid BioModel Id. The id should be a number or follow the pattern ^(BIOMD|MODEL)\d{10}$'
         #----------------------------------
         if biomodel_id:
+            import os
             model_content = None
             model_path = os.path.join(request.folder, 'static', 'data_models')
             if not os.path.exists(model_path):
@@ -210,7 +200,7 @@ def render():
     in_url = request.args(0) or request.vars.q
     if in_url:
         try:
-            #import urllib2
+            import urllib2
             file_content = _download(in_url)
         except urllib2.HTTPError, e:
             return 'error getting %s: %s' % (in_url, e)
@@ -233,7 +223,7 @@ def sbgnml_test():
         for fn in os.listdir(os.path.join(test_path, dn)):
             if fn.endswith('.sbgn'):
                 if fn == 'mapk_cascade.sbgn':  # FIXME
-                    print sbgnml2jsbgn(open(os.path.join(test_path, dn, fn), 'r').read())
+                    #print sbgnml2jsbgn(open(os.path.join(test_path, dn, fn), 'r').read())
                     continue
                 subitems.append(
                         TR(TH(A(fn, _href=URL('render', vars=dict(q='http://%s%s' % (request.env.http_host, URL(request.application,  'static/test-files/%s' % dn, fn)))),  _target="_blank"),  _colspan=2)),

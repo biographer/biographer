@@ -12,24 +12,27 @@ db.define_table('Reactome', Field('ST_ID','string'),    Field('Title','string'),
 
 #########################################################################
 if session.debug:
-    APP_URL = request.env.http_host+'/biographer'
+    APP_URL = request.env.http_host + '/biographer'
 else:
     APP_URL = 'biographer.biologie.hu-berlin.de'
 #########################################################################
-#this is a config helper 
+#this is a config helper
 db.define_table('config',
         Field('section'),
         Field('option'),
         Field('value')
         )
+
+
 class Config:
     '''configure general things needed'''
 
     def __init__(self):
-        self.create('smtp','login','user:password')
-        self.create('smtp','server','server:portx')
-        self.create('smtp','sender','name@server.org')
-        self.create('java','path', '/usr/bin/java')
+        self.create('smtp', 'login', 'user:password')
+        self.create('smtp', 'server', 'server:portx')
+        self.create('smtp', 'sender', 'name@server.org')
+        self.create('java', 'path', '/usr/bin/java')
+
     def get(self, section, option):
         '''get a value'''
         record = db(db.config.option == option)(db.config.section == section).select(db.config.value).first()
@@ -39,16 +42,17 @@ class Config:
     def create(self, section, option, value):
         '''create value if it does not exist'''
         if not db(db.config.option == option)(db.config.section == section).count():
-            db.config.insert(section = section, option = option, value = value)
+            db.config.insert(section=section, option=option, value=value)
 
     def set(self, section, option, value):
         '''set or update a value'''
         record = db(db.config.option == option)(db.config.section == section).select().first()
         if record:
             #record.update_record(value = value)
-            db.config[record.id] = dict(section = section, option = option, value = value)
+            db.config[record.id] = dict(section=section, option=option, value=value)
         else:
-            db.config.insert(section = section, option = option, value = value)
+            db.config.insert(section=section, option=option, value=value)
+
     def write(self):
         pass
 app_config = Config()
@@ -57,14 +61,14 @@ app_config = Config()
 from gluon.tools import *
 from gluon.contrib import simplejson
 mail = Mail()                                  # mailer
-auth = Auth(globals(),db)                      # authentication/authorization
-crud = Crud(globals(),db)                      # for CRUD helpers using auth
+auth = Auth(globals(), db)                      # authentication/authorization
+crud = Crud(globals(), db)                      # for CRUD helpers using auth
 service = Service(globals())                   # for json, xml, jsonrpc, xmlrpc, amfrpc
 plugins = PluginManager()
 
-mail.settings.server = app_config.get('smtp', 'server') # your SMTP server
-mail.settings.sender = app_config.get('smtp', 'sender') # your email
-mail.settings.login = app_config.get('smtp', 'login') # your credentials or None
+mail.settings.server = app_config.get('smtp', 'server')  # your SMTP server
+mail.settings.sender = app_config.get('smtp', 'sender')  # your email
+mail.settings.login = app_config.get('smtp', 'login')  # your credentials or None
 
 auth.settings.hmac_key = 'sha512:96779a30-57c0-40a7-a874-0b464c56e825'   # before define_tables()
 auth.define_tables()                           # creates all needed tables
@@ -72,9 +76,9 @@ auth.settings.mailer = mail                    # for user email verification
 auth.settings.actions_disabled.append('register')
 auth.settings.registration_requires_verification = True
 auth.settings.registration_requires_approval = True
-auth.messages.verify_email = 'Click on the link http://'+request.env.http_host+URL(r=request,c='default',f='user',args=['verify_email'])+'/%(key)s to verify your email'
+auth.messages.verify_email = 'Click on the link http://' + request.env.http_host + URL(r=request, c='default', f='user', args=['verify_email']) + '/%(key)s to verify your email'
 auth.settings.reset_password_requires_verification = True
-auth.messages.reset_password = 'Click on the link http://'+request.env.http_host+URL(r=request,c='default',f='user',args=['reset_password'])+'/%(key)s to reset your password'
+auth.messages.reset_password = 'Click on the link http://' + request.env.http_host + URL(r=request, c='default', f='user', args=['reset_password']) + '/%(key)s to reset your password'
 
 #########################################################################
 ## If you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
@@ -92,20 +96,30 @@ crud.settings.auth = None                      # =auth to enforce authorization 
 #login as first user if user comes from localhost
 #########################################################################
 import os.path
-if not auth.is_logged_in() and db(db.auth_user.id>0).count() and not os.path.exists(os.path.join(request.folder, 'LOCK')) and (request.env.remote_addr in '127.0.0.1 localhost'.split()):
+if not auth.is_logged_in() and db(db.auth_user.id > 0).count() and not os.path.exists(os.path.join(request.folder, 'LOCK')) and (request.env.remote_addr in '127.0.0.1 localhost'.split()):
     from gluon.storage import Storage
-    user = db(db.auth_user.id==1).select().first()
+    user = db(db.auth_user.id == 1).select().first()
     auth.user = Storage(auth.settings.table_user._filter_fields(user, id=True))
     auth.environment.session.auth = Storage(user=user, last_visit=request.now,
                                             expiration=auth.settings.expiration)
-    response.flash = 'You were automatically logged in as %s %s.<br/> To prevent this create the file %s'%(user.first_name, user.last_name, os.path.join(request.folder, 'LOCK'))
+    response.flash = 'You were automatically logged in as %s %s.<br/> To prevent this create the file %s' % (user.first_name, user.last_name, os.path.join(request.folder, 'LOCK'))
 #########################################################################
 #########################################################################
-#Cache functions
 
 
+def undoRegister(action, graph, json_string):
+    if session.editor_histroy_undo == None:
+        session.editor_histroy_undo = []
+    item = dict(action=action, graph=graph)
+    session.editor_histroy_redo = []
+    session.editor_histroy_undo.append(item)
+    session.editor_autosave = json_string
+    return item
+
 #########################################################################
 #########################################################################
+
+
 def layout(graph, path_to_layout_binary, execution_folder='/tmp'):
 
     global session
