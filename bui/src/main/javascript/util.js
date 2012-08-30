@@ -754,7 +754,7 @@ var getSBOForInstance = function(mapping, instance) {
         if (mapping.hasOwnProperty(sbo)) {
             var klass = mapping[sbo].klass;
 
-            if (instance instanceof klass) {
+            if ((typeof(klass) === 'function') && (instance instanceof klass)) {
                 return bui.util.toNumber(sbo);
             }
         }
