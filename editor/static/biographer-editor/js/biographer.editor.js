@@ -473,12 +473,12 @@ Editor.prototype = {
             function (graph, event) {
                 this_editor.selection_borders = {
                     left: event.detail.x0 - this_editor.canvaspos.left,
-                    top:  event.detail.y0 - this_editor.canvaspos.top
+                    top:  event.detail.y0 - this_editor.canvaspos.top-50
                 };
                 if (this_editor.cur_mode == 'selection'){
                     $('box').show();
-                    box.style.display = 'block';
-                    //box.style.display = '';
+                    //box.style.display = 'block';
+                    box.style.display = '';
                     box.style.left = event.detail.x0;
                     box.style.top = event.detail.y0;
                     box.style.width = Math.max(event.detail.dx, 0) + 'px';
@@ -502,14 +502,20 @@ Editor.prototype = {
                     box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
                     box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px';
                     this_editor.selection_borders.right = event.detail.pageX - this_editor.canvaspos.left;
-                    this_editor.selection_borders.bottom = event.detail.pageY - this_editor.canvaspos.top;
+                    this_editor.selection_borders.bottom = event.detail.pageY - this_editor.canvaspos.top-50;
                     this_editor.selected_nodes = [];
                     var all_drawables = this_editor.graph.drawables();
                     for (var key in all_drawables) {
                         var drawable = all_drawables[key];
                         if(drawable.drawableType() == 'node'){
-                            cur_elem_pos = drawable.absolutePosition();
-                            if((cur_elem_pos.x>=this_editor.selection_borders.left)&&(cur_elem_pos.x<=this_editor.selection_borders.right)&&(cur_elem_pos.y>=this_editor.selection_borders.top)&&(cur_elem_pos.y<=this_editor.selection_borders.bottom)){
+                            var pos_top_left_abs = drawable.absolutePosition();
+                            var size = drawable.size();
+                            var pos_botm_rigt_abs = {x: pos_top_left_abs.x+size.width, y: pos_top_left_abs.y+size.height};
+                            console.log(JSON.stringify(pos_top_left_abs)+JSON.stringify(pos_botm_rigt_abs)+' == '+JSON.stringify(this_editor.selection_borders));
+                            if((pos_top_left_abs.x>=this_editor.selection_borders.left) &&
+                                (pos_botm_rigt_abs.x<=this_editor.selection_borders.right) &&
+                                (pos_top_left_abs.y>=this_editor.selection_borders.top) &&
+                                (pos_botm_rigt_abs.y<=this_editor.selection_borders.bottom)){
                                 drawable.addClass('Red');
                                 drawable.selected = true;
                                 this_editor.selected_nodes.push(drawable);
