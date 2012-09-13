@@ -198,13 +198,15 @@ def export():
 
 def render():
     in_url = request.args(0) or request.vars.q
+    if in_url.startswith('/'):
+        in_url = 'http://%s%s' % (request.env.http_host, in_url)
     if in_url:
         try:
             import urllib2
             file_content = _download(in_url)
         except urllib2.HTTPError, e:
             return 'error getting %s: %s' % (in_url, e)
-        action, graph, json_string = import_file(file_content, '')
+        action, graph, json_string = import_file(file_content, '')#FIXME this should be done now by libSBGN.js!!
         if action and graph and json_string:
             undoRegister(action, graph, json_string)
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
@@ -237,12 +239,12 @@ def sbgnml_test():
                     #print sbgnml2jsbgn(open(os.path.join(test_path, dn, fn), 'r').read())
                     continue
                 subitems.append(
-                        TR(TH(A(fn, _href=URL('render', vars=dict(q='http://%s%s' % (request.env.http_host, URL(request.application,  'static/test-files/%s' % dn, fn)))),  _target="_blank"),  _colspan=2)),
+                        TR(TH(A(fn, _href=URL('render', vars=dict(q=URL(request.application,  'static/test-files/%s' % dn, fn))),  _target="_blank"),  _colspan=2)),
                     )
                 subitems.append(
                     TR(
                         TD(IMG(_src=URL(request.application, 'static/test-files/' + dn, fn[:-5] + '.png'), _alt='sbgn image', _style='max-width: 300px')),
-                        TD(IFRAME(_src=URL('render', vars=dict(q='http://%s%s' % (request.env.http_host, URL(request.application, 'static/test-files/%s' % dn, fn)))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0")),
+                        TD(PRE('%s' % IFRAME(_src=URL('render', vars=dict(q=URL(request.application, 'static/test-files/%s' % dn, fn))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"))),
                         ),
                     )
                 subitems.append(
