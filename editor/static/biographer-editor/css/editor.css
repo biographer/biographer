@@ -81,9 +81,12 @@ th {
 td {
     vertical-align: top;
 }
+#spacer {
+    height: 50px;
+}
 #canvas {
     z-index: 0;
-    margin-top: 50px;
+    /*margin-top: 50px;*/
     width: 92%;
     height: 90%;
     border: solid 1px #ddd;

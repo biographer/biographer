@@ -458,11 +458,17 @@ Editor.prototype = {
     enable_selection: function(){
         var this_editor = this;
         this.graph.enablePanning(false);
-        if(this_editor.box === undefined){
-            this_editor.box = document.body.appendChild(document.createElement('div'));
+        console.log('enable_selection: '+this.cur_mode);
+        /*if(this.cur_mode == 'selection'){
+            console.log('rest pan and zoom');
+            this.graph.scale(1);
+            this.graph.transalte(0,0);
+        }*/
+        if(this.box === undefined){
+            this.box = document.body.appendChild(document.createElement('div'));
         }
             
-        var box = this_editor.box;
+        var box = this.box;
         box.id = 'box';
         box.style.border = 'dashed blue';
         box.style.position = 'absolute';
@@ -472,8 +478,8 @@ Editor.prototype = {
             bui.Graph.ListenerType.dragStart,
             function (graph, event) {
                 this_editor.selection_borders = {
-                    left: event.detail.x0 - this_editor.canvaspos.left,
-                    top:  event.detail.y0 - this_editor.canvaspos.top-50
+                    left: (event.detail.x0 - this_editor.canvaspos.left - this_editor.graph.translate().x) / this_editor.graph.scale(),
+                    top: (event.detail.y0 - this_editor.canvaspos.top - this_editor.graph.translate().y) / this_editor.graph.scale()
                 };
                 if (this_editor.cur_mode == 'selection'){
                     $('box').show();
@@ -500,9 +506,10 @@ Editor.prototype = {
             function (graph, event) {
                 if (this_editor.cur_mode == 'selection'){
                     box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
-                    box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px';
-                    this_editor.selection_borders.right = event.detail.pageX - this_editor.canvaspos.left;
-                    this_editor.selection_borders.bottom = event.detail.pageY - this_editor.canvaspos.top-50;
+                    box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px'
+                    
+                    this_editor.selection_borders.right = (event.detail.pageX - this_editor.canvaspos.left - this_editor.graph.translate().x) / this_editor.graph.scale();
+                    this_editor.selection_borders.bottom = (event.detail.pageY - this_editor.canvaspos.top - this_editor.graph.translate().y) / this_editor.graph.scale();
                     this_editor.selected_nodes = [];
                     var all_drawables = this_editor.graph.drawables();
                     for (var key in all_drawables) {
@@ -511,7 +518,7 @@ Editor.prototype = {
                             var pos_top_left_abs = drawable.absolutePosition();
                             var size = drawable.size();
                             var pos_botm_rigt_abs = {x: pos_top_left_abs.x+size.width, y: pos_top_left_abs.y+size.height};
-                            console.log(JSON.stringify(pos_top_left_abs)+JSON.stringify(pos_botm_rigt_abs)+' == '+JSON.stringify(this_editor.selection_borders));
+                            //console.log(JSON.stringify(pos_top_left_abs)+JSON.stringify(pos_botm_rigt_abs)+' == '+JSON.stringify(this_editor.selection_borders));
                             if((pos_top_left_abs.x>=this_editor.selection_borders.left) &&
                                 (pos_botm_rigt_abs.x<=this_editor.selection_borders.right) &&
                                 (pos_top_left_abs.y>=this_editor.selection_borders.top) &&
@@ -928,6 +935,7 @@ Editor.prototype = {
             if ( ((this_editor.cur_mode == 'selection') && (mode !== 'selection')) || ((this_editor.cur_mode == 'move') && (mode !== 'move')) ){
                 this_editor.disable_selection();
             }
+            this_editor.setMode(mode);
             if ((mode == 'Edge')||(mode == 'Spline')){
                 for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
                     this_editor.selected_nodes[i].selected = false;
@@ -937,7 +945,6 @@ Editor.prototype = {
             }else if ((mode == 'selection')||(mode == 'move')){
                 this_editor.enable_selection();
             }
-            this_editor.setMode(mode);
         });
         //=========================
         $('.marker_select').click(function(){
