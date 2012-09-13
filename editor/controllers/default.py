@@ -207,8 +207,19 @@ def render():
         action, graph, json_string = import_file(file_content, '')
         if action and graph and json_string:
             undoRegister(action, graph, json_string)
-    response.files.append(URL(request.application, 'static/css', 'visualization-html.css'))
-    response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
+    response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-svg.css'))
+    response.files.append(URL(request.application, 'static/biographer-editor/css', 'jquery-ui-1.8.13.css'))
+    #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))  #FIXME why was this imported?
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery-ui-1.8.15.custom.min.js'))
+    #response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery.simplemodal.1.4.1.min.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.layout.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.geom.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'biographer-ui.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'biographer.editor.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'interact.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'libSBGN.js'))
     return dict()
 
 
