@@ -2,10 +2,18 @@
 import os
 import BaseHTTPServer
 import subprocess
+import sys
 
-PORT = 8000
+try: 
+  PORT = int(sys.argv[1])
+except:
+  PORT = 8080
 
-LAYOUT_BIN = '/local/home/handorf/hg/biographer-layout/build/layout'
+try: 
+  LAYOUT_BIN = sys.argv[2] 
+except: 
+  LAYOUT_BIN = '/local/home/handorf/hg/biographer-layout/build/layout'
+
 
 class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
    def do_GET(self):
