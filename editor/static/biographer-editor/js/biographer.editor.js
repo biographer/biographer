@@ -478,8 +478,8 @@ Editor.prototype = {
             bui.Graph.ListenerType.dragStart,
             function (graph, event) {
                 this_editor.selection_borders = {
-                    left: (event.detail.x0 - this_editor.canvaspos.left - this_editor.graph.translate().x) / this_editor.graph.scale(),
-                    top: (event.detail.y0 - this_editor.canvaspos.top - this_editor.graph.translate().y) / this_editor.graph.scale()
+                    left: (event.detail.x0 - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x,
+                    top: (event.detail.y0 - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y
                 };
                 if (this_editor.cur_mode == 'selection'){
                     $('box').show();
@@ -508,8 +508,8 @@ Editor.prototype = {
                     box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
                     box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px'
                     
-                    this_editor.selection_borders.right = (event.detail.pageX - this_editor.canvaspos.left - this_editor.graph.translate().x) / this_editor.graph.scale();
-                    this_editor.selection_borders.bottom = (event.detail.pageY - this_editor.canvaspos.top - this_editor.graph.translate().y) / this_editor.graph.scale();
+                    this_editor.selection_borders.right = (event.detail.pageX - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
+                    this_editor.selection_borders.bottom = (event.detail.pageY - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
                     this_editor.selected_nodes = [];
                     var all_drawables = this_editor.graph.drawables();
                     for (var key in all_drawables) {
@@ -999,6 +999,55 @@ Editor.prototype = {
                 //make all drawables placeholders visible
             }
         });
+        
+        // Mobile touch Support for drag tools
+        var touchDragging = false,
+            dragTools = document.querySelector('ul.tools_group.tools_drag');
+        
+        function touchToMouse (event) {
+            var mouseEvent = document.createEvent('MouseEvents'),
+                eventTypes = {
+                    touchstart: 'mousedown',
+                    touchmove: 'mousemove',
+                    touchend: 'mouseup',
+                    touchcancel: 'mouseup'
+                },
+                touch = event.touches[0] || event.changedTouches[0];
+            
+            mouseEvent.initMouseEvent(eventTypes[event.type], true, false, window, 0,
+                touch.screenX || 0,
+                touch.screenY || 0,
+                touch.clientX || 0,
+                touch.clientY || 0,
+                false,
+                false,
+                false,
+                false,
+                0,
+                window);
+            
+            event.target.dispatchEvent(mouseEvent);
+            event.preventDefault();
+        }
+            
+        dragTools.addEventListener('touchstart', function (event) {
+                touchToMouse(event);
+                touchDragging = true;
+            });
+
+        document.addEventListener('touchmove', function (event) {
+                if (touchDragging) {
+                    touchToMouse(event);
+                }
+            });
+            
+        document.addEventListener('touchend', function (event) {
+                if (touchDragging) {
+                    touchToMouse(event);
+                    touchDragging = false;
+                }
+            });
     }
 };
+
 
