@@ -588,11 +588,15 @@ Editor.prototype = {
         
         //=========================
         $('#hide_handles').click(function(){
+            if (this_editor.edge_handles_visible === undefined){
+                this_editor.edge_handles_visible = false;
+            }
+            this_editor.edge_handles_visible = !this_editor.edge_handles_visible;
             var all_drawables = this_editor.graph.drawables();
             for (var key in all_drawables) {
                 drawable = all_drawables[key];
                 if (drawable.identifier()=='bui.Edge'){
-                    drawable.edgeHandlesVisible(false);
+                    drawable.edgeHandlesVisible(this_editor.edge_handles_visible);
                 }
                 //drawable.recalculatePoints();
             }
