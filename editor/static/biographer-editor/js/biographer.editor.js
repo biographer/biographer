@@ -1003,6 +1003,55 @@ Editor.prototype = {
                 //make all drawables placeholders visible
             }
         });
+        
+        // Mobile touch Support for drag tools
+        var touchDragging = false,
+            dragTools = document.querySelector('ul.tools_group.tools_drag');
+        
+        function touchToMouse (event) {
+            var mouseEvent = document.createEvent('MouseEvents'),
+                eventTypes = {
+                    touchstart: 'mousedown',
+                    touchmove: 'mousemove',
+                    touchend: 'mouseup',
+                    touchcancel: 'mouseup'
+                },
+                touch = event.touches[0] || event.changedTouches[0];
+            
+            mouseEvent.initMouseEvent(eventTypes[event.type], true, false, window, 0,
+                touch.screenX || 0,
+                touch.screenY || 0,
+                touch.clientX || 0,
+                touch.clientY || 0,
+                false,
+                false,
+                false,
+                false,
+                0,
+                window);
+            
+            event.target.dispatchEvent(mouseEvent);
+            event.preventDefault();
+        }
+            
+        dragTools.addEventListener('touchstart', function (event) {
+                touchToMouse(event);
+                touchDragging = true;
+            });
+
+        document.addEventListener('touchmove', function (event) {
+                if (touchDragging) {
+                    touchToMouse(event);
+                }
+            });
+            
+        document.addEventListener('touchend', function (event) {
+                if (touchDragging) {
+                    touchToMouse(event);
+                    touchDragging = false;
+                }
+            });
     }
 };
+
 
