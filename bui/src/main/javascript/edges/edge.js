@@ -62,7 +62,7 @@
     /**
      * @private Set the visibility of the edge handles
      */
-    var setEdgeHandleVisibility = function() {
+    var setEdgeHandleVisibility = function(make_visible) {
         var privates = this._privates(identifier);
 
         var edgeHandlesVisible = this.visible() === true &&
@@ -71,11 +71,19 @@
         for (var i = 0; i < handles.length; i++) {
             //handles[i].visible(edgeHandlesVisible);
             //FIXME horrible horrible hack, but the whole edge disappears if the node is set to invisible!
-            var size = handles[i].size();
-            if (size.width == 1){
-                if(! handles[i].hasClass('Outcome')) handles[i].size(12,12);
-            } else{
-                if(! handles[i].hasClass('Outcome')) handles[i].size(1,1);
+            if (! handles[i].hasClass('Outcome')){
+                if (make_visible !== undefined){
+                    console.log('setEdgeHandleVisibility: '+make_visible);
+                    if (make_visible === false) handles[i].size(1,1);
+                    else handles[i].size(12,12);
+                }else{
+                    var size = handles[i].size();
+                    if (size.width == 1){
+                        handles[i].size(12,12);
+                    } else{
+                        handles[i].size(1,1);
+                    }
+                }
             }
         }
         var lines = privates.lines;
@@ -359,7 +367,7 @@
             if (visible !== undefined) {
                 privates.edgeHandlesVisible = visible;
 
-                setEdgeHandleVisibility.call(this);
+                setEdgeHandleVisibility.call(this, visible);
 
                 return this;
             }
