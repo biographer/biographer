@@ -41,7 +41,7 @@ bui.grid.spiral = function(length){
     }
     return spiral_setps
 
-}
+};
 //=====================================================
 bui.grid.add_padding = function(){
     var nodes = bui.grid.nodes;
@@ -52,7 +52,7 @@ bui.grid.add_padding = function(){
     var ebucketx = bui.grid.ebucketx;
     var ebuckety = bui.grid.ebuckety;
     for(i=0;i<bui.grid.height; ++i){
-        if(matrix_nodes[0][i] != undefined){
+        if(matrix_nodes[0][i] !== undefined){
             //---------
             matrix_nodes.push([]);
             for(i=0; i<bui.grid.height; ++i) matrix_nodes[bui.grid.width].push(undefined);
@@ -64,12 +64,12 @@ bui.grid.add_padding = function(){
                 matrix_nodes[nodes[i].x][nodes[i].y] = undefined;
                 ++nodes[i].x;
                 matrix_nodes[nodes[i].x][nodes[i].y] = 1;
-            } 
+            }
             break;
         }
-    } 
+    }
     for(i=0;i<bui.grid.width; ++i){
-        if(matrix_nodes[i][0] != undefined){
+        if(matrix_nodes[i][0] !== undefined){
             //---------
             for(i=0; i<bui.grid.width; ++i) matrix_nodes[i].push(undefined);
             ++bui.grid.height;
@@ -80,10 +80,10 @@ bui.grid.add_padding = function(){
                 matrix_nodes[nodes[i].x][nodes[i].y] = undefined;
                 ++nodes[i].y;
                 matrix_nodes[nodes[i].x][nodes[i].y] = 1;
-            } 
+            }
             break;
         }
-    } 
+    }
     //----------------------
     //---------------
     for(i=0;i<bui.grid.height; ++i){
@@ -113,8 +113,19 @@ bui.grid.add_padding = function(){
 bui.grid.find_circles = function(){
 }
 //=====================================================
-bui.grid.init = function(nodes, edges, width, height, put_on_grid){
+bui.grid.init = function(input_nodes, edges, width, height, put_on_grid){
     var grid_space = bui.grid.grid_space;
+    //-------------------------------------------------------
+    // sort nodes that have a fixed switch to be the first in the list of nodes
+    var fixed_nodes = [], other_nodes = [];
+    for(var i=0; i<input_nodes.length; ++i){
+        if (input_nodes[i].hasClass('fixed')) fixed_nodes.push(input_nodes[i]);
+        else other_nodes.push(input_nodes[i]);
+    }
+    //-------------------------------------------------------
+    var nodes = fixed_nodes.concat(other_nodes);
+    bui.grid.nodes = nodes;
+    bui.grid.edges = edges;
     //-------------------------------------------------------
     var node_id2node_idx = {};
     for(var i=0; i<nodes.length; ++i) node_id2node_idx[nodes[i].id()]=i;
@@ -123,11 +134,9 @@ bui.grid.init = function(nodes, edges, width, height, put_on_grid){
         edges[i].target_idx = node_id2node_idx[edges[i].ltarget.id()];
     }
     //-------------------------------------------------------
-    bui.grid.nodes = nodes;
-    bui.grid.edges = edges;
     bui.grid.spiral_steps = bui.grid.spiral(10000);
     var spiral_steps = bui.grid.spiral_steps;
-    if(width==undefined || height==undefined){
+    if(width===undefined || height===undefined){
         width = 2*Math.sqrt(nodes.length);
         height = 3*Math.sqrt(nodes.length);
     }
@@ -156,10 +165,10 @@ bui.grid.init = function(nodes, edges, width, height, put_on_grid){
                 tl = node_parent.topLeft();
                 var br = node_parent.bottomRight();
                 compartments_border.push({
-                    left: Math.ceil(tl.x/grid_space), 
-                    top: Math.ceil(tl.y/grid_space), 
-                    bottom: Math.floor(br.y/grid_space), 
-                    right: Math.floor(br.x/grid_space), 
+                    left: Math.ceil(tl.x/grid_space),
+                    top: Math.ceil(tl.y/grid_space),
+                    bottom: Math.floor(br.y/grid_space),
+                    right: Math.floor(br.x/grid_space)
                 });
                 var c_idx = compartments_border.length-1;
                 c_idx2max_nodes[c_idx] = (compartments_border[c_idx].right-compartments_border[c_idx].left+1) * (compartments_border[c_idx].bottom-compartments_border[c_idx].top+1);
@@ -172,7 +181,7 @@ bui.grid.init = function(nodes, edges, width, height, put_on_grid){
             c_idx2num_nodes[c_idx] += 1;
             if (c_idx2num_nodes[c_idx]>c_idx2max_nodes[c_idx]){
                 alert('Compartment '+node_parent.label()+' is to small! Current maximum number of nodes is '+c_idx2max_nodes[c_idx]+'. Please resize it to make room for more nodes.');
-                return
+                return;
             }
         }else{
             //console.log('node parent is not compartment! ');
@@ -354,21 +363,23 @@ bui.grid.layout = function(node_idx){
     //randomize node order for sum more fun :D and better results
     nodes_idx_list = [];
     for(i = 0; i<nodes.length; ++i) nodes_idx_list.push(i);
-    nodes_idx_list.sort(function() {return 0.5 - Math.random()});
-    var cni;
+    nodes_idx_list.sort(function() {return 0.5 - Math.random();});
     //------------------------------------------------
     //------------------------------------------------
     for(var nix=0; nix<nodes.length; ++nix){
         cni = nodes_idx_list[nix];
         var node = nodes[cni];
-        //console.log('step '+step+' curnode '+cni+'/'+nodes.length+' --- '+node.id());
         //--------------------------------------
+        //do not layout nodes that should stay at a fixed position
+        if (node.hasClass('fixed')) continue;
+        //--------------------------------------
+        //console.log('step '+step+' curnode '+cni+'/'+nodes.length+' --- '+node.id());
         ++step;
         if(step>nodes.length) break;
-        if (node_idx2nodes_idx[cni] == undefined){
+        if (node_idx2nodes_idx[cni] === undefined){
             for(var cx=0;cx<bui.grid.width; ++cx){
                 for(var cy=0;cy<bui.grid.height; ++cy){
-                    if(matrix_nodes[cx][cy]==undefined){
+                    if(matrix_nodes[cx][cy] === undefined){
                         matrix_nodes[cx][cy] = 1;
                         matrix_nodes[node.x][node.y] = undefined;
                         node.x=cx;
@@ -376,7 +387,7 @@ bui.grid.layout = function(node_idx){
                     }
                 }
             }
-            continue
+            continue;
         }
         //----------------------------------------
         //----------------------------------------
@@ -387,7 +398,7 @@ bui.grid.layout = function(node_idx){
         //distance
         min_ni += 0.1*bui.grid.edge_distance(node, node_idx2nodes_idx[cni]);
         min_ni += 0.05*bui.grid.edge_distance(node, node_idx2nodes_in_idx[cni]);
-        //flow 
+        //flow
         min_ni += 5*bui.grid.flow_fromto(node, node_idx2nodes_in[cni], node_idx2nodes_out[cni]);
         //90deg angle
         min_ni += 0.5*bui.grid.deg90_fromto(node, node_idx2nodes_idx[cni]);
@@ -483,7 +494,8 @@ bui.grid.render_current = function(){
         if (nodes[i].y == 0) spacing_y = grid_space;
     }
     for(i=0; i<nodes.length; ++i) 
-        nodes[i].absolutePositionCenter(nodes[i].x*grid_space+spacing_x,nodes[i].y*grid_space+spacing_y); 
+        if (! nodes[i].hasClass('fixed'))
+            nodes[i].absolutePositionCenter(nodes[i].x*grid_space+spacing_x,nodes[i].y*grid_space+spacing_y); 
 }
 //=====================================================
 bui.grid.edge_distance = function(from_node, to_nodes){
