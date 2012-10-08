@@ -2161,11 +2161,10 @@ var getSBOForMarkerId = function(id) {
          * If you omit the parameter a value for whether panning is
          * enabled is returned.
          *
-         * @param {Boolean} [select] True to enable panning or
+         * @param {Boolean} [pan] True to enable panning or
          *   false to disable.
          * @return {bui.Graph|Boolean} Fluent interface when you pass a
-         *   parameter to this function. If not, the current selection state
-         *   will be returned.
+         *   parameter to this function. If not, the graph will be returned.
          */
         enablePanning : function(pan) {
             var privates = this._privates(identifier);
@@ -2188,11 +2187,10 @@ var getSBOForMarkerId = function(id) {
          * If you omit the parameter a value for whether zooming is
          * enabled is returned.
          *
-         * @param {Boolean} [select] True to enable zooming or
+         * @param {Boolean} [zoom] True to enable zooming or
          *   false to disable.
          * @return {bui.Graph|Boolean} Fluent interface when you pass a
-         *   parameter to this function. If not, the current selection state
-         *   will be returned.
+         *   parameter to this function. If not, the graph will be returned.
          */
         enableZooming : function(zoom) {
             var privates = this._privates(identifier);
@@ -2282,6 +2280,7 @@ var getSBOForMarkerId = function(id) {
             var dimensions = this._privates(identifier).rootDimensions;
             
             this.translate(0,0);
+            this.scale(1);
 
             var viewportWidth = $(window).width();
             var viewportHeight = $(window).height();
@@ -2967,7 +2966,7 @@ var getSBOForMarkerId = function(id) {
             nodeGroup = privates.nodeGroup;
         
         // Unset interactable element and remove Event Listeners
-        interact.unset(nodeGroup);
+        interact(nodeGroup).unset();
         nodeGroup.removeEventListener('interactdragstart', privates.interact.dragStart);
         nodeGroup.removeEventListener('interactdragmove', privates.interact.dragMove);
         nodeGroup.removeEventListener('interactdragend', privates.interact.dragMove);
@@ -7396,6 +7395,10 @@ var getSBOForMarkerId = function(id) {
         }
 
         privates.handles.splice(index, 0, handle);
+        handle.lparent = this;
+        handle.bind(bui.Drawable.ListenerType.remove,
+                this.removePoint.createDelegate(this),
+                listenerIdentifier(this));
 
         redrawLines.call(this);
 
@@ -7521,7 +7524,7 @@ var getSBOForMarkerId = function(id) {
                     //.bind(bui.Node.ListenerType.absolutePosition, listener, listenerIdentifier(this))
                     .size(12,12)
                     .visible(true);
-                handle.addClass('Outcome');// the stylesheet mus fill the circle black
+                handle.addClass('Outcome');// the stylesheet must fill the circle black
             }else if ((type == 'and')||(type == 'or')||(type == 'not')||(type == 'delay')){
                 //SBO:0000174 ! or
                 //SBO:0000173 ! and
@@ -7542,8 +7545,30 @@ var getSBOForMarkerId = function(id) {
             
             index = 0;
             privates.handles.splice(index, 0, handle);
+            handle.bind(bui.Drawable.ListenerType.remove,
+                    this.removePoint.createDelegate(this),
+                    listenerIdentifier(this));
             redrawLines.call(this);
             return handle;
+        },
+        
+        /**
+         * Remove the given handle from the edge's list of edge handles if it is
+         * a handle of this edge
+         *
+         * @param {bui.EdgeHandle} the handle to be removed
+         * @return {bui.Edge} Fluent interface
+         */
+        removePoint: function (handle) {
+            var privates = this._privates(identifier),
+                index = privates.handles.indexOf(handle);
+
+            if (index !== -1) {
+                privates.handles.splice(index, 1);
+                handle.lparent = null;
+                redrawLines.call(this);
+            }
+            return this;
         },
         recalculatePoints : function(){
             recalculatePoints.call(this)
@@ -7662,7 +7687,7 @@ addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
 addMapping(nodeMapping, [247, 240, 245], bui.SimpleChemical);
 addMapping(nodeMapping, [245, 252], bui.Macromolecule);
 addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
-addMapping(nodeMapping, [405, 347], bui.Perturbation);
+addMapping(nodeMapping, [405, 357], bui.Perturbation);
 addMapping(nodeMapping, [358], bui.Phenotype);
 addMapping(nodeMapping, [253], bui.Complex);
 addMapping(nodeMapping, [290], bui.Compartment);
@@ -8722,12 +8747,12 @@ bui.grid.init = function(input_nodes, edges, width, height, put_on_grid){
     //-------------------------------------------------------
     // sort nodes that have a fixed switch to be the first in the list of nodes
     var fixed_nodes = [], other_nodes = [];
-    for(var i=0; i<nodes.length; ++i){
-        if (nodes[i].fixed === true) fixed_nodes.push(nodes[i]);
-        else other_nodes.push(nodes[i]);
+    for(var i=0; i<input_nodes.length; ++i){
+        if (input_nodes[i].hasClass('fixed')) fixed_nodes.push(input_nodes[i]);
+        else other_nodes.push(input_nodes[i]);
     }
     //-------------------------------------------------------
-    var nodes = fixed_nodes+other_nodes;
+    var nodes = fixed_nodes.concat(other_nodes);
     bui.grid.nodes = nodes;
     bui.grid.edges = edges;
     //-------------------------------------------------------
@@ -8975,7 +9000,7 @@ bui.grid.layout = function(node_idx){
         var node = nodes[cni];
         //--------------------------------------
         //do not layout nodes that should stay at a fixed position
-        if (node.fixed === true) continue;
+        if (node.hasClass('fixed')) continue;
         //--------------------------------------
         //console.log('step '+step+' curnode '+cni+'/'+nodes.length+' --- '+node.id());
         ++step;
@@ -9098,7 +9123,7 @@ bui.grid.render_current = function(){
         if (nodes[i].y == 0) spacing_y = grid_space;
     }
     for(i=0; i<nodes.length; ++i) 
-        if (nodes[i].fixed !== true)
+        if (! nodes[i].hasClass('fixed'))
             nodes[i].absolutePositionCenter(nodes[i].x*grid_space+spacing_x,nodes[i].y*grid_space+spacing_y); 
 }
 //=====================================================

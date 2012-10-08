@@ -58,7 +58,11 @@ Editor.prototype = {
         //add edge select listner to all nodes
         all_drawables = this.graph.drawables();
         for (key in all_drawables) {
+            if(drawable.drawableType()=='node'){
                 all_drawables[key].bind(bui.Node.ListenerType.click, editor.drawableSelect());
+            }else{
+                all_drawables[key].bind(bui.bui.AbstractLine.click, editor.drawableSelect());
+            }
         }
         var this_editor = this;
         $('.Complex, .Compartment').droppable({
@@ -232,6 +236,13 @@ Editor.prototype = {
                     undoPush('deleted '+drawable.drawableType());
                 } else if (this_editor.cur_mode == 'focus'){
                     if(drawable.drawableType()=='node') bui.util.alignCanvas(this_editor.graph, drawable.id());
+                }
+            }else{
+                //FIXME 
+                if (this_editor.cur_mode == 'del'){
+                    console.log('del edge');
+                    drawable.remove();
+                    undoPush('deleted edge '+drawable.drawableType())
                 }
             }
         };
