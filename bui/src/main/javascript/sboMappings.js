@@ -8,7 +8,7 @@ addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
 addMapping(nodeMapping, [247, 240, 245], bui.SimpleChemical);
 addMapping(nodeMapping, [245, 252], bui.Macromolecule);
 addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
-addMapping(nodeMapping, [405, 347], bui.Perturbation);
+addMapping(nodeMapping, [405, 357], bui.Perturbation);
 addMapping(nodeMapping, [358], bui.Phenotype);
 addMapping(nodeMapping, [253], bui.Complex);
 addMapping(nodeMapping, [290], bui.Compartment);
