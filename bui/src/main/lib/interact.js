@@ -5,15 +5,25 @@
  */
 
 /**
- * @namespace interact.js module
+ * @namespace interact.js
  * @name interact
+ * @function interact
+ * @param {HTMLElement | SVGElement} element The previously set document element
+ * @returns {Interactable | null} Returns an Interactable if the element passed
+ *          was previously set. Returns null otherwise.
+ * @description The properties of this variable can be used to set elements as
+ *              interactables and also to change various settings. Calling it as
+ *              a function with an element which was previously set returns an
+ *              Interactable object which has various methods to configure it.
  */
-window.interact = (function (window) {
+(function (window) {
     'use strict';
 
     var document = window.document,
         console = window.console,
         SVGElement = window.SVGElement,
+        SVGSVGElement = window.SVGSVGElement,
+        HTMLElement = window.HTMLElement,
 
         // Previous interact move event mouse/touch position
         prevX = 0,
@@ -45,6 +55,7 @@ window.interact = (function (window) {
         dropzones = [],
         target = null,
         dropTarget = null,
+        prevDropTarget = null,
 
         //All things relating to autoScroll
         scrollMargin = 70,
@@ -250,10 +261,14 @@ window.interact = (function (window) {
         actionIsEnabled = {
             drag: true,
             resize: true,
-            gesture: true,
+            gesture: true
         },
+        
+        // Action that's ready to be fired on next move event
         prepared = null,
         styleCursor = true,
+        
+        // user interaction event types. will be set depending on touch or mouse
         downEvent,
         upEvent,
         moveEvent,
@@ -261,6 +276,7 @@ window.interact = (function (window) {
         outEvent,
         enterEvent,
         leaveEvent,
+        
         eventTypes = [
             'interactresizestart',
             'interactresizemove',
@@ -272,6 +288,7 @@ window.interact = (function (window) {
             'interactgesturemove',
             'interactgestureend'
         ],
+        
         docTarget = {
             _element: document,
             events: {}
@@ -400,6 +417,12 @@ window.interact = (function (window) {
         } else {
             x = event[type + 'X'];
             y = event[type + 'Y'];
+        }
+
+        // Opera Mobile handles the viewport and scrolling oddly 
+        if (navigator.appName == 'Opera' && supportsTouch) {
+            x -= window.scrollX;
+            y -= window.scrollY;
         }
 
         return {
@@ -646,6 +669,10 @@ window.interact = (function (window) {
                 }
             }
         }
+        else if (action === 'drop' ||
+                (action === 'drag' && (phase === 'enter' || phase === 'leave'))) {
+            detail.draggable = target._element;
+        }
         return detail;
     }
     
@@ -759,6 +786,47 @@ window.interact = (function (window) {
             detail = getEventDetail(event, 'drag', 'move');
             dragEvent = document.createEvent('CustomEvent');
             dragEvent.initCustomEvent('interactdragmove', true, true, detail);
+
+            if (dropzones.length) {
+                var i,
+                    drops = [];
+
+                // collect all dropzones that qualify for a drop
+                for (i = 0; i < dropzones.length; i++) {
+                    if (dropzones[i].dropCheck(event)) {
+                        drops.push(dropzones[i]);
+                    }
+                }
+
+                // get the most apprpriate dropzone based on DOM depth and order
+                dropTarget = resolveDrops(drops);
+
+                // If the current dropTarget is not the same as the previous one
+                if (dropTarget !== prevDropTarget) {
+                    // if there was a prevDropTarget, first dispatch a dragleave event
+                    if (prevDropTarget) {
+                        var dragLeaveEvent = document.createEvent('CustomEvent'),
+							dragLeaveDetail = getEventDetail(event, 'drag', 'leave');
+
+                        dragLeaveEvent.initCustomEvent('interactdragleave', true, true, dragLeaveDetail);
+                        prevDropTarget._element.dispatchEvent(dragLeaveEvent);
+
+                        detail.dragLeave = prevDropTarget._element;
+                        prevDropTarget = null;
+                    }
+					// If the dropTarget is not null, dispatch a dragenter event
+                    if (dropTarget) {
+                        var dragEnterEvent = document.createEvent('CustomEvent'),
+							dragEnterDetail = getEventDetail(event, 'drag', 'enter');
+
+                        dragEnterEvent.initCustomEvent('interactdragenter', true, true, dragEnterDetail);
+                        dropTarget._element.dispatchEvent(dragEnterEvent);
+
+                        detail.dragEnter = dropTarget._element;
+                        prevDropTarget = dropTarget;
+                    }
+                }
+            }
             target._element.dispatchEvent(dragEvent);
         }
 
@@ -876,8 +944,7 @@ window.interact = (function (window) {
      */
     function docMouseUp (event) {
         var detail,
-            endEvent,
-            dropEvent;
+            endEvent;
 
         if (dragging) {
             endEvent = document.createEvent('CustomEvent');
@@ -896,17 +963,31 @@ window.interact = (function (window) {
 
                 // get the most apprpriate dropzone based on DOM depth and order
                 if ((dropTarget = resolveDrops(drops))) {
-                    detail.dropzone = dropTarget._element;
+                    var dropDetail = getEventDetail(event, 'drop'),
+                        dropEvent = document.createEvent('CustomEvent');
 
-                    dropEvent = document.createEvent('CustomEvent');
-                    dropEvent.initCustomEvent('interactdrop', true, true, detail);
+                    dropEvent.initCustomEvent('interactdrop', true, true, dropDetail);
+
+                    detail.dropzone = dropTarget._element;
+                }
+
+                // Otherwise, If there was a prevDropTarget (perhaps if for some reason
+                // this dragend happens without the mouse moving out of the previousdroptarget)
+                else if (prevDropTarget) {
+                    var dragLeaveEvent = document.createEvent('CustomEvent'),
+						dragLeaveDetail = getEventDetail(event, 'drag', 'leave');
+
+                    dragLeaveEvent.initCustomEvent('interactdragleave', true, true, dragLeaveDetail);
+                    prevDropTarget._element.dispatchEvent(dragLeaveEvent);
+
+                    detail.dragLeave = prevDropTarget._element;
                 }
             }
 
             endEvent.initCustomEvent('interactdragend', true, true, detail);
             target._element.dispatchEvent(endEvent);
             if (dropTarget) {
-                target._element.dispatchEvent(dropEvent);
+                dropTarget._element.dispatchEvent(dropEvent);
             }
         } else if (resizing) {
             endEvent = document.createEvent('CustomEvent');
@@ -1024,14 +1105,9 @@ window.interact = (function (window) {
         if (dropTarget) {
             removeClass(target._element, 'interact-droptarget');
         }
-        target = dropTarget = null;
+        target = dropTarget = prevDropTarget = null;
     }
 
-    /**
-     * @global
-     * @name interact
-     * @description Global interact object
-     */
     function interact(element) {
         if (typeof element === 'string') {
             element = document.getElementById(element);
@@ -1039,9 +1115,13 @@ window.interact = (function (window) {
         return interactables.get(element);
     }
 
+
     /**
-     * @private
-     * @description Node object class for an element
+     * Object type returned by interact.set(element) and interact(element) if
+     * the element was previously set.
+     *
+     * @class Interactable
+     * @name Interactable
      */
     function Interactable(element, options) {
 
@@ -1083,112 +1163,214 @@ window.interact = (function (window) {
     }
 
     Interactable.prototype = {
-        draggable: function (newValue) {
-                if (newValue !== null && newValue !== undefined) {
-                    this._drag  = newValue;
-
-                    return this;
-                }
-                return this._drag;
-            },
-        dropzone: function (newValue) {
-                if (newValue !== null && newValue !== undefined) {
-                    if (this._dropzone !== newValue) {
-                        if (newValue) {
-                            dropzones.push(this);
-                            this._dropzoneIndex = dropzones.length - 1;
-                        } else {
-                            dropzones.splice(this._dropzoneIndex, 1);
-                            this._dropzoneIndex = -1;
-                        }
-                    }
-                    this._dropzone  = newValue;
-
-                    return this;
-                }
-                return this._dropzone;
-            },
-        dropCheck: function (event) {
-                if (target !== this) {
-                    var clientRect = (this._element instanceof SVGElement)?
-                                this._element.getBoundingClientRect():
-                                this._element.getClientRects()[0],
-                        horizontal,
-                        vertical,
-                        page = getPageXY(event),
-                        x = page.x - window.scrollX,
-                        y = page.y - window.scrollY;
-
-                    horizontal = (x > clientRect.left) && ( x < clientRect.left + clientRect.width);
-                    vertical = (y > clientRect.top) && (y < clientRect.top + clientRect.height);
-
-                    return horizontal && vertical;
-                }
-            },
-        dropChecker: function (newValue) {
-                if (typeof newValue === 'function') {
-                    this.dropChecker = newValue;
-
-                    return this;
-                }
-                return this.dropChecker;
-            },
-        resizeable: function (newValue) {
-                if (newValue !== null && newValue !== undefined) {
-                    this._resize  = newValue;
-
-                    return this;
-                }
-                return this._resize;
-            },
-        squareResize: function (newValue) {
-                if (newValue !== null && newValue !== undefined) {
-                    this._drag  = newValue;
-
-                    return this;
-                }
-                return this._squareResize;
-            },
-        gestureable: function (newValue) {
-                if (newValue !== null && newValue !== undefined) {
-                    this._gesture  = newValue;
-
-                    return this;
-                }
-                return this._gesture;
-            },
-        autoScroll: function (newValue) {
-                if (newValue !== null && newValue !== undefined) {
-                    this._autoScroll  = newValue;
-
-                    return this;
-                }
-                return this._autoScroll;
-            },
-        actionChecker: function (newValue) {
-                if (typeof newValue === 'function') {
-                    this._getAction  = newValue;
-
-                    return this;
-                }
-                return this._getAction;
-            },
-        checkOnHover: function (newValue) {
-                if (newValue !== null && newValue !== undefined) {
-                    this._checkOnHover  = newValue;
-
-                    return this;
-                }
-                return this._checkOnHover;
-            },
-        element: function () {
-                return this._element;
-            },
 
         /**
+         * Returns or sets whether multitouch this Interactable's element can be
+         * dragged
+         *
          * @function
-         * @description Remove this interactable from the list of interactables
+         * @param {bool} newValue
+         * @returns {bool | Interactable}
+         */
+        draggable: function (newValue) {
+            if (newValue !== null && newValue !== undefined) {
+                this._drag  = newValue;
+
+                return this;
+            }
+            return this._drag;
+        },
+
+        /**
+         * Returns or sets whether elements can be dropped onto this
+         * Interactable to trigger interactdrop events
+         *
+         * @function
+         * @param {bool} newValue The new value to be set. Passing null returns
+         *              the current value
+         * @returns {bool | Interactable}
+         */
+        dropzone: function (newValue) {
+            if (newValue !== null && newValue !== undefined) {
+                if (this._dropzone !== newValue) {
+                    if (newValue) {
+                        dropzones.push(this);
+                        this._dropzoneIndex = dropzones.length - 1;
+                    } else {
+                        dropzones.splice(this._dropzoneIndex, 1);
+                        this._dropzoneIndex = -1;
+                    }
+                }
+                this._dropzone  = newValue;
+
+                return this;
+            }
+            return this._dropzone;
+        },
+
+        /**
+         * The default function to determine if an interactdragend event occured
+         * over this Interactable's element
+         *
+         * @function
+         * @param {MouseEvent | TouchEvent} event The event that ends an
+         *          interactdrag
+         * @returns {bool} 
+         */
+        dropCheck: function (event) {
+            if (target !== this) {
+                var clientRect = (this._element instanceof SVGElement)?
+                            this._element.getBoundingClientRect():
+                            this._element.getClientRects()[0],
+                    horizontal,
+                    vertical,
+                    page = getPageXY(event),
+                    x = page.x - window.scrollX,
+                    y = page.y - window.scrollY;
+
+                horizontal = (x > clientRect.left) && ( x < clientRect.left + clientRect.width);
+                vertical = (y > clientRect.top) && (y < clientRect.top + clientRect.height);
+
+                return horizontal && vertical;
+            }
+        },
+
+        /**
+         * Returns or sets the function used to check if a dragged element is
+         * dropped over this Interactable
+         *
+         * @function
+         * @param {function} newValue A function which takes a mouseUp/touchEnd
+         *                   event as a parameter and returns 
+         * @returns {Function | Interactable}
+         */
+        dropChecker: function (newValue) {
+            if (typeof newValue === 'function') {
+                this.dropChecker = newValue;
+
+                return this;
+            }
+            return this.dropChecker;
+        },
+
+        /**
+         * Returns or sets whether resize actions can be performed on the 
+         * Interactable
+         *
+         * @function
+         * @param {bool} newValue
+         * @returns {bool | Interactable}
+         */
+        resizeable: function (newValue) {
+            if (newValue !== null && newValue !== undefined) {
+                this._resize  = newValue;
+
+                return this;
+            }
+            return this._resize;
+        },
+
+        /**
+         * Returns or sets whether resizing can only be done on both axes equally
+         *
+         * @function
+         * @param {bool} newValue
+         * @returns {bool | Interactable}
+         */
+        squareResize: function (newValue) {
+            if (newValue !== null && newValue !== undefined) {
+                this._drag  = newValue;
+
+                return this;
+            }
+            return this._squareResize;
+        },
+
+        /**
+         * Returns or sets whether multitouch gestures can be performed on the
+         * Interactables element
+         *
+         * @function
+         * @param {bool} newValue
+         * @returns {bool | Interactable}
+         */
+        gestureable: function (newValue) {
+            if (newValue !== null && newValue !== undefined) {
+                this._gesture  = newValue;
+
+                return this;
+            }
+            return this._gesture;
+        },
+
+        /**
+         * Returns or sets whether dragging and resizing near the edges of the
+         * screen will trigger autoscroll
+         *
+         * @function
+         * @param {bool} newValue
+         * @returns {bool | Interactable}
+         */
+        autoScroll: function (newValue) {
+            if (newValue !== null && newValue !== undefined) {
+                this._autoScroll  = newValue;
+
+                return this;
+            }
+            return this._autoScroll;
+        },
+
+        /**
+         * Returns or sets the function used to check action to be performed on
+         * mouseDown/touchStart
+         *
+         * @function
+         * @param {function} newValue
+         * @returns {Function | Interactable}
+         */
+        actionChecker: function (newValue) {
+            if (typeof newValue === 'function') {
+                this._getAction  = newValue;
+
+                return this;
+            }
+            return this._getAction;
+        },
+
+        /**
+         * Returns or sets whether the action that would be performed when the
+         * mouse hovers over the element are checked. If so, the cursor may be
+         * styled appropriately
+         *
+         * @function
+         * @param {function} newValue
+         * @returns {Function | Interactable}
+         */
+        checkOnHover: function (newValue) {
+            if (newValue !== null && newValue !== undefined) {
+                this._checkOnHover  = newValue;
+
+                return this;
+            }
+            return this._checkOnHover;
+        },
+
+        /**
+         * returns the HTML or SVG element this interactable represents
+         *
+         * @function
+         * @returns {HTMLElement | SVGElement}
+         */
+        element: function () {
+            return this._element;
+        },
+
+        /**
+         * Remove this interactable from the list of interactables
          * and remove it's drag, drop, resize and gesture capabilities
+         *
+         * @function
+         * @returns {} {@link interact}
          */
         unset: function () {
                 events.removeAll(this);
@@ -1218,6 +1400,7 @@ window.interact = (function (window) {
      * @description Add an element to the list of interact nodes
      * @param {HTMLElement | SVGElement} element The DOM Element that will be added
      * @param {Object} options An object whose properties are the drag/resize/gesture options
+     * @returns {Interactable}
      */
     interact.set = function (element, options) {
         var interactable = interactables.get(element);
@@ -1236,7 +1419,7 @@ window.interact = (function (window) {
      * @function
      * @description Check if an element has been set
      * @param {HTMLElement | SVGElement} element The DOM Element that will be searched for
-     * @returns bool
+     * @returns {bool}
      */
     interact.isSet = function(element) {
         return interactables.indexOf(element !== -1);
@@ -1249,6 +1432,7 @@ window.interact = (function (window) {
      * @param {HTMLElement | SVGElement} element The DOM Element to resize/drag
      * @param {MouseEvent | TouchEvent} [mouseEvent] A mouse event whose pageX/Y
      *        coordinates will be the starting point of the interact drag/resize
+     * @returns {} {@link interact}
      */
     interact.simulate = function (action, element, mouseEvent) {
         var event = {},
@@ -1291,6 +1475,13 @@ window.interact = (function (window) {
         return interact;
     };
     
+    /**
+     * Returns or sets whether dragging is disabled for all Interactables
+     *
+     * @function
+     * @param {bool} newValue
+     * @returns {bool | interact}
+     */
     interact.enableDragging = function (value) {
         if (value !== null && value !== undefined) {
             actionIsEnabled.drag = value;
@@ -1300,6 +1491,13 @@ window.interact = (function (window) {
         return actionIsEnabled.drag;
     }
     
+    /**
+     * Returns or sets whether resizing is disabled for all Interactables
+     *
+     * @function
+     * @param {bool} newValue
+     * @returns {bool | interact}
+     */
     interact.enableResizing = function (value) {
         if (value !== null && value !== undefined) {
             actionIsEnabled.resize = value;
@@ -1309,6 +1507,13 @@ window.interact = (function (window) {
         return actionIsEnabled.resize;
     }
     
+    /**
+     * Returns or sets whether gestures are disabled for all Interactables
+     *
+     * @function
+     * @param {bool} newValue
+     * @returns {bool | interact}
+     */
     interact.enableGesturing = function (value) {
         if (value !== null && value !== undefined) {
             actionIsEnabled.gesture = value;
@@ -1321,13 +1526,12 @@ window.interact = (function (window) {
     interact.eventTypes = eventTypes;
 
     /**
+     * Returns debugging data
      * @function
-     * @description Displays debugging data in the browser console
      */
     interact.debug = function () {
         return {
             target: target,
-            prepared: prepared,
             dragging: dragging,
             resizing: resizing,
             gesturing: gesturing,
@@ -1360,6 +1564,15 @@ window.interact = (function (window) {
         };
     };
 
+    /**
+     * Returns or sets the margin for autocheck resizing. That is the distance
+     * from the bottom and right edges of an element clicking in which will
+     * start resizing
+     *
+     * @function
+     * @param {number} newValue
+     * @returns {number | interact}
+     */
     interact.margin = function (newMargin) {
         if (typeof newMargin === 'number') {
             margin = newMargin;
@@ -1369,6 +1582,14 @@ window.interact = (function (window) {
         return margin;
     };
 
+    /**
+     * Returns or sets whether or not the cursor style of the document is changed
+     * depending on what action is being performed
+     *
+     * @function
+     * @param {bool} newValue
+     * @returns {bool | interact}
+     */
     interact.styleCursor = function (newValue) {
         if (newValue !== null && newValue !== undefined) {
             var i;
@@ -1387,6 +1608,14 @@ window.interact = (function (window) {
         return styleCursor;
     };
 
+    /**
+     * Returns or sets whether or not any actions near the edges of the page
+     * trigger autoScroll
+     *
+     * @function
+     * @param {bool} newValue
+     * @returns {bool | interact}
+     */
     interact.enableAutoScroll = function (newValue) {
         if (newValue !== null && newValue !== undefined) {
             scroll.isEnabled  = newValue;
@@ -1415,6 +1644,6 @@ window.interact = (function (window) {
      events.add(docTarget, 'interactresizeend', scroll.hideEdges);
      events.add(docTarget, 'interactdragend', scroll.hideEdges);
 
-    return interact;
+    window.interact = interact;
 }(window));
 
