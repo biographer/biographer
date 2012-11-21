@@ -36,10 +36,13 @@
      */
     var nodeRemoved = function() {
         var privates = this._privates(identifier),
-            nodeGroup = privates.nodeGroup;
+            nodeGroup = privates.nodeGroup,
+            interactable = interact(nodeGroup);
         
         // Unset interactable element and remove Event Listeners
-        interact(nodeGroup).unset();
+        if (interactable) {
+            interactable.unset();
+        }
         nodeGroup.removeEventListener('interactdragstart', privates.interact.dragStart);
         nodeGroup.removeEventListener('interactdragmove', privates.interact.dragMove);
         nodeGroup.removeEventListener('interactdragend', privates.interact.dragMove);

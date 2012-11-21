@@ -33,7 +33,7 @@
                     aggregatedText.join(' ')));
             tspan.setAttributeNS(null, 'x', line.horizontalIndention);
             tspan.setAttributeNS(null, 'dy', previousHeight);
-			tspan.style.setProperty('fill', privates.color.label);
+            tspan.style.setProperty('fill', privates.color.label);
             privates.labelElement.appendChild(tspan);
 
             previousHeight = line.maxHeight;
@@ -76,7 +76,7 @@
         this.size(totalWidth, nodeHeight);
         privates.labelElement.setAttributeNS(null, 'x', padding.left);
         privates.labelElement.setAttributeNS(null, 'y', maxHeight);
-		privates.labelElement.style.setProperty('fill', privates.color.label);
+        privates.labelElement.style.setProperty('fill', privates.color.label);
     };
 
     /**
@@ -127,11 +127,11 @@
         privates.label = this._label;
         privates.adaptSizeToLabel = this._adaptSizeToLabel;
         privates.labelElement = null;
-		privates.color = {
-			background: '',
-			label: '',
-			border: ''
-		};
+        privates.color = {
+            background: '',
+            label: '',
+            border: ''
+        };
         privates.svgClasses = this._svgClasses;
         privates.calculationClasses = this._calculationClasses;
 
@@ -186,7 +186,7 @@
 
             return privates.label;
         },
-		
+        
         /**
          * Set or retrieve the current color
          *
@@ -195,38 +195,40 @@
          * @return {bui.Labelable|Object} Current colors are returned when you
          *   don't pass any parameter, fluent interface otherwise.
          */
-		color : function(options) {
+        color : function(options) {
             var privates = this._privates(identifier),
-			changed = false;
-			
-			if (!options || !(options.background || options.label || options.border)) {
-				// Return object giving background and label text color
-				return privates.color;
-			}
-			
-			
-			if (typeof options.background === 'string') {
-				options.background = options.background.toLowerCase();
-				changed = changed || options.background !== privates.color.background;
-				privates.color.background = options.background;
-			}
-			if (typeof options.label === 'string') {
-				options.label = options.label.toLowerCase();
-				changed = changed || options.label !== privates.color.label;
-				privates.color.label = options.label;
-			}
-			if (typeof options.border === 'string') {
-				options.border = options.border.toLowerCase();
-				changed = changed || options.border !== privates.color.border;
-				privates.color.border = options.border;
-			}
-			if(changed) {
-				//Fire the colorchanged
-				this.fire(bui.Labelable.ListenerType.color, [this, options]);
-			}
-			
-			return this;
-		},
+            changed = false;
+            
+            if (!options ||
+                ((options.background === null || options.background === undefined) &&
+                 (options.label      === null || options.label      === undefined) &&
+                 (options.border     === null || options.border     === undefined))) {
+                // Return object giving background and label text color
+                return privates.color;
+            }
+            
+            if (typeof options.background === 'string') {
+                options.background = options.background.toLowerCase();
+                changed = changed || options.background !== privates.color.background;
+                privates.color.background = options.background;
+            }
+            if (typeof options.label === 'string') {
+                options.label = options.label.toLowerCase();
+                changed = changed || options.label !== privates.color.label;
+                privates.color.label = options.label;
+            }
+            if (typeof options.border === 'string') {
+                options.border = options.border.toLowerCase();
+                changed = changed || options.border !== privates.color.border;
+                privates.color.border = options.border;
+            }
+            if(changed) {
+                //Fire the colorchanged
+                this.fire(bui.Labelable.ListenerType.color, [this, options]);
+            }
+            
+            return this;
+        },
 
         /**
          * Set or retrieve whether the node adapts to the label size
@@ -330,6 +332,6 @@
         /** @field */
         labelClass : bui.util.createListenerTypeId(),
         /** @field */
-		color : bui.util.createListenerTypeId()
+        color : bui.util.createListenerTypeId()
     };
 })(bui);
