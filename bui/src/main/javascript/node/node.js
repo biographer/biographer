@@ -32,6 +32,18 @@
     };
 
     /**
+     * @private visibility listener
+     */
+    var visibilityChanged = function(node, visible) {
+        if (visible === true) {
+            this.removeClass(bui.settings.css.classes.invisible);
+        } else {
+            this.addClass(bui.settings.css.classes.invisible);
+            //this.placeholderVisible(false);
+        }
+    };
+
+    /**
      * @private remove listener
      */
     var nodeRemoved = function() {
@@ -200,6 +212,8 @@
 
         privates.nodeGroup = document.createElementNS(bui.svgns, 'g');
         privates.nodeGroup.setAttributeNS(null, 'id', this.id());
+        visibilityChanged.call(this, this, this.visible());
+
         this.graph().nodeGroup().appendChild(privates.nodeGroup);
 
         positionChanged.call(this);
@@ -251,6 +265,7 @@
         privates.height = this._minHeight;
         privates.parent = this.graph();
         privates.children = [];
+        this.visible(true);
         
         // create interact listener function delegates
         // Done so that when a node is removed, the event listeners
@@ -267,6 +282,9 @@
         
         this.bind(bui.Drawable.ListenerType.remove,
                 nodeRemoved.createDelegate(this),
+                listenerIdentifier(this));
+        this.bind(bui.Drawable.ListenerType.visible,
+                visibilityChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Node.ListenerType.parent,
                 parentChanged.createDelegate(this),
