@@ -165,7 +165,7 @@
 //       }
       if (nosplines) return jdata;
       // import edges (splines);
-      while (lines.length){
+      layouter_OUTER: while (lines.length){
          var l=lines.shift();
          var parts=l.split(' ');
          if (parts.length<=3) continue; // non spline edge or empty line
@@ -177,6 +177,7 @@
          var isx=1;
          for (var i=0;i<handles.length;i++){
             handles[i]*=(isx ? 1 : -1); 
+            if (isNaN(handles[i])) continue layouter_OUTER;
             isx=1-isx;
          }
          var points=(parts.length>=5 ? parts[4].split(',') : []);
@@ -185,6 +186,7 @@
          for (var i=0;i<points.length;i++){ // alternating x and y coordinates
             points[i]*=(isx ? 1 : -1); 
             points[i]-=(isx ? minx : miny); // make positions positive
+            if (isNaN(points[i])) continue layouter_OUTER;
             isx=1-isx;
          }
          if (!jdata.edges[eidx].data) jdata.edges[eidx].data={};
