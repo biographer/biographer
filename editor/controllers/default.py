@@ -189,10 +189,12 @@ def export():
         import os
         from subprocess import Popen, PIPE
         from shlex import split
-        jar = os.path.join(request.folder, "static", "Exporter", "svg-export-0.2.jar")
+        jar = os.path.join(request.folder, "static", "svg-export-0.2.jar")
         applet = java + " -jar " + jar + " -si -so -f " + request.vars.format
         result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(fix_svg(request.vars.svg_data))      # call Ben's Java Exporter Applet
         out = result[0]  # stdout
+        if result[1]:
+            raise Exception(result[1])
         print "image export errors: ", result[1]  # stderr
 
     if not file_type:
