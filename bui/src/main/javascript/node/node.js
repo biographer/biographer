@@ -1002,7 +1002,7 @@
             var json = bui.Node.superClazz.prototype.toJSON.call(this),
                     dataFormat = bui.settings.dataFormat,
                     privates = this._privates(identifier),
-                    position = this.absolutePosition(),
+                    position = this.position(),
                     i;
 
             updateJson(json, dataFormat.drawable.sbo,

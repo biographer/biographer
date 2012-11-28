@@ -154,15 +154,15 @@
          if (n.data.x != undefined) n.data.x-=minx;
          if (n.data.y != undefined) n.data.y-=miny;
       }
-//       for (var i=0;i<jdata.nodes.length;i++){ // make positions relative to their compartments
-//          var n=jdata.nodes[i];
-//          if (n.is_abstract) continue;
-//          if (nh.hasOwnProperty(n.data.compartment)){
-//             var cp=jdata.nodes[nh[n.data.compartment]];
-//             if (n.data.x != undefined) n.data.x-=cp.data.x;
-//             if (n.data.y != undefined) n.data.y-=cp.data.y;
-//          }
-//       }
+      for (var i=0;i<jdata.nodes.length;i++){ // make positions relative to their compartments
+         var n=jdata.nodes[i];
+         if (n.is_abstract) continue;
+         if (nh.hasOwnProperty(n.data.compartment)){
+            var cp=jdata.nodes[nh[n.data.compartment]];
+            if (n.data.x != undefined) n.data.x-=cp.data.x;
+            if (n.data.y != undefined) n.data.y-=cp.data.y;
+         }
+      }
       if (nosplines) return jdata;
       // import edges (splines);
       layouter_OUTER: while (lines.length){
