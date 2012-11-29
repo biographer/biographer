@@ -58,11 +58,13 @@ Editor.prototype = {
         //add edge select listner to all nodes
         all_drawables = this.graph.drawables();
         for (key in all_drawables) {
-            if(drawable.drawableType()=='node'){
+          if (all_drawables.hasOwnProperty(key)){
+            if(all_drawables[key].drawableType()=='node'){
                 all_drawables[key].bind(bui.Node.ListenerType.click, editor.drawableSelect());
             }else{
-                all_drawables[key].bind(bui.bui.AbstractLine.click, editor.drawableSelect());
+                all_drawables[key].bind(bui.AbstractLine.click, editor.drawableSelect());
             }
+          }
         }
         var this_editor = this;
         $('.Complex, .Compartment').droppable({
