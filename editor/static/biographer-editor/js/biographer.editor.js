@@ -45,14 +45,17 @@ Editor.prototype = {
           }
     },
     //-------------------------------------------
+    // replace graph with new graph defined by json object
     redrawGraph: function(graph_json){
+       // clear graph
         var all_drawables = this.graph.drawables();
         var key;
         for (key in all_drawables) {
-            all_drawables[key].remove();
+            all_drawables[key].remove(); 
         }
         delete this.graph;
         $('#canvas').html('');
+        // create new graph
         this.graph = new bui.Graph($('#canvas')[0]);
         bui.importFromJSON(this.graph, graph_json);
         //add edge select listner to all nodes
@@ -66,7 +69,8 @@ Editor.prototype = {
             }
           }
         }
-        var this_editor = this;
+        var this_editor = this; // closure this object for drop callback below
+        // make compartments, complexes recieve droppable nodes
         $('.Complex, .Compartment').droppable({
                 hoverClass: 'drop_hover',
                 over : function(){$('#canvas').droppable("disable");},
@@ -75,6 +79,7 @@ Editor.prototype = {
         });
     },
     //-------------------------------------------
+    // show last action as tooltip to undo button
     showUndoRedo: function(){
         var newArray,html_history;
         console.log(editor_config.history_undo);
@@ -101,6 +106,7 @@ Editor.prototype = {
         }*/
     },
     //-------------------------------------------
+    // add a new state to undo list
     undoPush: function(action){
         var editor = this;
         var jsong = JSON.stringify(this.graph.toJSON());
@@ -130,10 +136,11 @@ Editor.prototype = {
         this.last_save = graph_str;
     },
     //-------------------------------------------
+    // reset to last state in undo list
     undo: function(){
-        var history_obj = editor_config.history_undo.pop();
+        var history_obj = editor_config.history_undo.pop(); //WARNING this is the current anyway isn't it?
         this.redrawGraph(history_obj.graph);
-        editor_config.history_redo.push(history_obj);
+        editor_config.history_redo.push(history_obj); // WARNING @falko this seems to be the wrong history_obj for redo
         this.showUndoRedo();
         $.ajax({
             url: editor_config.url_undo,
@@ -162,6 +169,7 @@ Editor.prototype = {
         });
     },
     //-------------------------------------------
+    // set cursor symbol (next to arrow) according to edit mode
     setMode: function(mode){
         if (mode == this.cur_mode) return;
         this.cur_mode = mode;
@@ -181,8 +189,10 @@ Editor.prototype = {
         }
     },
     //-------------------------------------------
+    // general handler for clicks on nodes
+    // depends on current edit mode
     drawableSelect: function() {
-        var this_editor = this;
+        var this_editor = this; // closure for this object
         return function(drawable, select_status){
             if(drawable.drawableType()=='node'){
                 if ((this_editor.cur_mode == 'cursor')||(this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
@@ -250,6 +260,7 @@ Editor.prototype = {
         };
     },
     //-------------------------------------------
+    // display property editor for nodes
     nodeModal: function(drawable, action) {
         var this_editor = this;
         //do not add lable to complex but anything else
@@ -330,6 +341,7 @@ Editor.prototype = {
         });*/
     },
     //-------------------------------------------//
+    // drops a ui-helper node from node type menu and generates the corresponding graph node
     dropFkt: function(event, ui, element){
         if(ui.helper.hasClass('node_helper')){
             //calculate position of new node
@@ -380,6 +392,8 @@ Editor.prototype = {
         }
     },
     //-------------------------------------------
+    // helper function getting a list of first level nodes and edges
+    
     get_nodes_edges: function(){
             var nodes = [], edges = [];
             var all_drawables = this.graph.drawables();
@@ -444,13 +458,14 @@ Editor.prototype = {
             }
             return {nodes:nodes, edges:edges};
     },
+    // select all nodes
     select_all: function(all){
         var all_drawables = this.graph.drawables();
         this.selected_nodes = [];
         for (var key in all_drawables) {
             var drawable = all_drawables[key];
             if (all){
-                this.selected_nodes.push(drawable);
+                this.selected_nodes.push(drawable); // FIXME that may result in nodes being more than once in selection list, right?
                 drawable.selected = true;
                 drawable.addClass('Red');
             }else{
@@ -459,6 +474,8 @@ Editor.prototype = {
             }
         }
     },
+    //------------------------------------
+    // disable box selection mode on graph
     disable_selection: function(){
         //disable listeners
         console.log('disable_selection now');
@@ -468,6 +485,9 @@ Editor.prototype = {
         this.graph.enablePanning(true);
         this.box.style.display = 'none';
     },
+    //------------------------------------
+    // enable box selection mode on graph
+    // bind to graph's dragStart/Move/Stop to animate selection box
     enable_selection: function(){
         var this_editor = this;
         this.graph.enablePanning(false);
@@ -568,11 +588,14 @@ Editor.prototype = {
             'graphDragEnd'
         );
     },
+    //----------------------------------
+    // setup the editor
     init: function(){
         var this_editor = this;
         //=========================
         var $_GET = {};
 
+        // get GET parameters from url
         document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function () {
             function decode(s) { return decodeURIComponent(s.split("+").join(" ")); }
             $_GET[decode(arguments[1])] = decode(arguments[2]);
@@ -1021,6 +1044,7 @@ Editor.prototype = {
         var touchDragging = false,
             dragTools = document.querySelector('ul.tools_group.tools_drag');
         
+        // catch touchevent and simulate a corresponding mouse event
         function touchToMouse (event) {
             var mouseEvent = document.createEvent('MouseEvents'),
                 eventTypes = {
@@ -1046,7 +1070,8 @@ Editor.prototype = {
             event.target.dispatchEvent(mouseEvent);
             event.preventDefault();
         }
-            
+        
+        // bind touch handlers
         dragTools.addEventListener('touchstart', function (event) {
                 touchToMouse(event);
                 touchDragging = true;
