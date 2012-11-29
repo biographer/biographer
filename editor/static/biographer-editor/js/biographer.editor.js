@@ -65,7 +65,7 @@ Editor.prototype = {
             if(all_drawables[key].drawableType()=='node'){
                 all_drawables[key].bind(bui.Node.ListenerType.click, editor.drawableSelect());
             }else{
-                all_drawables[key].bind(bui.AbstractLine.click, editor.drawableSelect());
+                all_drawables[key].bind(bui.AbstractLine.ListenerType.click, editor.drawableSelect());
             }
           }
         }
@@ -228,9 +228,7 @@ Editor.prototype = {
                         }
                         this_editor.selected_nodes = [];
                         //set click listener on new edge
-                        //FIXME this crashes, but it should work?
-                        //script.js:137Uncaught TypeError: Cannot read property 'ListenerType' of undefined
-                        //new_node.bind(bui.abstractLine.ListenerType.click, drawableSelect);
+                        new_edge.bind(bui.AbstractLine.ListenerType.click, editor.drawableSelect());
 
                         this_editor.edgeModal(new_edge, 'created '+this_editor.cur_mode);
                         this_editor.selected_nodes = [];
