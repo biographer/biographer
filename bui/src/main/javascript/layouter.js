@@ -178,10 +178,13 @@
       layouter_OUTER: while (lines.length){
          var l=lines.shift();
          var parts=l.split(' ');
-         if (parts.length<=3) continue; // non spline edge or empty line
+         if (parts.length<3) continue; // non edge or empty line
          var key=parts[1]+'->'+parts[2];
          if (!eh.hasOwnProperty(key)) throw "Edge "+key+" not found";
          var eidx=eh[key];
+         delete jdata.edges[eidx].data.handles;
+         delete jdata.edges[eidx].data.points;
+         if (parts.length<3) continue; // non spline edge 
          var handles=parts[3].split(',');
          if (handles.length<2) handles=[]; // there shouldn't be a single number here
          var isx=1;
