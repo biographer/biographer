@@ -810,7 +810,7 @@ Editor.prototype = {
             editor_config.graphData=this_editor.graph.toJSON();
             $.ajax({
                 url: editor_config.url_layout,
-                data: {layout: 'biographer', data:bui.layouter.makeLayouterFormat(editor_config.graphData)},
+                data: bui.layouter.makeLayouterFormat(editor_config.graphData),
                 type: 'POST',
                 success: function(data) {
                     //console.log(data);
