@@ -243,7 +243,7 @@ Editor.prototype = {
                     }
                 } else if (this_editor.cur_mode == 'del'){
                     drawable.remove();
-                    undoPush('deleted '+drawable.drawableType());
+                    this_editor.undoPush('deleted '+drawable.drawableType());
                 } else if (this_editor.cur_mode == 'focus'){
                     if(drawable.drawableType()=='node') bui.util.alignCanvas(this_editor.graph, drawable.id());
                 }
@@ -252,7 +252,7 @@ Editor.prototype = {
                 if (this_editor.cur_mode == 'del'){
                     console.log('del edge');
                     drawable.remove();
-                    undoPush('deleted edge '+drawable.drawableType())
+                    this_editor.undoPush('deleted edge '+drawable.drawableType())
                 }
             }
         };
