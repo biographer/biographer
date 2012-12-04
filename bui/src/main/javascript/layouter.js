@@ -90,7 +90,8 @@
    };
    /* extracts position information from layouter output and includes it into json data */
    bui.layouter.fromLayouterFormat = function(jdata,lt,nosplines){ // jdata - original json input data, lt - layouter output, nosplines - do not setup spline data in jdata
-      var nh={}; 
+      var nh={}; // node ids -> node idx
+      var ch=[]; // node idx -> compartment id
       var idx={};
       var cc=0;
       for (var i=0;i<jdata.nodes.length;i++){ // create node hash
@@ -107,7 +108,10 @@
          if (bui.nodeMapping[n.sbo].klass === bui.Compartment){
             if (n.data.subnodes){
                for (var j in n.data.subnodes){
-                  jdata.nodes[nh[n.data.subnodes[j]]].data.compartment=n.id;
+                  //jdata.nodes[nh[n.data.subnodes[j]]].data.compartment=n.id;
+                  if (nh[n.data.subnodes[j]]){
+                    ch[nh[n.data.subnodes[j]]]=n.id
+                  }
                }
             }
          }
@@ -157,8 +161,14 @@
       for (var i=0;i<jdata.nodes.length;i++){ // make positions relative to their compartments
          var n=jdata.nodes[i];
          if (n.is_abstract) continue;
-         if (nh.hasOwnProperty(n.data.compartment)){
-            var cp=jdata.nodes[nh[n.data.compartment]];
+         var cp=null;
+         if (nh.hasOwnProperty(n.data.compartment)){ // is in compartment due to compartment property?
+            cp=jdata.nodes[nh[n.data.compartment]];
+         }
+         if (ch[i]){ // is part of a compartment due to subnodes property
+            cp=jdata.nodes[nh[ch[i]]];
+         }
+         if (cp) {
             if (n.data.x != undefined) n.data.x-=cp.data.x;
             if (n.data.y != undefined) n.data.y-=cp.data.y;
          }
