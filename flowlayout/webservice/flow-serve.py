@@ -23,6 +23,7 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
       self.send_response(200)
       self.send_header("Access-Control-Allow-Origin", "*")
       self.send_header("Content-type", "text/plain")
+      self.send_header("Cache-Control", "no-cache")
       self.end_headers()
       length = int(self.headers.getheader('content-length'))
       content = self.rfile.read(length)
