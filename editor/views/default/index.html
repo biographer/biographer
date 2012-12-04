@@ -514,7 +514,7 @@ editor_config = {
 	url_undo_push : '{{=URL("undo_push")}}',
 	url_undo : '{{=URL('undo.json')}}',
 	url_redo : '{{=URL('redo.json')}}',
-	url_layout : '{{=URL('layout')}}',
+	url_layout : 'http://cheetah.biologie.hu-berlin.de/layouter',
 	url_import : '{{=URL('import_graph.json')}}',
  	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
     		nodes : [],
