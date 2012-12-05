@@ -360,9 +360,14 @@
                 </td>
 			</tr>
 			<tr>
-                <th> <a href="http://www.reactome.org/">Reactome</a> <br /> stable identifier </th>
-                <td> <input type="text" id="reactome_id_input" placeholder="REACT_6167.3"> 
-                    <button class="load" id="reactome_id">load</button>
+                <th> <a href="http://www.reactome.org/">Reactome</a></th>
+                <td>                     
+                    <form id='import_re' method="post" enctype="multipart/form-data">
+                        <select name="reactome_id" id="reactome_id" width="20">
+                            {{include 'default/reactome_pathways.html'}}
+                        </select>
+                        <button id="reactome">load</button>
+                    </form>
                 </td>
 			</tr>
 		</table>
