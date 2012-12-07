@@ -351,6 +351,17 @@
             return this;
         },
 
+        /**
+         * This emulates the behavior of Edge 
+         */
+        marker : function(markerID){
+          if (markerID !== undefined){
+            return bui.Spline.superClazz.prototype.marker.call(this,markerID);
+          } else {
+            return bui.Spline.superClazz.prototype.markerId.call(this);
+          }
+        },
+
         // overridden
         toJSON : function() {
             var json = bui.Spline.superClazz.prototype.toJSON.call(this),
