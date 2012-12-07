@@ -235,13 +235,9 @@ Editor.prototype = {
                         this_editor.selected_nodes = [];
                     }
                 } else if (this_editor.cur_mode == 'edit'){
-                    if(drawable.drawableType()=='edge'){
-                        this_editor.edgeModal(drawable, 'edited edge');
-                    } else {
-                        var label = 'Complex';
-                        if(drawable.identifier()!='Complex') label = drawable.label();
-                        this_editor.nodeModal(drawable, 'edited node '+label);
-                    }
+                    var label = 'Complex';
+                    if(drawable.identifier()!='Complex') label = drawable.label();
+                    this_editor.nodeModal(drawable, 'edited node '+label);
                 } else if (this_editor.cur_mode == 'del'){
                     drawable.remove();
                     this_editor.undoPush('deleted '+drawable.drawableType());
@@ -254,6 +250,8 @@ Editor.prototype = {
                     console.log('del edge');
                     drawable.remove();
                     this_editor.undoPush('deleted edge '+drawable.drawableType())
+                } else if (this_editor.cur_mode == 'edit'){
+                    this_editor.edgeModal(drawable, 'edited edge');
                 }
             }
         };
