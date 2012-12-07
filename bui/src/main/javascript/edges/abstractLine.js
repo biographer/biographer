@@ -291,6 +291,20 @@
         },
 
         /**
+         * Get the marker ID, i.e. a symbol at the end of the line.
+         *
+         * @return {String} The ID of the current marker symbol
+         *   The appropriate identifications can be retrieved through the id
+         *   property of the connecting arcs generation functions. Example:
+         *
+         *   bui.connectingArcs.stimulation.id
+         */
+        markerId : function() {
+            var privates = this._privates(identifier);
+
+            return privates.markerId;
+        },
+        /**
          * Set the line style. Available line style can be retrieved through
          * the {@link bui.AbstractLine.Style} object.
          *
