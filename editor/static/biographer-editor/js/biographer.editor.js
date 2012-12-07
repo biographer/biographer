@@ -218,10 +218,11 @@ Editor.prototype = {
                                 .source(this_editor.selected_nodes[0])
                                 .target(this_editor.selected_nodes[1])
                                 .visible(true);
-                        if(this_editor.cur_mode=='Spline') new_edge.setSplineHandlePositions([
-                            {x:this_editor.selected_nodes[0].position().x-10,y:this_editor.selected_nodes[0].position().y-20},
-                            {x:this_editor.selected_nodes[1].position().x-10,y:this_editor.selected_nodes[1].position().y-20}
-                            ], 300);
+                        if(this_editor.cur_mode=='Spline') {
+                          var dx=this_editor.selected_nodes[1].position().x-this_editor.selected_nodes[0].position().x;
+                          var dy=this_editor.selected_nodes[1].position().y-this_editor.selected_nodes[0].position().y;
+                          new_edge.setSplineHandlePositions([dx/5,dy/5,-dx/5,-dy/5]);
+                        }
                         for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
                             this_editor.selected_nodes[i].selected = false;
                             this_editor.selected_nodes[i].removeClass('Red');
