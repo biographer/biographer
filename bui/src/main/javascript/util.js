@@ -808,3 +808,16 @@ var getSBOForMarkerId = function(id) {
 
     return null;
 };
+
+
+/**
+ * Export SBO helpers to bui.util namespace
+ * 
+ */
+(function(bui){
+  
+  bui.util.getSBOForMarkerId = getSBOForMarkerId;
+  bui.util.getModificationSBOForLabel = getModificationSBOForLabel;
+  bui.util.getSBOForInstance = getSBOForInstance;
+  bui.util.retrieveFrom = retrieveFrom;
+})(bui);
