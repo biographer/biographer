@@ -423,7 +423,7 @@
 			</td>
 		</tr>
 	</table>
-	<button class='sc_but' id='close_modal_input'>close</button> or press <b>ESC</b> or <b>ENTER</b>
+	<button class='sc_but' class='close_modal_input'>close</button> or press <b>ESC</b> or <b>ENTER</b>
 	</div>
 </div>
 <!-- --------------------------------------------------------------------------------- -->
@@ -439,49 +439,56 @@
 		<tr>
 			<th>End Marker</th>
 			<td>
-				<div id="marker_select">
-					<div class="marker_select" id="">
-						<div> none </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'slide_down.png')}}"/> 
-					</div>
-					<div class="marker_select" id="production">
-						<div> production </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'production.png')}}"/> 
-					</div>
-					<div class="marker_select" id="control">
-						<div> control </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'control.png')}}"/> 
-					</div>
-					<div class="marker_select" id="inhibition">
-						<div> inhibition </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'inhibition.png')}}"/> 
-					</div>
-					<div class="marker_select" id="catalysis">
-						<div> catalysis </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'catalysis.png')}}"/> 
-					</div>
-					<div class="marker_select" id="stimulation">
-						<div> stimulation </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'stimulation.png')}}"/> 
-					</div>
-					<div class="marker_select" id="assignment">
-						<div> assignment </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'assignment.png')}}"/> 
-					</div>
-					<div class="marker_select" id="necessaryStimulation">
-						<div> necessaryStimulation </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'necessaryStimulation.png')}}"/> </div>
-					<div class="marker_select" id="absoluteStimulation">
-						<div> absoluteStimulation </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteStimulation.png')}}"/> </div>
-					<div class="marker_select" id="absoluteInhibition">
-						<div> absoluteInhibition </div>
-						<img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteInhibition.png')}}"/> </div>
-				</div>
+			  <div width="270px"> <!-- this is needed as position absolute in td does not work-->
+			     &nbsp;
+          <div id="marker_select_box">
+            <div class="marker_select" id="marker_none">
+              <div> none </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'slide_down.png')}}"/> 
+            </div>
+            <div class="marker_select" id="substrate">
+              <div> consumption </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'consumption.png')}}"/> 
+            </div>
+            <div class="marker_select" id="production">
+              <div> production </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'production.png')}}"/> 
+            </div>
+            <div class="marker_select" id="control">
+              <div> control </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'control.png')}}"/> 
+            </div>
+            <div class="marker_select" id="inhibition">
+              <div> inhibition </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'inhibition.png')}}"/> 
+            </div>
+            <div class="marker_select" id="catalysis">
+              <div> catalysis </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'catalysis.png')}}"/> 
+            </div>
+            <div class="marker_select" id="stimulation">
+              <div> stimulation </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'stimulation.png')}}"/> 
+            </div>
+            <div class="marker_select" id="assignment">
+              <div> assignment </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'assignment.png')}}"/> 
+            </div>
+            <div class="marker_select" id="necessaryStimulation">
+              <div> necessaryStimulation </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'necessaryStimulation.png')}}"/> </div>
+            <div class="marker_select" id="absoluteStimulation">
+              <div> absoluteStimulation </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteStimulation.png')}}"/> </div>
+            <div class="marker_select" id="absoluteInhibition">
+              <div> absoluteInhibition </div>
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteInhibition.png')}}"/> </div>
+          </div>
+        </div>
 			</td>
 		</tr>
 	</table>
-	<button class='sc_but' id='close_modal_input'>close</button> or press <b>ESC</b>
+	<button class='sc_but' class='close_modal_input'>close</button> or press <b>ESC</b>
 	</div>
 </div>
 <!-- --------------------------------------------------------------------------------- -->

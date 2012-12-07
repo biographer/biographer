@@ -116,30 +116,24 @@ td {
 #uoi_group{
     display: inline-block;
 }
-#marker_select {
+#marker_select_box {
 	width: 270px;
 	position:relative;
+  float:right;
     border: 2px solid #eee;
     border-radius: 4px;
     margin-bottom: 4px;
 	background-color: white;
 }
-#marker_select>div {
-	display:none;
-	position:relative;
+.marker_select {
+  display: none;
 	cursor: pointer;
 	padding: 3px;
 }
-#marker_select>div:first-child {
-	display:block;
-}
-#marker_select>div:hover {
+.marker_select:hover {
 	background-color: #eee;
 }
-#marker_select:hover>div {
-	display:block;
-}
-#marker_select>div>div {
+.marker_select>div {
 	width: 200px;
 	display: inline-block;
 }

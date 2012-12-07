@@ -309,20 +309,60 @@ Editor.prototype = {
     },
     //-------------------------------------------
     edgeModal: function(drawable, action) {
-        //do not add lable to complex but anything else
+        var sel=$('#marker_select_box')[0]; // the select <div>
         $('#action').html(action);
-        $('#marker_type').html('');
-        //-----------------
         $('.current_id').attr('id', drawable.id());
+        var type=drawable.marker(); // type as specified by sbo in edge
+        $('.marker_select').hide();
+        if (type){
+          $('#' + type).show(); // show the <div> correspnding to the current edge marker
+        } else {
+          $('#marker_none').show();
+        }
+        sel.opened=false; // we just introduce some local variables in the select div
+        sel.marker=type;
         var this_editor = this;
         $("#edge_modal_input").modal({
             overlayClose:true,
             opacity:20,
             onClose: function(){
-                if($('#marker_type').html() !== ''){
-                    if($('#edge_marker').val() !='none'){
-                        drawable.marker(bui.connectingArcs[$('#marker_type').html()].id);
+                if(sel.marker !== 'marker_none'){
+                    switch (sel.marker) {
+                      case "production" :
+                        if (!(drawable.source() instanceof bui.Process)){
+                          if (drawable.target() instanceof bui.Process){
+                            var h=drawable.source();  // swap source / target
+                            drawable.source(drawable.target());
+                            drawable.target(h);
+                          } else {
+                            jQuery('.flash').html("Error: production edge needs connect process to molecule").fadeIn();
+                            return;
+                          }
+                        }
+                        break;
+                      case "inhibition" :
+                      case "catalysis" :
+                      case "stimulation" :
+                      case "necessaryStimulation" :
+                      case "absoluteStimulation" :
+                      case "absoluteInhibition" :
+                      case "control" :
+                        if (!(drawable.target() instanceof bui.Process)){
+                          if (drawable.source() instanceof bui.Process){
+                            var h=drawable.source();  // swap source / target
+                            drawable.source(drawable.target());
+                            drawable.target(h);
+                          } else {
+                            jQuery('.flash').html("Error: edge of this type needs connect molecule process").fadeIn();
+                            return;
+                          }
+                        }
+                        break;
+                      case "assignment" :
                     }
+                      
+                    //drawable.json().sbo=bui.util.getSBOForMarkerId(sel.marker);
+                    drawable.marker(sel.marker);
                 }
                 this_editor.save($('#action').html());
                 $.modal.close();
@@ -984,12 +1024,23 @@ Editor.prototype = {
             }
         });
         //=========================
+        
         $('.marker_select').click(function(){
-        $('#marker_type').html($(this).attr('id'));
-        $.modal.close();
+          if (this.parentNode.opened){ // implement dropbox toggle
+//            $('#marker_type').html($(this).attr('id'));
+            this.parentNode.marker=$(this).attr('id'); // save current marker type in parent div (select div)
+            $('.marker_select').hide();
+            $(this).show();
+            this.parentNode.opened=false;
+          } else {
+            $('.marker_select').show();
+            this.parentNode.opened=true;
+          }
+
+        //$.modal.close();
         });
         //=========================
-        $('#close_modal_input').click(function(){
+        $('.close_modal_input').click(function(){
             $.modal.close();
         });
         //=========================
