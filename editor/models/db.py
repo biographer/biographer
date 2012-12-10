@@ -612,6 +612,44 @@ def reactome_id2jsbgn( reactome_stable_identifier ):
     if sbml:
         return sbml2jsbgn(sbml)
 #########################################################################
+def biomodel_fetch(biomodel_id, suppress_error=False):
+    import os
+    import re
+
+    model_content = None
+    model_path = os.path.join(request.folder, 'static', 'data_models')
+
+    if not re.match('^(BIOMD|MODEL)\d{10}$', biomodel_id):
+        try:
+            biomodel_id = 'BIOMD%.10d' % biomodel_id
+        except TypeError:
+            message = 'Invalid BioModel Id. The id should be a number or follow the pattern ^(BIOMD|MODEL)\d{10}$'
+            if suppress_error:
+                response.error = message
+            else:
+                HTTP(500, message)
+
+    if not os.path.exists(model_path):
+        os.mkdir(model_path)
+    if biomodel_id + '.xml' in os.listdir(model_path) and not request.vars.force:
+        model_content = open(os.path.join(model_path, biomodel_id + '.xml'), 'r').read()
+        response.flash = 'Loaded %s from cache.' % biomodel_id
+    else:
+        try:
+            model_content = _download('http://www.ebi.ac.uk/biomodels-main/download?mid=%s' % biomodel_id)
+            if model_content:
+                open(os.path.join(model_path, biomodel_id + '.xml'), 'w').write(model_content)
+        except ContentTooShortError:
+            message = 'Failed downloading %s: Content Too Short' % biomodel_id
+            if suppress_error:
+                response.flash = message
+            else:
+                HTTP(500, message)
+    return model_content
+
+
+#########################################################################
+
 
 class ContentTooShortError(Exception):
     def __init__(self,message):

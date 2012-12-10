@@ -26,38 +26,12 @@ def index():
             response.flash = 'failed importing'
     #----------------------------------
     elif request.vars.biomodel_id:
-        biomodel_id = None
-        import re
-        if re.match('^(BIOMD|MODEL)\d{10}$', request.vars.biomodel_id):
-            biomodel_id = request.vars.biomodel_id
-        else:
-            try:
-                int_id = request.vars.biomodel_id
-                biomodel_id = 'BIOMD%.10d' % int_id
-            except TypeError:
-                response.error = 'Invalid BioModel Id. The id should be a number or follow the pattern ^(BIOMD|MODEL)\d{10}$'
+        model_content = biomodel_fetch(request.vars.biomodel_id, suppress_error=True)
         #----------------------------------
-        if biomodel_id:
-            import os
-            model_content = None
-            model_path = os.path.join(request.folder, 'static', 'data_models')
-            if not os.path.exists(model_path):
-                os.mkdir(model_path)
-            if biomodel_id + '.xml' in os.listdir(model_path) and not request.vars.force:
-                model_content = open(os.path.join(model_path, biomodel_id + '.xml'), 'r').read()
-                response.flash = 'Loaded %s from cache.' % biomodel_id
-            else:
-                try:
-                    model_content = _download('http://www.ebi.ac.uk/biomodels-main/download?mid=%s' % biomodel_id)
-                    if model_content:
-                        open(os.path.join(model_path, biomodel_id + '.xml'), 'w').write(model_content)
-                except ContentTooShortError:
-                    response.flash = 'Failed downloading %s: Content Too Short' % biomodel_id
-            #----------------------------------
-            if model_content:
-                action, graph, json_string = import_file(model_content, biomodel_id)
-                if action and graph and json_string:
-                    undoRegister(action, graph, json_string)
+        if model_content:
+            action, graph, json_string = import_file(model_content, biomodel_id)
+            if action and graph and json_string:
+                undoRegister(action, graph, json_string)
     return dict()
 
 
@@ -75,15 +49,12 @@ def reset():
     session.editor_histroy_redo = None
     redirect(URL('index'))
 
-
-def script():
-    return dict()
-
-
 def import_graph():
-    response.generic_patterns = ['json']
     action, graph, json_string = None, None, None
-    if request.vars.type == 'reactome_id':
+
+    if request.vars.biomodel_id:
+        return biomodel_fetch(request.vars.biomodel_id)
+    if request.vars.reactome_id:
         #FIXME implement caching
         #model_path = os.path.join(request.folder, 'static', 'data_models')
         #if not os.path.exists(model_path):
