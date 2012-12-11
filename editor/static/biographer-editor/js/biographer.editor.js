@@ -235,9 +235,13 @@ Editor.prototype = {
                         this_editor.selected_nodes = [];
                     }
                 } else if (this_editor.cur_mode == 'edit'){
-                    var label = 'Complex';
-                    if(drawable.identifier()!='Complex') label = drawable.label();
-                    this_editor.nodeModal(drawable, 'edited node '+label);
+                    if(drawable.drawableType()=='edge'){
+                        this_editor.edgeModal(drawable, 'edited edge');
+                    } else {
+                        var label = 'Complex';
+                        if(drawable.identifier()!='Complex') label = drawable.label();
+                        this_editor.nodeModal(drawable, 'edited node '+label);
+                    }
                 } else if (this_editor.cur_mode == 'del'){
                     drawable.remove();
                     this_editor.undoPush('deleted '+drawable.drawableType());
@@ -918,7 +922,7 @@ Editor.prototype = {
                         //console.log('content: '+content);
                         var doc = sb.io.read(content);
                         if((doc === null)||(doc === undefined)){
-                            alert('could not import file');
+                            $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                         }else{
                             console.log(sb.io.write(doc, 'jsbgn'));
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
@@ -935,8 +939,56 @@ Editor.prototype = {
         } else {
             alert('The File APIs are not fully supported in this browser. You will not be able to upload jSBGN/SBGN-ML/SBML files. Please update your browser.');
         }
-        $("#biomodel").change(function(){
-            $(this).closest("form").submit();
+        $(".biomodels_select li").click(function(){
+            var bmid = $(this).attr('bla');
+            $.modal.close();
+            $('.flash').html('Loading BioModel BIOM'+bmid).fadeIn().delay(800).fadeOut();
+            $.ajax({
+                url: editor_config.url_import,
+                data : {
+                    biomodel_id: bmid
+                },
+                success: function( data ) {
+                    var doc = sb.io.read(data);
+                    if((doc === null)||(doc === undefined)){
+                        $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                    }else{
+                        console.log(sb.io.write(doc, 'jsbgn'));
+                        this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                        this_editor.undoPush('loaded BioModel '+bmid);
+                        $('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
+                    }
+                },
+                error: function (){
+                    $('.error').html('Could not save last action to session history');
+                }
+            });
+            
+        });
+        $('#reactome').click(function(){
+            var reid = $('#reactome_id').val();
+            $.modal.close();
+            $('.flash').html('Loading Reactome '+reid).fadeIn().delay(800).fadeOut();
+            $.ajax({
+                url: editor_config.url_import,
+                data : {
+                    reactome_id: reid
+                },
+                success: function( data ) {
+                    var doc = sb.io.read(data);
+                    if((doc === null)||(doc === undefined)){
+                        $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                    }else{
+                        console.log(sb.io.write(doc, 'jsbgn'));
+                        this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                        this_editor.undoPush('loaded Reactome '+bmid);
+                        $('.flash').html('loaded Reactome '+bmid).fadeIn().delay(1600).fadeOut();
+                    }
+                },
+                error: function (){
+                    $('.error').html('Could not save last action to session history');
+                }
+            });
         });
         //===
         $('#import_file').click(function() {
@@ -1137,6 +1189,20 @@ Editor.prototype = {
                     touchDragging = false;
                 }
             });
+        $(".biomodels_select li").hover(
+            function (e) {
+                var ident = $(this).attr('bla');
+                console.log('should show '+ident+' top '+e.clientY+' left '+e.clientX);
+                $('#'+ident).show();
+                $("body").mousemove(function(e){
+                    $('#'+ident).css('top', e.clientY+15).css('left', e.clientX+15);
+                });
+            },
+            function(){
+                $('#'+$(this).attr('bla')).hide();
+                $("body").unbind('mousemove');
+            }
+        );
     }
 };
 

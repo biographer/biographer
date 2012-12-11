@@ -350,24 +350,17 @@
                 </td>
 			</tr>
 			<tr>
-                <th> <a href="http://www.ebi.ac.uk/biomodels-main/"> BioModels.net </th> </a> <td>
-                    <form id='import' method="post" enctype="multipart/form-data">
-                        <select name="biomodel_id" id="biomodel_id">
-                            {{for i in range(1,403):}} <option>BIOMD{{='%.10d'%i}}</option> {{pass}}
-                        </select>
-                        <button id="biomodel">load</button>
-                    </form>
+                <th> <a href="http://www.reactome.org/">Reactome</a></th>
+                <td>                     
+                    <select name="reactome_id" id="reactome_id" width="20">
+                        {{include 'default/reactome_pathways.html'}}
+                    </select>
+                    <button id="reactome">load</button>
                 </td>
 			</tr>
 			<tr>
-                <th> <a href="http://www.reactome.org/">Reactome</a></th>
-                <td>                     
-                    <form id='import_re' method="post" enctype="multipart/form-data">
-                        <select name="reactome_id" id="reactome_id" width="20">
-                            {{include 'default/reactome_pathways.html'}}
-                        </select>
-                        <button id="reactome">load</button>
-                    </form>
+                <th> <a href="http://www.ebi.ac.uk/biomodels-main/"> BioModels.net </th> </a> <td>
+                	{{include 'default/biomodels_info.html'}}
                 </td>
 			</tr>
 		</table>
@@ -527,7 +520,7 @@ editor_config = {
 	url_undo : '{{=URL('undo.json')}}',
 	url_redo : '{{=URL('redo.json')}}',
 	url_layout : 'http://cheetah.biologie.hu-berlin.de/layouter',
-	url_import : '{{=URL('import_graph.json')}}',
+	url_import : '{{=URL('import_graph')}}',
  	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
     		nodes : [],
     		edges : []
