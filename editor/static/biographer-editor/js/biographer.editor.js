@@ -922,6 +922,31 @@ Editor.prototype = {
             });
             
         });
+        $('#reactome').click(function(){
+            var reid = $('#reactome_id').val();
+            $.modal.close();
+            $('.flash').html('Loading Reactome '+reid).fadeIn().delay(800).fadeOut();
+            $.ajax({
+                url: editor_config.url_import,
+                data : {
+                    reactome_id: reid
+                },
+                success: function( data ) {
+                    var doc = sb.io.read(data);
+                    if((doc === null)||(doc === undefined)){
+                        $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                    }else{
+                        console.log(sb.io.write(doc, 'jsbgn'));
+                        this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                        this_editor.undoPush('loaded Reactome '+bmid);
+                        $('.flash').html('loaded Reactome '+bmid).fadeIn().delay(1600).fadeOut();
+                    }
+                },
+                error: function (){
+                    $('.error').html('Could not save last action to session history');
+                }
+            });
+        });
         //===
         $('#import_file').click(function() {
             modal = $("#import_file_modal_input").modal({

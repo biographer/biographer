@@ -597,6 +597,8 @@ def sbgnml2jsbgn(sbgnml_str):
     graph['sbgnlang'] = lang2lang[xml.root.map[0].language]
     return graph
 
+
+#########################################################################
 def reactome_id2jsbgn( reactome_stable_identifier ):
     page = _download('http://www.reactome.org/cgi-bin/eventbrowser_st_id?ST_ID='+reactome_stable_identifier)
     sbml = ''
@@ -611,7 +613,31 @@ def reactome_id2jsbgn( reactome_stable_identifier ):
             sbml = _download('http://www.reactome.org/ReactomeGWT/entrypoint/sbmlRetrieval?ID=%s'%match.group(1))
     if sbml:
         return sbml2jsbgn(sbml)
+
+
 #########################################################################
+def reactome_fetch(reactome_id, suppress_error=False):
+    model_content = None
+    model_path = os.path.join(request.folder, 'static', 'data_models')
+
+    filename = 'React%s.sbgnml.xml' % reactome_id
+    if filename in os.listdir(model_path) and not request.vars.force:
+        model_content = open(os.path.join(model_path, filename), 'r').read()
+        response.flash = 'Loaded %s from cache.' % reactome_id
+    else:
+        try:
+            model_content = _download('http://www.reactome.org/ReactomeGWT/entrypoint/sbgnRetrieval?ID=%s' % reactome_id)
+            if model_content:
+                open(os.path.join(model_path, filename), 'w').write(model_content)
+        except ContentTooShortError:
+            message = 'Failed downloading %s: Content Too Short' % reactome_id
+            if suppress_error:
+                response.flash = message
+            else:
+                HTTP(500, message)
+    return model_content
+
+
 def biomodel_fetch(biomodel_id, suppress_error=False):
     import os
     import re

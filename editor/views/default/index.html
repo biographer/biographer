@@ -352,12 +352,10 @@
 			<tr>
                 <th> <a href="http://www.reactome.org/">Reactome</a></th>
                 <td>                     
-                    <form id='import_re' method="post" enctype="multipart/form-data">
-                        <select name="reactome_id" id="reactome_id" width="20">
-                            {{include 'default/reactome_pathways.html'}}
-                        </select>
-                        <button id="reactome">load</button>
-                    </form>
+                    <select name="reactome_id" id="reactome_id" width="20">
+                        {{include 'default/reactome_pathways.html'}}
+                    </select>
+                    <button id="reactome">load</button>
                 </td>
 			</tr>
 			<tr>

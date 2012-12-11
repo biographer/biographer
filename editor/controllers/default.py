@@ -55,16 +55,7 @@ def import_graph():
     if request.vars.biomodel_id:
         return biomodel_fetch(request.vars.biomodel_id)
     if request.vars.reactome_id:
-        #FIXME implement caching
-        #model_path = os.path.join(request.folder, 'static', 'data_models')
-        #if not os.path.exists(model_path):
-        #    os.mkdir(model_path)
-        #if request.vars.identifier+'.jsbgn' in os.listdir(model_path) and not request.vars.force:
-        #    model_content = open(os.path.join(model_path, biomodel_id+'.xml'), 'r').read()
-        #    response.flash = 'Loaded %s from cache.'%biomodel_id
-        graph = reactome_id2jsbgn(request.vars.identifier)
-        json_string = simplejson.dumps(graph)
-        action = 'Imported Reactome Id: %s' % request.vars.identifier
+        return reactome_fetch(request.vars.reactome_id)
     if action and graph and json_string:
         return undoRegister(action, graph, json_string)
     raise HTTP(500, 'could not import')
