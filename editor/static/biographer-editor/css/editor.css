@@ -117,32 +117,48 @@ td {
 #uoi_group{
     display: inline-block;
 }
-#marker_select {
+/**********************************/
+#marker_select_box {
 	width: 270px;
 	position:relative;
+    float:right;
     border: 2px solid #eee;
     border-radius: 4px;
     margin-bottom: 4px;
 	background-color: white;
 }
-#marker_select>div {
-	display:none;
-	position:relative;
-	cursor: pointer;
+.marker_select {
+    display: none;
+    cursor: pointer;
 	padding: 3px;
 }
-#marker_select>div:first-child {
-	display:block;
-}
-#marker_select>div:hover {
+.marker_select:hover {
 	background-color: #eee;
 }
-#marker_select:hover>div {
-	display:block;
-}
-#marker_select>div>div {
+.marker_select>div {
 	width: 200px;
 	display: inline-block;
+}
+/**********************************/
+.language {
+    position: absolute;
+}
+.language div{
+    display: none;
+    margin: -5px;
+    padding: 5px;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.language .lang_selected{
+    display: inline;
+    background-color: #eee;
+}
+li:hover .language div{
+    display: inline;
+    float:left;
 }
 /**********************************/
 h3.section {
@@ -210,6 +226,7 @@ h3.section.down {
 }
 .tools_group li:hover>div, .editor_menu li:hover>div{
     display: block;
+    z-index: 999;
 }
 /**********************************/
 .tools_group {

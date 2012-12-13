@@ -54,7 +54,8 @@ Editor.prototype = {
             all_drawables[key].remove(); 
         }
         delete this.graph;
-        $('#canvas').html('');
+        //$('#canvas').html('');//DO NOT USE THIS this causes a lot of trouble in Chrome!!!!
+        
         // create new graph
         this.graph = new bui.Graph($('#canvas')[0]);
         bui.importFromJSON(this.graph, graph_json);
@@ -77,6 +78,7 @@ Editor.prototype = {
                 out : function(){$('#canvas').droppable("enable");},
                 drop: function(event, ui){this_editor.dropFkt(event, ui, this);}
         });
+        
     },
     //-------------------------------------------
     // show last action as tooltip to undo button
@@ -186,6 +188,9 @@ Editor.prototype = {
             $("#canvas").mousemove(function(e){
                 $('#follow_'+mode2id[mode]).css('top', e.clientY+15).css('left', e.clientX+15);
             });
+        }
+        if ((mode == 'Edge')||(mode == 'Spline')){
+            $('.flash').html('<h2>Please click on two nodes to create an edge<h2>').fadeIn().delay(5000).fadeOut();
         }
     },
     //-------------------------------------------
@@ -968,7 +973,7 @@ Editor.prototype = {
         $('#reactome').click(function(){
             var reid = $('#reactome_id').val();
             $.modal.close();
-            $('.flash').html('Loading Reactome '+reid).fadeIn().delay(800).fadeOut();
+            $('.flash').html('Loading Reactome '+reid).fadeIn().delay(1600).fadeOut();
             $.ajax({
                 url: editor_config.url_import,
                 data : {
@@ -981,8 +986,8 @@ Editor.prototype = {
                     }else{
                         console.log(sb.io.write(doc, 'jsbgn'));
                         this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                        this_editor.undoPush('loaded Reactome '+bmid);
-                        $('.flash').html('loaded Reactome '+bmid).fadeIn().delay(1600).fadeOut();
+                        this_editor.undoPush('loaded Reactome '+reid);
+                        //$('.flash').html('loaded Reactome '+reid).fadeIn().delay(1600).fadeOut();
                     }
                 },
                 error: function (){
@@ -1079,7 +1084,7 @@ Editor.prototype = {
         
         $('.marker_select').click(function(){
           if (this.parentNode.opened){ // implement dropbox toggle
-//            $('#marker_type').html($(this).attr('id'));
+            //$('#marker_type').html($(this).attr('id'));
             this.parentNode.marker=$(this).attr('id'); // save current marker type in parent div (select div)
             $('.marker_select').hide();
             $(this).show();
@@ -1088,9 +1093,10 @@ Editor.prototype = {
             $('.marker_select').show();
             this.parentNode.opened=true;
           }
-
+        
         //$.modal.close();
         });
+        
         //=========================
         $('.close_modal_input').click(function(){
             $.modal.close();
