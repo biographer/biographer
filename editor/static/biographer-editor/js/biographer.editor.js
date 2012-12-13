@@ -646,6 +646,14 @@ Editor.prototype = {
                 $(this).parent().show();
             }
         });
+        $('.marker_select_box .marker_select').each(function(){
+           if (! $(this).hasClass(language_current)){
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+        
     },
     //----------------------------------
     // setup the editor

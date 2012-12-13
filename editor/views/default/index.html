@@ -194,27 +194,6 @@
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'vertical_gaps_equal.png')}}"/> 
 				&nbsp;
 				</li>
-				</li>
-				<!-- ---------------------------------------------------------------- -->
-				<li class="spacer"></li>
-				<li id='help'> 
-				<div>help
-                    Biographer currently works best with Chromium (Chrome), while FireFox also works it is very slow in working with lager graphs. Opera currently does not render the line ends properly.
-					<table>
-						<tr>
-							<th>ctrl+click</th>
-							<td>select an element to edit (resize, move, align)</td>
-						</tr>
-						<tr>
-							<th>doubleclick</th>
-							<td>deselect all nodes (for editing)</td>
-						</tr>
-					</table>
-					yes the help is a bit sparse, contact us if you need further help
-				</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'help.png')}}"/> 
-				&nbsp;
-				</li>
 			</ul>
 		</td>
 	</tr>
@@ -449,41 +428,43 @@
               <div> none </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'slide_down.png')}}"/> 
             </div>
-            <div class="marker_select" id="substrate">
+            <div class="marker_select PD" id="substrate">
               <div> consumption </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'consumption.png')}}"/> 
             </div>
-            <div class="marker_select" id="production">
+            <div class="marker_select PD" id="production">
               <div> production </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'production.png')}}"/> 
             </div>
-            <div class="marker_select" id="control">
+            <div class="marker_select PD ER" id="control">
               <div> control </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'control.png')}}"/> 
             </div>
-            <div class="marker_select" id="inhibition">
+            <div class="marker_select PD ER AF" id="inhibition">
               <div> inhibition </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'inhibition.png')}}"/> 
             </div>
-            <div class="marker_select" id="catalysis">
+            <div class="marker_select PD" id="catalysis">
               <div> catalysis </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'catalysis.png')}}"/> 
             </div>
-            <div class="marker_select" id="stimulation">
+            <div class="marker_select PD ER AF" id="stimulation">
               <div> stimulation </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'stimulation.png')}}"/> 
             </div>
-            <div class="marker_select" id="assignment">
+            <div class="marker_select PD ER AF" id="assignment">
               <div> assignment </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'assignment.png')}}"/> 
             </div>
-            <div class="marker_select" id="necessaryStimulation">
+            <div class="marker_select PD ER AF" id="necessaryStimulation">
               <div> necessaryStimulation </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'necessaryStimulation.png')}}"/> </div>
-            <div class="marker_select" id="absoluteStimulation">
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'necessaryStimulation.png')}}"/> 
+          	</div>
+            <div class="marker_select PD ER AF" id="absoluteStimulation">
               <div> absoluteStimulation </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteStimulation.png')}}"/> </div>
-            <div class="marker_select" id="absoluteInhibition">
+              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteStimulation.png')}}"/> 
+          	</div>
+            <div class="marker_select ER AF" id="absoluteInhibition">
               <div> absoluteInhibition </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteInhibition.png')}}"/> </div>
           </div>
