@@ -42,6 +42,8 @@ def debug():
         session.debug = not session.debug
     redirect(URL('index'))
 
+def userdoc():
+    return dict()
 
 def reset():
     session.editor_autosave = None
