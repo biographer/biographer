@@ -1,0 +1,39 @@
+# Project: biolayout2
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = functions.o layout.o network.o do_layout.o $(RES)
+LINKOBJ  = functions.o layout.o network.o do_layout.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib"  
+INCS =  -I"C:/Dev-Cpp/include" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include" 
+BIN  = biolayout2.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before biolayout2.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "biolayout2.exe" $(LIBS)
+
+functions.o: functions.cpp
+	$(CPP) -c functions.cpp -o functions.o $(CXXFLAGS)
+
+layout.o: layout.cpp
+	$(CPP) -c layout.cpp -o layout.o $(CXXFLAGS)
+
+network.o: network.cpp
+	$(CPP) -c network.cpp -o network.o $(CXXFLAGS)
+
+do_layout.o: do_layout.cpp
+	$(CPP) -c do_layout.cpp -o do_layout.o $(CXXFLAGS)
