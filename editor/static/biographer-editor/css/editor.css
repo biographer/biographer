@@ -104,9 +104,10 @@ td {
     padding:12px;
     }
 .modal_input {
+    position: relative;
     display: none;
 }
-.modal_input, .modal_input th {
+.modal_input, .modal_input th, .modal_input a {
     color: white;
 }
 .sc_but {
@@ -116,18 +117,19 @@ td {
 #uoi_group{
     display: inline-block;
 }
+/**********************************/
 #marker_select_box {
 	width: 270px;
 	position:relative;
-  float:right;
+    float:right;
     border: 2px solid #eee;
     border-radius: 4px;
     margin-bottom: 4px;
 	background-color: white;
 }
 .marker_select {
-  display: none;
-	cursor: pointer;
+    display: none;
+    cursor: pointer;
 	padding: 3px;
 }
 .marker_select:hover {
@@ -136,6 +138,27 @@ td {
 .marker_select>div {
 	width: 200px;
 	display: inline-block;
+}
+/**********************************/
+.language {
+    position: absolute;
+}
+.language div{
+    display: none;
+    margin: -5px;
+    padding: 5px;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.language .lang_selected{
+    display: inline;
+    background-color: #eee;
+}
+li:hover .language div{
+    display: inline;
+    float:left;
 }
 /**********************************/
 h3.section {
@@ -203,6 +226,7 @@ h3.section.down {
 }
 .tools_group li:hover>div, .editor_menu li:hover>div{
     display: block;
+    z-index: 999;
 }
 /**********************************/
 .tools_group {
@@ -307,6 +331,48 @@ input[type="text"] {
     border: dashed 1px black;
     position: absolute;
 }
+
+/**********************************/
+.biomodels_notes>div{
+    display: none;  
+    position: fixed;
+    background-color: white;
+    border: solid 1px #eee;
+    padding: 5px;
+    border-radius: 5px;
+}
+.biomodels_notes a {
+    color: blue;
+    text-decoration: underline;
+}
+.biomodels_select {
+    height: 200px;
+    min-width: 500px;
+    overflow-y: auto;
+    cursor: pointer;
+    list-style: none;
+    position: absolute;
+    padding:0;
+}
+.biomodels_select li{
+    display: none;
+}
+.biomodels_select:hover li{
+    display:block;
+}
+.biomodels_select li:nth-child(even){
+    background-color: #F8F8FF;
+}
+.biomodels_select li:nth-child(odd){
+    background-color: #FFF;
+}
+.biomodels_select li:hover{
+    background-color: #FFFFF0;
+}
+.biomodels_select li:first-child {
+    display:block;
+}
+/**********************************/
 
 /***************************
  * CSS 3 Buttons

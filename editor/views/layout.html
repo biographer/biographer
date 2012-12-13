@@ -36,6 +36,7 @@
                         <div id="logo"> <a href="{{=URL(request.application, 'default', 'index')}}">BioGrapher</a> </div>
                         <UL>
                             <li><a href="http://code.google.com/p/biographer/">About</a></li>
+                            <li><a href="{{=URL(request.application, 'default', 'userdoc')}}"></a></li>
                             <li><a href="http://code.google.com/p/biographer/source/browse/?repo=editor">Source Code</a></li>
                             {{if not request.vars.html5only:}}
                                 {{if os.path.exists(RELEASE_FOLDER):}}

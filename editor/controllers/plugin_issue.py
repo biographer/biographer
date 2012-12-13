@@ -243,9 +243,11 @@ def issue():
         response.files.append( URL(request.application, 'static/plugin_issue/markitup/sets/markmin', 'style.css') )
         return dict(content = DIV(content, _id='edit_issue%s'%issue.id))
 
+
 def vote():
+    response.generic_patterns = ['html', 'json']
     issue_id = request.args(0)
-    score = 1 if request.vars.vote=='up' else -1 if request.vars.vote=='down' else None
+    score = 1 if request.vars.vote == 'up' else -1 if request.vars.vote == 'down' else None
     if not (issue_id and score):
         raise HTTP(404)
     message = ''
@@ -437,7 +439,7 @@ def edit():
                     DIV('Are you a human? ',INPUT(_name='human', _type='text')) if not auth.is_logged_in() else '',
                     DIV('Attached Error Tickets:', LOAD('plugin_issue', 'attached_errors', args=request.args), _class="attached_tickets") if issue_id and issue_record.type and ('bug' in issue_record.type)  else '',
                     LOAD('plugin_issue', 'errors', args=issue_id, target='errors%s'%issue_record.id, ajax=True) if issue_id and issue_record.type and ('bug' in issue_record.type) else DIV(_id='errors%s'%issue_record.id if issue_id else 'errorsNone'),
-                    TABLE(TR(TD('Attach File '), TD(INPUT(_type="file", _name='attachment0'), DIV('+',_id="comment_attachment_more", _class="button"), _id=0) if auth.is_logged_in() else 'log in to post attachments' ), _class="issue_attachment add_attachment"),
+                    TABLE(TR(TD('Attach File '), TD(INPUT(_type="file", _name='attachment0'), SPAN('+',_id="comment_attachment_more", _class="button"), _id=0) if auth.is_logged_in() else 'log in to post attachments' ), _class="issue_attachment add_attachment"),
                     _id='issue_content',
                     ),
                 )),_id="issue_table"),
@@ -516,7 +518,7 @@ def edit_comment():
             form.custom.begin,
             DIV(form.custom.submit, ' ', form.custom.widget.nickname, ' your name (optional)',BR(), form.custom.widget.email, ' email (will not be displayed - enter if you want to be notified of changes)') if not auth.is_logged_in() else form.custom.submit,
             form.custom.widget.body,
-            TABLE(TR(TD('Attach File '), TD(INPUT(_type="file", _name='attachment0', _class="upload"), DIV('+',_id="comment_attachment_more", _class="button"), _id=0) if auth.is_logged_in() else 'log in to post attachments' ), _class="comment_attachment add_attachment"),
+            TABLE(TR(TD('Attach File '), TD(INPUT(_type="file", _name='attachment0', _class="upload"), SPAN('+',_id="comment_attachment_more", _class="button"), _id=0) if auth.is_logged_in() else 'log in to post attachments' ), _class="comment_attachment add_attachment"),
             DIV('Are you a human? ',INPUT(_name='human', _type='text')) if not auth.is_logged_in() else '',
             form.custom.end,
             JS('init_comment("edit_comment%s");'%issue_id),
