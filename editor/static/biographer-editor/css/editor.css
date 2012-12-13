@@ -140,25 +140,45 @@ td {
 	display: inline-block;
 }
 /**********************************/
-.language {
-    position: absolute;
+.language{
+    cursor: pointer;
 }
-.language div{
+.language_selection {
+    position: absolute;
+    top: 0;
+    left: 27px;
+    overflow: visible;
+    z-index: 999;
+    background-color: white;
     display: none;
+    border-radius: 5px;
+    border: solid 1px #ddd;
+}
+.language_current {
     margin: -5px;
     padding: 5px;
     width: 22px;
     height: 22px;
     border-radius: 5px;
-    cursor: pointer;
-}
-.language .lang_selected{
-    display: inline;
+    display: inline-block;
     background-color: #eee;
 }
-li:hover .language div{
-    display: inline;
-    float:left;
+.language_selection div {
+    margin: 5px;
+    padding: 5px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    display: inline-block;
+}
+.language_selection div:hover {
+    background-color: #eee;
+}
+.lang_selected {
+    background-color: #eee;
+}
+.language:hover .language_selection {
+    display: block;
 }
 /**********************************/
 h3.section {

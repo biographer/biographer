@@ -1,6 +1,16 @@
+{{extend 'layout.html'}}
 <h1>Using Biographer</h1>
 <h2>Creating SBGN visualisations</h2>
 <h3>Manually</h3>
 <h3>Importing</h3>
 <h2>Layout</h2>
 <h2>Exporting</h2>
+<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_json.png')}}"/> Biographers native exchange format is jSBGN (<a href="http://code.google.com/p/biographer/wiki/graph_exchange">described here</a>). This format ideal for transmission in the web and does only require topological information. 
+<br/> 
+<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_svg.png')}}"/> Biographer natively renders the images in you browser in the SVG format. To export the SVG image click on <img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_svg.png')}}"/> 
+<br/>
+<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export.png')}}"/>  to export
+supported fromats are .png pdf .
+<h1>System Requirements</h1>
+Supported Browsers are: Chromium and FireFox
+<h1>Problems and Support</h1>

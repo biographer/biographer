@@ -258,9 +258,12 @@
 			<ul class="tools_group tools_drag">
 				<li>
 					<span class="language">
-						<div class='lang_selected'>PD</div>
-						<div>ER</div>
-						<div>AF</div>
+						<div class="language_current">PD</div>
+						<div class="language_selection">
+							<div class='lang_selected PD'>PD</div>
+							<div class="ER">ER</div>
+							<div class="AF">AF</div>
+						</div>
 					</span>
 				</li>
 				<li>
@@ -285,15 +288,15 @@
 				</li>
 				<li>
 				<div>Perturbation (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Perturbation.png')}}" id="Perturbation" class="tool node PD ER"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Perturbation.png')}}" id="Perturbation" class="tool node PD ER AF"/>
 				</li>
 				<li>
 				<div>Phenotype (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Phenotype.png')}}" id="Phenotype" class="tool node PD ER"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Phenotype.png')}}" id="Phenotype" class="tool node PD ER AF"/>
 				</li>
 				<li>
 				<div>Compartment (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Compartment.png')}}" id="Compartment" class="tool node no_drop_complex PD"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Compartment.png')}}" id="Compartment" class="tool node no_drop_complex PD AF"/>
 				</li>
 				<li>
 				<div>Complex (drag me)</div>

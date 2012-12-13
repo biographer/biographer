@@ -55,7 +55,7 @@ Editor.prototype = {
         }
         delete this.graph;
         //$('#canvas').html('');//DO NOT USE THIS this causes a lot of trouble in Chrome!!!!
-        
+        //$('svg').parent().remove();
         // create new graph
         this.graph = new bui.Graph($('#canvas')[0]);
         bui.importFromJSON(this.graph, graph_json);
@@ -634,6 +634,19 @@ Editor.prototype = {
             'graphDragEnd'
         );
     },
+    //set the SBGN language
+    set_language: function(){
+        var language_current = $('.language_current').html();
+        $('.tools_drag li img').each(function(){
+            console.log('checking '+$(this).attr('id'));
+            if (! $(this).hasClass(language_current)){
+                $(this).parent().hide();
+                console.log('hiding '+$(this).attr('id'));
+            } else {
+                $(this).parent().show();
+            }
+        });
+    },
     //----------------------------------
     // setup the editor
     init: function(){
@@ -696,22 +709,13 @@ Editor.prototype = {
         });
         //=========================
         $('#vertical_gaps_equal, #horizontal_gaps_equal').click(function(){
-            // collect selected drawables
-            var all_drawables = this_editor.graph.drawables();
-            var selected_drawables = [];
-            for (var key in all_drawables) {
-                drawable = all_drawables[key];
-                if ((drawable.drawableType()=='node')&&drawable.placeholderVisible()){
-                    selected_drawables.push(drawable);
-                }
-            }
             // sort drawables
             var sorted_drawables = [];
-            for(var i=0; i<selected_drawables.length; i++){
+            for(var i=0; i<this_editor.selected_nodes.length; i++){
                 sorted_drawables.push({
-                x : selected_drawables[i].absolutePosition().x,
-                y : selected_drawables[i].absolutePosition().y,
-                drawable : selected_drawables[i]
+                x : this_editor.selected_nodes[i].absolutePosition().x,
+                y : this_editor.selected_nodes[i].absolutePosition().y,
+                drawable : this_editor.selected_nodes[i]
                 });
             }
             if($(this).attr('id')=='vertical_gaps_equal'){
@@ -1209,6 +1213,15 @@ Editor.prototype = {
                 $("body").unbind('mousemove');
             }
         );
+        //-------------------------------------------------
+        // get the language and only show glyps for that language
+        this.set_language();
+        $('.language_selection div').click(function(){
+            $('.language_current').html($(this).html());
+            $('.language_selection div').removeClass('lang_selected');
+            $('.language_selection .'+$(this).html()).addClass('lang_selected');
+            this_editor.set_language();
+        });
     }
 };
 
