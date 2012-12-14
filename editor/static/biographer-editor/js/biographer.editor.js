@@ -279,7 +279,7 @@ Editor.prototype = {
         }
         //-----------------
         $('.current_id').attr('id', drawable.id());
-        $("#node_modal_input").modal({
+        this_editor.modal = $("#node_modal_input").modal({
             overlayClose:true,
             opacity:20,
             onClose: function(){
@@ -307,14 +307,6 @@ Editor.prototype = {
                 $.modal.close();
             }
         });
-        //=========================
-        $('#node_modal_input').keydown(function(event){
-            if(event.keyCode == 13){
-            $.modal.close();
-                event.preventDefault();
-                return false;
-            }
-        });
     },
     //-------------------------------------------
     edgeModal: function(drawable, action) {
@@ -331,7 +323,7 @@ Editor.prototype = {
         sel.opened=false; // we just introduce some local variables in the select div
         sel.marker=type;
         var this_editor = this;
-        $("#edge_modal_input").modal({
+        this_editor.modal = $("#edge_modal_input").modal({
             overlayClose:true,
             opacity:20,
             onClose: function(){
@@ -914,11 +906,11 @@ Editor.prototype = {
                 success: function( data ) {
                     this_editor.undoRegister(data.action, data.graph);
                     this_editor.redrawGraph(data.graph);
-                    $.modal.close();
+                    this_editor.modal.close();
                     return true;
                 },
                 error: function(xhr, textStatus, errorThrown) {
-                    $.modal.close();
+                    this_editor.modal.close();
                     jQuery('.flash').html(textStatus+' '+xhr.responseText).fadeIn();
                     return true;
                 }
@@ -944,7 +936,7 @@ Editor.prototype = {
                             console.log(sb.io.write(doc, 'jsbgn'));
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
                             this_editor.undoPush('loaded graph from JSON string');
-                        $.modal.close();
+                        this_editor.modal.close();
                         }
                     };
                     reader.onerror = function (evt) {
@@ -958,7 +950,7 @@ Editor.prototype = {
         }
         $(".biomodels_select li").click(function(){
             var bmid = $(this).attr('bla');
-            $.modal.close();
+            this_editor.modal.close();
             $('.flash').html('Loading BioModel BIOM'+bmid).fadeIn().delay(800).fadeOut();
             $.ajax({
                 url: editor_config.url_import,
@@ -984,7 +976,7 @@ Editor.prototype = {
         });
         $('#reactome').click(function(){
             var reid = $('#reactome_id').val();
-            $.modal.close();
+            this_editor.modal.close();
             $('.flash').html('Loading Reactome '+reid).fadeIn().delay(1600).fadeOut();
             $.ajax({
                 url: editor_config.url_import,
@@ -1009,7 +1001,7 @@ Editor.prototype = {
         });
         //===
         $('#import_file').click(function() {
-            modal = $("#import_file_modal_input").modal({
+            this_editor.modal = $("#import_file_modal_input").modal({
                 overlayClose:true,
                 opacity:20
             });
@@ -1018,11 +1010,11 @@ Editor.prototype = {
         $('#load_json_string').click(function(){
             this_editor.redrawGraph(JSON.parse($('#json_string').val()));
             this_editor.undoPush('loaded graph from JSON string');
-            $.modal.close();
+            this_editor.modal.close();
         });
         //===
         $('#import_str').click(function() {
-            modal = $("#import_string_modal_input").modal({
+            this_editor.modal = $("#import_string_modal_input").modal({
                 overlayClose:true,
                 opacity:20
             });
@@ -1106,13 +1098,9 @@ Editor.prototype = {
             this.parentNode.opened=true;
           }
         
-        //$.modal.close();
+        //this_editor.modal.close();
         });
         
-        //=========================
-        $('.close_modal_input').click(function(){
-            $.modal.close();
-        });
         //=========================
         $('#save_to_session').click(function(){
             this_editor.save('manual');
@@ -1134,7 +1122,7 @@ Editor.prototype = {
         });
         //=========================
         $('#export_other').click(function() {
-            modal = $("#export_file_modal_input").modal({
+            this_editor.modal = $("#export_file_modal_input").modal({
                 overlayClose:true,
                 opacity:20
             });
@@ -1229,6 +1217,10 @@ Editor.prototype = {
             $('.language_selection div').removeClass('lang_selected');
             $('.language_selection .'+$(this).html()).addClass('lang_selected');
             this_editor.set_language();
+        });
+        //-------------------------------------------------
+        $('.close_modal').click(function(){
+            this_editor.modal.close();
         });
     }
 };

@@ -49,30 +49,11 @@
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'import_file.png')}}"/> 
 				&nbsp;
 				</li>
-				<li id="import_str"> 
-				<div><b>import</b> JSON graph <b>from string</b></div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'import_string.png')}}"/> 
-				&nbsp;
-				</li>
-				<li class="spacer"></li>
-				<li id="export_json"> 
-				<div>export current graph as jSBGN (JSON)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_json.png')}}"/> 
-				&nbsp;
-				</li>
-			    	{{if not request.vars.html5only:}}
-				<li id="export_svg"> 
-				<div>export current graph as SVG</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_svg.png')}}"/> 
-				&nbsp;
-				</li>
-				</li>
 				<li id="export_other"> 
 				<div>export current graph as: png,jpeg,pdf,tiff</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export.png')}}"/> 
 				&nbsp;
 				</li>
-				{{pass}}
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
 				<li id="layout_grid"> 
@@ -327,45 +308,81 @@
 <!-- --------------------------------------------------------------------------------- -->
 <form action="{{=URL('export')}}" id='export_form' style='display: none;' method="POST"></form>
 <!-- --------------------------------------------------------------------------------- -->
-<!-- --------------------------------------------------------------------------------- -->
-<div id="import_file_modal_input" class="modal_input">
+<!-- -------------------------------------------------------------------------------- -->
+<div id="export_file_modal_input" class="modal_input">
+	
+
+	<div class="port_group">
+		<div id="export_json"> 
+			<div>export current graph as jSBGN (JSON)</div>
+			<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_json.png')}}"/> 
+			&nbsp;
+		</div>
+		{{if not request.vars.html5only:}}
+		<div id="export_svg"> 
+			<div>export current graph as SVG</div>
+			<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_svg.png')}}"/> 
+			&nbsp;
+		</div>
+		{{pass}}
+	</div>
+	<div class="port_group">
 		<table>
 			<tr>
-				<th> JSON / SBML / SBGN-ML File </th>
-                <td>
-                    <form id='import_form' method="post" enctype="multipart/form-data">
-                        <input name="import_file" type="file" id="import_file_input"/>
-                    </form>
-                </td>
-			</tr>
-			<tr>
-                <th> <a href="http://www.reactome.org/">Reactome</a></th>
-                <td>                     
-                    <select name="reactome_id" id="reactome_id" width="20">
-                        {{include 'default/reactome_pathways.html'}}
-                    </select>
-                    <button id="reactome">load</button>
-                </td>
-			</tr>
-			<tr>
-                <th> <a href="http://www.ebi.ac.uk/biomodels-main/"> BioModels.net </th> </a> <td>
-                	{{include 'default/biomodels_info.html'}}
-                </td>
+				<th>Ohter Formats</th>
+				<td>
+					<select id="export_format_select">
+						<option value="">... choose</option>
+						{{for frmt in 'png pdf tiff'.split():}} <option>{{=frmt}}</option> {{pass}}
+					</select>
+				</td>
 			</tr>
 		</table>
 		<br />
-		<br />
-		<button class='sc_but' id='cancel_modal_input'>cancel</button> or press <b>ESC</b>
+	</div>
+	<br />
+	<button class='sc_but close_modal'>cancel</button> or press <b>ESC</b>
 </div>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
-<div id="import_string_modal_input" class="modal_input">
-	<textarea cols="30" rows="10" id='json_string' >{"nodes":[{"id":"node0","visible":true,"sbo":240,"data":{"x":50,"y":53,"width":61,"height":61,"label":"ATP"}}],"edges":[]}</textarea>
+<div id="import_file_modal_input" class="modal_input">
+	<table>
+		<tr>
+			<th>File</th>
+            <td>
+                <form id='import_form' method="post" enctype="multipart/form-data">
+                    <input name="import_file" type="file" id="import_file_input"/> supported formats are jSBGN, SBGN-ML, SBML
+                </form>
+            </td>
+		</tr>
+		<tr>
+            <th> <a href="http://www.reactome.org/">Reactome</a></th>
+            <td>                     
+                <select name="reactome_id" id="reactome_id" width="20">
+                    {{include 'default/reactome_pathways.html'}}
+                </select>
+                <button id="reactome">load</button>
+            </td>
+		</tr>
+		<tr>
+            <th> <a href="http://www.ebi.ac.uk/biomodels-main/">BioModels</th> </a> <td>
+            	{{include 'default/biomodels_info.html'}}
+            </td>
+		</tr>
+		<tr>
+			<th>jSBGN</th>
+			<td>
+				<textarea cols="30" rows="10" id='json_string' >{"nodes":[{"id":"node0","visible":true,"sbo":240,"data":{"x":50,"y":53,"width":61,"height":61,"label":"ATP"}}],"edges":[]}</textarea>
+				<button class='sc_but' id='load_json_string'>load</button>
+			</td>
+		</tr>
+	</table>
 	<br />
-	<button class='sc_but' id='load_json_string'>load</button> or press <b>ENTER</b>
 	<br />
-	<button class='sc_but' id='cancel_node_modal_input'>cancel</button> or press <b>ESC</b>
+	<button class='sc_but close_modal' id='cancel_modal_input'>cancel</button> or press <b>ESC</b>
 </div>
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
 <div id="node_modal_input" class="modal_input">
@@ -405,7 +422,7 @@
 			</td>
 		</tr>
 	</table>
-	<button class='sc_but' class='close_modal_input'>close</button> or press <b>ESC</b> or <b>ENTER</b>
+	<button class='sc_but close_modal'>close</button> or press <b>ESC</b> or <b>ENTER</b>
 	</div>
 </div>
 <!-- --------------------------------------------------------------------------------- -->
@@ -472,26 +489,8 @@
 			</td>
 		</tr>
 	</table>
-	<button class='sc_but' class='close_modal_input'>close</button> or press <b>ESC</b>
+	<button class='sc_but close_modal'>close</button> or press <b>ESC</b>
 	</div>
-</div>
-<!-- --------------------------------------------------------------------------------- -->
-<!-- --------------------------------------------------------------------------------- -->
-<div id="export_file_modal_input" class="modal_input">
-	<table>
-		<tr>
-			<th>Choose Export Format</th>
-			<td>
-				<select id="export_format_select">
-					<option value="">... choose</option>
-					{{for frmt in 'png pdf tiff'.split():}} <option>{{=frmt}}</option> {{pass}}
-				</select>
-			</td>
-		</tr>
-	</table>
-	<br />
-	<br />
-	<button class='sc_but' id='cancel_modal_input'>cancel</button> or press <b>ESC</b>
 </div>
 <!-- --------------------------------------------------------------------------------- -->
 {{if session.debug:}}
