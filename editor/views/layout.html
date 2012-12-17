@@ -48,7 +48,7 @@
                                 <li><a href="{{=URL(request.application, 'plugin_release', 'status')}}">Update</a></li>
                                 {{pass}}
                             {{pass}}
-                            <li><a href="{{=URL(request.application, 'plugin_issue', 'index') if IS_ISSUE_SERVER else '%s/plugin_issue/index'%APPLICATION_URL}}">Bugs/Features</a></li>
+                            <li><a href="http://code.google.com/p/biographer/issues/list">Bugs/Features</a></li>
                             {{if not request.vars.html5only:}}
                             {{if auth.has_membership('admin'):}}
                             <li><a href="{{=URL(request.application, 'setup', 'index')}}">Configure</a></li>
