@@ -57,13 +57,6 @@ Editor.prototype = {
         } else {
           this.graph = new bui.Graph($('#canvas')[0]);
         }
-        //delete this.graph;
-        //$('#canvas').html('');//DO NOT USE THIS this causes a lot of trouble in Chrome!!!!
-        //while ($('#canvas')[0].hasChildNodes()) {
-        //  $('#canvas')[0].removeChild($('#canvas')[0].lastChild);
-        //}
-        //if ($('#canvas')[0].fistChild) $('#canvas')[0].removeChild($('#canvas')[0].fistChild);
-        //$('svg').parent().remove();
         // create new graph
         bui.importFromJSON(this.graph, graph_json);
         //add edge select listner to all nodes
@@ -91,7 +84,7 @@ Editor.prototype = {
     // show last action as tooltip to undo button
     showUndoRedo: function(){
         var newArray,html_history;
-        console.log(editor_config.history_undo);
+        //console.log(editor_config.history_undo);
         if(editor_config.history_undo.length > 0){
             $('#undo').removeClass('disabled');
             newArray = editor_config.history_undo.slice();
@@ -104,15 +97,19 @@ Editor.prototype = {
             $('#undo').addClass('disabled');
             $('#undo>div').html('undo');
         }
-        /*if(editor_config.history_redo.length > 0){
+        if(editor_config.history_redo.length > 0){
             $('#redo').removeClass('disabled');
             $('#redo>div').html(editor_config.history_redo.join('<br/>'));
             newArray = editor_config.history_redo.slice();
-            $('#redo>div').html(newArray.reverse().join('<br/>'));
+            html_history = '';
+            for (var i = newArray.length - 1; i >= 0; i--) {
+                html_history += newArray[i].action+'<br/>';
+            }
+            $('#redo>div').html(html_history);
         }else{
             $('#redo').addClass('disabled');
             $('#redo>div').html('redo');
-        }*/
+        }
     },
     //-------------------------------------------
     // add a new state to undo list
@@ -123,7 +120,11 @@ Editor.prototype = {
             $('.flash').html('Saved: nothing changed, woooah').fadeIn().delay(800).fadeOut();
             return false;
         }
-        editor.undoRegister(action, jsong);
+        //editor.undoRegister(action, jsong);
+        editor_config.history_undo.push({action: action, graph: jsong});
+        editor_config.history_redo = [];
+        this.showUndoRedo();
+        this.last_save = jsong;
         $.ajax({
             url: editor_config.url_undo_push,
             data : {
@@ -138,18 +139,12 @@ Editor.prototype = {
             }
         });
     },
-    undoRegister: function(action, graph_str){
-        editor_config.history_undo.push({action: action, graph: graph_str});
-        editor_config.history_redo = [];
-        this.showUndoRedo();
-        this.last_save = graph_str;
-    },
     //-------------------------------------------
     // reset to last state in undo list
     undo: function(){
-        var history_obj = editor_config.history_undo.pop(); //WARNING this is the current anyway isn't it?
-        this.redrawGraph(history_obj.graph);
-        editor_config.history_redo.push(history_obj); // WARNING @falko this seems to be the wrong history_obj for redo
+        var history_obj = editor_config.history_undo.pop();
+        this.redrawGraph(JSON.parse(editor_config.history_undo.slice(-1)[0].graph));
+        editor_config.history_redo.push(history_obj);
         this.showUndoRedo();
         $.ajax({
             url: editor_config.url_undo,
@@ -166,7 +161,7 @@ Editor.prototype = {
         var history_obj = editor_config.history_redo.pop();
         editor_config.history_undo.push(history_obj);
         this_editor.showUndoRedo();
-        this_editor.redrawGraph(history_obj.graph);
+        this_editor.redrawGraph(JSON.parse(history_obj.graph));
         $.ajax({
             url: editor_config.url_undo,
             success: function( data ) {
@@ -675,7 +670,7 @@ Editor.prototype = {
                 success: function(data) {
                     //console.log(data);
                     bui.layouter.fromLayouterFormat(editor_config.graphData,data);
-                    this_editor.undoRegister('applied automatic biographer layout', editor_config.graphData);
+                    this_editor.undoPush('applied automatic biographer layout');
                     this_editor.redrawGraph(editor_config.graphData);
                     //bui.importUpdatedNodePositionsFromJSON(graph, editor_config.graphData, 300)
                     }
@@ -748,9 +743,7 @@ Editor.prototype = {
                     sorted_drawables[i].drawable.absolutePosition(sorted_drawables[i-1].drawable.absoluteBottomRight().x+gap_length, sorted_drawables[i].drawable.absolutePosition().y);
                 }
             }
-
-            var x_vals;
-            var max_x = Math.max();
+            this_editor.undoPush('Applied Equal Gaps');
         });
         //=========================
         $('#align_vertical, #align_hoizontal, #align_left, #align_top, #align_right, #align_bottom').click(function(){
@@ -795,13 +788,13 @@ Editor.prototype = {
                     }
                 }
             }
+            this_editor.undoPush('Aligned Nodes');
         });
-        //=========================
-        //$('#canvas').resizable();
         //=========================
         $('#clear').click(function(){
             this_editor.redrawGraph({nodes:[],edges:[]});
             //this_editor.graph.clear();//FIXME this does not work
+            this_editor.undoPush('Cleared Graph')
         });
         //=========================
         $('#layout_grid').click(function(evnt){
@@ -816,6 +809,7 @@ Editor.prototype = {
                 bui.grid.put_on_grid();
                 bui.grid.render_current();
             }
+            this_editor.undoPush('Applied Grid Layout');
             //});
             //$('#layout_grid').html(orig_html);
         });
@@ -830,10 +824,12 @@ Editor.prototype = {
                 new_nodes[i].bind(bui.Node.ListenerType.click, this_editor.drawableSelect());
             }
             $('#clone').html(orig_html);
+            this_editor.undoPush('Cloned Nodes');
         });
         //=========================
         $('#combine').click(function(){
             if(this_editor.selected_nodes.length === 0) bui.util.combine(this_editor.graph, this_editor.selected_nodes);
+            this_editor.undoPush('Combined Nodes');
         });
         //=========================
         $('#layout_force').click(function(){
@@ -851,10 +847,11 @@ Editor.prototype = {
               .links(nodes_edges.edges)
               .size([$('#canvas').width(), $('#canvas').height()])
               .start();
-            
+            this_editor.undoPush('Applied Force Directed Layout (D3)'); 
         });
         //=========================
         $('#layout_grahviz').click(function(){
+            //FIXME!!!
             $.getJSON(editor_config.url_layout+'.json?layout=graphviz', function(data) {
                 editor_config.history_undo.push(data.action);
                 this_editor.showUndoRedo();
@@ -874,16 +871,17 @@ Editor.prototype = {
                 success: function(data) {
                     //console.log(data);
                     bui.layouter.fromLayouterFormat(editor_config.graphData,data);
-                    this_editor.undoRegister('applied automatic biographer layout', editor_config.graphData);
+                    this_editor.undoPush('applied automatic biographer layout');
                     try{
                         this_editor.redrawGraph(editor_config.graphData);
+                        this_editor.undoPush('Applied Biographer Flow Layout');
                     }catch(e){
                         jQuery('.flash').html('FAILED '+e).fadeIn();
                     }
                     //bui.importUpdatedNodePositionsFromJSON(graph, editor_config.graphData, 300)
-                    },
+                },
                 complete: function(){
-                $('#layout_biographer').html(orig_html);
+                    $('#layout_biographer').html(orig_html);
                 }
             });
         });
@@ -911,7 +909,7 @@ Editor.prototype = {
                     identifier : $('#'+$(this).attr('id')+'_input').val()
                 },
                 success: function( data ) {
-                    this_editor.undoRegister(data.action, data.graph);
+                    this_editor.undoPush(data.action);
                     this_editor.redrawGraph(data.graph);
                     this_editor.modal.close();
                     return true;
@@ -1104,8 +1102,6 @@ Editor.prototype = {
             $('.marker_select').show();
             this.parentNode.opened=true;
           }
-        
-        //this_editor.modal.close();
         });
         
         //=========================
