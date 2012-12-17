@@ -34,6 +34,9 @@ def index():
                 undoRegister(action, graph, json_string)
     return dict()
 
+def convert():
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'libSBGN.js'))
+    return dict();
 
 def debug():
     if session.debug == None:
