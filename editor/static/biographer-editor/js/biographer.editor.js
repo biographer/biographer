@@ -48,16 +48,23 @@ Editor.prototype = {
     // replace graph with new graph defined by json object
     redrawGraph: function(graph_json){
        // clear graph
-        var all_drawables = this.graph.drawables();
-        var key;
-        for (key in all_drawables) {
-            all_drawables[key].remove(); 
+        if (this.graph){
+          var all_drawables = this.graph.drawables();
+          var key;
+          for (key in all_drawables) {
+              all_drawables[key].remove(); 
+          }
+        } else {
+          this.graph = new bui.Graph($('#canvas')[0]);
         }
-        delete this.graph;
+        //delete this.graph;
         //$('#canvas').html('');//DO NOT USE THIS this causes a lot of trouble in Chrome!!!!
+        //while ($('#canvas')[0].hasChildNodes()) {
+        //  $('#canvas')[0].removeChild($('#canvas')[0].lastChild);
+        //}
+        //if ($('#canvas')[0].fistChild) $('#canvas')[0].removeChild($('#canvas')[0].fistChild);
         //$('svg').parent().remove();
         // create new graph
-        this.graph = new bui.Graph($('#canvas')[0]);
         bui.importFromJSON(this.graph, graph_json);
         //add edge select listner to all nodes
         all_drawables = this.graph.drawables();
@@ -798,7 +805,7 @@ Editor.prototype = {
             }
         });
         //=========================
-        $('#canvas').resizable();
+        //$('#canvas').resizable();
         //=========================
         $('#clear').click(function(){
             this_editor.redrawGraph({nodes:[],edges:[]});
