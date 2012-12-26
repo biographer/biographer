@@ -93,6 +93,10 @@
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'hide_handle.png')}}"/> 
 				&nbsp;
 				</li>
+				<li id='del'>
+				<div>delete selected nodes (or press <b>del</b>)</div>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cross.png')}}"/>
+				</li>
 				<!-- li id="layout_grahviz"> 
 				<div>apply automatic <b>graphviz</b> layout</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'graphviz.png')}}"/> 
@@ -189,10 +193,10 @@
 				<div>move selected items</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'move.png')}}" id="move" class="tool"/>
 				</li>
-				<li id='selection'>
+				<!--li id='selection'>
 				<div>click to start drawing selection rectangle, click again to finish selection</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'selection.png')}}" id="selection" class="tool"/>
-				</li>
+				</li -->
 				<li id='edit'>
 				<div>edit</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'wrench.png')}}" id="edit" class="tool"/>
@@ -204,11 +208,7 @@
 				<li id='Spline'>
 				<div>draw spline</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'spline.png')}}" id="Spline" class="tool"/>
-				</li>
-				<li id='del'>
-				<div>delete node</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cross.png')}}" id="cross" class="tool"/>
-				</li>
+				</li>	
 				<li id="focus"> 
 				<div>focus to node</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus.png')}}"/> 
@@ -291,14 +291,17 @@
 		<td>
 			<div id="spacer"></div>
 			<div id="outer_canvas">
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'move.png')}}" id="follow_move" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'selection.png')}}" id="follow_selection" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cross.png')}}" id="follow_cross" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'wrench.png')}}" id="follow_wrench" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'edge.png')}}" id="follow_edge" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'spline.png')}}" id="follow_spline" class='follow' style="position: fixed;"/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus_.png')}}" id="follow_focus" class='follow' style="position: fixed;"/>
-				<div id="canvas" class='droppable'></div>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'move.png')}}" id="follow_move" class='follow'/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'selection.png')}}" id="follow_selection" class='follow'/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cross.png')}}" id="follow_cross" class='follow'/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'wrench.png')}}" id="follow_wrench" class='follow'/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'edge.png')}}" id="follow_edge" class='follow'/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'spline.png')}}" id="follow_spline" class='follow'/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus_.png')}}" id="follow_focus" class='follow'/>
+				{{for x in 'SimpleChemical Macromolecule NucleicAcidFeature UnspecifiedEntity RectangularNode Perturbation Phenotype Compartment Complex EmptySet Process Tag LogicalOperator Association Dissociation'.split(): }}
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', '%s_helper.png'%x)}}" id="follow_{{=x}}" class="follow helper"/>
+				{{pass}}
+				<div id="canvas"></div>
 			</div>
 		</td>
 	</tr>
@@ -366,6 +369,7 @@
 		</tr>
 		<tr>
             <th> <a href="http://www.ebi.ac.uk/biomodels-main/">BioModels</th> </a> <td>
+            	<div class="biomodels_start">... click to open</div>
             	{{include 'default/biomodels_info.html'}}
             </td>
 		</tr>
@@ -392,6 +396,15 @@
 			<td> <input type="text" placeholder="ATP" id='node_label' /></td>
 		</tr>
 		<tr>
+			<th>State Variable</th>
+			<td> 
+				<div id="sv_group">
+					<input type="text" placeholder="P@207" class='state_variable' /> 
+				</div>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img/ico', 'add.png')}}" id="add_state_variable" title="add another State Variable"/>
+			</td>
+		</tr>
+		<tr>	
 			<th>Unit of Information</th>
 			<td> 
 				<div id="uoi_group">
@@ -507,10 +520,10 @@
 <script type="text/javascript">
 editor_config = {
 	url_undo_push : '{{=URL("undo_push")}}',
-	url_undo : '{{=URL('undo.json')}}',
-	url_redo : '{{=URL('redo.json')}}',
+	url_undo : '{{=URL("undo")}}',
+	url_redo : '{{=URL("redo")}}',
 	url_layout : 'http://cheetah.biologie.hu-berlin.de/layouter',
-	url_import : '{{=URL('import_graph')}}',
+	url_import : '{{=URL("import_graph")}}',
  	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
     		nodes : [],
     		edges : []
@@ -525,6 +538,7 @@ bui.ready(function() {
 	editor.graph = new bui.Graph($('#canvas')[0]);
 	//bui.Node.bindStatic(bui.Node.ListenerType.click, editor.drawableSelect());//FIXME this does not work, y?
 	editor.redrawGraph(editor_config.graphData);
+	editor.enable_selection();
 	
 });
 </script>
