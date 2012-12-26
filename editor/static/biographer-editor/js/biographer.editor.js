@@ -209,7 +209,7 @@ Editor.prototype = {
         return function(drawable, select_status){
             if(drawable.drawableType()=='node'){
                 if ((this_editor.cur_mode == 'cursor')||(this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
-                    if (this_editor.shifted == false){
+                    if ((this_editor.shifted == false)||(this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
                         //shif key is down
                         //add all drawable to selection, if already selected remove selection
                         if (drawable.selected === true){
@@ -581,10 +581,7 @@ Editor.prototype = {
         this.graph.bind(
             bui.Graph.ListenerType.dragStart,
             function (graph, event) {
-                this_editor.selection_borders = {
-                    left: (event.detail.x0 - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x,
-                    top: (event.detail.y0 - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y
-                };
+                this_editor.selection_borders = {};
                 if ((this_editor.cur_mode == 'cursor') || (this_editor.cur_mode == undefined)){
                     $('box').show();
                     //box.style.display = 'block';
@@ -608,12 +605,33 @@ Editor.prototype = {
         this.graph.bind(
             bui.Graph.ListenerType.dragMove,
             function (graph, event) {
+                var x0, y0, dx, dy;
+                console.log('drag x0: '+event.detail.pageX+' x0: '+event.detail.x0+' dy: '+event.detail.dy);
                 if ((this_editor.cur_mode == 'cursor') || (this_editor.cur_mode == undefined)){
-                    box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
-                    box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px'
+                    if (event.detail.x0>event.detail.pageX){
+                        box.style.left = event.detail.pageX;
+                        box.style.width = Math.max(event.detail.x0 - event.detail.pageX) + 'px';
+                        this_editor.selection_borders.left = (event.detail.pageX - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x,
+                        this_editor.selection_borders.right = (event.detail.x0 - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
+                    }else{
+                        box.style.left = event.detail.x0;
+                        box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
+                        this_editor.selection_borders.left = (event.detail.x0 - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
+                        this_editor.selection_borders.right = (event.detail.pageX - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
+                    }
+                    if (event.detail.y0>event.detail.pageY){
+                        box.style.top = event.detail.pageY;
+                        box.style.height = Math.max(event.detail.y0 - event.detail.pageY) + 'px';
+                        this_editor.selection_borders.bottom = (event.detail.y0 - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
+                        this_editor.selection_borders.top = (event.detail.pageY - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
+                    }else{
+                        box.style.top = event.detail.y0;
+                        box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px';
+                        this_editor.selection_borders.bottom = (event.detail.pageY - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
+                        this_editor.selection_borders.top = (event.detail.y0 - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
+                    }
+
                     
-                    this_editor.selection_borders.right = (event.detail.pageX - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
-                    this_editor.selection_borders.bottom = (event.detail.pageY - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
                     this_editor.selected_nodes = [];
                     var all_drawables = this_editor.graph.drawables();
                     for (var key in all_drawables) {
