@@ -87,14 +87,18 @@ td {
 #canvas {
     z-index: 0;
     /*margin-top: 50px;*/
-    width: 92%;
-    height: 90%;
+    min-width: 1200px;
+    min-height: 700px;
     border: solid 1px #ddd;
 }
 /**********************************/
 .follow {
     display: none;
     z-index: 999;
+    position: fixed;
+}
+.helper {
+    opacity: .5;
 }
 /**********************************/
 #simplemodal-overlay {background-color:#000;}
@@ -117,9 +121,6 @@ td {
 .sc_but {
 	width: 55px;
 	margin-bottom: 3px;
-}
-#uoi_group{
-    display: inline-block;
 }
 /**********************************/
 #marker_select_box {
@@ -285,10 +286,6 @@ h3.section.down {
     opacity: .3;
 }
 /**********************************/
-.node_helper {
-    opacity: .5;
-}
-/**********************************/
 .drop_hover {
     background-color: #FFFFF0;
 }
@@ -369,6 +366,11 @@ input[type="text"] {
     color: blue;
     text-decoration: underline;
 }
+.biomodels_start {
+    min-width: 500px;
+    cursor: pointer;
+    background: white;
+}
 .biomodels_select {
     height: 200px;
     min-width: 500px;
@@ -377,12 +379,7 @@ input[type="text"] {
     list-style: none;
     position: absolute;
     padding:0;
-}
-.biomodels_select li{
     display: none;
-}
-.biomodels_select:hover li{
-    display:block;
 }
 .biomodels_select li:nth-child(even){
     background-color: #F8F8FF;
@@ -393,8 +390,20 @@ input[type="text"] {
 .biomodels_select li:hover{
     background-color: #FFFFF0;
 }
+/*
+.biomodels_select:hover li{
+    display:block;
+}
+.biomodels_select li{
+    display: none;
+}
 .biomodels_select li:first-child {
     display:block;
+}*/
+/**********************************/
+/*select box*/
+#box {
+    border: dashed 1px solid;
 }
 /**********************************/
 

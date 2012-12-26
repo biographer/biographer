@@ -30,7 +30,9 @@ To help you laying our your SBGN graphs Biographer currenly provides tree automa
         Respects compartments
     </li>
     <li><img src="{{=URL(request.application, 'static/biographer-editor/img', 'grid.png')}}"/> biographer.grid <br>
-        Respects compartments
+        Respects compartments <br>
+        If you click once only one iteration of optimization for each nodes its executed. For better results apply this layout multiple times. Once the layout is stuck in a local minmum you can manually move some nodes and apply the layout again. You will see that this greatly improves the layout. <br>
+        Holding down the <b>ctrl</b> key while clicking the grid layout button will only place each node on the cosest empty grid space. This can be used to quickly create great looking layouts manually.
     </li>
     <li><img src="{{=URL(request.application, 'static/biographer-editor/img', 'd3_force.png')}}"/> D3 force directed layout <br>
         Compartments are not supported <br>
@@ -67,7 +69,7 @@ bug tracker
 </div>
 <style type="text/css">
     .container {
-        width: 700px;
+        width: 600px;
         margin-left: 50px;
     }
     h1, h2, h3 {

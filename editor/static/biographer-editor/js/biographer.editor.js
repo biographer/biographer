@@ -71,13 +71,6 @@ Editor.prototype = {
           }
         }
         var this_editor = this; // closure this object for drop callback below
-        // make compartments, complexes recieve droppable nodes
-        $('.Complex, .Compartment').droppable({
-                hoverClass: 'drop_hover',
-                over : function(){$('#canvas').droppable("disable");},
-                out : function(){$('#canvas').droppable("enable");},
-                drop: function(event, ui){this_editor.dropFkt(event, ui, this);}
-        });
         
     },
     //-------------------------------------------
@@ -85,7 +78,7 @@ Editor.prototype = {
     showUndoRedo: function(){
         var newArray,html_history;
         //console.log(editor_config.history_undo);
-        if(editor_config.history_undo.length > 0){
+        if(editor_config.history_undo.length > 1){
             $('#undo').removeClass('disabled');
             newArray = editor_config.history_undo.slice();
             html_history = '';
@@ -142,6 +135,7 @@ Editor.prototype = {
     //-------------------------------------------
     // reset to last state in undo list
     undo: function(){
+        if(editor_config.history_undo.length < 1) return;
         var history_obj = editor_config.history_undo.pop();
         this.redrawGraph(JSON.parse(editor_config.history_undo.slice(-1)[0].graph));
         editor_config.history_redo.push(history_obj);
@@ -157,6 +151,7 @@ Editor.prototype = {
         });
     },
     redo: function(){
+        if(editor_config.history_redo.length < 1) return;
         var this_editor = this;
         var history_obj = editor_config.history_redo.pop();
         editor_config.history_undo.push(history_obj);
@@ -175,15 +170,19 @@ Editor.prototype = {
     //-------------------------------------------
     // set cursor symbol (next to arrow) according to edit mode
     setMode: function(mode){
+        if (this.cur_mode == 'node'){
+            $("body").unbind('click');
+        }
         if (mode == this.cur_mode) return;
         this.cur_mode = mode;
-        console.log('set cur_mode: '+this.cur_mode);
+        //console.log('set cur_mode: '+this.cur_mode);
         $('#canvas').unbind('mousemove');
         $('.follow').hide();
         $('.active').removeClass('active');
-        var mode2id = {'del':'cross', 'edit':'wrench', 'Edge':'edge', 'Spline':'spline', 'focus':'focus', 'move': 'move', 'selection': 'selection'};
-        if (mode === undefined){
+        var mode2id = {'edit':'wrench', 'Edge':'edge', 'Spline':'spline', 'focus':'focus', 'move': 'move', 'selection': 'selection'};
+        if ((mode === undefined)||(mode == 'cursor')){
             $('#cursor').addClass('active');
+            this.enable_selection();
         }else{
             $('#'+mode).addClass('active');
             $('#follow_'+mode2id[mode]).show();
@@ -191,7 +190,14 @@ Editor.prototype = {
                 $('#follow_'+mode2id[mode]).css('top', e.clientY+15).css('left', e.clientX+15);
             });
         }
-        if ((mode == 'Edge')||(mode == 'Spline')){
+        if ( this.cur_mode == 'move' ){
+                this.disable_selection();
+        }else if ((mode == 'Edge')||(mode == 'Spline')){
+            for (var i = this.selected_nodes.length - 1; i >= 0; i--) {
+                this.selected_nodes[i].selected = false;
+                this.selected_nodes[i].removeClass('selected');
+            }
+            this.selected_nodes = [];    
             $('.flash').html('<h2>Please click on two nodes to create an edge<h2>').fadeIn().delay(5000).fadeOut();
         }
     },
@@ -203,19 +209,32 @@ Editor.prototype = {
         return function(drawable, select_status){
             if(drawable.drawableType()=='node'){
                 if ((this_editor.cur_mode == 'cursor')||(this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
-                    if (drawable.selected === true){
-                            for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
-                                if (drawable == this_editor.selected_nodes[i]){
-                                    drawable.selected = false;
-                                    drawable.removeClass('Red');
-                                    this_editor.selected_nodes.splice(i, 1);
+                    if (this_editor.shifted == false){
+                        //shif key is down
+                        //add all drawable to selection, if already selected remove selection
+                        if (drawable.selected === true){
+                                for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
+                                    if (drawable == this_editor.selected_nodes[i]){
+                                        drawable.selected = false;
+                                        drawable.removeClass('selected');
+                                        this_editor.selected_nodes.splice(i, 1);
+                                        break;
+                                    }
                                 }
-                            }
+                        }else{
+                                drawable.addClass('selected');
+                                drawable.selected = true;
+                                this_editor.selected_nodes.push(drawable);
+                        }
                     }else{
-                            drawable.addClass('Red');
-                            //drawable.color({background: 'red', label: 'white'});
-                            drawable.selected = true;
-                            this_editor.selected_nodes.push(drawable);
+                        //shift key is not down
+                        for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
+                                this_editor.selected_nodes[i].selected = false;
+                                this_editor.selected_nodes[i].removeClass('selected');
+                        }
+                        this_editor.selected_nodes = [drawable]
+                        drawable.addClass('selected');
+                        drawable.selected = true;
                     }
                 }
                 if ((this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
@@ -232,7 +251,7 @@ Editor.prototype = {
                         }
                         for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
                             this_editor.selected_nodes[i].selected = false;
-                            this_editor.selected_nodes[i].removeClass('Red');
+                            this_editor.selected_nodes[i].removeClass('selected');
                         }
                         this_editor.selected_nodes = [];
                         //set click listener on new edge
@@ -249,9 +268,6 @@ Editor.prototype = {
                         if(drawable.identifier()!='Complex') label = drawable.label();
                         this_editor.nodeModal(drawable, 'edited node '+label);
                     }
-                } else if (this_editor.cur_mode == 'del'){
-                    drawable.remove();
-                    this_editor.undoPush('deleted '+drawable.drawableType());
                 } else if (this_editor.cur_mode == 'focus'){
                     if(drawable.drawableType()=='node') bui.util.alignCanvas(this_editor.graph, drawable.id());
                 }
@@ -294,6 +310,16 @@ Editor.prototype = {
                 $('.unit_of_information').each(function(){
                     if($(this).val()){
                         this_editor.graph.add(bui.UnitOfInformation)
+                        //.position(-10, -10)//TODO do we need this
+                        .parent(drawable)
+                        .label($(this).val())
+                        .adaptSizeToLabel(true)
+                        .visible(true);
+                    }
+                });
+                $('.state_variable').each(function(){
+                    if($(this).val()){
+                        this_editor.graph.add(bui.StateVariable)
                         //.position(-10, -10)//TODO do we need this
                         .parent(drawable)
                         .label($(this).val())
@@ -382,54 +408,59 @@ Editor.prototype = {
     },
     //-------------------------------------------//
     // drops a ui-helper node from node type menu and generates the corresponding graph node
-    dropFkt: function(event, ui, element){
-        if(ui.helper.hasClass('node_helper')){
-            //calculate position of new node
-            var pos_top = ui.offset.top-this.canvaspos.top;
-            var pos_left = ui.offset.left-this.canvaspos.left;
-            //set size of new node
-            var size = {};
-            if(ui.helper.attr('id')=='Process'){
-                size = {h:20, w:20};
-            }else if((ui.helper.attr('id')=='Compartment')||(ui.helper.attr('id')=='Complex')){
-                size = {h:100, w:100};
-            }else {
-                size = {h:50, w:50};
-            }
-            //create new node
-            new_node = this.graph.add(bui[ui.helper.attr('id')])
-                .position(pos_left, pos_top)
-                .size(size.h, size.w)
-                .visible(true);
-            //add parent if the drop is within a container like complex or compartment
-            if ($(element).attr('id').indexOf('placeholder') === 0){
-                var drawable_parent = this.graph.drawables()[$(element).attr('id').substring(12)];
-                    new_node.parent(drawable_parent);
-                    //alert('parent_id '+parent_id);
-                    if (drawable_parent.identifier() == 'Complex'){
-                        drawable_parent.tableLayout();
-                    } else {
-                        pos_top = pos_top-drawable_parent.position().y;
-                        pos_left = pos_left-drawable_parent.position().x;
-                        new_node.position(pos_left, pos_top);
-                    }
-            }
-            //-----------------
-            this.nodeModal(new_node, 'created '+ui.helper.attr('id'));
-            //-----------------
-            //set click listener on new node
-            new_node.bind(bui.Node.ListenerType.click, this.drawableSelect(), 'node_select');
-            //set droppable listener on new node
-            $('#placeholder_'+new_node.id()).droppable({
-                hoverClass: 'drop_hover',
-                over : function(){$('#canvas').droppable("disable");},
-                out : function(){$('#canvas').droppable("enable");},
-                drop: function(event, ui){dropFkt(event, ui, this);}
-            });
-            //make all drawables placeholders invisible
-            //this.placeholdersVisible(false);
-            $('#canvas').droppable("enable");
+    createNode: function(nodetype, e){
+        console.log("create node "+ nodetype);
+        //calculate position of new node
+        var pos_top = e.clientY-this.canvaspos.top;
+        var pos_left = e.clientX-this.canvaspos.left;
+        //set size of new node
+        var size = {};
+        if(nodetype=='Process'){
+            size = {h:20, w:20};
+        }else if((nodetype=='Compartment')||(nodetype=='Complex')){
+            size = {h:100, w:100};
+        }else {
+            size = {h:50, w:50};
         }
+        //create new node
+        new_node = this.graph.add(bui[nodetype])
+            .position(pos_left, pos_top)
+            .size(size.h, size.w)
+            .visible(true);
+        //add parent if the drop is within a container like complex or compartment
+        /*
+        FIXME add this function again
+        if ($(element).attr('id').indexOf('placeholder') === 0){
+            var drawable_parent = this.graph.drawables()[$(element).attr('id').substring(12)];
+                new_node.parent(drawable_parent);
+                //alert('parent_id '+parent_id);
+                if (drawable_parent.identifier() == 'Complex'){
+                    drawable_parent.tableLayout();
+                } else {
+                    pos_top = pos_top-drawable_parent.position().y;
+                    pos_left = pos_left-drawable_parent.position().x;
+                    new_node.position(pos_left, pos_top);
+                }
+        }
+        */
+        //-----------------
+        this.nodeModal(new_node, 'created '+nodetype);
+        //-----------------
+        //set click listener on new node
+        new_node.bind(bui.Node.ListenerType.click, this.drawableSelect(), 'node_select');
+        //set droppable listener on new node
+        /*
+        FIXME what is this can this be removed?
+        $('#placeholder_'+new_node.id()).droppable({
+            hoverClass: 'drop_hover',
+            over : function(){$('#canvas').droppable("disable");},
+            out : function(){$('#canvas').droppable("enable");},
+            drop: function(event, ui){dropFkt(event, ui, this);}
+        });
+        */
+        //make all drawables placeholders invisible
+        //this.placeholdersVisible(false);
+        //$('#canvas').droppable("enable");
     },
     //-------------------------------------------
     // helper function getting a list of first level nodes and edges
@@ -507,10 +538,10 @@ Editor.prototype = {
             if (all){
                 this.selected_nodes.push(drawable); // FIXME that may result in nodes being more than once in selection list, right?
                 drawable.selected = true;
-                drawable.addClass('Red');
+                drawable.addClass('selected');
             }else{
                 drawable.selected = false;
-                drawable.removeClass('Red');
+                drawable.removeClass('selected');
             }
         }
     },
@@ -543,7 +574,7 @@ Editor.prototype = {
             
         var box = this.box;
         box.id = 'box';
-        box.style.border = 'dashed blue';
+        box.style.border = 'dashed 1px blue';
         box.style.position = 'absolute';
         $('box').hide();
 
@@ -554,7 +585,7 @@ Editor.prototype = {
                     left: (event.detail.x0 - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x,
                     top: (event.detail.y0 - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y
                 };
-                if (this_editor.cur_mode == 'selection'){
+                if ((this_editor.cur_mode == 'cursor') || (this_editor.cur_mode == undefined)){
                     $('box').show();
                     //box.style.display = 'block';
                     box.style.display = '';
@@ -577,7 +608,7 @@ Editor.prototype = {
         this.graph.bind(
             bui.Graph.ListenerType.dragMove,
             function (graph, event) {
-                if (this_editor.cur_mode == 'selection'){
+                if ((this_editor.cur_mode == 'cursor') || (this_editor.cur_mode == undefined)){
                     box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
                     box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px'
                     
@@ -596,11 +627,11 @@ Editor.prototype = {
                                 (pos_botm_rigt_abs.x<=this_editor.selection_borders.right) &&
                                 (pos_top_left_abs.y>=this_editor.selection_borders.top) &&
                                 (pos_botm_rigt_abs.y<=this_editor.selection_borders.bottom)){
-                                drawable.addClass('Red');
+                                drawable.addClass('selected');
                                 drawable.selected = true;
                                 this_editor.selected_nodes.push(drawable);
                             }else{
-                                drawable.removeClass('Red');
+                                drawable.removeClass('selected');
                                 drawable.selected = false;
                             }
                         }
@@ -649,6 +680,12 @@ Editor.prototype = {
         });
         
     },
+    delete_selected_nodes: function(){
+        var nn = this.selected_nodes.length;
+        for (var i = this.selected_nodes.length - 1; i >= 0; i--) this.selected_nodes[i].remove();
+        this.selected_nodes = [];
+        this.undoPush('deleted '+nn+' nodes');
+    },
     //----------------------------------
     // setup the editor
     init: function(){
@@ -678,10 +715,6 @@ Editor.prototype = {
         }
         this.showUndoRedo();
  
-        $('#canvas').droppable({
-                hoverClass: 'drop_hover',
-                drop: function(event, ui){this_editor.dropFkt(event, ui, this);}
-        });
         
         //=========================
         $('#hide_handles').click(function(){
@@ -797,23 +830,6 @@ Editor.prototype = {
             this_editor.undoPush('Cleared Graph')
         });
         //=========================
-        $('#layout_grid').click(function(evnt){
-            nodes_edges = this_editor.get_nodes_edges();
-            //orig_html = $('#layout_grid').html();
-            //$('#layout_grid').html(this_editor.loading_img).ready(function(){
-            bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
-            if (!evnt.ctrlKey){
-                bui.grid.put_on_grid();
-                bui.grid.layout();
-            }else{
-                bui.grid.put_on_grid();
-                bui.grid.render_current();
-            }
-            this_editor.undoPush('Applied Grid Layout');
-            //});
-            //$('#layout_grid').html(orig_html);
-        });
-        //=========================
         $('#clone').click(function(){
             orig_html = $('#clone').html();
             $('#clone').html(this_editor.loading_img);
@@ -832,6 +848,23 @@ Editor.prototype = {
             this_editor.undoPush('Combined Nodes');
         });
         //=========================
+        $('#layout_grid').click(function(evnt){
+            nodes_edges = this_editor.get_nodes_edges();
+            //orig_html = $('#layout_grid').html();
+            //$('#layout_grid').html(this_editor.loading_img).ready(function(){
+            bui.grid.init(nodes_edges.nodes,nodes_edges.edges);
+            if (!evnt.ctrlKey){
+                bui.grid.put_on_grid();
+                bui.grid.layout();
+            }else{
+                bui.grid.put_on_grid();
+                bui.grid.render_current();
+            }
+            this_editor.undoPush('Applied Grid Layout');
+            //});
+            //$('#layout_grid').html(orig_html);
+        });
+        //=========================
         $('#layout_force').click(function(){
          
             orig_html = $('#layout_force').html();
@@ -847,7 +880,7 @@ Editor.prototype = {
               .links(nodes_edges.edges)
               .size([$('#canvas').width(), $('#canvas').height()])
               .start();
-            this_editor.undoPush('Applied Force Directed Layout (D3)'); 
+            //this_editor.undoPush('Applied Force Directed Layout (D3)');//FIXME this executed to early
         });
         //=========================
         $('#layout_grahviz').click(function(){
@@ -896,6 +929,11 @@ Editor.prototype = {
         //=========================
         $('#add_unit_of_information').click(function(){
             $('#uoi_group').append(' <br/><input type="text" placeholder="mt:prot" class="unit_of_information" /> ');
+            $('#simplemodal-container').css('height', parseInt($('#simplemodal-container').css('height')) + 20);
+        });
+        //=========================
+        $('#add_state_variable').click(function(){
+            $('#sv_group').append(' <br/><input type="text" placeholder="P@207" class="state_variable" /> ');
             $('#simplemodal-container').css('height', parseInt($('#simplemodal-container').css('height')) + 20);
         });
         //=========================
@@ -1075,19 +1113,7 @@ Editor.prototype = {
         //=========================
         $('.tools_click li').click(function(){
             var mode = $(this).attr('id');
-            if ( ((this_editor.cur_mode == 'selection') && (mode !== 'selection')) || ((this_editor.cur_mode == 'move') && (mode !== 'move')) ){
-                this_editor.disable_selection();
-            }
             this_editor.setMode(mode);
-            if ((mode == 'Edge')||(mode == 'Spline')){
-                for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
-                    this_editor.selected_nodes[i].selected = false;
-                    this_editor.selected_nodes[i].removeClass('Red');
-                }
-                this_editor.selected_nodes = [];
-            }else if ((mode == 'selection')||(mode == 'move')){
-                this_editor.enable_selection();
-            }
         });
         //=========================
         
@@ -1110,17 +1136,12 @@ Editor.prototype = {
         });
         //=========================
         $('#export_json').click(function(){
-            //alert(JSON.stringify(graph.toJSON()));
-            //$('#export_form').html('<input type="hidden" name="json" value=\''+JSON.stringify(this_editor.graph.toJSON())+'\' />').submit();
-            window.location.href="data:text/json;charset=UTF-8," + JSON.stringify(this_editor.graph.toJSON());
+            window.location.href="data:text/json;fileName=download.json;charset=UTF-8," + JSON.stringify(this_editor.graph.toJSON());
         });
         //=========================
         $('#export_svg').click(function(){
-            //alert($('#canvas svg').parent().html());
-            //$('#export_form').html('<input type="hidden" name="svg" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
-            //window.location.href="data:text/data;base64," + btoa(ne_graph.rawSVG());
             $.get(this_editor.bui_visualization_css_file, function(viscss) {
-                window.location.href="data:text/svg;charset=UTF-8," + encodeURIComponent($('#canvas svg').parent().html().replace(/@import url[^<]*/, viscss));
+                window.location.href="data:text/svg;fileName=download.svg;charset=UTF-8," + encodeURIComponent($('#canvas svg').parent().html().replace(/@import url[^<]*/, viscss));
             });
         });
         //=========================
@@ -1137,20 +1158,41 @@ Editor.prototype = {
         }
         });
         //=========================
-        $('.node').draggable({
-            zIndex: 2,
-            //revert: true,
-            //grid: [ 20,20 ],//does not work, need aling functions
-            helper: function() {return '<img src="'+this_editor.images_base_path+$(this).attr('id')+'_helper.png" id="'+$(this).attr('id')+'" class="node_helper"/>';},
-            start: function() {
-                this_editor.setMode('cursor');
-                this_editor.select_all(false);
-                //make all drawables placeholders visible
-            }
+        $('.node').parent().click(function(event){
+            event.stopPropagation();
+            this_editor.select_all(false);
+            this_editor.setMode('node');
+            $('.active').removeClass('active');
+            $(this).addClass('active');
+            var nodetype = $(this).find('img').attr('id');
+            $('.follow').hide();
+            $('#follow_'+nodetype).show();
+            $("#canvas").mousemove(function(e){
+                $('#follow_'+nodetype).css('top', e.clientY-3).css('left', e.clientX-3);
+            });
+            $("body").click(function(e){
+                this_editor.createNode(nodetype, e)
+            });
+            /*
+            FIXME must implement this            
+            // make compartments, complexes recieve droppable nodes
+            $('.Complex, .Compartment').droppable({
+                    hoverClass: 'drop_hover',
+                    over : function(){$('#canvas').droppable("disable");},
+                    out : function(){$('#canvas').droppable("enable");},
+                    drop: function(event, ui){this_editor.dropFkt(event, ui, this);}
+            });
+            */
         });
-        
+        /*        
+        $('#canvas').droppable({
+                hoverClass: 'drop_hover',
+                drop: function(event, ui){this_editor.dropFkt(event, ui, this);}
+        });
+        */
         // Mobile touch Support for drag tools
-        var touchDragging = false,
+        // ATTENTION this did not work on the touch device I tested (galxy s3)
+        /*var touchDragging = false,
             dragTools = document.querySelector('ul.tools_group.tools_drag');
         
         // catch touchevent and simulate a corresponding mouse event
@@ -1198,10 +1240,22 @@ Editor.prototype = {
                     touchDragging = false;
                 }
             });
+        */
+        $(".biomodels_start").click(function(){
+            $(this).hide();
+            $(".biomodels_select").show();
+        });
+        $(".biomodels_select").hover(
+            function (){},
+            function (){
+                $(this).hide();
+                $(".biomodels_start").show();
+            }
+            );
         $(".biomodels_select li").hover(
             function (e) {
                 var ident = $(this).attr('bla');
-                console.log('should show '+ident+' top '+e.clientY+' left '+e.clientX);
+                //console.log('should show '+ident+' top '+e.clientY+' left '+e.clientX);
                 $('#'+ident).show();
                 $("body").mousemove(function(e){
                     $('#'+ident).css('top', e.clientY+15).css('left', e.clientX+15);
@@ -1225,6 +1279,23 @@ Editor.prototype = {
         $('.close_modal').click(function(){
             this_editor.modal.close();
         });
+        //-------------------------------------------------
+        //this is for touch devices
+        $('.language_current').click(function(){
+            $('.language_selection').fadeToggle();
+        });
+        //-------------------------------------------------
+        //remove selected nodes if del was pressed on the keyboard
+        $(document).keyup(function(e) {
+            if (e.keyCode == 46) { // us: del; german: entf
+                this_editor.delete_selected_nodes(); 
+            }
+            this_editor.shifted = e.shiftKey;
+        });
+        $(document).keydown(function(e){
+            this_editor.shifted = e.shiftKey} 
+        );
+        $('#del').click(function(){this_editor.delete_selected_nodes();})
     }
 };
 
