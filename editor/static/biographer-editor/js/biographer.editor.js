@@ -605,8 +605,6 @@ Editor.prototype = {
         this.graph.bind(
             bui.Graph.ListenerType.dragMove,
             function (graph, event) {
-                var x0, y0, dx, dy;
-                console.log('drag x0: '+event.detail.pageX+' x0: '+event.detail.x0+' dy: '+event.detail.dy);
                 if ((this_editor.cur_mode == 'cursor') || (this_editor.cur_mode == undefined)){
                     if (event.detail.x0>event.detail.pageX){
                         box.style.left = event.detail.pageX;
@@ -904,7 +902,6 @@ Editor.prototype = {
         $('#layout_grahviz').click(function(){
             //FIXME!!!
             $.getJSON(editor_config.url_layout+'.json?layout=graphviz', function(data) {
-                editor_config.history_undo.push(data.action);
                 this_editor.showUndoRedo();
                 bui.importUpdatedNodePositionsFromJSON(this_editor.graph, data.graph, 300);
                 //redrawGraph(data.graph);
@@ -1311,8 +1308,9 @@ Editor.prototype = {
             this_editor.shifted = e.shiftKey;
         });
         $(document).keydown(function(e){
-            this_editor.shifted = e.shiftKey} 
-        );
+            this_editor.shifted = e.shiftKey
+        });
+        this_editor.shifted = true;
         $('#del').click(function(){this_editor.delete_selected_nodes();})
     }
 };
