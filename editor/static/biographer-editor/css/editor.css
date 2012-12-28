@@ -223,6 +223,7 @@ h3.section.down {
     line-hight: 40px;
     position: relative;
     margin: 5px 0 5px 0;
+    cursor: pointer;
 }
 .editor_menu img {
     position: relative;
@@ -290,6 +291,7 @@ h3.section.down {
     list-style: none;
     border-radius: 5px;
     position: relative;
+    cursor: pointer;
 }
 .tools_group img {
     display: block;
@@ -337,6 +339,7 @@ h3.section.down {
     width: 35px;
     height: 35px;
     display: inline-block;
+    cursor: pointer;
 }
 .zoom_menu li div {
     top: -30px;
@@ -455,21 +458,7 @@ input[type="text"] {
 .biomodels_select li:hover{
     background-color: #FFFFF0;
 }
-/*
-.biomodels_select:hover li{
-    display:block;
-}
-.biomodels_select li{
-    display: none;
-}
-.biomodels_select li:first-child {
-    display:block;
-}*/
-/**********************************/
-/*select box*/
-#box {
-    border: dashed 1px solid;
-}
+
 /**********************************/
 
 /***************************

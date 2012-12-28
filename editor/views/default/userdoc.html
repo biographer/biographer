@@ -9,9 +9,14 @@ To create a SBGN visualization from scratch first select the SBGN language you w
     <li>ER - Entity Relation</li>
     <li>AF - Activity Flow</li>
 </ul>
-Now start dragging the different node types below onto the canvas. You can draw Edges by using the edge tool <img src="{{=URL(request.application, 'static/biographer-editor/img', 'edge.png')}}" id="Edge" class="tool"/> or the spline tool <img src="{{=URL(request.application, 'static/biographer-editor/img', 'spline.png')}}" id="Spline" class="tool"/>. Click on the tool and then click on two nodes you want to connect with an edge. In the modal popup you can choose the edge type. 
+<h4>Creating Nodes</h4>
+Click on one of the different node types in the left menu and click onto the canvas to create the node at that position. A modal window will appear where you can enter the node label and change other node properties. 
+<h4>Creating Edges</h4>
+You can draw Edges by using the edge tool <div id="Edge" class="tool"></div> or the spline tool <div id="Spline" class="tool"></div>. Click on the tool and then click on two nodes you want to connect with an edge. Once two nodes are clicked a nodal popup will appear where you can choose the edge type. 
+<h4>Deleting Nodes</h4>
+To delete nodes select the nodes and press <div class="keyboard">Del</div> on your keyboard <br>or use the delete tool <div class="tool" id="del"></div>
 <h3>Importing</h3>
-Biographer can import SBGN graphs (with and without layout) from different sources. Use the import icon <img src="{{=URL(request.application, 'static/biographer-editor/img', 'import_file.png')}}"/> to open up the import modal popup. There you can either upload your personal docuemtns in one of the following formats:
+Biographer can import SBGN graphs (with and without layout) from different sources. Use the import icon <div class="tool" id="import_file"></div> to open up the import modal popup. There you can either upload your personal docuemtns in one of the following formats:
 <ul>
     <li><b>jSBGN</b><br>
         is Biographers native format. Is can contain only topological information or may also include proper layout information for all glyps in the graph.
@@ -26,15 +31,15 @@ Biographer can import SBGN graphs (with and without layout) from different sourc
 <h2>Layout</h2>
 To help you laying our your SBGN graphs Biographer currenly provides tree automatic layout algorightms.
 <ul>
-    <li><img src="{{=URL(request.application, 'static/biographer-editor/img', 'biographer.png')}}"/> biographer.flow <br>
+    <li><div class="tool" id="layout_biographer"></div> biographer.flow <br>
         Respects compartments
     </li>
-    <li><img src="{{=URL(request.application, 'static/biographer-editor/img', 'grid.png')}}"/> biographer.grid <br>
-        Respects compartments <br>
+    <li><div class="tool" id="layout_grid"></div> biographer.grid <br>
+        Respects compartments (but the compartments have to be layed out manually)<br>
         If you click once only one iteration of optimization for each nodes its executed. For better results apply this layout multiple times. Once the layout is stuck in a local minmum you can manually move some nodes and apply the layout again. You will see that this greatly improves the layout. <br>
         Holding down the <div class="keyboard">ctrl</div> key while clicking the grid layout button will only place each node on the cosest empty grid space. This can be used to quickly create great looking layouts manually.
     </li>
-    <li><img src="{{=URL(request.application, 'static/biographer-editor/img', 'd3_force.png')}}"/> D3 force directed layout <br>
+    <li><div class="tool" id="layout_force"></div> D3 force directed layout <br>
         Compartments are not supported <br>
         Uses the fantastic <a href="http://d3js.org/">D3 library</a>
     </li>
@@ -44,13 +49,13 @@ The Align functions always align to the <b>first selected node</b>.
 <h2>Navigation</h2>
 <h3>Zooming</h3>
 Since <div class="keyboard">ctrl + scroll</div> is already taken by the default zoom function in many browsers (like FireFox and Opera) biographer uses <div class="keyboard">alt + scroll</div> for zooming. <br>
-If you are using a touch enable device you can use the <b>pinch gesture</b> (move two fingers twards each other or away from each other) to zoom.<br>
+If you are using a touch enable device you can use the <b>pinch gesture</b> (move two fingers towards each other or away from each other) to zoom.<br>
 You can also zoom by using the zoom buttons. <br>
 <img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_in.png')}}"/> to zoom in <br>
 <img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_out.png')}}"/> to zoom out <br>
 <img src="{{=URL(request.application, 'static/biographer-editor/img', 'one.png')}}"/> to get the original size
 <h3>Panning</h3>
-<img src="{{=URL(request.application, 'static/biographer-editor/img', 'move.png')}}" id="move" class="tool"/> this tool can be used to pan the canvas - to move the whole canvas.
+<div id="move" class="tool"></div> this tool can be used to pan the canvas - to move the whole canvas.
 <h2>Exporting</h2>
 <img src="{{=URL(request.application, 'static/biographer-editor/img', 'export.png')}}"/> Exporting images is supported for several document formats:
 <ul>
@@ -58,7 +63,7 @@ You can also zoom by using the zoom buttons. <br>
 Biographers native exchange format is jSBGN (<a href="http://code.google.com/p/biographer/wiki/graph_exchange">described here</a>). This format ideal for transmission in the web and does only require topological information. 
     </li>
     <li><b>SVG</b><br>
-Biographer natively renders the images in you browser in the SVG format. To export the SVG image click on <br> <img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_svg.png')}}"/> 
+Biographer natively renders the images in you browser in the SVG format. To export the SVG image click on
     </li>
     <li><b>other formats</b><br>
         With the help of an external Java based library biographer is also able to export to 
@@ -70,9 +75,18 @@ Biographer natively renders the images in you browser in the SVG format. To expo
     </li>
 </ul>
 <h3>Converting Document Formats</h3>
-Go <a href="{{=URL('convert')}}">here</a> to convert between jSBGN, SBGN-ML and SBML using the <a href="https://github.com/chemhack/libSBGN.js">libSBGN.js library</a>.
+Go <a href="{{=URL('convert')}}">here</a> to convert between jSBGN, SBGN-ML and SBML using the <a href="https://github.com/chemhack/libSBGN.js">libSBGN.js library</a>. This is still under development and might not return what you expect.
+<h1>SBGN Support</h1>
+Biographer currently does not support the full SBGN specification. Missing glyphs include:
+<ul>
+    <li>Multimeres</li>
+    <li>Submap</li>
+    <li>3 way interaction circle ... todo look up the correct glyph name</li>
+    <li>Notes</li>
+</ul>
+Also missing are clone markers and node ports (the little ends on e.g. process nodes).
 <h1>System Requirements</h1>
-Biographer currently works best with Chromium (Chrome) and FireFox (slow for working with lager graphs). Opera currently does not render properly. Internet Explorer and Safari are not actively tested (Please do not use these browsers with biographer).
+Biographer currently works best with Chromium (Chrome), Opera and FireFox. Internet Explorer and Safari are not actively tested (Please do not use these browsers with biographer).
 <h1>Problems and Support</h1>
 If you want to talk to us please contact us on our <a href="https://groups.google.com/forum/?fromgroups#!forum/biographer">google group #biographer</a>.
 <br>
@@ -84,7 +98,7 @@ bug tracker
         width: 600px;
         margin-left: 50px;
     }
-    h1, h2, h3 {
+    h1, h2, h3, h4 {
         background-color: #eee;
     }
     ul {
@@ -92,6 +106,11 @@ bug tracker
     }
     ul ul {
         padding: 15px;
+    }
+    .tool {
+        width: 35px;
+        height: 35px;
+        display: inline-block;
     }
     .keyboard {
         display: inline-block;
