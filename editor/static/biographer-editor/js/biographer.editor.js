@@ -1189,7 +1189,7 @@ Editor.prototype = {
             this_editor.setMode('node');
             $('.active').removeClass('active');
             $(this).addClass('active');
-            var nodetype = $(this).find('img').attr('id');
+            var nodetype = $(this).attr('id');
             $('.follow').hide();
             $('#follow_'+nodetype).show();
             $("#canvas").mousemove(function(e){
