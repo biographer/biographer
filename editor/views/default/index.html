@@ -3,100 +3,55 @@
 	<tr>
 		<td></td>
 		<td>
+<ul class="zoom_menu">
+	<li class="scale" data-rate='0.1'> 
+		<div>zoom in</div>
+		<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_in.png')}}"/> 
+		&nbsp;
+	</li>
+	<li class="scale" data-rate='-0.1'> 
+		<div>zoom out</div>
+		<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_out.png')}}"/> 
+		&nbsp;
+	</li>
+	<li id='scale1'> 
+		<div>scale to default size</div>
+		<img src="{{=URL(request.application, 'static/biographer-editor/img', 'one.png')}}"/> 
+		&nbsp;
+	</li>
+	<li id="fit_to_screen"> 
+		<div>fit to page</div>
+		<img src="{{=URL(request.application, 'static/biographer-editor/img', 'fit_to_screen.png')}}"/> 
+		&nbsp;
+	</li>
+	<!-- ---------------------------------------------------------------- -->
+	<li class="spacer"></li>
+</ul>
 			<ul class="editor_menu">
 				{{if not request.vars.html5only:}}
-				<li id="save_to_session"> 
-				<div>save current network to session</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'disk.png')}}"/> 
-				&nbsp;
-				</li>
+				<li id="save_to_session"> <div>save current network to session</div> </li>
 				{{pass}}
-				<li id="clear"> 
-				<div>clear the canvas</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'trash.png')}}"/> 
-				&nbsp;
-				</li>
+				<li id="clear"> <div>clear the canvas</div> </li>
 				<!-- ---------------------------------------------------------------- -->
+				<li class="spacer"></li> 
+				<li id="undo"> <div>undo</div> </li> 
+				<li id="redo"> <div>redo</div> </li>
+				<!-- ---------------------------------------------------------------- -->
+				<li class="spacer"></li>
+				<li id="import_file"> <div><b>import</b> graph from : JSON file, SBML file, BioModels.net, Reactome </div> </li>
+				<li id="export_other"> <div>export current graph as: png,jpeg,pdf,tiff</div> </li>
+				<!-- ---------------------------------------------------------------- -->
+				<li class="spacer"></li>
 				{{if not request.vars.html5only:}}
-				<li class="spacer"></li>
-                <li id="bug" {{="class=fkt_active" if session.debug else ""}}> 
-				<div>switch to debug mode</div>
-                <a href="{{=URL('debug')}}"><img src="{{=URL(request.application, 'static/biographer-editor/img', 'bug.png')}}"/></a>
-				&nbsp;
-				</li>
-				<li id="reset"> 
-				<div>reset biographer</div>
-                <a href="{{=URL('reset')}}"><img src="{{=URL(request.application, 'static/biographer-editor/img', 'reset.png')}}"/></a>
-				&nbsp;
-				</li>
-				<!-- ---------------------------------------------------------------- -->
+				<li id="layout_biographer"> <div>apply automatic <b>biographer</b> layout</div> </li>
 				{{pass}}
-				<li class="spacer"></li>
-				<li id="undo"> 
-				<div>undo</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'undo.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id="redo"> 
-				<div>redo</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'redo.png')}}"/> 
-				&nbsp;
-				</li>
-				<!-- ---------------------------------------------------------------- -->
-				<li class="spacer"></li>
-				<li id="import_file"> 
-				<div><b>import</b> graph from : JSON file, SBML file, BioModels.net, Reactome </div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'import_file.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id="export_other"> 
-				<div>export current graph as: png,jpeg,pdf,tiff</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export.png')}}"/> 
-				&nbsp;
-				</li>
-				<!-- ---------------------------------------------------------------- -->
-				<li class="spacer"></li>
-				<li id="layout_grid"> 
-				<div>apply <b>grid based</b> layout in browser (if ctrl+click the grid is only initialized)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'grid.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id="layout_force"> 
-				<div>apply <b>D3 force based</b> layout in browser</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'd3_force.png')}}"/> 	
-				&nbsp;
-				</li>
-				{{if not request.vars.html5only:}}
-				<li id="layout_biographer"> 
-				<div>apply automatic <b>biographer</b> layout</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'biographer.png')}}"/> 
-				&nbsp;
-				</li>
-				{{pass}}
-				<li id="clone"> 
-				<div>clone selected objects (or all) with with edge degree &gt; 5</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'clone.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id="combine"> 
-				<div>combine selected objects</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'combine.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='straighten_and_distribute' class="fkt_active"> 
-				<div>enable/disable: straighten edges and distributen all points on edges equally</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'straighten_and_distribute.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='hide_handles'> 
-				<div>hide/show all edge handles</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'hide_handle.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='del'>
-				<div>delete selected nodes (or press <b>del</b>)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cross.png')}}"/>
-				</li>
+				<li id="layout_grid"> <div>apply <b>grid based</b> layout in browser (if ctrl+click the grid is only initialized)</div> </li>
+				<li id="layout_force"> <div>apply <b>D3 force based</b> layout in browser</div> </li>
+				<li id="clone"> <div>clone selected objects (or all) with with edge degree &gt; 5</div> </li>
+				<li id="combine"> <div>combine selected objects</div> </li>
+				<li id='straighten_and_distribute' class="fkt_active"> <div>enable/disable: straighten edges and distributen all points on edges equally</div> </li>
+				<li id='hide_handles'> <div>hide/show all edge handles</div> </li>
+				<li id='del'> <div>delete selected nodes (or press <b>del</b>)</div> </li>
 				<!-- li id="layout_grahviz"> 
 				<div>apply automatic <b>graphviz</b> layout</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'graphviz.png')}}"/> 
@@ -104,81 +59,28 @@
 				</li -->
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
-				<li class="scale" data-rate='0.1'> 
-				<div>zoom in</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_in.png')}}"/> 
-				&nbsp;
-				</li>
-				<li class="scale" data-rate='-0.1'> 
-				<div>zoom out</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_out.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='scale1'> 
-				<div>scale to default size</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'one.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id="fit_to_screen"> 
-				<div>fit to page</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'fit_to_screen.png')}}"/> 
-				&nbsp;
-				</li>
+				<li id='edit_all_nodes'> <div>resize/move all nodes</div> </li>
+				<li id='edit_no_nodes'> <div>resize/move no nodes</div> </li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
-				<li id='edit_all_nodes'> 
-				<div>resize/move all nodes</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'select_all.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='edit_no_nodes'> 
-				<div>resize/move no nodes</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'select_none.png')}}"/> 
-				&nbsp;
-				</li>
+				<li id='align_vertical'> <div>align selected nodes vertically</div> </li>
+				<li id='align_hoizontal'> <div>align selected nodes horizontally</div> </li>
+				<li id='align_top'> <div>align selected nodes top</div> </li>
+				<li id='align_bottom'> <div>align selected nodes bottom</div> </li>
+				<li id='align_left'> <div>align selected nodes left</div> </li>
+				<li id='align_right'> <div>align selected nodes right</div> </li>
+				<li id='horizontal_gaps_equal'> <div>make the distances of horizontal gaps between nodes equal</div> </li>
+				<li id='vertical_gaps_equal'> <div>make the distances of vertical gaps between nodes equal</div> </li>
 				<!-- ---------------------------------------------------------------- -->
+				{{if not request.vars.html5only:}}
 				<li class="spacer"></li>
-				<li id='align_vertical'> 
-				<div>align selected nodes vertically</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_vertical.png')}}"/> 
+                <!-- li id="bug" {{="class=fkt_active" if session.debug else ""}}> 
+				<div>switch to debug mode</div>
+                <a href="{{=URL('debug')}}"><img src="{{=URL(request.application, 'static/biographer-editor/img', 'bug.png')}}"/></a>
 				&nbsp;
-				</li>
-				<li id='align_hoizontal'> 
-				<div>align selected nodes horizontally</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_hoizontal.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='align_left'> 
-				<div>align selected nodes left</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_left.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='align_top'> 
-				<div>align selected nodes top</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_top.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='align_right'> 
-				<div>align selected nodes right</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_right.png')}}"/> 
-				&nbsp;
-				</li>
-				</li>
-				<li id='align_bottom'> 
-				<div>align selected nodes bottom</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'align_bottom.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='horizontal_gaps_equal'> 
-				<div>make the distances of horizontal gaps between nodes equal</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'horizontal_gaps_equal.png')}}"/> 
-				&nbsp;
-				</li>
-				<li id='vertical_gaps_equal'> 
-				<div>make the distances of vertical gaps between nodes equal</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'vertical_gaps_equal.png')}}"/> 
-				&nbsp;
-				</li>
+				</li -->
+				<li id="reset"> <div>reset biographer</div> </li>
+				{{pass}}
 			</ul>
 		</td>
 	</tr>
@@ -209,11 +111,11 @@
 				<div>draw spline</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'spline.png')}}" id="Spline" class="tool"/>
 				</li>	
-				<li id="focus"> 
+				<!-- li id="focus"> 
 				<div>focus to node</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus.png')}}"/> 
 				&nbsp;
-				</li>
+				</li -->
 			</ul>
 			<ul class="tools_group tools_drag">
 				<li>
@@ -455,7 +357,7 @@
 			     &nbsp;
           <div id="marker_select_box">
             <div class="marker_select" id="marker_none">
-              <div> none </div>
+              <div> ... click to open </div>
               <img src="{{=URL(request.application, 'static/biographer-editor/img', 'slide_down.png')}}"/> 
             </div>
             <div class="marker_select PD" id="substrate">
