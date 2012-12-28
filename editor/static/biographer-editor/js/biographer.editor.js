@@ -120,10 +120,8 @@ Editor.prototype = {
         this.last_save = jsong;
         $.ajax({
             url: editor_config.url_undo_push,
-            data : {
-                graph: jsong,
-                action: action
-            },
+            data : {graph: jsong, action: action },
+            type: 'POST',
             success: function( data ) {
                 $('.flash').html('Saved '+action).fadeIn().delay(800).fadeOut();
             },
@@ -1020,19 +1018,28 @@ Editor.prototype = {
             this_editor.modal.close();
             $('.flash').html('Loading BioModel BIOM'+bmid).fadeIn().delay(800).fadeOut();
             $.ajax({
-                url: editor_config.url_import,
+                url: editor_config.url_import+".json",
                 data : {
                     biomodel_id: bmid
                 },
+                dataType: 'json',
                 success: function( data ) {
-                    var doc = sb.io.read(data);
-                    if((doc === null)||(doc === undefined)){
-                        $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                    if (data.is_jsbgn == true){
+                        this_editor.redrawGraph(JSON.parse(data.graph));
+                        this_editor.md5 = data.md5;
+                        this_editor.undoPush('loaded layed out BioModel '+bmid);
+                        //$('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
                     }else{
-                        console.log(sb.io.write(doc, 'jsbgn'));
-                        this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                        this_editor.undoPush('loaded BioModel '+bmid);
-                        $('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
+                        this_editor.md5 = data.md5
+                        var doc = sb.io.read(data.graph);
+                        if((doc === null)||(doc === undefined)){
+                            $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                        }else{
+                            //console.log(sb.io.write(doc, 'jsbgn'));
+                            this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                            this_editor.undoPush('loaded BioModel '+bmid);
+                            //$('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
+                        }
                     }
                 },
                 error: function (){
@@ -1281,14 +1288,14 @@ Editor.prototype = {
             function (e) {
                 var ident = $(this).attr('bla');
                 //console.log('should show '+ident+' top '+e.clientY+' left '+e.clientX);
-                $('#'+ident).show();
-                $("body").mousemove(function(e){
+                /*$('#'+ident).show();
+                $(".biomodels_select").mousemove(function(e){
                     $('#'+ident).css('top', e.clientY+15).css('left', e.clientX+15);
-                });
+                });*/
             },
             function(){
                 $('#'+$(this).attr('bla')).hide();
-                $("body").unbind('mousemove');
+                $("biomodels_select").unbind('mousemove');
             }
         );
         //-------------------------------------------------
@@ -1299,6 +1306,20 @@ Editor.prototype = {
             $('.language_selection div').removeClass('lang_selected');
             $('.language_selection .'+$(this).html()).addClass('lang_selected');
             this_editor.set_language();
+        });
+        //-------------------------------------------------
+        $('#store_layout').click(function(){
+            $.ajax({
+                url: editor_config.url_undo_push,
+                data : {graph: JSON.stringify(this_editor.graph.toJSON()), action: 'layout stored', md5: this_editor.md5},
+                type: 'POST',
+                success: function( data ) {
+                    $('.flash').html('Saved layout of '+this_editor.md5).fadeIn().delay(800).fadeOut();
+                },
+                error: function (){
+                    $('.flash').html('Could not save layout');
+                }
+            });
         });
         //-------------------------------------------------
         $('.close_modal').click(function(){
@@ -1315,7 +1336,7 @@ Editor.prototype = {
             if (event.keyCode == 46) { // us: del; german: entf
                 this_editor.delete_selected_nodes(); 
             }
-            console.log('shift '+event.shiftKey);
+            //console.log('shift '+event.shiftKey);
             this_editor.shifted = event.shiftKey;
         });
         $(document).keydown(function(event){
@@ -1329,8 +1350,7 @@ Editor.prototype = {
                     return false;
                 }            
             }        
-            
-            console.log('down shift '+event.shiftKey)
+            //console.log('down shift '+event.shiftKey)
             this_editor.shifted = event.shiftKey
         });
         this_editor.shifted = false;

@@ -55,10 +55,18 @@ def reset():
     redirect(URL('index'))
 
 def import_graph():
+    response.generic_patterns = ['html', 'json']
     action, graph, json_string = None, None, None
 
     if request.vars.biomodel_id:
-        return biomodel_fetch(request.vars.biomodel_id)
+        biom = biomodel_fetch(request.vars.biomodel_id)
+        import hashlib
+        m = hashlib.md5(biom)
+        print request.vars.biomodel_id, m.hexdigest()
+        record = db(db.layout_store.md5 == m.hexdigest()).select().first()
+        if record:
+            return dict(md5=m.hexdigest(), graph=record.jsbgn, is_jsbgn=True)
+        return dict(md5=m.hexdigest(), graph = biom)
     if request.vars.reactome_id:
         return reactome_fetch(request.vars.reactome_id)
     if action and graph and json_string:
@@ -104,7 +112,6 @@ def layout():
 def autosave():
     session.editor_autosave = request.vars.json
 
-
 def undo_push():
     session.editor_autosave = request.vars.graph
     #create history
@@ -114,6 +121,16 @@ def undo_push():
     #pop if history is "full"
     if len(session.editor_histroy_undo) >= 100:
         session.editor_histroy_undo.pop(0)
+    if request.vars.md5:
+        record = db(db.layout_store.md5 == request.vars.md5).select().first()
+        if record:
+            print 'md5 store layout',record.id
+            db.layout_store[record.id].update_record(jsbgn = request.vars.graph)
+        else:
+            print 'md5 init layout'
+            db.layout_store.insert(md5 = request.vars.md5, jsbgn = request.vars.graph)
+
+
     #add current result to history
     session.editor_histroy_undo.append(dict(action=request.vars.action, graph=simplejson.loads(request.vars.graph)))
 

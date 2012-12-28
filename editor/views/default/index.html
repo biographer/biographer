@@ -63,6 +63,9 @@
 				</li -->
 				<li id="reset"> <div>reset biographer</div> </li>
 				{{pass}}
+				{{if auth.has_membership('admin'):}}
+				<li id="store_layout"> SL <div>store layout</div> </li>
+				{{pass}}
 			</ul>
 		</td>
 	</tr>
