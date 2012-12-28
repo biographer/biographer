@@ -160,10 +160,9 @@ td {
     border: solid 1px #ddd;
 }
 .language_current {
-    margin: -5px;
     padding: 5px;
-    width: 22px;
-    height: 22px;
+    width: 25px;
+    height: 25px;
     border-radius: 5px;
     display: inline-block;
     background-color: #eee;
@@ -237,31 +236,31 @@ h3.section.down {
     top: -7px;
 }
 
-#save_to_session {background: url('../img/top_menu.sprite.png') 0 0; }
-#clear {background: url('../img/top_menu.sprite.png') 0 -35px; }
-#del {background: url('../img/top_menu.sprite.png') 0 -70px; }
-#redo {background: url('../img/top_menu.sprite.png') 0 -105px; }
-#undo {background: url('../img/top_menu.sprite.png') 0 -140px; }
-#import_file {background: url('../img/top_menu.sprite.png') 0 -175px; }
-#export_other {background: url('../img/top_menu.sprite.png') 0 -210px; }
-#layout_biographer {background: url('../img/top_menu.sprite.png') 0 -245px; }
-#layout_grid {background: url('../img/top_menu.sprite.png') 0 -280px; }
-#layout_force {background: url('../img/top_menu.sprite.png') 0 -315px; }
-#align_hoizontal {background: url('../img/top_menu.sprite.png') 0 -350px; }
-#align_vertical {background: url('../img/top_menu.sprite.png') 0 -385px; }
-#align_top {background: url('../img/top_menu.sprite.png') 0 -420px; }
-#align_bottom {background: url('../img/top_menu.sprite.png') 0 -455px; }
-#align_left {background: url('../img/top_menu.sprite.png') 0 -490px; }
-#align_right {background: url('../img/top_menu.sprite.png') 0 -525px; }
-#vertical_gaps_equal {background: url('../img/top_menu.sprite.png') 0 -560px; }
-#horizontal_gaps_equal {background: url('../img/top_menu.sprite.png') 0 -595px; }
-#clone {background: url('../img/top_menu.sprite.png') 0 -630px; }
-#combine {background: url('../img/top_menu.sprite.png') 0 -665px; }
-#reset {background: url('../img/top_menu.sprite.png') 0 -700px; }
-#hide_handles {background: url('../img/top_menu.sprite.png') 0 -735px; }
-#straighten_and_distribute {background: url('../img/top_menu.sprite.png') 0 -770px; }
-#edit_all_nodes {background: url('../img/top_menu.sprite.png') 0 -805px; }
-#edit_no_nodes {background: url('../img/top_menu.sprite.png') 0 -840px; }
+#save_to_session {background: url('../img/biographer.sprites.png') 0 0; }
+#clear {background: url('../img/biographer.sprites.png') 0 -35px; }
+#del {background: url('../img/biographer.sprites.png') 0 -70px; }
+#redo {background: url('../img/biographer.sprites.png') 0 -105px; }
+#undo {background: url('../img/biographer.sprites.png') 0 -140px; }
+#import_file {background: url('../img/biographer.sprites.png') 0 -175px; }
+#export_other {background: url('../img/biographer.sprites.png') 0 -210px; }
+#layout_biographer {background: url('../img/biographer.sprites.png') 0 -245px; }
+#layout_grid {background: url('../img/biographer.sprites.png') 0 -280px; }
+#layout_force {background: url('../img/biographer.sprites.png') 0 -315px; }
+#align_hoizontal {background: url('../img/biographer.sprites.png') 0 -350px; }
+#align_vertical {background: url('../img/biographer.sprites.png') 0 -385px; }
+#align_top {background: url('../img/biographer.sprites.png') 0 -420px; }
+#align_bottom {background: url('../img/biographer.sprites.png') 0 -455px; }
+#align_left {background: url('../img/biographer.sprites.png') 0 -490px; }
+#align_right {background: url('../img/biographer.sprites.png') 0 -525px; }
+#vertical_gaps_equal {background: url('../img/biographer.sprites.png') 0 -560px; }
+#horizontal_gaps_equal {background: url('../img/biographer.sprites.png') 0 -595px; }
+#clone {background: url('../img/biographer.sprites.png') 0 -630px; }
+#combine {background: url('../img/biographer.sprites.png') 0 -665px; }
+#reset {background: url('../img/biographer.sprites.png') 0 -700px; }
+#hide_handles {background: url('../img/biographer.sprites.png') 0 -735px; }
+#straighten_and_distribute {background: url('../img/biographer.sprites.png') 0 -770px; }
+#edit_all_nodes {background: url('../img/biographer.sprites.png') 0 -805px; }
+#edit_no_nodes {background: url('../img/biographer.sprites.png') 0 -840px; }
 
 .tools_group li>div, .editor_menu li>div, .zoom_menu li>div {
     display: none;
@@ -286,9 +285,8 @@ h3.section.down {
 }
 .tools_group li {
     /*list-style: none*/
-    padding: 5px;
-    width: 22px;
-    height: 22px;
+    width: 35px;
+    height: 35px;
     list-style: none;
     border-radius: 5px;
     position: relative;
@@ -302,12 +300,33 @@ h3.section.down {
     background-color: #ddd;
 }
 .tools_group li.active, li.fkt_active {
-    background-color: #eee;
+    background-color: #eee !important;
     border-radius: 5px;
 }
 .tools_group li>div {
     left: 40px;
 }
+#cursor {background: url('../img/biographer.sprites.png') -35px 0; }
+#move {background: url('../img/biographer.sprites.png') -35px -35px; }
+#Edge {background: url('../img/biographer.sprites.png') -35px -70px; }
+#Spline {background: url('../img/biographer.sprites.png') -35px -105px; }
+#edit {background: url('../img/biographer.sprites.png') -35px -140px; }
+
+#SimpleChemical {background: url('../img/biographer.sprites.png') -70px 0px; }
+#Macromolecule {background: url('../img/biographer.sprites.png') -70px -35px; }
+#UnspecifiedEntity {background: url('../img/biographer.sprites.png') -70px -70px; }
+#NucleicAcidFeature {background: url('../img/biographer.sprites.png') -70px -105px; }
+#Compartment {background: url('../img/biographer.sprites.png') -70px -140px; }
+#Complex {background: url('../img/biographer.sprites.png') -70px -175px; }
+#Process {background: url('../img/biographer.sprites.png') -70px -210px; }
+#Perturbation {background: url('../img/biographer.sprites.png') -70px -245px; }
+#Phenotype {background: url('../img/biographer.sprites.png') -70px -280px; }
+#EmptySet {background: url('../img/biographer.sprites.png') -70px -315px; }
+#Association {background: url('../img/biographer.sprites.png') -70px -350px; }
+#LogicalOperator {background: url('../img/biographer.sprites.png') -70px -385px; }
+#Dissociation {background: url('../img/biographer.sprites.png') -70px -420px; }
+#RectangularNode {background: url('../img/biographer.sprites.png') -70px -455px; }
+#Tag {background: url('../img/biographer.sprites.png') -70px -490px; }
 /**********************************/
 .zoom_menu {
     position: fixed;
@@ -315,13 +334,18 @@ h3.section.down {
     right: 0;
 }
 .zoom_menu li {
+    width: 35px;
+    height: 35px;
     display: inline-block;
 }
 .zoom_menu li div {
     top: -30px;
     left: 0px;
 }
-
+#zoom_in {background: url('../img/biographer.sprites.png') -105px -0px; }
+#zoom_out {background: url('../img/biographer.sprites.png') -105px -35px; }
+#scale1 {background: url('../img/biographer.sprites.png') -105px -70px; }
+#fit_to_screen {background: url('../img/biographer.sprites.png') -105px -105px; }
 /**********************************/
 .disabled {
     opacity: .3;

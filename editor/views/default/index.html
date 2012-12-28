@@ -4,28 +4,10 @@
 		<td></td>
 		<td>
 <ul class="zoom_menu">
-	<li class="scale" data-rate='0.1'> 
-		<div>zoom in</div>
-		<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_in.png')}}"/> 
-		&nbsp;
-	</li>
-	<li class="scale" data-rate='-0.1'> 
-		<div>zoom out</div>
-		<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_out.png')}}"/> 
-		&nbsp;
-	</li>
-	<li id='scale1'> 
-		<div>scale to default size</div>
-		<img src="{{=URL(request.application, 'static/biographer-editor/img', 'one.png')}}"/> 
-		&nbsp;
-	</li>
-	<li id="fit_to_screen"> 
-		<div>fit to page</div>
-		<img src="{{=URL(request.application, 'static/biographer-editor/img', 'fit_to_screen.png')}}"/> 
-		&nbsp;
-	</li>
-	<!-- ---------------------------------------------------------------- -->
-	<li class="spacer"></li>
+	<li id="zoom_in" class="scale" data-rate='0.1'> <div>zoom in</div> </li>
+	<li id="zoom_out" class="scale" data-rate='-0.1'> <div>zoom out</div> </li>
+	<li id='scale1'> <div>scale to default size</div> </li>
+	<li id="fit_to_screen"> <div>fit to page</div> </li>
 </ul>
 			<ul class="editor_menu">
 				{{if not request.vars.html5only:}}
@@ -87,30 +69,15 @@
 	<tr>
 		<td>
 			<ul class="tools_group tools_click">
-				<li class="active" id='cursor'>
-				<div>select<br />ctrl+click to move and resize</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cursor.png')}}" id="cursor" class="tool"/>
-				</li>
-				<li id='move'>
-				<div>move selected items</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'move.png')}}" id="move" class="tool"/>
-				</li>
+				<li class="active" id='cursor'> <div>select<br />ctrl+click to move and resize</div> </li>
+				<li id='move'> <div>move selected items</div> </li>
 				<!--li id='selection'>
 				<div>click to start drawing selection rectangle, click again to finish selection</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'selection.png')}}" id="selection" class="tool"/>
 				</li -->
-				<li id='edit'>
-				<div>edit</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'wrench.png')}}" id="edit" class="tool"/>
-				</li>
-				<li id='Edge'>
-				<div>draw edge</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'edge.png')}}" id="Edge" class="tool"/>
-				</li>
-				<li id='Spline'>
-				<div>draw spline</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'spline.png')}}" id="Spline" class="tool"/>
-				</li>	
+				<li id='edit'> <div>edit</div> </li>
+				<li id='Edge'> <div>draw edge</div> </li>
+				<li id='Spline'> <div>draw spline</div> </li>
 				<!-- li id="focus"> 
 				<div>focus to node</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus.png')}}"/> 
@@ -118,7 +85,7 @@
 				</li -->
 			</ul>
 			<ul class="tools_group tools_drag">
-				<li>
+				<li class="PD ER AF">
 					<span class="language">
 						<div class="language_current">PD</div>
 						<div class="language_selection">
@@ -128,66 +95,21 @@
 						</div>
 					</span>
 				</li>
-				<li>
-				<div>SimpleChemical (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'SimpleChemical.png')}}" id="SimpleChemical" class="tool node PD"/>
-				</li>
-				<li>
-				<div>Macromolecule (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Macromolecule.png')}}" id="Macromolecule" class="tool node PD ER"/>
-				</li>
-				<li>
-				<div>NucleicAcidFeature (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'NucleicAcidFeature.png')}}" id="NucleicAcidFeature" class="tool node PD"/>
-				</li>
-				<li>
-				<div>UnspecifiedEntity (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'UnspecifiedEntity.png')}}" id="UnspecifiedEntity" class="tool node PD"/>
-				</li>
-				<li>
-				<div>Entity (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'RectangularNode.png')}}" id="RectangularNode" class="tool node ER AF"/>
-				</li>
-				<li>
-				<div>Perturbation (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Perturbation.png')}}" id="Perturbation" class="tool node PD ER AF"/>
-				</li>
-				<li>
-				<div>Phenotype (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Phenotype.png')}}" id="Phenotype" class="tool node PD ER AF"/>
-				</li>
-				<li>
-				<div>Compartment (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Compartment.png')}}" id="Compartment" class="tool node no_drop_complex PD AF"/>
-				</li>
-				<li>
-				<div>Complex (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Complex.png')}}" id="Complex" class="tool node PD"/>
-				</li>
-				<li>
-				<div>EmptySet (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'EmptySet.png')}}" id="EmptySet" class="tool node PD"/>
-				</li>
-				<li>
-				<div>Process (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Process.png')}}" id="Process" class="tool node no_drop_complex PD"/>
-				</li>
-				<li>
-				<div>Tag (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Tag.png')}}" id="Tag" class="tool node PD"/>
-				</li>
-				<li>
-				<div>LogicalOperator (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'LogicalOperator.png')}}" id="LogicalOperator" class="tool node PD ER"/>
-				</li>
-				<li>
-				<div>Association (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Association.png')}}" id="Association" class="tool node PD"/>
-				</li>
-				<li>
-				<div>Dissociation (drag me)</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'Dissociation.png')}}" id="Dissociation" class="tool node PD"/>
-				</li>
+				<li id="SimpleChemical" class="tool node PD"> <div>SimpleChemical (click me)</div> </li>
+				<li id="Macromolecule" class="tool node PD ER"> <div>Macromolecule (click me)</div> </li>
+				<li id="NucleicAcidFeature" class="tool node PD"> <div>NucleicAcidFeature (click me)</div> </li>
+				<li id="UnspecifiedEntity" class="tool node PD"> <div>UnspecifiedEntity (click me)</div> </li>
+				<li id="RectangularNode" class="tool node ER AF"> <div>Entity (click me)</div> </li>
+				<li id="Perturbation" class="tool node PD ER AF"> <div>Perturbation (click me)</div> </li>
+				<li id="Phenotype" class="tool node PD ER AF"> <div>Phenotype (click me)</div> </li>
+				<li id="Compartment" class="tool node no_drop_complex PD AF"/> <div>Compartment (click me)</div> </li>
+				<li id="Complex" class="tool node PD"> <div>Complex (click me)</div> </li>
+				<li id="EmptySet" class="tool node PD"> <div>EmptySet (click me)</div> </li>
+				<li id="Process" class="tool node no_drop_complex PD"> <div>Process (click me)</div> </li>
+				<li id="Tag" class="tool node PD"> <div>Tag (click me)</div> </li>
+				<li id="LogicalOperator" class="tool node PD ER"> <div>LogicalOperator (click me)</div> </li>
+				<li id="Association" class="tool node PD"> <div>Association (click me)</div> </li>
+				<li id="Dissociation" class="tool node PD"> <div>Dissociation (click me)</div> </li>
 			</ul>
 		</td>
 		<td>

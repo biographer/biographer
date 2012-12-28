@@ -689,13 +689,11 @@ Editor.prototype = {
     //set the SBGN language
     set_language: function(){
         var language_current = $('.language_current').html();
-        $('.tools_drag li img').each(function(){
-            console.log('checking '+$(this).attr('id'));
+        $('.tools_drag li').each(function(){
             if (! $(this).hasClass(language_current)){
-                $(this).parent().hide();
-                console.log('hiding '+$(this).attr('id'));
+                $(this).hide();
             } else {
-                $(this).parent().show();
+                $(this).show();
             }
         });
         $('.marker_select_box .marker_select').each(function(){
@@ -1184,9 +1182,10 @@ Editor.prototype = {
         }
         });
         //=========================
-        $('.node').parent().click(function(event){
-            event.stopPropagation();
+        $('.node').click(function(event){
+            event.stopPropagation();//because body gehts hooked up to click event
             this_editor.select_all(false);
+            console.log('node click set active '+$(this).attr('id'));
             this_editor.setMode('node');
             $('.active').removeClass('active');
             $(this).addClass('active');
