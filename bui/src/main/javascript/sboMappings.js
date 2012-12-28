@@ -11,7 +11,7 @@ addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
 addMapping(nodeMapping, [405, 357], bui.Perturbation);
 addMapping(nodeMapping, [358], bui.Phenotype);
 addMapping(nodeMapping, [253], bui.Complex);
-addMapping(nodeMapping, [290], bui.Compartment);
+addMapping(nodeMapping, [289, 290], bui.Compartment);
 addMapping(nodeMapping, [375, 167, 379, 396], bui.Process);
 addMapping(nodeMapping, [-1], bui.Helper);
 addMapping(nodeMapping, [110001], bui.VariableValue);
