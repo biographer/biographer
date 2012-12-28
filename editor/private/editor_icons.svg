@@ -170,11 +170,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="298.08296"
-     inkscape:cy="761.82603"
+     inkscape:zoom="0.5"
+     inkscape:cx="886.65906"
+     inkscape:cy="620.941"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g5303-6"
      showgrid="false"
      inkscape:window-width="1366"
      inkscape:window-height="717"
@@ -541,11 +541,11 @@
       <image
          sodipodi:absref="/home/select/Dev/biographer/editor/private/json160.gif"
          xlink:href="json160.gif"
-         y="355.62958"
-         x="441.27188"
-         id="image4606"
+         width="16.282143"
          height="16.282143"
-         width="16.282143" />
+         id="image4606"
+         x="441.27188"
+         y="355.62958" />
       <g
          transform="matrix(0.82646749,0,0,0.82646749,71.126843,64.96684)"
          id="g3226">
@@ -566,11 +566,11 @@
         <image
            sodipodi:absref="/home/select/Dev/biographer/editor/private/json160.gif"
            xlink:href="json160.gif"
-           y="351.69287"
-           x="447.86401"
-           id="image3224"
+           width="19.700888"
            height="19.700888"
-           width="19.700888" />
+           id="image3224"
+           x="447.86401"
+           y="351.69287" />
       </g>
     </g>
     <g
@@ -1753,7 +1753,10 @@
        inkscape:export-ydpi="90">
       <g
          transform="translate(-123.43839,-50.807653)"
-         id="g5051">
+         id="g5051"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
         <rect
            style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081"
@@ -1859,7 +1862,10 @@
            width="35"
            height="35"
            x="340.49997"
-           y="194.86221" />
+           y="194.86221"
+           inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
         <g
            id="g5303-6"
            transform="translate(34.017879,-60.554337)"
@@ -1870,7 +1876,10 @@
           <g
              id="g5390"
              transform="translate(13.796536,0)"
-             style="fill:none">
+             style="fill:none"
+             inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90">
             <rect
                style="fill:none;stroke:#666666;stroke-width:1.20000005000000010;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
                id="rect4284-09"
@@ -1897,14 +1906,20 @@
              style="fill:none;stroke:#ff0000;stroke-width:1.50000000000000000;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
              d="m 310.82388,286.90421 0,-27.97532"
              id="rect5264-0"
-             inkscape:connector-curvature="0" />
+             inkscape:connector-curvature="0"
+             inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90" />
           <g
              transform="matrix(-1,0,0,1.5012595,619.26129,-142.64905)"
              id="g5275-3-8"
-             style="fill:none">
+             style="fill:#000000"
+             inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+             inkscape:export-xdpi="90"
+             inkscape:export-ydpi="90">
             <path
                sodipodi:type="star"
-               style="fill:none;stroke:#000000;stroke-width:2.59581398999999990;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               style="fill:#000000;stroke:#000000;stroke-width:2.59581398999999990;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
                id="path4280-4-4-1-5"
                sodipodi:sides="3"
                sodipodi:cx="331.98663"
@@ -1920,7 +1935,7 @@
                transform="matrix(0,0.10262536,-0.15513933,0,371.3368,250.43382)"
                inkscape:transform-center-x="-4.5689092" />
             <path
-               style="fill:none;stroke:#000000;stroke-width:0.54383981000000003;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               style="fill:#000000;stroke:#000000;stroke-width:0.54383981000000003;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
                d="m 295.01022,284.50407 8.05403,0"
                id="rect4284-7-7-6-7-4-4"
                inkscape:connector-curvature="0"
@@ -1930,7 +1945,10 @@
       </g>
       <g
          transform="translate(-307.99999,95.00001)"
-         id="g5127">
+         id="g5127"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
         <rect
            style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0-7"
@@ -2005,7 +2023,10 @@
       </g>
       <g
          transform="translate(-183.99999,15.50001)"
-         id="g5158">
+         id="g5158"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
         <rect
            style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0-2"
@@ -2080,7 +2101,10 @@
       </g>
       <g
          transform="translate(-2.5000126,-9.0000053)"
-         id="g5039">
+         id="g5039"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
         <rect
            style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0-6"
@@ -2155,7 +2179,10 @@
       </g>
       <g
          transform="translate(-257.21081,80.00001)"
-         id="g5108">
+         id="g5108"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
         <rect
            style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0"
@@ -2305,7 +2332,10 @@
       </g>
       <g
          transform="translate(-327.74999,112.50001)"
-         id="g5139">
+         id="g5139"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
         <rect
            style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0-1"
@@ -2455,7 +2485,10 @@
       </g>
       <g
          transform="translate(-189.49999,-81.49999)"
-         id="g5065">
+         id="g5065"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
         <rect
            style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6"
