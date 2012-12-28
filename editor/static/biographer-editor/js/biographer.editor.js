@@ -209,7 +209,7 @@ Editor.prototype = {
         return function(drawable, select_status){
             if(drawable.drawableType()=='node'){
                 if ((this_editor.cur_mode == 'cursor')||(this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
-                    if ((this_editor.shifted == false)||(this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
+                    if ((this_editor.shifted == true)||(this_editor.cur_mode == 'Edge')||(this_editor.cur_mode == 'Spline')){
                         //shif key is down
                         //add all drawable to selection, if already selected remove selection
                         if (drawable.selected === true){
@@ -581,6 +581,7 @@ Editor.prototype = {
         this.graph.bind(
             bui.Graph.ListenerType.dragStart,
             function (graph, event) {
+                this_editor.selected_nodes = [];
                 this_editor.selection_borders = {};
                 if ((this_editor.cur_mode == 'cursor') || (this_editor.cur_mode == undefined)){
                     $('box').show();
@@ -630,7 +631,7 @@ Editor.prototype = {
                     }
 
                     
-                    this_editor.selected_nodes = [];
+                    
                     var all_drawables = this_editor.graph.drawables();
                     for (var key in all_drawables) {
                         var drawable = all_drawables[key];
@@ -643,12 +644,22 @@ Editor.prototype = {
                                 (pos_botm_rigt_abs.x<=this_editor.selection_borders.right) &&
                                 (pos_top_left_abs.y>=this_editor.selection_borders.top) &&
                                 (pos_botm_rigt_abs.y<=this_editor.selection_borders.bottom)){
-                                drawable.addClass('selected');
-                                drawable.selected = true;
-                                this_editor.selected_nodes.push(drawable);
+                                if (drawable.selected != true){
+                                    drawable.addClass('selected');
+                                    drawable.selected = true;
+                                    this_editor.selected_nodes.push(drawable);
+                                }
                             }else{
-                                drawable.removeClass('selected');
-                                drawable.selected = false;
+                                if (drawable.selected == true){
+                                    drawable.removeClass('selected');
+                                    drawable.selected = false;
+                                    for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
+                                        if (drawable == this_editor.selected_nodes[i]){
+                                            this_editor.selected_nodes.splice(i, 1);
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -1301,16 +1312,29 @@ Editor.prototype = {
         });
         //-------------------------------------------------
         //remove selected nodes if del was pressed on the keyboard
-        $(document).keyup(function(e) {
-            if (e.keyCode == 46) { // us: del; german: entf
+        $(document).keyup(function(event) {
+            if (event.keyCode == 46) { // us: del; german: entf
                 this_editor.delete_selected_nodes(); 
             }
-            this_editor.shifted = e.shiftKey;
+            console.log('shift '+event.shiftKey);
+            this_editor.shifted = event.shiftKey;
         });
-        $(document).keydown(function(e){
-            this_editor.shifted = e.shiftKey
+        $(document).keydown(function(event){
+            // FIXME does not work
+            //all text is selected nodes are not selected
+            //ctrl + a  select all
+            if (event.ctrlKey) {          
+                if (event.keyCode == 65) {                         
+                    event.disableTextSelect();
+                    this_editor.select_all(true);
+                    return false;
+                }            
+            }        
+            
+            console.log('down shift '+event.shiftKey)
+            this_editor.shifted = event.shiftKey
         });
-        this_editor.shifted = true;
+        this_editor.shifted = false;
         $('#del').click(function(){this_editor.delete_selected_nodes();})
     }
 };

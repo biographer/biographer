@@ -32,13 +32,25 @@ To help you laying our your SBGN graphs Biographer currenly provides tree automa
     <li><img src="{{=URL(request.application, 'static/biographer-editor/img', 'grid.png')}}"/> biographer.grid <br>
         Respects compartments <br>
         If you click once only one iteration of optimization for each nodes its executed. For better results apply this layout multiple times. Once the layout is stuck in a local minmum you can manually move some nodes and apply the layout again. You will see that this greatly improves the layout. <br>
-        Holding down the <b>ctrl</b> key while clicking the grid layout button will only place each node on the cosest empty grid space. This can be used to quickly create great looking layouts manually.
+        Holding down the <div class="keyboard">ctrl</div> key while clicking the grid layout button will only place each node on the cosest empty grid space. This can be used to quickly create great looking layouts manually.
     </li>
     <li><img src="{{=URL(request.application, 'static/biographer-editor/img', 'd3_force.png')}}"/> D3 force directed layout <br>
         Compartments are not supported <br>
         Uses the fantastic <a href="http://d3js.org/">D3 library</a>
     </li>
 </ul>
+<h3>Align and Distribute</h3>
+The Align functions always align to the <b>first selected node</b>.
+<h2>Navigation</h2>
+<h3>Zooming</h3>
+Since <div class="keyboard">ctrl + scroll</div> is already taken by the default zoom function in many browsers (like FireFox and Opera) biographer uses <div class="keyboard">alt + scroll</div> for zooming. <br>
+If you are using a touch enable device you can use the <b>pinch gesture</b> (move two fingers twards each other or away from each other) to zoom.<br>
+You can also zoom by using the zoom buttons. <br>
+<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_in.png')}}"/> to zoom in <br>
+<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_out.png')}}"/> to zoom out <br>
+<img src="{{=URL(request.application, 'static/biographer-editor/img', 'one.png')}}"/> to get the original size
+<h3>Panning</h3>
+<img src="{{=URL(request.application, 'static/biographer-editor/img', 'move.png')}}" id="move" class="tool"/> this tool can be used to pan the canvas - to move the whole canvas.
 <h2>Exporting</h2>
 <img src="{{=URL(request.application, 'static/biographer-editor/img', 'export.png')}}"/> Exporting images is supported for several document formats:
 <ul>
@@ -80,5 +92,12 @@ bug tracker
     }
     ul ul {
         padding: 15px;
+    }
+    .keyboard {
+        display: inline-block;
+        background-color: #eee;
+        padding: 3px;
+        border: solid 1px #aaa;
+        border-radius: 3px;
     }
 </style>
