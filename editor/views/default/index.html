@@ -118,15 +118,18 @@
 		<td>
 			<div id="spacer"></div>
 			<div id="outer_canvas">
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'move.png')}}" id="follow_move" class='follow'/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'selection.png')}}" id="follow_selection" class='follow'/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'cross.png')}}" id="follow_cross" class='follow'/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'wrench.png')}}" id="follow_wrench" class='follow'/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'edge.png')}}" id="follow_edge" class='follow'/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'spline.png')}}" id="follow_spline" class='follow'/>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus_.png')}}" id="follow_focus" class='follow'/>
-				{{for x in 'SimpleChemical Macromolecule NucleicAcidFeature UnspecifiedEntity RectangularNode Perturbation Phenotype Compartment Complex EmptySet Process Tag LogicalOperator Association Dissociation'.split(): }}
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', '%s_helper.png'%x)}}" id="follow_{{=x}}" class="follow helper"/>
+				<div id="follow_move" class='follow tool'></div>
+				<div id="follow_wrench" class='follow tool'></div>
+				<div id="follow_edge" class='follow tool'></div>
+				<div id="follow_spline" class='follow tool'></div>
+				{{for x in 'Process LogicalOperator Association Dissociation'.split(): }}
+				<div id="follow_{{=x}}" class="follow helperS"></div>
+				{{pass}}
+				{{for x in 'SimpleChemical Macromolecule NucleicAcidFeature UnspecifiedEntity RectangularNode Perturbation Phenotype EmptySet Tag'.split(): }}
+				<div id="follow_{{=x}}" class="follow helperM"></div>
+				{{pass}}
+				{{for x in 'Compartment Complex'.split(): }}
+				<div id="follow_{{=x}}" class="follow helperL"/></div>
 				{{pass}}
 				<div id="canvas"></div>
 			</div>
@@ -197,7 +200,7 @@
 		<tr>
             <th> <a href="http://www.ebi.ac.uk/biomodels-main/">BioModels</th> </a> <td>
             	<div class="biomodels_start">... click to open</div>
-            	{{include 'default/biomodels_info.html'}}
+            	{{#include 'default/biomodels_info.html'}}
             </td>
 		</tr>
 		<tr>
@@ -228,7 +231,7 @@
 				<div id="sv_group">
 					<input type="text" placeholder="P@207" class='state_variable' /> 
 				</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img/ico', 'add.png')}}" id="add_state_variable" title="add another State Variable"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_state_variable" title="add another State Variable"/>
 			</td>
 		</tr>
 		<tr>	
@@ -237,7 +240,7 @@
 				<div id="uoi_group">
 					<input type="text" placeholder="mt:prot" class='unit_of_information' /> 
 				</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img/ico', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
 			</td>
 		</tr>
 		<tr>
@@ -281,50 +284,17 @@
 			  <div width="270px"> <!-- this is needed as position absolute in td does not work-->
 			     &nbsp;
           <div id="marker_select_box">
-            <div class="marker_select" id="marker_none">
-              <div> ... click to open </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'slide_down.png')}}"/> 
-            </div>
-            <div class="marker_select PD" id="substrate">
-              <div> consumption </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'consumption.png')}}"/> 
-            </div>
-            <div class="marker_select PD" id="production">
-              <div> production </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'production.png')}}"/> 
-            </div>
-            <div class="marker_select PD ER" id="control">
-              <div> control </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'control.png')}}"/> 
-            </div>
-            <div class="marker_select PD ER AF" id="inhibition">
-              <div> inhibition </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'inhibition.png')}}"/> 
-            </div>
-            <div class="marker_select PD" id="catalysis">
-              <div> catalysis </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'catalysis.png')}}"/> 
-            </div>
-            <div class="marker_select PD ER AF" id="stimulation">
-              <div> stimulation </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'stimulation.png')}}"/> 
-            </div>
-            <div class="marker_select PD ER AF" id="assignment">
-              <div> assignment </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'assignment.png')}}"/> 
-            </div>
-            <div class="marker_select PD ER AF" id="necessaryStimulation">
-              <div> necessaryStimulation </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'necessaryStimulation.png')}}"/> 
-          	</div>
-            <div class="marker_select PD ER AF" id="absoluteStimulation">
-              <div> absoluteStimulation </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteStimulation.png')}}"/> 
-          	</div>
-            <div class="marker_select ER AF" id="absoluteInhibition">
-              <div> absoluteInhibition </div>
-              <img src="{{=URL(request.application, 'static/biographer-editor/img', 'absoluteInhibition.png')}}"/> </div>
-          </div>
+            <div class="marker_select" id="marker_none">  ... click to open <div></div> </div>
+            <div class="marker_select PD" id="substrate">  consumption <div></div> </div>
+            <div class="marker_select PD" id="production"> production <div></div> </div>
+            <div class="marker_select PD ER" id="control"> control <div></div> </div>
+            <div class="marker_select PD ER AF" id="inhibition"> inhibition <div></div> </div>
+            <div class="marker_select PD" id="catalysis"> catalysis <div></div> </div>
+            <div class="marker_select PD ER AF" id="stimulation"> stimulation <div></div> </div>
+            <div class="marker_select PD ER AF" id="assignment"> assignment <div></div> </div>
+            <div class="marker_select PD ER AF" id="necessaryStimulation"> necessaryStimulation <div></div> </div>
+            <div class="marker_select PD ER AF" id="absoluteStimulation"> absoluteStimulation <div></div> </div>
+            <div class="marker_select ER AF" id="absoluteInhibition"> absoluteInhibition <div></div> </div>
         </div>
 			</td>
 		</tr>

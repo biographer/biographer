@@ -1340,16 +1340,13 @@ Editor.prototype = {
             this_editor.shifted = event.shiftKey;
         });
         $(document).keydown(function(event){
-            // FIXME does not work
-            //all text is selected nodes are not selected
             //ctrl + a  select all
-            if (event.ctrlKey) {          
-                if (event.keyCode == 65) {                         
-                    event.disableTextSelect();
-                    this_editor.select_all(true);
-                    return false;
-                }            
-            }        
+            if ((event.ctrlKey || event.metaKey) && event.keyCode == 65) {
+                this_editor.select_all(true);
+                //event.disableTextSelect();
+                event.preventDefault();
+                return false;
+            }
             //console.log('down shift '+event.shiftKey)
             this_editor.shifted = event.shiftKey
         });

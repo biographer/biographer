@@ -170,9 +170,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.440625"
-     inkscape:cx="95.758025"
-     inkscape:cy="510.11175"
+     inkscape:zoom="0.62313785"
+     inkscape:cx="318.00596"
+     inkscape:cy="638.14311"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -458,11 +458,11 @@
       <image
          sodipodi:absref="/home/select/Dev/biographer/editor/private/json160.gif"
          xlink:href="json160.gif"
-         y="355.62958"
-         x="441.27188"
-         id="image4606"
+         width="16.282143"
          height="16.282143"
-         width="16.282143" />
+         id="image4606"
+         x="441.27188"
+         y="355.62958" />
       <g
          transform="matrix(0.82646749,0,0,0.82646749,71.126843,64.96684)"
          id="g3226">
@@ -483,11 +483,11 @@
         <image
            sodipodi:absref="/home/select/Dev/biographer/editor/private/json160.gif"
            xlink:href="json160.gif"
-           y="351.69287"
-           x="447.86401"
-           id="image3224"
+           width="19.700888"
            height="19.700888"
-           width="19.700888" />
+           id="image3224"
+           x="447.86401"
+           y="351.69287" />
       </g>
     </g>
     <g
@@ -4316,16 +4316,6 @@
         </g>
       </g>
     </g>
-    <rect
-       style="fill:#00ff00;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       id="rect4618"
-       width="8.485281"
-       height="2.8284271"
-       x="118.08683"
-       y="184.03505"
-       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
     <g
        id="g5357"
        inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"

@@ -97,9 +97,47 @@ td {
     z-index: 999;
     position: fixed;
 }
-.helper {
+.tool {
+    width: 35px;
+    height: 35px;
+}
+#follow_move {background: url('../img/biographer.sprites.png') -35px -35px; }
+#follow_edge {background: url('../img/biographer.sprites.png') -35px -70px; }
+#follow_spline {background: url('../img/biographer.sprites.png') -35px -105px; }
+#follow_wrench {background: url('../img/biographer.sprites.png') -35px -140px; }
+
+.helperS, .helperM, .helperL {
     opacity: .5;
 }
+.helperS {
+    width: 35px;
+    height: 35px;
+}
+.helperM {
+    height: 70px;
+    width: 70px;
+}
+.helperL {
+    width: 120px;
+    height: 120px;
+}
+#follow_LogicalOperator {background: url('../img/biographer.sprites.png') -140px -0px; }
+#follow_Dissociation {background: url('../img/biographer.sprites.png') -140px -35px; }
+#follow_Association {background: url('../img/biographer.sprites.png') -140px -70px; }
+#follow_Process {background: url('../img/biographer.sprites.png') -140px -105px; }
+
+#follow_Compartment {background: url('../img/biographer.sprites.png') -245px -0px; }
+#follow_Complex {background: url('../img/biographer.sprites.png') -245px -120px; }
+
+#follow_SimpleChemical {background: url('../img/biographer.sprites.png') -175px 0px; }
+#follow_Macromolecule {background: url('../img/biographer.sprites.png') -175px -70px; }
+#follow_NucleicAcidFeature {background: url('../img/biographer.sprites.png') -175px -140px; }
+#follow_UnspecifiedEntity {background: url('../img/biographer.sprites.png') -175px -210px; }
+#follow_Perturbation {background: url('../img/biographer.sprites.png') -175px -280px; }
+#follow_Phenotype {background: url('../img/biographer.sprites.png') -175px -350px; }
+#follow_EmptySet {background: url('../img/biographer.sprites.png') -175px -420px; }
+#follow_RectangularNode {background: url('../img/biographer.sprites.png') -175px -490px; }
+#follow_Tag {background: url('../img/biographer.sprites.png') -175px -560px; }
 /**********************************/
 #simplemodal-overlay {background-color:#000;}
 #simplemodal-container {
@@ -135,15 +173,31 @@ td {
 .marker_select {
     display: none;
     cursor: pointer;
-	padding: 3px;
+	height: 35px;
+    within: 200px;
+    position: relative;
 }
 .marker_select:hover {
 	background-color: #eee;
 }
 .marker_select>div {
-	width: 200px;
-	display: inline-block;
+	width: 50px;
+    height: 35px;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
+#production div{background: url('../img/biographer.sprites.png') -365px -0px; }
+#substrate div{background: url('../img/biographer.sprites.png') -365px -35px; }
+#control div{background: url('../img/biographer.sprites.png') -365px -70px; }
+#catalysis div{background: url('../img/biographer.sprites.png') -365px -105px; }
+#inhibition div{background: url('../img/biographer.sprites.png') -365px -140px; }
+#absoluteInhibition div{background: url('../img/biographer.sprites.png') -365px -175px; }
+#stimulation div{background: url('../img/biographer.sprites.png') -365px -210px; }
+#absoluteStimulation div{background: url('../img/biographer.sprites.png') -365px -245px; }
+#necessaryStimulation div{background: url('../img/biographer.sprites.png') -365px -280px; }
+#assignment div{background: url('../img/biographer.sprites.png') -365px -315px; }
+#marker_none div {background: url('../img/biographer.sprites.png') -365px -350px; }
 /**********************************/
 .language{
     cursor: pointer;
@@ -220,7 +274,6 @@ h3.section.down {
     list-style-type: none;
     width: 35px;
     height: 35px;
-    line-hight: 40px;
     position: relative;
     margin: 5px 0 5px 0;
     cursor: pointer;
