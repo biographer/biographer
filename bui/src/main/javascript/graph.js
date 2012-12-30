@@ -138,7 +138,7 @@
     var wheelZoom = function (graph, event) {
         var privates = graph._privates(identifier);
         
-        if (!privates.enableZooming) {
+        if (!privates.enableZooming || !event.altKey) {
             return event;
         }
         
