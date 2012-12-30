@@ -262,7 +262,11 @@
             }
         }
         
-        privates.root.addEventListener('mousewheel', mouseWheel.createDelegate(this));
+        privates.root.addEventListener(
+                ('onmousewheel' in document)
+                ? 'mousewheel'
+                : 'wheel',
+                mouseWheel.createDelegate(this));
             
         // Add interact.js event listeners
         privates.root.addEventListener('interactgesturemove', gestureMove.createDelegate(this));
