@@ -1350,6 +1350,11 @@ Editor.prototype = {
             //console.log('down shift '+event.shiftKey)
             this_editor.shifted = event.shiftKey
         });
+        //-------------------------------------------------
+        document.body.onmousewheel = function (event) {
+            this_editor.graph.fire(bui.Graph.ListenerType.wheel, [this_editor.graph, event]);
+        }
+        //-------------------------------------------------
         this_editor.shifted = false;
         $('#del').click(function(){this_editor.delete_selected_nodes();})
     }
