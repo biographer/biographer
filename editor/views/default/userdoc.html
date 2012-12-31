@@ -13,8 +13,6 @@ To create a SBGN visualization from scratch first select the SBGN language you w
 Click on one of the different node types in the left menu and click onto the canvas to create the node at that position. A modal window will appear where you can enter the node label and change other node properties. 
 <h4>Creating Edges</h4>
 You can draw Edges by using the edge tool <div id="Edge" class="tool"></div> or the spline tool <div id="Spline" class="tool"></div>. Click on the tool and then click on two nodes you want to connect with an edge. Once two nodes are clicked a nodal popup will appear where you can choose the edge type. 
-<h4>Deleting Nodes</h4>
-To delete nodes select the nodes and press <div class="keyboard">Del</div> on your keyboard <br>or use the delete tool <div class="tool" id="del"></div>
 <h3>Importing</h3>
 Biographer can import SBGN graphs (with and without layout) from different sources. Use the import icon <div class="tool" id="import_file"></div> to open up the import modal popup. There you can either upload your personal docuemtns in one of the following formats:
 <ul>
@@ -29,6 +27,14 @@ Biographer can import SBGN graphs (with and without layout) from different sourc
     </li>
 </ul>
 <h2>Layout</h2>
+<h3>Selecting Nodes</h3>
+You can select single nodes by clicking on them. To select multiple nodes use <div class="keyboard">shift + click</div> or choose the <div class="tool" id="cursor"></div> tool and <div class="keyboard">click + drag</div> a selection rectangle around several nodes.<br>
+Slected nodes have blue dashed border.
+<h3>Deleting Nodes</h3>
+To delete nodes select the nodes and press <div class="keyboard">Del</div> on your keyboard <br>or use the delete tool <div class="tool" id="del"></div>
+<h3>Moving Nodes</h3>
+To move a single node use <div class="keyboard">click + drag</div>. To move several nodes at once fist select several nodes and then move them like single nodes (currently not implementd).
+<h3>Automatic Layout</h3>
 To help you laying our your SBGN graphs Biographer currenly provides tree automatic layout algorightms.
 <ul>
     <li><div class="tool" id="layout_biographer"></div> biographer.flow <br>
@@ -48,16 +54,16 @@ To help you laying our your SBGN graphs Biographer currenly provides tree automa
 The Align functions always align to the <b>first selected node</b>.
 <h2>Navigation</h2>
 <h3>Zooming</h3>
-Since <div class="keyboard">ctrl + scroll</div> is already taken by the default zoom function in many browsers (like FireFox and Opera) biographer uses <div class="keyboard">alt + scroll</div> for zooming. <br>
-If you are using a touch enable device you can use the <b>pinch gesture</b> (move two fingers towards each other or away from each other) to zoom.<br>
+Since ctrl + scroll is already taken by the default zoom function in many browsers (like FireFox and Opera) biographer uses <div class="keyboard">alt + scroll</div> for zooming. <br>
+If you are using a touch enable device you can use the <div class="keyboard">pinch gesture</div> (move two fingers towards each other or away from each other) to zoom.<br>
 You can also zoom by using the zoom buttons. <br>
-<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_in.png')}}"/> to zoom in <br>
-<img src="{{=URL(request.application, 'static/biographer-editor/img', 'zoom_out.png')}}"/> to zoom out <br>
-<img src="{{=URL(request.application, 'static/biographer-editor/img', 'one.png')}}"/> to get the original size
+<div class="tool" id="zoom_in"></div> to zoom in <br>
+<div class="tool" id="zoom_out"></div> to zoom out <br>
+<div class="tool" id="scale1"></div> to get the original size
 <h3>Panning</h3>
 <div id="move" class="tool"></div> this tool can be used to pan the canvas - to move the whole canvas.
 <h2>Exporting</h2>
-<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export.png')}}"/> Exporting images is supported for several document formats:
+<div class="tool" id="export_other"></div> Exporting images is supported for several document formats:
 <ul>
     <li><b>jSBGN</b><br>
 Biographers native exchange format is jSBGN (<a href="http://code.google.com/p/biographer/wiki/graph_exchange">described here</a>). This format ideal for transmission in the web and does only require topological information. 
