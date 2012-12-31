@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0" />
+
+	<title>Biographer-ui Test Suite</title>
+
+    <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/showcase.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.8.22.custom.css" />
+
+	<script type="text/javascript" src="resources/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="resources/js/jquery.simulate.js"></script>
+	<script type="text/javascript" src="resources/js/jquery-ui-1.8.22.custom.min.js"></script>
+    <script type="text/javascript" src="resources/js/interact.js"></script>
+    <script type="text/javascript" src="resources/js/biographer-ui.js"></script>
+    <script type="text/javascript" src="resources/examples/showcase.js"></script>
+    <script type="text/javascript" src="resources/examples/showcaseDifferentPositions.js"></script>
+
+    <script type="text/javascript">
+        bui.ready(function() {
+            var canvas = document.getElementById('canvas');
+            graph = new bui.Graph(canvas);
+            bui.importFromJSON(graph, showcaseJSON);
+
+            $('.updatePos').click(function() {
+                var jsonVariableName = $(this).data('json');
+                var json = window[jsonVariableName];
+                bui.importUpdatedNodePositionsFromJSON(graph,
+                       json, 1000);
+                return false;
+            });
+
+            $('.focusToNode').click(function() {
+                bui.util.alignCanvas(graph, $(this).data('nodeId'));
+                return false;
+            });
+
+            $('.scale').click(function() {
+                var rate = bui.util.toNumber($(this).data('rate'));
+                graph.scale(graph.scale() + rate);
+                return false;
+            });
+
+            $('.fitToPage').click(function() {
+                graph.fitToPage();
+                return false;
+            });
+
+            $('.performance').click(function() {
+                var highPerformance = bui.util.toBoolean($(this).data('performance'));
+                graph.highPerformance(highPerformance);
+                return false;
+            });
+
+            $('.export').click(function() {
+                console.log(graph.toJSON());
+                return false;
+            });
+
+            $('.removeWhitespace').click(function() {
+                graph.reduceTopLeftWhitespace(1000);
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+<ul>
+    <li>
+        <h1>Position sets</h1>
+        <a href='#' class='updatePos' data-json='showcaseJSON'>
+            [1]</a>
+        <a href='#' class='updatePos'
+           data-json='showcaseDifferentPositionsJSON'>[2]</a>
+    </li>
+    <li>
+        <h1>Scaling</h1>
+        <a href='#' class='scale' data-rate='0.1'>[+]</a>
+        <a href='#' class='scale' data-rate='-0.1'>[-]</a>
+        <a href='#' class='fitToPage'>[Fit to page]</a>
+    </li>
+    <li>
+        <h1>Performance</h1>
+        <a href='#' class='performance'
+           data-performance='true'>[High]</a>
+        <a href='#' class='performance'
+           data-performance='false'>[Low]</a>
+    </li>
+    <li>
+        <h1>Miscellaneous</h1>
+        <a href='#' class='focusToNode'
+           data-node-id='node10'>[Focus node]</a>
+        <a href='#' class='export'>[Export JSON (see console)]</a>
+        <a href='#' class='removeWhitespace'>[Remove whitespace]</a>
+    </li>
+    <li>
+        <h1>Help</h1>
+        <div class="help">
+            <span style="color: #4183C4;">[Hover to show help]</span>
+            <ul>
+                <li>
+                    Move a node by clicking down on the middle of the node and <span>dragging</span> the mouse.
+                </li>
+                <li>
+                    Resize nodes by moving your mouse to the bottom or right edges of the
+                    node. When your cursor changes, click and move
+                    the mouse to change the node's size.
+                </li>
+                <li>
+                    Add edge handles to a straight line edge by
+                    <span>clicking</span> on it.
+                </li>
+                <li>
+                    Treat the blue dots like any
+                    other node, e.g. <span>click and drag to move</span>.
+                </li>
+            </ul>
+        </div>
+    </li>
+</ul>
+<div id='info'>
+    <span>Biographer-UI functionality showcase</span>
+    <a href='http://code.google.com/p/biographer/' title='The project on Google Code'>
+        http://code.google.com/p/biographer/
+    </a>
+</div>
+<div id="canvas">
+
+</div>
+</body>
+</html>
