@@ -225,11 +225,16 @@
 			<th>Label</th>
 			<td> <input type="text" placeholder="ATP" id='node_label' /></td>
 		</tr>
-		<tr>
-			<th>Mutimere/Clone</th>
+		<tr class="multimere_box">
+			<th>Mutimere</th>
 			<td> 
-				<span class="clone_box"><input type="checkbox" id='node_is_clone'> has clone marker </span><br>
-				<span class="multimere_box"><input type="checkbox" id='node_is_multimere'> is a multimere</span>
+				<input type="checkbox" id='node_is_multimere'> is a multimere
+			</td>
+		</tr>
+		<tr class="clonemarker_box">
+			<th>Clone Marker</th>
+			<td> 
+				<input type="checkbox" id='node_is_clone'> is cloned
 			</td>
 		</tr>
 		<tr>

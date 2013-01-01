@@ -293,12 +293,20 @@ Editor.prototype = {
             $('#node_label_row').show();
             $('#node_label').val(drawable.label());
         }
-        if (drawable.multimere() == undefined){
+        if (drawable.multimere == undefined){
             $('.multimere_box').hide();
         }else if (drawable.multimere() == true){
             $('#node_is_multimere').attr('checked', 'checked');
         }else {
             $('#node_is_multimere').removeAttr('checked');
+        }
+        console.log('clone'+drawable.clonemarker)
+        if (drawable.clonemarker == undefined){
+            $('.clonemarker_box').hide();
+        }else if (drawable.clonemarker() == true){
+            $('#node_is_clone').attr('checked', 'checked');
+        }else {
+            $('#node_is_clone').removeAttr('checked');
         }
         //-----------------
         $('.current_id').attr('id', drawable.id());
@@ -333,7 +341,8 @@ Editor.prototype = {
                     }
                 });
                 //-----------------
-                drawable.multimere($('#node_is_multimere').is(':checked'));
+                if (drawable.multimere != undefined) drawable.multimere($('#node_is_multimere').is(':checked'));
+                if (drawable.clonemarker != undefined) drawable.clonemarker($('#node_is_clone').is(':checked'));
                 //-----------------
                 if(($('input[name="node_color"]:checked').val() != 'none')&&($('input[name="node_color"]:checked').val() !== undefined)){
                     drawable.removeClass();
@@ -417,7 +426,6 @@ Editor.prototype = {
     //-------------------------------------------//
     // drops a ui-helper node from node type menu and generates the corresponding graph node
     createNode: function(nodetype, e){
-        console.log("create node "+ nodetype);
         //calculate position of new node
         var pos_top = e.clientY-this.canvaspos.top;
         var pos_left = e.clientX-this.canvaspos.left;
@@ -557,7 +565,6 @@ Editor.prototype = {
     // disable box selection mode on graph
     disable_selection: function(){
         //disable listeners
-        console.log('disable_selection now');
         editor.graph.unbind(bui.Graph.ListenerType.dragStart, 'graphDragStart');
         editor.graph.unbind(bui.Graph.ListenerType.dragMove, 'graphDragMove');
         editor.graph.unbind(bui.Graph.ListenerType.dragEnd, 'graphDragEnd');
@@ -570,7 +577,6 @@ Editor.prototype = {
     enable_selection: function(){
         var this_editor = this;
         this.graph.enablePanning(false);
-        console.log('enable_selection: '+this.cur_mode);
         /*if(this.cur_mode == 'selection'){
             console.log('rest pan and zoom');
             this.graph.scale(1);
@@ -715,7 +721,6 @@ Editor.prototype = {
         this.graph.bind(
             bui.Graph.ListenerType.dragEnd,
             function (graph, event) {
-                console.log('dragEnd');
                 $('box').hide();
                 box.style.display = 'none';
             },
@@ -1036,7 +1041,6 @@ Editor.prototype = {
                         if((doc === null)||(doc === undefined)){
                             $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                         }else{
-                            console.log(sb.io.write(doc, 'jsbgn'));
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
                             this_editor.undoPush('loaded graph from JSON string');
                         this_editor.modal.close();
@@ -1100,7 +1104,6 @@ Editor.prototype = {
                     if((doc === null)||(doc === undefined)){
                         $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                     }else{
-                        console.log(sb.io.write(doc, 'jsbgn'));
                         this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
                         this_editor.undoPush('loaded Reactome '+reid);
                         //$('.flash').html('loaded Reactome '+reid).fadeIn().delay(1600).fadeOut();
@@ -1230,7 +1233,6 @@ Editor.prototype = {
         $('.node').click(function(event){
             event.stopPropagation();//because body gehts hooked up to click event
             this_editor.select_all(false);
-            console.log('node click set active '+$(this).attr('id'));
             this_editor.setMode('node');
             $('.active').removeClass('active');
             $(this).addClass('active');

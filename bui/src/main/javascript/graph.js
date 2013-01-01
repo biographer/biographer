@@ -900,7 +900,16 @@
             }
 
             return this;
+        },
+        /**
+         * Return the defs group of the svg so node classes can draw clone markers 
+         *
+         * @return {} SVG defsGroup
+         */
+        defsGroup : function() {
+            return  this._privates(identifier).defsGroup
         }
+
     };
 
     bui.util.setSuperClass(bui.Graph, bui.Observable);

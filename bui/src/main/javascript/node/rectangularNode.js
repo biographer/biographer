@@ -102,6 +102,13 @@
             privates.multimere_rect.setAttributeNS(null, 'd', generatePathData(size.width, 
                 size.height, privates.topRadius, privates.bottomRadius, {x: 9, y:9}));
         }
+        if (privates.is_cloned == true){
+            privates.clone_rect.setAttributeNS(null, 'd', generatePathData(size.width, 
+                size.height, privates.topRadius, privates.bottomRadius));
+            privates.clippath_path.setAttributeNS(null, 'width', size.width);
+            privates.clippath_path.setAttributeNS(null, 'height', size.height / 3);
+            privates.clippath_path.setAttributeNS(null, 'y', 2*(size.height/3));
+        }
 
     };
 
@@ -219,22 +226,6 @@
             return privates.bottomRadius;
         },
         /**
-         * Set this node's multimere flag.
-         *
-         * @param {Bool} [flag] optional flag to set multimere state
-         * @return {bui.RectangularNode|Bool} Fluent interface if you pass
-         *   a parameter, the current multimere status otherwise.
-         */
-        is_cloned : function(flag) {
-            var privates = this._privates(identifier);
-            if (flag !== undefined) {
-                //TODO need to draw clone marker here
-                privates.is_cloned = flag
-                return this;
-            }
-            return privates.is_cloned;
-        },
-        /**
          * Set this node's multimere state.
          *
          * @param {Bool} [flag] optional flag to set multimere state
@@ -250,7 +241,7 @@
                     if (flag==true){
                         privates.multimere_rect = document.createElementNS(bui.svgns, 'path');
                         container.insertBefore(privates.multimere_rect, container.firstChild);
-                        formChanged.call(this, this, this.size().width);
+                        formChanged.call(this);
                     }else{
                         container.removeChild(privates.multimere_rect);
                     }
@@ -258,7 +249,35 @@
                 return this;
             }
             return privates.is_multimere;
-        }
+        },
+        clonemarker : function(flag) {
+            var privates = this._privates(identifier);
+            if (flag !== undefined){
+                if (flag!=privates.is_cloned){
+                    var container = this.nodeGroup();
+                    var defsGroup = this.graph().defsGroup();
+                    privates.is_cloned = flag;
+                    if (flag==true){
+                        privates.clone_rect = document.createElementNS(bui.svgns, 'path');
+                        privates.clone_rect.style.setProperty('fill', 'black');
+                        container.appendChild(privates.clone_rect);
+                        privates.clone_rect.setAttribute('clip-path','url(#clone_'+this.id()+')');
+                        privates.clippath = document.createElementNS(bui.svgns, 'clipPath');
+                        privates.clippath.setAttribute('id', 'clone_'+this.id());
+                        privates.clippath_path = document.createElementNS(bui.svgns, 'rect')
+                        privates.clippath_path.setAttributeNS(null, 'x', 0);
+                        formChanged.call(this);
+                        privates.clippath.appendChild(privates.clippath_path);
+                        defsGroup.appendChild(privates.clippath);
+                    }else{
+                        container.removeChild(privates.clone_rect);
+                        defsGroup.removeChild(clippath);
+                    }
+                }
+                return this
+            }
+            return privates.is_cloned;
+        },
     };
 
     bui.util.setSuperClass(bui.RectangularNode, bui.Labelable);

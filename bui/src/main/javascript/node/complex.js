@@ -36,6 +36,12 @@
         if (privates.is_multimere == true){
             privates.multimere_path.setAttributeNS(null, 'd', generatePathData(node,width,height,{x:10,y:10}));
         }
+        if (privates.is_cloned == true){
+            privates.clone_path.setAttributeNS(null, 'd', generatePathData(node,width,height));
+            privates.clippath_path.setAttributeNS(null, 'width', width);
+            privates.clippath_path.setAttributeNS(null, 'height', height / 3);
+            privates.clippath_path.setAttributeNS(null, 'y', 2*(height/3));
+        }
     };
 
     /**
@@ -103,6 +109,34 @@
                 return this;
             }
             return privates.is_multimere;
+        },
+        clonemarker : function(flag) {
+            var privates = this._privates(identifier);
+            if (flag !== undefined){
+                if (flag!=privates.is_cloned){
+                    var container = this.nodeGroup();
+                    var defsGroup = this.graph().defsGroup();
+                    privates.is_cloned = flag;
+                    if (flag==true){
+                        privates.clone_path = document.createElementNS(bui.svgns, 'path');
+                        privates.clone_path.style.setProperty('fill', 'black');
+                        container.appendChild(privates.clone_path);
+                        privates.clone_path.setAttribute('clip-path','url(#clone_'+this.id()+')');
+                        privates.clippath = document.createElementNS(bui.svgns, 'clipPath');
+                        privates.clippath.setAttribute('id', 'clone_'+this.id());
+                        privates.clippath_path = document.createElementNS(bui.svgns, 'rect')
+                        privates.clippath_path.setAttributeNS(null, 'x', 0);
+                        sizeChanged.call(this, this, this.size().width, this.size().height);
+                        privates.clippath.appendChild(privates.clippath_path);
+                        defsGroup.appendChild(privates.clippath);
+                    }else{
+                        container.removeChild(privates.clone_path);
+                        defsGroup.removeChild(clippath);
+                    }
+                }
+                return this
+            }
+            return privates.is_cloned;
         },
         /**
          * Automatically layout child elements using a simple table layout

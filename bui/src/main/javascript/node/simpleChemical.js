@@ -11,7 +11,7 @@
         return identifier + SimpleChemical.id();
     };
 
-    var sizeChanged = function(node, width) {
+    var sizeChanged = function(node, width, height) {
         var r = width / 2;
         var privates = this._privates(identifier);
         privates.circle.setAttributeNS(null, 'cx', r);
@@ -22,7 +22,14 @@
             privates.multimere_circle.setAttributeNS(null, 'cy', r+7);
             privates.multimere_circle.setAttributeNS(null, 'r', r);
         }
-
+        if (privates.is_cloned == true){
+            privates.clone_circle.setAttributeNS(null, 'cx', r);
+            privates.clone_circle.setAttributeNS(null, 'cy', r);
+            privates.clone_circle.setAttributeNS(null, 'r', r);
+            privates.clippath_path.setAttributeNS(null, 'width', width);
+            privates.clippath_path.setAttributeNS(null, 'height', height / 3);
+            privates.clippath_path.setAttributeNS(null, 'y', 2*(height/3));
+        }
     };
 
     /**
@@ -96,7 +103,7 @@
                     if (flag==true){
                         privates.multimere_circle = document.createElementNS(bui.svgns, 'circle');
                         container.insertBefore(privates.multimere_circle, container.firstChild);
-                        sizeChanged.call(this, this, this.size().width);
+                        sizeChanged.call(this, this, this.size().width, this.size().height);
                     }else{
                         container.removeChild(privates.multimere_circle);
                     }
@@ -104,6 +111,34 @@
                 return this
             }
             return privates.is_multimere;
+        },
+        clonemarker : function(flag) {
+            var privates = this._privates(identifier);
+            if (flag !== undefined){
+                if (flag!=privates.is_cloned){
+                    var container = this.nodeGroup();
+                    var defsGroup = this.graph().defsGroup();
+                    privates.is_cloned = flag;
+                    if (flag==true){
+                        privates.clone_circle = document.createElementNS(bui.svgns, 'circle');
+                        privates.clone_circle.style.setProperty('fill', 'black');
+                        container.appendChild(privates.clone_circle);
+                        privates.clone_circle.setAttribute('clip-path','url(#clone_'+this.id()+')');
+                        privates.clippath = document.createElementNS(bui.svgns, 'clipPath');
+                        privates.clippath.setAttribute('id', 'clone_'+this.id());
+                        privates.clippath_path = document.createElementNS(bui.svgns, 'rect')
+                        privates.clippath_path.setAttributeNS(null, 'x', 0);
+                        sizeChanged.call(this, this, this.size().width, this.size().height);
+                        privates.clippath.appendChild(privates.clippath_path);
+                        defsGroup.appendChild(privates.clippath);
+                    }else{
+                        container.removeChild(privates.clone_circle);
+                        defsGroup.removeChild(clippath);
+                    }
+                }
+                return this
+            }
+            return privates.is_cloned;
         },
         _minWidth : 60,
         _minHeight : 60,
