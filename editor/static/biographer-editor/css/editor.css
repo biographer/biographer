@@ -146,14 +146,12 @@ td {
     padding:12px;
     color: white;
     }
-#simplemodal-container  form {
+#simplemodal-container  form, #simplemodal-container table, .modal_input, .modal_input th, .modal_input a {
     color: white;
 }
 .modal_input {
     position: relative;
     display: none;
-}
-.modal_input, .modal_input th, .modal_input a {
     color: white;
 }
 .sc_but {

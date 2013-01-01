@@ -17,6 +17,12 @@
         privates.circle.setAttributeNS(null, 'cx', r);
         privates.circle.setAttributeNS(null, 'cy', r);
         privates.circle.setAttributeNS(null, 'r', r);
+        if (privates.is_multimere == true){
+            privates.multimere_circle.setAttributeNS(null, 'cx', r+5);
+            privates.multimere_circle.setAttributeNS(null, 'cy', r+7);
+            privates.multimere_circle.setAttributeNS(null, 'r', r);
+        }
+
     };
 
     /**
@@ -27,6 +33,10 @@
         var color = this.color();
         privates.circle.style.setProperty('fill', color.background);
         privates.circle.style.setProperty('stroke', color.border);
+        if (privates.is_multimere == true){
+            privates.multimere_circle.style.setProperty('fill', color.background);
+            privates.multimere_circle.style.setProperty('stroke', color.border);
+        }
     };
 
     /**
@@ -37,7 +47,7 @@
         var privates = this._privates(identifier);
         privates.circle = document.createElementNS(bui.svgns, 'circle');
         sizeChanged.call(this, this, this.size().width);
-		colorChanged.call(this, this, this.color()), 
+        colorChanged.call(this, this, this.color()), 
         container.appendChild(privates.circle);
     };
 
@@ -60,13 +70,40 @@
         this.bind(bui.Labelable.ListenerType.color,
                 colorChangedListener,
                 listenerIdentifier(this));
-
+        var privates = this._privates(identifier);
+        privates.is_multimere = false;
+        privates.is_cloned = false;
         initialPaint.call(this);
     };
 
     bui.SimpleChemical.prototype = {
         identifier : function() {
             return identifier;
+        },
+        /**
+         * Set this node's multimere state.
+         *
+         * @param {Bool} [flag] optional flag to set multimere state
+         * @return {bui.RectangularNode|Bool} Fluent interface if you pass
+         *   a parameter, the current multimere status otherwise.
+         */
+        multimere : function(flag) {
+            var privates = this._privates(identifier);
+            if (flag !== undefined){
+                if (flag!=privates.is_multimere){
+                    var container = this.nodeGroup();
+                    privates.is_multimere = flag;
+                    if (flag==true){
+                        privates.multimere_circle = document.createElementNS(bui.svgns, 'circle');
+                        container.insertBefore(privates.multimere_circle, container.firstChild);
+                        sizeChanged.call(this, this, this.size().width);
+                    }else{
+                        container.removeChild(privates.multimere_circle);
+                    }
+                }
+                return this
+            }
+            return privates.is_multimere;
         },
         _minWidth : 60,
         _minHeight : 60,

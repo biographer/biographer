@@ -293,6 +293,13 @@ Editor.prototype = {
             $('#node_label_row').show();
             $('#node_label').val(drawable.label());
         }
+        if (drawable.multimere() == undefined){
+            $('.multimere_box').hide();
+        }else if (drawable.multimere() == true){
+            $('#node_is_multimere').attr('checked', 'checked');
+        }else {
+            $('#node_is_multimere').removeAttr('checked');
+        }
         //-----------------
         $('.current_id').attr('id', drawable.id());
         this_editor.modal = $("#node_modal_input").modal({
@@ -325,6 +332,9 @@ Editor.prototype = {
                         .visible(true);
                     }
                 });
+                //-----------------
+                drawable.multimere($('#node_is_multimere').is(':checked'));
+                //-----------------
                 if(($('input[name="node_color"]:checked').val() != 'none')&&($('input[name="node_color"]:checked').val() !== undefined)){
                     drawable.removeClass();
                     drawable.addClass($('input[name="node_color"]:checked').val());

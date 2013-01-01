@@ -11,22 +11,31 @@
     var listenerIdentifier = function(Complex) {
         return identifier + Complex.id();
     };
-
-    var sizeChanged = function(node, width, height) {
+    var generatePathData = function(node, width, height, shift) {
         var cornerRadius = bui.settings.style.complexCornerRadius;
 
-        var pathData = ['M', width / 2, 0,
-                        'H', width - cornerRadius,
-                        'L', width, cornerRadius,
-                        'V', height - cornerRadius,
-                        'L', width - cornerRadius, height,
-                        'H', cornerRadius,
-                        'L', 0, height - cornerRadius,
-                        'V', cornerRadius,
-                        'L', cornerRadius, 0,
-                        'H', width / 2].join(' ');
-        
-        this._privates(identifier).path.setAttributeNS(null, 'd', pathData);
+        var sx = 0, sy = 0
+        if (shift != undefined){
+            sx = shift.x;
+            sy = shift.y
+        }
+        return ['M', width / 2 +sx, sy,
+                'H', width - cornerRadius +sx,
+                'L', width +sx, cornerRadius +sx,
+                'V', height - cornerRadius +sy,
+                'L', width - cornerRadius +sx, height +sy,
+                'H', cornerRadius +sy,
+                'L', sx, height - cornerRadius +sy,
+                'V', cornerRadius +sy,
+                'L', cornerRadius +sx, sy,
+                'H', width / 2 +sx].join(' ');
+    };
+    var sizeChanged = function(node, width, height) {
+        var privates = this._privates(identifier);
+        privates.path.setAttributeNS(null, 'd', generatePathData(node,width,height));
+        if (privates.is_multimere == true){
+            privates.multimere_path.setAttributeNS(null, 'd', generatePathData(node,width,height,{x:10,y:10}));
+        }
     };
 
     /**
@@ -58,6 +67,9 @@
         initialPaint.call(this);
 
         this.addClass(bui.settings.css.classes.complex);
+        var privates = this._privates(identifier);
+        privates.is_multimere = false;
+        privates.is_cloned = false;
     };
 
     bui.Complex.prototype = {
@@ -66,6 +78,32 @@
         },
         _minWidth : 90,
         _minHeight : 90,
+        /**
+         * Set this node's multimere state.
+         *
+         * @param {Bool} [flag] optional flag to set multimere state
+         * @return {bui.RectangularNode|Bool} Fluent interface if you pass
+         *   a parameter, the current multimere status otherwise.
+         */
+        multimere : function(flag) {
+            var privates = this._privates(identifier);
+            if (flag !== undefined) {
+                if (flag!=privates.is_multimere){
+                    var container = this.nodeGroup();
+                    privates.is_multimere = flag;
+                    if (flag==true){
+                        var size = this.size();
+                        privates.multimere_path = document.createElementNS(bui.svgns, 'path');
+                        container.insertBefore(privates.multimere_path, container.firstChild);
+                        sizeChanged.call(this, this, size.width, size.height);
+                    }else{
+                        container.removeChild(privates.multimere_path);
+                    }
+                }
+                return this;
+            }
+            return privates.is_multimere;
+        },
         /**
          * Automatically layout child elements using a simple table layout
          * strategy. You can change the strategy's settings through the first
