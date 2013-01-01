@@ -566,8 +566,36 @@ Editor.prototype = {
             this.graph.scale(1);
             this.graph.transalte(0,0);
         }*/
-        if(this.box === undefined){
+        if(this.box === undefined) {
             this.box = document.body.appendChild(document.createElement('div'));
+
+            var canvas = document.getElementById('canvas')
+            interact.set(canvas, {
+                drag:true,
+                checkOnHover: false
+            });
+
+            function fireDragStart (event) {
+                if (event.target === canvas) {
+                    this_editor.graph.fire(bui.Graph.ListenerType.dragStart, [this_editor.graph, event]);
+                }
+            };
+
+            function fireDragMove (event) {
+                if (event.target === canvas) {
+                    this_editor.graph.fire(bui.Graph.ListenerType.dragMove, [this_editor.graph, event]);
+                }
+            };
+
+            function fireDragEnd (event) {
+                if (event.target === canvas) {
+                    this_editor.graph.fire(bui.Graph.ListenerType.dragEnd, [this_editor.graph, event]);
+                }
+            };
+
+            canvas.addEventListener('interactdragstart', fireDragStart);
+            canvas.addEventListener('interactdragmove', fireDragMove);
+            canvas.addEventListener('interactdragend', fireDragEnd);
         }
             
         var box = this.box;
