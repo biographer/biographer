@@ -554,9 +554,9 @@
                                 .visible(true)
                                 .label(drawable.label())
                                 .parent(drawable.parent())
-                                //.addClass('cloneMarker')
                                 .position(drawable.position().x, drawable.position().y)
-                                .size(drawable.size().height, drawable.size().width);
+                                .size(drawable.size().height, drawable.size().width)
+                                .clonemarker(true);
                             // reroute the edge
                             new_nodes.push(new_node);
                             if (edge.source().id() == old_node_id){
@@ -588,12 +588,11 @@
             // create new node
             var drawable = all_drawables[Object.keys(select_drawables)[0]];
             var new_node = graph.add(bui[drawable.identifier().substr(4)]) 
-                            .visible(true)
-                    .label(drawable.label())
-                                .parent(drawable.parent())
-                    //.addClass('cloneMarker')
-                    .position(drawable.position().x, drawable.position().y)
-                            .size(drawable.size().height, drawable.size().width);
+                .visible(true)
+                .label(drawable.label())
+                .parent(drawable.parent())
+                .position(drawable.position().x, drawable.position().y)
+                .size(drawable.size().height, drawable.size().width);
             // redraw edges
             for (var edge_key in all_drawables){
             edge = all_drawables[edge_key];
