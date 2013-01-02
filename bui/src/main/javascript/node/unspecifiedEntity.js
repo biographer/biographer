@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.UnspecifiedEntity';
+    var identifier = 'UnspecifiedEntity';
 
     /**
      * @private

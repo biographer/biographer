@@ -200,7 +200,7 @@
 		<tr>
             <th> <a href="http://www.ebi.ac.uk/biomodels-main/">BioModels</th> </a> <td>
             	<div class="biomodels_start">... click to open</div>
-            	{{include 'default/biomodels_info.html'}}
+            	{{#include 'default/biomodels_info.html'}}
             </td>
 		</tr>
 		<tr>
@@ -277,7 +277,7 @@
 					<input type="checkbox" id='node_is_clone'> is cloned
 				</td>
 			</tr>
-			<tr>
+			<tr class='state_variable_box'>
 				<th>State Variable</th>
 				<td> 
 					<div id="sv_group">
@@ -286,7 +286,7 @@
 					<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_state_variable" title="add another State Variable"/>
 				</td>
 			</tr>
-			<tr>	
+			<tr class='uoi_box'>	
 				<th>Unit of Information</th>
 				<td> 
 					<div id="uoi_group">
@@ -296,16 +296,24 @@
 				</td>
 			</tr>
 			<tr>
-				<th>Color</th>
-				<td></td>
+				<th>Backround Color</th>
+				<td>
+					<div class="colorSelector color_bg"><div style="background-color: #fff"></div></div>
+					<div id="colorpickerHolder"></div>
+				</td>
 			</tr>
 			<tr>
-				<td colspan=2>
-				<div id="color_widget">
-					<div id="colorSelector"><div style="background-color: #00ff00"></div></div>
-	                <div id="colorpickerHolder">
-	                </div>
-				</div> 
+				<th>Border Color</th>
+				<td>
+					<div class="colorSelector color_bd"><div style="background-color: #000"></div></div>
+					<div id="colorpickerHolder"></div>
+				</td>
+			</tr>
+			<tr class="color_tx_box">
+				<th>Text Color</th>
+				<td>
+					<div class="colorSelector color_tx"><div style="background-color: #000"></div></div>
+					<div id="colorpickerHolder"></div>
 				</td>
 			</tr>
 		</table>

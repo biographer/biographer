@@ -369,31 +369,54 @@ Editor.prototype = {
         };
     },
     node_attributes_show: function(){
-        console.log('num sel no '+this.selected_nodes.length);
         if(this.selected_nodes.length==1){
             $('.node_attributes').show();
             $('.rm .message').hide();
-            var drawable = this.selected_nodes[0];   
-            if((drawable.identifier()=='Complex') || (drawable.identifier()=="Association") || (drawable.identifier()=="Dissociation")){
-                $('#node_label_row').hide();
+            var drawable = this.selected_nodes[0];
+            console.log('selcted a '+drawable.identifier());
+            //===========================================
+            if(drawable.identifier() in {'Macromolecule':1, 'UnspecifiedEntity': 1}){
+                $('.uoi_box, .state_variable_box').show();
             }else{
-                $('#node_label_row').show();
+                $('.uoi_box, .state_variable_box').hide();
+            }
+            //===========================================
+            if (drawable.identifier() in {'Complex':1, "Association": 1, "Dissociation":1, "EmptySet":1}){
+                $('#node_label_row, .color_tx_box').hide();
+            }else{
+                $('#node_label_row, .color_tx_box').show();
                 $('#node_label').val(drawable.label());
             }
-            if (drawable.multimere == undefined){
+            //===========================================
+            if (drawable.multimere === undefined){
                 $('.multimere_box').hide();
-            }else if (drawable.multimere() == true){
+            }else if (drawable.multimere() === true){
                 $('#node_is_multimere').attr('checked', 'checked');
             }else {
                 $('#node_is_multimere').removeAttr('checked');
             }
-            if (drawable.clonemarker == undefined){
+            //===========================================
+            if (drawable.clonemarker === undefined){
                 $('.clonemarker_box').hide();
-            }else if (drawable.clonemarker() == true){
+            }else if (drawable.clonemarker() === true){
                 $('#node_is_clone').attr('checked', 'checked');
             }else {
                 $('#node_is_clone').removeAttr('checked');
             }
+            //===========================================
+            var cur_color = drawable.color();
+            var setcolor = function(target, color){
+                $(target).ColorPickerSetColor(color);
+                $(target + ' div').css('backgroundColor', color);
+            };
+            if (cur_color.background !== '') setcolor('.color_bg', cur_color.background);
+            else setcolor('.color_bg', 'FFFFFF');
+            if (cur_color.border !== '') setcolor('.color_bd', cur_color.border);
+            else setcolor('.color_bd', '000000');
+            if (cur_color.label !== '') setcolor('.color_tx', cur_color.label);
+            else setcolor('.color_tx', '000000');
+            //===========================================
+            
         //}else if (this.selected_nodes.length>1){
             //FIXME show things that can be change for several nodes
         }else{
@@ -437,13 +460,14 @@ Editor.prototype = {
             });
             
             //-----------------
-            if (drawable.multimere != undefined){drawable.multimere($('#node_is_multimere').is(':checked')); }
-            if (drawable.clonemarker != undefined) drawable.clonemarker($('#node_is_clone').is(':checked'));
+            if (drawable.multimere !== undefined){drawable.multimere($('#node_is_multimere').is(':checked')); }
+            if (drawable.clonemarker !== undefined) drawable.clonemarker($('#node_is_clone').is(':checked'));
             //-----------------
-            if(($('input[name="node_color"]:checked').val() != 'none')&&($('input[name="node_color"]:checked').val() !== undefined)){
-                drawable.removeClass();
-                drawable.addClass($('input[name="node_color"]:checked').val());
-            }
+            console.log('setting bg color to '+this_editor.color_bg);
+            if(this_editor.color_bg !== undefined) drawable.color( { background: this_editor.color_bg} );
+            if(this_editor.color_bd !== undefined) drawable.color( { border: this_editor.color_bd} );
+            if(this_editor.color_tx !== undefined) drawable.color( { label: this_editor.color_tx} );
+            
             this.trigger_delayed_undoPush('changed node attributes');
         }
     },
@@ -954,12 +978,13 @@ Editor.prototype = {
             $('#clone').html(this_editor.loading_img);
             var new_nodes;
             if(this_editor.selected_nodes.length === 0) new_nodes = bui.util.clone(this_editor.graph, 5);
-            else new_nodes = bui.util.clone(this_editor, 2, this_editor.selected_nodes);
+            else new_nodes = bui.util.clone(this_editor.graph, 2, this_editor.selected_nodes);
             for (var i = new_nodes.length - 1; i >= 0; i--) {
                 new_nodes[i].bind(bui.Node.ListenerType.click, this_editor.drawableSelect());
             }
             $('#clone').html(orig_html);
-            this_editor.undoPush('Cloned Nodes');
+            if (new_nodes.length>0) this_editor.undoPush('Cloned nodes, got '+new_nodes.length+' new nodes');
+            else $('.flash').html('Could not clone any nodes').fadeIn().delay(1500).fadeOut();
         });
         //=========================
         $('#combine').click(function(){
@@ -1072,11 +1097,52 @@ Editor.prototype = {
             });
         });
         //=========================
-        $('#colorpickerHolder').ColorPicker({
-            flat: true,
+        $('.color_bg').ColorPicker({
             color: '#ffffff',
-            onSubmit: function(hsb, hex, rgb) {
-                $('#colorSelector div').css('backgroundColor', '#' + hex);
+            onShow: function (colpkr) {
+                $(colpkr).fadeIn(500);
+                return false;
+            },
+            onHide: function (colpkr) {
+                $(colpkr).fadeOut(500);
+                return false;
+            },
+            onChange: function (hsb, hex, rgb) {
+                this_editor.color_bg = '#'+hex;
+                $('.color_bg div').css('backgroundColor', '#' + hex);
+                this_editor.node_attributes_changed();
+            }
+        });
+        $('.color_bd').ColorPicker({
+            color: '#000000',
+            onShow: function (colpkr) {
+                $(colpkr).fadeIn(500);
+                return false;
+            },
+            onHide: function (colpkr) {
+                $(colpkr).fadeOut(500);
+                return false;
+            },
+            onChange: function (hsb, hex, rgb) {
+                this_editor.color_bd = '#'+hex;
+                $('.color_bd div').css('backgroundColor', '#' + hex);
+                this_editor.node_attributes_changed();
+            }
+        });
+        $('.color_tx').ColorPicker({
+            color: '#000000',
+            onShow: function (colpkr) {
+                $(colpkr).fadeIn(500);
+                return false;
+            },
+            onHide: function (colpkr) {
+                $(colpkr).fadeOut(500);
+                return false;
+            },
+            onChange: function (hsb, hex, rgb) {
+                this_editor.color_tx = '#'+hex;
+                $('.color_tx div').css('backgroundColor', '#' + hex);
+                this_editor.node_attributes_changed();
             }
         });
         //=========================
@@ -1394,7 +1460,7 @@ Editor.prototype = {
         //remove selected nodes if del was pressed on the keyboard
         $(document).keyup(function(event) {
             if (event.keyCode == 46) { // us: del; german: entf
-                this_editor.delete_selected_nodes(); 
+                this_editor.delete_selected_nodes();
             }
             //FIXME this does not work to detect if the shifkey is on!
             this_editor.shifted = event.shiftKey;
@@ -1407,16 +1473,16 @@ Editor.prototype = {
                 return false;
             }
             //FIXME this does not work to detect if the shifkey is on!
-            this_editor.shifted = event.shiftKey
+            this_editor.shifted = event.shiftKey;
         });
         //-------------------------------------------------
         document.body.onmousewheel = function (event) {
             this_editor.graph.fire(bui.Graph.ListenerType.wheel, [this_editor.graph, event]);
-        }
+        };
         //-------------------------------------------------
-        $('#del').click(function(){this_editor.delete_selected_nodes();})
+        $('#del').click(function(){this_editor.delete_selected_nodes();});
         //-------------------------------------------------
-        //slide toggle right menu 
+        //slide toggle right menu
         $('.rm_peek').click(function(){this_editor.right_menue_show(); });
         
     }

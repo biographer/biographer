@@ -75,7 +75,7 @@
 
     bui.EmptySet.prototype = {
         identifier : function() {
-            return identifier;
+            return 'EmptySet';
         },
         _minWidth : 60,
         _minHeight : 60,

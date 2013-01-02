@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Macromolecule';
+    var identifier = 'Macromolecule';
     /**
      * @class
      * A node with the shape of an rectangle and a label inside.
