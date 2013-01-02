@@ -72,7 +72,7 @@
         }
 
         if(('clone_marker' in nodeJSON.data)&&(nodeJSON.data.clone_marker == true)){
-            node.addClass('cloneMarker');
+            node.clonemarker(true);
         }
 
         node.size(size.width, size.height)
