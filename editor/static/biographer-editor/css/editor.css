@@ -74,6 +74,55 @@ ul {
 	background-color: #fff;
 	color: black;
 }
+.rm{
+    position: fixed;
+    width: 395px;
+    height: 500px;
+    top: 80px;
+    right: -360px;
+}
+.rm_peek{
+    position: absolute;
+    width: 35px;
+    height: 200px;
+    right:365px;
+    top: 150px;
+    z-index: 91;
+    cursor: pointer;
+}
+.rm_peek div{
+    position: relative;
+    top: 80px;
+    width: 35px;
+    height: 35px;
+    background: url('../img/biographer.sprites.png') -415px -0px; 
+}
+.rm_peek .out{
+    background: url('../img/biographer.sprites.png') -415px -35px; 
+}
+.rm_peek .in{
+    background: url('../img/biographer.sprites.png') -415px -0px; 
+}
+.rm_peek:hover{
+    background-color: #eee;
+}
+.rm_body{
+    width: 365px;
+    height: 500px;
+    position: absolute;
+    background-color: #aaa;
+    border: 2px solid #eee;
+    border-radius: 5px;
+    padding-right: 5px;
+    top: 0;
+    right: -5px;
+    z-index: 90;
+}
+.rm th {
+    vertical-align: top;
+    text-align: right;
+    font-weight: normal;
+}
 /**********************************/
 th {
 	text-align: left;
@@ -489,6 +538,7 @@ input[type="text"] {
     min-width: 500px;
     cursor: pointer;
     background: white;
+    color: black;
 }
 .biomodels_select {
     height: 200px;
@@ -499,6 +549,7 @@ input[type="text"] {
     position: absolute;
     padding:0;
     display: none;
+    color: black;
 }
 .biomodels_select li:nth-child(even){
     background-color: #F8F8FF;

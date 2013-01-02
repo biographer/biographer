@@ -78,7 +78,7 @@
 				<div>click to start drawing selection rectangle, click again to finish selection</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'selection.png')}}" id="selection" class="tool"/>
 				</li -->
-				<li id='edit'> <div>edit</div> </li>
+				<!-- li id='edit'> <div>edit</div> </li -->
 				<li id='Edge'> <div>draw edge</div> </li>
 				<li id='Spline'> <div>draw spline</div> </li>
 				<!-- li id="focus"> 
@@ -220,65 +220,7 @@
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
 <div id="node_modal_input" class="modal_input">
-	<table>
-		<tr id="node_label_row">
-			<th>Label</th>
-			<td> <input type="text" placeholder="ATP" id='node_label' /></td>
-		</tr>
-		<tr class="multimere_box">
-			<th>Mutimere</th>
-			<td> 
-				<input type="checkbox" id='node_is_multimere'> is a multimere
-			</td>
-		</tr>
-		<tr class="clonemarker_box">
-			<th>Clone Marker</th>
-			<td> 
-				<input type="checkbox" id='node_is_clone'> is cloned
-			</td>
-		</tr>
-		<tr>
-			<th>State Variable</th>
-			<td> 
-				<div id="sv_group">
-					<input type="text" placeholder="P@207" class='state_variable' /> 
-				</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_state_variable" title="add another State Variable"/>
-			</td>
-		</tr>
-		<tr>	
-			<th>Unit of Information</th>
-			<td> 
-				<div id="uoi_group">
-					<input type="text" placeholder="mt:prot" class='unit_of_information' /> 
-				</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
-			</td>
-		</tr>
-		<tr>
-			<th>Color</th>
-			<td> 
-				<div class="colorbox"><input type="radio" name="node_color" value="none" checked/></div>
-				<div class="colorbox Silver"><input type="radio" name="node_color" value="Silver"/></div>
-				<div class="colorbox Gray"><input type="radio" name="node_color" value="Gray"/></div>
-				<div class="colorbox Red"><input type="radio" name="node_color" value="Red"/></div>
-				<div class="colorbox Maroon"><input type="radio" name="node_color" value="Maroon"/></div>
-				<div class="colorbox Yellow"><input type="radio" name="node_color" value="Yellow"/></div>
-				<div class="colorbox Olive"><input type="radio" name="node_color" value="Olive"/></div>
-				<div class="colorbox Lime"><input type="radio" name="node_color" value="Lime"/></div>
-				<br />
-				<div class="colorbox Green"><input type="radio" name="node_color" value="Green"/></div>
-				<div class="colorbox Aqua"><input type="radio" name="node_color" value="Aqua"/></div>
-				<div class="colorbox Teal"><input type="radio" name="node_color" value="Teal"/></div>
-				<div class="colorbox Blue"><input type="radio" name="node_color" value="Blue"/></div>
-				<div class="colorbox Navy"><input type="radio" name="node_color" value="Navy"/></div>
-				<div class="colorbox Fuchsia"><input type="radio" name="node_color" value="Fuchsia"/></div>
-				<div class="colorbox Purple"><input type="radio" name="node_color" value="Purple"/></div>
-			</td>
-		</tr>
-	</table>
-	<button class='sc_but close_modal'>close</button> or press <b>ESC</b> or <b>ENTER</b>
-	</div>
+	
 </div>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
@@ -312,6 +254,61 @@
 		</tr>
 	</table>
 	<button class='sc_but close_modal'>close</button> or press <b>ESC</b>
+	</div>
+</div>
+<div class="rm">
+	<div class="rm_peek"><div></div></div>
+	<div class="rm_body">
+		<div class="message" style="display:none">Currently you can only change the attributes of one node at once.</div>
+		<table class='node_attributes'>
+			<tr id="node_label_row">
+				<th>Label</th>
+				<td> <input type="text" placeholder="ATP" id='node_label' /></td>
+			</tr>
+			<tr class="multimere_box">
+				<th>Mutimere</th>
+				<td> 
+					<input type="checkbox" id='node_is_multimere'> is a multimere
+				</td>
+			</tr>
+			<tr class="clonemarker_box">
+				<th>Clone Marker</th>
+				<td> 
+					<input type="checkbox" id='node_is_clone'> is cloned
+				</td>
+			</tr>
+			<tr>
+				<th>State Variable</th>
+				<td> 
+					<div id="sv_group">
+						<input type="text" placeholder="P@207" class='state_variable' /> 
+					</div>
+					<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_state_variable" title="add another State Variable"/>
+				</td>
+			</tr>
+			<tr>	
+				<th>Unit of Information</th>
+				<td> 
+					<div id="uoi_group">
+						<input type="text" placeholder="mt:prot" class='unit_of_information' /> 
+					</div>
+					<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
+				</td>
+			</tr>
+			<tr>
+				<th>Color</th>
+				<td></td>
+			</tr>
+			<tr>
+				<td colspan=2>
+				<div id="color_widget">
+					<div id="colorSelector"><div style="background-color: #00ff00"></div></div>
+	                <div id="colorpickerHolder">
+	                </div>
+				</div> 
+				</td>
+			</tr>
+		</table>
 	</div>
 </div>
 <!-- --------------------------------------------------------------------------------- -->

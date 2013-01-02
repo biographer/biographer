@@ -12,6 +12,8 @@ def index():
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.layout.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.geom.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/js', 'colorpicker.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/css', 'colorpicker.css'))
     if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph or request.vars.jsbgn:
         action, graph, json_string = None, None, None
         if request.vars.jgraph or request.vars.jsbgn:
