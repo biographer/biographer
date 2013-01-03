@@ -61,7 +61,7 @@
                 <a href="{{=URL('debug')}}"><img src="{{=URL(request.application, 'static/biographer-editor/img', 'bug.png')}}"/></a>
 				&nbsp;
 				</li -->
-				<li id="reset"> <div>reset biographer</div> </li>
+				<li id="reset"> <a href="{{=URL('reset')}}">..</a><div>reset biographer</div> </li>
 				{{pass}}
 				{{if auth.has_membership('admin'):}}
 				<li id="store_layout"> SL <div>store layout</div> </li>
@@ -274,10 +274,10 @@
 				<th>Label</th>
 				<td> <input type="text" placeholder="ATP" id='node_label' /></td>
 			</tr>
-			<tr class="multimere_box">
+			<tr class="multimer_box">
 				<th>Mutimere</th>
 				<td> 
-					<input type="checkbox" id='node_is_multimere'> is a multimere
+					<input type="checkbox" id='node_is_multimer'> is a multimer
 				</td>
 			</tr>
 			<tr class="clonemarker_box">
@@ -304,21 +304,21 @@
 					<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
 				</td>
 			</tr>
-			<tr>
+			<tr class="color_box">
 				<th>Backround Color</th>
 				<td>
 					<div class="colorSelector color_bg"><div style="background-color: #fff"></div></div>
 					<div id="colorpickerHolder"></div>
 				</td>
 			</tr>
-			<tr>
+			<tr class="color_box">
 				<th>Border Color</th>
 				<td>
 					<div class="colorSelector color_bd"><div style="background-color: #000"></div></div>
 					<div id="colorpickerHolder"></div>
 				</td>
 			</tr>
-			<tr class="color_tx_box">
+			<tr class="color_tx_box color_box">
 				<th>Text Color</th>
 				<td>
 					<div class="colorSelector color_tx"><div style="background-color: #000"></div></div>

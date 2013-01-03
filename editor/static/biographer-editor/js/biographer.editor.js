@@ -345,25 +345,8 @@ Editor.prototype = {
                         this_editor.edgeModal(new_edge, 'created '+this_editor.cur_mode);
                         this_editor.selected_nodes = [];
                     }
-                } else if (this_editor.cur_mode == 'edit'){
-                    if(drawable.drawableType()=='edge'){
-                        this_editor.edgeModal(drawable, 'edited edge');
-                    } else {
-                        var label = 'Complex';
-                        if(drawable.identifier()!='Complex') label = drawable.label();
-                        this_editor.nodeModal(drawable, 'edited node '+label);
-                    }
-                } else if (this_editor.cur_mode == 'focus'){
+                } else if (this_editor.cur_mode == 'focus'){//TODO focus is not part of the editor anymore since I do not consider this as a useful feature
                     if(drawable.drawableType()=='node') bui.util.alignCanvas(this_editor.graph, drawable.id());
-                }
-            }else{
-                //FIXME 
-                if (this_editor.cur_mode == 'del'){
-                    console.log('del edge');
-                    drawable.remove();
-                    this_editor.undoPush('deleted edge '+drawable.drawableType())
-                } else if (this_editor.cur_mode == 'edit'){
-                    this_editor.edgeModal(drawable, 'edited edge');
                 }
             }
         };
@@ -378,25 +361,43 @@ Editor.prototype = {
             $('#node_id').html(drawable.id());
             $('#node_type').html(drawable.identifier());
             //===========================================
+            if (drawable.color !== undefined){
+                $('.color_box').show();
+                var cur_color = drawable.color();
+                var setcolor = function(target, color){
+                    $(target).ColorPickerSetColor(color);
+                    $(target + ' div').css('backgroundColor', color);
+                };
+                if (cur_color.background !== '') setcolor('.color_bg', cur_color.background);
+                else setcolor('.color_bg', 'FFFFFF');
+                if (cur_color.border !== '') setcolor('.color_bd', cur_color.border);
+                else setcolor('.color_bd', '000000');
+                if (cur_color.label !== '') setcolor('.color_tx', cur_color.label);
+                else setcolor('.color_tx', '000000');
+            }else{
+                $('.color_box').hide();
+            }
+            //===========================================
             if(drawable.identifier() in {'Macromolecule':1, 'UnspecifiedEntity': 1}){
                 $('.uoi_box, .state_variable_box').show();
             }else{
                 $('.uoi_box, .state_variable_box').hide();
             }
             //===========================================
-            if (drawable.identifier() in {'Complex':1, "Association": 1, "Dissociation":1, "EmptySet":1}){
+            if (drawable.identifier() in {"Association": 1, "Dissociation":1, "EmptySet":1}){
                 $('#node_label_row, .color_tx_box').hide();
+                $('#node_label').val('');
             }else{
                 $('#node_label_row, .color_tx_box').show();
                 $('#node_label').val(drawable.label());
             }
             //===========================================
-            if (drawable.multimere === undefined){
-                $('.multimere_box').hide();
-            }else if (drawable.multimere() === true){
-                $('#node_is_multimere').attr('checked', 'checked');
+            if (drawable.multimer === undefined){
+                $('.multimer_box').hide();
+            }else if (drawable.multimer() === true){
+                $('#node_is_multimer').attr('checked', 'checked');
             }else {
-                $('#node_is_multimere').removeAttr('checked');
+                $('#node_is_multimer').removeAttr('checked');
             }
             //===========================================
             if (drawable.clonemarker === undefined){
@@ -407,18 +408,6 @@ Editor.prototype = {
                 $('#node_is_clone').removeAttr('checked');
             }
             //===========================================
-            var cur_color = drawable.color();
-            var setcolor = function(target, color){
-                $(target).ColorPickerSetColor(color);
-                $(target + ' div').css('backgroundColor', color);
-            };
-            if (cur_color.background !== '') setcolor('.color_bg', cur_color.background);
-            else setcolor('.color_bg', 'FFFFFF');
-            if (cur_color.border !== '') setcolor('.color_bd', cur_color.border);
-            else setcolor('.color_bd', '000000');
-            if (cur_color.label !== '') setcolor('.color_tx', cur_color.label);
-            else setcolor('.color_tx', '000000');
-            //===========================================
             
         //}else if (this.selected_nodes.length>1){
             //FIXME show things that can be change for several nodes
@@ -427,7 +416,7 @@ Editor.prototype = {
             $('.rm .message').show();
             /*
             $('.clonemarker_box').hide();
-            $('.multimere_box').hide();
+            $('.multimer_box').hide();
             $('#node_label_row').hide();
             */
         }
@@ -436,7 +425,7 @@ Editor.prototype = {
         var this_editor = this;
         if (this_editor.selected_nodes.length == 1){
             var drawable = this_editor.selected_nodes[0];
-            if ( (drawable.identifier()!='Complex')&&( $('#node_label').val() !== '' ) ){
+            if ( ($('#node_label').val() !== '') && (drawable.label !== undefined) ){
                 drawable.label($('#node_label').val()).adaptSizeToLabel();
             }
             //-----------------
@@ -463,10 +452,9 @@ Editor.prototype = {
             });
             
             //-----------------
-            if (drawable.multimere !== undefined){drawable.multimere($('#node_is_multimere').is(':checked')); }
+            if (drawable.multimer !== undefined){drawable.multimer($('#node_is_multimer').is(':checked')); }
             if (drawable.clonemarker !== undefined) drawable.clonemarker($('#node_is_clone').is(':checked'));
             //-----------------
-            console.log('setting bg color to '+this_editor.color_bg);
             if(this_editor.color_bg !== undefined) drawable.color( { background: this_editor.color_bg} );
             if(this_editor.color_bd !== undefined) drawable.color( { border: this_editor.color_bd} );
             if(this_editor.color_tx !== undefined) drawable.color( { label: this_editor.color_tx} );
@@ -1080,7 +1068,7 @@ Editor.prototype = {
         $('.unit_of_information').change(function(){
             this_editor.node_attributes_changed();
         });
-        $('#node_is_multimere, #node_is_clone').click(function(){
+        $('#node_is_multimer, #node_is_clone').click(function(){
             this_editor.node_attributes_changed();
         });
         //=========================
@@ -1189,8 +1177,8 @@ Editor.prototype = {
                             $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                         }else{
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                            this_editor.graph.scale(1);
-                            this_editor.graph.reduceTopLeftWhitespace(10);
+                            //this_editor.graph.scale(1);
+                            //this_editor.graph.reduceTopLeftWhitespace(10);
                             this_editor.undoPush('loaded graph from JSON string');
                         this_editor.modal.close();
                         }
@@ -1256,8 +1244,8 @@ Editor.prototype = {
                         $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                     }else{
                         this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                        this_editor.graph.scale(1);
-                        this_editor.graph.reduceTopLeftWhitespace(10);
+                        //this_editor.graph.scale(1);
+                        //this_editor.graph.reduceTopLeftWhitespace(10);
                         this_editor.undoPush('loaded Reactome '+reid);
                         //$('.flash').html('loaded Reactome '+reid).fadeIn().delay(1600).fadeOut();
                     }
@@ -1392,7 +1380,11 @@ Editor.prototype = {
             var nodetype = $(this).attr('id');
             $('.follow').hide();
             $('#follow_'+nodetype).show();
+            /*$('.compartment, .complex').hover(function(){
+                console.log('hover rock '+$(this).attr('id'));
+            });*/
             $("#canvas").mousemove(function(e){
+                //console.log($(e.currentTarget).attr('id'));//FIXME, needed for finding parent object - does not work on svg elements, just returns the canvas
                 $('#follow_'+nodetype).css('top', e.clientY-3).css('left', e.clientX-3);
             });
             $("body").click(function(e){
