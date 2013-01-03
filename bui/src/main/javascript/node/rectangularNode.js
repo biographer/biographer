@@ -97,8 +97,8 @@
         var size = this.size();
         privates.rect.setAttributeNS(null, 'd', generatePathData(size.width,
                 size.height, privates.topRadius, privates.bottomRadius));
-        if (privates.is_multimere == true){
-            privates.multimere_rect.setAttributeNS(null, 'd', generatePathData(size.width, 
+        if (privates.is_multimer == true){
+            privates.multimer_rect.setAttributeNS(null, 'd', generatePathData(size.width, 
                 size.height, privates.topRadius, privates.bottomRadius, {x: 9, y:9}));
         }
         if (privates.is_cloned == true){
@@ -164,7 +164,7 @@
         var privates = this._privates(identifier);
         privates.topRadius = 0;
         privates.bottomRadius = 0;
-        privates.is_multimere = false;
+        privates.is_multimer = false;
         privates.is_cloned = false;
 
         initialPaint.call(this);
@@ -225,29 +225,29 @@
             return privates.bottomRadius;
         },
         /**
-         * Set this node's multimere state.
+         * Set this node's multimer state.
          *
-         * @param {Bool} [flag] optional flag to set multimere state
+         * @param {Bool} [flag] optional flag to set multimer state
          * @return {bui.RectangularNode|Bool} Fluent interface if you pass
-         *   a parameter, the current multimere status otherwise.
+         *   a parameter, the current multimer status otherwise.
          */
-        multimere : function(flag) {
+        multimer : function(flag) {
             var privates = this._privates(identifier);
             if (flag !== undefined) {
-                if (flag!=privates.is_multimere){
+                if (flag!=privates.is_multimer){
                     var container = this.nodeGroup();
-                    privates.is_multimere = flag;
+                    privates.is_multimer = flag;
                     if (flag==true){
-                        privates.multimere_rect = document.createElementNS(bui.svgns, 'path');
-                        container.insertBefore(privates.multimere_rect, container.firstChild);
+                        privates.multimer_rect = document.createElementNS(bui.svgns, 'path');
+                        container.insertBefore(privates.multimer_rect, container.firstChild);
                         formChanged.call(this);
                     }else{
-                        container.removeChild(privates.multimere_rect);
+                        container.removeChild(privates.multimer_rect);
                     }
                 }
                 return this;
             }
-            return privates.is_multimere;
+            return privates.is_multimer;
         },
         clonemarker : function(flag) {
             var privates = this._privates(identifier);

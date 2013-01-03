@@ -1,6 +1,6 @@
 
 (function(bui) {
-    var identifier = 'bui.Complex';
+    var identifier = 'Complex';
 
     /**
      * @private
@@ -14,10 +14,10 @@
     var generatePathData = function(node, width, height, shift) {
         var cornerRadius = bui.settings.style.complexCornerRadius;
 
-        var sx = 0, sy = 0
-        if (shift != undefined){
+        var sx = 0, sy = 0;
+        if (shift !== undefined){
             sx = shift.x;
-            sy = shift.y
+            sy = shift.y;
         }
         return ['M', width / 2 +sx, sy,
                 'H', width - cornerRadius +sx,
@@ -33,10 +33,10 @@
     var sizeChanged = function(node, width, height) {
         var privates = this._privates(identifier);
         privates.path.setAttributeNS(null, 'd', generatePathData(node,width,height));
-        if (privates.is_multimere == true){
-            privates.multimere_path.setAttributeNS(null, 'd', generatePathData(node,width,height,{x:10,y:10}));
+        if (privates.is_multimer === true){
+            privates.multimer_path.setAttributeNS(null, 'd', generatePathData(node,width,height,{x:10,y:10}));
         }
-        if (privates.is_cloned == true){
+        if (privates.is_cloned === true){
             privates.clone_path.setAttributeNS(null, 'd', generatePathData(node,width,height));
             privates.clippath_path.setAttributeNS(null, 'width', width);
             privates.clippath_path.setAttributeNS(null, 'height', height / 3);
@@ -55,60 +55,74 @@
         sizeChanged.call(this, this, size.width, size.height);
         container.appendChild(privates.path);
     };
+    /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.path.style.setProperty('fill', color.background);
+        privates.path.style.setProperty('stroke', color.border);
+    };
 
     /**
      * @class
      * Class for SBGN complexes.
      *
-     * @extends bui.Node
+     * @extends bui.Labelable
      * @constructor
      */
     bui.Complex = function() {
-        bui.Node.apply(this, arguments);
-
-        this.bind(bui.Node.ListenerType.size,
+        bui.Labelable.apply(this, arguments);
+        
+        var colorChangedListener = colorChanged.createDelegate(this);
+        
+        this.bind(bui.Labelable.ListenerType.size,
                 sizeChanged.createDelegate(this),
+                listenerIdentifier(this));
+         this.bind(bui.Node.ListenerType.color,
+                colorChangedListener,
                 listenerIdentifier(this));
 
         initialPaint.call(this);
 
         this.addClass(bui.settings.css.classes.complex);
         var privates = this._privates(identifier);
-        privates.is_multimere = false;
+        privates.is_multimer = false;
         privates.is_cloned = false;
     };
 
     bui.Complex.prototype = {
         identifier : function() {
-            return 'Complex';
+            return identifier;
         },
         _minWidth : 90,
         _minHeight : 90,
         /**
-         * Set this node's multimere state.
+         * Set this node's multimer state.
          *
-         * @param {Bool} [flag] optional flag to set multimere state
+         * @param {Bool} [flag] optional flag to set multimer state
          * @return {bui.RectangularNode|Bool} Fluent interface if you pass
-         *   a parameter, the current multimere status otherwise.
+         *   a parameter, the current multimer status otherwise.
          */
-        multimere : function(flag) {
+        multimer : function(flag) {
             var privates = this._privates(identifier);
             if (flag !== undefined) {
-                if (flag!=privates.is_multimere){
+                if (flag!=privates.is_multimer){
                     var container = this.nodeGroup();
-                    privates.is_multimere = flag;
-                    if (flag==true){
+                    privates.is_multimer = flag;
+                    if (flag===true){
                         var size = this.size();
-                        privates.multimere_path = document.createElementNS(bui.svgns, 'path');
-                        container.insertBefore(privates.multimere_path, container.firstChild);
+                        privates.multimer_path = document.createElementNS(bui.svgns, 'path');
+                        container.insertBefore(privates.multimer_path, container.firstChild);
                         sizeChanged.call(this, this, size.width, size.height);
                     }else{
-                        container.removeChild(privates.multimere_path);
+                        container.removeChild(privates.multimer_path);
                     }
                 }
                 return this;
             }
-            return privates.is_multimere;
+            return privates.is_multimer;
         },
         clonemarker : function(flag) {
             var privates = this._privates(identifier);
@@ -117,14 +131,14 @@
                     var container = this.nodeGroup();
                     var defsGroup = this.graph().defsGroup();
                     privates.is_cloned = flag;
-                    if (flag==true){
+                    if (flag===true){
                         privates.clone_path = document.createElementNS(bui.svgns, 'path');
                         privates.clone_path.style.setProperty('fill', 'black');
                         container.appendChild(privates.clone_path);
                         privates.clone_path.setAttribute('clip-path','url(#clone_'+this.id()+')');
                         privates.clippath = document.createElementNS(bui.svgns, 'clipPath');
                         privates.clippath.setAttribute('id', 'clone_'+this.id());
-                        privates.clippath_path = document.createElementNS(bui.svgns, 'rect')
+                        privates.clippath_path = document.createElementNS(bui.svgns, 'rect');
                         privates.clippath_path.setAttributeNS(null, 'x', 0);
                         sizeChanged.call(this, this, this.size().width, this.size().height);
                         privates.clippath.appendChild(privates.clippath_path);
@@ -134,7 +148,7 @@
                         defsGroup.removeChild(clippath);
                     }
                 }
-                return this
+                return this;
             }
             return privates.is_cloned;
         },
@@ -262,5 +276,5 @@
         }
     };
 
-    bui.util.setSuperClass(bui.Complex, bui.Node);
+    bui.util.setSuperClass(bui.Complex, bui.Labelable);
 })(bui);

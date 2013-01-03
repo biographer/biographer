@@ -17,12 +17,12 @@
         privates.circle.setAttributeNS(null, 'cx', r);
         privates.circle.setAttributeNS(null, 'cy', r);
         privates.circle.setAttributeNS(null, 'r', r);
-        if (privates.is_multimere == true){
-            privates.multimere_circle.setAttributeNS(null, 'cx', r+5);
-            privates.multimere_circle.setAttributeNS(null, 'cy', r+7);
-            privates.multimere_circle.setAttributeNS(null, 'r', r);
+        if (privates.is_multimer === true){
+            privates.multimer_circle.setAttributeNS(null, 'cx', r+5);
+            privates.multimer_circle.setAttributeNS(null, 'cy', r+7);
+            privates.multimer_circle.setAttributeNS(null, 'r', r);
         }
-        if (privates.is_cloned == true){
+        if (privates.is_cloned === true){
             privates.clone_circle.setAttributeNS(null, 'cx', r);
             privates.clone_circle.setAttributeNS(null, 'cy', r);
             privates.clone_circle.setAttributeNS(null, 'r', r);
@@ -40,9 +40,9 @@
         var color = this.color();
         privates.circle.style.setProperty('fill', color.background);
         privates.circle.style.setProperty('stroke', color.border);
-        if (privates.is_multimere == true){
-            privates.multimere_circle.style.setProperty('fill', color.background);
-            privates.multimere_circle.style.setProperty('stroke', color.border);
+        if (privates.is_multimer === true){
+            privates.multimer_circle.style.setProperty('fill', color.background);
+            privates.multimer_circle.style.setProperty('stroke', color.border);
         }
     };
 
@@ -54,7 +54,7 @@
         var privates = this._privates(identifier);
         privates.circle = document.createElementNS(bui.svgns, 'circle');
         sizeChanged.call(this, this, this.size().width);
-        colorChanged.call(this, this, this.color()), 
+        colorChanged.call(this, this, this.color());
         container.appendChild(privates.circle);
     };
 
@@ -78,7 +78,7 @@
                 colorChangedListener,
                 listenerIdentifier(this));
         var privates = this._privates(identifier);
-        privates.is_multimere = false;
+        privates.is_multimer = false;
         privates.is_cloned = false;
         initialPaint.call(this);
     };
@@ -88,29 +88,29 @@
             return identifier;
         },
         /**
-         * Set this node's multimere state.
+         * Set this node's multimer state.
          *
-         * @param {Bool} [flag] optional flag to set multimere state
+         * @param {Bool} [flag] optional flag to set multimer state
          * @return {bui.RectangularNode|Bool} Fluent interface if you pass
-         *   a parameter, the current multimere status otherwise.
+         *   a parameter, the current multimer status otherwise.
          */
-        multimere : function(flag) {
+        multimer : function(flag) {
             var privates = this._privates(identifier);
             if (flag !== undefined){
-                if (flag!=privates.is_multimere){
+                if (flag!=privates.is_multimer){
                     var container = this.nodeGroup();
-                    privates.is_multimere = flag;
-                    if (flag==true){
-                        privates.multimere_circle = document.createElementNS(bui.svgns, 'circle');
-                        container.insertBefore(privates.multimere_circle, container.firstChild);
+                    privates.is_multimer = flag;
+                    if (flag===true){
+                        privates.multimer_circle = document.createElementNS(bui.svgns, 'circle');
+                        container.insertBefore(privates.multimer_circle, container.firstChild);
                         sizeChanged.call(this, this, this.size().width, this.size().height);
                     }else{
-                        container.removeChild(privates.multimere_circle);
+                        container.removeChild(privates.multimer_circle);
                     }
                 }
-                return this
+                return this;
             }
-            return privates.is_multimere;
+            return privates.is_multimer;
         },
         clonemarker : function(flag) {
             var privates = this._privates(identifier);
@@ -119,14 +119,14 @@
                     var container = this.nodeGroup();
                     var defsGroup = this.graph().defsGroup();
                     privates.is_cloned = flag;
-                    if (flag==true){
+                    if (flag===true){
                         privates.clone_circle = document.createElementNS(bui.svgns, 'circle');
                         privates.clone_circle.style.setProperty('fill', 'black');
                         container.appendChild(privates.clone_circle);
                         privates.clone_circle.setAttribute('clip-path','url(#clone_'+this.id()+')');
                         privates.clippath = document.createElementNS(bui.svgns, 'clipPath');
                         privates.clippath.setAttribute('id', 'clone_'+this.id());
-                        privates.clippath_path = document.createElementNS(bui.svgns, 'rect')
+                        privates.clippath_path = document.createElementNS(bui.svgns, 'rect');
                         privates.clippath_path.setAttributeNS(null, 'x', 0);
                         sizeChanged.call(this, this, this.size().width, this.size().height);
                         privates.clippath.appendChild(privates.clippath_path);
@@ -136,7 +136,7 @@
                         defsGroup.removeChild(clippath);
                     }
                 }
-                return this
+                return this;
             }
             return privates.is_cloned;
         },

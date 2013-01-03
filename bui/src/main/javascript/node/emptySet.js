@@ -19,7 +19,7 @@
         privates.circle.setAttributeNS(null, 'r', r);
         var pathData = [
             'M', 0, width,
-            'L', width, 0, 
+            'L', width, 0,
             'Z'].join(' ');
         privates.dash.setAttributeNS(null, 'd', pathData);
         privates.dash.setAttributeNS(null, 'stroke', 'black');
@@ -34,6 +34,7 @@
         var color = this.color();
         privates.circle.style.setProperty('fill', color.background);
         privates.circle.style.setProperty('stroke', color.border);
+        privates.dash.style.setProperty('stroke', color.border);
     };
 
     /**
@@ -45,7 +46,7 @@
         privates.circle = document.createElementNS(bui.svgns, 'circle');
         privates.dash = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, this.size().width);
-		colorChanged.call(this, this, this.color()), 
+		colorChanged.call(this, this, this.color());
         container.appendChild(privates.circle);
         container.appendChild(privates.dash);
     };
@@ -63,7 +64,7 @@
 
         var colorChangedListener = colorChanged.createDelegate(this);
         
-        this.bind(bui.Node.ListenerType.size,
+        this.bind(bui.Labelable.ListenerType.size,
                 sizeChanged.createDelegate(this),
                 listenerIdentifier(this));
         this.bind(bui.Labelable.ListenerType.color,
@@ -80,7 +81,7 @@
         _minWidth : 60,
         _minHeight : 60,
         _forceRectangular : true,
-        _calculationHook : circularShapeLineEndCalculationHook
+        _calculationHook : circularShapeLineEndCalculationHook,
     };
 
     bui.util.setSuperClass(bui.EmptySet, bui.Labelable);

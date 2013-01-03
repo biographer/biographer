@@ -26,7 +26,7 @@ text.small, tspan.small, text.small tspan {
 g.VariableValue > text {
    top: 5px;
 }
-ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect, g.perturbation > path, g.phenotype path, g.VariableValue path {
+ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect, g.perturbation > path, g.phenotype path, g.VariableValue path, g.annotation path {
     fill: white;
     stroke-width: 2px;
     stroke: black

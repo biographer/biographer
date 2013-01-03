@@ -51,7 +51,7 @@
         var privates = this._privates(identifier);
         privates.path = document.createElementNS(bui.svgns, 'path');
         sizeChanged.call(this, this, size.width, size.height);
-		colorChanged.call(this, this, this.color()), 
+		colorChanged.call(this, this, this.color());
         container.appendChild(privates.path);
     };
 
@@ -85,7 +85,7 @@
             return identifier;
         },
         _minWidth : 80,
-        _minHeight : 60,
+        _minHeight : 60
     };
 
     bui.util.setSuperClass(bui.Perturbation, bui.Labelable);
