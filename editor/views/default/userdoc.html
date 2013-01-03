@@ -17,13 +17,13 @@ You can draw Edges by using the edge tool <div id="Edge" class="tool"></div> or 
 Biographer can import SBGN graphs (with and without layout) from different sources. Use the import icon <div class="tool" id="import_file"></div> to open up the import modal popup. There you can either upload your personal docuemtns in one of the following formats:
 <ul>
     <li><b>jSBGN</b><br>
-        is Biographers native format. Is can contain only topological information or may also include proper layout information for all glyps in the graph.
+        Is Biographers native JSON based format. It can contain only topological information or may also include proper layout information for all glyps in the graph.
     </li>
     <li><b>SBGN-ML</b><br>
-        always contains layout information, though they may be set to arbitrary values that do not reflect a proper layout.
+        Is an XML based format. Always contains layout information, though they may be set to arbitrary values that do not reflect a proper layout.
     </li>
     <li><b>SBML</b><br>
-        only contains topological information, therefore you are required to layout the graph after importing it.
+        Only contains topological information, therefore you are required to layout the graph after importing it. The more MIRIAM annotations you use (especially: chEBI, PubChem, Uniprot) as well as SBO terms for ... the better the import will work since glyph types (nodes) and arc types (edges) can be detected.
     </li>
 </ul>
 <h2>Layout</h2>
@@ -83,14 +83,24 @@ Biographer natively renders the images in you browser in the SVG format. To expo
 <h3>Converting Document Formats</h3>
 Go <a href="{{=URL('convert')}}">here</a> to convert between jSBGN, SBGN-ML and SBML using the <a href="https://github.com/chemhack/libSBGN.js">libSBGN.js library</a>. This is still under development and might not return what you expect.
 <h1>SBGN Support</h1>
-Biographer currently does not support the full SBGN specification. Missing glyphs include:
+Biographer currently does not support the full SBGN specification. Missing are:
+<h2>PD</h2>
 <ul>
-    <li>Multimeres</li>
     <li>Submap</li>
-    <li>3 way interaction circle ... todo look up the correct glyph name</li>
-    <li>Notes</li>
+    <li>Annotation</li>
+    <li>Text on clone marker</li>
+    <li>Cardinality flags on edges</li>
 </ul>
-Also missing are clone markers and node ports (the little ends on e.g. process nodes).
+<h2>ER</h2>
+<ul>
+    <li>3 way interaction circle</li>
+</ul>
+<h2>AF</h2>
+<ul>
+    <li>Submap</li>
+    <li>Auxiliary Units</li>
+</ul>
+Also missing are node ports (the little ends on e.g. process nodes).
 <h1>System Requirements</h1>
 Biographer currently works best with Chromium (Chrome), Opera and FireFox. Internet Explorer and Safari are not actively tested (Please do not use these browsers with biographer).
 <h1>Problems and Support</h1>

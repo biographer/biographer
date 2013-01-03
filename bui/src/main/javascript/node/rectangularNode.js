@@ -97,7 +97,6 @@
         var size = this.size();
         privates.rect.setAttributeNS(null, 'd', generatePathData(size.width,
                 size.height, privates.topRadius, privates.bottomRadius));
-        console.log('multimere rect rock '+privates.is_multimere);   
         if (privates.is_multimere == true){
             privates.multimere_rect.setAttributeNS(null, 'd', generatePathData(size.width, 
                 size.height, privates.topRadius, privates.bottomRadius, {x: 9, y:9}));

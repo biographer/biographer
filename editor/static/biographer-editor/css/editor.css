@@ -456,8 +456,8 @@ h3.section.down {
 }
 #zoom_in {background: url('../img/biographer.sprites.png') -105px -0px; }
 #zoom_out {background: url('../img/biographer.sprites.png') -105px -35px; }
-#scale1 {background: url('../img/biographer.sprites.png') -105px -70px; }
-#fit_to_screen {background: url('../img/biographer.sprites.png') -105px -105px; }
+#fit_to_screen {background: url('../img/biographer.sprites.png') -105px -70px; }
+#scale1 {background: url('../img/biographer.sprites.png') -105px -105px; }
 /**********************************/
 .disabled {
     opacity: .3;

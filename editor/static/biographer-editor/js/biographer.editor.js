@@ -375,6 +375,9 @@ Editor.prototype = {
             var drawable = this.selected_nodes[0];
             console.log('selcted a '+drawable.identifier());
             //===========================================
+            $('#node_id').html(drawable.id());
+            $('#node_type').html(drawable.identifier());
+            //===========================================
             if(drawable.identifier() in {'Macromolecule':1, 'UnspecifiedEntity': 1}){
                 $('.uoi_box, .state_variable_box').show();
             }else{
@@ -1186,6 +1189,8 @@ Editor.prototype = {
                             $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                         }else{
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                            this_editor.graph.scale(1);
+                            this_editor.graph.reduceTopLeftWhitespace(10);
                             this_editor.undoPush('loaded graph from JSON string');
                         this_editor.modal.close();
                         }
@@ -1223,6 +1228,8 @@ Editor.prototype = {
                         }else{
                             //console.log(sb.io.write(doc, 'jsbgn'));
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                            this_editor.graph.scale(1);
+                            this_editor.graph.reduceTopLeftWhitespace(10);
                             this_editor.undoPush('loaded BioModel '+bmid);
                             //$('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
                         }
@@ -1249,6 +1256,8 @@ Editor.prototype = {
                         $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                     }else{
                         this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                        this_editor.graph.scale(1);
+                        this_editor.graph.reduceTopLeftWhitespace(10);
                         this_editor.undoPush('loaded Reactome '+reid);
                         //$('.flash').html('loaded Reactome '+reid).fadeIn().delay(1600).fadeOut();
                     }
@@ -1302,7 +1311,7 @@ Editor.prototype = {
         //=========================
         $('#fit_to_screen').click(function() {
             this_editor.graph.fitToPage();
-            this_editor.graph.reduceTopLeftWhitespace(100);
+            this_editor.graph.reduceTopLeftWhitespace(10);
             return false;
         });
         //=========================

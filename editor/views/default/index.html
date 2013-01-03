@@ -200,7 +200,7 @@
 		<tr>
             <th> <a href="http://www.ebi.ac.uk/biomodels-main/">BioModels</th> </a> <td>
             	<div class="biomodels_start">... click to open</div>
-            	{{#include 'default/biomodels_info.html'}}
+            	{{include 'default/biomodels_info.html'}}
             </td>
 		</tr>
 		<tr>
@@ -261,6 +261,15 @@
 	<div class="rm_body">
 		<div class="message" style="display:none">Currently you can only change the attributes of one node at once.</div>
 		<table class='node_attributes'>
+			<tr>
+				<th>Type</th>
+				<td id="node_type"></td>
+			</tr>
+			<tr>
+				<th>Node ID</th>
+				<td id="node_id"></td>
+			</tr>
+
 			<tr id="node_label_row">
 				<th>Label</th>
 				<td> <input type="text" placeholder="ATP" id='node_label' /></td>
