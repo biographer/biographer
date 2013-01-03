@@ -6,13 +6,15 @@ LYPORT=8099
 CUR=$(shell pwd)
 TDIR := $(CUR)/$(PREFIX)
 ABSPREFIX=$(shell readlink -f $(TDIR))
-.PHONY=all bui layout editor
+.PHONY=all tbui tlayout teditor tscripts
 
-all: tbui tlayout teditor
+all: tbui tlayout tscripts teditor
 tbui: 
 	$(MAKE) -C bui
 tlayout: 
 	$(MAKE) -C flowlayout
+tscripts:
+	$(MAKE) -C scripts
 teditor:
 	$(MAKE) -C editor
 installlinux: all

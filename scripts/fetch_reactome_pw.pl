@@ -4,7 +4,7 @@ use strict;
 
 my $addr="http://www.reactome.org/cgi-bin/entitylevelview/yuieventhierarchy?DB=gk_current&FOCUS_SPECIES_ID=48887";
 
-die "provide js filename to save list" unless $ARGV[0];
+die "provide filename to save list" unless $ARGV[0];
 my $f;
 open($f,">",$ARGV[0]) or die "cannot open ".$ARGV[0];
 
