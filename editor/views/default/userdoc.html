@@ -1,0 +1,138 @@
+{{extend 'layout.html'}}
+<div class="container">
+<h1>Using Biographer</h1>
+<h2>Creating SBGN visualisations</h2>
+<h3>Manually</h3>
+To create a SBGN visualization from scratch first select the SBGN language you want to use in the menu on the left. The options are 
+<ul>
+    <li>PD - Process Description</li>
+    <li>ER - Entity Relation</li>
+    <li>AF - Activity Flow</li>
+</ul>
+<h4>Creating Nodes</h4>
+Click on one of the different node types in the left menu and click onto the canvas to create the node at that position. A modal window will appear where you can enter the node label and change other node properties. 
+<h4>Creating Edges</h4>
+You can draw Edges by using the edge tool <div id="Edge" class="tool"></div> or the spline tool <div id="Spline" class="tool"></div>. Click on the tool and then click on two nodes you want to connect with an edge. Once two nodes are clicked a nodal popup will appear where you can choose the edge type. 
+<h3>Importing</h3>
+Biographer can import SBGN graphs (with and without layout) from different sources. Use the import icon <div class="tool" id="import_file"></div> to open up the import modal popup. There you can either upload your personal docuemtns in one of the following formats:
+<ul>
+    <li><b>jSBGN</b><br>
+        Is Biographers native JSON based format. It can contain only topological information or may also include proper layout information for all glyps in the graph.
+    </li>
+    <li><b>SBGN-ML</b><br>
+        Is an XML based format. Always contains layout information, though they may be set to arbitrary values that do not reflect a proper layout.
+    </li>
+    <li><b>SBML</b><br>
+        Only contains topological information, therefore you are required to layout the graph after importing it. The more MIRIAM annotations you use (especially: chEBI, PubChem, Uniprot) as well as SBO terms for ... the better the import will work since glyph types (nodes) and arc types (edges) can be detected.
+    </li>
+</ul>
+<h2>Layout</h2>
+<h3>Selecting Nodes</h3>
+You can select single nodes by clicking on them. To select multiple nodes use <div class="keyboard">shift + click</div> or choose the <div class="tool" id="cursor"></div> tool and <div class="keyboard">click + drag</div> a selection rectangle around several nodes.<br>
+Slected nodes have blue dashed border.
+<h3>Deleting Nodes</h3>
+To delete nodes select the nodes and press <div class="keyboard">Del</div> on your keyboard <br>or use the delete tool <div class="tool" id="del"></div>
+<h3>Moving Nodes</h3>
+To move a single node use <div class="keyboard">click + drag</div>. To move several nodes at once fist select several nodes and then move them like single nodes (currently not implementd).
+<h3>Automatic Layout</h3>
+To help you laying our your SBGN graphs Biographer currenly provides tree automatic layout algorightms.
+<ul>
+    <li><div class="tool" id="layout_biographer"></div> biographer.flow <br>
+        Respects compartments
+    </li>
+    <li><div class="tool" id="layout_grid"></div> biographer.grid <br>
+        Respects compartments (but the compartments have to be layed out manually)<br>
+        If you click once only one iteration of optimization for each nodes its executed. For better results apply this layout multiple times. Once the layout is stuck in a local minmum you can manually move some nodes and apply the layout again. You will see that this greatly improves the layout. <br>
+        Holding down the <div class="keyboard">ctrl</div> key while clicking the grid layout button will only place each node on the cosest empty grid space. This can be used to quickly create great looking layouts manually.
+    </li>
+    <li><div class="tool" id="layout_force"></div> D3 force directed layout <br>
+        Compartments are not supported <br>
+        Uses the fantastic <a href="http://d3js.org/">D3 library</a>
+    </li>
+</ul>
+<h3>Align and Distribute</h3>
+The Align functions always align to the <b>first selected node</b>.
+<h2>Navigation</h2>
+<h3>Zooming</h3>
+Since ctrl + scroll is already taken by the default zoom function in many browsers (like FireFox and Opera) biographer uses <div class="keyboard">alt + scroll</div> for zooming. <br>
+If you are using a touch enable device you can use the <div class="keyboard">pinch gesture</div> (move two fingers towards each other or away from each other) to zoom.<br>
+You can also zoom by using the zoom buttons. <br>
+<div class="tool" id="zoom_in"></div> to zoom in <br>
+<div class="tool" id="zoom_out"></div> to zoom out <br>
+<div class="tool" id="scale1"></div> to get the original size
+<h3>Panning</h3>
+<div id="move" class="tool"></div> this tool can be used to pan the canvas - to move the whole canvas.
+<h2>Exporting</h2>
+<div class="tool" id="export_other"></div> Exporting images is supported for several document formats:
+<ul>
+    <li><b>jSBGN</b><br>
+Biographers native exchange format is jSBGN (<a href="http://code.google.com/p/biographer/wiki/graph_exchange">described here</a>). This format ideal for transmission in the web and does only require topological information. 
+    </li>
+    <li><b>SVG</b><br>
+Biographer natively renders the images in you browser in the SVG format. To export the SVG image click on
+    </li>
+    <li><b>other formats</b><br>
+        With the help of an external Java based library biographer is also able to export to 
+        <ul>
+              <li>png</li>
+              <li>pdf</li>
+              <li>tiff</li>
+          </ul>  
+    </li>
+</ul>
+<h3>Converting Document Formats</h3>
+Go <a href="{{=URL('convert')}}">here</a> to convert between jSBGN, SBGN-ML and SBML using the <a href="https://github.com/chemhack/libSBGN.js">libSBGN.js library</a>. This is still under development and might not return what you expect.
+<h1>SBGN Support</h1>
+Biographer currently does not support the full SBGN specification. Missing are:
+<h2>PD</h2>
+<ul>
+    <li>Submap</li>
+    <li>Annotation</li>
+    <li>Text on clone marker</li>
+    <li>Cardinality flags on edges</li>
+</ul>
+<h2>ER</h2>
+<ul>
+    <li>3 way interaction circle</li>
+</ul>
+<h2>AF</h2>
+<ul>
+    <li>Submap</li>
+    <li>Auxiliary Units</li>
+</ul>
+Also missing are node ports (the little ends on e.g. process nodes).
+<h1>System Requirements</h1>
+Biographer currently works best with Chromium (Chrome), Opera and FireFox. Internet Explorer and Safari are not actively tested (Please do not use these browsers with biographer).
+<h1>Problems and Support</h1>
+If you want to talk to us please contact us on our <a href="https://groups.google.com/forum/?fromgroups#!forum/biographer">google group #biographer</a>.
+<br>
+For technical issues and discurssion you can follow our development group <a href="https://groups.google.com/forum/?fromgroups#!forum/biographer-dev">#biographer-dev</a>.
+bug tracker
+</div>
+<style type="text/css">
+    .container {
+        width: 600px;
+        margin-left: 50px;
+    }
+    h1, h2, h3, h4 {
+        background-color: #eee;
+    }
+    ul {
+        padding: 5px;
+    }
+    ul ul {
+        padding: 15px;
+    }
+    .tool {
+        width: 35px;
+        height: 35px;
+        display: inline-block;
+    }
+    .keyboard {
+        display: inline-block;
+        background-color: #eee;
+        padding: 3px;
+        border: solid 1px #aaa;
+        border-radius: 3px;
+    }
+</style>
