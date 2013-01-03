@@ -460,17 +460,14 @@ def hg_update():
     pstdout,pstderr = p.communicate()
     p = subprocess.Popen(['hg','update'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE, cwd = request.folder)
     ustdout,ustderr = p.communicate()
+    #p = subprocess.Popen(['make'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE, cwd = request.folder)
+    #ustdout,ustderr = p.communicate()
     return TAG[''](TABLE(
         TR(TH('command'), TH('stdout'), TH('stderr')),
         TR(TD('pull'), TD(pstdout),TD(pstderr)),
         TR(TD('update'), TD(ustdout),TD(ustderr)),
+        #TR(TD('make'), TD(ustdout),TD(ustderr)),
         ))
-    #from mercurial import ui, hg
-    #from mercurial.node import hex
-    #'hg pull init'
-    #'hg update'
-    #repo = hg.repository('/path/to/repo/root', ui.ui())
-    #fctx = repo.filectx('/path/to/file', 'tip')
 
 def glob_ignore(path):
     '''returns True it path matches a pattern from IGNORE_PATTERNS'''
