@@ -460,13 +460,13 @@ def hg_update():
     pstdout,pstderr = p.communicate()
     p = subprocess.Popen(['hg','update'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE, cwd = request.folder)
     ustdout,ustderr = p.communicate()
-    #p = subprocess.Popen(['make'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE, cwd = request.folder)
-    #ustdout,ustderr = p.communicate()
+    p = subprocess.Popen(['make'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE, cwd = request.folder)
+    mstdout,mstderr = p.communicate()
     return TAG[''](TABLE(
         TR(TH('command'), TH('stdout'), TH('stderr')),
         TR(TD('pull'), TD(pstdout),TD(pstderr)),
         TR(TD('update'), TD(ustdout),TD(ustderr)),
-        #TR(TD('make'), TD(ustdout),TD(ustderr)),
+        TR(TD('make'), TD(mstdout),TD(mstderr)),
         ))
 
 def glob_ignore(path):
