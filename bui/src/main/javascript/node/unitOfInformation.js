@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.UnitOfInformation';
+    var identifier = 'UnitOfInformation';
 
     /**
      * @private
@@ -27,6 +27,9 @@
     };
 
     bui.UnitOfInformation.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         auxiliaryUnit : true,
         includeInJSON : false,
         _enableResizing : false

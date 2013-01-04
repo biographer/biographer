@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.StateVariable';
+    var identifier = 'StateVariable';
 
     /**
      * @private
@@ -114,7 +114,7 @@
 })(bui);
 
 (function(bui) {
-    var identifier = 'bui.StateVariableER';
+    var identifier = 'StateVariableER';
 
     /**
      * @private

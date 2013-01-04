@@ -352,6 +352,7 @@ Editor.prototype = {
         };
     },
     node_attributes_show: function(){
+        var this_editor = this;
         if(this.selected_nodes.length==1){
             $('.node_attributes').show();
             $('.rm .message').hide();
@@ -380,6 +381,33 @@ Editor.prototype = {
             //===========================================
             if(drawable.identifier() in {'Macromolecule':1, 'UnspecifiedEntity': 1}){
                 $('.uoi_box, .state_variable_box').show();
+                var randomnumber=Math.floor(Math.random()*1501)
+                $('#sv_group').html('<input type="text" placeholder="P@'+randomnumber+'" class="state_variable" /> ');
+                $('#uoi_group').html('<input type="text" placeholder="mt:prot" class="unit_of_information" />');
+                var dc = drawable.children();
+                var ci = 0, cj = 0;
+                for (var i =0; i<dc.length; ++i){
+                    var randomnumber=Math.floor(Math.random()*1501)
+                    if (dc[i].identifier() in {'StateVariable':1,'StateVariableER':1} ){
+                        if (ci<1) $('.state_variable').val(dc[i].label());
+                        else $('#sv_group').append(' <br/><input type="text" class="state_variable" placeholder="P@'+randomnumber+'" value="'+dc[i].label()+'"/> ');
+                        ++ci;
+                    }
+                    if (dc[i].identifier() == "UnitOfInformation" ){
+                        if (cj<1) $('.unit_of_information').val(dc[i].label());
+                        else $('#uoi_group').append(' <br/><input type="text" class="unit_of_information" value="'+dc[i].label()+'"/> ');
+                        ++cj;
+                    }
+                }
+                $('.state_variable').unbind('change');
+                $('.state_variable').change(function(){
+                    this_editor.node_attributes_changed();
+                });
+                $('.unit_of_information').unbind('change');
+                $('.unit_of_information').change(function(){
+                    this_editor.node_attributes_changed();
+                });
+                
             }else{
                 $('.uoi_box, .state_variable_box').hide();
             }
@@ -429,10 +457,19 @@ Editor.prototype = {
                 drawable.label($('#node_label').val()).adaptSizeToLabel();
             }
             //-----------------
+            //brute for remove all children and add them agin, less code :D
+            var dc = drawable.children();
+            for (var i =0; i<dc.length; ++i){
+                if (dc[i].identifier() in {'StateVariable':1,'StateVariableER':1,'UnitOfInformation':1} ){
+                    drawable.removeChild(dc[i]);
+                    dc[i].remove();
+
+                }
+            }
             $('.state_variable').each(function(){
-                if($(this).val()){
+                if ($(this).val() != '') {
+                    added_flag = true;
                     this_editor.graph.add(bui.StateVariable)
-                    //.position(-10, -10)//TODO do we need this
                     .parent(drawable)
                     .label($(this).val())
                     .adaptSizeToLabel(true)
@@ -441,16 +478,16 @@ Editor.prototype = {
             });
             //-----------------
             $('.unit_of_information').each(function(){
-                if($(this).val()){
+                if($(this).val() != '') {
+                    added_flag = true;
                     this_editor.graph.add(bui.UnitOfInformation)
-                    //.position(-10, -10)//TODO do we need this
                     .parent(drawable)
                     .label($(this).val())
                     .adaptSizeToLabel(true)
                     .visible(true);
                 }
             });
-            
+            if (added_flag) drawable.positionAuxiliaryUnits(); // organise them neatly 
             //-----------------
             if (drawable.multimer !== undefined){drawable.multimer($('#node_is_multimer').is(':checked')); }
             if (drawable.clonemarker !== undefined) drawable.clonemarker($('#node_is_clone').is(':checked'));
