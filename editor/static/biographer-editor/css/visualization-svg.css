@@ -1,0 +1,165 @@
+.hidden {
+    visibility: hidden;
+}
+
+/*
+ * Please copy all changes to the .defaultText css class in the
+ * visualization-html.css file.
+ */
+text, tspan {
+    font-family: Verdana;
+    font-size: 16px;
+    fill: black;
+}
+/*
+ * Please copy all changes to the .smallText css class in the
+ * visualization-html.css file.
+ */
+text.small, tspan.small, text.small tspan {
+    font-size: 10px;
+    bottom: 3px;
+}
+.LogicalOperator tspan {
+    font-size: 12px;
+    top: 3px;
+}
+g.VariableValue > text {
+   top: 5px;
+}
+ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect, g.perturbation > path, g.phenotype path, g.VariableValue path, g.annotation path {
+    fill: white;
+    stroke-width: 2px;
+    stroke: black
+}
+g.cloneMarker > path, g.cloneMarker > circle, g.cloneMarker > rect {
+    fill: url(#cloneMarker);
+}
+g.existence > path {
+    fill: url(#stateVariableExistence);
+}
+g.location > path {
+    fill: url(#stateVariableLocation);
+}
+
+g.hideBorder > path {
+    stroke: white;
+}
+ellipse.selected, circle.selected {
+    fill: #eee;
+}
+
+line {
+    stroke: #000;
+}
+.process {
+	font-size: 10px;
+}
+.statevariable {
+	font-size: 10px;
+}
+
+.stimulation, .catalysis, .control, .necessaryStimulation {
+    fill: white;
+    stroke: black;
+}
+.interaction {
+	fill: black;
+	stroke: black;
+}
+
+.line {
+    fill: none;
+    stroke: black;
+}
+.line.mRED {
+    stroke: #f00;
+}
+
+.lineHover {
+    stroke-width: 4;
+}
+
+.dotted {
+    stroke-dasharray: 1, 3;
+}
+
+.dashed {
+    stroke-dasharray: 4, 5;
+}
+.LogicalOperator circle {
+	fill: white;
+	stroke: black;
+}
+.delay tspan {
+    font-family: "DejaVu Serif";
+    font-size: 20px;
+}
+.Outcome circle {
+	fill: black;
+	stroke: black;
+}
+.edgeHandle circle {
+	stroke: black;
+       opacity: 0.5;	
+}
+.splineEdgeHandle circle {
+    fill: #9ea5ff;
+    stroke: blue;
+    opacity: 0.5;
+}
+.clone path{
+	background-image: url('../images/editor/black_pixle.gif');
+	background-repeat:repeat;
+	background-attachment:fixed;
+	background-position:0% 70%;
+}
+
+.splineEdgeHandle.autoAlign circle {
+    opacity: 0.2;
+}
+g.Silver > path,g.Silver > circle,g.Silver > rect {
+	fill: #C0C0C0;
+}
+g.Gray > path,g.Gray > circle,g.Gray > rect {
+	fill: #808080;
+}
+g.Red > path,g.Red > circle,g.Red > rect, g.Red >ellipse {
+	fill: #FF0000;
+}
+g.Maroon > path,g.Maroon > circle,g.Maroon > rect {
+	fill: #800000;
+}
+g.Yellow > path,g.Yellow > circle,g.Yellow > rect {
+	fill: #FFFFF0;
+}
+g.Olive > path,g.Olive > circle,g.Olive > rect {
+	fill: #808000;
+}
+g.Lime > path,g.Lime > circle,g.Lime > rect {
+	fill: #00FF00;
+}
+g.Green > path,g.Green > circle,g.Green > rect {
+	fill: #008000;
+}
+g.Aqua > path,g.Aqua > circle,g.Aqua > rect {
+	fill: #00FFFF;
+}
+g.Teal > path,g.Teal > circle,g.Teal > rect {
+	fill: #008080;
+}
+g.Blue > path,g.Blue > circle,g.Blue > rect {
+	fill: #0000FF;
+}
+g.Navy > path,g.Navy > circle,g.Navy > rect {
+	fill: #000080;
+}
+g.Fuchsia > path,g.Fuchsia > circle,g.Fuchsia > rect {
+	fill: #FF00FF;
+}
+g.Purple > path,g.Purple > circle,g.Purple > rect {
+	fill: #800080;
+}
+g.selected > path,g.selected > circle,g.selected > rect, g.selected >ellipse {
+    stroke: blue;
+    stroke-dasharray: 5,5;
+}
