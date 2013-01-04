@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Tag';
+    var identifier = 'Tag';
 
     /*
      * Generate a path's data attribute

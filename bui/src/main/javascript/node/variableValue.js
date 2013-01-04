@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.VariableValue';
+    var identifier = 'VariableValue';
     /**
      * @private
      * Function used for the generation of listener identifiers

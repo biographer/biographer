@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.EdgeHandle';
+    var identifier = 'EdgeHandle';
 
     /**
      * @private

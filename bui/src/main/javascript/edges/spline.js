@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Spline';
+    var identifier = 'Spline';
 
     /**
      * @private

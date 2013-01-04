@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Phenotype';
+    var identifier = 'Phenotype';
 
     /*
      * Generate a path's data attribute

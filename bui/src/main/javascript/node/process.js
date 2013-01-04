@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Process';
+    var identifier = 'Process';
     /**
      * @class
      * Process node "process"

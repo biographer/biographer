@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.EmptySet';
+    var identifier = 'EmptySet';
 
     /**
      * @private

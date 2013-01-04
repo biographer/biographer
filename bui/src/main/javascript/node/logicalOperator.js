@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.LogicalOperator';
+    var identifier = 'LogicalOperator';
 
     /**
      * @private

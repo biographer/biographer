@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.NucleicAcidFeature';
+    var identifier = 'NucleicAcidFeature';
     /**
      * @class
      * A node with the shape of an rectangle and a label inside.

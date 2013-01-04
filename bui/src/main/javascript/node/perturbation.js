@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Perturbation';
+    var identifier = 'Perturbation';
 
     /*
      * Generate a path's data attribute

@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.RectangularNode';
+    var identifier = 'RectangularNode';
 
     // generate a path's arc data parameter
     // http://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
