@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Biographer-ui Test Suite</title>
+
+    <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.8.22.custom.css" />
+
+	<script type="text/javascript" src="resources/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="resources/js/jquery.simulate.js"></script>
+	<script type="text/javascript" src="resources/js/jquery-ui-1.8.22.custom.min.js"></script>
+    <script type="text/javascript" src="resources/js/interact.js"></script>
+    <script type="text/javascript" src="resources/js/biographer-ui.js"></script>
+    <script type="text/javascript" src="resources/examples/custom.js"></script>
+    <script type="text/javascript" src="resources/examples/customPositionsExample1.js"></script>
+    <script type="text/javascript" src="resources/examples/customPositionsExample2.js"></script>
+
+    <script type="text/javascript">
+
+
+        bui.ready(function() {
+            var canvas = document.getElementById('canvas');
+            graph = new bui.Graph(canvas);
+            bui.importFromJSON(graph, customExample);
+
+            console.log(customExample);
+            console.log(graph.toJSON());
+
+            // move the nodes after one second.
+            setTimeout(function() {
+                bui.importUpdatedNodePositionsFromJSON(graph,
+                        customPositionsExample1, 1000);
+            }, 1000);
+
+            // move the nodes after two second.
+            setTimeout(function() {
+                bui.importUpdatedNodePositionsFromJSON(graph,
+                        customPositionsExample2, 1000);
+            }, 2000);
+
+            // align the canvas to a specific node
+            setTimeout(function() {
+
+                bui.util.alignCanvas(graph, 'node10', $(canvas), $(canvas));
+            }, 3000);
+        });
+    </script>
+</head>
+<body style="padding: 30px;">
+<div id="canvas" style="width: 800px; height: 500px; overflow: scroll; border: 1px solid black; margin: auto auto;">
+
+</div>
+</body>
+</html>
