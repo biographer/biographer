@@ -86,6 +86,7 @@ Editor.prototype = {
             }
           }
         }
+        this.set_language();
         var this_editor = this; // closure this object for drop callback below
         
     },
@@ -825,8 +826,12 @@ Editor.prototype = {
         );
     },
     //set the SBGN language
-    set_language: function(lang){
+    set_language: function(){
         var language_current = this.graph.language();
+        $('.language_current').html(language_current);
+        $('.language_selection div').removeClass('lang_selected');
+        $('.language_selection .'+language_current).addClass('lang_selected');
+        console.log('set lang '+language_current);
         $('.tools_drag li').each(function(){
             if (! $(this).hasClass(language_current)){
                 $(this).hide();
@@ -1195,7 +1200,6 @@ Editor.prototype = {
                             $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                         }else{
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                            this_editor.set_language();
                             this_editor.undoPush('loaded graph from JSON string');
                         this_editor.modal.close();
                         }
@@ -1233,7 +1237,6 @@ Editor.prototype = {
                         }else{
                             //console.log(sb.io.write(doc, 'jsbgn'));
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                            this_editor.set_language();
                             this_editor.undoPush('loaded BioModel '+bmid);
                             //$('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
                         }
@@ -1444,9 +1447,6 @@ Editor.prototype = {
         //-------------------------------------------------
         // get the language and only show glyps for that language
         $('.language_selection div').click(function(){
-            $('.language_current').html($(this).html());
-            $('.language_selection div').removeClass('lang_selected');
-            $('.language_selection .'+$(this).html()).addClass('lang_selected');
             this_editor.graph.language($(this).html());
             this_editor.set_language();
         });
