@@ -583,6 +583,43 @@
         },
 
         /**
+         * @description
+         * Get the graph coordinates that correspond to a point on the page
+         * This does not take into account the offset of the graph's SVG Element
+         *
+         * @param {Number} [x] The x value of the cordinates
+         * @param {Number} [y] The y value of the cordinates
+         * @return {Object} An object with properties x and y which are the transformed coordinates
+         */
+        toGraphCoords : function(x, y) {
+            var privates = this._privates(identifier);
+
+            return {
+                x: x / privates.scale - privates.x,
+                y: y / privates.scale - privates.y
+            };
+        },
+
+        /**
+         * @description
+         * Get the page coordinates that correspond to a point on the graph
+         * This does not take into account the offset of the graph's SVG Element
+         *
+         * @param {Number} [x] The x value of the cordinates
+         * @param {Number} [y] The y value of the cordinates
+         * @return {Object} An object with properties x and y which are the transformed coordinates
+         */
+        toPageCoords : function(x, y) {
+            var privates = this._privates(identifier);
+
+            return {
+                x: (x + privates.x) * privates.scale,
+                y: (y + privates.y) * privates.scale
+            };
+        },
+
+        /**
+        /**
          * Fit the Graph to the viewport, i.e. scale the graph down to show
          * the whole graph or (in the case  of a very small graph) scale it
          * up.
