@@ -86,6 +86,7 @@ Editor.prototype = {
             }
           }
         }
+        this.set_language();
         var this_editor = this; // closure this object for drop callback below
         
     },
@@ -585,7 +586,7 @@ Editor.prototype = {
                 drawable = all_drawables[key];
                 drawable.index = count;
                 ++count;
-                if ((drawable.identifier()=='bui.EdgeHandle')||(drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'bui.StateVariable')||(drawable.identifier() == 'bui.StateVariableER')){
+                if ((drawable.identifier()=='EdgeHandle')||(drawable.identifier() == 'bui.Labelable')||(drawable.identifier() == 'Compartment')||(drawable.identifier() == 'StateVariable')||(drawable.identifier() == 'StateVariableER')){
                     //ignore
                 }else if (drawable.drawableType()=='node'){
                     var dparent = drawable.parent();
@@ -595,14 +596,14 @@ Editor.prototype = {
                         drawable.y = pos.y;
                         nodes.push(drawable);
                     }
-                }else if(drawable.identifier() == 'bui.Edge'){
+                }else if(drawable.identifier() == 'Edge'){
                     //----------------------------------
-                    if (drawable.source().identifier() == 'bui.EdgeHandle'){
-                        if(drawable.source().lparent.target().identifier() == 'bui.StateVariableER'){
+                    if (drawable.source().identifier() == 'EdgeHandle'){
+                        if(drawable.source().lparent.target().identifier() == 'StateVariableER'){
                             drawable.lsource = drawable.source().lparent.target().parent();
 
-                        }else if(drawable.source().lparent.target().identifier() == 'bui.EdgeHandle'){
-                            if(drawable.source().lparent.target().lparent.target().identifier() == 'bui.StateVariableER'){
+                        }else if(drawable.source().lparent.target().identifier() == 'EdgeHandle'){
+                            if(drawable.source().lparent.target().lparent.target().identifier() == 'StateVariableER'){
                                 drawable.lsource = drawable.source().lparent.target().lparent.target().parent();
                             }else {
                                 drawable.lsource = drawable.source().lparent.target().lparent.target();
@@ -610,18 +611,18 @@ Editor.prototype = {
                         }else {
                             drawable.lsource = drawable.source().lparent.target();
                         }
-                    }else if(drawable.source().identifier() == 'bui.StateVariableER'){
+                    }else if(drawable.source().identifier() == 'StateVariableER'){
                         drawable.lsource = drawable.source().parent();
                     }else {
                         drawable.lsource = drawable.source();
                     }
                     //----------------------------------
-                    if (drawable.target().identifier() == 'bui.EdgeHandle'){
-                        if(drawable.target().lparent.target().identifier() == 'bui.StateVariableER'){
+                    if (drawable.target().identifier() == 'EdgeHandle'){
+                        if(drawable.target().lparent.target().identifier() == 'StateVariableER'){
                             drawable.ltarget = drawable.target().lparent.target().parent();
 
-                        }else if(drawable.target().lparent.target().identifier() == 'bui.EdgeHandle'){
-                            if(drawable.target().lparent.target().lparent.target().identifier() == 'bui.StateVariableER'){
+                        }else if(drawable.target().lparent.target().identifier() == 'EdgeHandle'){
+                            if(drawable.target().lparent.target().lparent.target().identifier() == 'StateVariableER'){
                                 drawable.ltarget = drawable.target().lparent.target().lparent.target().parent();
                             }else {
                                 drawable.ltarget = drawable.target().lparent.target().lparent.target();
@@ -631,7 +632,7 @@ Editor.prototype = {
                             drawable.ltarget = drawable.target().lparent.target();
                         }
 
-                    }else if(drawable.target().identifier() == 'bui.StateVariableER'){
+                    }else if(drawable.target().identifier() == 'StateVariableER'){
                         drawable.ltarget = drawable.target().parent();
                     }else {
                         drawable.ltarget = drawable.target();
@@ -782,13 +783,13 @@ Editor.prototype = {
                                 (pos_botm_rigt_abs.x<=this_editor.selection_borders.right) &&
                                 (pos_top_left_abs.y>=this_editor.selection_borders.top) &&
                                 (pos_botm_rigt_abs.y<=this_editor.selection_borders.bottom)){
-                                if (drawable.selected != true){
+                                if (drawable.selected !== true){
                                     drawable.addClass('selected');
                                     drawable.selected = true;
                                     this_editor.selected_nodes.push(drawable);
                                 }
                             }else{
-                                if (drawable.selected == true){
+                                if (drawable.selected === true){
                                     drawable.removeClass('selected');
                                     drawable.selected = false;
                                     for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
@@ -826,7 +827,11 @@ Editor.prototype = {
     },
     //set the SBGN language
     set_language: function(){
-        var language_current = $('.language_current').html();
+        var language_current = this.graph.language();
+        $('.language_current').html(language_current);
+        $('.language_selection div').removeClass('lang_selected');
+        $('.language_selection .'+language_current).addClass('lang_selected');
+        console.log('set lang '+language_current);
         $('.tools_drag li').each(function(){
             if (! $(this).hasClass(language_current)){
                 $(this).hide();
@@ -892,7 +897,6 @@ Editor.prototype = {
         //init menues
         this.showUndoRedo();
         this.node_attributes_show();
-        this.set_language();
         //=========================
         $('#hide_handles').click(function(){
             if (this_editor.edge_handles_visible === undefined){
@@ -902,7 +906,7 @@ Editor.prototype = {
             var all_drawables = this_editor.graph.drawables();
             for (var key in all_drawables) {
                 drawable = all_drawables[key];
-                if (drawable.identifier()=='bui.Edge'){
+                if (drawable.identifier()=='Edge'){
                     drawable.edgeHandlesVisible(this_editor.edge_handles_visible);
                 }
                 //drawable.recalculatePoints();
@@ -1004,7 +1008,7 @@ Editor.prototype = {
         $('#clear').click(function(){
             this_editor.redrawGraph({nodes:[],edges:[]});
             //this_editor.graph.clear();//FIXME this does not work
-            this_editor.undoPush('Cleared Graph')
+            this_editor.undoPush('Cleared Graph');
         });
         //=========================
         $('#clone').click(function(){
@@ -1180,30 +1184,6 @@ Editor.prototype = {
             }
         });
         //=========================
-        $('.load').click(function(){
-            $.ajax({
-                url: editor_config.url_import,
-                type: 'POST',
-                dataType: 'json',
-                data : {
-                    type : $(this).attr('id'),
-                    identifier : $('#'+$(this).attr('id')+'_input').val()
-                },
-                success: function( data ) {
-                    this_editor.undoPush(data.action);
-                    this_editor.redrawGraph(data.graph);
-                    this_editor.modal.close();
-                    return true;
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    this_editor.modal.close();
-                    jQuery('.flash').html(textStatus+' '+xhr.responseText).fadeIn();
-                    return true;
-                }
-            });
-
-        });
-        //=========================
         if (window.File && window.FileReader && window.FileList && window.Blob) {
             // Great success! All the File APIs are supported.
             $('#import_file_input').change(function(){
@@ -1220,8 +1200,6 @@ Editor.prototype = {
                             $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                         }else{
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                            //this_editor.graph.scale(1);
-                            //this_editor.graph.reduceTopLeftWhitespace(10);
                             this_editor.undoPush('loaded graph from JSON string');
                         this_editor.modal.close();
                         }
@@ -1246,21 +1224,19 @@ Editor.prototype = {
                 },
                 dataType: 'json',
                 success: function( data ) {
-                    if (data.is_jsbgn == true){
+                    if (data.is_jsbgn === true){
                         this_editor.redrawGraph(JSON.parse(data.graph));
                         this_editor.md5 = data.md5;
                         this_editor.undoPush('loaded layed out BioModel '+bmid);
                         //$('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
                     }else{
-                        this_editor.md5 = data.md5
+                        this_editor.md5 = data.md5;
                         var doc = sb.io.read(data.graph);
                         if((doc === null)||(doc === undefined)){
                             $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                         }else{
                             //console.log(sb.io.write(doc, 'jsbgn'));
                             this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                            this_editor.graph.scale(1);
-                            this_editor.graph.reduceTopLeftWhitespace(10);
                             this_editor.undoPush('loaded BioModel '+bmid);
                             //$('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
                         }
@@ -1287,8 +1263,7 @@ Editor.prototype = {
                         $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                     }else{
                         this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                        //this_editor.graph.scale(1);
-                        //this_editor.graph.reduceTopLeftWhitespace(10);
+                        this_editor.set_language();
                         this_editor.undoPush('loaded Reactome '+reid);
                         //$('.flash').html('loaded Reactome '+reid).fadeIn().delay(1600).fadeOut();
                     }
@@ -1431,10 +1406,10 @@ Editor.prototype = {
                 $('#follow_'+nodetype).css('top', e.clientY-3).css('left', e.clientX-3);
             });
             $("body").click(function(e){
-                this_editor.createNode(nodetype, e)
+                this_editor.createNode(nodetype, e);
             });
             /*
-            FIXME must implement this            
+            FIXME must implement this
             // make compartments, complexes recieve droppable nodes
             $('.Complex, .Compartment').droppable({
                     hoverClass: 'drop_hover',
@@ -1472,9 +1447,7 @@ Editor.prototype = {
         //-------------------------------------------------
         // get the language and only show glyps for that language
         $('.language_selection div').click(function(){
-            $('.language_current').html($(this).html());
-            $('.language_selection div').removeClass('lang_selected');
-            $('.language_selection .'+$(this).html()).addClass('lang_selected');
+            this_editor.graph.language($(this).html());
             this_editor.set_language();
         });
         //-------------------------------------------------

@@ -65,3 +65,14 @@ def setup_java():
         app_config.set('java','path', form.vars.java_path)
         response.flash = 'JAVA path saved'
     return form
+    
+def setup_hg():
+    if not auth.has_membership(role = 'admin'):
+        return 'You need to login as admin to configure the Mercurial path'
+    form = form_factory(
+            Field('hg_path', default = app_config.get('hg','path')),
+            )
+    if form.accepts(request.vars, keepvalues = True):
+        app_config.set('hg','path', form.vars.hg_path)
+        response.flash = 'Mercurial path saved'
+    return form

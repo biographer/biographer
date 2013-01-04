@@ -888,13 +888,27 @@
             return this;
         },
         /**
-         * Return the defs group of the svg so node classes can draw clone markers 
+         * Return the defs group of the svg so node classes can draw clone markers
          *
          * @return {} SVG defsGroup
          */
         defsGroup : function() {
-            return  this._privates(identifier).defsGroup
-        }
+            return  this._privates(identifier).defsGroup;
+        },
+        /**
+         * get or set the language
+         * fluent interface
+         *
+         * @return string current SBGN language
+         */
+         language : function(lang){
+            if(lang === undefined){
+                return bui.settings.SBGNlang;
+            }
+            if(lang in {'ER':1,'PD':1,'AF':1}) bui.settings.SBGNlang = lang;
+            return this;
+         }
+        
 
     };
 

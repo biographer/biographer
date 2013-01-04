@@ -364,6 +364,7 @@ bui.ready(function() {
 	editor.graph = new bui.Graph($('#canvas')[0]);
 	//bui.Node.bindStatic(bui.Node.ListenerType.click, editor.drawableSelect());//FIXME this does not work, y?
 	editor.redrawGraph(editor_config.graphData);
+	editor.set_language();
 	editor.enable_selection();
 	editor_config.history_undo.push({action: 'initialized', graph: JSON.stringify(editor.graph.toJSON())})
 	

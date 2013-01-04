@@ -442,7 +442,7 @@ def full_release():
     #-------------------------------------------
     if not result == True:
         return result
-    download_location = URL(request.application, 'static', '%s_%s.tar.gz'%(APPLICATION_NAME, release_type))
+    download_location = URL(request.application, 'static', '%s_%s.tar.gz' % (APPLICATION_NAME, release_type))
     return TAG['']('Success, file can be downloaded from: ',A(download_location, _href=download_location))
     #redirect(URL(request.application, 'static', '%s_%s.zip'%(APPLICATION_NAME, release_type)))
 
@@ -460,7 +460,7 @@ def hg_update():
     pstdout,pstderr = p.communicate()
     p = subprocess.Popen(['hg','update'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE, cwd = request.folder)
     ustdout,ustderr = p.communicate()
-    p = subprocess.Popen(['make'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE, cwd = request.folder)
+    p = subprocess.Popen(['make'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE, cwd = app_config.get('hg','path'))
     mstdout,mstderr = p.communicate()
     return TAG[''](TABLE(
         TR(TH('command'), TH('stdout'), TH('stderr')),
