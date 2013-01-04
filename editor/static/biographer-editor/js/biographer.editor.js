@@ -362,6 +362,12 @@ Editor.prototype = {
             $('#node_id').html(drawable.id());
             $('#node_type').html(drawable.identifier());
             //===========================================
+            if (drawable.parent() !== undefined){
+                $('.parent_box').show();
+                var parent = drawable.parent();
+                $('#node_parent').html(parent.label()+' ('+parent.id()+') - '+parent.identifier() );
+            }else{$('.parent_box').hide();}
+            //===========================================
             if (drawable.color !== undefined){
                 $('.color_box').show();
                 var cur_color = drawable.color();
