@@ -108,6 +108,44 @@ If you want to talk to us please contact us on our <a href="https://groups.googl
 <br>
 For technical issues and discurssion you can follow our development group <a href="https://groups.google.com/forum/?fromgroups#!forum/biographer-dev">#biographer-dev</a>.
 bug tracker
+<h1>Install From Source</h1>
+assuming you are using linux, do the following:<br>
+check out the biographer repo and create a local copy of the biographer mercurial repository <br> 
+<a href="http://code.google.com/p/biographer/source/checkout">http://code.google.com/p/biographer/source/checkout</a> <br>
+something like <br>
+<pre>$ hg clone https://code.google.com/p/biographer/</pre>
+or  <br>
+<pre>$ hg clone https://my.googlename@code.google.com/p/biographer/</pre>
+download web2py source release from <br>
+<a href="http://web2py.com/examples/default/download">http://web2py.com/examples/default/download</a> <br>
+unpack it anywhere you want to <br>
+to start web2py comfortably create an alias in your .bashrc <br>
+<pre>alias web2py='python /home/fkrause/Dev/web2py/web2py.py -p 8000 -a yourpassword'</pre>
+now you can start web2py in the shell with <br>
+<pre>$ web2py </pre>
+start it and check if you see the welcome page in you browser at  <br>
+<a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> <br>
+to make biographer work you need to create a softlink to the editor in the biographer applications directory <br>
+<pre>$ ln -s /path/to/biographer/editor /path/to/web2py/applications/biographer </pre>
+now you can prepare biographer, go into the directory where you check out biographer <br>
+<pre>$ cd /path/to/biographer</pre>
+and call make <br>
+<pre>$ make </pre>
+This will take a long time since it will compile the biographer flow layout and pull the latest biomodels release and reactome information. But don't worry it will only take long in the first run <br>
+while make is working try to visit biographer, if you created the softlink like above you should be able to call  <br>
+<a href="http://127.0.0.1:8000/biographer">http://127.0.0.1:8000/biographer</a> <br>
+you will be asked to create a user account, you can enter anything you want to as long as you dont want to run biographer in the www <br>
+if you get an error ticket after the creation make is probably not ready yet. <br>
+if you cannot wait create the missing file (you can see the full path if you click on the error ticket) <br>
+<pre>$ touch /path/to/web2py/applications/biographer/views/default/biomodels_info.html </pre>
+touch just creates an empty file <br>
+now you should be ready <br>
+if you change the bui code (/path/to/biographer/bui/) <br>
+all you need to do to try out the changes is to call make<br>
+<pre>
+$ cd /path/to/biographer
+$ make 
+</pre>
 </div>
 <style type="text/css">
     .container {
@@ -122,6 +160,9 @@ bug tracker
     }
     ul ul {
         padding: 15px;
+    }
+    pre {
+        background-color: #aaa;
     }
     .tool {
         width: 35px;
