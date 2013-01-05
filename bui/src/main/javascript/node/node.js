@@ -57,7 +57,7 @@
         }
         nodeGroup.removeEventListener('interactdragstart', privates.interact.dragStart);
         nodeGroup.removeEventListener('interactdragmove', privates.interact.dragMove);
-        nodeGroup.removeEventListener('interactdragend', privates.interact.dragMove);
+        nodeGroup.removeEventListener('interactdragend', privates.interact.dragEnd);
         nodeGroup.removeEventListener('interactresizestart', privates.interact.resizeStart);
         nodeGroup.removeEventListener('interactresizemove', privates.interact.resizeMove);
         nodeGroup.removeEventListener('interactresizeend', privates.interact.resizeMove);
@@ -223,7 +223,7 @@
         // interact.js event listeners
         privates.nodeGroup.addEventListener('interactdragstart', privates.interact.dragStart);
         privates.nodeGroup.addEventListener('interactdragmove', privates.interact.dragMove);
-        privates.nodeGroup.addEventListener('interactdragend', privates.interact.dragMove);
+        privates.nodeGroup.addEventListener('interactdragend', privates.interact.dragEnd);
         privates.nodeGroup.addEventListener('interactresizestart', privates.interact.resizeStart);
         privates.nodeGroup.addEventListener('interactresizemove', privates.interact.resizeMove);
         privates.nodeGroup.addEventListener('interactresizeend', privates.interact.resizeMove);
@@ -443,7 +443,7 @@
             var pos = this.absolutePosition();
             return {
                 x : pos.x + size.width / 2,
-                y : pos.y + size.height / 2,
+                y : pos.y + size.height / 2
             };
         },
 
