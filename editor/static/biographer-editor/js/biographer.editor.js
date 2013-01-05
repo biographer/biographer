@@ -316,6 +316,23 @@ Editor.prototype = {
         //-----------------
         //set click listener on new node
         drawable.bind(bui.Node.ListenerType.click, this.drawableSelect(), 'node_select');
+
+        // Set drag function to move all other selected nodes
+        var this_editor = this;
+        drawable.bind(bui.Node.ListenerType.dragMove, function (node, event) {
+            if (this.cur_mode === 'cursor' || this.cur_mode === undefined) {
+                for (var i = 0; i < this_editor.selected_nodes.length; i++) {
+                    var movement = this_editor.graph.toGraphCoords(event.detail.dx, event.detail.dy);
+
+                    if (this_editor.selected_nodes[i] instanceof bui.Node &&
+                        this_editor.selected_nodes[i] !== node) {
+                        this_editor.selected_nodes[i].move(movement.x, movement.y);
+                    }
+                }
+            }
+        },
+        'multiple drag');
+
         //set droppable listener on new node
         /*
         FIXME what is this can this be removed?
@@ -333,9 +350,8 @@ Editor.prototype = {
             this.selected_nodes[i].selected = false;
             this.selected_nodes[i].removeClass('selected');
         }
-        this.selected_nodes = [drawable];
-        drawable.selected = true;
-        drawable.addClass('selected');
+        this.select_all(false);
+        this.select(drawable);
         this.rightMenue_show(true);
         this.setMode('cursor');
         this.drawableSelect()(drawable, true);
@@ -353,28 +369,14 @@ Editor.prototype = {
                         //shif key is down
                         //add all drawable to selection, if already selected remove selection
                         if (drawable.selected === true){
-                                for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
-                                    if (drawable == this_editor.selected_nodes[i]){
-                                        drawable.selected = false;
-                                        drawable.removeClass('selected');
-                                        this_editor.selected_nodes.splice(i, 1);
-                                        break;
-                                    }
-                                }
+                            this_editor.deselect(drawable);
                         }else{
-                                drawable.addClass('selected');
-                                drawable.selected = true;
-                                this_editor.selected_nodes.push(drawable);
+                            this_editor.select(drawable);
                         }
                     }else{
                         //shift key is not down
-                        for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
-                                this_editor.selected_nodes[i].selected = false;
-                                this_editor.selected_nodes[i].removeClass('selected');
-                        }
-                        this_editor.selected_nodes = [drawable];
-                        drawable.addClass('selected');
-                        drawable.selected = true;
+                        this_editor.select_all(false);
+                        this_editor.select(drawable);
                     }
                 }
                 //-------------------------------------
@@ -675,6 +677,23 @@ Editor.prototype = {
             }
             return {nodes:nodes, edges:edges};
     },
+    select: function (drawable) {
+        if (drawable.selected === true) {return;}
+
+        var this_editor = this;
+
+        this.selected_nodes.push(drawable);
+        drawable.selected = true;
+        drawable.addClass('selected');
+    },
+    deselect: function (drawable) {
+        if (!drawable.selected) {return;}
+
+        this.selected_nodes.splice(this.selected_nodes.indexOf(drawable), 1);
+        drawable.selected = false;
+        drawable.removeClass('selected');
+    },
+
     // select all nodes
     select_all: function(all){
         var all_drawables = this.graph.drawables();
@@ -682,12 +701,9 @@ Editor.prototype = {
         for (var key in all_drawables) {
             var drawable = all_drawables[key];
             if (all){
-                this.selected_nodes.push(drawable); // FIXME that may result in nodes being more than once in selection list, right?
-                drawable.selected = true;
-                drawable.addClass('selected');
+                this.select(drawable);
             }else{
-                drawable.selected = false;
-                drawable.removeClass('selected');
+                this.deselect(drawable);
             }
         }
     },
@@ -816,22 +832,9 @@ Editor.prototype = {
                                 (pos_botm_rigt_abs.x<=this_editor.selection_borders.right) &&
                                 (pos_top_left_abs.y>=this_editor.selection_borders.top) &&
                                 (pos_botm_rigt_abs.y<=this_editor.selection_borders.bottom)){
-                                if (drawable.selected !== true){
-                                    drawable.addClass('selected');
-                                    drawable.selected = true;
-                                    this_editor.selected_nodes.push(drawable);
-                                }
+                                this_editor.select(drawable);
                             }else{
-                                if (drawable.selected === true){
-                                    drawable.removeClass('selected');
-                                    drawable.selected = false;
-                                    for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--) {
-                                        if (drawable == this_editor.selected_nodes[i]){
-                                            this_editor.selected_nodes.splice(i, 1);
-                                            break;
-                                        }
-                                    }
-                                }
+                                this_editor.deselect(drawable);
                             }
                         }
                     }
