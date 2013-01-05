@@ -20,6 +20,13 @@ function Editor(){
     this.active = false;//delayed undo push active?
     this.delayed;//needs to be initialized for saving of delay action
     this.shifted = false;//is shift key currently pressed down
+    this.colorcombos = [
+        ['828277','D4E8C1','8DB87C','F5D769','ED8A3F'],
+        ["927B51","A89166","80C31C","BCDD5A","FF7900","FBB36B"],
+        ["B96A9A","D889B8","9CC089","D8F3C9","FDE8D7","FFFFFF"],
+        ["AEB05D","DCD191","D3A46E","E39871","DF7D60"],
+        ["AFCBF3","6195C5","EECD86","E49E7A","E39183"]
+        ];
     this.init();
 }
 //-------------------------------------------
@@ -215,6 +222,31 @@ Editor.prototype = {
             this.selected_nodes = [];
             this.rightMenu();
             $('.flash').html('<h2>Please click on two nodes to create an edge<h2>').fadeIn().delay(5000).fadeOut();
+        }
+    },
+    showColorCombo: function(){
+        console.log('in showColorCombo');
+        for(var i=0;i<this.colorcombos.length;++i){
+            var combo = [];
+            for (var j=0;j<this.colorcombos[i].length;++j){
+                combo.push('<div class="combo_color" style="background-color:#'+this.colorcombos[i][j]+'"></div>');
+            }
+                console.log('SHOW COLORCOMBOS '+combo.join(''));
+            $('.colorcombos').append('<div class="select_combo" id="'+i+'">combo '+i+'<br>'+(combo.join(' '))+'</div>');
+        }
+    },
+    setColorCombo: function(index){
+        index = parseInt(index);
+        var drawables = this.graph.drawables();
+        for (var key in drawables){
+            var drwbl = drawables[key];
+            console.log(drwbl.identifier());
+            if (drwbl.color !== undefined) drwbl.color({border: '#aaa'});
+            if(drwbl.identifier() == 'SimpleChemical') drwbl.color({background: this.colorcombos[index][0]});
+            else if(drwbl.identifier() == 'Process') drwbl.color({background: this.colorcombos[index][4]});
+            else if(drwbl.identifier() == 'Macromolecule') drwbl.color({background: this.colorcombos[index][1]});
+            else if(drwbl.identifier() == 'UnspecifiedEntity') drwbl.color({background: this.colorcombos[index][2]});
+            else if(drwbl.identifier() == 'Complex') drwbl.color({background: this.colorcombos[index][3]});
         }
     },
     //-------------------------------------------//
@@ -898,6 +930,7 @@ Editor.prototype = {
         //init menues
         this.showUndoRedo();
         this.rightMenu();
+        this.showColorCombo();
         //=========================
         $('#hide_handles').click(function(){
             if (this_editor.edge_handles_visible === undefined){
@@ -1134,6 +1167,10 @@ Editor.prototype = {
             $('.state_variable').change(function(){
                 this_editor.editNode();
             });
+        });
+        //=========================
+        $('.select_combo').click(function(){
+            this_editor.setColorCombo($(this).attr('id'));
         });
         //=========================
         $('.color_bg').ColorPicker({
