@@ -1,4 +1,5 @@
 (function(bui) {
+    var identifier = 'SplineEdgeHandle';
 
     /**
      * @class
@@ -16,6 +17,9 @@
     };
 
     bui.SplineEdgeHandle.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         includeInJSON : false
     };
 

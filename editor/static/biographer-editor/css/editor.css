@@ -119,6 +119,9 @@ ul {
     right: -5px;
 
 }
+.rm .message {
+    margin: 7px;
+}
 .rm th {
     vertical-align: top;
     text-align: right;
@@ -131,6 +134,16 @@ ul {
 }
 .colorpicker{
     z-index: 6;
+}
+.combo_color {
+    width: 30px;
+    height: 30px;
+    border: 2px solid black;
+    border-radius: 3px;
+    display: inline-block;
+}
+.select_combo{
+    cursor: pointer;
 }
 /**********************************/
 th {
