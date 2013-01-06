@@ -1,0 +1,16 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{=T.accepted_language or 'en'}}">
+  <head>
+    <title>Error @ {{=response.title or request.application}}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />     
+    <link rel="shortcut icon" href="{{=URL(request.application, 'static/ico', 'pyMantis.ico')}}" type="image/x-icon">
+    {{response.files.append(URL(request.application, 'static/plugin_issue', 'issue.css'))}}
+    {{include 'web2py_ajax.html'}}
+    <script type="text/javascript">
+    {{include 'plugin_issue/script.js'}}
+    </script>
+    {{=head}}
+  </head>
+  <body>
+      {{=content}}
+  </body>
+</html>
