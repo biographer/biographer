@@ -246,10 +246,11 @@ Editor.prototype = {
             console.log(drwbl.identifier());
             if (drwbl.color !== undefined) drwbl.color({border: '#aaa'});
             if(drwbl.identifier() == 'SimpleChemical') drwbl.color({background: this.colorcombos[index][0]});
-            else if(drwbl.identifier() == 'Process') drwbl.color({background: this.colorcombos[index][4]});
             else if(drwbl.identifier() == 'Macromolecule') drwbl.color({background: this.colorcombos[index][1]});
             else if(drwbl.identifier() == 'UnspecifiedEntity') drwbl.color({background: this.colorcombos[index][2]});
             else if(drwbl.identifier() == 'Complex') drwbl.color({background: this.colorcombos[index][3]});
+            else if(drwbl.identifier() == 'Process') drwbl.color({background: this.colorcombos[index][4]});
+            else if(drwbl.identifier() == 'EmptySet') drwbl.color({background: this.colorcombos[index][5]});
         }
         this.undoPush('applied color combo '+index);
     },
@@ -319,11 +320,6 @@ Editor.prototype = {
         */
         //-----------------
         this.bindDrawable(drawable);
-
-        for (var i = this.selected_nodes.length - 1; i >= 0; i--) {
-            this.selected_nodes[i].selected = false;
-            this.selected_nodes[i].removeClass('selected');
-        }
         this.select_all(false);
         this.select(drawable);
         this.rightMenue_show(true);
@@ -412,17 +408,18 @@ Editor.prototype = {
             $('.rm_edge').show();
             $('.rm .message').hide();
         }
-        else if(this.selected_nodes.length==1){
+        else if(this.selected_nodes.length>=1){
             $('.rm_node').show();
             $('.rm_edge').hide();
             $('.rm .message').hide();
             var drawable = this.selected_nodes[0];
-            console.log('selcted a '+drawable.identifier());
             //===========================================
-            $('#node_id').html(drawable.id());
-            $('#node_type').html(drawable.identifier());
+            var node_ids = [];
+            for(i=0;i<this.selected_nodes.length;++i) node_ids.push(this.selected_nodes[i].id())
+            $('#node_id').html(node_ids.join(', '));
+            if (this.selected_nodes.length == 1) $('#node_type').html(drawable.identifier());
             //===========================================
-            if (drawable.parent().label !== undefined){
+            if (drawable.parent().label !== undefined && this.selected_nodes.length==1){
                 $('.parent_box').show();
                 var parent = drawable.parent();
                 $('#node_parent').html(parent.label()+' ('+parent.id()+') - '+parent.identifier() );
@@ -445,7 +442,7 @@ Editor.prototype = {
                 $('.color_box').hide();
             }
             //===========================================
-            if(drawable.identifier() in {'Macromolecule':1, 'UnspecifiedEntity': 1}){
+            if(drawable.identifier() in {'Macromolecule':1, 'UnspecifiedEntity': 1} && this.selected_nodes.length == 1){
                 $('.uoi_box, .state_variable_box').show();
                 var randomnumber = Math.floor(Math.random()*1501);
                 $('#sv_group').html('<input type="text" placeholder="P@'+randomnumber+'" class="state_variable" /> ');
@@ -481,24 +478,44 @@ Editor.prototype = {
                 $('#node_label_row, .color_tx_box').hide();
                 $('#node_label').val('');
             }else{
-                $('#node_label_row, .color_tx_box').show();
-                $('#node_label').val(drawable.label());
+                $('.color_tx_box').show();
+                if(this.selected_nodes.length==1){
+                    $('#node_label_row').show();
+                    $('#node_label').val(drawable.label());
+                }else{
+                    $('#node_label_row').hide();
+                    $('#node_label').val('');
+                }
             }
             //===========================================
-            if (drawable.multimer === undefined){
+            var show_next=true;
+            for (i=0;i<this.selected_nodes.length;++i) 
+                if (this.selected_nodes[i].multimer === undefined)
+                    show_next=false;
+            if (show_next == false){
                 $('.multimer_box').hide();
-            }else if (drawable.multimer() === true){
-                $('#node_is_multimer').attr('checked', 'checked');
-            }else {
-                $('#node_is_multimer').removeAttr('checked');
+            }else{
+                $('.multimer_box').show();
+                if (drawable.multimer() === true){
+                    $('#node_is_multimer').attr('checked', 'checked');
+                }else {
+                    $('#node_is_multimer').removeAttr('checked');
+                }
             }
             //===========================================
-            if (drawable.clonemarker === undefined){
+            var show_next=true;
+            for (i=0;i<this.selected_nodes.length;++i) 
+                if (this.selected_nodes[i].clonemarker === undefined)
+                    show_next=false;
+            if (show_next == false){
                 $('.clonemarker_box').hide();
-            }else if (drawable.clonemarker() === true){
-                $('#node_is_clone').attr('checked', 'checked');
-            }else {
-                $('#node_is_clone').removeAttr('checked');
+            }else{
+                $('.clonemarker_box').show();
+                if (drawable.clonemarker() === true){
+                    $('#node_is_clone').attr('checked', 'checked');
+                }else {
+                    $('#node_is_clone').removeAttr('checked');
+                }
             }
             //===========================================
             
@@ -551,51 +568,56 @@ Editor.prototype = {
     },
     editNode: function(){
         var this_editor = this;
-        if (this_editor.selected_nodes.length == 1){
+        if (this_editor.selected_nodes.length >= 1){
             var drawable = this_editor.selected_nodes[0];
             if ( ($('#node_label').val() !== '') && (drawable.label !== undefined) ){
                 drawable.label($('#node_label').val()).adaptSizeToLabel();
             }
             //-----------------
-            //brute for remove all children and add them agin, less code :D
-            var dc = drawable.children();
-            for (var i =0; i<dc.length; ++i){
-                if (dc[i].identifier() in {'StateVariable':1,'StateVariableER':1,'UnitOfInformation':1} ){
-                    drawable.removeChild(dc[i]);
-                    dc[i].remove();
+            if (this_editor.selected_nodes.length==1){
+                //brute force remove all children and add them agin, less code :D
+                var dc = drawable.children();
+                for (var i =0; i<dc.length; ++i){
+                    if (dc[i].identifier() in {'StateVariable':1,'StateVariableER':1,'UnitOfInformation':1} ){
+                        drawable.removeChild(dc[i]);
+                        dc[i].remove();
 
+                    }
                 }
+                var added_flag = false;
+                $('.state_variable').each(function(){
+                    if ($(this).val() !== '') {
+                        added_flag = true;
+                        this_editor.graph.add(bui.StateVariable)
+                        .parent(drawable)
+                        .label($(this).val())
+                        .adaptSizeToLabel(true)
+                        .visible(true);
+                    }
+                });
+                //-----------------
+                $('.unit_of_information').each(function(){
+                    if($(this).val() !== '') {
+                        added_flag = true;
+                        this_editor.graph.add(bui.UnitOfInformation)
+                        .parent(drawable)
+                        .label($(this).val())
+                        .adaptSizeToLabel(true)
+                        .visible(true);
+                    }
+                });
+                if (added_flag) drawable.positionAuxiliaryUnits(); // organise them neatly
             }
-            var added_flag = false;
-            $('.state_variable').each(function(){
-                if ($(this).val() !== '') {
-                    added_flag = true;
-                    this_editor.graph.add(bui.StateVariable)
-                    .parent(drawable)
-                    .label($(this).val())
-                    .adaptSizeToLabel(true)
-                    .visible(true);
-                }
-            });
-            //-----------------
-            $('.unit_of_information').each(function(){
-                if($(this).val() !== '') {
-                    added_flag = true;
-                    this_editor.graph.add(bui.UnitOfInformation)
-                    .parent(drawable)
-                    .label($(this).val())
-                    .adaptSizeToLabel(true)
-                    .visible(true);
-                }
-            });
-            if (added_flag) drawable.positionAuxiliaryUnits(); // organise them neatly
-            //-----------------
-            if (drawable.multimer !== undefined){drawable.multimer($('#node_is_multimer').is(':checked')); }
-            if (drawable.clonemarker !== undefined) drawable.clonemarker($('#node_is_clone').is(':checked'));
-            //-----------------
-            if(this_editor.color_bg !== undefined) drawable.color( { background: this_editor.color_bg} );
-            if(this_editor.color_bd !== undefined) drawable.color( { border: this_editor.color_bd} );
-            if(this_editor.color_tx !== undefined) drawable.color( { label: this_editor.color_tx} );
+            for(i=0;i<this.selected_nodes.length;++i){
+                var drawable = this.selected_nodes[i];
+                //-----------------
+                if (drawable.multimer !== undefined){drawable.multimer($('#node_is_multimer').is(':checked')); }
+                if (drawable.clonemarker !== undefined) drawable.clonemarker($('#node_is_clone').is(':checked'));
+                //-----------------
+                if(this_editor.color_bg !== undefined) drawable.color( { background: this_editor.color_bg} );
+                if(this_editor.color_bd !== undefined) drawable.color( { border: this_editor.color_bd} );
+                if(this_editor.color_tx !== undefined) drawable.color( { label: this_editor.color_tx} );
+            }
             
             this.trigger_delayed_undoPush('changed node attributes');
         }

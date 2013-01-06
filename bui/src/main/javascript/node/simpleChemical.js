@@ -133,7 +133,7 @@
                         defsGroup.appendChild(privates.clippath);
                     }else{
                         container.removeChild(privates.clone_circle);
-                        defsGroup.removeChild(clippath);
+                        defsGroup.removeChild(privates.clippath);
                     }
                 }
                 return this;

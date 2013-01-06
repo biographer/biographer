@@ -270,7 +270,7 @@
                         defsGroup.appendChild(privates.clippath);
                     }else{
                         container.removeChild(privates.clone_rect);
-                        defsGroup.removeChild(clippath);
+                        defsGroup.removeChild(privates.clippath);
                     }
                 }
                 return this
