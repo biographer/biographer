@@ -354,11 +354,13 @@ Editor.prototype = {
         return function (node, event) {
             if (this.cur_mode === 'cursor' || this.cur_mode === undefined) {
                 for (var i = 0; i < this_editor.selected_nodes.length; i++) {
-                    var movement = this_editor.graph.toGraphCoords(event.detail.dx, event.detail.dy);
+                    var scale = this_editor.graph.scale(),
+                        dx = event.detail.dx / scale,
+                        dy = event.detail.dy / scale;
 
                     if (this_editor.selected_nodes[i] instanceof bui.Node &&
                         this_editor.selected_nodes[i] !== node) {
-                        this_editor.selected_nodes[i].move(movement.x, movement.y);
+                        this_editor.selected_nodes[i].move(dx, dy);
                     }
                 }
             }
