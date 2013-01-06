@@ -19,6 +19,7 @@ function Editor(){
     this.images_base_path = $('script[src*="js/biographer.editor.js"]').attr('src').replace('js/biographer.editor.js', 'img/');
     this.active = false;//delayed undo push active?
     this.delayed;//needs to be initialized for saving of delay action
+    this.ctrl_delayed;//same as above
     this.shifted = false;//is shift key currently pressed down
     this.colorcombos = [
         ['828277','D4E8C1','8DB87C','F5D769','ED8A3F'],
@@ -133,7 +134,10 @@ Editor.prototype = {
     // add a new state to undo list
     undoPush: function(action){
         var editor = this;
+        //$('.selected').removeClass('selected');
+        for(var i=0; i<this.selected_nodes.length; ++i) this.selected_nodes[i].removeClass('selected');
         var jsong = JSON.stringify(this.graph.toJSON());
+        for(var i=0; i<this.selected_nodes.length; ++i) this.selected_nodes[i].addClass('selected');
         if (jsong == this.last_save){
             $('.flash').html('Saved: nothing changed, woooah').fadeIn().delay(800).fadeOut();
             return false;
@@ -1534,6 +1538,7 @@ Editor.prototype = {
             }
             if (event.keyCode == 17) {
                 $('.keyboard').attr('style','');
+                clearTimeout(this.ctrl_delayed);
             }
         });
         $(document).keydown(function(event){
@@ -1543,13 +1548,24 @@ Editor.prototype = {
             if (event.keyCode == 46) { // us: del; german: entf
                 this_editor.delete_selected_nodes();
             }
-            //==================================
-            //f4 | toggle side menu
-            //==================================
-            if (event.keyCode == 115){   
-                this_editor.rightMenue_show();
-            }
+            var Opera = /opera/i.test(navigator.userAgent);
+            if (Opera) {
+                // Opera specific
+                //==================================
+                //ctrl + f4 | toggle side menu
+                //==================================
+                if ((event.ctrlKey || event.metaKey)&&(event.keyCode == 77)) {
+                    this_editor.rightMenue_show();
+                }            
+            }else{
+                //==================================
+                //f4 | toggle side menu
+                //==================================
+                if (event.keyCode == 115){   
+                    this_editor.rightMenue_show();
+                }
             console.log('keycode '+event.keyCode);
+            }
             //==================================
             if (event.ctrlKey || event.metaKey) {
                 //==================================
@@ -1567,7 +1583,7 @@ Editor.prototype = {
                 if ((event.keyCode == 90 && event.shiftKey)||event.keyCode == 89 ){this_editor.redo(); }
                 //==================================
                 //crtl + i | import
-                if (event.keyCode == 73){this_editor.modal = $("#import_file_modal_input").modal({overlayClose:true, opacity:20 }); }
+                if (event.keyCode == 73 ||  event.keyCode == 79){this_editor.modal = $("#import_file_modal_input").modal({overlayClose:true, opacity:20 }); }
                 //ctrl + e | export
                 if (event.keyCode == 69){this_editor.modal = $("#export_file_modal_input").modal({overlayClose:true, opacity:20 }); }
                 //==================================
@@ -1586,13 +1602,17 @@ Editor.prototype = {
                 this_editor.shifted = true;
             }
             if (event.keyCode == 17) {
-                if(10>Math.floor(Math.random()*100)){
-                    $('.keyboard').each(function() {
-                        $(this).show().delay(Math.floor(Math.random()*1600)).fadeOut('slow');
-                    });
-                }else{
-                    $('.keyboard').fadeIn('slow').delay(1000).fadeOut('slow');
-                }
+                clearTimeout(this.ctrl_delayed);
+                this.ctrl_delayed = setTimeout(function() {
+                    if(10>Math.floor(Math.random()*100)){
+                        $('.keyboard').each(function() {
+                            $(this).show().delay(Math.floor(Math.random()*1600)).fadeOut('slow');
+                        });
+                    }else{
+                        $('.keyboard').show();
+                    }
+                }, 400);
+                
             }
 
         });
