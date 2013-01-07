@@ -288,7 +288,7 @@
                 return this;
             }
 
-            return privates.marker;
+            return privates.markerId;
         },
 
         /**
