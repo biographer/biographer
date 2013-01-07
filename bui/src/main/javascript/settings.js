@@ -124,7 +124,8 @@ bui.settings = {
             compartment : 'compartment',
             process : 'process',
             perturbation : 'perturbation',
-	    statevariable : 'statevariable',
+            annotation : 'annotation',
+            statevariable : 'statevariable',
             smallText : 'small',
             textDimensionCalculation : {
                 generic : 'textDimensionCalculation',

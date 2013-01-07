@@ -26,7 +26,7 @@ text.small, tspan.small, text.small tspan {
 g.VariableValue > text {
    top: 5px;
 }
-ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect, g.perturbation > path, g.phenotype path, g.VariableValue path {
+ellipse, circle, g.rect > path, g.complex > path, g.compartment > rect, g.perturbation > path, g.phenotype path, g.VariableValue path, g.annotation path {
     fill: white;
     stroke-width: 2px;
     stroke: black
@@ -159,7 +159,12 @@ g.Fuchsia > path,g.Fuchsia > circle,g.Fuchsia > rect {
 g.Purple > path,g.Purple > circle,g.Purple > rect {
 	fill: #800080;
 }
-g.selected > path,g.selected > circle,g.selected > rect, g.selected >ellipse {
-    stroke: blue;
+g.selected > path,g.selected > circle,g.selected > rect, g.selected >ellipse{
+    stroke: blue!important;
     stroke-dasharray: 5,5;
+}
+line.selected {
+    stroke: blue!important;
+    stroke-dasharray: 5,5;
+    stroke-width: 4px;
 }

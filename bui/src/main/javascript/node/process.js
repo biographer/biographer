@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Process';
+    var identifier = 'Process';
     /**
      * @class
      * Process node "process"
@@ -24,6 +24,8 @@
         identifier : function() {
             return identifier;
         },
+        clonemarker: undefined,
+        multimer: undefined,
         _enableResizing : false,
         _adaptSizeToLabel : false,
         _minWidth : bui.settings.style.processNodeMinSize.width,

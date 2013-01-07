@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Dissociation';
+    var identifier = 'Dissociation';
 
     /**
      * @private

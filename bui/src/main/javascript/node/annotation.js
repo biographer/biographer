@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'Phenotype';
+    var identifier = 'Annotation';
 
     /*
      * Generate a path's data attribute
@@ -10,16 +10,20 @@
      */
     var sizeChanged = function(node, width, height) {
         var pathData = [
-            'M', 0, height/2,         // start point in middle left, go clockwise to draw
-            'L', width/5, height,     // draw / to top
-            'L', (width/5)*4, height, //draw _ on top
-            'L', width, height/2,     //draw \ to middle right
-            'L', (width/5)*4, 0,      //draw / to bottm
-            'L', width/5, 0,          //draw _ to left
-            'L', 0, height/2, 
+            'M', 0,0,         // start
+            'H', width-15, //draw _ on top to 7/8
+            'L', width, 15,
+            'V', height,
+            'H', 0,0,
             'Z'].join(' '); //draw \ to middle left
-
+        var edgeData = [
+            'M', width-15, 0,
+            'L', width, 15,
+            'H', width-15,
+            
+            'Z'].join(' ');
         this._privates(identifier).path.setAttributeNS(null, 'd', pathData);
+        this._privates(identifier).edgePath.setAttributeNS(null, 'd', edgeData);
     };
 
     /**
@@ -50,9 +54,13 @@
         var size = this.size();
         var privates = this._privates(identifier);
         privates.path = document.createElementNS(bui.svgns, 'path');
+        privates.edgePath = document.createElementNS(bui.svgns, 'path');
+        privates.edgePath.style.setProperty('fill', 'black');
+        privates.edgePath.style.setProperty('stroke-width', '0')
         sizeChanged.call(this, this, size.width, size.height);
-		colorChanged.call(this, this, this.color()), 
+		colorChanged.call(this, this, this.color());
         container.appendChild(privates.path);
+        container.appendChild(privates.edgePath);
     };
 
     /**
@@ -62,8 +70,8 @@
      * @extends bui.Labelable
      * @constructor
      */
-    bui.Phenotype = function() {
-        bui.Phenotype.superClazz.apply(this, arguments);
+    bui.Annotation = function() {
+        bui.Annotation.superClazz.apply(this, arguments);
 
         var colorChangedListener = colorChanged.createDelegate(this);
         
@@ -73,21 +81,21 @@
         this.bind(bui.Labelable.ListenerType.color,
                 colorChangedListener,
                 listenerIdentifier(this));
-        var privates = this._privates(identifier);
+        //var privates = this._privates(identifier);
 
         initialPaint.call(this);
 
-        this.addClass(bui.settings.css.classes.perturbation);
+        this.addClass(bui.settings.css.classes.annotation);
     };
 
-    bui.Phenotype.prototype = {
+    bui.Annotation.prototype = {
         identifier : function() {
             return identifier;
         },
         _minWidth : 80,
-        _minHeight : 60,
+        _minHeight : 60
     };
 
-    bui.util.setSuperClass(bui.Phenotype, bui.Labelable);
+    bui.util.setSuperClass(bui.Annotation, bui.Labelable);
 
 })(bui);

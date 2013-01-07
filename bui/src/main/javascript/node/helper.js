@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Helper';
+    var identifier = 'Helper';
     /**
      * @class
      * Helper node "helper"

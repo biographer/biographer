@@ -210,20 +210,6 @@
 
         privates.connectingArcs = {};
 
-        privates.stateVarExistence = document.createElementNS(bui.svgns, 'pattern');
-        privates.stateVarExistence.setAttribute('id', 'stateVariableExistence');
-        privates.stateVarExistence.setAttribute('patternUnits','objectBoundingBox');
-        privates.stateVarExistence.setAttribute('x','50%');
-        privates.stateVarExistence.setAttribute('y', '0');
-        privates.stateVarExistence.setAttribute('width', '100');
-        privates.stateVarExistence.setAttribute('height', '100');
-        privates.existanceRect = document.createElementNS(bui.svgns, 'rect');
-        privates.existanceRect.setAttribute('fill', 'black');
-        privates.existanceRect.setAttribute('width' , '100');
-        privates.existanceRect.setAttribute('height' , '100');
-        privates.stateVarExistence.appendChild(privates.existanceRect);
-        privates.defsGroup.appendChild(privates.stateVarExistence);
-
         privates.stateVarLocation = document.createElementNS(bui.svgns, 'pattern');
         privates.stateVarLocation.setAttribute('id', 'stateVariableLocation');
         privates.stateVarLocation.setAttribute('patternUnits','objectBoundingBox');
@@ -583,6 +569,43 @@
         },
 
         /**
+         * @description
+         * Get the graph coordinates that correspond to a point on the page
+         * This does not take into account the offset of the graph's SVG Element
+         *
+         * @param {Number} [x] The x value of the cordinates
+         * @param {Number} [y] The y value of the cordinates
+         * @return {Object} An object with properties x and y which are the transformed coordinates
+         */
+        toGraphCoords : function(x, y) {
+            var privates = this._privates(identifier);
+
+            return {
+                x: x / privates.scale - privates.x,
+                y: y / privates.scale - privates.y
+            };
+        },
+
+        /**
+         * @description
+         * Get the page coordinates that correspond to a point on the graph
+         * This does not take into account the offset of the graph's SVG Element
+         *
+         * @param {Number} [x] The x value of the cordinates
+         * @param {Number} [y] The y value of the cordinates
+         * @return {Object} An object with properties x and y which are the transformed coordinates
+         */
+        toPageCoords : function(x, y) {
+            var privates = this._privates(identifier);
+
+            return {
+                x: (x + privates.x) * privates.scale,
+                y: (y + privates.y) * privates.scale
+            };
+        },
+
+        /**
+        /**
          * Fit the Graph to the viewport, i.e. scale the graph down to show
          * the whole graph or (in the case  of a very small graph) scale it
          * up.
@@ -890,13 +913,27 @@
             return this;
         },
         /**
-         * Return the defs group of the svg so node classes can draw clone markers 
+         * Return the defs group of the svg so node classes can draw clone markers
          *
          * @return {} SVG defsGroup
          */
         defsGroup : function() {
-            return  this._privates(identifier).defsGroup
-        }
+            return  this._privates(identifier).defsGroup;
+        },
+        /**
+         * get or set the language
+         * fluent interface
+         *
+         * @return string current SBGN language
+         */
+         language : function(lang){
+            if(lang === undefined){
+                return bui.settings.SBGNlang;
+            }
+            if(lang in {'ER':1,'PD':1,'AF':1}) bui.settings.SBGNlang = lang;
+            return this;
+         }
+        
 
     };
 

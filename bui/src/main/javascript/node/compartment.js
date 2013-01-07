@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Compartment';
+    var identifier = 'Compartment';
     /**
      * @private
      * Function used for the generation of listener identifiers
@@ -66,7 +66,7 @@
 
     bui.Compartment.prototype = {
         identifier : function() {
-            return 'Compartment';
+            return identifier;
         },
         _minWidth : 90,
         _minHeight : 90,

@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.StateVariable';
+    var identifier = 'StateVariable';
 
     /**
      * @private
@@ -114,7 +114,7 @@
 })(bui);
 
 (function(bui) {
-    var identifier = 'bui.StateVariableER';
+    var identifier = 'StateVariableER';
 
     /**
      * @private
@@ -150,7 +150,6 @@
         auxiliaryUnit : true,
         includeInJSON : false,
         _enableResizing : true,
-
         // override
         toJSON : function() {
             if (this.hasClass('existence')) 

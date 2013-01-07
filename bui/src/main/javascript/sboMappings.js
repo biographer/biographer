@@ -5,25 +5,26 @@
  */
 
 addMapping(nodeMapping, [285], bui.UnspecifiedEntity);
-addMapping(nodeMapping, [247, 240, 245], bui.SimpleChemical);
-addMapping(nodeMapping, [245, 252], bui.Macromolecule);
-addMapping(nodeMapping, [250, 251], bui.NucleicAcidFeature);
+addMapping(nodeMapping, [247, 240, 245, 421], bui.SimpleChemical);
+addMapping(nodeMapping, [245, 252, 420], bui.Macromolecule);
+addMapping(nodeMapping, [250, 251, 419], bui.NucleicAcidFeature);
 addMapping(nodeMapping, [405, 357], bui.Perturbation);
 addMapping(nodeMapping, [358], bui.Phenotype);
-addMapping(nodeMapping, [253], bui.Complex);
+addMapping(nodeMapping, [253, 418], bui.Complex);
 addMapping(nodeMapping, [289, 290], bui.Compartment);
 addMapping(nodeMapping, [375, 167, 379, 396], bui.Process);
 addMapping(nodeMapping, [-1], bui.Helper);
 addMapping(nodeMapping, [110001], bui.VariableValue);
 addMapping(nodeMapping, [110002, 110004], bui.Tag);
 //SBO:0000395 ! encapsulating process
-addMapping(nodeMapping, [395, 412,110003], bui.RectangularNode);//Annotation
+addMapping(nodeMapping, [395, 412], bui.RectangularNode);//Annotation
 //SBO:0000409 ! interaction outcome
 addMapping(nodeMapping, [177,409], bui.Association);
 addMapping(nodeMapping, [180], bui.Dissociation);
 addMapping(nodeMapping, [174,173,238,225], bui.LogicalOperator);
 addMapping(nodeMapping, [291], bui.EmptySet);
 addMapping(nodeMapping, [110005], bui.EdgeHandle);
+addMapping(nodeMapping, [110003], bui.Annotation);
 addMapping(processNodeMapping, [375, 167], bui.Process);
 
 
@@ -38,7 +39,7 @@ addMapping(edgeMarkerMapping, [459, 462, 170], bui.connectingArcs.stimulation.id
 addMapping(edgeMarkerMapping, [15, 394], bui.connectingArcs.substrate.id);
 addMapping(edgeMarkerMapping, [11, 393], bui.connectingArcs.production.id);
 addMapping(edgeMarkerMapping, [461], bui.connectingArcs.necessaryStimulation.id);
-addMapping(edgeMarkerMapping, [13], bui.connectingArcs.catalysis.id);
+addMapping(edgeMarkerMapping, [13,172], bui.connectingArcs.catalysis.id);
 addMapping(edgeMarkerMapping, [411], bui.connectingArcs.absoluteStimulation.id);
 
 

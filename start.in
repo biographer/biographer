@@ -1,5 +1,5 @@
 cd PATH
 nohup python flowlayout/flow-serve.py LYPORT flowlayout/layout  >>layout_log 2>&1  &
-web2py -a 'CHANGE_ME' -p W2PORT &
+web2py -a 'katzenkotze' -p W2PORT &
 sleep 2
 xdg-open http://localhost:W2PORT/biographer

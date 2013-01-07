@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Association';
+    var identifier = 'Association';
 
     /**
      * @private

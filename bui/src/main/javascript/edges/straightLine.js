@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.StraightLine';
+    var identifier = 'StraightLine';
 
     /**
      * @private
@@ -23,6 +23,9 @@
     };
 
     bui.StraightLine.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         includeInJSON : false,
 
         /**

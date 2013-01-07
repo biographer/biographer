@@ -4,8 +4,8 @@
 		<td></td>
 		<td>
 <ul class="zoom_menu">
-	<li id="zoom_in" class="scale" data-rate='0.1'> <div>zoom in (alt + scroll up)</div> </li>
-	<li id="zoom_out" class="scale" data-rate='-0.1'> <div>zoom out (alt + scroll down)</down> </li>
+	<li id="zoom_in" class="scale" data-rate='0.1'> <div>zoom in</div><div class="keyboard">alt + scroll</div> </li>
+	<li id="zoom_out" class="scale" data-rate='-0.1'> <div>zoom out</div><div class="keyboard">alt + scroll</div> </li>
 	<li id='scale1'> <div>scale to default size</div> </li>
 	<li id="fit_to_screen"> <div>fit to page</div> </li>
 </ul>
@@ -16,12 +16,12 @@
 				<li id="clear"> <div>clear the canvas</div> </li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li> 
-				<li id="undo"> <div>undo</div> </li> 
-				<li id="redo"> <div>redo</div> </li>
+				<li id="undo"> <div class="pp">undo</div><div class="keyboard">ctrl + z</div> </li> 
+				<li id="redo"> <div class="pp">redo</div><div class="keyboard">ctrl + y</div> </li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
-				<li id="import_file"> <div><b>import</b> graph from : JSON file, SBML file, BioModels.net, Reactome </div> </li>
-				<li id="export_other"> <div>export current graph as: png,jpeg,pdf,tiff</div> </li>
+				<li id="import_file"> <div><b>import</b> graph from : JSON file, SBML file, BioModels.net, Reactome </div><div class="keyboard">ctrl + i</div> </li>
+				<li id="export_other"> <div>export current graph as: png,jpeg,pdf,tiff</div><div class="keyboard">ctrl + e</div> </li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
 				{{if not request.vars.html5only:}}
@@ -33,7 +33,7 @@
 				<li id="combine"> <div>combine selected objects</div> </li>
 				<li id='straighten_and_distribute' class="fkt_active"> <div>enable/disable: straighten edges and distributen all points on edges equally</div> </li>
 				<li id='hide_handles'> <div>hide/show all edge handles</div> </li>
-				<li id='del'> <div>delete selected nodes (or press <b>del</b>)</div> </li>
+				<li id='del'> <div>delete selected nodes</div><div class="keyboard">del</div> </li>
 				<!-- li id="layout_grahviz"> 
 				<div>apply automatic <b>graphviz</b> layout</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'graphviz.png')}}"/> 
@@ -41,8 +41,8 @@
 				</li -->
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
-				<li id='edit_all_nodes'> <div>resize/move all nodes</div> </li>
-				<li id='edit_no_nodes'> <div>resize/move no nodes</div> </li>
+				<li id='edit_all_nodes'> <div>select all nodes</div><div class="keyboard">ctrl + a</div> </li>
+				<li id='edit_no_nodes'> <div>select no nodes</div> </li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
 				<li id='align_vertical'> <div>align selected nodes vertically</div> </li>
@@ -61,7 +61,7 @@
                 <a href="{{=URL('debug')}}"><img src="{{=URL(request.application, 'static/biographer-editor/img', 'bug.png')}}"/></a>
 				&nbsp;
 				</li -->
-				<li id="reset"> <div>reset biographer</div> </li>
+				<li id="reset"> <a href="{{=URL('reset')}}">..</a><div>reset biographer</div> </li>
 				{{pass}}
 				{{if auth.has_membership('admin'):}}
 				<li id="store_layout"> SL <div>store layout</div> </li>
@@ -72,15 +72,10 @@
 	<tr>
 		<td>
 			<ul class="tools_group tools_click">
-				<li class="active" id='cursor'> <div>select<br />ctrl+click to move and resize</div> </li>
-				<li id='move'> <div>move selected items</div> </li>
-				<!--li id='selection'>
-				<div>click to start drawing selection rectangle, click again to finish selection</div>
-				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'selection.png')}}" id="selection" class="tool"/>
-				</li -->
-				<!-- li id='edit'> <div>edit</div> </li -->
-				<li id='Edge'> <div>draw edge</div> </li>
-				<li id='Spline'> <div>draw spline</div> </li>
+				<li class="active" id='cursor'> <div>select</div><div class="keyboard">ctrl + 1</div> </li>
+				<li id='move'> <div>pan canvas</div><div class="keyboard">ctrl + 2</div> </li>
+				<li id='Edge'> <div>draw edge</div><div class="keyboard">ctrl + 3</div> </li>
+				<li id='Spline'> <div>draw spline</div><div class="keyboard">ctrl + 4</div> </li>
 				<!-- li id="focus"> 
 				<div>focus to node</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus.png')}}"/> 
@@ -98,21 +93,23 @@
 						</div>
 					</span>
 				</li>
-				<li id="SimpleChemical" class="tool node PD"> <div>SimpleChemical (click me)</div> </li>
+				<li id="SimpleChemical" class="tool node PD"> <div>Simple Chemical (click me)</div> </li>
 				<li id="Macromolecule" class="tool node PD ER"> <div>Macromolecule (click me)</div> </li>
-				<li id="NucleicAcidFeature" class="tool node PD"> <div>NucleicAcidFeature (click me)</div> </li>
-				<li id="UnspecifiedEntity" class="tool node PD"> <div>UnspecifiedEntity (click me)</div> </li>
+				<li id="NucleicAcidFeature" class="tool node PD"> <div>Nucleic Acid Feature (click me)</div> </li>
+				<li id="UnspecifiedEntity" class="tool node PD"> <div>Unspecified Entity (click me)</div> </li>
 				<li id="RectangularNode" class="tool node ER AF"> <div>Entity (click me)</div> </li>
 				<li id="Perturbation" class="tool node PD ER AF"> <div>Perturbation (click me)</div> </li>
 				<li id="Phenotype" class="tool node PD ER AF"> <div>Phenotype (click me)</div> </li>
+				<li id="VariableValue" class="tool node ER"> <div>Varable Value (click me)</div> </li>
 				<li id="Compartment" class="tool node no_drop_complex PD AF"/> <div>Compartment (click me)</div> </li>
 				<li id="Complex" class="tool node PD"> <div>Complex (click me)</div> </li>
 				<li id="EmptySet" class="tool node PD"> <div>EmptySet (click me)</div> </li>
 				<li id="Process" class="tool node no_drop_complex PD"> <div>Process (click me)</div> </li>
 				<li id="Tag" class="tool node PD"> <div>Tag (click me)</div> </li>
-				<li id="LogicalOperator" class="tool node PD ER"> <div>LogicalOperator (click me)</div> </li>
+				<li id="LogicalOperator" class="tool node PD ER"> <div>Logical Operator (click me)</div> </li>
 				<li id="Association" class="tool node PD"> <div>Association (click me)</div> </li>
 				<li id="Dissociation" class="tool node PD"> <div>Dissociation (click me)</div> </li>
+				<li id="Annotation" class="tool node PD ER AF"> <div>Annotation (click me)</div> </li>
 			</ul>
 		</td>
 		<td>
@@ -125,7 +122,7 @@
 				{{for x in 'Process LogicalOperator Association Dissociation'.split(): }}
 				<div id="follow_{{=x}}" class="follow helperS"></div>
 				{{pass}}
-				{{for x in 'SimpleChemical Macromolecule NucleicAcidFeature UnspecifiedEntity RectangularNode Perturbation Phenotype EmptySet Tag'.split(): }}
+				{{for x in 'SimpleChemical Macromolecule NucleicAcidFeature UnspecifiedEntity RectangularNode Perturbation Phenotype EmptySet Tag Annotation VariableValue'.split(): }}
 				<div id="follow_{{=x}}" class="follow helperM"></div>
 				{{pass}}
 				{{for x in 'Compartment Complex'.split(): }}
@@ -145,7 +142,7 @@
 <div id="export_file_modal_input" class="modal_input">
 	
 
-	<div class="port_group">
+	<div>
 		<div id="export_json"> 
 			<div>export current graph as jSBGN (JSON)</div>
 			<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_json.png')}}"/> 
@@ -159,7 +156,7 @@
 		</div>
 		{{pass}}
 	</div>
-	<div class="port_group">
+	<div>
 		<table>
 			<tr>
 				<th>Ohter Formats</th>
@@ -231,36 +228,58 @@
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
 <div id="edge_modal_input" class="modal_input">
-	<table>
-		<tr>
-			<th>End Marker</th>
-			<td>
-			  <div width="270px"> <!-- this is needed as position absolute in td does not work-->
-			     &nbsp;
-          <div id="marker_select_box">
-            <div class="marker_select" id="marker_none">  ... click to open <div></div> </div>
-            <div class="marker_select PD" id="substrate">  consumption <div></div> </div>
-            <div class="marker_select PD" id="production"> production <div></div> </div>
-            <div class="marker_select PD ER" id="control"> control <div></div> </div>
-            <div class="marker_select PD ER AF" id="inhibition"> inhibition <div></div> </div>
-            <div class="marker_select PD" id="catalysis"> catalysis <div></div> </div>
-            <div class="marker_select PD ER AF" id="stimulation"> stimulation <div></div> </div>
-            <div class="marker_select PD ER AF" id="assignment"> assignment <div></div> </div>
-            <div class="marker_select PD ER AF" id="necessaryStimulation"> necessaryStimulation <div></div> </div>
-            <div class="marker_select PD ER AF" id="absoluteStimulation"> absoluteStimulation <div></div> </div>
-            <div class="marker_select ER AF" id="absoluteInhibition"> absoluteInhibition <div></div> </div>
-        </div>
-			</td>
-		</tr>
-	</table>
 	<button class='sc_but close_modal'>close</button> or press <b>ESC</b>
-	</div>
+</div>
 </div>
 <div class="rm">
-	<div class="rm_peek"><div></div></div>
+	<div class="rm_peek"><div class='bg'></div><div class="keyboard">F4</div></div>
 	<div class="rm_body">
-		<div class="message" style="display:none">Currently you can only change the attributes of one node at once.</div>
-		<table class='node_attributes'>
+		<div class="message" style="display:none">Currently you can only change the attributes of one node at once.<br>
+			<br>
+			<h2>Color Combos</h2>
+			<div class="colorcombos"></div>
+			<h2>Combo Maker</h2>
+			<div class="combomaker" style="display:none;">
+				<table>
+					<tr type="SimpleChemical" class="tool node PD"> <td class='name'>SimpleChemical</td><td></td></tr>
+					<tr type="Macromolecule" class="tool node PD ER"> <td class='name'>Macromolecule</td><td></td></tr>
+					<tr type="NucleicAcidFeature" class="tool node PD"> <td class='name'>NucleicAcidFeature</td><td></td></tr>
+					<tr type="UnspecifiedEntity" class="tool node PD"> <td class='name'>UnspecifiedEntity</td><td></td></tr>
+					<tr type="RectangularNode" class="tool node ER AF"> <td class='name'>Entity</td><td></td></tr>
+					<tr type="Perturbation" class="tool node PD ER AF"> <td class='name'>Perturbation</td><td></td></tr>
+					<tr type="Phenotype" class="tool node PD ER AF"> <td class='name'>Phenotype</td><td></td></tr>
+					<tr type="Compartment" class="tool node no_drop_complex PD AF"/> <td class='name'>Compartment</td><td></td></tr>
+					<tr type="Complex" class="tool node PD"> <td class='name'>Complex</td><td></td></tr>
+					<tr type="EmptySet" class="tool node PD"> <td class='name'>EmptySet</td><td></td></tr>
+					<tr type="Process" class="tool node no_drop_complex PD"> <td class='name'>Process</td><td></td></tr>
+					<tr type="Tag" class="tool node PD"> <td class='name'>Tag</td><td></td></tr>
+					<tr type="LogicalOperator" class="tool node PD ER"> <td class='name'>LogicalOperator</td><td></td></tr>
+					<tr type="Association" class="tool node PD"> <td class='name'>Association</td><td></td></tr>
+					<tr type="Dissociation" class="tool node PD"> <td class='name'>Dissociation</td><td></td></tr>
+					<tr type="Annotation" class="tool node PD ER AF"> <td class='name'>Annotation</td><td></td></tr>	
+				</table>
+			</div>
+		</div>
+		<table class="rm_edge">
+			<tr>
+				<th>End Marker</th>
+				<td>
+					<div id="marker_select_box">
+						<div class="marker_select PD ER AF" id="substrate">  consumption/logic <div></div> </div>
+						<div class="marker_select PD" id="production"> production <div></div> </div>
+						<div class="marker_select ER" id="assignment"> assignment/interaction <div></div> </div>
+						<div class="marker_select PD ER AF" id="control"> control <div></div> </div>
+						<div class="marker_select PD ER AF" id="stimulation"> stimulation <div></div> </div>
+						<div class="marker_select PD" id="catalysis"> catalysis <div></div> </div>
+						<div class="marker_select PD ER AF" id="inhibition"> inhibition <div></div> </div>
+						<div class="marker_select PD ER AF" id="necessaryStimulation"> necessary stimulation <div></div> </div>
+						<div class="marker_select ER" id="absoluteInhibition"> absolute inhibition <div></div> </div>
+						<div class="marker_select ER" id="absoluteStimulation"> absolute stimulation <div></div> </div>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<table class='rm_node'>
 			<tr>
 				<th>Type</th>
 				<td id="node_type"></td>
@@ -269,15 +288,18 @@
 				<th>Node ID</th>
 				<td id="node_id"></td>
 			</tr>
-
+			<tr class="parent_box">
+				<th>Parent</th>
+				<td id="node_parent"></td>
+			</tr>
 			<tr id="node_label_row">
 				<th>Label</th>
 				<td> <input type="text" placeholder="ATP" id='node_label' /></td>
 			</tr>
-			<tr class="multimere_box">
+			<tr class="multimer_box">
 				<th>Mutimere</th>
 				<td> 
-					<input type="checkbox" id='node_is_multimere'> is a multimere
+					<input type="checkbox" id='node_is_multimer'> is a multimer
 				</td>
 			</tr>
 			<tr class="clonemarker_box">
@@ -304,21 +326,21 @@
 					<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
 				</td>
 			</tr>
-			<tr>
+			<tr class="color_box">
 				<th>Backround Color</th>
 				<td>
 					<div class="colorSelector color_bg"><div style="background-color: #fff"></div></div>
 					<div id="colorpickerHolder"></div>
 				</td>
 			</tr>
-			<tr>
+			<tr class="color_box">
 				<th>Border Color</th>
 				<td>
 					<div class="colorSelector color_bd"><div style="background-color: #000"></div></div>
 					<div id="colorpickerHolder"></div>
 				</td>
 			</tr>
-			<tr class="color_tx_box">
+			<tr class="color_tx_box color_box">
 				<th>Text Color</th>
 				<td>
 					<div class="colorSelector color_tx"><div style="background-color: #000"></div></div>
@@ -361,6 +383,7 @@ bui.ready(function() {
 	editor.graph = new bui.Graph($('#canvas')[0]);
 	//bui.Node.bindStatic(bui.Node.ListenerType.click, editor.drawableSelect());//FIXME this does not work, y?
 	editor.redrawGraph(editor_config.graphData);
+	editor.set_language();
 	editor.enable_selection();
 	editor_config.history_undo.push({action: 'initialized', graph: JSON.stringify(editor.graph.toJSON())})
 	
