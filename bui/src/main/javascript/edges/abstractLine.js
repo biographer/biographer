@@ -393,6 +393,8 @@
                 if (sbo !== null) {
                     updateJson(json, dataFormat.drawable.sbo, sbo);
                 }
+                updateJson(json, dataFormat.edge.type, privates.markerId);
+                
             }
 
             return json;
