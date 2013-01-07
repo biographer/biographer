@@ -435,10 +435,7 @@
      * @private mouse click listener
      */
     var lineMouseClick = function(event) {
-        if (event.ctrlKey === true) {
-            this.layoutElementsVisible(!this.layoutElementsVisible());
-        }
-        if (event.shiftKey === true){
+        if (event.ctrlKey === true){
            var scale = 1 / this.graph().scale(),
                 graph = this.graph(),
                 graphTranslate = graph.translate(),
