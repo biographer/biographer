@@ -120,6 +120,7 @@
       for (var i=0;i<jdata.edges.length;i++){ // create edge hash
          var e=jdata.edges[i];
          eh[idx[e.source]+'->'+idx[e.target]]=i;
+         if (e.data.type) delete e.data.type; // remove spline indicator ( defaults all edges to straight edges)
       }
       var lines=lt.split("\n");
       var minx=1000000000000000000;
@@ -204,7 +205,9 @@
          }
          if (!jdata.edges[eidx].data) jdata.edges[eidx].data={};
          if (handles.length) jdata.edges[eidx].data.handles=handles;
+         if (handles.length) jdata.edges[eidx].data.type="curve";
          if (points.length) jdata.edges[eidx].data.points=points;
+ 
       }
       return jdata;
    }
