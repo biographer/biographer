@@ -269,11 +269,17 @@
     var addAllEdges = function(graph, data, generatedNodes) {
         var edges = data.edges;
 
-        var edge_stack = [];
+        var edge_stack = [], edge_stack2 = edges.slice(); // make a shallow copy of edges array
         var drawables = graph.drawables();
         var generatedEdges = {};
-        for (var i = 0; i < edges.length; i++) {
-            var edgeJSON = edges[i], edge;
+        var last_len=edge_stack2.length+1;
+        while (last_len>edge_stack2.length){ // repeat until no more edges from edge_Stack can be added
+          last_len=edge_stack2.length
+          edge_stack = edge_stack2;
+          edge_stack2 = [];
+          for (var i = 0; i < edge_stack.length; i++) {
+          
+            var edgeJSON = edge_stack[i], edge;
 
             if ((edgeJSON.source === undefined)||(edgeJSON.target===undefined)){
                 continue;
@@ -281,7 +287,7 @@
             var source = undefined;
             //if there are ports defined (molecule:domain-port) make them to the target
             if (edgeJSON.source.indexOf(':') != -1){
-                node_ids = edgeJSON.source.split(':');
+                var node_ids = edgeJSON.source.split(':');
                 source = generatedNodes[node_ids[0]];
                 if (source !== undefined) {
                     children = source.children();
@@ -295,10 +301,29 @@
             }else{
                 var source = generatedNodes[edgeJSON.source];
             }
+            // still undefined? may be an edge
+            if(source === undefined){
+              var idx=-1;
+              var source_edge= undefined;
+              if (edgeJSON.source.indexOf(':') != -1){
+                var ids = edgeJSON.source.split(':');
+                idx = ids[1];
+                source_edge = generatedEdges[ids[0]];
+              } else {
+                source_edge = generatedEdges[edgeJSON.source];
+              }
+              if (source_edge !== undefined) {
+                if (idx>=0){
+                  source = source_edge.getPoint(idx);
+                } else {
+                  source = source_edge.addPoint(undefined,undefined,"Outcome");
+                }
+              }
+            }
             var target = undefined;
             //if there are ports defined (molecule:domain-port) make them to the target
             if (edgeJSON.target.indexOf(':') != -1){
-                node_ids = edgeJSON.target.split(':');
+                var node_ids = edgeJSON.target.split(':');
                 target = generatedNodes[node_ids[0]];
                 if (target !== undefined) {
                     var children = target.children();
@@ -312,40 +337,51 @@
             }else{
                 target = generatedNodes[edgeJSON.target];
             }
+            // still undefined? may be an edge
+            if(target === undefined){
+              var idx=-1;
+              var target_edge= undefined;
+              if (edgeJSON.target.indexOf(':') != -1){
+                var ids = edgeJSON.target.split(':');
+                idx = ids[1];
+                target_edge = generatedEdges[ids[0]];
+              } else {
+                target_edge = generatedEdges[edgeJSON.target];
+              }
+              if (target_edge !== undefined) {
+                if (idx>=0){
+                  target = target_edge.getPoint(idx);
+                } else {
+                  target = target_edge.addPoint();
+                }
+              }
+            }
+            // if source or target are still undefined they might reference an edge which is not yet added
             if ((source === undefined)||(target === undefined)) {
-                edge_stack.push(edgeJSON);
+                edge_stack2.push(edgeJSON);
                 continue;
             }
 
             // ensuring that the data property exists
             edgeJSON.data = edgeJSON.data || {};
 
-            if (edgeJSON.data.handles !== undefined && edgeJSON.data.handles.length>=4) {
-                edge = graph.add(bui.Spline, edgeJSON.id)
-                    .layoutElementsVisible(false);
-
-                edge.json(edgeJSON).source(source).target(target);
-
-                if (edgeJSON.data.points !== undefined) {
-                    edge.setSplinePoints(edgeJSON.data.points);
+            edge = graph.add(bui.Edge, edgeJSON.id);
+            edge.json(edgeJSON).source(source).target(target);
+            var spline=(edgeJSON.data.type=='curve' || edgeJSON.data.type=='spline');
+            edge.spline(spline);
+            if (spline){
+              edge.sourceSplineHandle(edgeJSON.data.handles[0],edgeJSON.data.handles[1]);
+              edge.targetSplineHandle(edgeJSON.data.handles[-2],edgeJSON.data.handles[-1]);
+            }
+            if(edgeJSON.data.points !== undefined){
+              for(var j=0; j<edgeJSON.data.points.length; j += 2){
+                var type = (edgeJSON.data.pointtypes ? edgeJSON.data.pointtypes[i] : undefined);
+                if (spline){
+                  edge.addPoint(edgeJSON.data.points[j], edgeJSON.data.points[j+1],type,undefined,edgeJSON.data.handles[j+2],edgeJSON.data.handles[j+3])
+                } else {
+                  edge.addPoint(edgeJSON.data.points[j], edgeJSON.data.points[j+1],type)
                 }
-                if (edgeJSON.data.handles !== undefined) {
-                    edge.setSplineHandlePositions(edgeJSON.data.handles);
-                }
-            } else {
-                edge = graph.add(bui.Edge, edgeJSON.id);
-                edge.json(edgeJSON).source(source).target(target);
-                if(edgeJSON.data.points !== undefined){
-                    for(var j=0; j<edgeJSON.data.points.length; j += 2){
-                        edge.addPoint(edgeJSON.data.points[j], edgeJSON.data.points[j+1])
-                    }
-                }
-                if(edgeJSON.data.handles !== undefined){
-                    for(var eh=0; eh<edgeJSON.data.handles.length; ++eh){
-                        var pos = edgeJSON.data.handles[eh];
-                        edge.addPoint(pos.x, pos.y);
-                    }
-                }
+              }
             }
 
 
@@ -385,111 +421,28 @@
             }
 
             edge.visible(true);
-            generatedEdges[edgeJSON.id] = edge;
+            generatedEdges[edgeJSON.id] = edge;   
+          }
         }
+        if (edge_stack2.length){
+          log('Edge stack still contains '+String(edge_stack2.length)+' edges');
+          for(var i = 0; i<edge_stack2.length; i++){
+              var flag = true;
+              if ((generatedNodes[edge_stack2[i].source] === undefined) && (generatedEdges[edge_stack2[i].source] === undefined)){
+                  log('Edge source '+edge_stack2[i].source+' could not be found. Edge ID: '+edge_stack2[i].id);
+                  flag = false;
+              }
+              if ((generatedNodes[edge_stack2[i].target] === undefined) && (generatedEdges[edge_stack2[i].target] === undefined)){
+                  log('Edge target '+edge_stack2[i].target+' could not be found. Edge ID: '+edge_stack2[i].id);
+                  flag = false;
+              }
+              if (flag) log('found but not added: '+JSON.stringify(edge_stack2[i]));
+              //log('Edge source '+edge_stack[i].source+' or target ' + edge_stack[i].target + ' could not be found.');
+          } 
 
-        var last_len = edge_stack.length + 1;
-        //console.log('edge_stack: ',edge_stack.length);
-        while ((edge_stack.length > 0) && (edge_stack.length<last_len)){
-            last_len = edge_stack.length;
-            for(var i = 0; i<edge_stack.length;i++){
-                var source_edge = undefined;
-                var target_edge = undefined;
-                var edgeJSON = edge_stack[i];
-                //alert(edge_stack.length+'Processing '+JSON.stringify(edgeJSON));
-                //---------------------------
-                var target = undefined;
-                if (edgeJSON.target.indexOf(':') != -1){
-                    node_ids = edgeJSON.target.split(':');
-                    target = generatedNodes[node_ids[0]];
-                    if (target !== undefined) {
-                        var children = target.children();
-                        for(var j = 0;j<children.length;j++){
-                            if((children[j].label() == node_ids[1])||(children[j].hasClass(node_ids[1]))){
-                                target = drawables[children[j].id()];
-                                break;
-                            }
-                        }
-                    }
-                }else{ target = generatedNodes[edgeJSON.target]; }
-
-                if(target === undefined){
-                    target_edge = generatedEdges[edgeJSON.target];
-                    if (target_edge === undefined) continue;  
-                    target = target_edge.addPoint(0,0);
-                }
-                //---------------------------
-                var source = undefined; 
-                if (edgeJSON.source.indexOf(':') != -1){
-                    node_ids = edgeJSON.source.split(':');
-                    source = generatedNodes[node_ids[0]];
-                    if (source !== undefined) {
-                        children = source.children();
-                        for(var j = 0;j<children.length;j++){
-                            if((children[j].label() == node_ids[1])||(children[j].hasClass(node_ids[1]))){
-                                source = drawables[children[j].id()];
-                                break;
-                            }
-                        }
-                    }
-                }else{ source = generatedNodes[edgeJSON.source]; }
-
-                if(source===undefined){
-                    source_edge = generatedEdges[edgeJSON.source];
-                    if (source_edge === undefined) continue;  
-                    source = source_edge.addPoint(0,0, 'Outcome');//FIXME this does not give the proper positions ... y???
-                }
-                //---------------------------
-                //---------------------------
-                if ((source === undefined)||(target === undefined)) continue
-                rm_elem = edge_stack.splice(i,1);
-                //alert('success '+JSON.stringify(rm_elem));
-                //check if edge source and target produce overlaying edges
-                /*if(source_edge != undefined || target_edge != undefined){
-                    if source_edge.source()
-                }*/
-                edge = graph.add(bui.Edge, edgeJSON.id);
-                edge.source(source).target(target);//.json(edgeJSON);
-                var marker = retrieveFrom(edgeMarkerMapping, edgeJSON.sbo);
-                edge.marker(marker.klass);
-                if(edgeJSON.data.handles !== undefined){
-                    for(var eh=0; eh<edgeJSON.data.handles.length; ++eh){
-                        var pos = edgeJSON.data.handles[eh];
-                        edge.addPoint(pos.x, pos.y);
-                    }
-                }
-                generatedEdges[edgeJSON.id] = edge;
-            }
         }
-        //recalculate all edge points this should be prevented if points were specified
-        for(edge_id in generatedEdges){
-            var edge = generatedEdges[edge_id];
-            if (edge.identifier() == 'bui.Edge'){
-                var handles = edge.handles();
-                for(var i=0; i<handles.length; i++){
-                    var curpos = handles[i].positionCenter(); 
-                    if(curpos.x==0 && curpos.y==0){
-                        edge.recalculatePoints();
-                        break;
-                    }
-                }
-            }
-        }
-        for(var i = 0; i<edge_stack.length; i++){
-            var flag = true;
-            if ((generatedNodes[edge_stack[i].source] === undefined) && (generatedEdges[edge_stack[i].source] === undefined)){
-                log('Edge source '+edge_stack[i].source+' could not be found. Edge ID: '+edge_stack[i].id);
-                flag = false;
-            }
-            if ((generatedNodes[edge_stack[i].target] === undefined) && (generatedEdges[edge_stack[i].target] === undefined)){
-                log('Edge target '+edge_stack[i].target+' could not be found. Edge ID: '+edge_stack[i].id);
-                flag = false;
-            }
-            if (flag) log('found but not added: '+JSON.stringify(edge_stack[i]));
-            //log('Edge source '+edge_stack[i].source+' or target ' + edge_stack[i].target + ' could not be found.');
-        } 
-        log('Edge stack still contains '+String(edge_stack.length)+' edges');
-    };
+        
+      };
 
     /**
      * Align nodes according to their parent-child relationships. Childs
