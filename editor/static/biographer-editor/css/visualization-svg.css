@@ -163,7 +163,7 @@ g.selected > path,g.selected > circle,g.selected > rect, g.selected >ellipse{
     stroke: blue!important;
     stroke-dasharray: 5,5;
 }
-line.selected {
+path.selected {
     stroke: blue!important;
     stroke-dasharray: 5,5;
     stroke-width: 4px;
