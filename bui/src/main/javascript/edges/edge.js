@@ -400,10 +400,11 @@
      * @private
      * Source changed event listener
      */
-    var sourceChanged = function(node, source) {
+    var sourceChanged = function(node, source, old) {
         var privates = this._privates(identifier);
         if (privates.isSpline) privates.sourceHelperLine.target(source);
-        source.bind(bui.Node.ListenerType.absolutePosition,
+        if (old !== undefined && old !== null) old.unbindAll(listenerIdentifier(this));
+        if (source !== undefined && source !== null) source.bind(bui.Node.ListenerType.absolutePosition,
                     detectWholeEdgeMove.createDelegate(this),
                     listenerIdentifier(this));
     };
@@ -412,10 +413,11 @@
      * @private
      * Target changed event listener
      */
-    var targetChanged = function(node, target) {
+    var targetChanged = function(node, target, old) {
         var privates = this._privates(identifier);
         if (privates.isSpline) privates.targetHelperLine.target(target);
-        target.bind(bui.Node.ListenerType.absolutePosition,
+        if (old !== undefined && old !== null) old.unbindAll(listenerIdentifier(this));
+        if (target !== undefined && target !== null) target.bind(bui.Node.ListenerType.absolutePosition,
                     detectWholeEdgeMove.createDelegate(this),
                     listenerIdentifier(this));
     };
