@@ -1190,7 +1190,7 @@ Editor.prototype = {
         $('.unit_of_information').change(function(){
             this_editor.editNode();
         });
-        $('#node_is_multimer, #node_is_clone').click(function(){
+        $('#node_is_multimer, #node_is_clonemarker, #node_is_existence, #node_is_location').click(function(){
             this_editor.editNode();
         });
         //=========================
