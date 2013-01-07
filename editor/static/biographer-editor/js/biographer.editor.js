@@ -95,7 +95,7 @@ Editor.prototype = {
             }
           }
         }
-        this.set_language();
+        this.setLanguage();
         var this_editor = this; // closure this object for drop callback below
         
     },
@@ -208,7 +208,7 @@ Editor.prototype = {
         var mode2id = {'edit':'wrench', 'Edge':'edge', 'Spline':'spline', 'focus':'focus', 'move': 'move', 'selection': 'selection'};
         if ((mode === undefined)||(mode == 'cursor')){
             $('#cursor').addClass('active');
-            this.enable_selection();
+            this.enableSelection();
         }else{
             $('#'+mode).addClass('active');
             $('#follow_'+mode2id[mode]).show();
@@ -217,7 +217,7 @@ Editor.prototype = {
             });
         }
         if ( this.cur_mode == 'move' ){
-                this.disable_selection();
+                this.disableSelection();
         }else if ((mode == 'Edge')||(mode == 'Spline')){
             for (var i = this.selected_nodes.length - 1; i >= 0; i--) {
                 this.selected_nodes[i].selected = false;
@@ -323,7 +323,7 @@ Editor.prototype = {
         */
         //-----------------
         this.bindDrawable(drawable);
-        this.select_all(false);
+        this.selectAll(false);
         this.select(drawable);
         this.rightMenue_show(true);
         this.setMode('cursor');
@@ -387,7 +387,7 @@ Editor.prototype = {
                         }
                     }else{
                         //shift key is not down
-                        this_editor.select_all(false);
+                        this_editor.selectAll(false);
                         this_editor.select(drawable);
                     }
                 }
@@ -408,6 +408,7 @@ Editor.prototype = {
     },
     rightMenu: function(){
         var this_editor = this;
+        var i;
         if((this.cur_mode == 'Edge')||(this.cur_mode == 'Spline')){
             $('.rm_node').hide();
             $('.rm_edge').show();
@@ -420,7 +421,7 @@ Editor.prototype = {
             var drawable = this.selected_nodes[0];
             //===========================================
             var node_ids = [];
-            for(i=0;i<this.selected_nodes.length;++i) node_ids.push(this.selected_nodes[i].id())
+            for(i=0;i<this.selected_nodes.length;++i) node_ids.push(this.selected_nodes[i].id());
             $('#node_id').html(node_ids.join(', '));
             if (this.selected_nodes.length == 1) $('#node_type').html(drawable.identifier());
             //===========================================
@@ -454,7 +455,7 @@ Editor.prototype = {
                 $('#uoi_group').html('<input type="text" placeholder="mt:prot" class="unit_of_information" />');
                 var dc = drawable.children();
                 var ci = 0, cj = 0;
-                for (var i =0; i<dc.length; ++i){
+                for (i=0; i<dc.length; ++i){
                     randomnumber = Math.floor(Math.random()*1501);
                     if (dc[i].identifier() in {'StateVariable':1,'StateVariableER':1} ){
                         if (ci<1) $('.state_variable').val(dc[i].label());
@@ -493,35 +494,36 @@ Editor.prototype = {
                 }
             }
             //===========================================
-            var show_next=true;
-            for (i=0;i<this.selected_nodes.length;++i) 
-                if (this.selected_nodes[i].multimer === undefined)
-                    show_next=false;
-            if (show_next == false){
-                $('.multimer_box').hide();
-            }else{
-                $('.multimer_box').show();
-                if (drawable.multimer() === true){
-                    $('#node_is_multimer').attr('checked', 'checked');
-                }else {
-                    $('#node_is_multimer').removeAttr('checked');
-                }
-            }
             //===========================================
-            var show_next=true;
-            for (i=0;i<this.selected_nodes.length;++i) 
-                if (this.selected_nodes[i].clonemarker === undefined)
-                    show_next=false;
-            if (show_next == false){
-                $('.clonemarker_box').hide();
-            }else{
-                $('.clonemarker_box').show();
-                if (drawable.clonemarker() === true){
-                    $('#node_is_clone').attr('checked', 'checked');
-                }else {
-                    $('#node_is_clone').removeAttr('checked');
+            var showNext = function(nodes, fkt_name){
+                var flag = true;
+                for (i=0;i<nodes.length;++i){
+                    if (nodes[i][fkt_name] === undefined){
+                        flag = false;
+                        break;
+                    }
                 }
-            }
+                if (! flag){
+                    $('.'+fkt_name+'_box').hide();
+                }else{
+                    $('.'+fkt_name+'_box').show();
+                    if (drawable[fkt_name]() === true){
+                        $('#node_is_'+fkt_name).attr('checked', 'checked');
+                    }else {
+                        $('#node_is_'+fkt_name).removeAttr('checked');
+                    }
+                }
+            };
+            //===========================================
+            //===========================================
+            showNext(this.selected_nodes, 'multimer');
+            //===========================================
+            showNext(this.selected_nodes, 'clonemarker');
+            //===========================================
+            showNext(this.selected_nodes, 'existence');
+            //===========================================
+            showNext(this.selected_nodes, 'location');
+            //===========================================
             //===========================================
             
         //}else if (this.selected_nodes.length>1){
@@ -530,11 +532,6 @@ Editor.prototype = {
             $('.rm_edge').hide();
             $('.rm_node').hide();
             $('.rm .message').show();
-            /*
-            $('.clonemarker_box').hide();
-            $('.multimer_box').hide();
-            $('#node_label_row').hide();
-            */
         }
     },
     editEdge: function(){
@@ -617,7 +614,9 @@ Editor.prototype = {
                 var drawable = this.selected_nodes[i];
                 //-----------------
                 if (drawable.multimer !== undefined){drawable.multimer($('#node_is_multimer').is(':checked')); }
-                if (drawable.clonemarker !== undefined) drawable.clonemarker($('#node_is_clone').is(':checked'));
+                if (drawable.clonemarker !== undefined) drawable.clonemarker($('#node_is_clonemarker').is(':checked'));
+                if (drawable.existence !== undefined) drawable.exitence($('#node_is_extence').is(':checked'));
+                if (drawable.location !== undefined) drawable.location($('#node_is_location').is(':checked'));
                 //-----------------
                 if(this_editor.color_bg !== undefined) drawable.color( { background: this_editor.color_bg} );
                 if(this_editor.color_bd !== undefined) drawable.color( { border: this_editor.color_bd} );
@@ -743,7 +742,7 @@ Editor.prototype = {
     },
 
     // select all nodes
-    select_all: function(all){
+    selectAll: function(all){
         var all_drawables = this.graph.drawables();
         this.selected_nodes = [];
         for (var key in all_drawables) {
@@ -757,7 +756,7 @@ Editor.prototype = {
     },
     //------------------------------------
     // disable box selection mode on graph
-    disable_selection: function(){
+    disableSelection: function(){
         //disable listeners
         editor.graph.unbind(bui.Graph.ListenerType.dragStart, 'graphDragStart');
         editor.graph.unbind(bui.Graph.ListenerType.dragMove, 'graphDragMove');
@@ -768,7 +767,7 @@ Editor.prototype = {
     //------------------------------------
     // enable box selection mode on graph
     // bind to graph's dragStart/Move/Stop to animate selection box
-    enable_selection: function(){
+    enableSelection: function(){
         var this_editor = this;
         this.graph.enablePanning(false);
         /*if(this.cur_mode == 'selection'){
@@ -910,7 +909,7 @@ Editor.prototype = {
         );
     },
     //set the SBGN language
-    set_language: function(){
+    setLanguage: function(){
         var language_current = this.graph.language();
         $('.language_current').html(language_current);
         $('.language_selection div').removeClass('lang_selected');
@@ -925,7 +924,7 @@ Editor.prototype = {
         });
         
     },
-    delete_selected_nodes: function(){
+    deleteSelectedNodes: function(){
         var nn = this.selected_nodes.length;
         for (var i = this.selected_nodes.length - 1; i >= 0; i--) this.selected_nodes[i].remove();
         this.selected_nodes = [];
@@ -1200,7 +1199,7 @@ Editor.prototype = {
         $('.unit_of_information').change(function(){
             this_editor.editNode();
         });
-        $('#node_is_multimer, #node_is_clone').click(function(){
+        $('#node_is_multimer, #node_is_clonemarker, #node_is_existence, #node_is_location').click(function(){
             this_editor.editNode();
         });
         //=========================
@@ -1352,7 +1351,7 @@ Editor.prototype = {
                         $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                     }else{
                         this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                        this_editor.set_language();
+                        this_editor.setLanguage();
                         this_editor.undoPush('loaded Reactome '+reid);
                         //$('.flash').html('loaded Reactome '+reid).fadeIn().delay(1600).fadeOut();
                     }
@@ -1421,14 +1420,14 @@ Editor.prototype = {
         //=========================
         $('#edit_all_nodes, #edit_no_nodes').click(function(){
                 var visible = $(this).attr('id')=='edit_all_nodes';
-                this_editor.select_all(visible);
+                this_editor.selectAll(visible);
         });
         $('#canvas').dblclick(function(){
             var visible;
             var all_drawables = this_editor.graph.drawables();
             if(this_editor.selected_nodes.length != Object.keys(all_drawables).length) visible = true;
             else visible = false;
-            this_editor.select_all(visible);
+            this_editor.selectAll(visible);
         });
         //=========================
         $('.tools_click li').click(function(){
@@ -1471,7 +1470,7 @@ Editor.prototype = {
         //=========================
         $('.node').click(function(event){
             event.stopPropagation();//because body gehts hooked up to click event
-            this_editor.select_all(false);
+            this_editor.selectAll(false);
             this_editor.setMode('node');
             $('.active').removeClass('active');
             $(this).addClass('active');
@@ -1528,7 +1527,7 @@ Editor.prototype = {
         // get the language and only show glyps for that language
         $('.language_selection div').click(function(){
             this_editor.graph.language($(this).html());
-            this_editor.set_language();
+            this_editor.setLanguage();
         });
         //-------------------------------------------------
         $('#store_layout').click(function(){
@@ -1560,9 +1559,11 @@ Editor.prototype = {
         //-------------------------------------------------
         //-------------------------------------------------
         $(document).keyup(function(event) {
-             if (event.keyCode == 16) {
+            //shift | shift key is not pressed anymore
+            if (event.keyCode == 16) {
                 this_editor.shifted = false;
             }
+            // ctrl | ctrl key is not pressed anymore
             if (event.keyCode == 17) {
                 $('.keyboard').attr('style','');
                 clearTimeout(this.ctrl_delayed);
@@ -1573,22 +1574,22 @@ Editor.prototype = {
             //del  | delete selected nodes
             //==================================
             if (event.keyCode == 46) { // us: del; german: entf
-                this_editor.delete_selected_nodes();
+                this_editor.deleteSelectedNodes();
             }
             var Opera = /opera/i.test(navigator.userAgent);
             if (Opera) {
                 // Opera specific
                 //==================================
-                //ctrl + f4 | toggle side menu
+                //ctrl + m | toggle side menu
                 //==================================
                 if ((event.ctrlKey || event.metaKey)&&(event.keyCode == 77)) {
                     this_editor.rightMenue_show();
-                }            
+                }
             }else{
                 //==================================
                 //f4 | toggle side menu
                 //==================================
-                if (event.keyCode == 115){   
+                if (event.keyCode == 115){
                     this_editor.rightMenue_show();
                 }
             }
@@ -1596,9 +1597,8 @@ Editor.prototype = {
             if (event.ctrlKey || event.metaKey) {
                 //==================================
                 //ctrl + a  | select all
-                //==================================
-                if (event.keyCode == 65){   
-                    this_editor.select_all(true);
+                if (event.keyCode == 65){
+                    this_editor.selectAll(true);
                     event.preventDefault();
                 }
                 //==================================
@@ -1623,10 +1623,13 @@ Editor.prototype = {
                 if (event.keyCode == 52){this_editor.setMode('Spline'); }
                 return false;
             }
+            // shift | detect if shift key is pressed
             if (event.keyCode == 16) {
-                //FIXME this does not work to detect if the shifkey is on!
                 this_editor.shifted = true;
+                interact.simulate('drag', $('#canvas')[0], event);
             }
+            // ctrl | ctrl pressed down for a longer time, show keyboard shortcuts
+            // TODO this only works in chrom(ium) so far, but is not so important
             if (event.keyCode == 17) {
                 clearTimeout(this.ctrl_delayed);
                 this.ctrl_delayed = setTimeout(function() {
@@ -1646,11 +1649,13 @@ Editor.prototype = {
         //-------------------------------------------------
         
         //-------------------------------------------------
+        //catch mouse scroll from whole body for zoom to work outside of the canvas
         document.body.onmousewheel = function (event) {
             this_editor.graph.fire(bui.Graph.ListenerType.wheel, [this_editor.graph, event]);
         };
         //-------------------------------------------------
-        $('#del').click(function(){this_editor.delete_selected_nodes();});
+        // delete selected nodes on click
+        $('#del').click(function(){this_editor.deleteSelectedNodes();});
         //-------------------------------------------------
         //slide toggle right menu
         $('.rm_peek').click(function(){this_editor.rightMenue_show(); });

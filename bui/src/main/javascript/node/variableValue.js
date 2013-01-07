@@ -123,7 +123,7 @@
                 return this;
             }
             return privates.is_existence;
-        }
+        },
         location: function(flag){
             //FIXME must implement location symbol here: a big T titled to the side
             //two lines and a clippath around it

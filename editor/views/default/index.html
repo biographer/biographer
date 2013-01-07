@@ -305,7 +305,7 @@
 			<tr class="clonemarker_box">
 				<th>Clone Marker</th>
 				<td> 
-					<input type="checkbox" id='node_is_clone'> is cloned
+					<input type="checkbox" id='node_is_clonemarker'> is cloned
 				</td>
 			</tr>
 			<tr class='state_variable_box'>
@@ -324,6 +324,18 @@
 						<input type="text" placeholder="mt:prot" class='unit_of_information' /> 
 					</div>
 					<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
+				</td>
+			</tr>
+			<tr class="existence_box">
+				<th>Clone Marker</th>
+				<td> 
+					<input type="checkbox" id='node_is_existence'> is existence
+				</td>
+			</tr>
+			<tr class="location_box">
+				<th>Clone Marker</th>
+				<td> 
+					<input type="checkbox" id='node_is_location'> is location
 				</td>
 			</tr>
 			<tr class="color_box">
@@ -383,8 +395,8 @@ bui.ready(function() {
 	editor.graph = new bui.Graph($('#canvas')[0]);
 	//bui.Node.bindStatic(bui.Node.ListenerType.click, editor.drawableSelect());//FIXME this does not work, y?
 	editor.redrawGraph(editor_config.graphData);
-	editor.set_language();
-	editor.enable_selection();
+	editor.setLanguage();
+	editor.enableSelection();
 	editor_config.history_undo.push({action: 'initialized', graph: JSON.stringify(editor.graph.toJSON())})
 	
 });
