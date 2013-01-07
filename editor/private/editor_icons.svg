@@ -15,7 +15,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.2 r9819"
    sodipodi:docname="editor_icons.svg">
   <defs
      id="defs4">
@@ -162,6 +162,329 @@
          d="M 0,0 V 20 M 5,0 25,10 5,20 z"
          id="path30" />
     </marker>
+    <marker
+       class="necessaryStimulation"
+       viewBox="-2 -2 30 30"
+       markerHeight="26"
+       markerWidth="6.5"
+       refY="10"
+       refX="25"
+       orient="auto"
+       id="connectingArc9hover">
+      <path
+         id="path4606"
+         stroke="black"
+         fill="white"
+         d="M0,0 V20 M10,0 L25,10L10,20Z" />
+    </marker>
+    <marker
+       class="necessaryStimulation"
+       viewBox="-2 -2 30 30"
+       markerHeight="26"
+       markerWidth="26"
+       refY="10"
+       refX="25"
+       orient="auto"
+       id="connectingArc9">
+      <path
+         id="path4603"
+         stroke="black"
+         fill="white"
+         d="M0,0 V20 M10,0 L25,10L10,20Z" />
+    </marker>
+    <marker
+       class="control"
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="5"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc8hover">
+      <path
+         id="path4600"
+         stroke="black"
+         fill="white"
+         d="M10,0L20,10L10,20L0,10Z" />
+    </marker>
+    <marker
+       class="control"
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="20"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc8">
+      <path
+         id="path4597"
+         stroke="black"
+         fill="white"
+         d="M10,0L20,10L10,20L0,10Z" />
+    </marker>
+    <marker
+       class="catalysis"
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="5"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc7hover">
+      <circle
+         id="circle4594"
+         stroke="black"
+         fill="white"
+         r="10"
+         cy="10"
+         cx="10" />
+    </marker>
+    <marker
+       class="catalysis"
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="20"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc7">
+      <circle
+         id="circle4591"
+         stroke="black"
+         fill="white"
+         r="10"
+         cy="10"
+         cx="10" />
+    </marker>
+    <marker
+       class="necessaryStimulation"
+       viewBox="-2 -2 14 30"
+       markerHeight="26"
+       markerWidth="2.5"
+       refY="12"
+       refX="10"
+       orient="auto"
+       id="connectingArc6hover">
+      <path
+         id="path4588"
+         stroke="black"
+         fill="white"
+         d="M0,0 V25 M10,0 V25Z" />
+    </marker>
+    <marker
+       class="necessaryStimulation"
+       viewBox="-2 -2 14 30"
+       markerHeight="26"
+       markerWidth="10"
+       refY="12"
+       refX="10"
+       orient="auto"
+       id="connectingArc6">
+      <path
+         id="path4585"
+         stroke="black"
+         fill="white"
+         d="M0,0 V25 M10,0 V25Z" />
+    </marker>
+    <marker
+       viewBox="-2 -2 24 26"
+       markerHeight="22"
+       markerWidth="5"
+       refY="10"
+       refX="2"
+       orient="auto"
+       id="connectingArc5hover">
+      <path
+         id="path4582"
+         stroke="black"
+         fill="black"
+         d="M0,0 V20 H1 V0 ZM22,0" />
+    </marker>
+    <marker
+       viewBox="-2 -2 24 26"
+       markerHeight="22"
+       markerWidth="20"
+       refY="10"
+       refX="2"
+       orient="auto"
+       id="connectingArc5">
+      <path
+         id="path4579"
+         stroke="black"
+         fill="black"
+         d="M0,0 V20 H1 V0 ZM22,0" />
+    </marker>
+    <marker
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="5"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc4hover">
+      <path
+         id="path4576"
+         stroke="black"
+         fill="black"
+         d="" />
+    </marker>
+    <marker
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="20"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc4-6">
+      <path
+         id="path4573"
+         stroke="black"
+         fill="black"
+         d="" />
+    </marker>
+    <marker
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="5"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc3hover">
+      <path
+         id="path4570"
+         stroke="black"
+         fill="black"
+         d="M0,0L20,10L0,20Z" />
+    </marker>
+    <marker
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="20"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc3">
+      <path
+         id="path4567"
+         stroke="black"
+         fill="black"
+         d="M0,0L20,10L0,20Z" />
+    </marker>
+    <marker
+       class="stimulation"
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="5"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc2hover">
+      <path
+         id="path4564"
+         stroke="black"
+         fill="white"
+         d="M0,0L20,10L0,20Z" />
+    </marker>
+    <marker
+       class="stimulation"
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="20"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc2">
+      <path
+         id="path4561"
+         stroke="black"
+         fill="white"
+         d="M0,0L20,10L0,20Z" />
+    </marker>
+    <marker
+       class="stimulation"
+       viewBox="-2 -2 39 24"
+       markerHeight="20"
+       markerWidth="8.75"
+       refY="10"
+       refX="25"
+       orient="auto"
+       id="connectingArc1hover">
+      <path
+         id="path4558"
+         stroke="black"
+         fill="white"
+         d="M0,0 L0,20 L10,15 L10,5 L0,0 Z M10,0 L10,20 L25,10Z" />
+    </marker>
+    <marker
+       class="stimulation"
+       viewBox="-2 -2 39 24"
+       markerHeight="20"
+       markerWidth="35"
+       refY="10"
+       refX="25"
+       orient="auto"
+       id="connectingArc1">
+      <path
+         id="path4555"
+         stroke="black"
+         fill="white"
+         d="M0,0 L0,20 L10,15 L10,5 L0,0 Z M10,0 L10,20 L25,10Z" />
+    </marker>
+    <marker
+       class="assignment"
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="5"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc0hover">
+      <path
+         id="path4552"
+         stroke="black"
+         fill="black"
+         d="M0,0 S10,10,0,20 L20,10 Z" />
+    </marker>
+    <marker
+       class="assignment"
+       viewBox="-2 -2 24 24"
+       markerHeight="20"
+       markerWidth="20"
+       refY="10"
+       refX="20"
+       orient="auto"
+       id="connectingArc0">
+      <path
+         id="path4549"
+         stroke="black"
+         fill="black"
+         d="M0,0 S10,10,0,20 L20,10 Z" />
+    </marker>
+    <pattern
+       height="14"
+       width="14"
+       y="0"
+       x="0"
+       patternUnits="objectBoundingBox"
+       id="stateVariableLocation">
+      <path
+         id="path4546"
+         style="stroke-width:2;stroke:rgb(0,0,0)"
+         d="M0,14 L14,0 M7,7 L14,14 Z" />
+    </pattern>
+    <pattern
+       height="100"
+       width="100"
+       y="0"
+       x="50%"
+       patternUnits="objectBoundingBox"
+       id="stateVariableExistence">
+      <rect
+         id="rect4543"
+         height="100"
+         width="100"
+         fill="black" />
+    </pattern>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -171,15 +494,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.53593716"
-     inkscape:cx="-96.370089"
-     inkscape:cy="880.30757"
+     inkscape:cx="-104.01735"
+     inkscape:cy="755.0708"
      inkscape:document-units="px"
-     inkscape:current-layer="g5374"
+     inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1871"
-     inkscape:window-height="1056"
-     inkscape:window-x="49"
-     inkscape:window-y="24"
+     inkscape:window-width="1366"
+     inkscape:window-height="717"
+     inkscape:window-x="0"
+     inkscape:window-y="26"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -232,7 +555,7 @@
     <g
        id="g4648"
        transform="translate(-29.038665,-8.2760443)"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -456,13 +779,13 @@
            style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
       </g>
       <image
-         sodipodi:absref="/home/fkrause/Dev/biographer/editor/private/json160.gif"
+         sodipodi:absref="/home/select/Dev/biographer/editor/private/json160.gif"
          xlink:href="json160.gif"
-         width="16.282143"
-         height="16.282143"
-         id="image4606"
+         y="355.62958"
          x="441.27188"
-         y="355.62958" />
+         id="image4606"
+         height="16.282143"
+         width="16.282143" />
       <g
          transform="matrix(0.82646749,0,0,0.82646749,71.126843,64.96684)"
          id="g3226">
@@ -481,13 +804,13 @@
              style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:4;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
         </g>
         <image
-           sodipodi:absref="/home/fkrause/Dev/biographer/editor/private/json160.gif"
+           sodipodi:absref="/home/select/Dev/biographer/editor/private/json160.gif"
            xlink:href="json160.gif"
-           width="19.700888"
-           height="19.700888"
-           id="image3224"
+           y="351.69287"
            x="447.86401"
-           y="351.69287" />
+           id="image3224"
+           height="19.700888"
+           width="19.700888" />
       </g>
     </g>
     <g
@@ -891,7 +1214,7 @@
     <g
        id="g4248"
        transform="translate(-36.987368,-92.958373)"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -1173,255 +1496,6 @@
       </g>
     </g>
     <g
-       id="g4525"
-       transform="translate(35.000004,-2.0000016e-7)"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90">
-      <g
-         transform="translate(-39.000004,-4.5894978)"
-         id="g4344">
-        <rect
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect4267"
-           width="70"
-           height="70"
-           x="267"
-           y="52.362183" />
-        <g
-           id="node13-9"
-           class=""
-           transform="matrix(0.81767011,0,0,0.81767011,277.4699,62.832079)"
-           style="fill:none;stroke-width:3.91166854;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/SimpleChemical_helper.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <circle
-             cx="30"
-             cy="30"
-             r="30"
-             id="circle45-5"
-             d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
-             sodipodi:cx="30"
-             sodipodi:cy="30"
-             sodipodi:rx="30"
-             sodipodi:ry="30"
-             style="fill:none;stroke:#000000;stroke-width:3.91111279;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-28.000004,-14.589498)"
-         id="g4349">
-        <rect
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect4267-6"
-           width="70"
-           height="70"
-           x="256"
-           y="132.36218" />
-        <g
-           id="node14-5"
-           class="rect"
-           transform="matrix(0.81767011,0,0,0.81767011,266.4699,142.83208)"
-           style="fill:none;stroke-width:3.91166854;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/Macromolecule_helper.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <path
-             d="M 30,0 H 45 A 15,15 0 0 1 60,15 V 45 A 15,15 0 0 1 45,60 H 15 A 15,15 0 0 1 0,45 V 15 A 15,15 0 0 1 15,0 z"
-             id="path48-5"
-             inkscape:connector-curvature="0"
-             style="fill:none;stroke:#000000;stroke-width:3.91166854;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-18.000004,-0.589498)"
-         id="g4354">
-        <rect
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect4267-67"
-           width="70"
-           height="70"
-           x="246"
-           y="188.36218" />
-        <g
-           id="node16-3"
-           class="rect"
-           transform="matrix(0.71673475,0,0,0.71673475,256.27265,201.86014)"
-           style="fill:none;stroke-width:4.46253586;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/NucleicAcidFeature_helper.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <path
-             d="M 34.5,0 H 69 V 45 A 15,15 0 0 1 54,60 H 15 A 15,15 0 0 1 0,45 V 0 z"
-             id="path51-1"
-             inkscape:connector-curvature="0"
-             style="fill:none;stroke:#000000;stroke-width:4.46190166;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-33.680332,2.3956552)"
-         id="g4360">
-        <rect
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect4267-5"
-           width="70"
-           height="70"
-           x="261.68033"
-           y="255.37703" />
-        <g
-           id="node17-0"
-           class=""
-           transform="matrix(0.69824378,0,0,0.69824378,271.89266,275.01567)"
-           style="fill:none;stroke-width:4.58071327;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/UnspecifiedEntity_helper.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <ellipse
-             cx="35.5"
-             cy="22"
-             rx="35.5"
-             ry="22"
-             id="ellipse54-4"
-             d="M 71,22 C 71,34.150264 55.106109,44 35.5,44 15.893891,44 0,34.150264 0,22 0,9.8497355 15.893891,0 35.5,0 55.106109,0 71,9.8497355 71,22 z"
-             sodipodi:cx="35.5"
-             sodipodi:cy="22"
-             sodipodi:rx="35.5"
-             sodipodi:ry="22"
-             style="fill:none;stroke:#000000;stroke-width:4.58071327;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-38.730717,12.39564)"
-         id="g4365">
-        <rect
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect4267-7"
-           width="70"
-           height="70"
-           x="266.73071"
-           y="315.37704" />
-        <path
-           style="fill:none;stroke:#000000;stroke-width:3.19799995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           d="m 273.7159,326.10154 56.02965,0 -16.23273,24.27549 16.23273,24.27549 -56.02965,0 16.23273,-24.27549 z"
-           id="rect3826"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Perturbation_helper.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-      </g>
-      <g
-         transform="translate(-24.000004,5.4105021)"
-         id="g4369">
-        <rect
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect4267-61"
-           width="70"
-           height="70"
-           x="252"
-           y="392.36218" />
-        <path
-           style="fill:none;stroke:#000000;stroke-width:3.19799995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           d="m 275.2179,403.08669 23.5642,0 16.23272,24.27549 -16.23272,24.27549 -23.5642,0 -16.23272,-24.27549 z"
-           id="rect3826-1"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Phenotype_helper.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-      </g>
-      <g
-         transform="translate(-41.155979,22.425272)"
-         id="g4385">
-        <rect
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect4267-3"
-           width="70"
-           height="70"
-           x="269.15598"
-           y="585.34741" />
-        <path
-           style="fill:none;stroke:#000000;stroke-width:3.19799995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           d="m 276.21388,596.07195 39.65148,0 16.23271,24.27549 -16.23271,24.27549 -39.65148,0 0,-24.27549 z"
-           id="rect3826-1-3"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Tag_helper.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-      </g>
-      <g
-         transform="translate(-36.37891,-5.0812276)"
-         id="g4373">
-        <rect
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect4267-9"
-           width="70"
-           height="70"
-           x="264.37891"
-           y="472.85391" />
-        <g
-           id="g5218"
-           transform="translate(300.58325,-72.51472)"
-           style="fill:none;stroke-width:3.19799995;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/EmptySet_helper.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <g
-             inkscape:export-ydpi="90"
-             inkscape:export-xdpi="90"
-             inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/SimpleChemical_helper.png"
-             style="fill:none;stroke-width:3.91111279;stroke-miterlimit:4;stroke-dasharray:none"
-             transform="matrix(0.81767011,0,0,0.81767011,-25.734454,555.83854)"
-             class=""
-             id="node13-9-4">
-            <circle
-               style="fill:none;stroke:#000000;stroke-width:3.91111279;stroke-miterlimit:4;stroke-dasharray:none"
-               sodipodi:ry="30"
-               sodipodi:rx="30"
-               sodipodi:cy="30"
-               sodipodi:cx="30"
-               d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
-               id="circle45-5-3"
-               r="30"
-               cy="30"
-               cx="30" />
-          </g>
-          <path
-             inkscape:connector-curvature="0"
-             id="path5189"
-             d="M 22.125002,557.03928 -24.533703,603.698"
-             style="fill:none;stroke:#000000;stroke-width:3.19799995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        </g>
-      </g>
-      <g
-         transform="translate(-46.626255,12.636515)"
-         id="g4380">
-        <rect
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect4267-0"
-           width="70"
-           height="70"
-           x="274.62625"
-           y="525.13617" />
-        <g
-           id="node21-9-2"
-           class="rect"
-           transform="matrix(2.0141312,0,0,1.3509415,276.37148,485.29826)"
-           style="fill:none;stroke-width:3.8541913;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/RectangularNode_helper.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <path
-             d="m 16.510729,42.396841 h 13 v 26 H 3.5107287 v -26 z"
-             id="path64-6-9"
-             inkscape:connector-curvature="0"
-             style="fill:none;stroke:#000000;stroke-width:1.75806868;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-    </g>
-    <g
        id="g4865"
        transform="translate(-0.43751,1.12499)" />
     <rect
@@ -1437,7 +1511,7 @@
     <g
        id="g5170"
        transform="translate(7.3998535e-6,276.91046)"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -2276,7 +2350,7 @@
     </g>
     <g
        id="g5777"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -2904,7 +2978,7 @@
     <g
        id="g5868"
        transform="translate(3.6407843,0)"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -3384,7 +3458,7 @@
     <g
        id="g4909"
        transform="translate(-5.9999994,5.9999981)"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -3666,557 +3740,22 @@
       </g>
     </g>
     <g
-       id="g4944"
-       transform="translate(-32.918834,1.6234099)"
-       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-ydpi="90"
        inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90">
+       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       id="g4834"
+       transform="translate(-105.22139,373.01071)">
       <g
-         id="g5374"
-         transform="translate(-29.004484,-10.365508)">
-        <rect
-           y="581.51477"
-           x="219.92331"
-           height="35"
-           width="35"
-           id="rect4501-0-9-1-0-7"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-        <g
-           transform="translate(31.176354,2.9662955)"
-           id="g5368"
-           inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <path
-             sodipodi:nodetypes="cccccc"
-             inkscape:connector-curvature="0"
-             id="path5338"
-             d="m 210.32508,587.1891 c 2.49379,2.49882 2.14388,2.14473 2.53125,2.53125 l 0.72446,1.15446 1.52554,1.12679 c 0.0981,0.0951 0.002,-0.003 3.53125,3.53125 -8.22047,-8.29456 -0.0514,0.0673 -8.3125,-8.34375 z"
-             style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#280b0b;stroke-width:0;stroke-miterlimit:2;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
-          <path
-             sodipodi:nodetypes="ccccccccccccccccccc"
-             inkscape:connector-curvature="0"
-             id="path64-2-2"
-             d="m 193.85633,587.1891 0,1.25 0,15.1875 0,1.28125 1.75,0 10.65625,0 10.625,0 1.75,0 0,-1.28125 0,-8.09375 c -3.52954,-3.53442 -3.4332,-3.43613 -3.53125,-3.53125 l 0,10.375 -8.84375,0 -8.875,0 0,-12.65625 15.46875,0 c -0.38737,-0.38652 -0.0375,-0.0324 -2.53125,-2.53125 l -14.71875,0 z"
-             style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#280b0b;stroke-width:0;stroke-miterlimit:2;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
-          <path
-             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#280b0b;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:2;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-             d="m 210.30897,587.18911 c 8.32413,8.33562 0.12369,0.10715 8.32861,8.32861 l -8.32861,0 z"
-             id="rect5293"
-             inkscape:connector-curvature="0"
-             sodipodi:nodetypes="cccc" />
-        </g>
-      </g>
-      <g
-         transform="translate(-37.476658,-32.526911)"
-         id="g4634"
-         style="fill:none"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-ydpi="90"
          inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="78.676186"
-           x="228.39548"
-           height="35"
-           width="35"
-           id="rect4501"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="node13"
-           class=""
-           transform="matrix(0.3021148,0,0,0.3021148,236.83203,87.112742)"
-           style="fill:none;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/SimpleChemical.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <circle
-             cx="30"
-             cy="30"
-             r="30"
-             id="circle45"
-             d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
-             sodipodi:cx="30"
-             sodipodi:cy="30"
-             sodipodi:rx="30"
-             sodipodi:ry="30"
-             style="fill:none;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-29.169041,-36.595469)"
-         id="g4639"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="117.74474"
-           x="220.08786"
-           height="35"
-           width="35"
-           id="rect4501-7"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="node14"
-           class="rect"
-           transform="matrix(0.3021148,0,0,0.3021148,228.52442,126.1813)"
-           style="stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/Macromolecule.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <path
-             d="M 30,0 H 45 A 15,15 0 0 1 60,15 V 45 A 15,15 0 0 1 45,60 H 15 A 15,15 0 0 1 0,45 V 15 A 15,15 0 0 1 15,0 z"
-             id="path48"
-             inkscape:connector-curvature="0"
-             style="fill:#ffffff;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-14.319797,-59.933535)"
-         id="g4649"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="211.08281"
-           x="205.23862"
-           height="35"
-           width="35"
-           id="rect4501-4"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="node16"
-           class="rect"
-           transform="matrix(0.26482095,0,0,0.26482095,213.60229,220.63818)"
-           style="stroke-width:11.32840919;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/NucleicAcidFeature.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <path
-             d="M 34.5,0 H 69 V 45 A 15,15 0 0 1 54,60 H 15 A 15,15 0 0 1 0,45 V 0 z"
-             id="path51"
-             inkscape:connector-curvature="0"
-             style="fill:#ffffff;stroke:#000000;stroke-width:11.32840919;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-22.805088,-42.607638)"
-         id="g4644"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="158.75691"
-           x="213.72391"
-           height="35"
-           width="35"
-           id="rect4501-9"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="node17"
-           class=""
-           transform="matrix(0.25798886,0,0,0.25798886,222.0653,170.58116)"
-           style="stroke-width:11.62840939;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/UnspecifiedEntity.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <ellipse
-             cx="35.5"
-             cy="22"
-             rx="35.5"
-             ry="22"
-             id="ellipse54"
-             d="M 71,22 C 71,34.150264 55.106109,44 35.5,44 15.893891,44 0,34.150264 0,22 0,9.8497355 15.893891,0 35.5,0 55.106109,0 71,9.8497355 71,22 z"
-             sodipodi:cx="35.5"
-             sodipodi:cy="22"
-             sodipodi:rx="35.5"
-             sodipodi:ry="22"
-             style="fill:#ffffff;stroke:#000000;stroke-width:11.62840939;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-22.097995,-69.481264)"
-         id="g4654"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="255.63054"
-           x="213.01682"
-           height="35"
-           width="35"
-           id="rect4501-0"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="node18"
-           class="compartment"
-           transform="matrix(0.18775336,0,0,0.18775336,221.12915,263.74287)"
-           style="stroke-width:15.97840881;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/Compartment.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <rect
-             rx="25"
-             ry="15"
-             width="100"
-             height="100"
-             id="rect57"
-             x="0"
-             y="0"
-             style="fill:#ffffff;stroke:#000000;stroke-width:15.97840881;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-18.562442,-74.079241)"
-         id="g4659"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="295.22852"
-           x="209.48126"
-           height="35"
-           width="35"
-           id="rect4501-0-0"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="node20"
-           class="complex"
-           transform="matrix(0.18775336,0,0,0.18775336,216.59359,303.34085)"
-           style="stroke-width:15.97840881;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Complex.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <path
-             d="m 50,0 35,0 25.65227,25.652273 0,48.695454 L 85,100 25.652273,100 0,74.347727 0,25.652273 25.652273,0 50,0"
-             id="path61"
-             inkscape:connector-curvature="0"
-             style="fill:#ffffff;stroke:#000000;stroke-width:15.97840881;stroke-miterlimit:4;stroke-dasharray:none"
-             sodipodi:nodetypes="cccccccccc" />
-        </g>
-      </g>
-      <g
-         transform="translate(-14.319812,-83.62697)"
-         id="g4664"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="339.77625"
-           x="205.23863"
-           height="35"
-           width="35"
-           id="rect4501-0-9"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="node21"
-           class="rect"
-           transform="matrix(0.30662021,0,0,0.30662021,218.75257,353.29018)"
-           style="stroke-width:9.784091;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/Process.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <path
-             d="M 13,0 H 26 V 26 H 0 V 0 z"
-             id="path64"
-             inkscape:connector-curvature="0"
-             style="fill:#ffffff;stroke:#000000;stroke-width:9.784091;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-73.716769,95.622816)"
-         id="g4862"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="195.52646"
-           x="264.63559"
-           height="35"
-           width="35"
-           id="rect4501-0-9-1"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <path
-           style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           d="m 273.10816,205.20398 18.05486,0 -5.23079,7.82249 5.23079,7.82247 -18.05486,0 5.23079,-7.82247 z"
-           id="rect3826-18"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Perturbation.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-      </g>
-      <g
-         transform="translate(-72.302554,81.832441)"
-         id="g4866"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="244.31683"
-           x="263.22137"
-           height="35"
-           width="35"
-           id="rect4501-0-9-1-5"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <path
-           style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           d="m 276.4359,252.98717 8.57095,0 5.90428,8.82967 -5.90428,8.82965 -8.57095,0 -5.90428,-8.82965 z"
-           id="rect3826-1-7"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Phenotype.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-      </g>
-      <g
-         transform="translate(-65.231474,199.90857)"
-         id="g4875"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="336.24069"
-           x="256.1503"
-           height="35"
-           width="35"
-           id="rect4501-0-9-1-0"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <path
-           style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           d="m 263.93661,344.91103 13.52309,0 5.90428,8.82967 -5.90428,8.82965 -13.52309,0 0,-8.82965 z"
-           id="rect3826-1-7-1"
-           inkscape:connector-curvature="0"
-           sodipodi:nodetypes="ccccccc"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Tag.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90" />
-      </g>
-      <g
-         transform="translate(-72.302554,371.3873)"
-         id="g4834"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="59.761971"
-           x="263.22137"
-           height="35"
-           width="35"
-           id="rect4501-0-9-1-0-0"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="g5157"
-           transform="translate(94.167822,-362.32947)"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/LogicalOperator.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <g
-             inkscape:export-ydpi="90"
-             inkscape:export-xdpi="90"
-             inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/SimpleChemical.png"
-             style="stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
-             transform="matrix(0.25661243,0,0,0.25661243,178.85518,431.89307)"
-             class=""
-             id="node13-1">
-            <circle
-               style="fill:#ffffff;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
-               sodipodi:ry="30"
-               sodipodi:rx="30"
-               sodipodi:cy="30"
-               sodipodi:cx="30"
-               d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
-               id="circle45-3"
-               r="30"
-               cy="30"
-               cx="30" />
-          </g>
-          <text
-             sodipodi:linespacing="125%"
-             id="text5153"
-             y="442.00241"
-             x="181.38649"
-             style="font-size:6.73163891px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-             xml:space="preserve"><tspan
-               y="442.00241"
-               x="181.38649"
-               id="tspan5155"
-               sodipodi:role="line">OR</tspan></text>
-        </g>
-      </g>
-      <g
-         transform="translate(-69.474124,215.12028)"
-         id="g4855"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="146.02899"
-           x="260.39294"
-           height="35"
-           width="35"
-           id="rect4501-0-9-1-0-89"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="g4810"
-           transform="translate(-103.45376,-33.260302)">
-          <g
-             inkscape:export-ydpi="90"
-             inkscape:export-xdpi="90"
-             inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/EmptySet.png"
-             style="stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
-             transform="matrix(0.3021148,0,0,0.3021148,372.28326,187.72585)"
-             class=""
-             id="node13-8">
-            <circle
-               style="fill:#ffffff;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
-               sodipodi:ry="30"
-               sodipodi:rx="30"
-               sodipodi:cy="30"
-               sodipodi:cx="30"
-               d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
-               id="circle45-7"
-               r="30"
-               cy="30"
-               cx="30" />
-          </g>
-          <path
-             inkscape:connector-curvature="0"
-             id="rect5184"
-             d="m 371.9717,206.1643 18.75001,-18.75001"
-             style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0" />
-        </g>
-      </g>
-      <g
-         transform="translate(-70.888339,291.13247)"
-         id="g4842"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="105.0168"
-           x="261.80716"
-           height="35"
-           width="35"
-           id="rect4501-0-9-1-0-8"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="node13-1-9"
-           class=""
-           transform="matrix(0.25661243,0,0,0.25661243,271.60879,114.81843)"
-           style="fill:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Association.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <circle
-             cx="30"
-             cy="30"
-             r="30"
-             id="circle45-3-6"
-             d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
-             sodipodi:cx="30"
-             sodipodi:cy="30"
-             sodipodi:rx="30"
-             sodipodi:ry="30"
-             style="fill:#000000;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-69.47415,217.94156)"
-         id="g4870"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="283.2077"
-           x="260.39297"
-           height="35"
-           width="35"
-           id="rect4501-0-9-1-55"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="node21-2"
-           class="rect"
-           transform="matrix(0.81784752,0,0,0.58410356,267.26096,293.11436)"
-           style="stroke-width:4.34050417;stroke-miterlimit:4;stroke-dasharray:none"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/RectangularNode.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
-          <path
-             d="M 13,0 H 26 V 26 H 0 V 0 z"
-             id="path64-2"
-             inkscape:connector-curvature="0"
-             style="fill:#ffffff;stroke:#000000;stroke-width:4.34050417;stroke-miterlimit:4;stroke-dasharray:none" />
-        </g>
-      </g>
-      <g
-         transform="translate(-125.33557,370.32485)"
-         id="g4847"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
-        <rect
-           y="95.824417"
-           x="316.25439"
-           height="35"
-           width="35"
-           id="rect4501-0-9-1-0-8-8"
-           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
-        <g
-           id="g5301"
-           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Dissociation.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90"
-           transform="translate(307.31689,-319.60024)">
-          <g
-             inkscape:export-ydpi="90"
-             inkscape:export-xdpi="90"
-             inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/SimpleChemical.png"
-             style="fill:#ffffff;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
-             transform="matrix(0.25661243,0,0,0.25661243,18.73913,425.22628)"
-             class=""
-             id="node13-1-9-6">
-            <circle
-               style="fill:#ffffff;stroke:#000000;stroke-width:9.92937088;stroke-miterlimit:4;stroke-dasharray:none"
-               sodipodi:ry="30"
-               sodipodi:rx="30"
-               sodipodi:cy="30"
-               sodipodi:cx="30"
-               d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
-               id="circle45-3-6-7"
-               r="30"
-               cy="30"
-               cx="30" />
-          </g>
-          <g
-             inkscape:export-ydpi="90"
-             inkscape:export-xdpi="90"
-             inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/SimpleChemical.png"
-             style="fill:#ffffff;stroke-width:24.3420639;stroke-miterlimit:4;stroke-dasharray:none"
-             transform="matrix(0.10467477,0,0,0.10467477,23.29726,429.78441)"
-             class=""
-             id="node13-1-9-6-1">
-            <circle
-               style="fill:#ffffff;stroke:#000000;stroke-width:24.3420639;stroke-miterlimit:4;stroke-dasharray:none"
-               sodipodi:ry="30"
-               sodipodi:rx="30"
-               sodipodi:cy="30"
-               sodipodi:cx="30"
-               d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
-               id="circle45-3-6-7-5"
-               r="30"
-               cy="30"
-               cx="30" />
-          </g>
-        </g>
-      </g>
+         inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/LogicalOperator.png"
+         transform="translate(94.167822,-362.32947)"
+         id="g5157" />
     </g>
     <g
        id="g4590"
        transform="translate(-142,-26.589498)"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -4402,7 +3941,7 @@
     </g>
     <g
        id="g5302"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -4822,7 +4361,7 @@
     <g
        id="g5430"
        transform="translate(-13.017446,-6.05306)"
-       inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -4887,5 +4426,1032 @@
         </g>
       </g>
     </g>
+    <g
+       id="g6228"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <g
+         transform="translate(-70.395492,-30.903501)"
+         id="g4634"
+         style="fill:none"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="78.676186"
+           x="228.39548"
+           height="35"
+           width="35"
+           id="rect4501"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="node13"
+           class=""
+           transform="matrix(0.3021148,0,0,0.3021148,236.83203,87.112742)"
+           style="fill:none;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/SimpleChemical.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <circle
+             cx="30"
+             cy="30"
+             r="30"
+             id="circle45"
+             d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
+             sodipodi:cx="30"
+             sodipodi:cy="30"
+             sodipodi:rx="30"
+             sodipodi:ry="30"
+             style="fill:none;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-62.087875,-34.972059)"
+         id="g4639"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="117.74474"
+           x="220.08786"
+           height="35"
+           width="35"
+           id="rect4501-7"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="node14"
+           class="rect"
+           transform="matrix(0.3021148,0,0,0.3021148,228.52442,126.1813)"
+           style="stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/Macromolecule.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <path
+             d="M 30,0 H 45 A 15,15 0 0 1 60,15 V 45 A 15,15 0 0 1 45,60 H 15 A 15,15 0 0 1 0,45 V 15 A 15,15 0 0 1 15,0 z"
+             id="path48"
+             inkscape:connector-curvature="0"
+             style="fill:#ffffff;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-47.238632,-58.310125)"
+         id="g4649"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="211.08281"
+           x="205.23862"
+           height="35"
+           width="35"
+           id="rect4501-4"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="node16"
+           class="rect"
+           transform="matrix(0.26482095,0,0,0.26482095,213.60229,220.63818)"
+           style="stroke-width:11.32840919;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/NucleicAcidFeature.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <path
+             d="M 34.5,0 H 69 V 45 A 15,15 0 0 1 54,60 H 15 A 15,15 0 0 1 0,45 V 0 z"
+             id="path51"
+             inkscape:connector-curvature="0"
+             style="fill:#ffffff;stroke:#000000;stroke-width:11.32840919;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-55.723922,-40.984228)"
+         id="g4644"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="158.75691"
+           x="213.72391"
+           height="35"
+           width="35"
+           id="rect4501-9"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="node17"
+           class=""
+           transform="matrix(0.25798886,0,0,0.25798886,222.0653,170.58116)"
+           style="stroke-width:11.62840939;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/UnspecifiedEntity.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <ellipse
+             cx="35.5"
+             cy="22"
+             rx="35.5"
+             ry="22"
+             id="ellipse54"
+             d="M 71,22 C 71,34.150264 55.106109,44 35.5,44 15.893891,44 0,34.150264 0,22 0,9.8497355 15.893891,0 35.5,0 55.106109,0 71,9.8497355 71,22 z"
+             sodipodi:cx="35.5"
+             sodipodi:cy="22"
+             sodipodi:rx="35.5"
+             sodipodi:ry="22"
+             style="fill:#ffffff;stroke:#000000;stroke-width:11.62840939;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-55.01683,-67.857854)"
+         id="g4654"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="255.63054"
+           x="213.01682"
+           height="35"
+           width="35"
+           id="rect4501-0"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="node18"
+           class="compartment"
+           transform="matrix(0.18775336,0,0,0.18775336,221.12915,263.74287)"
+           style="stroke-width:15.97840881;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/Compartment.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             rx="25"
+             ry="15"
+             width="100"
+             height="100"
+             id="rect57"
+             x="0"
+             y="0"
+             style="fill:#ffffff;stroke:#000000;stroke-width:15.97840881;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-51.481277,-72.455831)"
+         id="g4659"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="295.22852"
+           x="209.48126"
+           height="35"
+           width="35"
+           id="rect4501-0-0"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="node20"
+           class="complex"
+           transform="matrix(0.18775336,0,0,0.18775336,216.59359,303.34085)"
+           style="stroke-width:15.97840881;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Complex.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <path
+             d="m 50,0 35,0 25.65227,25.652273 0,48.695454 L 85,100 25.652273,100 0,74.347727 0,25.652273 25.652273,0 50,0"
+             id="path61"
+             inkscape:connector-curvature="0"
+             style="fill:#ffffff;stroke:#000000;stroke-width:15.97840881;stroke-miterlimit:4;stroke-dasharray:none"
+             sodipodi:nodetypes="cccccccccc" />
+        </g>
+      </g>
+      <g
+         transform="translate(-47.238647,-82.00356)"
+         id="g4664"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="339.77625"
+           x="205.23863"
+           height="35"
+           width="35"
+           id="rect4501-0-9"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="node21"
+           class="rect"
+           transform="matrix(0.30662021,0,0,0.30662021,218.75257,353.29018)"
+           style="stroke-width:9.784091;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/Process.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <path
+             d="M 13,0 H 26 V 26 H 0 V 0 z"
+             id="path64"
+             inkscape:connector-curvature="0"
+             style="fill:#ffffff;stroke:#000000;stroke-width:9.784091;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-106.6356,97.246226)"
+         id="g4862"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="195.52646"
+           x="264.63559"
+           height="35"
+           width="35"
+           id="rect4501-0-9-1"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           d="m 273.10816,205.20398 18.05486,0 -5.23079,7.82249 5.23079,7.82247 -18.05486,0 5.23079,-7.82247 z"
+           id="rect3826-18"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Perturbation.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+      </g>
+      <g
+         transform="translate(-105.22139,83.455851)"
+         id="g4866"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="244.31683"
+           x="263.22137"
+           height="35"
+           width="35"
+           id="rect4501-0-9-1-5"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           d="m 276.4359,252.98717 8.57095,0 5.90428,8.82967 -5.90428,8.82965 -8.57095,0 -5.90428,-8.82965 z"
+           id="rect3826-1-7"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Phenotype.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+      </g>
+      <g
+         transform="translate(-98.150314,201.53198)"
+         id="g4875"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="336.24069"
+           x="256.1503"
+           height="35"
+           width="35"
+           id="rect4501-0-9-1-0"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           d="m 263.93661,344.91103 13.52309,0 5.90428,8.82967 -5.90428,8.82965 -13.52309,0 0,-8.82965 z"
+           id="rect3826-1-7-1"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Tag.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+      </g>
+      <rect
+         y="432.77267"
+         x="157.99998"
+         height="35"
+         width="35"
+         id="rect4501-0-9-1-0-0"
+         style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <g
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/SimpleChemical.png"
+         style="stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
+         transform="matrix(0.25661243,0,0,0.25661243,167.80161,442.57431)"
+         class=""
+         id="node13-1">
+        <circle
+           style="fill:#ffffff;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
+           sodipodi:ry="30"
+           sodipodi:rx="30"
+           sodipodi:cy="30"
+           sodipodi:cx="30"
+           d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
+           id="circle45-3"
+           r="30"
+           cy="30"
+           cx="30" />
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text5153"
+         y="452.28915"
+         x="171.22191"
+         style="font-size:2.33377934px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+         xml:space="preserve"><tspan
+           style="font-size:5.54700994px;fill:#000000;font-family:Verdana"
+           y="452.28915"
+           x="171.22191"
+           id="tspan5155"
+           sodipodi:role="line">OR</tspan></text>
+      <g
+         transform="translate(-102.39296,216.74369)"
+         id="g4855"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="146.02899"
+           x="260.39294"
+           height="35"
+           width="35"
+           id="rect4501-0-9-1-0-89"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="g4810"
+           transform="translate(-103.45376,-33.260302)">
+          <g
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/EmptySet.png"
+             style="stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
+             transform="matrix(0.3021148,0,0,0.3021148,372.28326,187.72585)"
+             class=""
+             id="node13-8">
+            <circle
+               style="fill:#ffffff;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
+               sodipodi:ry="30"
+               sodipodi:rx="30"
+               sodipodi:cy="30"
+               sodipodi:cx="30"
+               d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
+               id="circle45-7"
+               r="30"
+               cy="30"
+               cx="30" />
+          </g>
+          <path
+             inkscape:connector-curvature="0"
+             id="rect5184"
+             d="m 371.9717,206.1643 18.75001,-18.75001"
+             style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0" />
+        </g>
+      </g>
+      <g
+         transform="translate(-103.80717,292.75588)"
+         id="g4842"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="105.0168"
+           x="261.80716"
+           height="35"
+           width="35"
+           id="rect4501-0-9-1-0-8"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="node13-1-9"
+           class=""
+           transform="matrix(0.25661243,0,0,0.25661243,271.60879,114.81843)"
+           style="fill:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Association.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <circle
+             cx="30"
+             cy="30"
+             r="30"
+             id="circle45-3-6"
+             d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
+             sodipodi:cx="30"
+             sodipodi:cy="30"
+             sodipodi:rx="30"
+             sodipodi:ry="30"
+             style="fill:#000000;stroke:#000000;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-102.39299,219.56497)"
+         id="g4870"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="283.2077"
+           x="260.39297"
+           height="35"
+           width="35"
+           id="rect4501-0-9-1-55"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="node21-2"
+           class="rect"
+           transform="matrix(0.81784752,0,0,0.58410356,267.26096,293.11436)"
+           style="stroke-width:4.34050417;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/RectangularNode.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <path
+             d="M 13,0 H 26 V 26 H 0 V 0 z"
+             id="path64-2"
+             inkscape:connector-curvature="0"
+             style="fill:#ffffff;stroke:#000000;stroke-width:4.34050417;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-158.25441,371.94826)"
+         id="g4847"
+         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <rect
+           y="95.824417"
+           x="316.25439"
+           height="35"
+           width="35"
+           id="rect4501-0-9-1-0-8-8"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        <g
+           id="g5301"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Dissociation.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"
+           transform="translate(307.31689,-319.60024)">
+          <g
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/SimpleChemical.png"
+             style="fill:#ffffff;stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
+             transform="matrix(0.25661243,0,0,0.25661243,18.73913,425.22628)"
+             class=""
+             id="node13-1-9-6">
+            <circle
+               style="fill:#ffffff;stroke:#000000;stroke-width:9.92937088;stroke-miterlimit:4;stroke-dasharray:none"
+               sodipodi:ry="30"
+               sodipodi:rx="30"
+               sodipodi:cy="30"
+               sodipodi:cx="30"
+               d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
+               id="circle45-3-6-7"
+               r="30"
+               cy="30"
+               cx="30" />
+          </g>
+          <g
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/SimpleChemical.png"
+             style="fill:#ffffff;stroke-width:24.3420639;stroke-miterlimit:4;stroke-dasharray:none"
+             transform="matrix(0.10467477,0,0,0.10467477,23.29726,429.78441)"
+             class=""
+             id="node13-1-9-6-1">
+            <circle
+               style="fill:#ffffff;stroke:#000000;stroke-width:24.3420639;stroke-miterlimit:4;stroke-dasharray:none"
+               sodipodi:ry="30"
+               sodipodi:rx="30"
+               sodipodi:cy="30"
+               sodipodi:cx="30"
+               d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
+               id="circle45-3-6-7-5"
+               r="30"
+               cy="30"
+               cx="30" />
+          </g>
+        </g>
+      </g>
+      <g
+         id="g5789">
+        <rect
+           y="572.77264"
+           x="157.99998"
+           height="35"
+           width="35"
+           id="rect4501-0-9-1-0-7"
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <g
+           id="g4610-5"
+           transform="matrix(0.30375873,0,0,0.30375873,121.12717,565.97195)">
+          <g
+             id="g4612-6">
+            <g
+               class="annotation"
+               transform="translate(139,50)"
+               id="drawable64-3">
+              <path
+                 id="path4615-5"
+                 d="M 0,0 H 65 L 80,15 V 60 H 0 0 z"
+                 inkscape:connector-curvature="0"
+                 style="fill:#ffffff;stroke:#000000;stroke-width:9.8762598;stroke-miterlimit:4;stroke-dasharray:none" />
+              <path
+                 id="path4617-5"
+                 d="M 65,0 80,15 H 65 z"
+                 style="fill:#000000;stroke:#000000;stroke-width:3.29208636;stroke-miterlimit:4;stroke-dasharray:none"
+                 inkscape:connector-curvature="0" />
+            </g>
+          </g>
+          <g
+             id="g4619-8" />
+        </g>
+      </g>
+      <g
+         transform="translate(-1.6454462,-7.2138062)"
+         id="g5889">
+        <rect
+           style="fill:none;fill-opacity:1;stroke:none"
+           id="rect5885"
+           width="35"
+           height="35"
+           x="159.64543"
+           y="614.98645" />
+        <rect
+           style="fill:none;stroke:#000000;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none"
+           id="rect5887"
+           width="26.002451"
+           height="15.027915"
+           x="164.14421"
+           y="624.97247"
+           rx="7.0241866"
+           ry="10.847716" />
+      </g>
+    </g>
+    <g
+       id="g6180"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <g
+         transform="translate(-4,-4.589498)"
+         id="g4344">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267"
+           width="70"
+           height="70"
+           x="267"
+           y="52.362183" />
+        <g
+           id="node13-9"
+           class=""
+           transform="matrix(0.81767011,0,0,0.81767011,277.4699,62.832079)"
+           style="fill:none;stroke-width:3.91166854;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/SimpleChemical_helper.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <circle
+             cx="30"
+             cy="30"
+             r="30"
+             id="circle45-5"
+             d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
+             sodipodi:cx="30"
+             sodipodi:cy="30"
+             sodipodi:rx="30"
+             sodipodi:ry="30"
+             style="fill:none;stroke:#000000;stroke-width:3.91111279;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(7,-14.589498)"
+         id="g4349">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-6"
+           width="70"
+           height="70"
+           x="256"
+           y="132.36218" />
+        <g
+           id="node14-5"
+           class="rect"
+           transform="matrix(0.81767011,0,0,0.81767011,266.4699,142.83208)"
+           style="fill:none;stroke-width:3.91166854;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/Macromolecule_helper.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <path
+             d="M 30,0 H 45 A 15,15 0 0 1 60,15 V 45 A 15,15 0 0 1 45,60 H 15 A 15,15 0 0 1 0,45 V 15 A 15,15 0 0 1 15,0 z"
+             id="path48-5"
+             inkscape:connector-curvature="0"
+             style="fill:none;stroke:#000000;stroke-width:3.91166854;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(17,-0.5894982)"
+         id="g4354">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-67"
+           width="70"
+           height="70"
+           x="246"
+           y="188.36218" />
+        <g
+           id="node16-3"
+           class="rect"
+           transform="matrix(0.71673475,0,0,0.71673475,256.27265,201.86014)"
+           style="fill:none;stroke-width:4.46253586;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/NucleicAcidFeature_helper.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <path
+             d="M 34.5,0 H 69 V 45 A 15,15 0 0 1 54,60 H 15 A 15,15 0 0 1 0,45 V 0 z"
+             id="path51-1"
+             inkscape:connector-curvature="0"
+             style="fill:none;stroke:#000000;stroke-width:4.46190166;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(1.319672,2.395655)"
+         id="g4360">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-5"
+           width="70"
+           height="70"
+           x="261.68033"
+           y="255.37703" />
+        <g
+           id="node17-0"
+           class=""
+           transform="matrix(0.69824378,0,0,0.69824378,271.89266,275.01567)"
+           style="fill:none;stroke-width:4.58071327;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/UnspecifiedEntity_helper.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <ellipse
+             cx="35.5"
+             cy="22"
+             rx="35.5"
+             ry="22"
+             id="ellipse54-4"
+             d="M 71,22 C 71,34.150264 55.106109,44 35.5,44 15.893891,44 0,34.150264 0,22 0,9.8497355 15.893891,0 35.5,0 55.106109,0 71,9.8497355 71,22 z"
+             sodipodi:cx="35.5"
+             sodipodi:cy="22"
+             sodipodi:rx="35.5"
+             sodipodi:ry="22"
+             style="fill:none;stroke:#000000;stroke-width:4.58071327;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-3.730713,12.39564)"
+         id="g4365">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-7"
+           width="70"
+           height="70"
+           x="266.73071"
+           y="315.37704" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:3.19799995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           d="m 273.7159,326.10154 56.02965,0 -16.23273,24.27549 16.23273,24.27549 -56.02965,0 16.23273,-24.27549 z"
+           id="rect3826"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Perturbation_helper.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+      </g>
+      <g
+         transform="translate(11,5.4105019)"
+         id="g4369">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-61"
+           width="70"
+           height="70"
+           x="252"
+           y="392.36218" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:3.19799995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           d="m 275.2179,403.08669 23.5642,0 16.23272,24.27549 -16.23272,24.27549 -23.5642,0 -16.23272,-24.27549 z"
+           id="rect3826-1"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Phenotype_helper.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+      </g>
+      <g
+         transform="translate(-6.155975,22.425272)"
+         id="g4385">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-3"
+           width="70"
+           height="70"
+           x="269.15598"
+           y="585.34741" />
+        <path
+           style="fill:none;stroke:#000000;stroke-width:3.198;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           d="m 276.21388,596.07195 39.65148,0 16.23271,24.27549 -16.23271,24.27549 -39.65148,0 0,-24.27549 z"
+           id="rect3826-1-3"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/Tag_helper.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+      </g>
+      <g
+         transform="translate(-1.378906,-5.0812278)"
+         id="g4373">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-9"
+           width="70"
+           height="70"
+           x="264.37891"
+           y="472.85391" />
+        <g
+           id="g5218"
+           transform="translate(300.58325,-72.51472)"
+           style="fill:none;stroke-width:3.19799995;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/EmptySet_helper.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <g
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/home/select/Dev/biographer-server/static/images/editor/SimpleChemical_helper.png"
+             style="fill:none;stroke-width:3.91111279;stroke-miterlimit:4;stroke-dasharray:none"
+             transform="matrix(0.81767011,0,0,0.81767011,-25.734454,555.83854)"
+             class=""
+             id="node13-9-4">
+            <circle
+               style="fill:none;stroke:#000000;stroke-width:3.91111279;stroke-miterlimit:4;stroke-dasharray:none"
+               sodipodi:ry="30"
+               sodipodi:rx="30"
+               sodipodi:cy="30"
+               sodipodi:cx="30"
+               d="M 60,30 C 60,46.568542 46.568542,60 30,60 13.431458,60 0,46.568542 0,30 0,13.431458 13.431458,0 30,0 46.568542,0 60,13.431458 60,30 z"
+               id="circle45-5-3"
+               r="30"
+               cy="30"
+               cx="30" />
+          </g>
+          <path
+             inkscape:connector-curvature="0"
+             id="path5189"
+             d="M 22.125002,557.03928 -24.533703,603.698"
+             style="fill:none;stroke:#000000;stroke-width:3.19799995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        </g>
+      </g>
+      <g
+         transform="translate(-11.626251,12.636515)"
+         id="g4380">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-0"
+           width="70"
+           height="70"
+           x="274.62625"
+           y="525.13617" />
+        <g
+           id="node21-9-2"
+           class="rect"
+           transform="matrix(2.0141312,0,0,1.3509415,276.37148,485.29826)"
+           style="fill:none;stroke-width:3.8541913;stroke-miterlimit:4;stroke-dasharray:none"
+           inkscape:export-filename="/home/select/Dev/biographer-editor/static/images/editor/RectangularNode_helper.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <path
+             d="m 16.510729,42.396841 h 13 v 26 H 3.5107287 v -26 z"
+             id="path64-6-9"
+             inkscape:connector-curvature="0"
+             style="fill:none;stroke:#000000;stroke-width:1.75806868;stroke-miterlimit:4;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         transform="translate(-0.3563229,-12.277731)"
+         id="g5876">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-0-2"
+           width="70"
+           height="70"
+           x="263.35632"
+           y="690.05042" />
+        <g
+           id="g4610"
+           transform="matrix(0.6950128,0,0,0.6950128,173.94903,669.44939)">
+          <g
+             id="g4612">
+            <g
+               class="annotation"
+               transform="translate(139,50)"
+               id="drawable64">
+              <path
+                 id="path4615"
+                 d="M 0,0 H 65 L 80,15 V 60 H 0 0 z"
+                 inkscape:connector-curvature="0"
+                 style="fill:none;stroke:#000000;stroke-width:4.60135411999999988;stroke-miterlimit:4;stroke-dasharray:none" />
+              <path
+                 id="path4617"
+                 d="M 65,0 80,15 H 65 z"
+                 style="fill:#000000;stroke:#000000;stroke-width:0px"
+                 inkscape:connector-curvature="0" />
+            </g>
+          </g>
+          <g
+             id="g4619" />
+        </g>
+      </g>
+      <g
+         transform="translate(2.4580387,-6.3723965)"
+         id="g6176">
+        <rect
+           style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect4267-0-2-4"
+           width="70"
+           height="70"
+           x="260.54196"
+           y="754.14508" />
+        <rect
+           ry="11.964762"
+           y="777.1803"
+           x="268.12851"
+           height="23.929523"
+           width="54.826878"
+           id="rect6040"
+           style="fill:none;stroke:#000000;stroke-width:3.19799995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      </g>
+    </g>
   </g>
+  <style
+     id="style4608"
+     type="text/css">.hidden {
+    visibility: hidden;
+}
+
+/*
+ * Please copy all changes to the .defaultText css class in the
+ * visualization-html.css file.
+ */
+text, tspan {
+    font-family: Verdana;
+    font-size: 16px;
+    fill: black;
+}
+/*
+ * Please copy all changes to the .smallText css class in the
+ * visualization-html.css file.
+ */
+text.small, tspan.small, text.small tspan {
+    font-size: 10px;
+    bottom: 3px;
+}
+.LogicalOperator tspan {
+    font-size: 12px;
+    top: 3px;
+}
+g.VariableValue &gt; text {
+   top: 5px;
+}
+ellipse, circle, g.rect &gt; path, g.complex &gt; path, g.compartment &gt; rect, g.perturbation &gt; path, g.phenotype path, g.VariableValue path, g.annotation path {
+    fill: white;
+    stroke-width: 2px;
+    stroke: black
+}
+g.cloneMarker &gt; path, g.cloneMarker &gt; circle, g.cloneMarker &gt; rect {
+    fill: url(#cloneMarker);
+}
+g.existence &gt; path {
+    fill: url(#stateVariableExistence);
+}
+g.location &gt; path {
+    fill: url(#stateVariableLocation);
+}
+
+g.hideBorder &gt; path {
+    stroke: white;
+}
+ellipse.selected, circle.selected {
+    fill: #eee;
+}
+
+line {
+    stroke: #000;
+}
+.process {
+	font-size: 10px;
+}
+.statevariable {
+	font-size: 10px;
+}
+
+.stimulation, .catalysis, .control, .necessaryStimulation {
+    fill: white;
+    stroke: black;
+}
+.interaction {
+	fill: black;
+	stroke: black;
+}
+
+.line {
+    fill: none;
+    stroke: black;
+}
+.line.mRED {
+    stroke: #f00;
+}
+
+.lineHover {
+    stroke-width: 4;
+}
+
+.dotted {
+    stroke-dasharray: 1, 3;
+}
+
+.dashed {
+    stroke-dasharray: 4, 5;
+}
+.LogicalOperator circle {
+	fill: white;
+	stroke: black;
+}
+.delay tspan {
+    font-family: &quot;DejaVu Serif&quot;;
+    font-size: 20px;
+}
+.Outcome circle {
+	fill: black;
+	stroke: black;
+}
+.edgeHandle circle {
+	stroke: black;
+       opacity: 0.5;	
+}
+.splineEdgeHandle circle {
+    fill: #9ea5ff;
+    stroke: blue;
+    opacity: 0.5;
+}
+.clone path{
+	background-image: url('../images/editor/black_pixle.gif');
+	background-repeat:repeat;
+	background-attachment:fixed;
+	background-position:0% 70%;
+}
+
+.splineEdgeHandle.autoAlign circle {
+    opacity: 0.2;
+}
+g.Silver &gt; path,g.Silver &gt; circle,g.Silver &gt; rect {
+	fill: #C0C0C0;
+}
+g.Gray &gt; path,g.Gray &gt; circle,g.Gray &gt; rect {
+	fill: #808080;
+}
+g.Red &gt; path,g.Red &gt; circle,g.Red &gt; rect, g.Red &gt;ellipse {
+	fill: #FF0000;
+}
+g.Maroon &gt; path,g.Maroon &gt; circle,g.Maroon &gt; rect {
+	fill: #800000;
+}
+g.Yellow &gt; path,g.Yellow &gt; circle,g.Yellow &gt; rect {
+	fill: #FFFFF0;
+}
+g.Olive &gt; path,g.Olive &gt; circle,g.Olive &gt; rect {
+	fill: #808000;
+}
+g.Lime &gt; path,g.Lime &gt; circle,g.Lime &gt; rect {
+	fill: #00FF00;
+}
+g.Green &gt; path,g.Green &gt; circle,g.Green &gt; rect {
+	fill: #008000;
+}
+g.Aqua &gt; path,g.Aqua &gt; circle,g.Aqua &gt; rect {
+	fill: #00FFFF;
+}
+g.Teal &gt; path,g.Teal &gt; circle,g.Teal &gt; rect {
+	fill: #008080;
+}
+g.Blue &gt; path,g.Blue &gt; circle,g.Blue &gt; rect {
+	fill: #0000FF;
+}
+g.Navy &gt; path,g.Navy &gt; circle,g.Navy &gt; rect {
+	fill: #000080;
+}
+g.Fuchsia &gt; path,g.Fuchsia &gt; circle,g.Fuchsia &gt; rect {
+	fill: #FF00FF;
+}
+g.Purple &gt; path,g.Purple &gt; circle,g.Purple &gt; rect {
+	fill: #800080;
+}
+g.selected &gt; path,g.selected &gt; circle,g.selected &gt; rect, g.selected &gt;ellipse{
+    stroke: blue!important;
+    stroke-dasharray: 5,5;
+}
+line.selected {
+    stroke: blue!important;
+    stroke-dasharray: 5,5;
+    stroke-width: 4px;
+}
+</style>
 </svg>

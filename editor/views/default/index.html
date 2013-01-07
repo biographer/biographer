@@ -93,19 +93,20 @@
 						</div>
 					</span>
 				</li>
-				<li id="SimpleChemical" class="tool node PD"> <div>SimpleChemical (click me)</div> </li>
+				<li id="SimpleChemical" class="tool node PD"> <div>Simple Chemical (click me)</div> </li>
 				<li id="Macromolecule" class="tool node PD ER"> <div>Macromolecule (click me)</div> </li>
-				<li id="NucleicAcidFeature" class="tool node PD"> <div>NucleicAcidFeature (click me)</div> </li>
-				<li id="UnspecifiedEntity" class="tool node PD"> <div>UnspecifiedEntity (click me)</div> </li>
+				<li id="NucleicAcidFeature" class="tool node PD"> <div>Nucleic Acid Feature (click me)</div> </li>
+				<li id="UnspecifiedEntity" class="tool node PD"> <div>Unspecified Entity (click me)</div> </li>
 				<li id="RectangularNode" class="tool node ER AF"> <div>Entity (click me)</div> </li>
 				<li id="Perturbation" class="tool node PD ER AF"> <div>Perturbation (click me)</div> </li>
 				<li id="Phenotype" class="tool node PD ER AF"> <div>Phenotype (click me)</div> </li>
+				<li id="VariableValue" class="tool node ER"> <div>Varable Value (click me)</div> </li>
 				<li id="Compartment" class="tool node no_drop_complex PD AF"/> <div>Compartment (click me)</div> </li>
 				<li id="Complex" class="tool node PD"> <div>Complex (click me)</div> </li>
 				<li id="EmptySet" class="tool node PD"> <div>EmptySet (click me)</div> </li>
 				<li id="Process" class="tool node no_drop_complex PD"> <div>Process (click me)</div> </li>
 				<li id="Tag" class="tool node PD"> <div>Tag (click me)</div> </li>
-				<li id="LogicalOperator" class="tool node PD ER"> <div>LogicalOperator (click me)</div> </li>
+				<li id="LogicalOperator" class="tool node PD ER"> <div>Logical Operator (click me)</div> </li>
 				<li id="Association" class="tool node PD"> <div>Association (click me)</div> </li>
 				<li id="Dissociation" class="tool node PD"> <div>Dissociation (click me)</div> </li>
 				<li id="Annotation" class="tool node PD ER AF"> <div>Annotation (click me)</div> </li>
@@ -121,7 +122,7 @@
 				{{for x in 'Process LogicalOperator Association Dissociation'.split(): }}
 				<div id="follow_{{=x}}" class="follow helperS"></div>
 				{{pass}}
-				{{for x in 'SimpleChemical Macromolecule NucleicAcidFeature UnspecifiedEntity RectangularNode Perturbation Phenotype EmptySet Tag'.split(): }}
+				{{for x in 'SimpleChemical Macromolecule NucleicAcidFeature UnspecifiedEntity RectangularNode Perturbation Phenotype EmptySet Tag Annotation VariableValue'.split(): }}
 				<div id="follow_{{=x}}" class="follow helperM"></div>
 				{{pass}}
 				{{for x in 'Compartment Complex'.split(): }}
@@ -141,7 +142,7 @@
 <div id="export_file_modal_input" class="modal_input">
 	
 
-	<div class="port_group">
+	<div>
 		<div id="export_json"> 
 			<div>export current graph as jSBGN (JSON)</div>
 			<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_json.png')}}"/> 
@@ -155,7 +156,7 @@
 		</div>
 		{{pass}}
 	</div>
-	<div class="port_group">
+	<div>
 		<table>
 			<tr>
 				<th>Ohter Formats</th>
@@ -234,9 +235,30 @@
 	<div class="rm_peek"><div class='bg'></div><div class="keyboard">F4</div></div>
 	<div class="rm_body">
 		<div class="message" style="display:none">Currently you can only change the attributes of one node at once.<br>
-		<br>
-		<h2>Color Combos</h2>
-		<div class="colorcombos"></div>
+			<br>
+			<h2>Color Combos</h2>
+			<div class="colorcombos"></div>
+			<h2>Combo Maker</h2>
+			<div class="combomaker" style="display:none;">
+				<table>
+					<tr type="SimpleChemical" class="tool node PD"> <td class='name'>SimpleChemical</td><td></td></tr>
+					<tr type="Macromolecule" class="tool node PD ER"> <td class='name'>Macromolecule</td><td></td></tr>
+					<tr type="NucleicAcidFeature" class="tool node PD"> <td class='name'>NucleicAcidFeature</td><td></td></tr>
+					<tr type="UnspecifiedEntity" class="tool node PD"> <td class='name'>UnspecifiedEntity</td><td></td></tr>
+					<tr type="RectangularNode" class="tool node ER AF"> <td class='name'>Entity</td><td></td></tr>
+					<tr type="Perturbation" class="tool node PD ER AF"> <td class='name'>Perturbation</td><td></td></tr>
+					<tr type="Phenotype" class="tool node PD ER AF"> <td class='name'>Phenotype</td><td></td></tr>
+					<tr type="Compartment" class="tool node no_drop_complex PD AF"/> <td class='name'>Compartment</td><td></td></tr>
+					<tr type="Complex" class="tool node PD"> <td class='name'>Complex</td><td></td></tr>
+					<tr type="EmptySet" class="tool node PD"> <td class='name'>EmptySet</td><td></td></tr>
+					<tr type="Process" class="tool node no_drop_complex PD"> <td class='name'>Process</td><td></td></tr>
+					<tr type="Tag" class="tool node PD"> <td class='name'>Tag</td><td></td></tr>
+					<tr type="LogicalOperator" class="tool node PD ER"> <td class='name'>LogicalOperator</td><td></td></tr>
+					<tr type="Association" class="tool node PD"> <td class='name'>Association</td><td></td></tr>
+					<tr type="Dissociation" class="tool node PD"> <td class='name'>Dissociation</td><td></td></tr>
+					<tr type="Annotation" class="tool node PD ER AF"> <td class='name'>Annotation</td><td></td></tr>	
+				</table>
+			</div>
 		</div>
 		<table class="rm_edge">
 			<tr>

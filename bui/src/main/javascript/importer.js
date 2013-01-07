@@ -111,7 +111,7 @@
                 if(bui.settings.SBGNlang == 'ER'){
                     statevar.size(60,14)
                     if(variables[i] == 'existence'){
-                        statevar.label('').addClass('existence').size(14,14);
+                        statevar.existence(true).size(15,15);
                     }
                     if(variables[i] == 'location'){
                         statevar.label('').addClass('location').size(14,14);

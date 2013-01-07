@@ -150,7 +150,6 @@
         auxiliaryUnit : true,
         includeInJSON : false,
         _enableResizing : true,
-
         // override
         toJSON : function() {
             if (this.hasClass('existence')) 

@@ -134,12 +134,11 @@ Editor.prototype = {
     // add a new state to undo list
     undoPush: function(action){
         var editor = this;
-        //$('.selected').removeClass('selected');
         for(var i=0; i<this.selected_nodes.length; ++i) this.selected_nodes[i].removeClass('selected');
         var jsong = JSON.stringify(this.graph.toJSON());
         for(var i=0; i<this.selected_nodes.length; ++i) this.selected_nodes[i].addClass('selected');
         if (jsong == this.last_save){
-            $('.flash').html('Saved: nothing changed, woooah').fadeIn().delay(800).fadeOut();
+            //$('.flash').html('Saved: nothing changed, woooah').fadeIn().delay(800).fadeOut();
             return false;
         }
         //editor.undoRegister(action, jsong);
@@ -291,6 +290,10 @@ Editor.prototype = {
             size = {h:20, w:20};
         }else if((nodetype=='Compartment')||(nodetype=='Complex')){
             size = {h:100, w:100};
+        }else if(nodetype=='VariableValue'){
+            size = {h:50, w:20};
+        }else if(nodetype=='LogicalOperator'){
+            size = {h:20, w:20};
         }else {
             size = {h:50, w:50};
         }
@@ -904,15 +907,8 @@ Editor.prototype = {
         $('.language_selection div').removeClass('lang_selected');
         $('.language_selection .'+language_current).addClass('lang_selected');
         console.log('set lang '+language_current);
-        $('.tools_drag li').each(function(){
+        $('.tools_drag li, .marker_select, .combomaker tr').each(function(){
             if (! $(this).hasClass(language_current)){
-                $(this).hide();
-            } else {
-                $(this).show();
-            }
-        });
-        $('.marker_select').each(function(){
-           if (! $(this).hasClass(language_current)){
                 $(this).hide();
             } else {
                 $(this).show();
@@ -1586,7 +1582,6 @@ Editor.prototype = {
                 if (event.keyCode == 115){   
                     this_editor.rightMenue_show();
                 }
-            console.log('keycode '+event.keyCode);
             }
             //==================================
             if (event.ctrlKey || event.metaKey) {

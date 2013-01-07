@@ -210,20 +210,6 @@
 
         privates.connectingArcs = {};
 
-        privates.stateVarExistence = document.createElementNS(bui.svgns, 'pattern');
-        privates.stateVarExistence.setAttribute('id', 'stateVariableExistence');
-        privates.stateVarExistence.setAttribute('patternUnits','objectBoundingBox');
-        privates.stateVarExistence.setAttribute('x','50%');
-        privates.stateVarExistence.setAttribute('y', '0');
-        privates.stateVarExistence.setAttribute('width', '100');
-        privates.stateVarExistence.setAttribute('height', '100');
-        privates.existanceRect = document.createElementNS(bui.svgns, 'rect');
-        privates.existanceRect.setAttribute('fill', 'black');
-        privates.existanceRect.setAttribute('width' , '100');
-        privates.existanceRect.setAttribute('height' , '100');
-        privates.stateVarExistence.appendChild(privates.existanceRect);
-        privates.defsGroup.appendChild(privates.stateVarExistence);
-
         privates.stateVarLocation = document.createElementNS(bui.svgns, 'pattern');
         privates.stateVarLocation.setAttribute('id', 'stateVariableLocation');
         privates.stateVarLocation.setAttribute('patternUnits','objectBoundingBox');

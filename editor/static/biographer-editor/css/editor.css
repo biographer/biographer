@@ -216,6 +216,8 @@ td {
 #follow_EmptySet {background: url('../img/biographer.sprites.png') -175px -420px; }
 #follow_RectangularNode {background: url('../img/biographer.sprites.png') -175px -490px; }
 #follow_Tag {background: url('../img/biographer.sprites.png') -175px -560px; }
+#follow_Annotation {background: url('../img/biographer.sprites.png') -175px -630px; }
+#follow_VariableValue {background: url('../img/biographer.sprites.png') -175px -700px; }
 /**********************************/
 #simplemodal-overlay {background-color:#000;}
 #simplemodal-container {
@@ -484,6 +486,7 @@ h3.section.down {
 #RectangularNode {background: url('../img/biographer.sprites.png') -70px -455px; }
 #Tag {background: url('../img/biographer.sprites.png') -70px -490px; }
 #Annotation {background: url('../img/biographer.sprites.png') -70px -525px; }
+#VariableValue {background: url('../img/biographer.sprites.png') -70px -560px; }
 /**********************************/
 .zoom_menu {
     position: fixed;
