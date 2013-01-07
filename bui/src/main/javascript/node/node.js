@@ -876,21 +876,23 @@
          * Used to calculate line endpoints. Generally spoken this method
          * will only be used by the class {@link bui.StraightLine}.
          *
-         * @param {bui.Node} otherNode
+         * @param {bui.Node| Number, Number } otherNode or x,y position
          * @return {Object} an object with x and y properties
          */
-        calculateLineEnd : function(otherNode) {
-            if (this.visible() === false) {
-                return this.center();
-            }
+        calculateLineEnd : function(otherNode,y) {
+//             if (this.visible() === false) {
+//                 return this.center();
+//             }
 
             var position = this.absoluteCenter(),
-                    size = this.size(),
-                    otherPosition = otherNode.absoluteCenter();
+                    size = this.size();
+                    
+            // get other position from otherNode or from x,y parameters
+            var otherPosition = (Object.prototype.toString.call(otherNode).slice(8,-1) == "Number" ? {x:otherNode,y:y} : otherNode.absoluteCenter());
 
             var padding = bui.settings.style.edgeToNodePadding;
-            var widthWithPadding = size.width + padding.leftRight * 2,
-                    heightWithPadding = size.height + padding.topBottom * 2;
+            var widthWithPadding = (this.visible() ? size.width : 0) + padding.leftRight * 2,
+                    heightWithPadding = (this.visible() ? size.height : 0) + padding.topBottom * 2;
 
             var deltaX = otherPosition.x - position.x,
                     deltaY = otherPosition.y - position.y;
