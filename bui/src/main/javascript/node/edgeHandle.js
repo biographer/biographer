@@ -57,6 +57,15 @@
         identifier : function() {
             return identifier;
         },
+        edge : function(e){
+          var privates = this._privates(identifier);
+          if (e !==undefined){
+            privates.edge=e;
+            return this;
+          } else {
+            return privates.edge;
+          }
+        },
         includeInJSON : false,
         _circle : null,
         _forceRectangular : true,
