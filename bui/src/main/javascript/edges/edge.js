@@ -1,5 +1,5 @@
 (function(bui) {
-    var identifier = 'bui.Edge';
+    var identifier = 'Edge';
 
     /**
      * @private
