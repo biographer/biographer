@@ -1,0 +1,66 @@
+body {
+    margin-top: 70px;
+}
+body > ul {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    background-color: #eee;
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+    font-size: 0.8em;
+    background: whiteSmoke;
+    background: -webkit-gradient(linear,0% 0,0% 100%,from(#fff),to(#ccc));
+    background: -moz-linear-gradient(270deg,#fff,#ccc);
+    border-bottom: 1px solid #555;
+    -webkit-box-shadow: 0px 2px 5px 0px #999;
+    -moz-box-shadow: 0px 2px 5px 0px #999;
+    box-shadow: 0px 2px 5px 0px #999;
+}
+body > ul > li {
+    display: inline-block;
+    border-right: 1px solid #555;
+    padding: 10px 10px 10px 10px;
+}
+body > ul > li:last-child {
+    border: 0;
+}
+a {
+    text-decoration: none;
+    color: #4183C4;
+}
+h1 {
+    font-size: 1em;
+    margin: 0;
+    padding: 0 0 5px;
+    text-align: center;
+}
+.help ul {
+    display: none;
+    position: absolute;
+    top: 20px;
+    left: 25%;
+    background-color: #fafad2;
+    border: 1px solid black;
+    padding: 10px 10px 10px 25px;
+    max-width: 400px;
+}
+.help:hover ul {
+    display: block;
+}
+li > span {
+    font-weight: bold;
+}
+#info {
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+    font-size: 0.8em;
+    position: fixed;
+    top: 12px;
+    right: 30px;
+    text-align: right;
+}
+#info span {
+    font-weight: bold;
+    display: block;
+}
