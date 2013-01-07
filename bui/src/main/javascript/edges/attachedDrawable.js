@@ -156,8 +156,8 @@
                     privates = this._privates(identifier);
 
             if (privates.source !== null) {
-                if (privates.source.identifier() == 'bui.EdgeHandle'){
-                    updateJson(json, dataFormat.edge.source, privates.source.lparent.id());
+                if (privates.source instanceof bui.EdgeHandle){
+                    updateJson(json, dataFormat.edge.source, privates.source.edge().id() + ":" + privates.source.edge().getPosition(privates.source));
                 }else if (privates.source.identifier() == 'bui.StateVariableER'|| privates.source.identifier() == 'bui.StateVariable'){
                     updateJson(json, dataFormat.edge.source, privates.source.parent().id()+':'+privates.source.toJSON());
                 }else{
@@ -165,8 +165,8 @@
                 }
             }
             if (privates.target !== null) {
-                if (privates.target.identifier() == 'bui.EdgeHandle'){
-                    updateJson(json, dataFormat.edge.target, privates.target.lparent.id());
+                if (privates.target instanceof bui.EdgeHandle){
+                    updateJson(json, dataFormat.edge.target, privates.target.edge().id() + ":" + privates.target.edge().getPosition(privates.target));
                 }else if (privates.target.identifier() == 'bui.StateVariableER'|| privates.target.identifier() == 'bui.StateVariable'){
                     updateJson(json, dataFormat.edge.target, privates.target.parent().id()+':'+privates.target.toJSON());
                 }else{
