@@ -44,7 +44,8 @@
         var source = this.source(), target = this.target();
 
         this.visible(source !== null && target !== null &&
-                source.visible() === true && target.visible() === true);
+                    (source.visible() === true || source instanceof bui.EdgeHandle) && 
+                    (target.visible() === true || target instanceof bui.EdgeHandle));
     };
 
     /**
