@@ -401,6 +401,8 @@ Editor.prototype = {
                     if(drawable.drawableType()=='node') bui.util.alignCanvas(this_editor.graph, drawable.id());
                 }
                 this_editor.rightMenu();
+            } else {
+              this_editor.select(drawable);
             }
         };
     },
@@ -720,15 +722,22 @@ Editor.prototype = {
         if (drawable.selected === true) {return;}
 
         var this_editor = this;
-
-        this.selected_nodes.push(drawable);
+        if (drawable.drawableType() == 'node'){
+          this.selected_nodes.push(drawable);
+        } else {
+          this.selected_edges.push(drawable);
+        }
         drawable.selected = true;
         drawable.addClass('selected');
     },
     deselect: function (drawable) {
         if (!drawable.selected) {return;}
 
-        this.selected_nodes.splice(this.selected_nodes.indexOf(drawable), 1);
+        if (drawable.drawableType() == 'node'){
+          this.selected_nodes.splice(this.selected_nodes.indexOf(drawable), 1);
+        } else {
+          this.selected_edges.splice(this.selected_edges.indexOf(drawable), 1);
+        }
         drawable.selected = false;
         drawable.removeClass('selected');
     },
