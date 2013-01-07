@@ -96,7 +96,8 @@ bui.settings = {
             height : ['data', 'height'],
             subNodes : ['data', 'subnodes'],
             modification : ['data', 'modification'],
-            statevariable : ['data', 'statevariable']
+            statevariable : ['data', 'statevariable'],
+            color : ['data', 'color']
         },
         edge : {
             source : 'source',

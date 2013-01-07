@@ -313,6 +313,7 @@
                     dataFormat = bui.settings.dataFormat;
 
             updateJson(json, dataFormat.node.label, privates.label);
+            if (privates.color) updateJson(json, dataFormat.node.color, privates.color);
 
             return json;
         }
