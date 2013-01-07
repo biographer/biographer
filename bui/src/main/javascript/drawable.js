@@ -71,6 +71,9 @@
          * all listeners will be unbound.
          */
         remove : function() {
+            var privates = this._privates(identifier);
+            if (privates.inremove) return; // avoid cyclic remove call when attached Drawables are removing this node again
+            privates.inremove=true;
             this.fire(bui.Drawable.ListenerType.remove, [this]);
             this.unbind();
         },
