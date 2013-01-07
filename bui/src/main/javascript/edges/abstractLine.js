@@ -28,6 +28,14 @@
     var classesChanged = function(drawable, classString) {
         this._line.setAttributeNS(
                 null, 'class', classString);
+        marker = this._privates(identifier).marker;
+        if (marker !== null) {
+            this._line.setAttributeNS(null, 'marker-end',
+                    bui.util.createMarkerAttributeValue(
+                            bui.util.getHoverId(marker)
+                    ));
+        }
+        
     };
 
     /**
