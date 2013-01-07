@@ -6,6 +6,7 @@
 	<title>Biographer-ui Test Suite</title>
 
     <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/visualization-svg.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.8.22.custom.css" />
 
 	<script type="text/javascript" src="resources/js/jquery-1.7.2.min.js"></script>
@@ -22,11 +23,24 @@
             graph = new bui.Graph(document.getElementsByTagName('body')[0]);
 
             bui.importFromJSON(graph, simpleExample);
-            console.log(simpleExample);
-            console.log(graph.toJSON());
+            $("#straighten").change(function(){
+	      if ($("#straighten").attr('checked')){
+		bui.settings.straightenEdges=true;
+	      } else {
+		bui.settings.straightenEdges=false;
+	      }
+            });
+            $('#toggle').click(function(){
+	      var e0=graph.drawables()['e0'];
+	      e0.spline(!e0.spline());
+            });
+             console.log(simpleExample);
+             console.log(graph.toJSON());
         });
     </script>
 </head>
 <body>
+<input type="checkbox" id="straighten" checked>straighten edges</input>
+<input type="button" id="toggle" value="toggle spline edge 0"></input>
 </body>
 </html>
