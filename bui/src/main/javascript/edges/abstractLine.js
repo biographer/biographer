@@ -401,7 +401,7 @@
                 if (sbo !== null) {
                     updateJson(json, dataFormat.drawable.sbo, sbo);
                 }
-                updateJson(json, dataFormat.edge.type, privates.markerId);
+                //updateJson(json, dataFormat.edge.type, privates.markerId); FIXME this collides with data.type indicating spline status
                 
             }
 
