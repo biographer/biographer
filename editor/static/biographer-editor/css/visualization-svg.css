@@ -163,6 +163,11 @@ g.selected > path,g.selected > circle,g.selected > rect, g.selected >ellipse{
     stroke: blue!important;
     stroke-dasharray: 5,5;
 }
+g.drop_here > path, g.drop_here > rect{
+    /*fill: #fcd6d6;*/
+    fill: #D8F3C9;
+}
+
 path.selected {
     stroke: blue!important;
     stroke-dasharray: 5,5;
