@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Biographer-ui Test Suite</title>
+
+    <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.8.22.custom.css" />
+
+	<script type="text/javascript" src="resources/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="resources/js/jquery.simulate.js"></script>
+	<script type="text/javascript" src="resources/js/jquery-ui-1.8.22.custom.min.js"></script>
+    <script type="text/javascript" src="resources/js/interact.js"></script>
+    <script type="text/javascript" src="resources/js/biographer-ui.js"></script>
+    <script type="text/javascript" src="resources/examples/complex_cp.js"></script>
+
+    <script type="text/javascript">
+
+
+        bui.ready(function() {
+            graph = new bui.Graph(document.getElementsByTagName('body')[0]);
+            graph.scale(0.7);
+            bui.importFromJSON(graph, complexExample);
+
+            setTimeout(function() {
+                bui.util.alignCanvas(graph, 'Reactome:109788');
+            }, 1000);
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

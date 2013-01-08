@@ -1,0 +1,13 @@
+<script type="text/javascript">
+{{include 'plugin_issue/script.js'}}
+</script>
+<div id='new_issue_button' class='button'>New Issue</div>
+{{=A('Refresh Issues', _href=URL('index'), _class="button")}}
+<!-- div id='close_edit' class='button'>Close Issue</div -->
+<br />
+<br />
+<a name="edit_issue"></a>
+<div id="edit_issue"></div>
+<br />
+<br />
+{{=LOAD('plugin_issue', 'issues', target='issues', vars = request.vars, ajax=True)}}
