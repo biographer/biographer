@@ -549,6 +549,7 @@ Editor.prototype = {
                 var drawable = this.selected_edges[i];
                 //======================================
                 drawable.spline($('#edge_is_spline').is(':checked'));
+                drawable.layoutElementsVisible(true);
                 //======================================
                 if(this.graph.language() == "PD"){
                     if (cur_marker == 'production') {
@@ -805,7 +806,8 @@ Editor.prototype = {
         this.graph.bind(
             bui.Graph.ListenerType.dragStart,
             function (graph, event) {
-                this_editor.selected_nodes = [];
+                this_editor.orignially_selected_drawables = this_editor.selected_nodes.slice(0);
+                this_editor.orignially_selected_drawables = this_editor.orignially_selected_drawables.concat(this_editor.selected_edges.slice(0));
                 this_editor.selection_borders = {};
                 if ((this_editor.cur_mode == 'cursor') || (this_editor.cur_mode === undefined)){
                     $('box').show();
@@ -867,12 +869,28 @@ Editor.prototype = {
                                 (pos_botm_rigt_abs.x<=this_editor.selection_borders.right) &&
                                 (pos_top_left_abs.y>=this_editor.selection_borders.top) &&
                                 (pos_botm_rigt_abs.y<=this_editor.selection_borders.bottom)){
-                                this_editor.select(drawable);
+
+                                if(this_editor.shifted){
+                                    if(this_editor.orignially_selected_drawables.indexOf(drawable) != -1){
+                                        this_editor.deselect(drawable);
+                                    }else{
+                                        this_editor.select(drawable);
+                                    }
+                                }else{
+                                    this_editor.select(drawable);
+                                }
                             }else{
-                                this_editor.deselect(drawable);
+                                if(this_editor.shifted){
+                                    if(this_editor.orignially_selected_drawables.indexOf(drawable) != -1){
+                                        this_editor.select(drawable);
+                                    }else{
+                                        this_editor.deselect(drawable);
+                                    }
+                                }else{
+                                    this_editor.deselect(drawable);
+                                }
+
                             }
-                        } else {
-                            console.log('absoluteTopLeft no '+drawable.identifier() )
                         }
                     }
                     this_editor.rightMenu();
@@ -1626,7 +1644,7 @@ Editor.prototype = {
             // shift | detect if shift key is pressed
             if (event.keyCode == 16) {
                 this_editor.shifted = true;
-                interact.simulate('drag', $('#canvas')[0], event);
+                //interact.simulate('drag', $('#canvas')[0], event);
             }
             // ctrl | ctrl pressed down for a longer time, show keyboard shortcuts
             // TODO this only works in chrom(ium) so far, but is not so important
