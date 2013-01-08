@@ -198,6 +198,9 @@ Editor.prototype = {
     setMode: function(mode){
         if (this.cur_mode == 'node'){
             $("body").unbind('click');
+            $('.compartment, .complex').unbind('hover');
+            var drop_drawable = this.graph.drawables()[$('.drop_here').attr('id')];
+            if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
         }
         if (mode == this.cur_mode) return;
         this.cur_mode = mode;
@@ -298,22 +301,19 @@ Editor.prototype = {
         if((drawable.identifier()=="Association") || (drawable.identifier()=="Dissociation")){
             drawable.size(20,20);
         }
+        //-----------------------------
         //add parent if the drop is within a container like complex or compartment
-        /*
-        FIXME add this function again
-        if ($(element).attr('id').indexOf('placeholder') === 0){
-            var drawable_parent = this.graph.drawables()[$(element).attr('id').substring(12)];
-                drawable.parent(drawable_parent);
-                //alert('parent_id '+parent_id);
-                if (drawable_parent.identifier() == 'Complex'){
-                    drawable_parent.tableLayout();
-                } else {
-                    pos_top = pos_top-drawable_parent.position().y;
-                    pos_left = pos_left-drawable_parent.position().x;
-                    drawable.position(pos_left, pos_top);
-                }
+        var parent = this.graph.drawables()[$('.drop_here').attr('id')];
+        if(parent !== undefined){
+            drawable.parent(parent);
+            if (parent.identifier() == 'Complex'){
+                parent.tableLayout();
+            } else {
+                pos_top = pos_top-parent.position().y;
+                pos_left = pos_left-parent.position().x;
+                drawable.position(pos_left, pos_top);
+            }
         }
-        */
         //-----------------
         this.bindDrawable(drawable);
         this.selectAll(false);
@@ -348,7 +348,7 @@ Editor.prototype = {
     multiMove: function(){
         var this_editor = this;
         return function (node, event) {
-            if (this.cur_mode === 'cursor' || this.cur_mode === undefined) {
+            if ( (this.cur_mode === 'cursor' || this.cur_mode === undefined) && (node.selected === true) ){
                 for (var i = 0; i < this_editor.selected_nodes.length; i++) {
                     var scale = this_editor.graph.scale(),
                         dx = event.detail.dx / scale,
@@ -1496,12 +1496,17 @@ Editor.prototype = {
             var nodetype = $(this).attr('id');
             $('.follow').hide();
             $('#follow_'+nodetype).show();
-            /*$('.compartment, .complex').hover(function(){
-                console.log('hover rock '+$(this).attr('id'));
-            });*/
+            $('.compartment, .complex').hover(
+                function(){//hover in
+                    this_editor.graph.drawables()[$(this).attr('id')].addClass('drop_here');
+                },
+                function(){//hover out
+                    this_editor.graph.drawables()[$(this).attr('id')].removeClass('drop_here');
+                }
+            );
             $("#canvas").mousemove(function(e){
                 //console.log($(e.currentTarget).attr('id'));//FIXME, needed for finding parent object - does not work on svg elements, just returns the canvas
-                $('#follow_'+nodetype).css('top', e.clientY-3).css('left', e.clientX-3);
+                $('#follow_'+nodetype).css('top', e.clientY+10).css('left', e.clientX+10);
             });
             $("body").click(function(e){
                 this_editor.createNode(nodetype, e);
