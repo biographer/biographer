@@ -158,7 +158,7 @@
      * handler for reacting on user interaction with spline handle
      */
     var splineHandleChanged = function() {
-      console.log("splineHandleChanged");
+//      console.log("splineHandleChanged");
       var privates = this._privates(identifier);
       if (privates.positioningSplineHandles) return; // if spline handles are modified internally return
 
@@ -496,7 +496,8 @@
          */
         _sourceOrTargetDimensionChanged : function() {
 	         //console.log("_sourceOrTargetDimensionChanged");
-           //TODO why is this called when the node is moved??? is this correct? fkt name does not sound like that, is it just the naming?
+           // fk: why is this called when the node is moved??? is this correct? fkt name does not sound like that, is it just the naming?
+           // th: its just naming. this reacts on everything that happens to source/target (i.e. change,position,size) and is a virtual method in AbstractLine
             updateEdge.call(this);
         },
         /**
