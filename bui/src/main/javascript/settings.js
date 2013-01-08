@@ -25,7 +25,7 @@ bui.settings = {
      * @field
      *  if this is true all handles on edges (not splines) will be distributed equally on a straight line from source to target as soon as the source or target are moved
      */
-    straightenEdges : true,
+    straightenEdges : false,
 
     /**
      * @field

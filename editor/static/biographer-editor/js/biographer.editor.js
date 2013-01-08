@@ -1188,9 +1188,8 @@ Editor.prototype = {
                 data: bui.layouter.makeLayouterFormat(editor_config.graphData),
                 type: 'POST',
                 success: function(data) {
-                    //console.log(data);
+                    bui.settings.straightenEdges = false;
                     bui.layouter.fromLayouterFormat(editor_config.graphData,data);
-                    this_editor.undoPush('applied automatic biographer layout');
                     try{
                         this_editor.redrawGraph(editor_config.graphData);
                         this_editor.undoPush('Applied Biographer Flow Layout');
