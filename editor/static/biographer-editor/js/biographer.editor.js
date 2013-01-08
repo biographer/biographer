@@ -303,17 +303,7 @@ Editor.prototype = {
         }
         //-----------------------------
         //add parent if the drop is within a container like complex or compartment
-        var parent = this.graph.drawables()[$('.drop_here').attr('id')];
-        if(parent !== undefined){
-            drawable.parent(parent);
-            if (parent.identifier() == 'Complex'){
-                parent.tableLayout();
-            } else {
-                pos_top = pos_top-parent.position().y;
-                pos_left = pos_left-parent.position().x;
-                drawable.position(pos_left, pos_top);
-            }
-        }
+        this.drawableAddChild(drawable, this.graph.drawables()[$('.drop_here').attr('id')], e);
         //-----------------
         this.bindDrawable(drawable);
         this.selectAll(false);
@@ -331,9 +321,71 @@ Editor.prototype = {
         drawable.bind(bui.Node.ListenerType.click, this.drawableSelect(), 'node_select');
         // Set drag function to move all other selected nodes
         drawable.bind(bui.Node.ListenerType.dragMove,this.multiMove(),'multiple drag');
-        //FIXME bind drag stop to save
+        // bind drag stop to save
         drawable.bind(bui.Node.ListenerType.dragEnd,this.saveOnDragEnd(),'node drag ends');
+        // make dragged nodes droppable into complexes and compartments
+        drawable.bind(bui.Node.ListenerType.dragStart,this.dragStartChild(),'dragstart makechild');
+        drawable.bind(bui.Node.ListenerType.dragEnd,this.dragStopChild(),'dragstop makechild');
+
         
+    },
+    //-------------------------------------------//
+    dragStartChild: function(){
+        var this_editor = this;
+        return function(){
+            // must do this complicated hover function since hover() does not work since the dragged element is under the mouse
+            // from http://stackoverflow.com/questions/5587703/css-hover-how-to-get-lower-divs-to-hover-as-well
+            // FIXME is ther a better solution??
+            $('.compartment, .complex').bind('intersect',function(e){
+                var $me = this_editor.graph.drawables()[$(this).attr('id')];
+                var pos = $(this).offset();
+                var size = $me.size();
+                
+                if ( e.pageX > pos.left && e.pageY > pos.top && e.pageX < pos.left + size.width && e.pageY < pos.top + size.height ) {
+                    $me.addClass('drop_here');
+                } else if($me.hasClass('drop_here')) {
+                    $me.removeClass('drop_here');
+                }
+            });
+            $('#canvas').mousemove(function(e){
+                var evt = jQuery.Event('intersect');
+                evt.pageX = e.pageX;
+                evt.pageY = e.pageY;
+                $.event.trigger(evt);
+            });
+        };
+    },
+    dragStopChild: function(){
+        var this_editor = this;
+        return function(drawable, e){
+            $('#canvas').unbind('mousemove');
+            $('.compartment, .complex').unbind('intersect');
+            //-----------------------------
+            //add parent if the drop is within a container like complex or compartment
+            //FIXME this causes errrooooorrrr
+            //this_editor.drawableAddChild(drawable, this_editor.graph.drawables()[$('.drop_here').attr('id')], e);
+            //-----------------------------
+            var drop_drawable = this_editor.graph.drawables()[$('.drop_here').attr('id')];
+            if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
+        };
+    },
+    drawableAddChild: function(drawable, parent, e){
+        if(parent !== undefined){
+            console.log('e.clientY '+e.clientY);
+            drawable.parent(parent);
+            if (parent.identifier() == 'Complex'){
+                parent.tableLayout();
+            } else {
+                //FIME needs translation
+                var pos_top = e.clientY;
+                var pos_left = e.clientX;
+                pos_top = pos_top-parent.position().y;
+                pos_left = pos_left-parent.position().x;
+                drawable.position(pos_left, pos_top);
+            }
+        }else {
+            drawable.parent(this.graph);
+        }
     },
     //-------------------------------------------//
     // drag ended now save to
