@@ -140,6 +140,20 @@
             }
             return privates.is_cloned;
         },
+        toJSON : function() {
+          var json = bui.SimpleChemical.superClazz.prototype.toJSON.call(this),
+                  privates = this._privates(identifier),
+                  dataFormat = bui.settings.dataFormat;
+
+          if (privates.is_multimer) {
+            json.data.multimer=true;
+          } else {
+            delete json.data.multimer;
+          }
+
+          return json;
+        },
+
         _minWidth : 60,
         _minHeight : 60,
         _forceRectangular : true,

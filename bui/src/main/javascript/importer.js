@@ -79,6 +79,15 @@
         }
         if(nodeJSON.data.multimer === true) node.multimer(true);
 
+        if (bui.util.propertySetAndNotNull(nodeJSON, ['data','color'])){
+          if (Object.prototype.toString.call(nodeJSON.data.color).slice(8,-1) == "String"){
+            node.color({background: nodeJSON.data.color});
+          } else {
+          
+            node.color(nodeJSON.data.color);
+          }
+          
+        }
         node.size(size.width, size.height)
                 .visible(true);
 

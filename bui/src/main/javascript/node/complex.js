@@ -273,7 +273,21 @@
             }
 
             this.size(totalWidth, totalHeight);
-        }
+        },
+        toJSON : function() {
+          var json = bui.Complex.superClazz.prototype.toJSON.call(this),
+                  privates = this._privates(identifier),
+                  dataFormat = bui.settings.dataFormat;
+
+          if (privates.is_multimer) {
+            json.data.multimer=true;
+          } else {
+            delete json.data.multimer;
+          }
+
+          return json;
+        },
+
     };
 
     bui.util.setSuperClass(bui.Complex, bui.Labelable);

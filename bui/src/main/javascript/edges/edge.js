@@ -723,6 +723,7 @@
               }
             }
             if (privates.isSpline) handles.push(privates.targetSplineHandleVec.x,privates.targetSplineHandleVec.y);
+            if (privates.isSpline) updateJson(json, dataFormat.edge.type, "spline");
             if (points.length) updateJson(json, dataFormat.edge.points, points);
             if (handles.length) updateJson(json, dataFormat.edge.handles, handles);
             if (pointtypes.length) updateJson(json, dataFormat.edge.pointtypes, pointtypes);
