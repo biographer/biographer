@@ -47,13 +47,16 @@ def biomodels_info():
             notes = re.sub('body', 'div', model.getNotes().getChild(0).toXMLString()) 
             model_id = fn[-19:-4]
             name = model.getName() 
-            items.append([model_id, '<li bla="%s">%s: %s</li>' % (model_id, model_id, name)])
+            items.append([model_id, '<li><div bla="%s">%s: %s <a href="{{=URL(r=request,f="biomodels_info_notes.html#%s")}}" target="_blank">notes</a></div></li>' % (model_id, name, model_id, model_id)])
             notes_items.append('<div id="%s">%s</div>' % (model_id, notes))
         except:
             pass
         #print model.getName(), model.getId(), 
     items.sort()
-    return "<ul class='biomodels_select'>%s\n</ul><div class='biomodels_notes'>%s</div>" % ("\n".join([x for y,x in items]), ''.join(notes_items))
+    biomodels_list = "<ul class='biomodels_select'>%s\n</ul>" % "\n".join([x for y,x in items])
+    notes = "<div class='biomodels_notes'>%s</div><br/><br/><br/><br/><br/><br/><br/><br/>" % ''.join(notes_items)
+    open('biomodels_info_list.html', 'w').write(biomodels_list)
+    open('biomodels_info_notes.html', 'w').write(notes)
 
 if __name__ == "__main__":
-    open('biomodels_info.html', 'w').write(biomodels_info())
+    (biomodels_info())

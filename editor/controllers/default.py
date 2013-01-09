@@ -296,3 +296,6 @@ def user():
     to decorate functions that need access control
     """
     return dict(form=auth())
+
+def biomodels_info_notes():
+    return dict()
