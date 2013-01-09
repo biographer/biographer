@@ -416,6 +416,14 @@
         nodeGroup : function() {
             return this._privates(identifier).nodeGroup;
         },
+        /**
+         * Return the defs group of the svg so node classes can draw clone markers, ...
+         *
+         * @return {} SVG defsGroup
+         */
+        defsGroup : function() {
+            return  this._privates(identifier).defsGroup;
+        },
 
         /**
          * @description
@@ -911,14 +919,6 @@
             }
 
             return this;
-        },
-        /**
-         * Return the defs group of the svg so node classes can draw clone markers
-         *
-         * @return {} SVG defsGroup
-         */
-        defsGroup : function() {
-            return  this._privates(identifier).defsGroup;
         },
         /**
          * get or set the language

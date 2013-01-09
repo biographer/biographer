@@ -493,11 +493,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.53593716"
-     inkscape:cx="-104.01735"
-     inkscape:cy="755.0708"
+     inkscape:zoom="0.5"
+     inkscape:cx="-137.08237"
+     inkscape:cy="507.43464"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g6228"
      showgrid="false"
      inkscape:window-width="1366"
      inkscape:window-height="717"
@@ -781,11 +781,11 @@
       <image
          sodipodi:absref="/home/select/Dev/biographer/editor/private/json160.gif"
          xlink:href="json160.gif"
-         y="355.62958"
-         x="441.27188"
-         id="image4606"
+         width="16.282143"
          height="16.282143"
-         width="16.282143" />
+         id="image4606"
+         x="441.27188"
+         y="355.62958" />
       <g
          transform="matrix(0.82646749,0,0,0.82646749,71.126843,64.96684)"
          id="g3226">
@@ -806,11 +806,11 @@
         <image
            sodipodi:absref="/home/select/Dev/biographer/editor/private/json160.gif"
            xlink:href="json160.gif"
-           y="351.69287"
-           x="447.86401"
-           id="image3224"
+           width="19.700888"
            height="19.700888"
-           width="19.700888" />
+           id="image3224"
+           x="447.86401"
+           y="351.69287" />
       </g>
     </g>
     <g
@@ -1509,53 +1509,44 @@
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <g
-       id="g5170"
-       transform="translate(7.3998535e-6,276.91046)"
+       id="g6005"
        inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
-         transform="translate(-123.43839,-50.807653)"
-         id="g5051"
-         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
-         inkscape:export-xdpi="90"
-         inkscape:export-ydpi="90">
+         id="g4806">
         <rect
-           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           style="fill:none;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081"
            width="35"
            height="35"
-           x="211.43837"
-           y="206.66988" />
+           x="87.999992"
+           y="432.77267" />
         <g
-           id="g5303"
-           transform="translate(-81.88552,-48.746674)"
-           inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/align_vertical.png"
-           inkscape:export-xdpi="90"
-           inkscape:export-ydpi="90">
+           id="g4794">
           <rect
-             y="262.05157"
-             x="298.15399"
+             y="439.40771"
+             x="92.830093"
              height="4.8336759"
              width="25.339773"
              id="rect4284"
              style="fill:none;stroke:#666666;stroke-width:1.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
           <rect
-             y="269.12265"
-             x="304.5759"
+             y="446.47879"
+             x="99.251999"
              height="4.8336759"
              width="12.495986"
              id="rect4284-0"
              style="fill:none;stroke:#666666;stroke-width:1.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
           <rect
-             y="276.1937"
-             x="301.7536"
+             y="453.54984"
+             x="96.429703"
              height="4.8336759"
              width="18.140543"
              id="rect4284-9"
              style="fill:none;stroke:#666666;stroke-width:1.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
           <g
-             transform="matrix(1,0,0,1.5012595,2.3864899,-142.64905)"
+             transform="matrix(1,0,0,1.5012595,-202.93741,34.70709)"
              id="g5275">
             <path
                sodipodi:type="star"
@@ -1583,11 +1574,11 @@
           </g>
           <path
              style="fill:#ff0000;stroke:#ff0000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-             d="m 310.82388,286.90421 0,-27.97532"
+             d="m 105.49998,464.26035 0,-27.97532"
              id="rect5264"
              inkscape:connector-curvature="0" />
           <g
-             transform="matrix(-1,0,0,1.5012595,619.26129,-142.64905)"
+             transform="matrix(-1,0,0,1.5012595,413.93739,34.70709)"
              id="g5275-3">
             <path
                sodipodi:type="star"
@@ -1616,11 +1607,11 @@
         </g>
       </g>
       <g
-         transform="translate(-252.49999,66.00001)"
+         transform="translate(-252.49998,342.91047)"
          id="g5091"
          style="fill:none">
         <rect
-           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           style="fill:none;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-6"
            width="35"
            height="35"
@@ -1644,21 +1635,21 @@
              inkscape:export-xdpi="90"
              inkscape:export-ydpi="90">
             <rect
-               style="fill:none;stroke:#666666;stroke-width:1.20000005000000010;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               style="fill:none;stroke:#666666;stroke-width:1.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
                id="rect4284-09"
                width="25.339773"
                height="4.8336759"
                x="298.15399"
                y="262.05157" />
             <rect
-               style="fill:none;stroke:#666666;stroke-width:1.20000005000000010;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               style="fill:none;stroke:#666666;stroke-width:1.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
                id="rect4284-0-9"
                width="12.495986"
                height="4.8336759"
                x="298.15399"
                y="269.12265" />
             <rect
-               style="fill:none;stroke:#666666;stroke-width:1.20000005000000010;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               style="fill:none;stroke:#666666;stroke-width:1.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
                id="rect4284-9-5"
                width="18.140543"
                height="4.8336759"
@@ -1666,7 +1657,7 @@
                y="276.1937" />
           </g>
           <path
-             style="fill:none;stroke:#ff0000;stroke-width:1.50000000000000000;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+             style="fill:none;stroke:#ff0000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
              d="m 310.82388,286.90421 0,-27.97532"
              id="rect5264-0"
              inkscape:connector-curvature="0"
@@ -1682,7 +1673,7 @@
              inkscape:export-ydpi="90">
             <path
                sodipodi:type="star"
-               style="fill:#000000;stroke:#000000;stroke-width:2.59581398999999990;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               style="fill:#000000;stroke:#000000;stroke-width:2.59581399;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
                id="path4280-4-4-1-5"
                sodipodi:sides="3"
                sodipodi:cx="331.98663"
@@ -1698,7 +1689,7 @@
                transform="matrix(0,0.10262536,-0.15513933,0,371.3368,250.43382)"
                inkscape:transform-center-x="-4.5689092" />
             <path
-               style="fill:#000000;stroke:#000000;stroke-width:0.54383981000000003;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+               style="fill:#000000;stroke:#000000;stroke-width:0.54383981;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
                d="m 295.01022,284.50407 8.05403,0"
                id="rect4284-7-7-6-7-4-4"
                inkscape:connector-curvature="0"
@@ -1707,13 +1698,13 @@
         </g>
       </g>
       <g
-         transform="translate(-307.99999,95.00001)"
+         transform="translate(-307.99998,371.91047)"
          id="g5127"
          inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
-           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           style="fill:none;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0-7"
            width="35"
            height="35"
@@ -1785,13 +1776,13 @@
         </g>
       </g>
       <g
-         transform="translate(-183.99999,15.50001)"
+         transform="translate(-183.99998,292.41047)"
          id="g5158"
          inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
-           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           style="fill:none;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0-2"
            width="35"
            height="35"
@@ -1863,13 +1854,13 @@
         </g>
       </g>
       <g
-         transform="translate(-2.5000126,-9.0000053)"
+         transform="translate(-2.5000052,267.91045)"
          id="g5039"
          inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
-           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           style="fill:none;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0-6"
            width="35"
            height="35"
@@ -1941,13 +1932,13 @@
         </g>
       </g>
       <g
-         transform="translate(-257.21081,80.00001)"
+         transform="translate(-257.2108,356.91047)"
          id="g5108"
          inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
-           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           style="fill:none;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0"
            width="35"
            height="35"
@@ -2094,13 +2085,13 @@
         </g>
       </g>
       <g
-         transform="translate(-327.74999,112.50001)"
+         transform="translate(-327.74998,389.41047)"
          id="g5139"
          inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
-           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           style="fill:none;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6-0-1"
            width="35"
            height="35"
@@ -2247,13 +2238,13 @@
         </g>
       </g>
       <g
-         transform="translate(-189.49999,-81.49999)"
+         transform="translate(-189.49998,195.41047)"
          id="g5065"
          inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
-           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           style="fill:none;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
            id="rect4081-6"
            width="35"
            height="35"
@@ -4435,7 +4426,7 @@
          transform="translate(-70.395492,-30.903501)"
          id="g4634"
          style="fill:none"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4469,7 +4460,7 @@
       <g
          transform="translate(-62.087875,-34.972059)"
          id="g4639"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4497,7 +4488,7 @@
       <g
          transform="translate(-47.238632,-58.310125)"
          id="g4649"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4525,7 +4516,7 @@
       <g
          transform="translate(-55.723922,-40.984228)"
          id="g4644"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4560,7 +4551,7 @@
       <g
          transform="translate(-55.01683,-67.857854)"
          id="g4654"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4592,7 +4583,7 @@
       <g
          transform="translate(-51.481277,-72.455831)"
          id="g4659"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4621,7 +4612,7 @@
       <g
          transform="translate(-47.238647,-82.00356)"
          id="g4664"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4649,7 +4640,7 @@
       <g
          transform="translate(-106.6356,97.246226)"
          id="g4862"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4672,7 +4663,7 @@
       <g
          transform="translate(-105.22139,83.455851)"
          id="g4866"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4695,7 +4686,7 @@
       <g
          transform="translate(-98.150314,201.53198)"
          id="g4875"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4721,11 +4712,14 @@
          height="35"
          width="35"
          id="rect4501-0-9-1-0-0"
-         style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+         style="fill:none;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
       <g
          inkscape:export-ydpi="90"
          inkscape:export-xdpi="90"
-         inkscape:export-filename="/home/fkrause/Dev/biographer-server/static/images/editor/SimpleChemical.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          style="stroke-width:9.93000031;stroke-miterlimit:4;stroke-dasharray:none"
          transform="matrix(0.25661243,0,0,0.25661243,167.80161,442.57431)"
          class=""
@@ -4748,7 +4742,10 @@
          y="452.28915"
          x="171.22191"
          style="font-size:2.33377934px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-         xml:space="preserve"><tspan
+         xml:space="preserve"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"><tspan
            style="font-size:5.54700994px;fill:#000000;font-family:Verdana"
            y="452.28915"
            x="171.22191"
@@ -4757,7 +4754,7 @@
       <g
          transform="translate(-102.39296,216.74369)"
          id="g4855"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4800,7 +4797,7 @@
       <g
          transform="translate(-103.80717,292.75588)"
          id="g4842"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4834,7 +4831,7 @@
       <g
          transform="translate(-102.39299,219.56497)"
          id="g4870"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4862,7 +4859,7 @@
       <g
          transform="translate(-158.25441,371.94826)"
          id="g4847"
-         inkscape:export-filename="/home/fkrause/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
         <rect
@@ -4921,7 +4918,10 @@
         </g>
       </g>
       <g
-         id="g5789">
+         id="g5789"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
         <rect
            y="572.77264"
            x="157.99998"
@@ -4943,9 +4943,10 @@
                id="drawable64-3">
               <path
                  id="path4615-5"
-                 d="M 0,0 H 65 L 80,15 V 60 H 0 0 z"
+                 d="M 0,0 41.875192,0 65,0 80,15 80,60 0,60 0,60 z"
                  inkscape:connector-curvature="0"
-                 style="fill:#ffffff;stroke:#000000;stroke-width:9.8762598;stroke-miterlimit:4;stroke-dasharray:none" />
+                 style="fill:#ffffff;stroke:#000000;stroke-width:9.87625979999999970;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round"
+                 sodipodi:nodetypes="cccccccc" />
               <path
                  id="path4617-5"
                  d="M 65,0 80,15 H 65 z"
@@ -4959,7 +4960,10 @@
       </g>
       <g
          transform="translate(-1.6454462,-7.2138062)"
-         id="g5889">
+         id="g5889"
+         inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
         <rect
            style="fill:none;fill-opacity:1;stroke:none"
            id="rect5885"
@@ -5278,6 +5282,331 @@
            width="54.826878"
            id="rect6040"
            style="fill:none;stroke:#000000;stroke-width:3.19799995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      </g>
+    </g>
+    <g
+       id="g5963"
+       transform="translate(117.89821,-88.554531)"
+       inkscape:export-filename="/home/select/Dev/biographer/editor/static/biographer-editor/img/biographer.sprites.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <g
+         transform="translate(0,-19.091883)"
+         id="g5849">
+        <rect
+           style="fill:none;fill-opacity:1;stroke:none"
+           id="rect5847"
+           width="35"
+           height="35"
+           x="5.1017723"
+           y="330.4191" />
+        <g
+           id="g4822-7"
+           transform="matrix(-1,0,0,-1,159.74471,798.94156)">
+          <rect
+             y="439.21603"
+             x="124.47305"
+             height="4.1467524"
+             width="25.339773"
+             id="rect4284-5-4"
+             style="fill:#ffffff;stroke:#666666;stroke-width:1.111467;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             ry="1.1955115"
+             y="446.21808"
+             x="124.09326"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-9"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             ry="1.1955115"
+             y="451.08459"
+             x="124.09326"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-5-3"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             ry="1.1955115"
+             y="455.95111"
+             x="124.09326"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-3-8"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             ry="1.1955115"
+             y="460.81763"
+             x="124.09326"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-6-0"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <path
+             inkscape:transform-center-x="-4.5689092"
+             transform="matrix(0.1540673,0,0,0.15513933,92.641901,381.62443)"
+             d="m 344.98062,439.02451 -12.99399,0 -12.99399,0 6.497,-11.25312 6.49699,-11.25313 6.497,11.25313 z"
+             inkscape:randomized="0"
+             inkscape:rounded="0"
+             inkscape:flatsided="false"
+             sodipodi:arg2="1.5707963"
+             sodipodi:arg1="0.52359878"
+             sodipodi:r2="7.5020838"
+             sodipodi:r1="15.004166"
+             sodipodi:cy="431.52243"
+             sodipodi:cx="331.98663"
+             sodipodi:sides="3"
+             id="path4280-4-4-12-5"
+             style="fill:#000000;stroke:#000000;stroke-width:2.59581399;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+             sodipodi:type="star" />
+          <path
+             sodipodi:nodetypes="cc"
+             inkscape:connector-curvature="0"
+             id="rect4284-7-7-6-7-6-0"
+             d="m 143.86014,462.98879 0,-13.66508"
+             style="fill:#ffffff;stroke:#000000;stroke-width:0.66600001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        </g>
+      </g>
+      <g
+         transform="translate(-5.5048294,-36.404841)"
+         id="g5907">
+        <rect
+           style="fill:none;fill-opacity:1;stroke:none"
+           id="rect5905"
+           width="35"
+           height="35"
+           x="10.606602"
+           y="382.73206" />
+        <g
+           id="g5812"
+           transform="translate(-29.143403,-107.39824)">
+          <rect
+             transform="scale(-1,1)"
+             y="510.42346"
+             x="-69.919891"
+             height="4.1467524"
+             width="25.339773"
+             id="rect4284-5-4-0"
+             style="fill:#ffffff;stroke:#666666;stroke-width:1.111467;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             transform="scale(-1,1)"
+             ry="1.1955115"
+             y="517.42548"
+             x="-70.299675"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-9-0"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             transform="scale(-1,-1)"
+             ry="1.1955115"
+             y="-507.56815"
+             x="-70.299675"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-5-3-4"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             transform="scale(-1,-1)"
+             ry="1.1955115"
+             y="-502.70163"
+             x="-70.2621"
+             height="2.3910229"
+             width="16.513557"
+             id="rect4531-3-8-8"
+             style="fill:#000000;stroke:#000000;stroke-width:0.42704728;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             transform="scale(-1,-1)"
+             ry="1.1955115"
+             y="-497.83511"
+             x="-70.299675"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-6-0-0"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <path
+             inkscape:transform-center-x="-4.5689092"
+             transform="matrix(-0.1540673,0,0,-0.15513933,101.75104,572.1618)"
+             d="m 344.98062,439.02451 -12.99399,0 -12.99399,0 6.497,-11.25312 6.49699,-11.25313 6.497,11.25313 z"
+             inkscape:randomized="0"
+             inkscape:rounded="0"
+             inkscape:flatsided="false"
+             sodipodi:arg2="1.5707963"
+             sodipodi:arg1="0.52359878"
+             sodipodi:r2="7.5020838"
+             sodipodi:r1="15.004166"
+             sodipodi:cy="431.52243"
+             sodipodi:cx="331.98663"
+             sodipodi:sides="3"
+             id="path4280-4-4-12-5-4"
+             style="fill:#000000;stroke:#000000;stroke-width:2.59581399;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+             sodipodi:type="star" />
+          <path
+             sodipodi:nodetypes="cc"
+             inkscape:connector-curvature="0"
+             id="path4916"
+             d="m 52.5,501.36218 c -1.709586,0.45758 -1.930561,1.80833 -2,3.25"
+             style="fill:none;stroke:#000000;stroke-width:0.66600001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+        </g>
+      </g>
+      <g
+         id="g5849-8"
+         transform="matrix(-1,0,0,-1,45.203545,781.74631)">
+        <rect
+           style="fill:none;fill-opacity:1;stroke:none"
+           id="rect5847-1"
+           width="35"
+           height="35"
+           x="5.1017723"
+           y="330.4191" />
+        <g
+           id="g4822-7-6"
+           transform="matrix(-1,0,0,-1,159.74471,798.94156)">
+          <rect
+             y="439.21603"
+             x="124.47305"
+             height="4.1467524"
+             width="25.339773"
+             id="rect4284-5-4-3"
+             style="fill:#ffffff;stroke:#666666;stroke-width:1.111467;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             ry="1.1955115"
+             y="446.21808"
+             x="124.09326"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-9-2"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             ry="1.1955115"
+             y="451.08459"
+             x="124.09326"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-5-3-3"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             ry="1.1955115"
+             y="455.95111"
+             x="124.09326"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-3-8-7"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             ry="1.1955115"
+             y="460.81763"
+             x="124.09326"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-6-0-7"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <path
+             inkscape:transform-center-x="-4.5689092"
+             transform="matrix(0.1540673,0,0,0.15513933,92.641901,381.62443)"
+             d="m 344.98062,439.02451 -12.99399,0 -12.99399,0 6.497,-11.25312 6.49699,-11.25313 6.497,11.25313 z"
+             inkscape:randomized="0"
+             inkscape:rounded="0"
+             inkscape:flatsided="false"
+             sodipodi:arg2="1.5707963"
+             sodipodi:arg1="0.52359878"
+             sodipodi:r2="7.5020838"
+             sodipodi:r1="15.004166"
+             sodipodi:cy="431.52243"
+             sodipodi:cx="331.98663"
+             sodipodi:sides="3"
+             id="path4280-4-4-12-5-0"
+             style="fill:#000000;stroke:#000000;stroke-width:2.59581399;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+             sodipodi:type="star" />
+          <path
+             sodipodi:nodetypes="cc"
+             inkscape:connector-curvature="0"
+             id="rect4284-7-7-6-7-6-0-7"
+             d="m 143.86014,462.98879 0,-13.66508"
+             style="fill:#ffffff;stroke:#000000;stroke-width:0.66600001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+        </g>
+      </g>
+      <g
+         id="g5907-3"
+         transform="matrix(-1,0,0,-1,50.708374,799.05927)">
+        <rect
+           style="fill:none;fill-opacity:1;stroke:none"
+           id="rect5905-6"
+           width="35"
+           height="35"
+           x="10.606602"
+           y="382.73206" />
+        <g
+           id="g5812-7"
+           transform="translate(-29.143403,-107.39824)">
+          <rect
+             transform="scale(-1,1)"
+             y="510.42346"
+             x="-69.919891"
+             height="4.1467524"
+             width="25.339773"
+             id="rect4284-5-4-0-1"
+             style="fill:#ffffff;stroke:#666666;stroke-width:1.111467;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             transform="scale(-1,1)"
+             ry="1.1955115"
+             y="517.42548"
+             x="-70.299675"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-9-0-6"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             transform="scale(-1,-1)"
+             ry="1.1955115"
+             y="-507.56815"
+             x="-70.299675"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-5-3-4-5"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             transform="scale(-1,-1)"
+             ry="1.1955115"
+             y="-502.70163"
+             x="-70.2621"
+             height="2.3910229"
+             width="16.513557"
+             id="rect4531-3-8-8-1"
+             style="fill:#000000;stroke:#000000;stroke-width:0.42704728;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <rect
+             transform="scale(-1,-1)"
+             ry="1.1955115"
+             y="-497.83511"
+             x="-70.299675"
+             height="2.3910229"
+             width="11.212611"
+             id="rect4531-6-0-0-8"
+             style="fill:#000000;stroke:#000000;stroke-width:0.3518917;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+          <path
+             inkscape:transform-center-x="-4.5689092"
+             transform="matrix(-0.1540673,0,0,-0.15513933,101.75104,572.1618)"
+             d="m 344.98062,439.02451 -12.99399,0 -12.99399,0 6.497,-11.25312 6.49699,-11.25313 6.497,11.25313 z"
+             inkscape:randomized="0"
+             inkscape:rounded="0"
+             inkscape:flatsided="false"
+             sodipodi:arg2="1.5707963"
+             sodipodi:arg1="0.52359878"
+             sodipodi:r2="7.5020838"
+             sodipodi:r1="15.004166"
+             sodipodi:cy="431.52243"
+             sodipodi:cx="331.98663"
+             sodipodi:sides="3"
+             id="path4280-4-4-12-5-4-6"
+             style="fill:#000000;stroke:#000000;stroke-width:2.59581399;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+             sodipodi:type="star" />
+          <path
+             sodipodi:nodetypes="cc"
+             inkscape:connector-curvature="0"
+             id="path4916-45"
+             d="m 52.5,501.36218 c -1.709586,0.45758 -1.930561,1.80833 -2,3.25"
+             style="fill:none;stroke:#000000;stroke-width:0.66600001;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+        </g>
       </g>
     </g>
   </g>

@@ -398,6 +398,12 @@ h3.section.down {
 #edit_all_nodes {background: url('../img/biographer.sprites.png') 0 -805px; }
 #edit_no_nodes {background: url('../img/biographer.sprites.png') 0 -840px; }
 
+#layer_bottom {background: url('../img/biographer.sprites.png') -35px -175px; }
+#layer_down {background: url('../img/biographer.sprites.png') -35px -210px; }
+#layer_up {background: url('../img/biographer.sprites.png') -35px -245px; }
+#layer_top {background: url('../img/biographer.sprites.png') -35px -280px; }
+
+
 .tools_group li>div, .editor_menu li>div, .zoom_menu li>div {
     display: none;
     position: absolute;

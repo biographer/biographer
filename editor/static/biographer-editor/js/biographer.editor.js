@@ -135,6 +135,8 @@ Editor.prototype = {
     undoPush: function(action){
         var editor = this;
         for(var i=0; i<this.selected_nodes.length; ++i) this.selected_nodes[i].removeClass('selected');
+        var drop_drawable = this.graph.drawables()[$('.drop_here').attr('id')];
+        if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
         var jsong = JSON.stringify(this.graph.toJSON());
         for(var i=0; i<this.selected_nodes.length; ++i) this.selected_nodes[i].addClass('selected');
         if (jsong == this.last_save){
@@ -323,7 +325,7 @@ Editor.prototype = {
         drawable.bind(bui.Node.ListenerType.dragMove,this.multiMove(),'multiple drag');
         // bind drag stop to save
         drawable.bind(bui.Node.ListenerType.dragEnd,this.saveOnDragEnd(),'node drag ends');
-        // make dragged nodes droppable into complexes and compartments
+        // make dragged nodes droppable into complexes and createNode: function(nodetype, e)compartments
         drawable.bind(bui.Node.ListenerType.dragStart,this.dragStartChild(),'dragstart makechild');
         drawable.bind(bui.Node.ListenerType.dragEnd,this.dragStopChild(),'dragstop makechild');
 
@@ -1148,6 +1150,18 @@ Editor.prototype = {
             }
             this_editor.undoPush('Aligned Nodes');
         });
+        $('#layer_bottom').click(function(){
+            for(var i=0;i<this_editor.selected_nodes.length;++i){
+                this_editor.selected_nodes[i].toBack()
+            }
+        });
+        //=========================
+        $('#layer_top').click(function(){
+            for(var i=0;i<this_editor.selected_nodes.length;++i){
+                this_editor.selected_nodes[i].toFront()
+            }
+        });
+
         //=========================
         $('#clear').click(function(){
             this_editor.redrawGraph({nodes:[],edges:[]});

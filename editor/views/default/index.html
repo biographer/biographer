@@ -33,7 +33,6 @@
 				<li id="combine"> <div>combine selected objects</div> </li>
 				<li id='straighten_and_distribute'> <div>enable/disable: straighten edges and distributen all points on edges equally</div> </li>
 				<li id='hide_handles'> <div>hide/show all edge handles</div> </li>
-				<li id='del'> <div>delete selected nodes</div><div class="keyboard">del</div> </li>
 				<!-- li id="layout_grahviz"> 
 				<div>apply automatic <b>graphviz</b> layout</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'graphviz.png')}}"/> 
@@ -45,14 +44,21 @@
 				<li id='edit_no_nodes'> <div>select no nodes</div> </li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
-				<li id='align_vertical'> <div>align selected nodes vertically</div> </li>
-				<li id='align_hoizontal'> <div>align selected nodes horizontally</div> </li>
-				<li id='align_top'> <div>align selected nodes top</div> </li>
-				<li id='align_bottom'> <div>align selected nodes bottom</div> </li>
-				<li id='align_left'> <div>align selected nodes left</div> </li>
-				<li id='align_right'> <div>align selected nodes right</div> </li>
+				<li id='align_vertical'> <div>align selection vertically</div> </li>
+				<li id='align_hoizontal'> <div>align selection horizontally</div> </li>
+				<li id='align_top'> <div>align selection top</div> </li>
+				<li id='align_bottom'> <div>align selection bottom</div> </li>
+				<li id='align_left'> <div>align selection left</div> </li>
+				<li id='align_right'> <div>align selection right</div> </li>
 				<li id='horizontal_gaps_equal'> <div>make the distances of horizontal gaps between nodes equal</div> </li>
 				<li id='vertical_gaps_equal'> <div>make the distances of vertical gaps between nodes equal</div> </li>
+				<li class="spacer"></li>
+				<li id='layer_bottom'> <div>lower selection to bottom</div> </li>
+				<!-- not implemented yet -->
+				<li id='layer_down' class="disabled"> <div>lower selection one step</div> </li>
+				<li id='layer_up' class="disabled"> <div>raise selection one step</div> </li>
+				<!-- -->
+				<li id='layer_top'> <div>raise selection to top</div> </li>
 				<!-- ---------------------------------------------------------------- -->
 				{{if not request.vars.html5only:}}
 				<li class="spacer"></li>
@@ -360,6 +366,12 @@
 				<td>
 					<div class="colorSelector color_tx"><div style="background-color: #000"></div></div>
 					<div id="colorpickerHolder"></div>
+				</td>
+			</tr>
+			<tr>
+				<th>Delete</th>
+				<td>
+					<div class="tool" id='del'><div><div class="keyboard">del</div>
 				</td>
 			</tr>
 		</table>
