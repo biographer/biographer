@@ -595,7 +595,7 @@ input[type="text"] {
     padding: 5px;
     border-radius: 5px;
 }
-.biomodels_notes a {
+.biomodels_select a{
     color: blue;
     text-decoration: underline;
 }

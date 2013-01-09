@@ -77,7 +77,7 @@
         
         var colorChangedListener = colorChanged.createDelegate(this);
         
-        this.bind(bui.Labelable.ListenerType.size,
+        this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
                 listenerIdentifier(this));
          this.bind(bui.Node.ListenerType.color,
@@ -267,11 +267,9 @@
                     // this probably needs to go to the end of the loop
                     totalColumnWidth += size.width + settings.padding;
                 }
-
                 totalHeight += highestColumn + settings.padding;
                 totalWidth = Math.max(totalWidth, totalColumnWidth);
             }
-
             this.size(totalWidth, totalHeight);
         },
         toJSON : function() {

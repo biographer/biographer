@@ -247,7 +247,6 @@ Editor.prototype = {
         var drawables = this.graph.drawables();
         for (var key in drawables){
             var drwbl = drawables[key];
-            console.log(drwbl.identifier());
             if (drwbl.color !== undefined) drwbl.color({border: '#aaa'});
             if(drwbl.identifier() == 'SimpleChemical') drwbl.color({background: this.colorcombos[index][0]});
             else if(drwbl.identifier() == 'Macromolecule') drwbl.color({background: this.colorcombos[index][1]});
