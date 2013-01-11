@@ -47,13 +47,14 @@ def biomodels_info():
             notes = re.sub('body', 'div', model.getNotes().getChild(0).toXMLString()) 
             model_id = fn[-19:-4]
             name = model.getName() 
-            items.append([model_id, '<li><div bla="%s">%s: %s <a href="{{=URL(r=request,f="biomodels_info_notes.html#%s")}}" target="_blank">notes</a></div></li>' % (model_id, name, model_id, model_id)])
+            items.append([model_id, '<li><div bla="%s">%s: %s <div onclick="document.getElementById(\'notes_iframe\').src = \'{{=URL(r=request,f="biomodels_info_notes.html#%s")}}\'; $(\'#notes_iframe\').css(\'marginTop\', event.pageY); $(\'#notes_iframe\').show();">load</div></div></li>' % (model_id, name, model_id, model_id)])
             notes_items.append('<div id="%s">%s</div>' % (model_id, notes))
         except:
             pass
         #print model.getName(), model.getId(), 
     items.sort()
-    biomodels_list = "<ul class='biomodels_select'>%s\n</ul>" % "\n".join([x for y,x in items])
+    unordered_list = "<ul class='biomodels_select'>%s\n</ul>" % "\n".join([x for y,x in items])
+    biomodels_list = "<script src=\"/biographer/static/biographer-editor/js/jquery.js\" type=\"text/javascript\"></script><table><tr><td style=\"vertical-align:top;\">"+unordered_list+"</td><td style=\"vertical-align:top;\"><iframe id=\"notes_iframe\" style=\"display:none;width:800;\" scrolling=\"auto\"></iframe></td></tr></table>"
     notes = "<div class='biomodels_notes'>%s</div><br/><br/><br/><br/><br/><br/><br/><br/>" % ''.join(notes_items)
     open('biomodels_info_list.html', 'w').write(biomodels_list)
     open('biomodels_info_notes.html', 'w').write(notes)

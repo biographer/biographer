@@ -299,3 +299,7 @@ def user():
 
 def biomodels_info_notes():
     return dict()
+
+def biomodels_info_list():
+    """Just for testing purposes. Should be removed later."""
+    return dict()
