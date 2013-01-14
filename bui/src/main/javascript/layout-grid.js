@@ -419,13 +419,16 @@ bui.grid.layout = function(node_idx){
         var fields_visited = 0;
         while(true){
             //-----------------------
-            if (counter>9990) console.log('counter too high: '+counter);
+            if (counter>9999){
+                console.log('counter too high: '+counter);
+                break;
+            } 
             cx += spiral_steps[counter][0];
             cy += spiral_steps[counter][1];
             ++counter;
             //-----------------------
-            if(i in node_idx2cborder){
-                if ( node_idx2comp_empty_fields[cni] == fields_visited ) break;
+            if(node_idx2cborder[cni] !==  undefined){//is node in compartment
+                if ( node_idx2comp_empty_fields[cni] == fields_visited ) break;//all possible fileds visited
                 if(!(cx>=node_idx2cborder[cni].left && cx<=node_idx2cborder[cni].right && cy>=node_idx2cborder[cni].top && cy<=node_idx2cborder[cni].bottom && matrix_nodes[cx][cy] == undefined)){
                     continue;
                 }
