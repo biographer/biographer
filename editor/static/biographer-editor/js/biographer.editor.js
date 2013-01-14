@@ -199,7 +199,7 @@ Editor.prototype = {
     // set cursor symbol (next to arrow) according to edit mode
     setMode: function(mode){
         if (this.cur_mode == 'node'){
-            $("body").unbind('click');
+            $("#canvas").unbind('click');
             $('.compartment, .complex').unbind('hover');
             var drop_drawable = this.graph.drawables()[$('.drop_here').attr('id')];
             if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
