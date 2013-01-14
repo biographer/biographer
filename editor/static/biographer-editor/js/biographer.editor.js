@@ -199,7 +199,7 @@ Editor.prototype = {
     // set cursor symbol (next to arrow) according to edit mode
     setMode: function(mode){
         if (this.cur_mode == 'node'){
-            $("#canvas").unbind('click');
+            $("body").unbind('click');
             $('.compartment, .complex').unbind('hover');
             var drop_drawable = this.graph.drawables()[$('.drop_here').attr('id')];
             if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
@@ -322,9 +322,10 @@ Editor.prototype = {
         drawable.bind(bui.Node.ListenerType.click, this.drawableSelect(), 'node_select');
         // Set drag function to move all other selected nodes
         drawable.bind(bui.Node.ListenerType.dragMove,this.multiMove(),'multiple drag');
+        // bind drag stop to save
+        drawable.bind(bui.Node.ListenerType.dragEnd,this.saveOnDragEnd(),'node drag ends');
         // make dragged nodes droppable into complexes and createNode: function(nodetype, e)compartments
         drawable.bind(bui.Node.ListenerType.dragStart,this.dragStartChild(),'dragstart makechild');
-        // bind drag stop to save and add child if possible
         drawable.bind(bui.Node.ListenerType.dragEnd,this.dragStopChild(),'dragstop makechild');
 
         
@@ -360,26 +361,18 @@ Editor.prototype = {
         return function(drawable, e){
             $('#canvas').unbind('mousemove');
             $('.compartment, .complex').unbind('intersect');
-            if( $('.drop_here').attr('id') !== undefined){
-                //-----------------------------
-                //add parent if the drop is within a container like complex or compartment
-                //FIXME this causes errrooooorrrr
-                //this_editor.drawableAddChild(drawable, this_editor.graph.drawables()[$('.drop_here').attr('id')], e);
-                //-----------------------------
-                var drop_drawable = this_editor.graph.drawables()[$('.drop_here').attr('id')];
-                if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
-                //-------------------------------------------//
-                this_editor.undoPush('moved node and changed parent');
-            }else{
-                this_editor.undoPush('moved node(s)');
-            }
+            //-----------------------------
+            //add parent if the drop is within a container like complex or compartment
+            //FIXME this causes errrooooorrrr
+            //this_editor.drawableAddChild(drawable, this_editor.graph.drawables()[$('.drop_here').attr('id')], e);
+            //-----------------------------
+            var drop_drawable = this_editor.graph.drawables()[$('.drop_here').attr('id')];
+            if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
         };
     },
     drawableAddChild: function(drawable, parent, e){
         if(parent !== undefined){
-            if (drawable.parent().identifier() != 'Graph'){
-                drawable.parent().removeChild(drawable);
-            }
+            console.log('e.clientY '+e.clientY);
             drawable.parent(parent);
             if (parent.identifier() == 'Complex'){
                 parent.tableLayout();
@@ -394,6 +387,14 @@ Editor.prototype = {
         }else {
             drawable.parent(this.graph);
         }
+    },
+    //-------------------------------------------//
+    // drag ended now save to
+    saveOnDragEnd: function(){
+        var this_editor = this;
+        return function(){
+            this_editor.undoPush('moved node(s)');
+        };
     },
     //-------------------------------------------//
     // multiple drag move function
@@ -1572,7 +1573,7 @@ Editor.prototype = {
                 //console.log($(e.currentTarget).attr('id'));//FIXME, needed for finding parent object - does not work on svg elements, just returns the canvas
                 $('#follow_'+nodetype).css('top', e.clientY+10).css('left', e.clientX+10);
             });
-            $("#canvas").click(function(e){
+            $("body").click(function(e){
                 this_editor.createNode(nodetype, e);
             });
             /*
@@ -1597,22 +1598,20 @@ Editor.prototype = {
                 $(".biomodels_start").show();
             }
             );
-        /*
         $(".biomodels_select li").hover(
             function (e) {
                 var ident = $(this).attr('bla');
                 //console.log('should show '+ident+' top '+e.clientY+' left '+e.clientX);
-                $('#'+ident).show();
+                /*$('#'+ident).show();
                 $(".biomodels_select").mousemove(function(e){
                     $('#'+ident).css('top', e.clientY+15).css('left', e.clientX+15);
-                });
+                });*/
             },
             function(){
                 $('#'+$(this).attr('bla')).hide();
                 $("biomodels_select").unbind('mousemove');
             }
         );
-        */
         //-------------------------------------------------
         // get the language and only show glyps for that language
         $('.language_selection div').click(function(){

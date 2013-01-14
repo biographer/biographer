@@ -2,7 +2,7 @@
     // used to identify and compare the graph instances
     var graphCounter = 0;
 
-    var identifier = 'Graph';
+    var identifier = 'bui.Graph';
 
     /**
      * @private
@@ -339,9 +339,6 @@
     };
 
     bui.Graph.prototype = {
-        identifier : function() {
-            return identifier;
-        },
         /**
          * @description
          * Retrieve the graph's id.
