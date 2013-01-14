@@ -1,0 +1,437 @@
+{{extend 'layout.html'}}
+<table>
+	<tr>
+		<td></td>
+		<td>
+<ul class="zoom_menu">
+	<li id="zoom_in" class="scale" data-rate='0.1'> <div>zoom in</div><div class="keyboard">alt + scroll</div> </li>
+	<li id="zoom_out" class="scale" data-rate='-0.1'> <div>zoom out</div><div class="keyboard">alt + scroll</div> </li>
+	<li id='scale1'> <div>scale to default size</div> </li>
+	<li id="fit_to_screen"> <div>fit to page</div> </li>
+</ul>
+			<ul class="editor_menu">
+				{{if not request.vars.html5only:}}
+				<li id="save_to_session"> <div>save current network to session</div> </li>
+				{{pass}}
+				<li id="clear"> <div>clear the canvas</div> </li>
+				<!-- ---------------------------------------------------------------- -->
+				<li class="spacer"></li> 
+				<li id="undo"> <div class="pp">undo</div><div class="keyboard">ctrl + z</div> </li> 
+				<li id="redo"> <div class="pp">redo</div><div class="keyboard">ctrl + y</div> </li>
+				<!-- ---------------------------------------------------------------- -->
+				<li class="spacer"></li>
+				<li id="import_file"> <div><b>import</b> graph from : JSON file, SBML file, BioModels.net, Reactome </div><div class="keyboard">ctrl + i</div> </li>
+				<li id="export_other"> <div>export current graph as: png,jpeg,pdf,tiff</div><div class="keyboard">ctrl + e</div> </li>
+				<!-- ---------------------------------------------------------------- -->
+				<li class="spacer"></li>
+				{{if not request.vars.html5only:}}
+				<li id="layout_biographer"> <div>apply automatic <b>biographer</b> layout</div> </li>
+				{{pass}}
+				<li id="layout_grid"> <div>apply <b>grid based</b> layout in browser (if ctrl+click the grid is only initialized)</div> </li>
+				<li id="layout_force"> <div>apply <b>D3 force based</b> layout in browser</div> </li>
+				<li id="clone"> <div>clone selected objects (or all) with with edge degree &gt; 5</div> </li>
+				<li id="combine"> <div>combine selected objects</div> </li>
+				<li id='straighten_and_distribute'> <div>enable/disable: straighten edges and distributen all points on edges equally</div> </li>
+				<li id='hide_handles'> <div>hide/show all edge handles</div> </li>
+				<!-- li id="layout_grahviz"> 
+				<div>apply automatic <b>graphviz</b> layout</div>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'graphviz.png')}}"/> 
+				&nbsp;
+				</li -->
+				<!-- ---------------------------------------------------------------- -->
+				<li class="spacer"></li>
+				<li id='edit_all_nodes'> <div>select all nodes</div><div class="keyboard">ctrl + a</div> </li>
+				<li id='edit_no_nodes'> <div>select no nodes</div> </li>
+				<!-- ---------------------------------------------------------------- -->
+				<li class="spacer"></li>
+				<li id='align_vertical'> <div>align selection vertically</div> </li>
+				<li id='align_hoizontal'> <div>align selection horizontally</div> </li>
+				<li id='align_top'> <div>align selection top</div> </li>
+				<li id='align_bottom'> <div>align selection bottom</div> </li>
+				<li id='align_left'> <div>align selection left</div> </li>
+				<li id='align_right'> <div>align selection right</div> </li>
+				<li id='horizontal_gaps_equal'> <div>make the distances of horizontal gaps between nodes equal</div> </li>
+				<li id='vertical_gaps_equal'> <div>make the distances of vertical gaps between nodes equal</div> </li>
+				<li class="spacer"></li>
+				<li id='layer_bottom'> <div>lower selection to bottom</div> </li>
+				<!-- not implemented yet -->
+				<li id='layer_down' class="disabled"> <div>lower selection one step</div> </li>
+				<li id='layer_up' class="disabled"> <div>raise selection one step</div> </li>
+				<!-- -->
+				<li id='layer_top'> <div>raise selection to top</div> </li>
+				<!-- ---------------------------------------------------------------- -->
+				{{if not request.vars.html5only:}}
+				<li class="spacer"></li>
+                <!-- li id="bug" {{="class=fkt_active" if session.debug else ""}}> 
+				<div>switch to debug mode</div>
+                <a href="{{=URL('debug')}}"><img src="{{=URL(request.application, 'static/biographer-editor/img', 'bug.png')}}"/></a>
+				&nbsp;
+				</li -->
+				<li id="reset"> <a href="{{=URL('reset')}}">..</a><div>reset biographer</div> </li>
+				{{pass}}
+				{{if auth.has_membership('admin'):}}
+				<li id="store_layout"> SL <div>store layout</div> </li>
+				{{pass}}
+			</ul>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<ul class="tools_group tools_click">
+				<li class="active" id='cursor'> <div>select</div><div class="keyboard">ctrl + 1</div> </li>
+				<li id='move'> <div>pan canvas</div><div class="keyboard">ctrl + 2</div> </li>
+				<li id='Edge'> <div>draw edge</div><div class="keyboard">ctrl + 3</div> </li>
+				<!-- li id="focus"> 
+				<div>focus to node</div>
+				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'focus.png')}}"/> 
+				&nbsp;
+				</li -->
+			</ul>
+			<ul class="tools_group tools_drag">
+				<li class="PD ER AF">
+					<span class="language">
+						<div class="language_current">PD</div>
+						<div class="language_selection">
+							<div class='lang_selected PD'>PD</div>
+							<div class="ER">ER</div>
+							<div class="AF">AF</div>
+						</div>
+					</span>
+				</li>
+				<li id="SimpleChemical" class="tool node PD"> <div>Simple Chemical (click me)</div> </li>
+				<li id="Macromolecule" class="tool node PD ER"> <div>Macromolecule (click me)</div> </li>
+				<li id="NucleicAcidFeature" class="tool node PD"> <div>Nucleic Acid Feature (click me)</div> </li>
+				<li id="UnspecifiedEntity" class="tool node PD"> <div>Unspecified Entity (click me)</div> </li>
+				<li id="RectangularNode" class="tool node ER AF"> <div>Entity (click me)</div> </li>
+				<li id="Perturbation" class="tool node PD ER AF"> <div>Perturbation (click me)</div> </li>
+				<li id="Phenotype" class="tool node PD ER AF"> <div>Phenotype (click me)</div> </li>
+				<li id="VariableValue" class="tool node ER"> <div>Varable Value (click me)</div> </li>
+				<li id="Compartment" class="tool node no_drop_complex PD AF"/> <div>Compartment (click me)</div> </li>
+				<li id="Complex" class="tool node PD"> <div>Complex (click me)</div> </li>
+				<li id="EmptySet" class="tool node PD"> <div>EmptySet (click me)</div> </li>
+				<li id="Process" class="tool node no_drop_complex PD"> <div>Process (click me)</div> </li>
+				<li id="Tag" class="tool node PD"> <div>Tag (click me)</div> </li>
+				<li id="LogicalOperator" class="tool node PD ER"> <div>Logical Operator (click me)</div> </li>
+				<li id="Association" class="tool node PD"> <div>Association (click me)</div> </li>
+				<li id="Dissociation" class="tool node PD"> <div>Dissociation (click me)</div> </li>
+				<li id="Annotation" class="tool node PD ER AF"> <div>Annotation (click me)</div> </li>
+			</ul>
+		</td>
+		<td>
+			<div id="spacer"></div>
+			<div id="outer_canvas">
+				<div id="follow_move" class='follow tool'></div>
+				<div id="follow_wrench" class='follow tool'></div>
+				<div id="follow_edge" class='follow tool'></div>
+				<div id="follow_spline" class='follow tool'></div>
+				{{for x in 'Process LogicalOperator Association Dissociation'.split(): }}
+				<div id="follow_{{=x}}" class="follow helperS"></div>
+				{{pass}}
+				{{for x in 'SimpleChemical Macromolecule NucleicAcidFeature UnspecifiedEntity RectangularNode Perturbation Phenotype EmptySet Tag Annotation VariableValue'.split(): }}
+				<div id="follow_{{=x}}" class="follow helperM"></div>
+				{{pass}}
+				{{for x in 'Compartment Complex'.split(): }}
+				<div id="follow_{{=x}}" class="follow helperL"/></div>
+				{{pass}}
+				<div id="canvas"></div>
+			</div>
+		</td>
+	</tr>
+</table>
+<div class="selection_rect"></div>
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<form action="{{=URL('export')}}" id='export_form' style='display: none;' method="POST"></form>
+<!-- --------------------------------------------------------------------------------- -->
+<!-- -------------------------------------------------------------------------------- -->
+<div id="export_file_modal_input" class="modal_input">
+	
+
+	<div>
+		<div id="export_json"> 
+			<div>export current graph as jSBGN (JSON)</div>
+			<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_json.png')}}"/> 
+			&nbsp;
+		</div>
+		{{if not request.vars.html5only:}}
+		<div id="export_svg"> 
+			<div>export current graph as SVG</div>
+			<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_svg.png')}}"/> 
+			&nbsp;
+		</div>
+		{{pass}}
+	</div>
+	<div>
+		<table>
+			<tr>
+				<th>Ohter Formats</th>
+				<td>
+					<select id="export_format_select">
+						<option value="">... choose</option>
+						{{for frmt in 'png pdf tiff'.split():}} <option>{{=frmt}}</option> {{pass}}
+					</select>
+				</td>
+			</tr>
+		</table>
+		<br />
+	</div>
+	<br />
+	<button class='sc_but close_modal'>cancel</button> or press <b>ESC</b>
+</div>
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<div id="import_file_modal_input" class="modal_input">
+	<table>
+		<tr>
+			<th>File</th>
+            <td>
+                <form id='import_form' method="post" enctype="multipart/form-data">
+                    <input name="import_file" type="file" id="import_file_input"/> supported formats are jSBGN, SBGN-ML, SBML
+                </form>
+            </td>
+		</tr>
+		<tr>
+            <th> <a href="http://www.reactome.org/">Reactome</a></th>
+            <td>                     
+                <select name="reactome_id" id="reactome_id" width="20">
+                    {{include 'default/reactome_pathways.html'}}
+                </select>
+                <button id="reactome">load</button>
+            </td>
+		</tr>
+		<tr>
+            <th> <a href="http://www.ebi.ac.uk/biomodels-main/">BioModels</th> </a> <td>
+            	<div class="biomodels_start">... click to open</div>
+            	{{include 'default/biomodels_info_list.html'}}
+            </td>
+		</tr>
+		<tr>
+			<th>jSBGN</th>
+			<td>
+				<textarea cols="30" rows="10" id='json_string' >{"nodes":[{"id":"node0","visible":true,"sbo":240,"data":{"x":50,"y":53,"width":61,"height":61,"label":"ATP"}}],"edges":[]}</textarea>
+				<button class='sc_but' id='load_json_string'>load</button>
+			</td>
+		</tr>
+	</table>
+	<br />
+	<br />
+	<button class='sc_but close_modal' id='cancel_modal_input'>cancel</button> or press <b>ESC</b>
+</div>
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<div id="node_modal_input" class="modal_input">
+	
+</div>
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<!-- storage for modals -->
+	<div class="current_id" style="display: none"/>
+	<div id='action' style="display: none"></div>
+	<div id='marker_type' style="display: none"></div>
+<!-- --------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------- -->
+<div id="edge_modal_input" class="modal_input">
+	<button class='sc_but close_modal'>close</button> or press <b>ESC</b>
+</div>
+</div>
+<div class="rm">
+	<div class="rm_peek"><div class='bg'></div><div class="keyboard">F4</div></div>
+	<div class="rm_body">
+		<div class="message" style="display:none">Currently you can only change the attributes of one node at once.<br>
+			<br>
+			<h2>Color Combos</h2>
+			<div class="colorcombos"></div>
+			<h2>Combo Maker</h2>
+			<div class="combomaker" style="display:none;">
+				<table>
+					<tr type="SimpleChemical" class="tool node PD"> <td class='name'>SimpleChemical</td><td></td></tr>
+					<tr type="Macromolecule" class="tool node PD ER"> <td class='name'>Macromolecule</td><td></td></tr>
+					<tr type="NucleicAcidFeature" class="tool node PD"> <td class='name'>NucleicAcidFeature</td><td></td></tr>
+					<tr type="UnspecifiedEntity" class="tool node PD"> <td class='name'>UnspecifiedEntity</td><td></td></tr>
+					<tr type="RectangularNode" class="tool node ER AF"> <td class='name'>Entity</td><td></td></tr>
+					<tr type="Perturbation" class="tool node PD ER AF"> <td class='name'>Perturbation</td><td></td></tr>
+					<tr type="Phenotype" class="tool node PD ER AF"> <td class='name'>Phenotype</td><td></td></tr>
+					<tr type="Compartment" class="tool node no_drop_complex PD AF"/> <td class='name'>Compartment</td><td></td></tr>
+					<tr type="Complex" class="tool node PD"> <td class='name'>Complex</td><td></td></tr>
+					<tr type="EmptySet" class="tool node PD"> <td class='name'>EmptySet</td><td></td></tr>
+					<tr type="Process" class="tool node no_drop_complex PD"> <td class='name'>Process</td><td></td></tr>
+					<tr type="Tag" class="tool node PD"> <td class='name'>Tag</td><td></td></tr>
+					<tr type="LogicalOperator" class="tool node PD ER"> <td class='name'>LogicalOperator</td><td></td></tr>
+					<tr type="Association" class="tool node PD"> <td class='name'>Association</td><td></td></tr>
+					<tr type="Dissociation" class="tool node PD"> <td class='name'>Dissociation</td><td></td></tr>
+					<tr type="Annotation" class="tool node PD ER AF"> <td class='name'>Annotation</td><td></td></tr>	
+				</table>
+			</div>
+		</div>
+		<table class="rm_edge">
+			<tr>
+				<th>Spline</th>
+				<td><input type="checkbox" id='edge_is_spline'> is spline</td>
+			</tr>
+			<tr>
+				<th>End Marker</th>
+				<td>
+					<div id="marker_select_box">
+						<div class="marker_select PD ER AF" id="substrate">  consumption/logic <div></div> </div>
+						<div class="marker_select PD" id="production"> production <div></div> </div>
+						<div class="marker_select ER" id="assignment"> assignment/interaction <div></div> </div>
+						<div class="marker_select PD ER AF" id="control"> control <div></div> </div>
+						<div class="marker_select PD ER AF" id="stimulation"> stimulation <div></div> </div>
+						<div class="marker_select PD" id="catalysis"> catalysis <div></div> </div>
+						<div class="marker_select PD ER AF" id="inhibition"> inhibition <div></div> </div>
+						<div class="marker_select PD ER AF" id="necessaryStimulation"> necessary stimulation <div></div> </div>
+						<div class="marker_select ER" id="absoluteInhibition"> absolute inhibition <div></div> </div>
+						<div class="marker_select ER" id="absoluteStimulation"> absolute stimulation <div></div> </div>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<table class='rm_node'>
+			<tr class='node_type_box'>
+				<th>Type</th>
+				<td>
+					<select name="" id="node_type">
+						<option type="SimpleChemical" class="tool node PD">SimpleChemical</option>
+						<option type="Macromolecule" class="tool node PD ER">Macromolecule</option>
+						<option type="NucleicAcidFeature" class="tool node PD">NucleicAcidFeature</option>
+						<option type="UnspecifiedEntity" class="tool node PD">UnspecifiedEntity</option>
+						<option type="RectangularNode" class="tool node ER AF">Entity</option>
+						<option type="Perturbation" class="tool node PD ER AF">Perturbation</option>
+						<option type="Phenotype" class="tool node PD ER AF">Phenotype</option>
+						<option type="Compartment" class="tool node no_drop_complex PD AF"/>Compartment</option>
+						<option type="Complex" class="tool node PD">Complex</option>
+						<option type="EmptySet" class="tool node PD">EmptySet</option>
+						<option type="Process" class="tool node no_drop_complex PD">Process</option>
+						<option type="Tag" class="tool node PD">Tag</option>
+						<option type="LogicalOperator" class="tool node PD ER">LogicalOperator</option>
+						<option type="Association" class="tool node PD">Association</option>
+						<option type="Dissociation" class="tool node PD">Dissociation</option>
+						<option type="Annotation" class="tool node PD ER AF">Annotation</option>		
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>Node ID</th>
+				<td id="node_id"></td>
+			</tr>
+			<tr class="parent_box">
+				<th>Parent</th>
+				<td id="node_parent"></td>
+			</tr>
+			<tr id="node_label_row">
+				<th>Label</th>
+				<td> <input type="text" placeholder="ATP" id='node_label' /></td>
+			</tr>
+			<tr class="multimer_box">
+				<th>Mutimere</th>
+				<td> 
+					<input type="checkbox" id='node_is_multimer'> is a multimer
+				</td>
+			</tr>
+			<tr class="clonemarker_box">
+				<th>Clone Marker</th>
+				<td> 
+					<input type="checkbox" id='node_is_clonemarker'> is cloned
+				</td>
+			</tr>
+			<tr class='state_variable_box'>
+				<th>State Variable</th>
+				<td> 
+					<div id="sv_group">
+						<input type="text" placeholder="P@207" class='state_variable' /> 
+					</div>
+					<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_state_variable" title="add another State Variable"/>
+				</td>
+			</tr>
+			<tr class='uoi_box'>	
+				<th>Unit of Information</th>
+				<td> 
+					<div id="uoi_group">
+						<input type="text" placeholder="mt:prot" class='unit_of_information' /> 
+					</div>
+					<img src="{{=URL(request.application, 'static/biographer-editor/img', 'add.png')}}" id="add_unit_of_information" title="add another Unit of Information"/>
+				</td>
+			</tr>
+			<tr class="existence_box">
+				<th>Clone Marker</th>
+				<td> 
+					<input type="checkbox" id='node_is_existence'> is existence
+				</td>
+			</tr>
+			<tr class="location_box">
+				<th>Clone Marker</th>
+				<td> 
+					<input type="checkbox" id='node_is_location'> is location
+				</td>
+			</tr>
+			<tr class="color_box">
+				<th>Backround Color</th>
+				<td>
+					<div class="colorSelector color_bg"><div style="background-color: #fff"></div></div>
+					<div id="colorpickerHolder"></div>
+				</td>
+			</tr>
+			<tr class="color_box">
+				<th>Border Color</th>
+				<td>
+					<div class="colorSelector color_bd"><div style="background-color: #000"></div></div>
+					<div id="colorpickerHolder"></div>
+				</td>
+			</tr>
+			<tr class="color_tx_box color_box">
+				<th>Text Color</th>
+				<td>
+					<div class="colorSelector color_tx"><div style="background-color: #000"></div></div>
+					<div id="colorpickerHolder"></div>
+				</td>
+			</tr>
+			<tr>
+				<th>Delete</th>
+				<td>
+					<div class="tool" id='del'><div><div class="keyboard">del</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<!-- --------------------------------------------------------------------------------- -->
+{{if session.debug:}}
+<script type="text/javascript">
+    {{include 'default/biographer-ui.js'}}
+</script>
+{{else:}}
+<script type="text/javascript" src="{{=URL(request.application, 'static/biographer-editor/js', 'biographer-ui.js')}}"></script>
+{{pass}}
+<script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'biographer.editor.js')}}'></script>
+<script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'interact.js')}}'></script>
+<script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'libSBGN.js')}}'></script>
+<!-- --------------------------------------------------------------------------------- -->
+<script type="text/javascript">
+editor_config = {
+	url_undo_push : '{{=URL("undo_push")}}',
+	url_undo : '{{=URL("undo")}}',
+	url_redo : '{{=URL("redo")}}',
+	url_layout : 'http://cheetah.biologie.hu-berlin.de/layouter',
+	url_import : '{{=URL("import_graph")}}',
+ 	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
+    		nodes : [],
+    		edges : []
+    	}{{pass}},
+    history_redo:  [],
+    history_undo:  []
+}
+//=========================
+editor = new Editor();
+bui.ready(function() {
+	//bui.settings.css.stylesheetUrl = '{{=URL(request.application, "static/biographer-editor/css", "visualization-svg.css")}}';//FIXME this is not working anymore
+	editor.graph = new bui.Graph($('#canvas')[0]);
+	//bui.Node.bindStatic(bui.Node.ListenerType.click, editor.drawableSelect());//FIXME this does not work, y?
+	editor.redrawGraph(editor_config.graphData);
+	editor.setLanguage();
+	editor.enableSelection();
+	editor_config.history_undo.push({action: 'initialized', graph: JSON.stringify(editor.graph.toJSON())})
+	
+});
+</script>
