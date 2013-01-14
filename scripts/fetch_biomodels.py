@@ -47,7 +47,7 @@ def biomodels_info():
             notes = re.sub('body', 'div', model.getNotes().getChild(0).toXMLString()) 
             model_id = fn[-19:-4]
             name = model.getName() 
-            items.append([model_id, '<li><div bla="%s">%s: %s <a href="{{=URL(r=request,f="biomodels_info_notes.html#%s")}}" target="_blank">notes</a></div></li>' % (model_id, name, model_id, model_id)])
+            items.append([model_id, '<li><q><span bla="%s">%s: %s</span> <a href="{{=URL(r=request,f="biomodels_info_notes.html#%s")}}" target="_blank">notes</a></q></li>' % (model_id, model_id, name, model_id)])
             notes_items.append('<div id="%s">%s</div>' % (model_id, notes))
         except:
             pass

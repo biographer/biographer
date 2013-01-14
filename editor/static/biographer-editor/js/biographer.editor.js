@@ -1385,7 +1385,7 @@ Editor.prototype = {
         } else {
             alert('The File APIs are not fully supported in this browser. You will not be able to upload jSBGN/SBGN-ML/SBML files. Please update your browser.');
         }
-        $(".biomodels_select div").click(function(){
+        $(".biomodels_select span").click(function(){
             var bmid = $(this).attr('bla');
             this_editor.modal.close();
             $('.flash').html('Loading BioModel BIOM'+bmid).fadeIn().delay(800).fadeOut();
