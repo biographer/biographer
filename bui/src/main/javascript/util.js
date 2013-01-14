@@ -590,7 +590,6 @@
 
 
     bui.util.combine = function(graph, select_drawables){
-	console.log('combine');
         var suspendHandle = graph.suspendRedraw(20000);
         var all_drawables = graph.drawables();
         // create new node
@@ -602,12 +601,10 @@
             .position(drawable.position().x, drawable.position().y)
             .size(drawable.size().width, drawable.size().height);
         // redraw edges
-        for (var edge_key=0; edge_key<all_drawables.length; ++edge_key){
+        for (var edge_key in all_drawables){
             var edge = all_drawables[edge_key];
             if (edge.identifier() in {'Edge':1,'Spline':1}){
-		// console.log(edge.source().id());
-		// console.log(edge.target().id());
-                for (var node_key=0; node_key<select_drawables.length; ++node_key){
+		for (var node_key=0; node_key<select_drawables.length; ++node_key){
 	 	    var node_id = select_drawables[node_key].id();
                     if (edge.source().id() == node_id){
                         all_drawables[edge_key].source(new_node);
@@ -618,11 +615,11 @@
                  }
             }
         }
-        // // remove select_drawables
-        // for (var node_key=0; node_key<select_drawables.length;++node_key){
-        //     select_drawables[node_key].remove();
-        // }
-	// select_drawables = [];
+        // remove select_drawables
+        for (var node_key=0; node_key<select_drawables.length;++node_key){
+            select_drawables[node_key].remove();
+        }
+	select_drawables = [];
         // redraw ALL THE NODES
         graph.unsuspendRedraw(suspendHandle);
 	return new_node;
