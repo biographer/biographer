@@ -339,9 +339,9 @@
     };
 
     bui.Graph.prototype = {
-        identifier : function() {
-            return identifier;
-        },
+	identifier : function() {
+	    return identifier;
+	},
         /**
          * @description
          * Retrieve the graph's id.

@@ -464,6 +464,9 @@
     };
 
     bui.Edge.prototype = {
+        identifier : function() {
+            return identifier;
+        },
         /**
          * @private initial paint
          */

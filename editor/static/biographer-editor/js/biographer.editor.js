@@ -199,7 +199,7 @@ Editor.prototype = {
     // set cursor symbol (next to arrow) according to edit mode
     setMode: function(mode){
         if (this.cur_mode == 'node'){
-            $("#canvas").unbind('click');
+            $("body").unbind('click');
             $('.compartment, .complex').unbind('hover');
             var drop_drawable = this.graph.drawables()[$('.drop_here').attr('id')];
             if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
@@ -1395,7 +1395,7 @@ Editor.prototype = {
         } else {
             alert('The File APIs are not fully supported in this browser. You will not be able to upload jSBGN/SBGN-ML/SBML files. Please update your browser.');
         }
-        $(".biomodels_select div").click(function(){
+        $(".biomodels_select span").click(function(){
             var bmid = $(this).attr('bla');
             this_editor.modal.close();
             $('.flash').html('Loading BioModel BIOM'+bmid).fadeIn().delay(800).fadeOut();
@@ -1597,22 +1597,20 @@ Editor.prototype = {
                 $(".biomodels_start").show();
             }
             );
-        /*
         $(".biomodels_select li").hover(
             function (e) {
                 var ident = $(this).attr('bla');
                 //console.log('should show '+ident+' top '+e.clientY+' left '+e.clientX);
-                $('#'+ident).show();
+                /*$('#'+ident).show();
                 $(".biomodels_select").mousemove(function(e){
                     $('#'+ident).css('top', e.clientY+15).css('left', e.clientX+15);
-                });
+                });*/
             },
             function(){
                 $('#'+$(this).attr('bla')).hide();
                 $("biomodels_select").unbind('mousemove');
             }
         );
-        */
         //-------------------------------------------------
         // get the language and only show glyps for that language
         $('.language_selection div').click(function(){
