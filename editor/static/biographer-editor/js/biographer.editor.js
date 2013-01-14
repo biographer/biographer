@@ -532,12 +532,12 @@ Editor.prototype = {
                         ++cj;
                     }
                 }
-                $('.state_variable').unbind('change');
-                $('.state_variable').change(function(){
+                $('.state_variable').unbind('keyup');
+                $('.state_variable').keyup(function(){
                     this_editor.editNode();
                 });
-                $('.unit_of_information').unbind('change');
-                $('.unit_of_information').change(function(){
+                $('.unit_of_information').unbind('keyup');
+                $('.unit_of_information').keyup(function(){
                     this_editor.editNode();
                 });
             }else{
@@ -1296,25 +1296,29 @@ Editor.prototype = {
             this_editor.editNode();
         });
         //=========================
-        $('.unit_of_information').change(function(){
+        $('.unit_of_information, .state_variable').keyup(function(){
             this_editor.editNode();
         });
         $('#node_is_multimer, #node_is_clonemarker, #node_is_existence, #node_is_location').click(function(){
             this_editor.editNode();
         });
         //=========================
+        $('#node_type').change(function(){
+           this_editor.editNode(); 
+        });
+        //=========================
         $('#add_unit_of_information').click(function(){
             $('#uoi_group').append(' <br/><input type="text" placeholder="mt:prot" class="unit_of_information" /> ');
-            $('.unit_of_information').unbind('change');
-            $('.unit_of_information').change(function(){
+            $('.unit_of_information').unbind('keyup');
+            $('.unit_of_information').keyup(function(){
                 this_editor.editNode();
             });
         });
         //=========================
         $('#add_state_variable').click(function(){
             $('#sv_group').append(' <br/><input type="text" placeholder="P@207" class="state_variable" /> ');
-            $('.state_variable').unbind('change');
-            $('.state_variable').change(function(){
+            $('.state_variable').unbind('keyup');
+            $('.state_variable').keyup(function(){
                 this_editor.editNode();
             });
         });
