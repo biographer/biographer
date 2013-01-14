@@ -1,0 +1,11 @@
+{{extend 'layout.html'}}
+
+<h2>JSON input</h2>
+
+<form enctype="multipart/form-data" action="{{=URL()}}" method="POST">
+	Please provide your biographer model as JSON object:
+	<input type=text name="JSON" />
+	<input type="submit" value="Upload" />
+</form>
+
+{{=request.POST}}
