@@ -1183,7 +1183,13 @@ Editor.prototype = {
         });
         //=========================
         $('#combine').click(function(){
-            if(this_editor.selected_nodes.length === 0) bui.util.combine(this_editor.graph, this_editor.selected_nodes);
+            if(this_editor.selected_nodes.length !== 0) {
+		var new_node = bui.util.combine(this_editor.graph, this_editor.selected_nodes);
+		this_editor.bindDrawable(new_node);
+		this_editor.selectAll(false);
+		this_editor.select(new_node);
+	    }
+	    else $('.flash').html('Must select nodes to combine').fadeIn().delay(1500).fadeOut();
             this_editor.undoPush('Combined Nodes');
         });
         //=========================
