@@ -29,10 +29,10 @@
 				{{pass}}
 				<li id="layout_grid"> <div>apply <b>grid based</b> layout in browser (if ctrl+click the grid is only initialized)</div> </li>
 				<li id="layout_force"> <div>apply <b>D3 force based</b> layout in browser</div> </li>
+				<li class="spacer"></li>
 				<li id="clone"> <div>clone selected objects (or all) with with edge degree &gt; 5</div> </li>
 				<li id="combine"> <div>combine selected objects</div> </li>
 				<li id='straighten_and_distribute'> <div>enable/disable: straighten edges and distributen all points on edges equally</div> </li>
-				<li id='hide_handles'> <div>hide/show all edge handles</div> </li>
 				<!-- li id="layout_grahviz"> 
 				<div>apply automatic <b>graphviz</b> layout</div>
 				<img src="{{=URL(request.application, 'static/biographer-editor/img', 'graphviz.png')}}"/> 
@@ -121,9 +121,7 @@
 			<div id="spacer"></div>
 			<div id="outer_canvas">
 				<div id="follow_move" class='follow tool'></div>
-				<div id="follow_wrench" class='follow tool'></div>
 				<div id="follow_edge" class='follow tool'></div>
-				<div id="follow_spline" class='follow tool'></div>
 				{{for x in 'Process LogicalOperator Association Dissociation'.split(): }}
 				<div id="follow_{{=x}}" class="follow helperS"></div>
 				{{pass}}
