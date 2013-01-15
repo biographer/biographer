@@ -332,7 +332,7 @@ Editor.prototype = {
     //-------------------------------------------//
     dragStartChild: function(){
         var this_editor = this;
-        return function(){
+        return function(drawable){
             // must do this complicated hover function since hover() does not work since the dragged element is under the mouse
             // from http://stackoverflow.com/questions/5587703/css-hover-how-to-get-lower-divs-to-hover-as-well
             // TODO is ther a better solution??
@@ -341,7 +341,7 @@ Editor.prototype = {
                 var pos = $(this).offset();
                 var size = $me.size();
                 
-                if ( e.pageX > pos.left && e.pageY > pos.top && e.pageX < pos.left + size.width && e.pageY < pos.top + size.height ) {
+                if ($me != drawable && e.pageX > pos.left && e.pageY > pos.top && e.pageX < pos.left + size.width && e.pageY < pos.top + size.height ) {
                     $me.addClass('drop_here');
                 } else if($me.hasClass('drop_here')) {
                     $me.removeClass('drop_here');
@@ -360,32 +360,37 @@ Editor.prototype = {
         return function(drawable, e){
             $('#canvas').unbind('mousemove');
             $('.compartment, .complex').unbind('intersect');
-            if( $('.drop_here').attr('id') !== undefined){
-                //-----------------------------
-                //add parent if the drop is within a container like complex or compartment
-                //FIXME this causes errrooooorrrr
-                this_editor.drawableAddChild(drawable, this_editor.graph.drawables()[$('.drop_here').attr('id')], e);
-                //-----------------------------
-                var drop_drawable = this_editor.graph.drawables()[$('.drop_here').attr('id')];
-                if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
-                //-------------------------------------------//
-                this_editor.undoPush('moved node and changed parent');
-            }else{
-                this_editor.undoPush('moved node(s)');
-            }
+            //-----------------------------
+            //add parent if the drop is within a container like complex or compartment
+            //FIXME this causes errrooooorrrr
+            this_editor.drawableAddChild(drawable, this_editor.graph.drawables()[$('.drop_here').attr('id')], e);
+            //-----------------------------
+            var drop_drawable = this_editor.graph.drawables()[$('.drop_here').attr('id')];
+            if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
+            //-------------------------------------------//
+            this_editor.undoPush('moved node and changed parent');
+            this_editor.undoPush('moved node(s)');
+        
         };
     },
     drawableAddChild: function(drawable, parent, e){
-        if(parent !== undefined){
+        var x,y,pos;
+        if(parent === undefined && drawable.hasParent()) {
+            drawable.parent(this.graph);
+            x = e.pageX !== undefined ? e.pageX : event.detail.pageX;
+            y = e.pageY !== undefined ? e.pageY : event.detail.pageY;
+            pos = this.graph.toGraphCoords( x-this.canvaspos.left, y-this.canvaspos.top ) ;
+            drawable.absolutePosition(pos.x, pos.y);
+        }else if(parent !== undefined && drawable != parent && parent != drawable.parent()){
             drawable.parent(parent);
             if (parent.identifier() == 'Complex'){
                 parent.tableLayout();
             } else {
-                var pos = this.graph.toGraphCoords( e.pageX-this.canvaspos.left, e.pageY-this.canvaspos.top ) ;
+                x = e.pageX !== undefined ? e.pageX : event.detail.pageX;
+                y = e.pageY !== undefined ? e.pageY : event.detail.pageY;
+                pos = this.graph.toGraphCoords( x-this.canvaspos.left, y-this.canvaspos.top ) ;
                 drawable.absolutePosition(pos.x, pos.y);
             }
-        }else {
-            drawable.parent(this.graph);
         }
     },
     //-------------------------------------------//
@@ -690,34 +695,34 @@ Editor.prototype = {
             if( this_editor.selected_nodes.length == 1 && $('#node_type').val() != drawable.identifier()){
                 //create the new node
                 //apply all attributes of old node if possible
-		var new_node = this.graph.add(bui[$('#node_type').val()]) 
-		    .visible(true)
-		    .label(drawable.label())
-		    .parent(drawable.parent())
-		    .position(drawable.position().x, drawable.position().y)
-		    .size(drawable.size().width, drawable.size().height);
-		this.bindDrawable(new_node);
-		this.selectAll(false);
-		this.select(new_node);
+                var new_node = this.graph.add(bui[$('#node_type').val()])
+                    .visible(true)
+                    .label(drawable.label())
+                    .parent(drawable.parent())
+                    .position(drawable.position().x, drawable.position().y)
+                    .size(drawable.size().width, drawable.size().height);
+                this.bindDrawable(new_node);
+                this.selectAll(false);
+                this.select(new_node);
                 //make edges point to new node
-		var all_drawables = this.graph.drawables();
-		var node_id = drawable.id();
-		for (var edge_key in all_drawables){
-		    var edge = all_drawables[edge_key];
-		    if (edge.identifier() in {'Edge':1,'Spline':1}){
-			if (edge.source().id() == node_id){
-			    all_drawables[edge_key].source(new_node);
-			}
-			if (edge.target().id() == node_id){
-			    all_drawables[edge_key].target(new_node);
-			}
-		    }
-		}
+                var all_drawables = this.graph.drawables();
+                var node_id = drawable.id();
+                for (var edge_key in all_drawables){
+                    var edge = all_drawables[edge_key];
+                    if (edge.identifier() in {'Edge':1,'Spline':1}){
+                        if (edge.source().id() == node_id){
+                            all_drawables[edge_key].source(new_node);
+                        }
+                        if (edge.target().id() == node_id){
+                            all_drawables[edge_key].target(new_node);
+                        }
+                    }
+                }
                 //delte old node
-		if(drawable.parent().identifier()!="Graph"){
-		    drawable.parent().removeChild(drawable);
-		}
-		drawable.remove();
+                if(drawable.parent().identifier()!="Graph"){
+                    drawable.parent().removeChild(drawable);
+                }
+                drawable.remove();
             }
             
             this.trigger_delayed_undoPush('changed node attributes');
