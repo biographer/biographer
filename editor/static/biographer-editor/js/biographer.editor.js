@@ -721,7 +721,7 @@ Editor.prototype = {
                     drawable.parent().removeChild(drawable);
                 }
                 drawable.remove();
-                    }
+            }
             
             this.trigger_delayed_undoPush('changed node attributes');
         }
