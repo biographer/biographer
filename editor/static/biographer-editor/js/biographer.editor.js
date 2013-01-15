@@ -364,7 +364,7 @@ Editor.prototype = {
                 //-----------------------------
                 //add parent if the drop is within a container like complex or compartment
                 //FIXME this causes errrooooorrrr
-                //this_editor.drawableAddChild(drawable, this_editor.graph.drawables()[$('.drop_here').attr('id')], e);
+                this_editor.drawableAddChild(drawable, this_editor.graph.drawables()[$('.drop_here').attr('id')], e);
                 //-----------------------------
                 var drop_drawable = this_editor.graph.drawables()[$('.drop_here').attr('id')];
                 if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
@@ -377,9 +377,6 @@ Editor.prototype = {
     },
     drawableAddChild: function(drawable, parent, e){
         if(parent !== undefined){
-            if (drawable.parent().identifier() != 'Graph'){
-                drawable.parent().removeChild(drawable);
-            }
             drawable.parent(parent);
             if (parent.identifier() == 'Complex'){
                 parent.tableLayout();
