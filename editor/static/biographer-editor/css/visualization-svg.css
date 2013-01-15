@@ -117,48 +117,6 @@ line {
 .splineEdgeHandle.autoAlign circle {
     opacity: 0.2;
 }
-g.Silver > path,g.Silver > circle,g.Silver > rect {
-	fill: #C0C0C0;
-}
-g.Gray > path,g.Gray > circle,g.Gray > rect {
-	fill: #808080;
-}
-g.Red > path,g.Red > circle,g.Red > rect, g.Red >ellipse {
-	fill: #FF0000;
-}
-g.Maroon > path,g.Maroon > circle,g.Maroon > rect {
-	fill: #800000;
-}
-g.Yellow > path,g.Yellow > circle,g.Yellow > rect {
-	fill: #FFFFF0;
-}
-g.Olive > path,g.Olive > circle,g.Olive > rect {
-	fill: #808000;
-}
-g.Lime > path,g.Lime > circle,g.Lime > rect {
-	fill: #00FF00;
-}
-g.Green > path,g.Green > circle,g.Green > rect {
-	fill: #008000;
-}
-g.Aqua > path,g.Aqua > circle,g.Aqua > rect {
-	fill: #00FFFF;
-}
-g.Teal > path,g.Teal > circle,g.Teal > rect {
-	fill: #008080;
-}
-g.Blue > path,g.Blue > circle,g.Blue > rect {
-	fill: #0000FF;
-}
-g.Navy > path,g.Navy > circle,g.Navy > rect {
-	fill: #000080;
-}
-g.Fuchsia > path,g.Fuchsia > circle,g.Fuchsia > rect {
-	fill: #FF00FF;
-}
-g.Purple > path,g.Purple > circle,g.Purple > rect {
-	fill: #800080;
-}
 g.selected > path,g.selected > circle,g.selected > rect, g.selected >ellipse{
     stroke: blue!important;
     stroke-dasharray: 5,5;
@@ -167,7 +125,6 @@ g.drop_here > path, g.drop_here > rect{
     /*fill: #fcd6d6;*/
     fill: #D8F3C9;
 }
-
 path.selected {
     stroke: blue!important;
     stroke-dasharray: 5,5;
