@@ -216,6 +216,10 @@
                       listenerIdentifier(this))
               .edge(this)
               .visible(privates.layoutElementsVisible);
+      this.fire(bui.Edge.ListenerType.edgePointAdded,
+        [this, privates.sourceSplineHandle]);
+      this.fire(bui.Edge.ListenerType.edgePointAdded,
+        [this, privates.targetSplineHandle ]);
       for (var i=0;i<privates.points.length;i++){
         privates.points[i].splineHandle=this.graph()
                 .add(bui.SplineEdgeHandle)
@@ -224,6 +228,8 @@
                   listenerIdentifier(this))
                 .edge(this)
                 .visible(privates.layoutElementsVisible);
+        this.fire(bui.Edge.ListenerType.edgePointAdded,
+          [this, privates.points[i].splineHandle]);
       }
       // create spline handle helper lines
       privates.sourceHelperLine = this.graph()
@@ -377,6 +383,8 @@
 
       privates.points.splice(position, 0, pth); // add point at position position
       
+      this.fire(bui.Edge.ListenerType.edgePointAdded,
+        [this, pth.splineHandle]);
       this.fire(bui.Edge.ListenerType.edgePointAdded,
         [this, point]);
 
@@ -553,8 +561,8 @@
           return pos;
         },
         /**
-        * method to remove a point from edge. 
-        * 
+        * method to remove a point from edge.
+        *
         * @param {point} index of point or the point itself
         * @return {bui.Edge} fluent interface
         */
@@ -579,8 +587,6 @@
             pth.helperLine.remove();
           }
           updateEdge.call(this);
-          this.fire(bui.Edge.ListenerType.edgePointRemoved,
-            [this, pth.point]); // WARNING pth.point is already removed
           
           return this;
         },
@@ -751,7 +757,6 @@
     bui.Edge.ListenerType = {
     /** @field */
       edgePointAdded : bui.util.createListenerTypeId(),
-      edgePointRemoved : bui.util.createListenerTypeId()
     }
 
 })(bui);
