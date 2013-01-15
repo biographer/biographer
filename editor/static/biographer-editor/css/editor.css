@@ -365,19 +365,18 @@ h3.section.down {
     width: 35px;
     height: 35px;
     position: relative;
-    margin: 5px 0 5px 0;
     cursor: pointer;
 }
-.editor_menu img {
-    position: relative;
-    bottom: -5px;
+.editor_menu li a{
+    display: inline-block;
+    width: 35px;
+    height: 35px;
 }
 .editor_menu .spacer {
     width: 2px;
     padding: 0;
-    margin: 0 4px 0 4px;
+    top: 2px;
     background-color: #eee;
-    top: -7px;
 }
 
 #save_to_session {background: url('../img/biographer.sprites.png') 0 0; }
