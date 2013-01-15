@@ -89,9 +89,10 @@ Editor.prototype = {
           if (all_drawables.hasOwnProperty(key)){
             if(all_drawables[key].drawableType()=='node'){
                 var drawable = all_drawables[key];
-                this.bindDrawable(drawable)
+                this.bindDrawable(drawable);
             }else{
-                all_drawables[key].bind(bui.AbstractLine.ListenerType.click, editor.drawableSelect());
+                all_drawables[key].bind(bui.AbstractLine.ListenerType.click, editor.drawableSelect(), 'edge select');
+                all_drawables[key].bind(bui.Edge.ListenerType.edgePointAdded, editor.newNodeCreated, 'edgeHandle select');
             }
           }
         }
@@ -269,7 +270,9 @@ Editor.prototype = {
             this.selected_nodes[i].removeClass('selected');
         }
         //set click listener on new edge
-        new_edge.bind(bui.AbstractLine.ListenerType.click, editor.drawableSelect());
+        new_edge.bind(bui.AbstractLine.ListenerType.click, editor.drawableSelect(), 'edge select');
+        new_edge.bind(bui.Edge.ListenerType.edgePointAdded, editor.newNodeCreated, 'edgeHandle select');
+            
         this.selectAll(false);
         this.select(new_edge);
         this.rightMenue_show(true);
@@ -316,15 +319,24 @@ Editor.prototype = {
         this.trigger_delayed_undoPush('created node', 4000);
     },
     //-------------------------------------------//
+    // if an edge is converted to a spline or an edge point was created the new drawables must be bound to the editor event liseners
+    newNodeCreated: function(drawable){
+        console.log('a new node was added');
+        this.bindDrawable(drawable);
+    },
+    //-------------------------------------------//
     // multiple drag move function
     bindDrawable: function(drawable){
-        //set click listener on new node
-        drawable.bind(bui.Node.ListenerType.click, this.drawableSelect(), 'node_select');
-        // Set drag function to move all other selected nodes
-        drawable.bind(bui.Node.ListenerType.dragMove,this.multiMove(),'multiple drag');
-        // make dragged nodes droppable into complexes and createNode: function(nodetype, e)compartments
-        drawable.bind(bui.Node.ListenerType.dragStart,this.dragStartChild(),'dragstart makechild');
-        // bind drag stop to save and add child if possible
+        //do not connect spline handles, they should not be selectable
+        if(drawable.identifier() != 'SplineEdgeHandle'){
+            //set click listener on new node
+            drawable.bind(bui.Node.ListenerType.click, this.drawableSelect(), 'node_select');
+            // Set drag function to move all other selected nodes
+            drawable.bind(bui.Node.ListenerType.dragMove,this.multiMove(),'multiple drag');
+            // make dragged nodes droppable into complexes and createNode: function(nodetype, e)compartments
+            drawable.bind(bui.Node.ListenerType.dragStart,this.dragStartChild(),'dragstart makechild');
+            // bind drag stop to save and add child if possible
+        }
         drawable.bind(bui.Node.ListenerType.dragEnd,this.dragStopChild(),'dragstop makechild');
 
         
@@ -368,9 +380,7 @@ Editor.prototype = {
             var drop_drawable = this_editor.graph.drawables()[$('.drop_here').attr('id')];
             if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
             //-------------------------------------------//
-            this_editor.undoPush('moved node and changed parent');
-            this_editor.undoPush('moved node(s)');
-        
+            this_editor.undoPush('moved node');
         };
     },
     drawableAddChild: function(drawable, parent, e){
@@ -603,6 +613,7 @@ Editor.prototype = {
             for(var i=0;i<this.selected_edges.length >= 1;++i){
                 var drawable = this.selected_edges[i];
                 //======================================
+                console.log('set spline to '+$('#edge_is_spline').is(':checked'));
                 drawable.spline($('#edge_is_spline').is(':checked'));
                 drawable.layoutElementsVisible(true);
                 //======================================
@@ -633,6 +644,7 @@ Editor.prototype = {
                 }
                 drawable.marker(cur_marker);
             }
+            this.trigger_delayed_undoPush('changed edge attributes');
         }
     },
     editNode: function(){
@@ -1079,21 +1091,6 @@ Editor.prototype = {
         this.showUndoRedo();
         this.rightMenu();
         this.showColorCombo();
-        //=========================
-        $('#hide_handles').click(function(){
-            if (this_editor.edge_handles_visible === undefined){
-                this_editor.edge_handles_visible = false;
-            }
-            this_editor.edge_handles_visible = !this_editor.edge_handles_visible;
-            var all_drawables = this_editor.graph.drawables();
-            for (var key in all_drawables) {
-                drawable = all_drawables[key];
-                if (drawable.identifier()=='Edge'){
-                    drawable.edgeHandlesVisible(this_editor.edge_handles_visible);
-                }
-                //drawable.recalculatePoints();
-            }
-        });
         //=========================
         $('#straighten_and_distribute').click(function(){
             if($(this).hasClass('fkt_active')){
@@ -1596,6 +1593,9 @@ Editor.prototype = {
         $('.marker_select').click(function(){
             $('.selected_marker').removeClass('selected_marker');
             $(this).addClass('selected_marker');
+            this_editor.editEdge();
+        });
+        $('#edge_is_spline').click(function(){
             this_editor.editEdge();
         });
         //=========================
