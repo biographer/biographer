@@ -376,6 +376,10 @@
               listenerIdentifier(this));
 
       privates.points.splice(position, 0, pth); // add point at position position
+      
+      this.fire(bui.Edge.ListenerType.edgePointAdded,
+        [this, point]);
+
       return point;
       
     }
@@ -575,6 +579,9 @@
             pth.helperLine.remove();
           }
           updateEdge.call(this);
+          this.fire(bui.Edge.ListenerType.edgePointRemoved,
+            [this, pth.point]); // WARNING pth.point is already removed
+          
           return this;
         },
 
@@ -740,4 +747,11 @@
     };
 
     bui.util.setSuperClass(bui.Edge, bui.AbstractLine);
+    
+    bui.Edge.ListenerType = {
+    /** @field */
+      edgePointAdded : bui.util.createListenerTypeId(),
+      edgePointRemoved : bui.util.createListenerTypeId()
+    }
+
 })(bui);
