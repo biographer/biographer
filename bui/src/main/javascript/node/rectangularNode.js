@@ -157,7 +157,7 @@
         this.bind(bui.RectangularNode.ListenerType.bottomRadius,
                 listener,
                 listenerIdentifier(this));
-        this.bind(bui.Labelable.ListenerType.color,
+        this.bind(bui.Node.ListenerType.color,
                 colorChangedListener,
                 listenerIdentifier(this));
 

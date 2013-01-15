@@ -74,7 +74,7 @@
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
                 listenerIdentifier(this));
-        this.bind(bui.Labelable.ListenerType.color,
+        this.bind(bui.Node.ListenerType.color,
                 colorChangedListener,
                 listenerIdentifier(this));
         var privates = this._privates(identifier);
