@@ -856,6 +856,21 @@ Editor.prototype = {
         this.graph.enablePanning(true);
         this.box.style.display = 'none';
     },
+    enableWheelPan: function(){
+        this.graph.bind(bui.Graph.ListenerType.wheel, this.panGraph(), 'editorPan');
+    },
+    panGraph: function(){
+        var this_editor = this;
+        return function(graph, event){
+            event.preventDefault();
+            var wheelDelta = event.wheelDelta || event.deltaY * -1 || event.detail,//cross browser scroll data
+                ds = (1/graph.scale()) * 15 * (wheelDelta > 0? 1: -1);//calculate the value for scrolling
+            var pos = graph.translate();
+            if (event.shiftKey) pos.x += ds;
+            else pos.y += ds;
+            graph.translate(pos.x, pos.y);
+        }
+    },
     //------------------------------------
     // enable box selection mode on graph
     // bind to graph's dragStart/Move/Stop to animate selection box
@@ -1231,7 +1246,7 @@ Editor.prototype = {
             for(var key in this_editor.graph.drawables()){
                 var drawable = this_editor.graph.drawables()[key];
                 if(drawable.identifier() == 'Edge'){
-                    drawable.spline('false');
+                    drawable.spline(false);
                 }
             }
             nodes_edges = this_editor.get_nodes_edges();
@@ -1256,7 +1271,7 @@ Editor.prototype = {
             for(var key in this_editor.graph.drawables()){
                 var drawable = this_editor.graph.drawables()[key];
                 if(drawable.identifier() == 'Edge'){
-                    drawable.spline('false');
+                    drawable.spline(false);
                 }
             }
             orig_html = $('#layout_force').html();
@@ -1782,7 +1797,6 @@ Editor.prototype = {
         //-------------------------------------------------
         //slide toggle right menu
         $('.rm_peek').click(function(){this_editor.rightMenue_show(); });
-        
     }
 };
 
