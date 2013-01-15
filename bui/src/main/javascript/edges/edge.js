@@ -179,6 +179,7 @@
      * function called when straight edge is transformed into spline. Calculates initial spline handle positions and creates them. updates SVG.
      */
     var makeSpline = function(){
+      console.log('making it a spline');
       var privates = this._privates(identifier);
       
       if (privates.isSpline) return;
@@ -216,6 +217,7 @@
                       listenerIdentifier(this))
               .edge(this)
               .visible(privates.layoutElementsVisible);
+      console.log('fire edgePointAdded');
       this.fire(bui.Edge.ListenerType.edgePointAdded,
         [this, privates.sourceSplineHandle]);
       this.fire(bui.Edge.ListenerType.edgePointAdded,
@@ -642,11 +644,11 @@
          */
         targetSplineHandle : function(dx,dy){
           var privates = this._privates(identifier);
-          if (dx == undefined) {
+          if (dx === undefined) {
             return privates.targetSplineHandleVec;
           } else {
             privates.targetSplineHandleVec={x:dx,y:dy};
-	    updateSpline.call(this);
+            updateSpline.call(this);
             return this;
           }
         },
@@ -668,8 +670,8 @@
                 privates.layoutElementsVisible = visible;
 
                 if (privates.isSpline) {
-		  privates.sourceSplineHandle.visible(visible);
-		  privates.targetSplineHandle.visible(visible);
+                  privates.sourceSplineHandle.visible(visible);
+                  privates.targetSplineHandle.visible(visible);
                   privates.sourceHelperLine.visible(visible);
                   privates.targetHelperLine.visible(visible);
 		}
