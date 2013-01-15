@@ -18,6 +18,17 @@
         privates.rect.setAttributeNS(null, 'width', width);
         privates.rect.setAttributeNS(null, 'height', height);
     };
+
+    /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+        var privates = this._privates(identifier);
+        var color = this.color();
+        privates.rect.style.setProperty('fill', color.background);
+        privates.rect.style.setProperty('stroke', color.border);
+    };
+
     
     /**
      * @private used from the constructor to improve readability
@@ -34,6 +45,7 @@
         privates.rect.setAttributeNS(null, 'ry', cornerRadius.y);
 
         sizeChanged.call(this, this, size.width, size.height);
+		colorChanged.call(this, this, this.color()), 
         container.appendChild(privates.rect);
     };
 
@@ -47,9 +59,15 @@
     bui.Compartment = function() {
         bui.Compartment.superClazz.apply(this, arguments);
 
+        var colorChangedListener = colorChanged.createDelegate(this);
+        
         this.bind(bui.Node.ListenerType.size,
                 sizeChanged.createDelegate(this),
                 listenerIdentifier(this));
+        this.bind(bui.Node.ListenerType.color,
+                colorChangedListener,
+                listenerIdentifier(this));
+
 
         initialPaint.call(this);
 

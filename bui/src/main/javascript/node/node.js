@@ -265,6 +265,10 @@
         privates.height = this._minHeight;
         privates.parent = this.graph();
         privates.children = [];
+        privates.color  = {
+            background: '',
+            border: ''
+        };
         this.visible(true);
         
         // create interact listener function delegates
@@ -721,6 +725,40 @@
             this.moveAbsolute(x - size.width / 2, y - size.height / 2);
 
         },
+
+        /**
+         * Set or retrieve the current color
+         *
+         * @param {Object} [options] object with propertied background and/or label
+         * which are the new colors to be set. Omit to retrieve current colors.
+         * @return {bui.Labelable|Object} Current colors are returned when you
+         *   don't pass any parameter, fluent interface otherwise.
+         */
+        color : function(options) {
+            var privates = this._privates(identifier),
+            changed = false;
+            
+            if (typeof options !== 'object') {
+                // Return object giving background and label text color
+                return privates.color;
+            }
+
+            for (var prop in privates.color) {
+                if (privates.color.hasOwnProperty(prop) && typeof options[prop] === 'string') {
+                    options[prop] = options[prop].toLowerCase();
+                    changed = changed || options[prop] !== privates.color[prop];
+                    privates.color[prop] = options[prop];
+                }
+            }
+            
+           if(changed) {
+                //Fire the colorchanged
+                this.fire(bui.Node.ListenerType.color, [this, options]);
+            }
+            
+            return this;
+        },
+
         /**
          * Retrieve the current parent or set it
          *
@@ -1099,7 +1137,9 @@
         /** @field */
         resizeMove : bui.util.createListenerTypeId(),
         /** @field */
-        resizeEnd : bui.util.createListenerTypeId()
+        resizeEnd : bui.util.createListenerTypeId(),
+        /** @field */
+        color : bui.util.createListenerTypeId()
     };
 })(bui);
 
