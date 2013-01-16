@@ -112,6 +112,18 @@
             }
             return privates.is_cloned;
         },
+        toJSON : function() {
+          var json = bui.UnspecifiedEntity.superClazz.prototype.toJSON.call(this),
+                  privates = this._privates(identifier),
+                  dataFormat = bui.settings.dataFormat;
+          if (privates.is_cloned) {
+            json.data.clonemarker=true;
+          } else {
+            delete json.data.clonemarker;
+          }
+
+          return json;
+        },
         _minWidth : 70,
         _minHeight : 50,
     }
