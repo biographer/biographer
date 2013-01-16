@@ -1,0 +1,291 @@
+public class OneTwoThreeTest {
+public class GSEAConverterTest {
+public class GSEAEntry {
+public class GSEAConverter implements Visitor {
+public class PathwayCommonsIOHandler
+public class PaxtoolsMainTest
+public class ReactomeEntitySetUnificationXrefFix
+public class PathwayGenesExtractor implements Visitor {
+public class UnificationIDtoRDFIDLister
+public class GOUnificationXREFtoRelationshipXREFConverter
+public class ProteinNameLister
+public class PaxtoolsMain {
+public class SimpleIOHandlerTest
+public class MockFactory extends BioPAXFactoryAdaptor
+public class EvidenceImplTest {
+public class DuplicateProprtyValuesTest {
+public class UnificationXrefImplTest {
+public class ModelCoverageTest
+public class ShallowCopyTest {
+public class PathAccessorTest
+public class PropertyReasonerTest {
+public class CommandManagerTest
+public class ClonerTest
+public class ModelUtilsTest {
+public class SimpleMergerTest {
+public class EditorMapAdapterTest
+public class SimpleEditorMapTest
+public class UnionPropertyAccessorTest
+public class SimpleIOHandler extends BioPAXIOHandlerAdapter
+	public class Triple
+public class PropertyRemoveCommand extends AbstractPropertyCommand
+public class AddCommand extends AbstractAddRemoveCommand
+public class PropertyAddCommand extends AbstractPropertyCommand
+public class RemoveCommand extends AbstractAddRemoveCommand
+public class CommandManager
+public class PropertySetCommand<D extends BioPAXElement, R> extends AbstractPropertyCommand<D,R>
+	public Class<? extends BioPAXElement> getInterfaceForName(String localName)
+public class FeatureResolver {
+public class ModelImpl implements Model
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+public class Level2FactoryImpl extends BioPAXFactoryAdaptor {
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	@Override public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+public class ComplexImpl extends PhysicalEntityImpl implements Complex
+	public Class<? extends Complex> getModelInterface()
+	public Class<? extends PhysicalEntity> getPhysicalEntityClass()
+public class ControlImpl extends InteractionImpl
+	public Class<? extends Control> getModelInterface()
+public class EntityFeatureImpl extends L3ElementImpl implements EntityFeature
+	public Class<? extends EntityFeature> getModelInterface()
+public class ProvenanceImpl extends NamedImpl implements Provenance
+    public Class<? extends Provenance> getModelInterface()
+public class SequenceIntervalImpl extends SequenceLocationImpl
+	public Class<? extends SequenceInterval> getModelInterface()
+public class PhysicalEntityImpl extends EntityImpl implements PhysicalEntity
+	public Class<? extends PhysicalEntity> getModelInterface()
+public class BioSourceImpl extends NamedImpl implements BioSource
+	public Class<? extends BioSource> getModelInterface()
+public class ProteinReferenceImpl extends SequenceEntityReferenceImpl
+    public Class<? extends ProteinReference> getModelInterface()
+public class UnificationXrefImpl extends XrefImpl implements UnificationXref {
+    public Class<? extends UnificationXref> getModelInterface() {
+public class CatalysisImpl extends ControlImpl implements Catalysis
+	public Class<? extends Catalysis> getModelInterface()
+public class RnaImpl extends NucleicAcidImpl  implements Rna
+    public Class<? extends Rna> getModelInterface()
+public class ComplexAssemblyImpl extends ConversionImpl
+	public Class<? extends ComplexAssembly> getModelInterface()
+public class ExperimentalFormImpl extends L3ElementImpl implements ExperimentalForm
+	public Class<? extends ExperimentalForm> getModelInterface()
+public class RnaReferenceImpl extends NucleicAcidReferenceImpl
+	public Class<? extends RnaReference> getModelInterface()
+public class TransportImpl extends ConversionImpl implements Transport
+    public Class<? extends Transport> getModelInterface()
+public class ProteinImpl extends SimplePhysicalEntityImpl implements Protein
+	public Class<? extends Protein> getModelInterface()
+public class EvidenceCodeVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends EvidenceCodeVocabulary> getModelInterface() {
+public class PublicationXrefImpl extends XrefImpl implements PublicationXref
+    public Class<? extends PublicationXref> getModelInterface()
+public class RnaRegionImpl extends NucleicAcidImpl implements RnaRegion
+	public Class<? extends RnaRegion> getModelInterface()
+public class DnaRegionReferenceImpl extends NucleicAcidRegionReferenceImpl implements DnaRegionReference
+	public Class<? extends DnaRegionReference> getModelInterface()
+public class SmallMoleculeImpl extends SimplePhysicalEntityImpl
+	public Class<? extends PhysicalEntity> getModelInterface() {
+public class DeltaGImpl extends L3ElementImpl implements DeltaG
+	public Class<? extends DeltaG> getModelInterface()
+public class CovalentBindingFeatureImpl extends BindingFeatureImpl implements CovalentBindingFeature
+	public Class<? extends CovalentBindingFeature> getModelInterface()
+public class BiochemicalReactionImpl extends ConversionImpl
+	public Class<? extends BiochemicalReaction> getModelInterface()
+public class PathwayStepImpl extends L3ElementImpl implements PathwayStep
+	public Class<? extends PathwayStep> getModelInterface()
+public class DnaImpl extends NucleicAcidImpl implements Dna
+	public Class<? extends Dna> getModelInterface()
+public class ConversionImpl extends InteractionImpl
+	public Class<? extends Conversion> getModelInterface()
+public class DnaReferenceImpl extends NucleicAcidReferenceImpl implements
+	public Class<? extends DnaReference> getModelInterface()
+public class FragmentFeatureImpl extends EntityFeatureImpl implements FragmentFeature
+	public Class<? extends FragmentFeature> getModelInterface()
+public class RnaRegionReferenceImpl extends NucleicAcidRegionReferenceImpl implements RnaRegionReference
+	public Class<? extends RnaRegionReference> getModelInterface()
+public class CellVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends CellVocabulary> getModelInterface() {
+public class SequenceModificationVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends SequenceModificationVocabulary> getModelInterface() {
+public class PhenotypeVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends PhenotypeVocabulary> getModelInterface() {
+public class StoichiometryImpl extends L3ElementImpl implements Stoichiometry
+	public Class<? extends Stoichiometry> getModelInterface()
+public class ExperimentalFormVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends ExperimentalFormVocabulary> getModelInterface() {
+public class ControlledVocabularyImpl extends XReferrableImpl implements
+	public Class<? extends ControlledVocabulary> getModelInterface()
+public class GeneticInteractionImpl extends InteractionImpl
+	public Class<? extends GeneticInteraction> getModelInterface()
+public class DnaRegionImpl extends NucleicAcidImpl implements DnaRegion
+	public Class<? extends DnaRegion> getModelInterface()
+public class RelationshipXrefImpl extends XrefImpl implements RelationshipXref
+    public Class<? extends RelationshipXref> getModelInterface()
+public class ScoreImpl extends XReferrableImpl implements Score
+    public Class<? extends Score> getModelInterface()
+public class SequenceRegionVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends SequenceRegionVocabulary> getModelInterface() {
+public class TransportWithBiochemicalReactionImpl extends BiochemicalReactionImpl
+    public Class<? extends TransportWithBiochemicalReaction> getModelInterface()
+public class SmallMoleculeReferenceImpl extends EntityReferenceImpl implements SmallMoleculeReference
+	public Class<? extends SmallMoleculeReference> getModelInterface()
+public class SequenceLocationImpl extends L3ElementImpl
+	public Class<? extends SequenceLocation> getModelInterface()
+public class DegradationImpl extends ConversionImpl implements Degradation
+	public Class<? extends Degradation> getModelInterface()
+public class KPrimeImpl extends L3ElementImpl implements KPrime
+	public Class<? extends KPrime> getModelInterface()
+public class RelationshipTypeVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends RelationshipTypeVocabulary> getModelInterface() {
+public class PathwayImpl extends ProcessImpl implements Pathway
+	public Class<? extends Pathway> getModelInterface()
+public class ModulationImpl extends ControlImpl implements Modulation
+	public Class<? extends Modulation> getModelInterface()
+	public Class<? extends EntityReference> getModelInterface()
+public class TemplateReactionImpl extends InteractionImpl implements TemplateReaction {
+    public Class<? extends TemplateReaction> getModelInterface()
+public class EvidenceImpl extends XReferrableImpl implements Evidence
+	public Class<? extends Evidence> getModelInterface()
+public class SequenceSiteImpl extends SequenceLocationImpl implements SequenceSite
+    public Class<? extends SequenceSite> getModelInterface()
+public class CellularLocationVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends CellularLocationVocabulary> getModelInterface() {
+public class InteractionImpl extends ProcessImpl implements Interaction
+	public Class<? extends Interaction> getModelInterface()
+public class BindingFeatureImpl extends EntityFeatureImpl
+	public Class<? extends BindingFeature> getModelInterface()
+public class InteractionVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends InteractionVocabulary> getModelInterface() {
+public class ChemicalStructureImpl extends L3ElementImpl implements ChemicalStructure
+	public Class<? extends ChemicalStructure> getModelInterface()
+public class Level3FactoryImpl extends BioPAXFactoryAdaptor {
+public class TissueVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends TissueVocabulary> getModelInterface() {
+public class ModificationFeatureImpl extends EntityFeatureImpl
+	public Class<? extends ModificationFeature> getModelInterface()
+public class GeneImpl extends EntityImpl implements Gene
+    public Class<? extends Gene> getModelInterface()
+public class BiochemicalPathwayStepImpl extends PathwayStepImpl implements BiochemicalPathwayStep
+    public Class<? extends BiochemicalPathwayStep> getModelInterface()
+public class TemplateReactionRegulationImpl extends ControlImpl implements TemplateReactionRegulation
+    public Class<? extends TemplateReactionRegulation> getModelInterface()
+public class MolecularInteractionImpl extends InteractionImpl
+    public Class<? extends MolecularInteraction> getModelInterface()
+public class EntityReferenceTypeVocabularyImpl extends ControlledVocabularyImpl
+    public Class<? extends EntityReferenceTypeVocabulary> getModelInterface() {
+public class SetEquivalanceChecker
+public class Level2Helper
+public class BidirectionalLinkViolationException
+public class ClassFilterSet<E, F extends E> extends AbstractFilterSet<E, F>
+	public ClassFilterSet(Set<? extends E> baseSet,Class<F> filterClass)
+public class IllegalRDFIDException extends IllegalArgumentException
+public class BioPaxIOException extends RuntimeException
+public class SetStringBridge implements StringBridge {
+public class IllegalBioPAXArgumentException extends IllegalArgumentException
+public class StringPropertyEditor<D extends BioPAXElement> extends PropertyEditor<D, String>
+public class ShallowCopy implements Visitor
+public class Traverser
+public class ObjectPropertyEditor<D extends BioPAXElement, R extends BioPAXElement> extends PropertyEditor<D, R>
+public class ConversionScore implements Comparable
+public class TraverserBilinked extends Traverser
+public class UnionPropertyAccessor<D extends BioPAXElement> implements PropertyAccessor<D,Object>
+	@Override public Class<D> getDomain()
+	@Override public Class getRange()
+public class ModelUtils {
+	public Class<D> getDomain()
+	public Class<R> getRange()
+public class Merger implements Visitor
+public class PathAccessor extends PropertyAccessorAdapter<BioPAXElement, Object>
+public class Cloner implements Visitor
+public class Integrator {
+	@Override public Class<D> getDomain()
+	@Override public Class<R> getRange()
+public class Fetcher extends AbstractTraverser
+public class PropertyReasoner extends AbstractTraverser
+public class SimpleMerger
+public class FeatureUtils {
+public class ClassFilteringPropertyAccessor<D extends BioPAXElement, R,
+	public ClassFilteringPropertyAccessor(PropertyAccessor<D, R> impl, Class<F> filter)
+public class ReusedPEPHelper
+public class EnumeratedPropertyEditor<D extends BioPAXElement, R extends Enum>
+public class SimplePropertyAccessor<D extends BioPAXElement, R> extends PropertyAccessorAdapter<D, R>
+public class Completer implements Visitor
+public class PrimitivePropertyEditor<D extends BioPAXElement, R>
+public class JenaEditorMapTest
+public class EquivalenceTest
+public class JenaIOHandlerTest
+public class JenaEditorMap extends EditorMapAdapter {
+public class JenaIOHandler extends BioPAXIOHandlerAdapter
+public class ModelBuilder
+public class QueryTest
+public class AbstractEdge implements Edge
+public class EdgeL3 extends AbstractEdge
+public class GraphL3 extends AbstractGraph 
+public class PhysicalEntityWrapper extends AbstractNode
+public class ConversionWrapper extends AbstractNode
+public class ControlWrapper extends AbstractNode
+public class QueryExecuter
+public class BFS
+public class Prune
+public class NeighborhoodQuery
+public class PathsBetweenQuery
+public class PoIQuery
+public class CommonStreamQuery
+public class CycleBreaker extends BFS
+public class ShellTest {
+public class Shell
+public class TestMappingL3 extends TestCase implements BioPAXMarshaller {
+public class TestMappingL2 extends TestCase implements BioPAXMarshaller {
+public class EntryMapper extends Thread {
+public class BioPAXMapperImp implements BioPAXMapper
+public class PSIMIBioPAXConverter implements PSIMIConverter {
+public class BioPAXMarshallerImp extends Thread implements BioPAXMarshaller {
+public class SBGNConverterTest
+public class L3ToSBGNPDConverter
+public class SimpleInteractionConverterTest
+public class SimpleInteractionConverter
+public class MaximumInteractionThresholdExceedException extends RuntimeException
+public class SimpleInteraction
+public class ControlRule implements InteractionRuleL2
+public class ParticipatesRule implements InteractionRuleL2
+public class ConsecutiveCatalysisRule implements InteractionRuleL2
+public class AffectsRule implements InteractionRuleL2
+public class ComponentRule implements InteractionRuleL2
+public class ControlsTogetherRule implements InteractionRuleL2
+public class ControlRule implements InteractionRuleL3
+public class ParticipatesRule implements InteractionRuleL3
+public class ConsecutiveCatalysisRule implements InteractionRuleL3
+public class ComponentRule implements InteractionRuleL3
+public class ControlsTogetherRule implements InteractionRuleL3
+\hlkwa{public class }\hlstd{GOUnificationXREFtoRelationshipXREFConverter}\hspace*{\fill}\\

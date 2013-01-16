@@ -1,0 +1,10 @@
+syntax: glob
+*.o
+*~
+*.so
+*.gch
+*.rej
+*.old
+build/*
+json-glib*
+ani*
