@@ -758,7 +758,7 @@
     
     bui.Edge.ListenerType = {
     /** @field */
-      edgePointAdded : bui.util.createListenerTypeId(),
+      edgePointAdded : bui.util.createListenerTypeId()
     }
 
 })(bui);

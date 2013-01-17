@@ -125,7 +125,7 @@
           return json;
         },
         _minWidth : 70,
-        _minHeight : 50,
+        _minHeight : 50
     }
     bui.util.setSuperClass(bui.UnspecifiedEntity, bui.Labelable);
 })(bui);

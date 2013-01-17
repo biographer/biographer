@@ -81,7 +81,7 @@
         _minWidth : 60,
         _minHeight : 60,
         _forceRectangular : true,
-        _calculationHook : circularShapeLineEndCalculationHook,
+        _calculationHook : circularShapeLineEndCalculationHook
     };
 
     bui.util.setSuperClass(bui.EmptySet, bui.Labelable);

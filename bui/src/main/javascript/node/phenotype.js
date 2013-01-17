@@ -85,7 +85,7 @@
             return identifier;
         },
         _minWidth : 80,
-        _minHeight : 60,
+        _minHeight : 60
     };
 
     bui.util.setSuperClass(bui.Phenotype, bui.Labelable);
