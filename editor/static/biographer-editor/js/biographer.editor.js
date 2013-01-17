@@ -522,6 +522,13 @@ Editor.prototype = {
                 $('.color_box').hide();
             }
             //===========================================
+            if(drawable.identifier() in {'LogicalOperator':1} && this.selected_nodes.length == 1){
+                $('.logical_operator_box').show();
+	    }
+	    else{
+                $('.logical_operator_box').hide();
+	    }
+            //===========================================
             if(drawable.identifier() in {'Macromolecule':1, 'UnspecifiedEntity': 1} && this.selected_nodes.length == 1){
                 $('.uoi_box, .state_variable_box').show();
                 var randomnumber = Math.floor(Math.random()*1501);
@@ -703,7 +710,7 @@ Editor.prototype = {
             }
             // change the node type by delting the node and creating a new node
             if( this_editor.selected_nodes.length == 1 && $('#node_type').val() != drawable.identifier()){
-                //create the new node
+		//create the new node
                 //apply all attributes of old node if possible
                 var new_node = this.graph.add(bui[$('#node_type').val()])
                     .visible(true)
