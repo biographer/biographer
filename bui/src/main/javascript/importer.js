@@ -140,9 +140,9 @@
                 var label, mapping = retrieveFrom(modificationMapping,
                         modification[0]);
 
-                label = mapping.short;
+                label = mapping.shortlabel;
 
-                if (bui.settings.style.importer.modificationLabel === 'long') {
+                if (bui.settings.style.importer.modificationLabel === 'longlabel') {
                     label += '@' + modification[1];
                 }
 

@@ -713,10 +713,10 @@ var nodeMapping = {}, processNodeMapping = {}, edgeMarkerMapping = {},
  * @param {String} long Long name of the SBO term
  * @param {String} short Short name (abbreviation of the SBO term
  */
-var addModificationMapping = function(keys, long, short) {
+var addModificationMapping = function(keys, longlabel, shortlabel) {
     var val = {
-        long : long,
-        short : short
+        longlabel : longlabel,
+        shortlabel : shortlabel
     };
 
     for (var i = 0; i < keys.length; i++) {
@@ -774,7 +774,7 @@ var getSBOForInstance = function(mapping, instance) {
 
 /**
  * Determine the SBO ID for a modification label using the
- * modificationsMapping, both labels, i.e. short and long, will be matched
+ * modificationsMapping, both labels, i.e. shortlabel and longlabel, will be matched
  * against the first parameter.
  *
  * @param {String} label The label for which the SBO ID should be determined.
@@ -787,8 +787,8 @@ var getModificationSBOForLabel = function(label) {
         if (modificationMapping.hasOwnProperty(sbo)) {
             var mapping = modificationMapping[sbo];
 
-            if (label === mapping.short.toLowerCase() ||
-                    label === mapping.long.toLowerCase()) {
+            if (label === mapping.shortlabel.toLowerCase() ||
+                    label === mapping.longlabel.toLowerCase()) {
                 return bui.util.toNumber(sbo);
             }
         }

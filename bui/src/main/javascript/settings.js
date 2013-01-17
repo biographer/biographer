@@ -198,7 +198,7 @@ bui.settings = {
                 horizontal : 20,
                 vertical : 20
             },
-            modificationLabel : 'long' // either 'long' or 'short'
+            modificationLabel : 'longlabel' // either 'longlabel' or 'shortlabel'
         },
         // x/y coordinates as % of a node's size (1 = 100%)
         // T = top, L = left, R = right, B = bottom, CX = Center X,
