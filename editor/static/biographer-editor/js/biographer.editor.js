@@ -524,6 +524,14 @@ Editor.prototype = {
             //===========================================
             if(drawable.identifier() in {'LogicalOperator':1} && this.selected_nodes.length == 1){
                 $('.logical_operator_box').show();
+		if(drawable.label() in {'AND':1, 'OR':1, 'NOT':1, 'DELAY':1}){
+		    if(drawable.label() in {'τ':1}){
+			$('#operator_type').val('DELAY');
+		    }
+		    else{
+			$('#operator_type').val(drawable.label());
+		    }
+		}
 	    }
 	    else{
                 $('.logical_operator_box').hide();
@@ -561,7 +569,7 @@ Editor.prototype = {
                 $('.uoi_box, .state_variable_box').hide();
             }
             //===========================================
-            if (drawable.identifier() in {"Association": 1, "Dissociation":1, "EmptySet":1}){
+            if (drawable.identifier() in {"Association": 1, "Dissociation":1, "LogicalOperator": 1, "EmptySet":1}){
                 $('#node_label_row, .color_tx_box').hide();
                 $('#node_label').val('');
             }else{
@@ -657,9 +665,21 @@ Editor.prototype = {
         if (this_editor.selected_nodes.length >= 1){
             var drawable = this_editor.selected_nodes[0];
             // set the label of the node
-            if ( ($('#node_label').val() !== '') && (drawable.label !== undefined) ){
-                drawable.label($('#node_label').val()).adaptSizeToLabel();
-            }
+	    if(drawable.identifier() in {'LogicalOperator':1}){
+		// set from the logical operator box
+		if($('#operator_type').val() in {'DELAY':1}){
+		    drawable.label('τ').adaptSizeToLabel();
+		}
+		else{
+		    drawable.label($('#operator_type').val()).adaptSizeToLabel();
+		}
+	    }
+	    else{
+		// set from the label field
+                if ( ($('#node_label').val() !== '') && (drawable.label !== undefined) ){
+                    drawable.label($('#node_label').val()).adaptSizeToLabel();
+                }
+	    }
             //-----------------
             if (this_editor.selected_nodes.length==1){
                 //set child nodes like StateVariables and UnitsOfInformation
@@ -1343,7 +1363,7 @@ Editor.prototype = {
         $('.unit_of_information, .state_variable').keyup(function(){
             this_editor.editNode();
         });
-        $('#node_is_multimer, #node_is_clonemarker, #node_is_existence, #node_is_location').click(function(){
+        $('#node_is_multimer, #node_is_clonemarker, #node_is_existence, #node_is_location, #operator_type').click(function(){
             this_editor.editNode();
         });
         //=========================

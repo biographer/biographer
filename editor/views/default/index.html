@@ -310,15 +310,6 @@
 					</select>
 				</td>
 			</tr>
-			<tr class='logical_operator_box'>
-				<th>Operator</th>
-				<td>
-					<select name="" id="operator_type">
-						<option type="and" class="tool">and</option>
-						<option type="or" class="tool">or</option>
-					</select>
-				</td>
-			</tr>
 			<tr>
 				<th>Node ID</th>
 				<td id="node_id"></td>
@@ -330,6 +321,17 @@
 			<tr id="node_label_row">
 				<th>Label</th>
 				<td> <input type="text" placeholder="ATP" id='node_label' /></td>
+			</tr>
+			<tr class="logical_operator_box">
+				<th>Label</th>
+				<td>
+					<select name="" id="operator_type">
+						<option type="AND" class="tool">AND</option>
+						<option type="OR" class="tool">OR</option>
+						<option type="NOT" class="tool">NOT</option>
+						<option type="DELAY" class="tool">DELAY</option>
+					</select>
+				</td>
 			</tr>
 			<tr class="multimer_box">
 				<th>Multimere</th>
