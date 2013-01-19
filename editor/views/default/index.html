@@ -72,6 +72,7 @@
 				{{if auth.has_membership('admin'):}}
 				<li id="store_layout"> SL <div>store layout</div> </li>
 				{{pass}}
+				<li id="create_session"><a href="{{=URL('create_session')}}">CS</a> <div>create new session</div> </li>
 			</ul>
 		</td>
 	</tr>
@@ -405,9 +406,11 @@
 		</table>
 	</div>
 </div>
+{{if session.uuid:}}
 <div id="chat">
 	<input type="text" id="msg">
 </div>
+{{pass}}
 <!-- directly include the visualization css file here so the js code can have direct access to it -->
 <style type="text/css" id="visualization-svg">
 	{{include 'default/visualization-svg.css'}}
@@ -430,6 +433,7 @@ editor_config = {
 	url_undo : '{{=URL("undo")}}',
 	url_redo : '{{=URL("redo")}}',
 	url_chat : '{{=URL("chat")}}',
+	websocket_group : '{{=session.uuid}}',
 	url_layout : 'http://cheetah.biologie.hu-berlin.de/layouter',
 	url_import : '{{=URL("import_graph")}}',
  	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {
