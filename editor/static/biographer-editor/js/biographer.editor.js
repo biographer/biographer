@@ -255,6 +255,7 @@ Editor.prototype = {
             else if(drwbl.identifier() == 'EmptySet') drwbl.color({background: "#"+this.colorcombos[index][5]});
         }
         this.undoPush('applied color combo '+index);
+        this_editor.shareAction({edit: 'all'});
     },
     //-------------------------------------------//
     createEdge: function(){
@@ -315,6 +316,7 @@ Editor.prototype = {
         this.drawableSelect()(drawable, true);
         $('#node_label').focus();
         this.trigger_delayed_undoPush('created node', 4000);
+        this.shareAction({create: drawable.id()});
     },
     //-------------------------------------------//
     // if an edge is converted to a spline or an edge point was created the new drawables must be bound to the editor event liseners
@@ -379,6 +381,7 @@ Editor.prototype = {
             if (drop_drawable !== undefined) drop_drawable.removeClass('drop_here');
             //-------------------------------------------//
             this_editor.undoPush('moved node');
+            this_editor.shareAction({move: drawable.id()});
         };
     },
     drawableAddChild: function(drawable, parent, e){
@@ -658,6 +661,7 @@ Editor.prototype = {
                 drawable.marker(cur_marker);
             }
             this.trigger_delayed_undoPush('changed edge attributes');
+            this.shareAction({edit: 'selected'});
         }
     },
     editNode: function(){
@@ -763,6 +767,7 @@ Editor.prototype = {
             }
             
             this.trigger_delayed_undoPush('changed node attributes');
+            this.shareAction({edit: 'selected'});
         }
     },
     //-------------------------------------------
@@ -1075,6 +1080,7 @@ Editor.prototype = {
         
     },
     deleteSelectedNodes: function(){
+        this_editor.shareAction({del: 'selected'});
         var nn = this.selected_nodes.length;
         for (var i = this.selected_nodes.length - 1; i >= 0; i--) this.selected_nodes[i].remove();
         this.selected_nodes = [];
@@ -1100,6 +1106,60 @@ Editor.prototype = {
         else lm.animate({right:  tw });
     },
     //----------------------------------
+    shareAction: function(action){
+        var msg
+        if ('del' in action){
+
+        }else if('clear' in action){
+            msg = action;//just submit this
+        }else if('redraw' in action){
+            msg = action;
+        }else if('msg' in action){
+            msg = action;
+        }else if('move' in action){
+            console.log('sharing move');
+            var all_drawables = this.graph.drawables()
+            var cur_pos = all_drawables[action.move].absolutePosition();
+            msg = {move : [{id:action.move, x:cur_pos.x, y:cur_pos.y}]};
+            //for (var i = 0; i < this_editor.selected_nodes.length; i++) {
+        }
+        msg.myid = editor_config.websocket_myid;
+        $.ajax({
+            url: editor_config.url_chat,
+            data : {msg: JSON.stringify(msg)},
+        });
+    },
+    recieveAction: function(){
+        var this_editor = this;
+        return function(e){
+            if(e.data == '-anonymous'){
+                $('.flash').html('somebody left').fadeIn().delay(500).fadeOut();
+            }else if(e.data == '+anonymous'){
+                $('.flash').html('somebody joined').fadeIn().delay(500).fadeOut();
+            }else{ 
+                var data = JSON.parse(e.data);
+                if (data.myid != editor_config.websocket_myid){
+                    if ('msg' in data){
+                        $('.flash').html(data.msg).fadeIn().delay(500).fadeOut();
+                    }else{
+                        if('clear' in data){
+                            this_editor.redrawGraph({nodes:[],edges:[]});
+                        }else if ('redraw' in data){
+                            this_editor.redrawGraph(JSON.parse(data.redraw));
+                        }else if ('move' in data){
+                            var all_drawables = this_editor.graph.drawables();
+                            for(var i=0; i<data.move.length; ++i){
+                                var cur_obj = data.move[i];
+                                all_drawables[cur_obj.id].moveAbsolute(cur_obj.x, cur_obj.y, 200)
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+    },
+    //----------------------------------
     // setup the editor
     init: function(){
         var this_editor = this;
@@ -1121,6 +1181,7 @@ Editor.prototype = {
                     //console.log(data);
                     bui.layouter.fromLayouterFormat(editor_config.graphData,data);
                     this_editor.undoPush('applied automatic biographer layout');
+                    this_editor.shareAction({move: 'all'});
                     this_editor.redrawGraph(editor_config.graphData);
                     //bui.importUpdatedNodePositionsFromJSON(graph, editor_config.graphData, 300)
                     }
@@ -1177,6 +1238,7 @@ Editor.prototype = {
                 }
             }
             this_editor.undoPush('Applied Equal Gaps');
+            this_editor.shareAction({move: 'selected'});
         });
         //=========================
         $('#align_vertical, #align_hoizontal, #align_left, #align_top, #align_right, #align_bottom').click(function(){
@@ -1222,6 +1284,7 @@ Editor.prototype = {
                 }
             }
             this_editor.undoPush('Aligned Nodes');
+            this_editor.shareAction({move: 'all'});
         });
         $('#layer_bottom').click(function(){
             for(var i=0;i<this_editor.selected_nodes.length;++i){
@@ -1240,6 +1303,7 @@ Editor.prototype = {
             this_editor.redrawGraph({nodes:[],edges:[]});
             //this_editor.graph.clear();//FIXME this does not work
             this_editor.undoPush('Cleared Graph');
+            this_editor.shareAction({clear: 'all'});      
         });
         //=========================
         $('#clone').click(function(){
@@ -1252,19 +1316,23 @@ Editor.prototype = {
                 this_editor.bindDrawable(new_nodes[i]);
             }
             $('#clone').html(orig_html);
-            if (new_nodes.length>0) this_editor.undoPush('Cloned nodes, got '+new_nodes.length+' new nodes');
-            else $('.flash').html('Could not clone any nodes').fadeIn().delay(1500).fadeOut();
+            if (new_nodes.length>0){
+                this_editor.undoPush('Cloned nodes, got '+new_nodes.length+' new nodes');
+                this_editor.shareAction({exist: 'all'});
+            }else{
+                $('.flash').html('Could not clone any nodes').fadeIn().delay(1500).fadeOut();
+            } 
         });
         //=========================
         $('#combine').click(function(){
             if(this_editor.selected_nodes.length !== 0) {
-		var new_node = bui.util.combine(this_editor.graph, this_editor.selected_nodes);
-		this_editor.bindDrawable(new_node);
-		this_editor.selectAll(false);
-		this_editor.select(new_node);
-	    }
-	    else $('.flash').html('Must select nodes to combine').fadeIn().delay(1500).fadeOut();
-            this_editor.undoPush('Combined Nodes');
+                var new_node = bui.util.combine(this_editor.graph, this_editor.selected_nodes);
+                this_editor.bindDrawable(new_node);
+                this_editor.selectAll(false);
+                this_editor.select(new_node);
+                this_editor.undoPush('Combined Nodes');
+                this_editor.shareAction({exist: 'all'});
+            } else $('.flash').html('Must select nodes to combine').fadeIn().delay(1500).fadeOut();
         });
         //=========================
         $('#layout_grid').click(function(evnt){
@@ -1288,6 +1356,7 @@ Editor.prototype = {
                 //bui.Node.bindStatic(bui.Node.ListenerType.click, editor.drawableSelect());//FIXME this does not work, y?
             }
             this_editor.undoPush('Applied Grid Layout');
+            this_editor.shareAction({move: 'all'});
             //});
             //$('#layout_grid').html(orig_html);
         });
@@ -1313,6 +1382,7 @@ Editor.prototype = {
               .size([$('#canvas').width(), $('#canvas').height()])
               .start();
             //this_editor.undoPush('Applied Force Directed Layout (D3)');//FIXME this executed to early
+            //this_editor.shareAction({move: 'all'});
         });
         //=========================
         $('#layout_grahviz').click(function(){
@@ -1338,6 +1408,7 @@ Editor.prototype = {
                     try{
                         this_editor.redrawGraph(editor_config.graphData);
                         this_editor.undoPush('Applied Biographer Flow Layout');
+                        this_editor.shareAction({move: 'all'});
                     }catch(e){
                         jQuery('.flash').html('FAILED '+e).fadeIn();
                     }
@@ -1455,8 +1526,10 @@ Editor.prototype = {
                         if((doc === null)||(doc === undefined)){
                             $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                         }else{
-                            this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                            var new_graph = sb.io.write(doc, 'jsbgn');
+                            this_editor.redrawGraph(JSON.parse(new_graph));
                             this_editor.undoPush('loaded graph from JSON string');
+                            this_editor.shareAction({redraw: new_graph});
                         this_editor.modal.close();
                         }
                     };
@@ -1484,6 +1557,7 @@ Editor.prototype = {
                         this_editor.redrawGraph(JSON.parse(data.graph));
                         this_editor.md5 = data.md5;
                         this_editor.undoPush('loaded layed out BioModel '+bmid);
+                        this_editor.shareAction({redraw: data.graph});
                         //$('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
                     }else{
                         this_editor.md5 = data.md5;
@@ -1492,8 +1566,10 @@ Editor.prototype = {
                             $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                         }else{
                             //console.log(sb.io.write(doc, 'jsbgn'));
-                            this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                            var new_graph = sb.io.write(doc, 'jsbgn');
+                            this_editor.redrawGraph(JSON.parse(new_graph));
                             this_editor.undoPush('loaded BioModel '+bmid);
+                            this_editor.shareAction({redraw: new_graph});
                             //$('.flash').html('loaded BioModel '+bmid).fadeIn().delay(1600).fadeOut();
                         }
                     }
@@ -1518,9 +1594,11 @@ Editor.prototype = {
                     if((doc === null)||(doc === undefined)){
                         $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                     }else{
-                        this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                        var new_graph = sb.io.write(doc, 'jsbgn');
+                        this_editor.redrawGraph(JSON.parse(new_graph));
                         this_editor.setLanguage();
                         this_editor.undoPush('loaded Reactome '+reid);
+                        this_editor.shareAction({redraw: new_graph});
                         //$('.flash').html('loaded Reactome '+reid).fadeIn().delay(1600).fadeOut();
                     }
                 },
@@ -1538,8 +1616,10 @@ Editor.prototype = {
         });
         //=========================
         $('#load_json_string').click(function(){
-            this_editor.redrawGraph(JSON.parse($('#json_string').val()));
+            var new_graph = $('#json_string').val();
+            this_editor.redrawGraph(JSON.parse(new_graph));
             this_editor.undoPush('loaded graph from JSON string');
+            this_editor.shareAction({redraw: new_graph});
             this_editor.modal.close();
         });
         //===
@@ -1822,20 +1902,14 @@ Editor.prototype = {
         $('.rm_peek').click(function(){this_editor.rightMenue_show(); });
         //-------------------------------------------------
         // websocket chat
-        var callback=function(e){
-            $('.flash').html(e.data).fadeIn().delay(500).fadeOut();
-        };
-        if(!web2py_websocket('ws://127.0.0.1:8888/realtime/'+editor_config.websocket_group,callback))
+
+        if(!web2py_websocket('ws://127.0.0.1:8888/realtime/'+editor_config.websocket_group, this_editor.recieveAction()))
             alert("html5 websocket not supported by your browser, download a later version");
 
         $('#msg').keypress(function(event){
             if(event.keyCode == 13){
-                var msg = $(this).val()
+                this_editor.shareAction({msg: $(this).val()});
                 $(this).val('');
-                $.ajax({
-                    url: editor_config.url_chat,
-                    data : {msg: msg},
-                });
             }
         });
     }

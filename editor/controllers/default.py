@@ -13,6 +13,9 @@ def index():
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.geom.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/js', 'colorpicker.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/css', 'colorpicker.css'))
+    if not session.myid:
+        from gluon.utils import web2py_uuid
+        session.myid = web2py_uuid()
     if request.args(0):
         session.uuid = request.args(0)
     else:
