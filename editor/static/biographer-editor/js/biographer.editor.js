@@ -1820,6 +1820,24 @@ Editor.prototype = {
         //-------------------------------------------------
         //slide toggle right menu
         $('.rm_peek').click(function(){this_editor.rightMenue_show(); });
+        //-------------------------------------------------
+        // websocket chat
+        var callback=function(e){
+            $('.flash').html(e.data).fadeIn().delay(500).fadeOut();
+        };
+        if(!web2py_websocket('ws://127.0.0.1:8888/realtime/mygroup',callback))
+            alert("html5 websocket not supported by your browser, try Google Chrome");
+
+        $('#msg').keypress(function(event){
+            if(event.keyCode == 13){
+                var msg = $(this).val()
+                $(this).val('');
+                $.ajax({
+                    url: editor_config.url_chat,
+                    data : {msg: msg},
+                });
+            }
+        });
     }
 };
 

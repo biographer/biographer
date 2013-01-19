@@ -405,11 +405,14 @@
 		</table>
 	</div>
 </div>
-<!-- directly include the visualization file here so the js code can have direct access to it -->
+<div id="chat">
+	<input type="text" id="msg">
+</div>
+<!-- directly include the visualization css file here so the js code can have direct access to it -->
 <style type="text/css" id="visualization-svg">
 	{{include 'default/visualization-svg.css'}}
 </style>
-<!-- --------------------------------------------------------------------------------- -->
+<!-- -------------------------------------------------------------------------------- -->
 {{if session.debug:}}
 <script type="text/javascript">
     {{include 'default/biographer-ui.js'}}
@@ -420,12 +423,13 @@
 <script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'biographer.editor.js')}}'></script>
 <script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'interact.js')}}'></script>
 <script type="text/javascript" src='{{=URL(request.application, 'static/biographer-editor/js', 'libSBGN.js')}}'></script>
-<!-- --------------------------------------------------------------------------------- -->
+<!-- -------------------------------------------------------------------------------- -->
 <script type="text/javascript">
 editor_config = {
 	url_undo_push : '{{=URL("undo_push")}}',
 	url_undo : '{{=URL("undo")}}',
 	url_redo : '{{=URL("redo")}}',
+	url_chat : '{{=URL("chat")}}',
 	url_layout : 'http://cheetah.biologie.hu-berlin.de/layouter',
 	url_import : '{{=URL("import_graph")}}',
  	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {

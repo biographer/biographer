@@ -279,6 +279,9 @@ def sbml_test():
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     return dict(table=TAG[''](TABLE(items)))
 
+def chat():
+    from gluon.contrib.websocket_messaging import websocket_send
+    websocket_send('http://127.0.0.1:8888',request.vars.msg,'mykey','mygroup')
 
 def user():
     """
