@@ -435,6 +435,7 @@ editor_config = {
 	url_chat : '{{=URL("chat")}}',
 	websocket_group : '{{=session.uuid}}',
 	websocket_myid : '{{=session.myid}}',
+	websocket_server: '{{=app_config.get("websocket","server")}}',
 	url_layout : 'http://cheetah.biologie.hu-berlin.de/layouter',
 	url_import : '{{=URL("import_graph")}}',
  	graphData: {{if session.editor_autosave:}} {{=XML(session.editor_autosave)}} {{else:}} {

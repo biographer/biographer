@@ -1903,7 +1903,7 @@ Editor.prototype = {
         //-------------------------------------------------
         // websocket chat
 
-        if(!web2py_websocket('ws://127.0.0.1:8888/realtime/'+editor_config.websocket_group, this_editor.recieveAction()))
+        if(!web2py_websocket('ws://'+editor_config.websocket_server+'/realtime/'+editor_config.websocket_group, this_editor.recieveAction()))
             alert("html5 websocket not supported by your browser, download a later version");
 
         $('#msg').keypress(function(event){

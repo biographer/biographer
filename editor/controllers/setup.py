@@ -76,3 +76,16 @@ def setup_hg():
         app_config.set('hg','path', form.vars.hg_path)
         response.flash = 'Mercurial path saved'
     return form
+
+def setup_websocket():
+    if not auth.has_membership(role = 'admin'):
+        return 'You need to login as admin to configure the websocket parameters'
+    form = form_factory(
+            Field('ws_server', label="Websocket Server Address (no protocol)", default = app_config.get('websocket','server')),
+            Field('ws_pass', label="Websocket Sever Password", default = app_config.get('websocket','password')),
+            )
+    if form.accepts(request.vars, keepvalues = True):
+        app_config.set('websocket','server', form.vars.ws_server)
+        app_config.set('websocket','password', form.vars.ws_pass)
+        response.flash = 'websocket parameters saved'
+    return form

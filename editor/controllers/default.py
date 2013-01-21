@@ -293,7 +293,7 @@ def create_session():
 def chat():
     if session.uuid:
         from gluon.contrib.websocket_messaging import websocket_send
-        websocket_send('http://127.0.0.1:8888',request.vars.msg,'mykey',session.uuid)
+        websocket_send('http://'+app_config.get('websocket','server'),request.vars.msg,app_config.get('websocket','password'),session.uuid)
 
 def user():
     """
