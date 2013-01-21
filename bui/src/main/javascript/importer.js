@@ -18,141 +18,8 @@
             node = graph.add(nodeType.klass, nodeJSON.id);
         }
 
-        if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'label'])) {
-            if (node.label !== undefined) {
-                node.label(nodeJSON.data.label);
-            }
-        }
-        if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'orientation'])) {
-            if(node.identifier()=='bui.Tag') node.orientation(nodeJSON.data.orientation);
-        }
-
-        nodeJSON.data = nodeJSON.data || {};
-
-        if (bui.util.propertySetAndNotNull(nodeJSON,
-                ['data', 'x'], ['data', 'y'])) {
-            nodeJSON.data.x = bui.util.toNumber(nodeJSON.data.x);
-            nodeJSON.data.y = bui.util.toNumber(nodeJSON.data.y);
-
-            node.position(nodeJSON.data.x, nodeJSON.data.y);
-        }
-
-        var standardNodeSize = bui.settings.style.importer.standardNodeSize;
-        var size = {
-            width : standardNodeSize.width,
-            height : standardNodeSize.height
-        };
-
-        if (bui.util.propertySetAndNotNull(nodeJSON,
-                ['data', 'width'], ['data', 'height'])) {
-            size.width = nodeJSON.data.width;
-            size.height = nodeJSON.data.height;
-        } else if (node.sizeBasedOnLabel !== undefined && (!(node._ignLabelSize))) {
-            size = node.sizeBasedOnLabel();
-
-            // some padding because of various shapes
-            var padding = bui.settings.style.importer.sizeBasedOnLabelPassing;
-            size.width += padding.horizontal;
-            size.height += padding.vertical;
-        }
-
-        if (bui.util.propertySetAndNotNull(nodeJSON,
-                ['data', 'cssClasses'])) {
-            if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'cssClasses'])) {
-              // added loop to be able to add more than one class
-                if (nodeJSON.data.cssClasses instanceof Array) {
-                    for (var i=0; i < nodeJSON.data.cssClasses.length; i++) {
-                        node.addClass(nodeJSON.data.cssClasses[i]);
-                    }
-                } else {
-                    log ('Converted cssClasses ' + nodeJSON.data.cssClasses +  ' to String');
-                    node.addClass(nodeJSON.data.cssClasses);
-                }
-            }
-        }
-
-        if(('clonemarker' in nodeJSON.data)&&(nodeJSON.data.clonemarker === true)){
-            node.clonemarker(true);
-        }
-        if((nodeJSON.sbo >= 418) && (nodeJSON.sbo <= 421) ){
-            node.multimer(true);
-        }
-        if(nodeJSON.data.multimer === true) node.multimer(true);
-
-        if (bui.util.propertySetAndNotNull(nodeJSON, ['data','color'])){
-          if (Object.prototype.toString.call(nodeJSON.data.color).slice(8,-1) == "String"){
-            node.color({background: nodeJSON.data.color});
-          } else {
-          
-            node.color(nodeJSON.data.color);
-          }
-          
-        }
-        node.size(size.width, size.height)
-                .visible(true);
-
-        nodeJSON.data.width = size.width;
-        nodeJSON.data.height = size.height;
+        node.fromJSON(nodeJSON);
         
-        if (nodeJSON.data.unitofinformation !== undefined) {
-            for (var i = 0; i < nodeJSON.data.unitofinformation.length; i++) {
-                uoi = graph.add(bui.UnitOfInformation)
-                        .label(nodeJSON.data.unitofinformation[i])
-                        .parent(node)
-                        .visible(true)
-                        .json(nodeJSON.data.unitofinformation[i]);//FIXME needs to be added to json, no clue what this does
-            }
-        }
-        // generic state variables
-        if (bui.util.propertySetAndNotNull(nodeJSON,
-                ['data', 'statevariable'])) {
-            var variables = nodeJSON.data.statevariable;
-            var state_class_obj = bui.StateVariable;
-            if(bui.settings.SBGNlang == 'ER'){
-                state_class_obj = bui.StateVariableER;
-            }
-            for (var i = 0; i < variables.length; i++) {
-                statevar = graph.add(state_class_obj)
-                        .label(variables[i])
-                        .parent(node)
-                        .visible(true)
-                        .json(variables[i]);//FIXME needs to be added to json, no clue what this does
-                if(bui.settings.SBGNlang == 'ER'){
-                    statevar.size(60,14)
-                    if(variables[i] == 'existence'){
-                        statevar.existence(true).size(15,15);
-                    }
-                    if(variables[i] == 'location'){
-                        statevar.label('').addClass('location').size(14,14);
-                    }
-                }
-            }
-        }
-        if (bui.util.propertySetAndNotNull(nodeJSON,
-                ['data', 'modification'])) {
-            //alert ('xyrock');
-            var modifications = nodeJSON.data.modification;
-
-            for (var i = 0; i < modifications.length; i++) {
-                var modification = modifications[i];
-                //log('adding modification');
-
-                var label, mapping = retrieveFrom(modificationMapping,
-                        modification[0]);
-
-                label = mapping.shortlabel;
-
-                if (bui.settings.style.importer.modificationLabel === 'longlabel') {
-                    label += '@' + modification[1];
-                }
-
-                graph.add(bui.StateVariable)
-                        .label(label)
-                        .parent(node)
-                        .visible(true)
-                        .json(modification);
-            }
-        }
 
         return node;
     };
@@ -590,7 +457,7 @@
         }
 
         var nodesJSON = data.nodes, i;
-	var listener_set=false;
+        var listener_set=false;
         for (i = 0; i < nodesJSON.length; i++) {
             var nodeJSON = nodesJSON[i],
                     node = optimizedDrawables[nodeJSON.id];
@@ -644,6 +511,7 @@
                 continue;
             }
 
+            //FIXME these methods dont exist anymore !!!!!!!
             edge.setSplineHandlePositions(edgeJSON.data.handles, duration);
             edge.setSplinePoints(edgeJSON.data.points, duration);
         }
