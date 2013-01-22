@@ -1132,6 +1132,7 @@
             // generic state variables
             if (bui.util.propertySetAndNotNull(nodeJSON,
                     ['data', 'statevariable'])) {
+                //TODO try to delete old statevariables
                 var variables = nodeJSON.data.statevariable;
                 var state_class_obj = bui.StateVariable;
                 if(bui.settings.SBGNlang == 'ER'){

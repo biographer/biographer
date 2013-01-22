@@ -17,6 +17,8 @@ function Editor(){
     this.loading_img = '<img src="'+$('script[src*="js/biographer.editor.js"]').attr('src').replace('js/biographer.editor.js', 'img/loading.gif')+'" alt="loading" >';
     this.active = false;//delayed undo push active?
     this.delayed;//needs to be initialized for saving of delay action
+    this.share_active = false;//delayed undo push active?
+    this.share_delayed;//needs to be initialized for saving of delay action
     this.ctrl_delayed;//same as above
     this.shifted = false;//is shift key currently pressed down
     this.colorcombos = [
@@ -56,7 +58,6 @@ Editor.prototype = {
     //-------------------------------------------
     trigger_delayed_undoPush: function(action, delta){
         clearTimeout(this.delayed);
-        if(delta === undefined) delta=2500;
         var this_editor = this;
         this.delayed = setTimeout(function() {
             if(this_editor.active === false){
@@ -64,7 +65,7 @@ Editor.prototype = {
                 this_editor.undoPush(action);
                 this_editor.active = false;
             }
-        }, delta);
+        }, 2500);
     },
     //-------------------------------------------
     // replace graph with new graph defined by json object
@@ -456,6 +457,7 @@ Editor.prototype = {
             }
             if (this_editor.cur_mode == 'Edge'){
                 if (this_editor.selected_nodes.length>=2){
+                    this_editor.shareAction({create_edge: {s: this_editor.selected_nodes[0], t:this_editor.selected_nodes[1]}});
                     this_editor.createEdge();
                 }
             } /*else if (this_editor.cur_mode == 'focus'){//TODO focus is not part of the editor anymore since I do not consider this as a useful feature
@@ -774,7 +776,15 @@ Editor.prototype = {
             }
             
             this.trigger_delayed_undoPush('changed node attributes');
-            this.shareAction({edit_node: 'selected'});
+            clearTimeout(this.share_delayed);
+            var this_editor = this;
+            this.share_delayed = setTimeout(function() {
+                if(this_editor.share_active === false){
+                    this_editor.share_active = true;
+                    this_editor.shareAction({edit_node: 'selected'});//FIXME must trigger delayed 50 - 100 ms max
+                    this_editor.share_active = false;
+                }
+            }, 50);
         }
     },
     //-------------------------------------------
@@ -1122,6 +1132,8 @@ Editor.prototype = {
             msg = action;//just submit this
         }else if ('create_node' in action){
             msg = action;
+        }else if ('create_edge' in action){
+            msg = action;
         }else if('redraw' in action){
             msg = action;
         }else if('msg' in action){
@@ -1140,12 +1152,18 @@ Editor.prototype = {
             }
         }else if('edit_node' in action) {
             var items = [];
-            for (var i = 0; i < this.selected_nodes.length; i++) {
+            for (var i = 0; i < this.selected_nodes.length; ++i) {
                 var d = this.selected_nodes[i], j = d.toJSON();
                 items.push({id: d.id(), json:j });
             }
             msg = {edit_node: items};
+        }else if('clone' in action || 'combine' in action){
+            var items = [];
+            for (var i = 0; i < this.selected_nodes.length; ++i) items.push(this.selected_nodes[i].id());
+            if('clone' in action) msg = {clone: items};
+            else msg = {combine: items};
         }
+
         //---------------------------
         msg.myid = editor_config.websocket_myid;//add id of this client to filter out own messages
         $.ajax({
@@ -1170,7 +1188,7 @@ Editor.prototype = {
                             this_editor.redrawGraph({nodes:[],edges:[]});
                         }else if ('redraw' in data){
                             this_editor.redrawGraph(JSON.parse(data.redraw));
-                        }else if ('create_node' in data){
+                        }else if ('create_node' in data){//TODO this does not work since the node ids on each side are not in sync
                             this_editor.createNode(data.create_node.type, data.create_node.pos);
                         }else if ('del' in data){
                             var all_drawables = this_editor.graph.drawables();
@@ -1181,18 +1199,47 @@ Editor.prototype = {
                                 var co = data.move[i];
                                 all_drawables[co.id].moveAbsolute(co.x, co.y, 200)
                             }
-                        }else if ('edit_node' in data){
+                        }else if ('edit_node' in data){//TODO the fromJSON does not yet delete subnodes
                             var all_drawables = this_editor.graph.drawables();
                             for(var i=0; i<data.edit_node.length; ++i){
                                 var co = data.edit_node[i];
                                 all_drawables[co.id].fromJSON(co.json);
                             }
+                        }else if ('clone' in data){//TODO this does not work since the node ids on each side are not in sync
+                            var all_drawables = this_editor.graph.drawables();
+                            var drawables = []
+                            for(var i=0; i<data.clone.length; ++i) drawables.push(all_drawables[data.clone[i]]);
+                            this_editor.clone(drawables);
+                        }else if ('combine' in data){
+                            var all_drawables = this_editor.graph.drawables();
+                            var drawables = []
+                            for(var i=0; i<data.combine.length; ++i) drawables.push(all_drawables[data.combine[i]]);
+                            var new_node = bui.util.combine(this_editor.graph, drawables);
+                            this_editor.bindDrawable(new_node); 
+                        }else if ('create_edge' in data){
+                            //TODO
+                        }else if ('edit_edge' in data){
+                            //TODO
+                        }else if ('resize' in data){
+                            //TODO
                         }
                         
                     }
                 }
             }
         }
+    },
+    clone: function(drawables){
+        if (drawables === undefined){
+            drawables = this.selected_nodes;
+        }
+        var new_nodes;
+        if(drawables === 0) new_nodes = bui.util.clone(this.graph, 5);
+        else new_nodes = bui.util.clone(this.graph, 2, drawables);
+        for (var i = new_nodes.length - 1; i >= 0; i--) {
+            this.bindDrawable(new_nodes[i]);
+        }
+        return new_nodes.length;
     },
     init: function(){
         var this_editor = this;
@@ -1340,31 +1387,23 @@ Editor.prototype = {
         });
         //=========================
         $('#clone').click(function(){
-            orig_html = $('#clone').html();
-            $('#clone').html(this_editor.loading_img);
-            var new_nodes;
-            if(this_editor.selected_nodes.length === 0) new_nodes = bui.util.clone(this_editor.graph, 5);
-            else new_nodes = bui.util.clone(this_editor.graph, 2, this_editor.selected_nodes);
-            for (var i = new_nodes.length - 1; i >= 0; i--) {
-                this_editor.bindDrawable(new_nodes[i]);
-            }
-            $('#clone').html(orig_html);
-            if (new_nodes.length>0){
-                this_editor.undoPush('Cloned nodes, got '+new_nodes.length+' new nodes');
-                this_editor.shareAction({exist: 'all'});
+            this_editor.shareAction({clone: ''});
+            var n = this_editor.clone();
+            if (n>0){
+                this_editor.undoPush('Cloned nodes, got '+n+' new nodes');
             }else{
                 $('.flash').html('Could not clone any nodes').fadeIn().delay(1500).fadeOut();
-            } 
+            }
         });
         //=========================
         $('#combine').click(function(){
             if(this_editor.selected_nodes.length !== 0) {
+                this_editor.shareAction({combine: ''});
                 var new_node = bui.util.combine(this_editor.graph, this_editor.selected_nodes);
                 this_editor.bindDrawable(new_node);
                 this_editor.selectAll(false);
                 this_editor.select(new_node);
                 this_editor.undoPush('Combined Nodes');
-                this_editor.shareAction({exist: 'all'});
             } else $('.flash').html('Must select nodes to combine').fadeIn().delay(1500).fadeOut();
         });
         //=========================
