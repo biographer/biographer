@@ -7,12 +7,14 @@ status_fkt = lambda message,close=False: sys.stderr.write(message)
 
 def download_status_fkt(size_known,num_done,start=False,stop=False,url=''):
     ''' internal default function if no external UI functions were set (see L{setUIFunctions})'''
-    if size_known: 
+    import sys
+    if size_known:
         percent = int(num_done*100/size_known)
     else:
         percent = int(num_done)
-    if start: sys.stderr.write("Loading %s\n"%url)
-    elif stop: 
+    if start:
+        sys.stderr.write("Loading %s\n"%url)
+    elif stop:
         sys.stderr.write("\nLoading Finished\n")
         return
     if not size_known: sys.stderr.write("%s B\r"%percent)
@@ -106,6 +108,8 @@ def version():
     '''
     show the current version of this application
     '''
+    if not os.path.exists(os.path.join(request.folder, 'VERSION')):
+        open(os.path.join(request.folder, 'VERSION'), 'w').write('0.0.1')
     return open(os.path.join(request.folder, 'VERSION'), 'r').read()
 
 def check_version():
@@ -203,7 +207,7 @@ def update():
     update this app from a zip from the web
     '''
     if os.path.exists(RELEASE_FOLDER):
-        return 'This is the sever, should not update!'
+        return 'This is the server, should not update!'
     if not session.app_is_old_version:
         return 'Cannot find newer version.'
     filename = os.path.join(request.folder,'private','tmp.w2p')
@@ -227,20 +231,21 @@ def update():
     os.unlink(filename)
     #-------------------------------------------
     #copy site-packages 
-    w2p_sitep_path = os.path.join(request.env.web2py_path, 'site-packages')
-    app_sitep_path = os.path.join(request.folder, 'site-packages')
-    if os.path.exists(app_sitep_path):
-        for p in os.listdir(app_sitep_path):
-            w2p_p = os.path.join(w2p_sitep_path, p)
-            app_p = os.path.join(app_sitep_path, p)
-            if os.path.isdir(app_p): #dir 
-                if os.path.exists(w2p_p):
-                    shutil.rmtree(w2p_p)
-                shutil.copytree(app_p, w2p_p)
-            else: #file
-                if os.path.exists(w2p_p):
-                    os.unlink(w2p_p)
-                shutil.copy(app_p, w2p_p)
+    if False:
+        w2p_sitep_path = os.path.join(request.env.web2py_path, 'site-packages')
+        app_sitep_path = os.path.join(request.folder, 'site-packages')
+        if os.path.exists(app_sitep_path):
+            for p in os.listdir(app_sitep_path):
+                w2p_p = os.path.join(w2p_sitep_path, p)
+                app_p = os.path.join(app_sitep_path, p)
+                if os.path.isdir(app_p): #dir 
+                    if os.path.exists(w2p_p):
+                        shutil.rmtree(w2p_p)
+                    shutil.copytree(app_p, w2p_p)
+                else: #file
+                    if os.path.exists(w2p_p):
+                        os.unlink(w2p_p)
+                    shutil.copy(app_p, w2p_p)
     #-------------------------------------------
     session.app_current_version = None
     response.headers['web2py-component-flash'] = 'Updated %s. Some changes may require a restart of the server!'%APPLICATION_NAME
@@ -251,7 +256,7 @@ def create(sub_release_folder, release_type, release_web2py_base, update_web2py 
     create a full release zip package
     '''
     #if there are no previous releases, set up everything needed
-
+    import os
     if not os.path.exists(os.path.join(sub_release_folder, 'web2py')) or update_web2py:
         result = prepare_web2py(release_type)
         if not result == True:
@@ -262,8 +267,8 @@ def create(sub_release_folder, release_type, release_web2py_base, update_web2py 
     if os.path.exists(new_app_dir):
         shutil.rmtree(new_app_dir)
     os.mkdir(new_app_dir)
-    if os.path.exists(os.path.join(release_web2py_base, 'site-packages')):
-        shutil.rmtree(os.path.join(release_web2py_base, 'site-packages'))
+    #if os.path.exists(os.path.join(release_web2py_base, 'site-packages')):
+    #    shutil.rmtree(os.path.join(release_web2py_base, 'site-packages'))
     #clean up web2py examples app
     if os.path.exists(os.path.join(release_web2py_base, 'applications', 'examples')):
         shutil.rmtree(os.path.join(release_web2py_base, 'applications', 'examples'))
@@ -291,10 +296,13 @@ python web2py/web2py.py -p 8000 -a test -R ./application/init/open_browser.py'''
     elif release_type == 'win':
         shutil.copy(os.path.join(request.folder,'static', 'plugin_release', 'start.bat'), os.path.join(sub_release_folder, '%s.bat'%APPLICATION_NAME))
     elif release_type == 'osx':
-        pass#no clue what to do for osx to make it look nice
-    #move site-packages 
-    if os.path.exists(os.path.join(request.folder, 'site-packages')):
-        shutil.copytree(os.path.join(request.folder, 'site-packages'), os.path.join(release_web2py_base, 'site-packages'))
+        import stat
+        os.chmod(os.path.join(sub_release_folder, 'web2py', 'web2py.app', 'Contents', 'MacOS',   'web2py'), 0755)
+        os.chmod(os.path.join(sub_release_folder, 'web2py', 'web2py.app', 'Contents', 'MacOS',   'python'), 0755)
+        pass  # no clue what to do for osx to make it look nice
+    # move site-packages 
+    #if os.path.exists(os.path.join(request.folder, 'site-packages')):
+    #    shutil.copytree(os.path.join(request.folder, 'site-packages'), os.path.join(release_web2py_base, 'site-packages'))
     #move and modify files for osx release
     #if release_type == 'osx':
     #    shutil.move()
@@ -448,6 +456,8 @@ def full_release():
 
 @auth.requires_membership('admin')
 def edit_version():
+    if not os.path.exists(os.path.join(request.folder, 'VERSION')):
+        open(os.path.join(request.folder, 'VERSION'), 'w').write('0.0.1')
     form = form_factory(Field('version', default = version()), submit_button="Change")
     if form.accepts(request.vars, session, keepvalues = True):
         open(os.path.join(request.folder, 'VERSION'), 'w').write(form.vars.version)
