@@ -270,9 +270,11 @@ def create(sub_release_folder, release_type, release_web2py_base, update_web2py 
     #if os.path.exists(os.path.join(release_web2py_base, 'site-packages')):
     #    shutil.rmtree(os.path.join(release_web2py_base, 'site-packages'))
     #clean up web2py examples app
+    print 'removing exmaple app' 
     if os.path.exists(os.path.join(release_web2py_base, 'applications', 'examples')):
         shutil.rmtree(os.path.join(release_web2py_base, 'applications', 'examples'))
     #copy files and folders of current app into release applications/init
+    print 'copying app to web2py'
     for rdir in 'controllers cron languages models modules static views'.split():
         try:
             shutil.rmtree(os.path.join(new_app_dir, rdir))
@@ -287,6 +289,7 @@ def create(sub_release_folder, release_type, release_web2py_base, update_web2py 
             os.mkdir(os.path.join(new_app_dir, rdir))
         except:
             pass
+    print 'final preparations: startfile, executable flags, ...'
     if release_type == 'src':
         open(os.path.join(sub_release_folder, '%s'%APPLICATION_NAME), 'w').write('''#!/usr/bin/env bash
 python web2py/applications/init/static/plugin_release/open_browser.py&
@@ -299,17 +302,12 @@ python web2py/web2py.py -p 8000 -a test -R ./application/init/open_browser.py'''
         import stat
         os.chmod(os.path.join(sub_release_folder, 'web2py', 'web2py.app', 'Contents', 'MacOS',   'web2py'), 0755)
         os.chmod(os.path.join(sub_release_folder, 'web2py', 'web2py.app', 'Contents', 'MacOS',   'python'), 0755)
-        pass  # no clue what to do for osx to make it look nice
-    # move site-packages 
-    #if os.path.exists(os.path.join(request.folder, 'site-packages')):
-    #    shutil.copytree(os.path.join(request.folder, 'site-packages'), os.path.join(release_web2py_base, 'site-packages'))
-    #move and modify files for osx release
-    #if release_type == 'osx':
-    #    shutil.move()
-    #zipit(sub_release_folder, os.path.join(request.folder, 'static','%s_%s.zip'%(APPLICATION_NAME, release_type)))
-    #print 'creating tar.gz'
+        os.rename(os.path.join(sub_release_folder, 'web2py', 'web2py.app'),os.path.join(sub_release_folder, 'web2py', '%s.app'%APPLICATION_NAME))
+        targzit(os.path.join(sub_release_folder, 'web2py'), os.path.join(request.folder, 'static','%s_%s.tar.gz'%(APPLICATION_NAME, release_type)))
+        os.rename(os.path.join(sub_release_folder, 'web2py', '%s.app'%APPLICATION_NAME), os.path.join(sub_release_folder, 'web2py', 'web2py.app'))
+        return True
+    print 'creating compressed release'
     targzit(sub_release_folder, os.path.join(request.folder, 'static','%s_%s.tar.gz'%(APPLICATION_NAME, release_type)))
-    #TODO add start script
     return True
 
 def check_web2py_version(myversion, version_URL):
@@ -416,6 +414,7 @@ def full_release():
     '''
     create a full release package for linux, windows and mac and put it in the configured location
     '''
+    import os
     release_type = request.vars.type
     if not release_type in 'win src osx'.split():
         raise HTTP(500, 'unknown release type')
