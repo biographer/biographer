@@ -139,7 +139,7 @@
 <div class="selection_rect"></div>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- --------------------------------------------------------------------------------- -->
-<form action="{{=URL('export')}}" id='export_form' style='display: none;' method="POST"></form>
+<form action="{{=URL('export')}}" id='export_form' style='display: none;' method="post"></form>
 <!-- --------------------------------------------------------------------------------- -->
 <!-- -------------------------------------------------------------------------------- -->
 <div id="export_file_modal_input" class="modal_input">
@@ -147,14 +147,12 @@
 
 	<div>
 		<div id="export_json"> 
-			<div>export current graph as jSBGN (JSON)</div>
-			<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_json.png')}}"/> 
+			<input type="button" value="export current graph as jSBGN (JSON)"/>
 			&nbsp;
 		</div>
 		{{if not request.vars.html5only:}}
 		<div id="export_svg"> 
-			<div>export current graph as SVG</div>
-			<img src="{{=URL(request.application, 'static/biographer-editor/img', 'export_svg.png')}}"/> 
+			<input type="button" value="export current graph as SVG"/>
 			&nbsp;
 		</div>
 		{{pass}}
@@ -162,11 +160,11 @@
 	<div>
 		<table>
 			<tr>
-				<th>Ohter Formats</th>
+				<th>Other Formats</th>
 				<td>
 					<select id="export_format_select">
 						<option value="">... choose</option>
-						{{for frmt in 'png pdf tiff'.split():}} <option>{{=frmt}}</option> {{pass}}
+						{{for frmt in 'png jpeg pdf tiff'.split():}} <option>{{=frmt}}</option> {{pass}}
 					</select>
 				</td>
 			</tr>

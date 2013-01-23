@@ -158,13 +158,7 @@ def redo():
 
 def export():
     file_type = False
-    def fix_svg(svg_data):
-        import re
-        import os
-        stylesheet_contents = open(os.path.join(request.folder, 'static' , 'biographer-editor', 'css', 'visualization-svg.css'), 'r').read()
-        out = re.sub('@import url[^<]*', stylesheet_contents, svg_data)
-        return '<?xml version="1.0" encoding="UTF-8"?>\n%s'%out
-    if request.vars.format in 'png jpg pdf tiff'.split():
+    if request.vars.format in 'png jpeg pdf tiff'.split():
         file_type = request.vars.format
         java = app_config.get('java', 'path')
         import os
@@ -172,7 +166,7 @@ def export():
         from shlex import split
         jar = os.path.join(request.folder, "static", "svg-export-0.2.jar")
         applet = java + " -jar " + jar + " -si -so -f " + request.vars.format
-        result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(fix_svg(request.vars.svg_data))      # call Ben's Java Exporter Applet
+        result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(request.vars.svg_data)      # call Ben's Java Exporter Applet
         out = result[0]  # stdout
         if result[1]:
             raise Exception(result[1])

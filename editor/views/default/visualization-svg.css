@@ -98,7 +98,7 @@ line {
     opacity: 0.5;
 }
 .clone path{
-	background-image: url('../images/editor/black_pixle.gif');
+	background-image: url("../images/editor/black_pixle.gif");
 	background-repeat:repeat;
 	background-attachment:fixed;
 	background-position:0% 70%;

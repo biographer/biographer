@@ -1624,7 +1624,7 @@ Editor.prototype = {
         //===
         $("#export_format_select").change(function(){
             if($('#export_format_select').val() != '... choose'){
-                $('#export_form').html('<input type="hidden" name="format" value=\''+$('#export_format_select').val()+'\' /><input type="hidden" name="svg_data" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
+                $('#export_form').html('<input type="hidden" name="format" value=\''+$('#export_format_select').val()+'\' /><input type="hidden" name="svg_data" value=\''+$('#canvas svg').parent().html().replace(/@import url[^<]*/, $('#visualization-svg').html())+'\' />').submit();
         }
         });
         //=========================
