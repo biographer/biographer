@@ -359,7 +359,7 @@ def compress(path, archive, base_path, archive_type = 'zip'):
             if archive_type == 'zip':
                 archive.write(p, './'+p[len(base_path):]) # Write the file to the zipfile
             elif archive_type == 'tar':
-                archive.add(p, './'+p[len(base_path):], False, glob_ignore)
+                archive.add(p, p[len(base_path):], False, glob_ignore)
     return
 
 def targzit(path, archname):
@@ -369,7 +369,7 @@ def targzit(path, archname):
     if os.path.isdir(path):
         compress(path, archive, path, 'tar')
     else:
-        archive.add(p, './'+p[len(base_path):])
+        archive.add(p, p[len(base_path):])
     archive.close()
 
     tgzfp = gzopen(archname, 'wb')
