@@ -1130,6 +1130,20 @@ Editor.prototype = {
                     }
             });
         }
+        if(editor_config.in_url !== undefined){
+            $.get(editor_config.url_render,{url: editor_config.in_url},function(data){
+
+                var doc = sb.io.read(data);
+                if((doc === null)||(doc === undefined)){
+                    $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                }else{
+                    this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                    this_editor.setLanguage();
+                    editor.graph.fitToPage();
+                    this_editor.undoPush('loaded url '+editor_config.in_url);
+                }
+            });
+        }
         //=========================
         //init menues
         this.showUndoRedo();

@@ -38,6 +38,8 @@
 <!-- --------------------------------------------------------------------------------- -->
 <script type="text/javascript">
 editor_config = {
+    in_url : '{{=XML(in_url)}}',
+    url_render : '{{=URL("render_help")}}',
     url_undo_push : '{{=URL("undo_push")}}',
     url_undo : '{{=URL("undo")}}',
     url_redo : '{{=URL("redo")}}',
@@ -60,7 +62,6 @@ bui.ready(function() {
     editor.enableSelection();
     editor_config.history_undo.push({action: 'initialized', graph: JSON.stringify(editor.graph.toJSON())})
     editor.setMode('move');
-    editor.graph.fitToPage();
     $('body').hover(function(){$('#biog').fadeIn(); }, function(){$('#biog').fadeOut(); } );
 });
 </script>

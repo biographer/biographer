@@ -1,18 +1,33 @@
 {{extend 'layout.html'}}
 <div class="container">
-<h1>Using Biographer</h1>
-<h2>Creating SBGN visualisations</h2>
+<h1>Contents</h1>
+<ul>
+    <li><a href=#0>Using Biographer</a></li>
+    <ul>
+        <li><a href=#1>Creating SBGN visualisations</a></li>
+        <li><a href=#2>Layout</a></li>
+        <li><a href=#3>Navigation</a></li>
+        <li><a href=#4>Exporting</a></li>
+        <li><a href=#5>Keyboard Shortcuts</a></li>        
+    </ul>
+    <li><a href=#6>System Requirements</a></li>
+    <li><a href=#7>Support</a></li>
+    <li><a href=#8>Installation</a></li>
+</ul>
+<a name=0><h1>Using Biographer</h1></a>
+
+<a name=1><h2>Creating SBGN visualisations</h2></a>
 <!-- ---------------------------------------------------------------- -->
 <h3>Manually</h3>
 To create a SBGN visualization from scratch first select the SBGN language you want to use in the menu on the left. The options are 
 <ul>
-    <li>PD - Process Description</li>
-    <li>ER - Entity Relation</li>
-    <li>AF - Activity Flow</li>
+    <li><div class="language_current" id="pd">PD</div> - Process Description</li>
+    <li><div class="language_current" id="er">ER</div> - Entity Relation</li>
+    <li><div class="language_current" id="af">AF</div> - Activity Flow</li>
 </ul>
 If you are on a touch device click on the language to change it.
 <h4>Creating Nodes</h4>
-Click on one of the different node types in the left menu and click onto the canvas to create the node at that position. A modal window will appear where you can enter the node label and change other node properties. 
+Click on one of the different node types in the left menu and click onto the canvas to create the node at that position. A window will appear where you can enter the node label and change other node properties.
 <h4>Creating Edges</h4>
 You can draw Edges by using the edge tool <div id="Edge" class="tool"></div>. Click on the tool and then click on two nodes you want to connect with an edge. Once two nodes are clicked you can choose the edge type in the right menu. <br>
 To add point on the edge use <div class="keyboard">ctrl + click</div> on a unselected edge. You can move to points on an edge to change the path of the edge.<br>
@@ -28,69 +43,67 @@ Biographer can import SBGN graphs (with and without layout) from different sourc
         Is an XML based format. Always contains layout information, though they may be set to arbitrary values that do not reflect a proper layout.
     </li>
     <li><b>SBML</b><br>
-        Only contains topological information, therefore you are required to layout the graph after importing it. The more MIRIAM annotations the document contains (especially: chEBI, PubChem, Uniprot) [as well as SBO terms for line end markers: this is TODO] the better the import will work, since glyph types (nodes) [and arc types (edges): TODO] can be detected.
+        Only contains topological information, therefore you are required to layout the graph after importing it. The more <a href="https://en.wikipedia.org/wiki/Minimum_information_required_in_the_annotation_of_models">MIRIAM</a> annotations the document contains (especially: <a href="https://www.ebi.ac.uk/chebi/">chEBI</a>, <a href="https://pubchem.ncbi.nlm.nih.gov/">PubChem</a>, <a href="http://www.uniprot.org/">Uniprot</a>) the better the import will work, since glyph types (nodes) can then be detected.
     </li>
 </ul>
 <!-- ---------------------------------------------------------------- -->
-<h2>Layout</h2>
+<a name=2><h2>Layout</h2></a>
 <!-- ---------------------------------------------------------------- -->
 <h3>Selecting Nodes</h3>
 You can select single nodes by clicking on them. To select multiple nodes use <div class="keyboard">shift + click</div> or choose the <div class="tool" id="cursor"></div> tool and <div class="keyboard">click + drag</div> a selection rectangle around several nodes.<br>
-Slected nodes have blue dashed border.
+Selected nodes have blue dashed border.
 <!-- ---------------------------------------------------------------- -->
 <h3>Deleting Nodes</h3>
-To delete nodes select the nodes and press <div class="keyboard">Del</div> on your keyboard <br>or use the delete tool <div class="tool" id="del"></div>
+To delete nodes, select them and press <div class="keyboard">Del</div> on your keyboard <br>or use the delete tool <div class="tool" id="del"></div>
 <!-- ---------------------------------------------------------------- -->
 <h3>Moving Nodes</h3>
-To move a single node use <div class="keyboard">click + drag</div>. To move several nodes at once fist select several nodes and then move them like single nodes.
+To move a single node use <div class="keyboard">click + drag</div>. To move several nodes at once fist select the nodes and then move them clicking on one of them.
 <!-- ---------------------------------------------------------------- -->
 <h3>Automatic Layout</h3>
-To help you laying our your SBGN graphs Biographer currenly provides tree automatic layout algorightms.
+To help you laying out your SBGN graphs, biographer currtenly provides three automatic layout algorithms.
 <ul>
     <li><div class="tool" id="layout_biographer"></div> biographer.flow <br>
         Respects compartments
     </li>
     <li><div class="tool" id="layout_grid"></div> biographer.grid <br>
         Respects compartments (but the compartments have to be layed out manually)<br>
-        If you click once only one iteration of optimization for each nodes its executed. For better results apply this layout multiple times. Once the layout is stuck in a local minmum you can manually move some nodes and apply the layout again. You will see that this greatly improves the layout. <br>
+        If you click once only one iteration of optimization for each node is executed. For better results apply this layout multiple times. Once the layout is stuck in a local minmum you can manually move some nodes and apply the layout again. You will see that this greatly improves the layout. <br>
         Holding down the <div class="keyboard">ctrl</div> key while clicking the grid layout button will only place each node on the cosest empty grid space. This can be used to quickly create great looking layouts manually.
     </li>
     <li><div class="tool" id="layout_force"></div> D3 force directed layout <br>
         Compartments are not supported <br>
-        Uses the fantastic <a href="http://d3js.org/">D3 library</a>
+        Uses the fantastic <a href="http://d3js.org/">D3 library for a force based layout</a>
     </li>
 </ul>
 <!-- ---------------------------------------------------------------- -->
 <h3>Align and Distribute</h3>
 The Align functions always align to the <b>first selected node</b>.
 <!-- ---------------------------------------------------------------- -->
-<h2>Undo/Redo</h2>
-<div class="tool" id="undo"></div> use this tool to undo or <div class="keyboard">ctrl + z</div> <br>
-<div class="tool" id="redo"></div> use this tool to redo or <div class="keyboard">ctrl + y</div>
-<!-- ---------------------------------------------------------------- -->
-<h2>Navigation</h2>
+
+<a name=3><h2>Navigation</h2></a>
+
 <!-- ---------------------------------------------------------------- -->
 <h3>Zooming</h3>
 Since ctrl + scroll is already taken by the default zoom function in many browsers (like FireFox and Opera) biographer uses <div class="keyboard">alt + scroll</div> for zooming. <br>
-If you are using a touch enable device you can use the <div class="keyboard">pinch gesture</div> (move two fingers towards each other or away from each other) to zoom.<br>
+If you are using a touch enabled device you can use the <div class="keyboard">pinch gesture</div> (move two fingers towards each other or away from each other) to zoom.<br>
 You can also zoom by using the zoom buttons. <br>
 <div class="tool" id="zoom_in"></div> to zoom in <br>
 <div class="tool" id="zoom_out"></div> to zoom out <br>
 <div class="tool" id="scale1"></div> to get the original size
 <!-- ---------------------------------------------------------------- -->
 <h3>Panning</h3>
-<div id="move" class="tool"></div> this tool can be used to pan the canvas - to move the whole canvas.
+<div id="move" class="tool"></div> this tool can be used to pan the canvas using <div class="keyboard">click + drag</div>.
 <!-- ---------------------------------------------------------------- -->
 <h3>Converting Document Formats</h3>
-Go <a href="{{=URL('convert')}}">here</a> to convert between jSBGN, SBGN-ML and SBML using the <a href="https://github.com/chemhack/libSBGN.js">libSBGN.js library</a>. This is still under development and might not return what you expect.
-<h2>Exporting</h2>
-<div class="tool" id="export_other"></div> or <div class="keyboard">ctrl + e</div> Exporting images is supported for several document formats:
+Try using our <a href="{{=URL('convert')}}">converter</a> to convert between jSBGN, SBGN-ML and SBML using the <a href="https://github.com/chemhack/libSBGN.js">libSBGN.js library</a>. This is still under development and might not return what you expect.
+<a name=4><h2>Exporting</h2></a>
+Clicking on <div class="tool" id="export_other"></div> or pressing <div class="keyboard">ctrl + e</div> opens the export dialog. Exporting images is supported for several document formats:
 <ul>
     <li><b>jSBGN</b><br>
-Biographers native exchange format is jSBGN (<a href="http://code.google.com/p/biographer/wiki/graph_exchange">described here</a>). This format ideal for transmission in the web and does only require topological information. 
+Biographer's native exchange format is jSBGN (<a href="http://code.google.com/p/biographer/wiki/graph_exchange">described here</a>). This format ideal for transmission in the web and does only require topological information. 
     </li>
     <li><b>SVG</b><br>
-Biographer natively renders the images in you browser in the SVG format. To export the SVG image click on
+Biographer natively renders the images in your browser in the SVG format. To export the SVG image click on "export current graph as SVG"
     </li>
     <li><b>other formats</b><br>
         With the help of an external Java based library biographer is also able to export to 
@@ -101,7 +114,7 @@ Biographer natively renders the images in you browser in the SVG format. To expo
           </ul>  
     </li>
 </ul>
-<h1>Keyboard Shortcuts</h1>
+<a name=5><h1>Keyboard Shortcuts</h1></a>
 To see the keyboard shortcuts in the editor hold down <div class="keyboard">ctrl</div> for a bit longer.
 <table class="key_shortcuts">
     <tr>
@@ -147,13 +160,14 @@ To see the keyboard shortcuts in the editor hold down <div class="keyboard">ctrl
         <td><div class="keyboard">f4</div> </td>
         <td> toggle site menu, opera: <div class="keyboard">ctrl + m</div></td>
      </tr> 
+
+<!-- ---------------------------------------------------------------- -->
 </table>
 <!-- ---------------------------------------------------------------- -->
 <h1>SBGN Support</h1>
 Biographer currently does not support the full SBGN specification. Missing are:<br>
 <b>PD</b>
 <ul>
-    <li>Submap</li>
     <li>Text on clone marker</li>
     <li>Cardinality flags on edges</li>
 </ul>
@@ -167,38 +181,53 @@ Biographer currently does not support the full SBGN specification. Missing are:<
     <li>Auxiliary Units</li>
 </ul>
 Node ports (the little ends on e.g. process nodes) have to be created manually unless you use the biographer.flow layout.
-<h1>System Requirements</h1>
+<a name=6><h1>System Requirements</h1></a>
 Biographer currently works best with Chromium (Chrome) and Opera. While FireFox also works it is slower than the browsers mentioned before. Internet Explorer and Safari are not actively tested (Please do not use these browsers with biographer).
-<h1>Problems and Support</h1>
+<a name=7><h1>Problems and Support</h1></a>
 If you want to talk to us please contact us on our <a href="https://groups.google.com/forum/?fromgroups#!forum/biographer">google group #biographer</a>.
 <br>
 For technical issues and discurssion you can follow our development group <a href="https://groups.google.com/forum/?fromgroups#!forum/biographer-dev">#biographer-dev</a>.<br>
 To directly request features or report bugs please use our <a href="http://code.google.com/p/biographer/issues/list">issue tracker at google code</a>.
-<h1>Installation From Source</h1>
-Assuming you are using Linux, do the following:<br>
-Create a local copy of the Biographer mercurial repository (<a href="http://code.google.com/p/biographer/source/checkout">http://code.google.com/p/biographer/source/checkout</a>).<br>
-The shell command should be somethign like: <br>
-<pre>$ hg clone https://code.google.com/p/biographer/</pre>
-or  <br>
-<pre>$ hg clone https://my.googlename@code.google.com/p/biographer/</pre>
-The editor uses the web2py framework (which includes a http server). Download the latest stable web2py source release from: <br>
-<a href="http://web2py.com/examples/default/download">http://web2py.com/examples/default/download</a> <br>
-Extract the archive anywhere you want to. <br>
-To start web2py comfortably create an alias in your .bashrc (or other rc file if you are using a different shell)<br>
-<pre>alias web2py='python /home/fkrause/Dev/web2py/web2py.py -p 8000 -a yourpassword'</pre>
-Now you can start web2py in the shell with:<br>
-<pre>$ web2py </pre>
-Start it and check if you see the welcome page in you browser at:<br>
-<a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> <br>
-To make biographer work you need to create a softlink to the editor in the biographer applications directory. <br>
-<pre>$ ln -s /path/to/biographer/editor /path/to/web2py/applications/biographer </pre>
-Biographer needs some additional files that we need to prepare. Go to you local copy of the Biographer mercurial repository and call make <br>
-<pre>$ make </pre>
-This will take a long time since it will compile the biographer flow layout and pull the latest biomodels release and reactome information. But don't worry it will only take long in the first run. <br>
-While make is working try to visit biographer, if you created the softlink as described above you should be able to call  <br>
-<a href="http://127.0.0.1:8000/biographer">http://127.0.0.1:8000/biographer</a> <br>
-You will be asked to create a user account, you can enter anything you want to as long as you dont want to run biographer in the www. <br>
-If you get an error ticket after the creation make is not ready yet. If you cannot wait create the missing file (you can see the full path if you click on the error ticket). <br>
+<a name=8><h1>Installation From Source</h1></a>
+Assuming you are using Linux or Mac OS, do the following:<br>
+<ol>
+    <li>
+        Create a local copy of the Biographer <b>mercurial</b> repository (<a href="http://code.google.com/p/biographer/source/checkout">http://code.google.com/p/biographer/source/checkout</a>).<br>
+        The shell command should be something like: <br>
+        <pre>$ hg clone https://code.google.com/p/biographer/</pre>
+        or  <br>
+        <pre>$ hg clone https://my.googlename@code.google.com/p/biographer/</pre>
+    </li>
+    <li>
+        The editor uses the web2py framework (which includes a http server). Download the latest stable web2py source release from: <br>
+        <a href="http://web2py.com/examples/default/download">http://web2py.com/examples/default/download</a> <br>
+        Extract the archive anywhere you want to. <br>
+        To start web2py comfortably create an alias in your .bashrc (or other rc file if you are using a different shell)<br>
+        <pre>alias web2py='python /path/to/web2py/web2py/web2py.py -p 8000 -a shortpassword'</pre></li>
+        <li>
+            Now you can start web2py in the shell with:<br>
+            <pre>$ web2py </pre>
+            Start it and check if you see the welcome page in you browser at:<br>
+            <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a> <br>
+        </li>
+        <li>
+            To make biographer work you need to create a softlink to the editor in the biographer applications directory. <br>
+            <pre>$ ln -s /path/to/biographer/editor /path/to/web2py/applications/biographer </pre>
+        </li>
+        <li>
+            Biographer needs some additional files that we need to prepare. Go to you local copy of the Biographer mercurial repository and call make <br>
+            <pre>$ cd /path/to/biographer/</pre>
+            <pre>$ make </pre>
+            This will take a long time since it will compile the biographer flow layout and pull the latest biomodels release and reactome information. But don't worry it will only take long in the first run. <br>
+            <b>!</b> If "make" returns error messages, most of these are related to the flow layout and will not affect the rest of the software. Flow layout will not work if not compiled correctly. <b>!</b>
+        </li>
+        <li>
+            After make is finished try to visit biographer. If you created the softlink as described above you should be able to call:<br>
+            <a href="http://127.0.0.1:8000/biographer">http://127.0.0.1:8000/biographer</a> <br>
+            You will be asked to create a <b>user account</b>, you can <b>enter anything</b> you want to as long as you dont want to run biographer in the www.</li>
+</ol>
+
+If you get an error ticket, probably "make" ran into problems or is not ready yet and some files are missing. You can safely create the missing files (you can see the full path if you click on the error ticket) as empty files using "touch": <br>
 <pre>$ touch /path/to/web2py/applications/biographer/views/default/biomodels_info.html </pre>
 Touch just creates an empty file. <br>
 Now you should be ready. <br>
