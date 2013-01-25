@@ -518,6 +518,14 @@
             updateEdge.call(this);
         },
         /**
+        * method to return length of edge (in segments).
+        * 
+        * @return {length} number of points+1
+        */
+        length : function(){
+          return this._privates(identifier).points.length+1;
+        },
+        /**
         * method to add a point to edge. 
         * 
         * @param {x,y} position of new point
