@@ -644,7 +644,7 @@
                 points=edgeJSON.data.points;
             }
             var handles=[];
-            if (isSpline && (!bui.util.propertySetAndNotNull(edgeJSON,['data', 'handles']) || scalar edgeJSON.data.handles.length+2!=points.length)) { 
+            if (isSpline && (!bui.util.propertySetAndNotNull(edgeJSON,['data', 'handles']) || edgeJSON.data.handles.length+2!=points.length)) { 
               log('no/wrong data.handles property for spline edge');
               isSpline=false;
             }
