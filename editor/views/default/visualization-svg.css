@@ -1,3 +1,8 @@
+
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+/* WARNING: Please do not use single quotes in this file! It will break the export as graphics extension. */
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+
 .hidden {
     visibility: hidden;
 }
@@ -97,13 +102,6 @@ line {
     stroke: blue;
     opacity: 0.5;
 }
-.clone path{
-	background-image: url('../images/editor/black_pixle.gif');
-	background-repeat:repeat;
-	background-attachment:fixed;
-	background-position:0% 70%;
-}
-
 .splineEdgeHandle.autoAlign circle {
     opacity: 0.2;
 }

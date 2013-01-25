@@ -30,6 +30,10 @@ function Editor(){
 }
 //-------------------------------------------
 Editor.prototype = {
+    /**
+     * save current state of the graph
+     * @param  {string} action save mode
+     */
     save: function(action) {
         if (action == 'manual' || action == 'auto'){
             var now = new Date();
@@ -209,7 +213,7 @@ Editor.prototype = {
         $('#canvas').unbind('mousemove');
         $('.follow').hide();
         $('.active').removeClass('active');
-        var mode2id = {'edit':'wrench', 'Edge':'edge', 'focus':'focus', 'move': 'move', 'selection': 'selection'};
+        var mode2id = {'Edge':'edge', 'focus':'focus', 'move': 'move'};
         if ((mode === undefined)||(mode == 'cursor')){
             $('#cursor').addClass('active');
             this.enableSelection();
@@ -1126,6 +1130,20 @@ Editor.prototype = {
                     }
             });
         }
+        if(editor_config.in_url !== undefined){
+            $.get(editor_config.url_render,{url: editor_config.in_url},function(data){
+
+                var doc = sb.io.read(data);
+                if((doc === null)||(doc === undefined)){
+                    $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                }else{
+                    this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                    this_editor.setLanguage();
+                    editor.graph.fitToPage();
+                    this_editor.undoPush('loaded url '+editor_config.in_url);
+                }
+            });
+        }
         //=========================
         //init menues
         this.showUndoRedo();
@@ -1624,7 +1642,7 @@ Editor.prototype = {
         //===
         $("#export_format_select").change(function(){
             if($('#export_format_select').val() != '... choose'){
-                $('#export_form').html('<input type="hidden" name="format" value=\''+$('#export_format_select').val()+'\' /><input type="hidden" name="svg_data" value=\''+$('#canvas svg').parent().html()+'\' />').submit();
+                $('#export_form').html('<input type="hidden" name="format" value=\''+$('#export_format_select').val()+'\' /><input type="hidden" name="svg_data" value=\''+$('#canvas svg').parent().html().replace(/@import url[^<]*/, $('#visualization-svg').html())+'\' />').submit();
         }
         });
         //=========================

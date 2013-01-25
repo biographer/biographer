@@ -1,8 +1,20 @@
 from gluon.contrib import simplejson
 
 
+def check_extra_files():
+    import os
+    error = ''
+    if not os.path.exists(os.path.join(request.folder, 'views', 'default', 'reactome_pathways.html')):
+        error += 'please execute make to create %s or create a blank file at this location <br/>' % os.path.join(request.folder, 'view', 'default', 'reactome_pathways.html')
+    if not os.path.exists(os.path.join(request.folder, 'views', 'default', 'biomodels_info_list.html')): 
+        error += 'please execute make to create %s  or create a blank file at this location' % os.path.join(request.folder, 'view', 'default', 'biomodels_info_list.html')
+    if error: 
+        raise HTTP(500, error)
+                    
+
 def index():
     check_first_user()
+    check_extra_files()
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'jquery-ui-1.8.13.css'))
     #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))  #FIXME why was this imported?
@@ -158,13 +170,7 @@ def redo():
 
 def export():
     file_type = False
-    def fix_svg(svg_data):
-        import re
-        import os
-        stylesheet_contents = open(os.path.join(request.folder, 'static' , 'biographer-editor', 'css', 'visualization-svg.css'), 'r').read()
-        out = re.sub('@import url[^<]*', stylesheet_contents, svg_data)
-        return '<?xml version="1.0" encoding="UTF-8"?>\n%s'%out
-    if request.vars.format in 'png jpg pdf tiff'.split():
+    if request.vars.format in 'png jpeg pdf tiff'.split():
         file_type = request.vars.format
         java = app_config.get('java', 'path')
         import os
@@ -172,7 +178,7 @@ def export():
         from shlex import split
         jar = os.path.join(request.folder, "static", "svg-export-0.2.jar")
         applet = java + " -jar " + jar + " -si -so -f " + request.vars.format
-        result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(fix_svg(request.vars.svg_data))      # call Ben's Java Exporter Applet
+        result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(request.vars.svg_data)      # call Ben's Java Exporter Applet
         out = result[0]  # stdout
         if result[1]:
             raise Exception(result[1])
@@ -188,33 +194,35 @@ def export():
 
 
 def render():
+    check_extra_files()
     in_url = request.args(0) or request.vars.q
+    if session.render == None:
+        session.render = {}
     if in_url.startswith('/'):
         in_url = 'http://%s%s' % (request.env.http_host, in_url)
     if in_url:
         try:
             import urllib2
-            file_content = _download(in_url)
+            session.render[in_url] = _download(in_url)
         except urllib2.HTTPError, e:
             return 'error getting %s: %s' % (in_url, e)
-        action, graph, json_string = import_file(file_content, '')#FIXME this should be done now by libSBGN.js!!
-        if action and graph and json_string:
-            undoRegister(action, graph, json_string)
+        # action, graph, json_string = import_file(file_content, '')#FIXME this should be done now by libSBGN.js!!
+        # if action and graph and json_string:
+            # undoRegister(action, graph, json_string)
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
-    response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-svg.css'))
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'jquery-ui-1.8.13.css'))
     #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))  #FIXME why was this imported?
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery-ui-1.8.15.custom.min.js'))
-    #response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery.simplemodal.1.4.1.min.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery.simplemodal.1.4.1.min.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.layout.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.geom.js'))
-    response.files.append(URL(request.application, 'static/biographer-editor/js', 'biographer-ui.js'))
-    response.files.append(URL(request.application, 'static/biographer-editor/js', 'biographer.editor.js'))
-    response.files.append(URL(request.application, 'static/biographer-editor/js', 'interact.js'))
-    response.files.append(URL(request.application, 'static/biographer-editor/js', 'libSBGN.js'))
-    return dict()
+    response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/js', 'colorpicker.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/css', 'colorpicker.css'))
+    return dict(in_url=in_url)
 
+def render_help():
+    return session.render[request.vars.url]
 
 def sbgnml_test():
     import os
@@ -228,14 +236,16 @@ def sbgnml_test():
             if fn.endswith('.sbgn'):
                 if fn == 'mapk_cascade.sbgn':  # FIXME
                     #print sbgnml2jsbgn(open(os.path.join(test_path, dn, fn), 'r').read())
-                    continue
+                    # continue
+                    pass
                 subitems.append(
                         TR(TH(A(fn, _href=URL('render', vars=dict(q=URL(request.application,  'static/test-files/%s' % dn, fn))),  _target="_blank"),  _colspan=2)),
                     )
                 subitems.append(
                     TR(
                         TD(IMG(_src=URL(request.application, 'static/test-files/' + dn, fn[:-5] + '.png'), _alt='sbgn image', _style='max-width: 300px')),
-                        TD(PRE('%s' % IFRAME(_src=URL('render', vars=dict(q=URL(request.application, 'static/test-files/%s' % dn, fn))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"))),
+                        # TD(PRE('%s' % IFRAME(_src=URL('render', vars=dict(q=URL(request.application, 'static/test-files/%s' % dn, fn))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"))),
+                        TD(IFRAME(_src=URL('render', vars=dict(q=URL(request.application, 'static/test-files/%s' % dn, fn))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0")),
                         ),
                     )
                 subitems.append(
@@ -249,18 +259,11 @@ def sbgnml_test():
 
 def sbml_test():
     import os
-    #test_path = os.path.join(request.folder, 'static', 'sbml-test')
     test_path = os.path.join(request.folder, 'static', 'data_models')
     items = []
-    #count = 0
     filenames = [fn for fn in os.listdir(test_path) if fn.startswith('BIOMD') and fn.endswith('.xml')]
     filenames.sort()
     for fn in filenames:
-        #if count>380:
-        #    break
-        #count += 1
-        #if count<360:
-        #    continue
         items.append(
                 TR(TH(A(fn, _href=URL('render', vars=dict(q=URL(request.application, 'static/data_models', fn), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
             )
