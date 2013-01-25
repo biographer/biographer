@@ -195,18 +195,15 @@ def render():
         if action and graph and json_string:
             undoRegister(action, graph, json_string)
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
-    response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-svg.css'))
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'jquery-ui-1.8.13.css'))
     #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))  #FIXME why was this imported?
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery-ui-1.8.15.custom.min.js'))
-    #response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery.simplemodal.1.4.1.min.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery.simplemodal.1.4.1.min.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.layout.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.geom.js'))
-    response.files.append(URL(request.application, 'static/biographer-editor/js', 'biographer-ui.js'))
-    response.files.append(URL(request.application, 'static/biographer-editor/js', 'biographer.editor.js'))
-    response.files.append(URL(request.application, 'static/biographer-editor/js', 'interact.js'))
-    response.files.append(URL(request.application, 'static/biographer-editor/js', 'libSBGN.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/js', 'colorpicker.js'))
+    response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/css', 'colorpicker.css'))
     return dict()
 
 
@@ -222,14 +219,16 @@ def sbgnml_test():
             if fn.endswith('.sbgn'):
                 if fn == 'mapk_cascade.sbgn':  # FIXME
                     #print sbgnml2jsbgn(open(os.path.join(test_path, dn, fn), 'r').read())
-                    continue
+                    # continue
+                    pass
                 subitems.append(
                         TR(TH(A(fn, _href=URL('render', vars=dict(q=URL(request.application,  'static/test-files/%s' % dn, fn))),  _target="_blank"),  _colspan=2)),
                     )
                 subitems.append(
                     TR(
                         TD(IMG(_src=URL(request.application, 'static/test-files/' + dn, fn[:-5] + '.png'), _alt='sbgn image', _style='max-width: 300px')),
-                        TD(PRE('%s' % IFRAME(_src=URL('render', vars=dict(q=URL(request.application, 'static/test-files/%s' % dn, fn))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"))),
+                        # TD(PRE('%s' % IFRAME(_src=URL('render', vars=dict(q=URL(request.application, 'static/test-files/%s' % dn, fn))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"))),
+                        TD(IFRAME(_src=URL('render', vars=dict(q=URL(request.application, 'static/test-files/%s' % dn, fn))), _width="500px", _height="200px", _scrolling="no", _frameBorder="0")),
                         ),
                     )
                 subitems.append(
@@ -243,18 +242,11 @@ def sbgnml_test():
 
 def sbml_test():
     import os
-    #test_path = os.path.join(request.folder, 'static', 'sbml-test')
     test_path = os.path.join(request.folder, 'static', 'data_models')
     items = []
-    #count = 0
     filenames = [fn for fn in os.listdir(test_path) if fn.startswith('BIOMD') and fn.endswith('.xml')]
     filenames.sort()
     for fn in filenames:
-        #if count>380:
-        #    break
-        #count += 1
-        #if count<360:
-        #    continue
         items.append(
                 TR(TH(A(fn, _href=URL('render', vars=dict(q=URL(request.application, 'static/data_models', fn), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
             )

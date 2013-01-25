@@ -30,6 +30,10 @@ function Editor(){
 }
 //-------------------------------------------
 Editor.prototype = {
+    /**
+     * save current state of the graph
+     * @param  {string} action save mode
+     */
     save: function(action) {
         if (action == 'manual' || action == 'auto'){
             var now = new Date();
@@ -209,7 +213,7 @@ Editor.prototype = {
         $('#canvas').unbind('mousemove');
         $('.follow').hide();
         $('.active').removeClass('active');
-        var mode2id = {'edit':'wrench', 'Edge':'edge', 'focus':'focus', 'move': 'move', 'selection': 'selection'};
+        var mode2id = {'Edge':'edge', 'focus':'focus', 'move': 'move'};
         if ((mode === undefined)||(mode == 'cursor')){
             $('#cursor').addClass('active');
             this.enableSelection();
