@@ -1,0 +1,286 @@
+.issue_summary {
+    border-top: 1px solid #aaa;
+    margin-bottom: 5px;
+    height: 70px;
+    width: 800px;
+    cursor: pointer;
+}
+.issue_summary:hover {
+    background-color: #FFFFF0;
+}
+
+.issue_summary>div{
+    vertical-align: top;
+}
+.issue_summary .issue_id{
+    display: inline-block;
+    font-size:30px;
+    width: 100px;
+}
+.issue_summary .n_votes, .issue_summary .n_comments, .issue_summary .n_views{
+    display: inline-block;
+    margin-left: 10px;
+}
+.issue_summary .n_views{
+    margin-right: 10px;
+}
+.issue_summary .title{
+    display: inline-block;
+    font-size: 16px;
+    width: 450px;
+}
+.issue_summary .meta {/*.created_on, .issue_summary .created_by {*/
+    display: inline-block;
+    color: #aaa;
+    width: 100px;
+    font-size: 13px;
+}
+.issue_summary .accept_pending, .issue_summary .del{
+    display: inline-block;
+    margin-top: 5px;
+}
+.issue_summary .meta .created_on, .issue_summary .meta .created_by {
+    width: 100px;
+    display: block;
+}
+/************************************************/
+#filter_issues_form>div {
+    display: inline-block;
+    padding-right: 10px;
+    text-align: bottom;
+}
+/************************************************/
+.n_votes, .n_comments, .n_views{
+    position: relative;
+    width: 25px;
+    font-size: 25px;
+    height: 50px;
+    font-weight: bold;
+    text-align: center;
+}
+.n_votes{
+    color: #555;
+}
+.n_comments{
+    color: #9a4444;
+}
+.n_views{
+    color: #999;
+}
+.subtitle {
+    bottom: 0px;
+    font-size: 10px;
+    font-weight: normal;
+    margin-left: auto;
+    margin-right: auto;
+}
+/************************************************/
+/************************************************/
+.err_line {
+    border-top: 1px dotted #aaa;
+    cursor: pointer;
+}
+#issue_errors thead {
+    background-color: #111;
+    color: white;
+} 
+/************************************************/
+.add_tickets, .add_attachment{
+    margin: 0;
+    padding-top: 20px;
+    background-color: #ddd;
+    padding-left: 10px;
+}
+.error_detail {
+    display: none;
+}
+#issue_errors tr:hover {
+    background-color: #eee;
+}
+/************************************************/
+.issue {
+   position: relative;
+   width: 800px;
+   vertical-align: top;
+}
+#issue_table tr, #issue_table td, #issue_table {
+    border-collapse:collapse;
+}
+
+#issue_header {
+    width: 800px;
+    height: 85px;
+    background-color: #ddd;
+    padding-top: 5px;
+    position: relative;
+}
+#issue_footer {
+    width: 800px;
+    padding-top: 5px;
+    border-top: solid 3px #ddd;
+    margin-bottom: 20px;
+}
+#issue_sidebar {
+    padding-top: 5px;
+    min-width: 200px;
+    border-right: solid 3px #ddd;
+}
+#issue_header .title, #issue_header .meta, #issue_header .nickname {
+    margin-left: 215px;
+}
+#issue_content {
+    padding: 0px;
+    padding-top: 5px;
+    width: 600px;
+}
+#issue_header .edit {
+    position: absolute;
+    display: inline;
+    left: 10px;
+    top: 40px;
+    cursor: pointer;
+}
+#issue_header .issue_id {
+    position: absolute;
+    font-size: 30px;
+    display: inline;
+    margin-right: 5px;
+}
+#issue_header .title{
+    font-size: 25px;
+    color: #2b547d;
+}
+#issue_header .meta{
+    color: #555;
+    font-size: 13px;
+}
+#issue_sidebar .n_votes, #issue_sidebar .n_views, #issue_sidebar .n_comments {
+    display: inline-block;
+    margin-right: 10px;
+}
+#issue_sidebar .n_votes {
+    height: 100px;
+    width: 32px
+}
+.sbar_prop {
+    font-size: 12px;
+    font-weight: bold;
+}
+.sbar_prop>div{
+    font-size: 14px;
+    display: block;
+    font-weight: normal;
+    margin-left: 10px;
+}
+.issue_type div div {
+    display: inline-block;
+    color: #3e6d8e;
+    background-color: #e0eaf1;
+    padding: 2px;
+    margin-right: 3px;
+    border: solid 1px;
+    border-bottom-color: #3e6d8e;
+    border-left-color: #3e6d8e;
+    border-right-color: #7f9fb6;
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-top-color: #3e6d8e;
+}
+#vote_up, #vote_down{
+    display: block;
+    /*min-width: 42px;
+    max-width: 42px;*/
+    min-height: 25px;
+    max-height: 25px;
+    background-repeat:no-repeat;
+    cursor: pointer;
+}
+#vote_up.v_0 { background-image: url('up.png'); } 
+#vote_down.v_0 { background-image: url('down.png'); }
+#vote_up.v_0:hover { background-image: url('up_active.png'); }
+#vote_down.v_0:hover { background-image: url('down_active.png'); }
+.v_1 { background-image: url('v_1.png'); }
+.v_1:hover { background-image: url('v_2.png'); }
+.v_2 { background-image: url('v_2.png'); }
+.v_2:hover { background-image: url('v_3.png'); }
+.v_3 { background-image: url('v_3.png'); }
+.v_-1 { background-image: url('v_-1.png'); }
+.v_-1:hover { background-image: url('v_-2.png'); }
+.v_-2 { background-image: url('v_-2.png'); }
+.v_-2:hover { background-image: url('v_-3.png'); }
+.v_-3 { background-image: url('v_-3.png'); }
+#vote_up.cant_vote { background-image: url('up_empty.png'); }
+#vote_down.cant_vote { background-image: url('down_empty.png'); }
+/************************************************/
+.comments {
+    display: block;
+}
+.comment {
+    display: block;
+    border-top: solid 3px #ddd;
+    padding-left: 10px;
+}
+.first_comment {
+    border-top: none;
+    padding-top:20px;
+    padding-bottom: 20px;
+}
+.attached_tickets{
+    background-color: #ddd;
+    padding-left: 10px;
+}
+.comment .meta{
+    color: #aaa;
+    font-size: 13px;
+} 
+.issue_attachment {
+    width: 597px;
+}
+.comment_attachment {
+    width: 100%;
+}
+.comment .attachments {
+    background-color: #ddd;
+}
+.comment .attachments a {
+    display: block;
+}
+/************************************************/
+#no_table_title {
+    font-size: 16px;
+    width: 500px;
+}
+#plugin_issue_comment_body {
+    width: 790px;
+    height: 50px;
+}
+/************************************************/
+.error_detail {
+    display: none;
+}
+.error_header {
+    cursor: pointer;
+}
+.error_header div {
+    display: inline-block;
+}
+.error_header .action, .error_header .count {
+    width: 30px;
+}
+.error_header .count{
+    color: red;  
+}
+.error_header .origin {
+    font-weight: bold;
+    margin-right: 10px;
+}
+.error_header .summary {
+    font-size: 12px;
+}
+.error_detail {
+    background-color: white;
+}
+.attached {
+    background-color: red;
+}
+/************************************************/

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Biographer-ui Test Suite</title>
+
+    <link rel="stylesheet" type="text/css" href="resources/css/visualization-html.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/jquery-ui-1.8.22.custom.css" />
+
+	<script type="text/javascript" src="resources/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="resources/js/jquery.simulate.js"></script>
+	<script type="text/javascript" src="resources/js/jquery-ui-1.8.22.custom.min.js"></script>
+    <script type="text/javascript" src="resources/js/interact.js"></script>
+    <script type="text/javascript" src="resources/js/biographer-ui.js"></script>
+    <script type="text/javascript" src="resources/examples/showcase.js"></script>
+
+    <script type="text/javascript">
+        bui.ready(function() {
+            
+            var canvas = document.getElementById('canvas');
+            graph = new bui.Graph(canvas);
+            var importHandle = graph.suspendRedraw(20000);
+            bui.importFromJSON(graph, showcaseJSON); 
+            setTimeout(function() {
+                alert('Hi');
+                graph.unsuspendRedraw(importHandle);
+              }, 2000);
+
+        })
+    </script>
+</head>
+<body>
+<div id="canvas">
+
+</div>
+</body>
+</html>
+

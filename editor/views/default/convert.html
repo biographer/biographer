@@ -1,0 +1,52 @@
+{{extend 'layout.html'}}
+<h1>Convert</h1>
+jSBGN / SBGN-ML / SBML <input type="file" id="input">Convert to <span class="outformat"><span class="selected">jSBGN</span><span>SBGN-ML</span>
+</span>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('.outformat span').click(function(){
+        $('.outformat span').removeClass('selected');
+        $(this).addClass('selected');
+    });
+    //=========================
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        // Great success! All the File APIs are supported.
+        $('#input').change(function(){
+            var upload_element = $(this)[0];
+            var file = upload_element.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.readAsText(file);//, "UTF-8");//TODO what encoding should be parsed???
+                reader.onload = function (evt) {
+                    var content = evt.target.result;
+                    //console.log('content: '+content);
+                    var doc = sb.io.read(content);
+                    if((doc === null)||(doc === undefined)){
+                        $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                    }else{
+                        window.location.href="data:text/json;charset=UTF-8," + sb.io.write(doc, $('.outformat .selected').html().toLowerCase());
+                    }
+                };
+                reader.onerror = function (evt) {
+                     $('.error').html("error reading file");
+                };
+            }
+            return false;
+        });
+    } else {
+        alert('The File APIs are not fully supported in this browser. You will not be able to upload jSBGN/SBGN-ML/SBML files. Please update your browser.');
+    }
+});
+</script>
+<style type="text/css">
+    .outformat .selected {
+        background-color: #eee;
+    }
+    .outformat span {
+        border-radius: 5px;
+        border: 1px solid #eee;
+        padding: 5px;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+</style>
