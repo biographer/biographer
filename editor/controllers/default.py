@@ -1,8 +1,20 @@
 from gluon.contrib import simplejson
 
 
+def check_extra_files():
+    import os
+    error = ''
+    if not os.path.exists(os.path.join(request.folder, 'views', 'default', 'reactome_pathways.html')):
+        error += 'please execute make to create %s or create a blank file at this location <br/>' % os.path.join(request.folder, 'view', 'default', 'reactome_pathways.html')
+    if not os.path.exists(os.path.join(request.folder, 'views', 'default', 'biomodels_info_list.html')): 
+        error += 'please execute make to create %s  or create a blank file at this location' % os.path.join(request.folder, 'view', 'default', 'biomodels_info_list.html')
+    if error: 
+        raise HTTP(500, error)
+                    
+
 def index():
     check_first_user()
+    check_extra_files()
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'jquery-ui-1.8.13.css'))
     #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))  #FIXME why was this imported?
@@ -182,18 +194,21 @@ def export():
 
 
 def render():
+    check_extra_files()
     in_url = request.args(0) or request.vars.q
+    if session.render == None:
+        session.render = {}
     if in_url.startswith('/'):
         in_url = 'http://%s%s' % (request.env.http_host, in_url)
     if in_url:
         try:
             import urllib2
-            file_content = _download(in_url)
+            session.render[in_url] = _download(in_url)
         except urllib2.HTTPError, e:
             return 'error getting %s: %s' % (in_url, e)
-        action, graph, json_string = import_file(file_content, '')#FIXME this should be done now by libSBGN.js!!
-        if action and graph and json_string:
-            undoRegister(action, graph, json_string)
+        # action, graph, json_string = import_file(file_content, '')#FIXME this should be done now by libSBGN.js!!
+        # if action and graph and json_string:
+            # undoRegister(action, graph, json_string)
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'jquery-ui-1.8.13.css'))
     #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))  #FIXME why was this imported?
@@ -204,8 +219,10 @@ def render():
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.geom.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/js', 'colorpicker.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/css', 'colorpicker.css'))
-    return dict()
+    return dict(in_url=in_url)
 
+def render_help():
+    return session.render[request.vars.url]
 
 def sbgnml_test():
     import os
