@@ -1,6 +1,13 @@
 
 (function(bui){
    bui.layouter={};
+   var arraytoxy=function(array){
+     var xyar=[];
+     for (var i=0;i<array.length/2;i++){
+       xyar.push({x:array[2*i],y:array[2*i+1]});
+     }
+     return xyar;
+   }
    /* creates a string from the json data which serves as input for the layouter */
    bui.layouter.makeLayouterFormat = function(jdata){
       var cc=0; // node index counter
@@ -204,9 +211,9 @@
             isx=1-isx;
          }
          if (!jdata.edges[eidx].data) jdata.edges[eidx].data={};
-         if (handles.length) jdata.edges[eidx].data.handles=handles;
+         if (handles.length) jdata.edges[eidx].data.handles=arraytoxy(handles);
          if (handles.length) jdata.edges[eidx].data.type="curve";
-         if (points.length) jdata.edges[eidx].data.points=points;
+         if (points.length) jdata.edges[eidx].data.points=arraytoxy(points);
  
       }
       return jdata;
