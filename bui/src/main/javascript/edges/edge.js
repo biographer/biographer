@@ -415,6 +415,18 @@
       privates.detectMove.prev[type]={x:x,y:y};
       privates.detectMove.last={type:type,dx:dx,dy:dy};
     }
+    /*
+     * @private
+     * if edge is a loop, make initial edge a spline which is a loop of a size similar to the node size
+     */
+    var fixLoopEdge=function(){
+       var privates = this._privates(identifier);
+       if (privates.points && privates.points.length) return; // then the user should know on its own
+       var size=this.source().size();
+       privates.sourceSplineHandleVec={x:size.width,y:-size.height};
+       privates.targetSplineHandleVec={x:-size.width,y:-size.height};
+       makeSpline.call(this);
+    }
     /**
      * @private
      * Source changed event listener
@@ -422,10 +434,11 @@
     var sourceChanged = function(node, source, old) {
         var privates = this._privates(identifier);
         if (privates.isSpline) privates.sourceHelperLine.target(source);
-        if (old !== undefined && old !== null) old.unbindAll(listenerIdentifier(this));
+        if (old !== undefined && old !== null) old.unbindAll(listenerIdentifier(this) + 'source');
         if (source !== undefined && source !== null) source.bind(bui.Node.ListenerType.absolutePosition,
                     detectWholeEdgeMove.createDelegate(this),
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'source');
+        if (source && source == this.target()) fixLoopEdge.call(this);
     };
 
     /**
@@ -435,10 +448,11 @@
     var targetChanged = function(node, target, old) {
         var privates = this._privates(identifier);
         if (privates.isSpline) privates.targetHelperLine.target(target);
-        if (old !== undefined && old !== null) old.unbindAll(listenerIdentifier(this));
+        if (old !== undefined && old !== null) old.unbindAll(listenerIdentifier(this) + 'target');
         if (target !== undefined && target !== null) target.bind(bui.Node.ListenerType.absolutePosition,
                     detectWholeEdgeMove.createDelegate(this),
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'target');
+        if (target && target == this.source()) fixLoopEdge.call(this);
     };
 
     /**

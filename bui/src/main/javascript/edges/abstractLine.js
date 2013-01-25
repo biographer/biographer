@@ -65,20 +65,20 @@
      */
     var sourceChanged = function(drawable, newSource, oldSource) {
         if (oldSource !== null) {
-            oldSource.unbindAll(listenerIdentifier(this));
+            oldSource.unbindAll(listenerIdentifier(this) + 'source');
         }
 
         if (newSource !== null) {
             var listener = this._sourceOrTargetDimensionChanged
                     .createDelegate(this);
             newSource.bind(bui.Node.ListenerType.absolutePosition, listener,
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'source');
             newSource.bind(bui.Node.ListenerType.size, listener,
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'source');
 
             newSource.bind(bui.Drawable.ListenerType.visible,
                     endpointVisibilityChanged.createDelegate(this),
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'source');
         }
 
         this._sourceOrTargetDimensionChanged();
@@ -90,20 +90,20 @@
      */
     var targetChanged = function(drawable, newTarget, oldTarget) {
         if (oldTarget !== null) {
-            oldTarget.unbindAll(listenerIdentifier(this));
+            oldTarget.unbindAll(listenerIdentifier(this) + 'target');
         }
 
         if (newTarget !== null) {
             var listener = this._sourceOrTargetDimensionChanged
                     .createDelegate(this);
             newTarget.bind(bui.Node.ListenerType.absolutePosition, listener,
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'target');
             newTarget.bind(bui.Node.ListenerType.size, listener,
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'target');
 
             newTarget.bind(bui.Drawable.ListenerType.visible,
                     endpointVisibilityChanged.createDelegate(this),
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'target');
         }
 
         this._sourceOrTargetDimensionChanged();

@@ -33,11 +33,11 @@
         if (newX !== null) {
             newX.bind(bui.Drawable.ListenerType.remove,
                     sourceRemoveListener.createDelegate(this),
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'source');
         }
 
         if (oldX !== null) {
-            oldX.unbindAll(listenerIdentifier(this));
+            oldX.unbindAll(listenerIdentifier(this) + 'source');
         }
     };
 
@@ -49,11 +49,11 @@
         if (newX !== null) {
             newX.bind(bui.Drawable.ListenerType.remove,
                     targetRemoveListener.createDelegate(this),
-                    listenerIdentifier(this));
+                    listenerIdentifier(this) + 'target');
         }
 
         if (oldX !== null) {
-            oldX.unbindAll(listenerIdentifier(this));
+            oldX.unbindAll(listenerIdentifier(this) + 'target');
         }
     };
 
@@ -64,11 +64,11 @@
         var privates = this._privates(identifier);
 
         if (privates.source !== null) {
-            privates.source.unbindAll(listenerIdentifier(this));
+            privates.source.unbindAll(listenerIdentifier(this) + 'source');
         }
 
         if (privates.target !== null) {
-            privates.target.unbindAll(listenerIdentifier(this));
+            privates.target.unbindAll(listenerIdentifier(this) + 'target');
         }
     };
 
