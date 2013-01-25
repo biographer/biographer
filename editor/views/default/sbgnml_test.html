@@ -1,0 +1,12 @@
+{{extend 'layout.html'}}
+{{if session.debug:}}
+<script type="text/javascript">
+    {{include 'default/biographer-ui.js'}}
+</script>
+{{else:}}
+<script type="text/javascript" src="{{=URL(request.application, 'static/js', 'biographer-ui.js')}}"></script>
+{{pass}}
+{{=table}}
+<script type="text/javascript">
+        $('iframe').resizable();
+</script>

@@ -1,0 +1,18 @@
+calling biographer-visualization from command line using node.js:
+
+install node.js
+install jsdom (node.js module; i.e. with npm install jsdom; need npm to be installed as well)
+
+goto {biographer-visualization-repository}/src/node directory
+
+link biographer-ui.js & visualization-svg.css (from target tree after building biographer-visusalization) 
+to current directory.
+put jquery-1.7.js in current directory (tested with version 1.7; update path in biographer-node.js if using different version)
+
+call node.js:
+
+node biographer-node.js input.json output.svg [layouter-binary]
+
+layouter-binary is optionally and will perform layout if given.
+
+that's it.
