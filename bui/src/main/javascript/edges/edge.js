@@ -760,22 +760,22 @@
                 privates = this._privates(identifier);
 
             var handles = [], points = [], pointtypes = [];
-            if (privates.isSpline) handles.push(privates.sourceSplineHandleVec.x,privates.sourceSplineHandleVec.y);
+            if (privates.isSpline) handles.push({x:privates.sourceSplineHandleVec.x,y:privates.sourceSplineHandleVec.y});
             if (privates.points.length > 0) {
               
               for (var i = 0; i < privates.points.length; i++) {
                 var position = privates.points[i].point.absoluteCenter();
-                points.push(position.x,position.y);
+                points.push({x:position.x,y:position.y});
                 if (privates.isSpline) {
                   var ps = privates.points[i].splineHandle.absoluteCenter();
-                  handles.push(ps.x-position.x,ps.y-position.y);
+                  handles.push({x:ps.x-position.x,y:ps.y-position.y});
                 }
                 if (privates.points[i].point.hasClass('Outcome')){
                   pointtypes[i]='Outcome';
                 }
               }
             }
-            if (privates.isSpline) handles.push(privates.targetSplineHandleVec.x,privates.targetSplineHandleVec.y);
+            if (privates.isSpline) handles.push({x:privates.targetSplineHandleVec.x,y:privates.targetSplineHandleVec.y});
             if (privates.isSpline) updateJson(json, dataFormat.edge.type, "spline");
             if (points.length) updateJson(json, dataFormat.edge.points, points);
             if (handles.length) updateJson(json, dataFormat.edge.handles, handles);
