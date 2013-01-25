@@ -383,16 +383,16 @@
             var spline=(edgeJSON.data.type=='curve' || edgeJSON.data.type=='spline');
             edge.spline(spline);
             if (spline){
-              edge.sourceSplineHandle(edgeJSON.data.handles[0],edgeJSON.data.handles[1]);
-              edge.targetSplineHandle(edgeJSON.data.handles[edgeJSON.data.handles.length-2],edgeJSON.data.handles[edgeJSON.data.handles.length-1]);
+              edge.sourceSplineHandle(edgeJSON.data.handles[0].x,edgeJSON.data.handles[0].y);
+              edge.targetSplineHandle(edgeJSON.data.handles[edgeJSON.data.handles.length-1].x,edgeJSON.data.handles[edgeJSON.data.handles.length-1].y);
             }
             if(edgeJSON.data.points !== undefined){
-              for(var j=0; j<edgeJSON.data.points.length; j += 2){
-                var type = (edgeJSON.data.pointtypes ? edgeJSON.data.pointtypes[i] : undefined);
+              for(var j=0; j<edgeJSON.data.points.length; j ++){
+                var type = (edgeJSON.data.pointtypes ? edgeJSON.data.pointtypes[j] : undefined);
                 if (spline){
-                  edge.addPoint(edgeJSON.data.points[j], edgeJSON.data.points[j+1],type,undefined,edgeJSON.data.handles[j+2],edgeJSON.data.handles[j+3])
+                  edge.addPoint(edgeJSON.data.points[j].x, edgeJSON.data.points[j].y,type,undefined,edgeJSON.data.handles[j+1].x,edgeJSON.data.handles[j+1].y)
                 } else {
-                  edge.addPoint(edgeJSON.data.points[j], edgeJSON.data.points[j+1],type)
+                  edge.addPoint(edgeJSON.data.points[j].x, edgeJSON.data.points[j].y,type)
                 }
               }
             }
@@ -637,13 +637,43 @@
                 log('Warning: Can\'t update edge for json edge id ' +
                         edgeJSON.id + ' because the edge can\'t be found.');
                 continue;
-            } else if (!bui.util.propertySetAndNotNull(edgeJSON,
-                    ['data', 'type'], ['data', 'handles'])) {
-                continue;
-            } else if (edgeJSON.data.type !== 'curve') {
-                continue;
             }
-
+            var isSpline=(edgeJSON.data.type == 'curve' || edgeJSON.data.type == 'spline');
+            var points=[];
+            if (bui.util.propertySetAndNotNull(edgeJSON,['data', 'points'])) {
+                points=edgeJSON.data.points;
+            }
+            var handles=[];
+            if (isSpline && (!bui.util.propertySetAndNotNull(edgeJSON,['data', 'handles']) || scalar edgeJSON.data.handles.length+2!=points.length)) { 
+              log('no/wrong data.handles property for spline edge');
+              isSpline=false;
+            }
+            edge.spline(isSpline); // update spline status
+            if (isSpline){
+              handles=edgeJSON.data.handles
+              edge.sourceSplineHandle(handles[0].x,handles[0].y);
+              edge.targetSplineHandle(handles[handles.length-1].x,handles[handles.length-1].y);
+            }
+            for (var k=edge.length()-2;k>=points.length;k--){
+              edge.removePoint(k);
+            }
+            for (var k=0;k<points.length;k++){
+                //var type = (pointtypes ? pointtypes[j] : undefined); //WARNING cannot update type yet
+              if (isSpline){
+                edge.updatePoint(k,points[k].x, points[k].y,handles[k+1].x,handles[k+1].y,duration);
+              } else {
+                edge.updatePoint(k,points[k].x, points[k].y,undefined,undefined,duration);
+              }
+              
+            }
+            for (var k=edge.length();k<points.length;k++){
+              var type = (pointtypes ? pointtypes[j] : undefined);
+              if (isSpline){
+                edge.addPoint(points[k].x, points[k].y,type,undefined,handles[k+1].x,handles[k+1].y)
+              } else {
+                edge.addPoint(points[k].x, points[k].y,type)
+              }
+            }
             edge.setSplineHandlePositions(edgeJSON.data.handles, duration);
             edge.setSplinePoints(edgeJSON.data.points, duration);
         }
