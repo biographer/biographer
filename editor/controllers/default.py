@@ -28,8 +28,10 @@ def index():
     if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph or request.vars.jsbgn:
         action, graph, json_string = None, None, None
         if request.vars.jgraph or request.vars.jsbgn:
+            # FIXME import_file should not be used anymore
             result = import_file(request.vars.jgraph or request.vars.jsbgn)
         else:
+            # FIXME import_file should not be used anymore
             result = import_file(request.vars.import_file.file.read().strip(), request.vars.import_file.filename)
         if result:
             action, graph, json_string = result
@@ -206,12 +208,8 @@ def render():
             session.render[in_url] = _download(in_url)
         except urllib2.HTTPError, e:
             return 'error getting %s: %s' % (in_url, e)
-        # action, graph, json_string = import_file(file_content, '')#FIXME this should be done now by libSBGN.js!!
-        # if action and graph and json_string:
-            # undoRegister(action, graph, json_string)
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'jquery-ui-1.8.13.css'))
-    #response.files.append(URL(request.application, 'static/js', 'jquery.simulate.js'))  #FIXME why was this imported?
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery-ui-1.8.15.custom.min.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'jquery.simplemodal.1.4.1.min.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.js'))
