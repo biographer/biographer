@@ -328,7 +328,8 @@ td {
 .language:hover .language_selection {
     display: block;
 }
-/**********************************/
+/**********************************
+TODO this code seems to be dead
 h3.section {
     padding-left: 20px;
     padding-right: 20px;
@@ -343,7 +344,7 @@ h3.section.up {
 h3.section.down {
     background: #eee url('../images/editor/slide_down.png') no-repeat 95% 50%;
 }
-/**********************************/
+**********************************/
 .tools_group, .editor_menu {
     border: 2px solid #eee;
     border-radius: 4px;
@@ -521,6 +522,37 @@ h3.section.down {
 #zoom_out {background: url('../img/biographer.sprites.png') -105px -35px; }
 #fit_to_screen {background: url('../img/biographer.sprites.png') -105px -70px; }
 #scale1 {background: url('../img/biographer.sprites.png') -105px -105px; }
+/**********************************/
+.scroll_menu {
+    position: fixed;
+}
+.scroll_menu {
+    list-style: none;
+    /*display:none;*/
+}
+.scroll_h {
+    bottom: 0;
+    right: 50%;
+}
+.scroll_h li {
+    display: inline-block;
+    margin-left: 50px;
+}
+.scroll_v {
+    right: 20;
+    top: 50%;
+}
+.scroll_v li {
+    margin-bottom: 50px;
+}
+.scroll_menu li {
+    width: 35px;
+    height: 35px;
+}
+#scroll_right {background: url('../img/biographer.sprites.png') -415px -70px; }
+#scroll_left {background: url('../img/biographer.sprites.png') -415px -105px; }
+#scroll_up {background: url('../img/biographer.sprites.png') -415px -140px; }
+#scroll_down {background: url('../img/biographer.sprites.png') -415px -175px; }
 /**********************************/
 .disabled {
     opacity: .3;

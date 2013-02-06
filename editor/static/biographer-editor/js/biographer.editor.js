@@ -886,8 +886,12 @@ Editor.prototype = {
         this.box.style.display = 'none';
     },
     enableWheelPan: function(){
+        $('.scroll_menu').fadeIn();
         this.graph.bind(bui.Graph.ListenerType.wheel, this.panGraph(), 'editorPan');
     },
+    /**
+     * closure function for bining paning to the graph wheel event
+     */
     panGraph: function(){
         var this_editor = this;
         return function(graph, event){
@@ -898,11 +902,12 @@ Editor.prototype = {
             if (event.shiftKey) pos.x += ds;
             else pos.y += ds;
             graph.translate(pos.x, pos.y);
-        }
+        };
     },
-    //------------------------------------
-    // enable box selection mode on graph
-    // bind to graph's dragStart/Move/Stop to animate selection box
+    /**
+     * enable box selection mode on graph
+     * bind to graph's dragStart/Move/Stop to animate selection box
+     */
     enableSelection: function(){
         var this_editor = this;
         this.graph.enablePanning(false);
@@ -1062,7 +1067,9 @@ Editor.prototype = {
             'graphDragEnd'
         );
     },
-    //set the SBGN language
+    /**
+     * set the language of the editor to the of the currrent bui.graph
+     */
     setLanguage: function(){
         var language_current = this.graph.language();
         $('.language_current').html(language_current);
@@ -1078,6 +1085,9 @@ Editor.prototype = {
         });
         
     },
+    /**
+     * delete all nodes that are currently selected
+     */
     deleteSelectedNodes: function(){
         var nn = this.selected_nodes.length;
         for (var i = this.selected_nodes.length - 1; i >= 0; i--) this.selected_nodes[i].remove();
@@ -1103,8 +1113,22 @@ Editor.prototype = {
         else if (show == true) lm.animate({right:  0 });
         else lm.animate({right:  tw });
     },
-    //----------------------------------
-    // setup the editor
+    /**
+     * scroll the canvas with the translate function
+     * @param  {integer} x scroll value x
+     * @param  {integer} y scroll value y
+     */
+    scroll: function(x, y){
+        console.log('scroll '+x+' '+y);
+        var pos = this.graph.translate();
+        pos.x += x;
+        pos.y += y;
+        this.graph.translate(pos.x, pos.y);
+    },
+    /**
+     * setup the editor
+     * connect all html elements to js functions
+     */
     init: function(){
         var this_editor = this;
         //=========================
@@ -1137,6 +1161,7 @@ Editor.prototype = {
                 if((doc === null)||(doc === undefined)){
                     $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
                 }else{
+                    console.log(sb.io.write(doc, 'jsbgn'));
                     this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
                     this_editor.setLanguage();
                     editor.graph.fitToPage();
@@ -1837,7 +1862,12 @@ Editor.prototype = {
         $('#del').click(function(){this_editor.deleteSelectedNodes();});
         //-------------------------------------------------
         //slide toggle right menu
+        var scroll_step = 30;
         $('.rm_peek').click(function(){this_editor.rightMenue_show(); });
+        $('#scroll_up').click(function(){this_editor.scroll(0, scroll_step); });
+        $('#scroll_down').click(function(){this_editor.scroll(0, -scroll_step); });
+        $('#scroll_left').click(function(){this_editor.scroll(-scroll_step, 0); });
+        $('#scroll_right').click(function(){this_editor.scroll(scroll_step, 0); });
     }
 };
 
