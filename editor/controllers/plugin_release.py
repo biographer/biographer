@@ -45,6 +45,8 @@ def _download(url,post_data=None):
     #self.status_fkt('Checking connection ...')
     #if not self.checkConnection(): raise DatabaseError('No Internet Connection')
     #-----------------------------------------------------
+    import sys
+    status_fkt = lambda message,close=False: sys.stderr.write(message)
     status_fkt("Loading %s\n"%url)
     #-----------------------------------------------------
     reqObj = urllib2.Request(url, post_data, headers)
@@ -130,9 +132,9 @@ def check_version():
             session.app_is_old_version = True
             session.app_current_version = DIV(DIV(_id='show_update'),' version %s is available '%latest_version, DIV('update now', _onclick="web2py_component('%s', 'show_update')"%URL(request.application, 'plugin_release', 'update'), _class="button"))
     except urllib2.HTTPError, e:
-        return 'X'
-    except urllib2.URLError:
-        return 'X'
+        return 'http error %s, please retry'%e
+    except urllib2.URLError, e:
+        return 'url error %s'%e
     return session.app_current_version
 
 def _extractall(filename, path='.', members=None):
