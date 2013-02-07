@@ -935,9 +935,10 @@
             }
             if(lang in {'ER':1,'PD':1,'AF':1}) bui.settings.SBGNlang = lang;
             return this;
+         },
+         modificationSupport: function(enable){
+            bui.settings.enableModificationSupport = enable;
          }
-        
-
     };
 
     bui.util.setSuperClass(bui.Graph, bui.Observable);

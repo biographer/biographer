@@ -883,6 +883,7 @@ Editor.prototype = {
         editor.graph.unbind(bui.Graph.ListenerType.dragMove, 'graphDragMove');
         editor.graph.unbind(bui.Graph.ListenerType.dragEnd, 'graphDragEnd');
         this.graph.enablePanning(true);
+        this.graph.modificationSupport(false);
         this.box.style.display = 'none';
     },
     enableWheelPan: function(){
@@ -911,6 +912,7 @@ Editor.prototype = {
     enableSelection: function(){
         var this_editor = this;
         this.graph.enablePanning(false);
+        this.graph.modificationSupport(true);
         /*if(this.cur_mode == 'selection'){
             console.log('rest pan and zoom');
             this.graph.scale(1);
@@ -925,19 +927,19 @@ Editor.prototype = {
                 checkOnHover: false
             });
 
-            function fireDragStart (event) {
+            var fireDragStart  = function(event) {
                 if (event.target === canvas) {
                     this_editor.graph.fire(bui.Graph.ListenerType.dragStart, [this_editor.graph, event]);
                 }
             };
 
-            function fireDragMove (event) {
+            var fireDragMove = function(event) {
                 if (event.target === canvas) {
                     this_editor.graph.fire(bui.Graph.ListenerType.dragMove, [this_editor.graph, event]);
                 }
             };
 
-            function fireDragEnd (event) {
+            var fireDragEnd = function(event) {
                 if (event.target === canvas) {
                     this_editor.graph.fire(bui.Graph.ListenerType.dragEnd, [this_editor.graph, event]);
                 }
@@ -1768,6 +1770,9 @@ Editor.prototype = {
             //shift | shift key is not pressed anymore
             if (event.keyCode == 16) {
                 this_editor.shifted = false;
+                if(this_editor.cur_mode == 'cursor'){
+                    this_editor.graph.modificationSupport(true);
+                }
             }
             // ctrl | ctrl key is not pressed anymore
             if (event.keyCode == 17) {
@@ -1830,6 +1835,9 @@ Editor.prototype = {
             // shift | detect if shift key is pressed
             if (event.keyCode == 16) {
                 this_editor.shifted = true;
+                if(this_editor.cur_mode == 'cursor'){
+                    this_editor.graph.modificationSupport(false);
+                }
                 //interact.simulate('drag', $('#canvas')[0], event);
             }
             // ctrl | ctrl pressed down for a longer time, show keyboard shortcuts
