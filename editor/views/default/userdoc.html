@@ -50,11 +50,13 @@ Biographer can import SBGN graphs (with and without layout) from different sourc
 <a name=2><h2>Layout</h2></a>
 <!-- ---------------------------------------------------------------- -->
 <h3>Selecting Nodes</h3>
-You can select single nodes by clicking on them. To select multiple nodes use <div class="keyboard">shift + click</div> or choose the <div class="tool" id="cursor"></div> tool and <div class="keyboard">click + drag</div> a selection rectangle around several nodes.<br>
-Selected nodes have blue dashed border.
+You can select single nodes by <div class="keyboard">click</div>ing on them. To select multiple nodes use <div class="keyboard">shift + click</div> or choose the <div class="tool" id="cursor"></div> tool and <div class="keyboard">click + drag</div> a selection rectangle around several nodes.<br>
+To select all nodes use the select all tool <div class="tool" id="edit_all_nodes"></div> or <div class="keyboard">doubleclick</div> on a empty space on the canvas. To deselect all nodes you can use the <div class="tool" id="edit_no_nodes"></div> tool or draw and empty selection rectagle. <br>
+If you are in a compartment trying to draw a selection rectangle be carefult that you do not move the compartment while drawing the selection rectangle. You can prevent this by deselecting all nodes and then drawing a selection rectangle with <div class="keyboard">shift + drag</div>. <br>
+Selected nodes have blue dashed borders.
 <!-- ---------------------------------------------------------------- -->
 <h3>Deleting Nodes</h3>
-To delete nodes, select them and press <div class="keyboard">Del</div> on your keyboard <br>or use the delete tool <div class="tool" id="del"></div>
+To delete nodes, select them and press <div class="keyboard">Del</div> on your keyboard <br>or use the delete tool <div class="tool" id="del"></div> in the right menu.
 <!-- ---------------------------------------------------------------- -->
 <h3>Moving Nodes</h3>
 To move a single node use <div class="keyboard">click + drag</div>. To move several nodes at once fist select the nodes and then move them clicking on one of them.
@@ -94,8 +96,6 @@ You can also zoom by using the zoom buttons. <br>
 <h3>Panning</h3>
 <div id="move" class="tool"></div> this tool can be used to pan the canvas using <div class="keyboard">click + drag</div>.
 <!-- ---------------------------------------------------------------- -->
-<h3>Converting Document Formats</h3>
-Try using our <a href="{{=URL('convert')}}">converter</a> to convert between jSBGN, SBGN-ML and SBML using the <a href="https://github.com/chemhack/libSBGN.js">libSBGN.js library</a>. This is still under development and might not return what you expect.
 <a name=4><h2>Exporting</h2></a>
 Clicking on <div class="tool" id="export_other"></div> or pressing <div class="keyboard">ctrl + e</div> opens the export dialog. Exporting images is supported for several document formats:
 <ul>
@@ -114,6 +114,8 @@ Biographer natively renders the images in your browser in the SVG format. To exp
           </ul>  
     </li>
 </ul>
+<h3>Converting Document Formats</h3>
+Try using our <a href="{{=URL('convert')}}">converter</a> to convert between jSBGN, SBGN-ML and SBML using the <a href="https://github.com/chemhack/libSBGN.js">libSBGN.js library</a>. This is still under development and might not return what you expect.
 <a name=5><h1>Keyboard Shortcuts</h1></a>
 To see the keyboard shortcuts in the editor hold down <div class="keyboard">ctrl</div> for a bit longer.
 <table class="key_shortcuts">
@@ -141,7 +143,7 @@ To see the keyboard shortcuts in the editor hold down <div class="keyboard">ctrl
         <td> export current graph</td>
     </tr> 
     <tr>
-        <td><div class="keyboard">ctrl + [1-4]</div> </td>
+        <td><div class="keyboard">ctrl + [1-3]</div> </td>
         <td> activate a tool</td>
      </tr> 
     <tr>
@@ -160,12 +162,19 @@ To see the keyboard shortcuts in the editor hold down <div class="keyboard">ctrl
         <td><div class="keyboard">f4</div> </td>
         <td> toggle site menu, opera: <div class="keyboard">ctrl + m</div></td>
      </tr> 
-
+    <tr>
+        <td><div class="keyboard">click</div> <div class="keyboard">drag</div> </td>
+        <td> <div class="tool" id="cursor"></div> mode: select a node</td>
+     </tr> 
+    <tr>
+        <td><div class="keyboard">shift + click</div> <div class="keyboard">shift + drag</div></td>
+        <td> <div class="tool" id="cursor"></div> mode: select multiple nodes</td>
+     </tr> 
 <!-- ---------------------------------------------------------------- -->
 </table>
 <!-- ---------------------------------------------------------------- -->
 <h1>SBGN Support</h1>
-Biographer currently does not support the full SBGN specification. Missing are:<br>
+Biographer is missing some details of the SBGN specification. Missing are:<br>
 <b>PD</b>
 <ul>
     <li>Text on clone marker</li>
@@ -177,12 +186,12 @@ Biographer currently does not support the full SBGN specification. Missing are:<
 </ul>
 <b>AF</b>
 <ul>
-    <li>Submap</li>
+    <li>Submap (use Enity and Tags)</li>
     <li>Auxiliary Units</li>
 </ul>
 Node ports (the little ends on e.g. process nodes) have to be created manually unless you use the biographer.flow layout.
 <a name=6><h1>System Requirements</h1></a>
-Biographer currently works best with Chromium (Chrome) and Opera. While FireFox also works it is slower than the browsers mentioned before. Internet Explorer and Safari are not actively tested (Please do not use these browsers with biographer).
+Biographer currently works best with Chromium (Chrome) and Opera. While FireFox also works it is slower than the browsers mentioned before. Safari should also work. Internet Explorer and other browsers are not actively tested (Please do not use these browsers with biographer).
 <a name=7><h1>Problems and Support</h1></a>
 If you want to talk to us please contact us on our <a href="https://groups.google.com/forum/?fromgroups#!forum/biographer">google group #biographer</a>.
 <br>
@@ -228,7 +237,7 @@ Assuming you are using Linux or Mac OS, do the following:<br>
 </ol>
 
 If you get an error ticket, probably "make" ran into problems or is not ready yet and some files are missing. You can safely create the missing files (you can see the full path if you click on the error ticket) as empty files using "touch": <br>
-<pre>$ touch /path/to/web2py/applications/biographer/views/default/biomodels_info.html </pre>
+<pre>$ touch /path/to/web2py/applications/biographer/views/default/biomodels_info_list.html </pre>
 Touch just creates an empty file. <br>
 Now you should be ready. <br>
 If you change the bui code (bui/ folder in your local hg repository) all you need to do, to try out the changes, is to call make<br>

@@ -312,6 +312,7 @@ python web2py/web2py.py -p 8000 -a test -R ./application/init/open_browser.py'''
     targzit(sub_release_folder, os.path.join(request.folder, 'static','%s_%s.tar.gz'%(APPLICATION_NAME, release_type)))
     return True
 
+
 def check_web2py_version(myversion, version_URL):
     """
     web2py check for new version
@@ -326,6 +327,7 @@ def check_web2py_version(myversion, version_URL):
         return True, version
     else:
         return False, version
+
 
 def unzip(filename, dir, subfolder=''):
     """
