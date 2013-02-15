@@ -13,9 +13,9 @@ Set this for outgoing email notifications.
 <br />
 This is optional, and you will most likely not need this.
 {{=LOAD('setup', 'setup_smtp', ajax=True)}}
-<h2>Java</h2>
-Set the Java path. Java is used to export images (png, jpg, pdf, ...)
-{{=LOAD('setup', 'setup_java', ajax=True)}}
+<h2>Export</h2>
+Set the Java/Inkscape path. Either one is used to export images (png, pdf, ...)
+{{=LOAD('setup', 'setup_export', ajax=True)}}
 <h2>Mercurial</h2>
 Set the Mercurial path. Use this if you want to pull latest released directly from the biographer mercurial repo
 {{=LOAD('setup', 'setup_hg', ajax=True)}}

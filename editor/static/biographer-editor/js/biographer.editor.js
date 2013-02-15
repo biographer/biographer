@@ -1872,8 +1872,8 @@ Editor.prototype = {
         //slide toggle right menu
         var scroll_step = 30;
         $('.rm_peek').click(function(){this_editor.rightMenue_show(); });
-        $('#scroll_up').click(function(){this_editor.scroll(0, scroll_step); });
-        $('#scroll_down').click(function(){this_editor.scroll(0, -scroll_step); });
+        $('#scroll_up').click(function(){this_editor.scroll(0, -scroll_step); });
+        $('#scroll_down').click(function(){this_editor.scroll(0, scroll_step); });
         $('#scroll_left').click(function(){this_editor.scroll(-scroll_step, 0); });
         $('#scroll_right').click(function(){this_editor.scroll(scroll_step, 0); });
     }

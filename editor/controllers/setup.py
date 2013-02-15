@@ -55,24 +55,31 @@ def setup_smtp():
         app_config.set('smtp', 'sender', form.vars.sender)
         response.flash = 'smtp config saved'
     return form
-def setup_java():
-    if not auth.has_membership(role = 'admin'):
-        return 'You need to login as admin to configure the JAVA path'
+
+
+def setup_export():
+    if not auth.has_membership(role='admin'):
+        return 'You need to login as admin to configure the export settings'
     form = form_factory(
-            Field('java_path', default = app_config.get('java','path')),
-            )
-    if form.accepts(request.vars, keepvalues = True):
-        app_config.set('java','path', form.vars.java_path)
-        response.flash = 'JAVA path saved'
+        Field('export_tool', default=app_config.get('export', 'tool'), requires=IS_IN_SET(['java', 'inkscape'], zero=None)),
+        Field('inkscape_path', default=app_config.get('inkscape', 'path')),
+        Field('java_path', default=app_config.get('java', 'path')),
+    )
+    if form.accepts(request.vars, keepvalues=True):
+        app_config.set('export', 'tool', form.vars.export_tool)
+        app_config.set('inkscape', 'path', form.vars.inkscape_path)
+        app_config.set('java', 'path', form.vars.java_path)
+        response.flash = 'Export settings saved'
     return form
-    
+
+
 def setup_hg():
-    if not auth.has_membership(role = 'admin'):
+    if not auth.has_membership(role='admin'):
         return 'You need to login as admin to configure the Mercurial path'
     form = form_factory(
             Field('hg_path', default = app_config.get('hg','path')),
             )
-    if form.accepts(request.vars, keepvalues = True):
-        app_config.set('hg','path', form.vars.hg_path)
-        response.flash = 'Mercurial path saved'
+    if form.accepts(request.vars, keepvalues=True):
+        app_config.set('hg', 'path', form.vars.hg_path)
+    response.flash = 'Mercurial path saved'
     return form

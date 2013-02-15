@@ -32,6 +32,8 @@ class Config:
         self.create('smtp', 'login', 'user:password')
         self.create('smtp', 'server', 'server:portx')
         self.create('smtp', 'sender', 'name@server.org')
+        self.create('export', 'tool', 'java')
+        self.create('inkscape', 'path', '/usr/bin/inkscape')
         self.create('java', 'path', '/usr/bin/java')
         self.create('hg', 'path', '/path/to/hg')
 

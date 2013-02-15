@@ -168,29 +168,47 @@ def redo():
         session.editor_histroy_undo.append(item)
         session.editor_autosave = simplejson.dumps(item['graph'])
     return ''
-    
+
 
 def export():
-    file_type = False
-    if request.vars.format in 'png jpeg pdf tiff'.split():
-        file_type = request.vars.format
-        java = app_config.get('java', 'path')
-        import os
-        from subprocess import Popen, PIPE
-        from shlex import split
-        jar = os.path.join(request.folder, "static", "svg-export-0.2.jar")
-        applet = java + " -jar " + jar + " -si -so -f " + request.vars.format
-        result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(request.vars.svg_data)      # call Ben's Java Exporter Applet
-        out = result[0]  # stdout
-        if result[1]:
-            raise Exception(result[1])
-        print "image export errors: ", result[1]  # stderr
-
-    if not file_type:
+    out = ''
+    if not request.vars.format:
         return ''
+    import os
+    if app_config.get('export', 'tool') == 'inkscape':
+        if request.vars.format in 'png pdf'.split():
+            from gluon.tools import web2py_uuid
+            import subprocess
+            tmp_file = os.path.join(request.folder, 'static', web2py_uuid())
+            open(tmp_file + '.svg', 'w').write(request.vars.svg_data)
+            format_switch = '-A' if request.vars.format == 'pdf' else '-e'
+            command = [app_config.get('inkscape', 'path'), "-f ", tmp_file + ".svg", format_switch, tmp_file + request.vars.format]
+            result = subprocess.call(command)
+            if result == 1:  # stderr
+                raise HTTP('inkscape call failed')
+            out = open(tmp_file + request.vars.format, 'rb').read()
+            os.unlink(tmp_file + '.svg')
+            os.unlink(tmp_file + request.vars.format)
+        else:
+            raise HTTP(500, 'File Format Not Supported')
+
+    elif app_config.get('export', 'tool') == 'java':
+        if request.vars.format in 'png jpeg pdf tiff'.split():
+            from subprocess import Popen, PIPE
+            from shlex import split
+            jar = os.path.join(request.folder, "static", "svg-export-0.2.jar")
+            applet = app_config.get('java', 'path') + " -jar " + jar + " -si -so -f " + request.vars.format
+            result = Popen(split(applet), stdin=PIPE, stdout=PIPE).communicate(request.vars.svg_data)      # call Ben's Java Exporter Applet
+            out = result[0]  # stdout
+            if result[1]:
+                raise Exception(result[1])
+            # print "image export errors: ", result[1]  # stderr
+        else:
+            raise HTTP(500, 'File Format Not Supported')
+
     import gluon.contenttype
-    response.headers['Content-Type'] = gluon.contenttype.contenttype("%s" % file_type)
-    filename = "%s.%s" % ('graph', file_type)
+    response.headers['Content-Type'] = gluon.contenttype.contenttype("%s" % request.vars.format)
+    filename = "%s.%s" % ('graph', request.vars.format)
     response.headers['Content-disposition'] = "attachment; filename=\"%s\"" % filename
     return out
 
@@ -219,8 +237,10 @@ def render():
     response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/css', 'colorpicker.css'))
     return dict(in_url=in_url)
 
+
 def render_help():
     return session.render[request.vars.url]
+
 
 def sbgnml_test():
     import os

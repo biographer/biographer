@@ -172,7 +172,11 @@
 				<td>
 					<select id="export_format_select">
 						<option value="">... choose</option>
+						{{if app_config.get('export', 'tool') == 'java':}}
 						{{for frmt in 'png jpeg pdf tiff'.split():}} <option>{{=frmt}}</option> {{pass}}
+						{{elif app_config.get('export', 'tool') == 'inkscape':}}
+						{{for frmt in 'png pdf'.split():}} <option>{{=frmt}}</option> {{pass}}
+						{{pass}}
 					</select>
 				</td>
 			</tr>
@@ -449,6 +453,7 @@ bui.ready(function() {
 	editor.redrawGraph(editor_config.graphData);
 	editor.setLanguage();
 	editor.enableSelection();
+	editor.enableWheelPan();
 	editor_config.history_undo.push({action: 'initialized', graph: JSON.stringify(editor.graph.toJSON())})
 	
 });
