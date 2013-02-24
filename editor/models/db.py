@@ -437,17 +437,18 @@ def sbgnml2jsbgn(sbgnml_str):
     class2sbo = {
             'compartment' : 290,
             'macromolecule' : 245,
-            'macromolecule multimer' : 245,#FIXME
+            'macromolecule multimer' : 420,#FIXME
             'simple chemical' : 247,
-            'simple chemical multimer' : 247,#FIXME
+            'simple chemical multimer' : 421,#FIXME
             'complex' : 253,
+            'complex multimer' : 418,
             'process' : 375,
             'omitted process' : 379,
             'uncertain process' : 396,
             'annotation' : 110003,
             'phenotype' : 358,
             'nucleic acid feature' : 250,
-            'nucleic acid feature multimer' : 250,#FIXME
+            'nucleic acid feature multimer' : 419,#FIXME
             'association' : 177,
             'dissociation' : 180,
             'entity' : 245,
@@ -512,7 +513,7 @@ def sbgnml2jsbgn(sbgnml_str):
             node_item['data']['orientation'] = node.orientation
         #---------
         if hasattr(node, 'clone'):
-            node_item['data']['clone_marker'] = True
+            node_item['data']['clonemarker'] = True
         #---------
         if hasattr(node, 'glyph'):#subnodes present
             node.glyph

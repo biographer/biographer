@@ -454,7 +454,6 @@ bui.ready(function() {
 	editor.setLanguage();
 	editor.enableSelection();
 	editor.enableWheelPan();
-	editor_config.history_undo.push({action: 'initialized', graph: JSON.stringify(editor.graph.toJSON())})
-	
+	editor_config.history_undo.push({action: 'initialized', graph: JSON.stringify(editor.graph.toJSON())})	
 });
 </script>

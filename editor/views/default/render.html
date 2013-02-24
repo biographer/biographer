@@ -57,11 +57,13 @@ editor = new Editor();
 bui.ready(function() {
     editor.graph = new bui.Graph($('#canvas')[0]);
     //bui.Node.bindStatic(bui.Node.ListenerType.click, editor.drawableSelect());//FIXME this does not work, y?
+    console.log('redraw '+JSON.stringify(editor_config.graphData));
     editor.redrawGraph(editor_config.graphData);
     editor.setLanguage();
     editor.enableSelection();
     editor_config.history_undo.push({action: 'initialized', graph: JSON.stringify(editor.graph.toJSON())})
     editor.setMode('move');
+    editor.graph.fitToPage();
     $('body').hover(function(){$('#biog').fadeIn(); }, function(){$('#biog').fadeOut(); } );
 });
 </script>

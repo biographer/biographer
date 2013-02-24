@@ -1142,32 +1142,40 @@ Editor.prototype = {
             $_GET[decode(arguments[1])] = decode(arguments[2]);
         });
 
+        if(editor_config.in_url !== undefined){
+            console.log('got in_url!!! '+editor_config.in_url);
+            $.ajax({
+                url : editor_config.url_render,
+                data: {url: editor_config.in_url},
+                async : false,
+                success: function(data){
+                    if (data.charAt(0) != '{'){
+                        var doc = sb.io.read(data);
+                        if((doc === null)||(doc === undefined)){
+                            $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                        }else{
+                            editor_config.graph = sb.io.write(doc, 'jsbgn');
+                            //console.log(sb.io.write(doc, 'jsbgn'));
+                            console.log('got doc and converted to jsbgn');
+                            console.log(editor_config.graph);
+                        }
+                    }else{
+                        console.log('got jsbgn data from render in_url: '+data);
+                        editor_config.graphData = JSON.parse(data);
+                    }
+                }
+            });
+        }
         if('layout' in $_GET){
             $.ajax({
                 url: editor_config.url_layout,
-                data: {jsbgn: JSON.stringify(editor_config.graphData), layout: 'biographer', data:bui.layouter.makeLayouterFormat(editor_config.graphData), filename: $_GET['filename']},
+                data: bui.layouter.makeLayouterFormat(editor_config.graphData),
                 type: 'POST',
                 success: function(data) {
-                    //console.log(data);
-                    bui.layouter.fromLayouterFormat(editor_config.graphData,data);
-                    this_editor.undoPush('applied automatic biographer layout');
+                    bui.settings.straightenEdges = false;
+                    editor_config.graphData = bui.layouter.fromLayouterFormat(editor_config.graphData,data);
                     this_editor.redrawGraph(editor_config.graphData);
-                    //bui.importUpdatedNodePositionsFromJSON(graph, editor_config.graphData, 300)
-                    }
-            });
-        }
-        if(editor_config.in_url !== undefined){
-            $.get(editor_config.url_render,{url: editor_config.in_url},function(data){
-
-                var doc = sb.io.read(data);
-                if((doc === null)||(doc === undefined)){
-                    $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
-                }else{
-                    console.log(sb.io.write(doc, 'jsbgn'));
-                    this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
-                    this_editor.setLanguage();
-                    editor.graph.fitToPage();
-                    this_editor.undoPush('loaded url '+editor_config.in_url);
+                    this_editor.graph.fitToPage();
                 }
             });
         }

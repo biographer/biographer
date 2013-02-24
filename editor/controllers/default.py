@@ -223,7 +223,10 @@ def render():
     if in_url:
         try:
             import urllib2
-            session.render[in_url] = _download(in_url)
+            # session.render[in_url] = _download(in_url)
+            action, graph, json_string = import_file(_download(in_url))
+            session.render[in_url] = json_string
+            print 'old translate: ', session.render[in_url], in_url
         except urllib2.HTTPError, e:
             return 'error getting %s: %s' % (in_url, e)
     response.files.append(URL(request.application, 'static/biographer-editor/css', 'visualization-html.css'))
@@ -281,22 +284,26 @@ def sbml_test():
     items = []
     filenames = [fn for fn in os.listdir(test_path) if fn.startswith('BIOMD') and fn.endswith('.xml')]
     filenames.sort()
+    count = 0
     for fn in filenames:
         items.append(
                 TR(TH(A(fn, _href=URL('render', vars=dict(q=URL(request.application, 'static/data_models', fn), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
             )
         items.append(
             TR(
-                #TD(IMG(_src=URL(request.application, 'static/test-files/'+dn, fn[:-5]+'.png'), _alt='sbgn image', _style='max-width: 300px')),
-                TD(PRE(
+                TD(
+                    DIV('load', _class='button load_iframe', _id=fn),
                     '%s' % IFRAME(_src=URL('render', vars=dict(q=URL(request.application, 'static/data_models', fn), layout="biographer")), _width="500px", _height="200px", _scrolling="no", _frameBorder="0"),
                     _class='show_iframe'
-                    ), DIV()),
+                    ),
                 ),
             )
         items.append(
             TR(TH(HR(), _colspan=2)),
             )
+        if count > 1:
+            break
+        count += 1
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     return dict(table=TAG[''](TABLE(items)))
 

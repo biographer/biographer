@@ -8,8 +8,8 @@
 {{pass}}
 {{=table}}
 <script type="text/javascript">
-        $('iframe').resizable();
-        $('.show_iframe').click(function(){
-            $(this).parent().find('div').html($(this).html());
+        $('.load_iframe').click(function(){
+            console.log('jup clicked it');
+            $(this).parent().html('<iframe frameborder="0" height="200px" scrolling="no" src="{{=URL("render")}}?layout=biographer&q={{=URL(request.application, "static", "data_models")}}/'+$(this).attr('id')+'" width="500px"></iframe>');
         });
 </script>
