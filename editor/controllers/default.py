@@ -284,7 +284,6 @@ def sbml_test():
     items = []
     filenames = [fn for fn in os.listdir(test_path) if fn.startswith('BIOMD') and fn.endswith('.xml')]
     filenames.sort()
-    count = 0
     for fn in filenames:
         items.append(
                 TR(TH(A(fn, _href=URL('render', vars=dict(q=URL(request.application, 'static/data_models', fn), layout="biographer", filename=fn)), _target="_blank"), _colspan=2)),
@@ -301,9 +300,6 @@ def sbml_test():
         items.append(
             TR(TH(HR(), _colspan=2)),
             )
-        if count > 1:
-            break
-        count += 1
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     return dict(table=TAG[''](TABLE(items)))
 
