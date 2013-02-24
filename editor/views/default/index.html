@@ -32,9 +32,9 @@
 				<li id="export_other"> <div>export current graph as: png,jpeg,pdf,tiff</div><div class="keyboard">ctrl + e</div> </li>
 				<!-- ---------------------------------------------------------------- -->
 				<li class="spacer"></li>
-				{{if not request.vars.html5only:}}
-				<li id="layout_biographer"> <div>apply automatic <b>biographer</b> layout</div> </li>
-				{{pass}}
+				<li id="layout_biographer"> <div>apply automatic <b>biographer</b> layout
+				{{if request.vars.html5only:}} (needs an internet connection!) {{pass}}
+				</div> </li>
 				<li id="layout_grid"> <div>apply <b>grid based</b> layout in browser (if ctrl+click the grid is only initialized)</div> </li>
 				<li id="layout_force"> <div>apply <b>D3 force based</b> layout in browser</div> </li>
 				<li class="spacer"></li>
@@ -158,13 +158,12 @@
 			<input type="button" value="export current graph as jSBGN (JSON)"/>
 			&nbsp;
 		</div>
-		{{if not request.vars.html5only:}}
 		<div id="export_svg"> 
 			<input type="button" value="export current graph as SVG"/>
 			&nbsp;
 		</div>
-		{{pass}}
 	</div>
+	{{if not request.vars.html5only:}}
 	<div>
 		<table>
 			<tr>
@@ -183,6 +182,7 @@
 		</table>
 		<br />
 	</div>
+	{{pass}}
 	<br />
 	<button class='sc_but close_modal'>cancel</button> or press <b>ESC</b>
 </div>
@@ -195,9 +195,13 @@
             <td>
                 <form id='import_form' method="post" enctype="multipart/form-data">
                     <input name="import_file" type="file" id="import_file_input"/> supported formats are jSBGN, SBGN-ML, SBML
+					{{if request.vars.html5only:}}
+					<br> Attention: File imports only work if you access this file from a server see <a href="http://stackoverflow.com/questions/6427870/html5-file-api-security-error-while-reading-a-file">here</a>
+					{{}}
                 </form>
             </td>
 		</tr>
+		{{if not request.vars.html5only:}}
 		<tr>
             <th> <a href="http://www.reactome.org/">Reactome</a></th>
             <td>                     
@@ -213,6 +217,7 @@
                 {{include 'default/biomodels_info_list.html'}}
             </td>
 		</tr>
+		{{pass}}
 		<tr>
 			<th>jSBGN</th>
 			<td>
