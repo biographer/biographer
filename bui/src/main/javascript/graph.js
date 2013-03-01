@@ -138,7 +138,7 @@
     var wheelZoom = function (graph, event) {
         var privates = graph._privates(identifier);
         
-        if (!privates.enableZooming || !event.altKey) {
+        if (!privates.enableZooming || (privates.wheelZoomKey && !event[privates.wheelZoomKey])) {
             return event;
         }
         
@@ -317,6 +317,7 @@
         privates.y = 0;
         privates.enablePanning = true;
         privates.enableZooming = true;
+        privates.wheelZoomKey = 'altKey';
         privates.highPerformance = bui.settings.initialHighPerformance;
 
         this.bind(bui.Graph.ListenerType.dragStart,
@@ -513,6 +514,40 @@
             }
 
             return privates.enableZooming;
+        },
+
+        /**
+         * @description
+         * Used to set or clear the modifier key that must be pressed for
+         * a mouse wheel event to zoom into the graph.
+         *
+         * If you omit the parameter the current modifierKey is returned.
+         *
+         * @param {String} [modifierKey] The Modifier key that is required to
+         *   be held for the graph to be zoomed into/out of or null if there
+         *   is to be no modifier key necessary.
+         * @return {bui.Graph|String|null} Fluent interface when you pass a
+         *   parameter to this function. If not, the graph will be returned.
+         */
+        wheelZoomKey : function(modifierKey) {
+            var privates = this._privates(identifier);
+
+            if (modifierKey !== undefined) {
+                if (modifierKey === null) {
+                    privates.wheelZoomKey = null;
+                } else {
+                    modifierKey = modifierKey.indexOf('Key') === -1?
+                    modifierKey + 'Key':
+                        modifierKey;
+
+                    if (modifierKey === 'altKey' || modifierKey === 'ctrlKey' || modifierKey === 'metaKey' || modifierKey === 'shiftKey') {
+                        privates.wheelZoomKey = modifierKey;
+                    }
+                }
+                return this;
+            }
+
+            return privates.wheelZoomKey;
         },
 
         /**
