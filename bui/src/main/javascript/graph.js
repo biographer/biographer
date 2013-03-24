@@ -41,39 +41,27 @@
 
     var gestureStart = function(event) {
         // Only fire if event isn't propagating from a child element
-        if (event.target === this._privates(identifier).root) {
             this.fire(bui.Graph.ListenerType.gestureStart, [this, event]);
-        }
     };
 
     var gestureMove = function(event) {
-        if (event.target === this._privates(identifier).root) {
             this.fire(bui.Graph.ListenerType.gestureMove, [this, event]);
-        }
     };
 
     var gestureEnd = function(event) {
-        if (event.target === this._privates(identifier).root) {
             this.fire(bui.Graph.ListenerType.gestureEnd, [this, event]);
-        }
     };
 
     var dragStart = function(event) {
-        if (event.target === this._privates(identifier).root) {
             this.fire(bui.Graph.ListenerType.dragStart, [this, event]);
-        }
     };
 
     var dragMove = function(event) {
-        if (event.target === this._privates(identifier).root) {
             this.fire(bui.Graph.ListenerType.dragMove, [this, event]);
-        }
     };
 
     var dragEnd = function(event) {
-        if (event.target === this._privates(identifier).root) {
             this.fire(bui.Graph.ListenerType.dragEnd, [this, event]);
-        }
     };
 
     var mouseWheel = function(event) {
@@ -82,7 +70,7 @@
     
     var gesturePanAndZoom = function(graph, event) {
         var privates = graph._privates(identifier),
-            newScale = privates.scale * (1 + event.detail.ds),
+            newScale = privates.scale * (1 + event.ds),
             dx,
             dy;
 
@@ -93,14 +81,14 @@
             
             if (privates.enablePanning) {
                 // So that the graph follows the gesture
-                dx += event.detail.dx / newScale;
-                dy += event.detail.dy / newScale;
+                dx += event.dx / newScale;
+                dy += event.dy / newScale;
             }
         
             if (privates.enableZooming) {
                 // So that the graph is scaled with the gesture cordinate as the center
-                dx -= ((event.detail.pageX - privates.rootOffset.x) * event.detail.ds) / newScale;
-                dy -= ((event.detail.pageY - privates.rootOffset.y) * event.detail.ds) / newScale;
+                dx -= ((event.pageX - privates.rootOffset.x) * event.ds) / newScale;
+                dy -= ((event.pageY - privates.rootOffset.y) * event.ds) / newScale;
                 
                 graph.scale(newScale);
             }
@@ -125,11 +113,11 @@
             return event;
         }
         
-        if ((event.type === 'interactdragmove' && this.highPerformance()) ||
-            (event.type === 'interactdragend' && !this.highPerformance())) {
+        if ((event.type === 'dragmove' && this.highPerformance()) ||
+            (event.type === 'dragend' && !this.highPerformance())) {
             
-            privates.panPosition.x += event.detail.dx / privates.scale;
-            privates.panPosition.y += event.detail.dy / privates.scale;
+            privates.panPosition.x += event.dx / privates.scale;
+            privates.panPosition.y += event.dy / privates.scale;
 
             this.translate(privates.panPosition.x, privates.panPosition.y);
         }
@@ -138,7 +126,7 @@
     var wheelZoom = function (graph, event) {
         var privates = graph._privates(identifier);
         
-        if (!privates.enableZooming || (privates.wheelZoomKey && !event[privates.wheelZoomKey])) {
+        if (!privates.enableZooming || !event.altKey) {
             return event;
         }
         
@@ -241,21 +229,22 @@
                 mouseWheel.createDelegate(this));
             
         // Add interact.js event listeners
-        privates.root.addEventListener('interactgesturemove', gestureMove.createDelegate(this));
-        privates.root.addEventListener('interactdragstart', dragStart.createDelegate(this));
-        privates.root.addEventListener('interactdragmove', dragMove.createDelegate(this));
-        privates.root.addEventListener('interactdragend', dragEnd.createDelegate(this));
+        
         
         // Set as interactable
         interact.set(privates.root, {
-                gesture: true,
-                drag: true,
-                autoScroll: false,
-                actionCheck: function (event) {
+                draggable   : true,
+                gestureable : true,
+                autoScroll  : false,
+                actionCheck : function (event) {
                     return 'drag';
                 },
 				checkOnHover: false
-            });
+            })
+            .bind('gesturemove', gestureMove.createDelegate(this))
+            .bind('dragstart', dragStart.createDelegate(this))
+            .bind('dragmove', dragMove.createDelegate(this))
+            .bind('dragend', dragEnd.createDelegate(this));
     };
 
     /**
@@ -317,7 +306,6 @@
         privates.y = 0;
         privates.enablePanning = true;
         privates.enableZooming = true;
-        privates.wheelZoomKey = 'altKey';
         privates.highPerformance = bui.settings.initialHighPerformance;
 
         this.bind(bui.Graph.ListenerType.dragStart,
@@ -514,40 +502,6 @@
             }
 
             return privates.enableZooming;
-        },
-
-        /**
-         * @description
-         * Used to set or clear the modifier key that must be pressed for
-         * a mouse wheel event to zoom into the graph.
-         *
-         * If you omit the parameter the current modifierKey is returned.
-         *
-         * @param {String} [modifierKey] The Modifier key that is required to
-         *   be held for the graph to be zoomed into/out of or null if there
-         *   is to be no modifier key necessary.
-         * @return {bui.Graph|String|null} Fluent interface when you pass a
-         *   parameter to this function. If not, the graph will be returned.
-         */
-        wheelZoomKey : function(modifierKey) {
-            var privates = this._privates(identifier);
-
-            if (modifierKey !== undefined) {
-                if (modifierKey === null) {
-                    privates.wheelZoomKey = null;
-                } else {
-                    modifierKey = modifierKey.indexOf('Key') === -1?
-                    modifierKey + 'Key':
-                        modifierKey;
-
-                    if (modifierKey === 'altKey' || modifierKey === 'ctrlKey' || modifierKey === 'metaKey' || modifierKey === 'shiftKey') {
-                        privates.wheelZoomKey = modifierKey;
-                    }
-                }
-                return this;
-            }
-
-            return privates.wheelZoomKey;
         },
 
         /**

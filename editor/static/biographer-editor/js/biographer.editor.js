@@ -389,8 +389,8 @@ Editor.prototype = {
         var x,y,pos;
         if(parent === undefined && drawable.hasParent()) {
             drawable.parent(this.graph);
-            x = e.pageX !== undefined ? e.pageX : event.detail.pageX;
-            y = e.pageY !== undefined ? e.pageY : event.detail.pageY;
+            x = e.pageX !== undefined ? e.pageX : event.pageX;
+            y = e.pageY !== undefined ? e.pageY : event.pageY;
             pos = this.graph.toGraphCoords( x-this.canvaspos.left, y-this.canvaspos.top ) ;
             drawable.absolutePosition(pos.x, pos.y);
         }else if(parent !== undefined && drawable != parent && parent != drawable.parent()){
@@ -398,8 +398,8 @@ Editor.prototype = {
             if (parent.identifier() == 'Complex'){
                 parent.tableLayout();
             } else {
-                x = e.pageX !== undefined ? e.pageX : event.detail.pageX;
-                y = e.pageY !== undefined ? e.pageY : event.detail.pageY;
+                x = e.pageX !== undefined ? e.pageX : event.pageX;
+                y = e.pageY !== undefined ? e.pageY : event.pageY;
                 pos = this.graph.toGraphCoords( x-this.canvaspos.left, y-this.canvaspos.top ) ;
                 drawable.absolutePosition(pos.x, pos.y);
             }
@@ -413,8 +413,8 @@ Editor.prototype = {
             if ( (this.cur_mode === 'cursor' || this.cur_mode === undefined) && (node.selected === true) ){
                 for (var i = 0; i < this_editor.selected_nodes.length; i++) {
                     var scale = this_editor.graph.scale(),
-                        dx = event.detail.dx / scale,
-                        dy = event.detail.dy / scale;
+                        dx = event.dx / scale,
+                        dy = event.dy / scale;
 
                     if (this_editor.selected_nodes[i] instanceof bui.Node &&
                         this_editor.selected_nodes[i] !== node) {
@@ -897,7 +897,7 @@ Editor.prototype = {
         var this_editor = this;
         return function(graph, event){
             event.preventDefault();
-            var wheelDelta = event.wheelDelta || event.deltaY * -1 || event.detail,//cross browser scroll data
+            var wheelDelta = event.wheelDelta || event.deltaY * -1 || event,//cross browser scroll data
                 ds = (1/graph.scale()) * 15 * (wheelDelta > 0? 1: -1);//calculate the value for scrolling
             var pos = graph.translate();
             if (event.shiftKey) pos.x += ds;
@@ -922,10 +922,6 @@ Editor.prototype = {
             this.box = document.body.appendChild(document.createElement('div'));
 
             var canvas = document.getElementById('canvas');
-            interact.set(canvas, {
-                drag:true,
-                checkOnHover: false
-            });
 
             var fireDragStart  = function(event) {
                 if (event.target === canvas) {
@@ -945,9 +941,16 @@ Editor.prototype = {
                 }
             };
 
-            canvas.addEventListener('interactdragstart', fireDragStart);
-            canvas.addEventListener('interactdragmove', fireDragMove);
-            canvas.addEventListener('interactdragend', fireDragEnd);
+            interact.set(canvas, {
+                    draggable   : true,
+                    resizeable  : true,
+                    gestureable : true,
+                    dropzone    : true,
+                    checkOnHover: false
+                })
+                .bind('dragstart', fireDragStart)
+                .bind('dragmove' , fireDragMove)
+                .bind('dragend'  , fireDragEnd);
         }
             
         var box = this.box;
@@ -966,10 +969,10 @@ Editor.prototype = {
                     $('box').show();
                     //box.style.display = 'block';
                     box.style.display = '';
-                    box.style.left = event.detail.x0;
-                    box.style.top = event.detail.y0;
-                    box.style.width = Math.max(event.detail.dx, 0) + 'px';
-                    box.style.height = Math.max(event.detail.dy, 0) + 'px';
+                    box.style.left = event.x0;
+                    box.style.top = event.y0;
+                    box.style.width = Math.max(event.dx, 0) + 'px';
+                    box.style.height = Math.max(event.dy, 0) + 'px';
                     
                 }else if (this_editor.cur_mode == 'move'){
                     this_editor.selected_nodes_start_pos = {};
@@ -986,27 +989,27 @@ Editor.prototype = {
             bui.Graph.ListenerType.dragMove,
             function (graph, event) {
                 if ((this_editor.cur_mode == 'cursor') || (this_editor.cur_mode === undefined)){
-                    if (event.detail.x0>event.detail.pageX){
-                        box.style.left = event.detail.pageX;
-                        box.style.width = Math.max(event.detail.x0 - event.detail.pageX) + 'px';
-                        this_editor.selection_borders.left = (event.detail.pageX - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x,
-                        this_editor.selection_borders.right = (event.detail.x0 - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
+                    if (event.x0>event.pageX){
+                        box.style.left = event.pageX;
+                        box.style.width = Math.max(event.x0 - event.pageX) + 'px';
+                        this_editor.selection_borders.left = (event.pageX - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x,
+                        this_editor.selection_borders.right = (event.x0 - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
                     }else{
-                        box.style.left = event.detail.x0;
-                        box.style.width = Math.max(event.detail.pageX - event.detail.x0) + 'px';
-                        this_editor.selection_borders.left = (event.detail.x0 - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
-                        this_editor.selection_borders.right = (event.detail.pageX - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
+                        box.style.left = event.x0;
+                        box.style.width = Math.max(event.pageX - event.x0) + 'px';
+                        this_editor.selection_borders.left = (event.x0 - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
+                        this_editor.selection_borders.right = (event.pageX - this_editor.canvaspos.left) / this_editor.graph.scale() - this_editor.graph.translate().x;
                     }
-                    if (event.detail.y0>event.detail.pageY){
-                        box.style.top = event.detail.pageY;
-                        box.style.height = Math.max(event.detail.y0 - event.detail.pageY) + 'px';
-                        this_editor.selection_borders.bottom = (event.detail.y0 - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
-                        this_editor.selection_borders.top = (event.detail.pageY - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
+                    if (event.y0>event.pageY){
+                        box.style.top = event.pageY;
+                        box.style.height = Math.max(event.y0 - event.pageY) + 'px';
+                        this_editor.selection_borders.bottom = (event.y0 - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
+                        this_editor.selection_borders.top = (event.pageY - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
                     }else{
-                        box.style.top = event.detail.y0;
-                        box.style.height = Math.max(event.detail.pageY - event.detail.y0) + 'px';
-                        this_editor.selection_borders.bottom = (event.detail.pageY - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
-                        this_editor.selection_borders.top = (event.detail.y0 - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
+                        box.style.top = event.y0;
+                        box.style.height = Math.max(event.pageY - event.y0) + 'px';
+                        this_editor.selection_borders.bottom = (event.pageY - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
+                        this_editor.selection_borders.top = (event.y0 - this_editor.canvaspos.top) / this_editor.graph.scale() - this_editor.graph.translate().y;
                     }
 
                     
@@ -1048,7 +1051,7 @@ Editor.prototype = {
                     }
                     this_editor.rightMenu();
                 }else if (this_editor.cur_mode == 'move'){
-                    var move = {x:event.detail.pageX - this_editor.selection_borders.left, y: event.detail.pageY - this_editor.selection_borders.top};
+                    var move = {x:event.pageX - this_editor.selection_borders.left, y: event.pageY - this_editor.selection_borders.top};
                     for (var i = this_editor.selected_nodes.length - 1; i >= 0; i--){
                         this_editor.selected_nodes[i].absolutePosition(
                             this_editor.selected_nodes_start_pos[this_editor.selected_nodes[i].id()].x+move.x,
@@ -1142,40 +1145,32 @@ Editor.prototype = {
             $_GET[decode(arguments[1])] = decode(arguments[2]);
         });
 
-        if(editor_config.in_url !== undefined){
-            console.log('got in_url!!! '+editor_config.in_url);
-            $.ajax({
-                url : editor_config.url_render,
-                data: {url: editor_config.in_url},
-                async : false,
-                success: function(data){
-                    if (data.charAt(0) != '{'){
-                        var doc = sb.io.read(data);
-                        if((doc === null)||(doc === undefined)){
-                            $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
-                        }else{
-                            editor_config.graph = sb.io.write(doc, 'jsbgn');
-                            //console.log(sb.io.write(doc, 'jsbgn'));
-                            console.log('got doc and converted to jsbgn');
-                            console.log(editor_config.graph);
-                        }
-                    }else{
-                        console.log('got jsbgn data from render in_url: '+data);
-                        editor_config.graphData = JSON.parse(data);
-                    }
-                }
-            });
-        }
         if('layout' in $_GET){
             $.ajax({
                 url: editor_config.url_layout,
-                data: bui.layouter.makeLayouterFormat(editor_config.graphData),
+                data: {jsbgn: JSON.stringify(editor_config.graphData), layout: 'biographer', data:bui.layouter.makeLayouterFormat(editor_config.graphData), filename: $_GET['filename']},
                 type: 'POST',
                 success: function(data) {
-                    bui.settings.straightenEdges = false;
-                    editor_config.graphData = bui.layouter.fromLayouterFormat(editor_config.graphData,data);
+                    //console.log(data);
+                    bui.layouter.fromLayouterFormat(editor_config.graphData,data);
+                    this_editor.undoPush('applied automatic biographer layout');
                     this_editor.redrawGraph(editor_config.graphData);
-                    this_editor.graph.fitToPage();
+                    //bui.importUpdatedNodePositionsFromJSON(graph, editor_config.graphData, 300)
+                    }
+            });
+        }
+        if(editor_config.in_url !== undefined){
+            $.get(editor_config.url_render,{url: editor_config.in_url},function(data){
+
+                var doc = sb.io.read(data);
+                if((doc === null)||(doc === undefined)){
+                    $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                }else{
+                    console.log(sb.io.write(doc, 'jsbgn'));
+                    this_editor.redrawGraph(JSON.parse(sb.io.write(doc, 'jsbgn')));
+                    this_editor.setLanguage();
+                    editor.graph.fitToPage();
+                    this_editor.undoPush('loaded url '+editor_config.in_url);
                 }
             });
         }
