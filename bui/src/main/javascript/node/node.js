@@ -212,12 +212,10 @@
 
         positionChanged.call(this);
 
-//        interact.set(privates.nodeGroup);
-
         // interact.js event listeners
         if (bui.settings.enableModificationSupport) {
             // set as interactable
-            interact.set(privates.nodeGroup, {
+            interact(privates.nodeGroup).set({
                     draggable    : this._enableDragging,
                     resizeable   : this._enableResizing,
                     squareResize : this._forceRectangular,

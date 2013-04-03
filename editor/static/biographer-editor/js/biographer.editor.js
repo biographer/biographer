@@ -941,7 +941,7 @@ Editor.prototype = {
                 }
             };
 
-            interact.set(canvas, {
+            interact(canvas).set({
                     draggable   : true,
                     resizeable  : true,
                     gestureable : true,

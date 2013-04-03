@@ -232,7 +232,7 @@
         
         
         // Set as interactable
-        interact.set(privates.root, {
+        interact(privates.root).set({
                 draggable   : true,
                 gestureable : true,
                 autoScroll  : false,
