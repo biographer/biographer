@@ -36,6 +36,8 @@ class Config:
         self.create('inkscape', 'path', '/usr/bin/inkscape')
         self.create('java', 'path', '/usr/bin/java')
         self.create('hg', 'path', '/path/to/hg')
+        self.create('websocket', 'server', '127.0.0.1:8888')
+        self.create('websocket', 'password', 'password')
 
     def get(self, section, option):
         '''get a value'''

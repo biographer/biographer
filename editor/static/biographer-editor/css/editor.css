@@ -576,7 +576,6 @@ input[type="text"] {
     border: dashed 1px black;
     position: absolute;
 }
-
 /**********************************/
 .biomodels_notes>div{
     display: none;  
@@ -617,6 +616,23 @@ input[type="text"] {
     background-color: #FFFFF0;
 }
 
+/**********************************/
+#chat {
+    position: absolute;
+    width: 200px;
+    height: 40px;
+    background-color: black;
+    bottom: 0px;
+    left: 200px;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+#chat input{
+    position: relative;
+    top: 10;
+    left: 25px;;
+    width: 150px;
+}
 /**********************************/
 
 /***************************

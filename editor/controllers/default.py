@@ -25,6 +25,13 @@ def index():
     response.files.append(URL(request.application, 'static/biographer-editor/js', 'd3.geom.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/js', 'colorpicker.js'))
     response.files.append(URL(request.application, 'static/biographer-editor/js/colorpicker/css', 'colorpicker.css'))
+    if not session.myid:
+        from gluon.utils import web2py_uuid
+        session.myid = web2py_uuid()
+    if request.args(0):
+        session.uuid = request.args(0)
+    else:
+        session.uuid = None
     if (request.vars.import_file != None and request.vars.import_file != '') or request.vars.jgraph or request.vars.jsbgn:
         action, graph, json_string = None, None, None
         if request.vars.jgraph or request.vars.jsbgn:
@@ -303,6 +310,14 @@ def sbml_test():
     response.files.append(URL(request.application, 'static/js', 'jquery-ui-1.8.15.custom.min.js'))
     return dict(table=TAG[''](TABLE(items)))
 
+def create_session():
+    from gluon.utils import web2py_uuid
+    redirect(URL(index, args=[web2py_uuid()]))
+
+def chat():
+    if session.uuid:
+        from gluon.contrib.websocket_messaging import websocket_send
+        websocket_send('http://'+app_config.get('websocket','server'),request.vars.msg,app_config.get('websocket','password'),session.uuid)
 
 def user():
     """
