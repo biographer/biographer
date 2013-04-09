@@ -322,7 +322,14 @@
                 }
               }
             }
-
+            // import the color width and dash array of the edge
+            if (bui.util.propertySetAndNotNull(edgeJSON, ['data','color'])){
+              if (Object.prototype.toString.call(edgeJSON.data.color).slice(8,-1) == "String"){
+                edge.color({color: edgeJSON.data.color});
+              } else {
+                edge.color(edgeJSON.data.color);
+              } 
+            }
 
             if (edgeJSON.sbo !== undefined) {
                 if ((edgeJSON.source.split(':')[0] == edgeJSON.target.split(':')[0])&&(edgeJSON.sbo == 342)){//SBO:0000342 molecular or genetic interaction

@@ -106,7 +106,8 @@ bui.settings = {
             type : ['data', 'type'],
             handles : ['data', 'handles'],
             points : ['data', 'points'],
-            pointtypes : ['data', 'pointtypes']
+            pointtypes : ['data', 'pointtypes'],
+            color : ['data', 'color']
         }
 
     },

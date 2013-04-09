@@ -114,6 +114,10 @@
 
 
       this._line.setAttributeNS(null, 'd', data.join(' '));
+      console.log('stroke width set to: '+this.color().width);
+      this._line.setAttributeNS(null, 'stroke-width', this.color().width);
+      this._line.setAttributeNS(null, 'stroke-dasharray', this.color().dasharray);
+      this._line.setAttributeNS(null, 'stroke', this.color().color);
       
     }
     /**
@@ -152,6 +156,9 @@
       }
       data.push('L', targetPosition.x, targetPosition.y);
       this._line.setAttributeNS(null, 'd', data.join(' '));
+      this._line.setAttributeNS(null, 'stroke-width', this.color().width);
+      this._line.setAttributeNS(null, 'stroke-dasharray', this.color().dasharray);
+      this._line.setAttributeNS(null, 'stroke', this.color().color);
     }
     /**
      * @private
@@ -479,7 +486,14 @@
             this.layoutElementsVisible(true);
         }
     };
-
+    /**
+     * @private background/text color listener
+     */
+    var colorChanged = function() {
+      this._line.setAttributeNS(null, 'stroke-width', this.color().width);
+      this._line.setAttributeNS(null, 'stroke-dasharray', this.color().dasharray);
+      this._line.setAttributeNS(null, 'stroke', this.color().color);
+    };
     /**
      * @class
      * An edge which contains multiple segments, can be spline or straight
@@ -489,6 +503,13 @@
      */
     bui.Edge = function(args){
         bui.Edge.superClazz.apply(this, arguments);
+
+        var privates = this._privates(identifier);
+        privates.color  = {
+            color: 'black',
+            width: '',
+            dasharray: ''
+        };
     };
 
     bui.Edge.prototype = {
@@ -795,18 +816,57 @@
             if (handles.length) updateJson(json, dataFormat.edge.handles, handles);
             if (pointtypes.length) updateJson(json, dataFormat.edge.pointtypes, pointtypes);
 
+            var color = this.color();
+            if(color.color || color.width || color.dasharray){
+                updateJson(json, dataFormat.edge.color, color);    
+            }
             //console.log('rock edge '+JSON.stringify(json));
 
             return json;
+        },
+        /**
+        * Set or retrieve the current color
+        *
+        * @param {Object} [options] object with propertied color, dasharray, 
+        * which are the new colors to be set. Omit to retrieve current colors.
+        * @return {bui.Labelable|Object} Current colors are returned when you
+        *   don't pass any parameter, fluent interface otherwise.
+        */
+        color : function(options) {
+          var privates = this._privates(identifier),
+          changed = false;
+          if (typeof options !== 'object') {
+              // Return object giving background and label text color
+              return privates.color;
+          }
+          console.log(privates.color);
+          for (var prop in privates.color) {
+              if (privates.color.hasOwnProperty(prop)) {
+                if(typeof options[prop] === 'string'){
+                  options[prop] = options[prop].toLowerCase();
+                }
+                  changed = changed || options[prop] !== privates.color[prop];
+                  privates.color[prop] = options[prop];
+              }
+          }
+         if(changed) {
+              console.log('color changed fire now')
+              //Fire the colorchanged
+              //this.fire(bui.Edge.ListenerType.color, [this, options]);//FIXME cannot get this to work
+              colorChanged.call(this,options);
+          }
+          
+          return this;
         }
-
     };
 
     bui.util.setSuperClass(bui.Edge, bui.AbstractLine);
     
     bui.Edge.ListenerType = {
     /** @field */
-      edgePointAdded : bui.util.createListenerTypeId()
+      edgePointAdded : bui.util.createListenerTypeId(),
+    /** @field */
+      color : bui.util.createListenerTypeId()
     }
 
 })(bui);
