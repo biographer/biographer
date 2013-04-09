@@ -1110,14 +1110,11 @@
                 this.color(nodeJSON.data.color);
               } 
             }
+            this.size(size.width, size.height).visible(true);
             //---------------------
             //TODO why is this block here?? it does not make sense at all
-            /*
-            this.size(size.width, size.height).visible(true);
-
             nodeJSON.data.width = size.width;
             nodeJSON.data.height = size.height;
-            */
             //---------------------
             
             if (nodeJSON.data.unitofinformation !== undefined) {
