@@ -1192,7 +1192,10 @@
             updateJson(json, dataFormat.node.y, position.y);
             updateJson(json, dataFormat.node.width, privates.width);
             updateJson(json, dataFormat.node.height, privates.height);
-
+            var color = this.color();
+            if(color.background || color.border || color.label){
+                updateJson(json, dataFormat.node.color, color);    
+            }
             var children = this.childrenWithoutAuxiliaryUnits();
             if (children.length > 0) {
                 var subNodes = [];
