@@ -1649,15 +1649,25 @@ Editor.prototype = {
                     reader.onload = function (evt) {
                         var content = evt.target.result;
                         //console.log('content: '+content);
-                        var doc = sb.io.read(content);
-                        if((doc === null)||(doc === undefined)){
-                            $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
-                        }else{
-                            var new_graph = sb.io.write(doc, 'jsbgn');
-                            this_editor.redrawGraph(JSON.parse(new_graph));
+                        content = content.replace(/^\s+|\s+$/g, '');
+                        var doc;
+                        if (content[0] == '{'){
+                            console.log()
+                            this_editor.redrawGraph(JSON.parse(content));
                             this_editor.undoPush('loaded graph from JSON string');
-                            this_editor.shareAction({redraw: new_graph});
-                        this_editor.modal.close();
+                            this_editor.shareAction({redraw: content});
+                            this_editor.modal.close();
+                        }else {
+                            doc = sb.io.read(content);
+                            if((doc === null)||(doc === undefined)){
+                                $('.error').html('libSBGN.js: could not import file').fadeIn().delay(800).fadeOut();
+                            }else{
+                                var new_graph = sb.io.write(doc, 'jsbgn');
+                                this_editor.redrawGraph(JSON.parse(new_graph));
+                                this_editor.undoPush('loaded graph from JSON string');
+                                this_editor.shareAction({redraw: new_graph});
+                                this_editor.modal.close();
+                            }
                         }
                     };
                     reader.onerror = function (evt) {
