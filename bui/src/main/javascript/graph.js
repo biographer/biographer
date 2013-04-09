@@ -222,29 +222,19 @@
             }
         }
         
-        privates.root.addEventListener(
-                ('onmousewheel' in document)
-                ? 'mousewheel'
-                : 'wheel',
-                mouseWheel.createDelegate(this));
-            
-        // Add interact.js event listeners
-        
-        
         // Set as interactable
         interact(privates.root).set({
-                draggable   : true,
-                gestureable : true,
-                autoScroll  : false,
-                actionCheck : function (event) {
-                    return 'drag';
-                },
-				checkOnHover: false
+                draggable     : true,
+                gestureable   : true,
+                autoScroll    : false,
+                actionChecker : function (event) { return 'drag'; },
+				checkOnHover  : false
             })
             .bind('gesturemove', gestureMove.createDelegate(this))
-            .bind('dragstart', dragStart.createDelegate(this))
-            .bind('dragmove', dragMove.createDelegate(this))
-            .bind('dragend', dragEnd.createDelegate(this));
+            .bind('dragstart'  , dragStart  .createDelegate(this))
+            .bind('dragmove'   , dragMove   .createDelegate(this))
+            .bind('dragend'    , dragEnd    .createDelegate(this))
+            .bind('wheel'      , mouseWheel .createDelegate(this));
     };
 
     /**
