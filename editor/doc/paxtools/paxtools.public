@@ -1,0 +1,2282 @@
+public class OneTwoThreeTest {
+	public final void testFilter() throws IOException {
+	public final void testFilterBigger() throws IOException {
+	public final void testFilterOthers() throws Throwable
+public final class OneTwoThree extends AbstractTraverser implements ModelFilter {
+	public OneTwoThree() {
+			public boolean filter(PropertyEditor editor) {
+			public boolean filter(PropertyEditor editor) {
+	public OneTwoThree(BioPAXFactory factory) throws IOException{
+	public Model filter(Model model) {
+   	static public String getLocalId(BioPAXElement bpe) {
+public class GSEAConverterTest {
+	public void setupTest() throws IOException {
+	public void finishTest() throws IOException {
+	public void testWriteL2GSEA() throws Exception {
+			public boolean accept(File dir, String name) {
+	public void testWriteL3GSEA() throws Exception {
+			public boolean accept(File dir, String name) {
+public class GSEAEntry {
+    public String getName() {
+    public void setName(String name) {
+    public String getTaxID() {
+    public void setTaxID(String taxID) {
+    public String getDataSource() {
+    public void setDataSource(String datasource) {
+    public Map<String, String> getRDFToGeneMap() {
+    public void setRDFToGeneMap(Map<String, String> rdfToGenes) {
+    public Collection<String> getGenes() {
+    public String toString() {
+public class GSEAConverter implements Visitor {
+	public GSEAConverter() {
+	public GSEAConverter(String database, boolean crossSpeciesCheck) {
+	public void writeToGSEA(final Model model, OutputStream out) throws IOException {
+    public Collection<? extends GSEAEntry> convert(final Model model) {
+    public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor editor) {
+public class PathwayCommonsIOHandler
+    public static final String default_prefix =
+    public static final String default_output_format = "biopax";
+    public static final String version = "version=";
+	public static final String command = "cmd=";
+    public static final String input_id_type = "input_id_type=";
+    public static final String output_id_type = "output_id_type=";
+    public static final String data_source = "data_source=";
+    public static final String output ="output=";
+    public static final String default_version = "2.0";
+    public PathwayCommonsIOHandler(BioPAXIOHandler ioHandler) {
+    public void setPrefix(String prefix)
+    public void setInputIdType(ID_TYPE newInputIdType)
+    public void setOutputIdType(ID_TYPE newOutputIdType)
+    public void setDataSource(DATA_SRC newDataSource)
+    public Model retrieveByID(String id) throws IOException
+    public List<List<String>> getPathways(String id) throws IOException
+    public Model getNeighbors(String id) throws IOException
+    public enum ID_TYPE
+        public String getTag()
+    public enum DATA_SRC
+      	public String getTag()
+public class PaxtoolsMainTest
+    public void testGetNeighbors() throws Exception
+public final class SimpleIOExample {
+	public static void main(String[] args) throws IOException {
+	public  static void output(Model model) throws IOException {
+public class ReactomeEntitySetUnificationXrefFix
+	public static void main(String[] args) throws IOException
+	public static void fixReactome(InputStream in, OutputStream out) throws IOException
+public final class SifnxExportExample {
+	public static void main(String[] args) throws IOException {
+public class PathwayGenesExtractor implements Visitor {
+	public PathwayGenesExtractor(pathway pw) {
+	public static void main(String[] args) throws FileNotFoundException {
+	public void visit(BioPAXElement domain1, Object range, Model model, PropertyEditor editor) {
+public class UnificationIDtoRDFIDLister
+	public static void main(String[] args)
+public class GOUnificationXREFtoRelationshipXREFConverter
+    public static void main(String[] args)
+public class ProteinNameLister
+	public static void main(String[] args)
+			public boolean filter(PropertyEditor editor)
+			public boolean accept(File dir, String name)
+	public static void listProteinUnificationXrefsPerPathway(Model model)
+	public static void listUnificationXrefsPerPathway(Model model)
+			public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor editor)
+public class PaxtoolsMain {
+    public static Log log = LogFactory.getLog(PaxtoolsMain.class);
+    public static void main(String[] argv) throws IOException, 
+    public static void fromPsimi(String[] argv) throws IOException {
+    public static void toGSEA(String[] argv) throws IOException
+    public static void getNeighbors(String[] argv) throws IOException
+    public static void fetch(String[] argv) throws IOException {
+    public static void toLevel3(String[] argv) throws IOException {
+    public static void validate(String[] argv) throws IOException 
+                public boolean accept(File dir, String name) {
+    public static void toSifnx(String[] argv) throws IOException {
+    public static void toSif(String[] argv) throws IOException {
+    public static void integrate(String[] argv) throws IOException {
+    public static void merge(String[] argv) throws IOException {
+		        {public void run(String[] argv) throws IOException{merge(argv);} },
+		        {public void run(String[] argv) throws IOException{toSif(argv);} },
+		        {public void run(String[] argv) throws IOException{toSifnx(argv);} },
+		        {public void run(String[] argv) throws IOException{validate(argv);} },
+		        {public void run(String[] argv) throws IOException{integrate(argv);} },
+		        {public void run(String[] argv) throws IOException{toLevel3(argv);} },
+		        {public void run(String[] argv) throws IOException{fromPsimi(argv);} },
+		        {public void run(String[] argv) throws IOException{toGSEA(argv);} },
+		        {public void run(String[] argv) throws IOException{fetch(argv);} },
+		        {public void run(String[] argv) throws IOException{getNeighbors(argv);} },
+		        {public void run(String[] argv) throws IOException{help();} };
+        public abstract void run(String[] argv) throws IOException;
+public class SimpleIOHandlerTest
+	public final void testExportL2() throws FileNotFoundException	{
+	public final void testReadWriteL2() throws IOException
+	public static Model getL2Model(BioPAXIOHandler io)
+	public final void testReadWriteL3() throws IOException
+	public static Model getL3Model(BioPAXIOHandler io)
+	public final void testDuplicateNamesByExporter() throws IOException
+	public final void testhibernateFile() throws IOException
+	public final void testBioPAXDocument()
+public class MockFactory extends BioPAXFactoryAdaptor
+    public MockFactory(BioPAXLevel level)
+    public <T extends BioPAXElement> T create(Class<T> aClass, String uri)
+    public BioPAXElement create(String localName, String uri) {
+    public <T extends BioPAXElement> T createInstance(Class<T> aClass, String uri) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public BioPAXLevel getLevel() {
+public class EvidenceImplTest {
+	public final void testSemanticallyEquivalent() {
+public class DuplicateProprtyValuesTest {
+	public void setUp() throws Exception {
+	public final void testXref() {
+public class UnificationXrefImplTest {
+	public final void testEquals() {
+public class ModelCoverageTest
+    public void testCreationMethods() throws InvocationTargetException, IllegalAccessException
+public class ShallowCopyTest {
+	public void setUp() throws Exception {
+	public final void testCopyTString() {
+public class PathAccessorTest
+  public void testPaths()
+public class PropertyReasonerTest {
+	public void setUp() throws Exception {
+	public final void testRun_Domains() {	
+	public final void testRun_Basic() {	
+	public final void testRun_Clear() {
+	public final void testRun_AutoOverride() {
+	public final void testRun_AutoOverride1() {
+	public final void testRun_AutoOverride2() {
+	public final void testRun_DefaultOverride() {
+	public final void testRun_NullOverride() {
+public class CommandManagerTest
+	public void TestCommandManager()
+public class ClonerTest
+	public void testClone() throws Exception
+public class ModelUtilsTest {
+	public void setUp() throws Exception {
+	public final void testMergeAndReplace() {
+	public final void testInferPropertyFromParent() {
+	public final void testInferPropertyFromParent2() {
+	public final void testA() {
+	public final void testMetrics()
+public class SimpleMergerTest {
+	public void setUp() throws Exception {
+	public final void testMergeModel() {
+public class EditorMapAdapterTest
+	public void testGetKnownSubClassesOf() throws Exception
+public class SimpleEditorMapTest
+    public void testSimpleEditorMap() throws Exception
+    public void testClearSingularProperty() {    	
+	public final void testComments() {
+	public final void testReflection()
+public class UnionPropertyAccessorTest
+	public void testUnion()
+public class SimpleIOHandler extends BioPAXIOHandlerAdapter
+	public SimpleIOHandler()
+	public SimpleIOHandler(BioPAXLevel level)
+	public SimpleIOHandler(BioPAXFactory factory, BioPAXLevel level)
+	public void mergeDuplicates(boolean mergeDuplicates)
+	public String getXmlStreamInfo()
+	public String getId()
+	public class Triple
+		public String domain, range, property;
+		public String toString()
+    public void convertToOWL(Model model, OutputStream outputStream) 
+    public void convertToOWL(Model model, OutputStream outputStream, String... ids)
+				public boolean filter(PropertyEditor editor) {
+    public void writeObject(Writer out, BioPAXElement bean) throws IOException {
+    public void normalizeNameSpaces(boolean normalizeNameSpaces) {
+public interface BioPAXIOHandler
+public abstract class BioPAXIOHandlerAdapter implements BioPAXIOHandler
+	public BioPAXIOHandlerAdapter()
+	public BioPAXIOHandlerAdapter(BioPAXLevel level)
+	public BioPAXIOHandlerAdapter(BioPAXFactory factory, BioPAXLevel level)
+	public void fixReusedPEPs(boolean fixReusedPEPs)
+	public void treatNilAsNull(boolean treatNILasNull)
+	public void setConvertingFromLevel1ToLevel2(boolean convertingFromLevel1ToLevel2)
+	public boolean isTreatNilAsNull()
+	public void setTreatNilAsNull(boolean treatNilAsNull)
+	public boolean isConvertingFromLevel1ToLevel2()
+	public boolean isFixReusedPEPs()
+	public ReusedPEPHelper getReusedPEPHelper()
+	public BioPAXFactory getFactory()
+	public void setFactory(BioPAXFactory factory)
+	public EditorMap getEditorMap()
+	public void setEditorMap(EditorMap editorMap)
+	public BioPAXLevel getLevel()
+	public Model convertFromMultipleOwlFiles(String... files)
+	public Model convertFromOWL(InputStream in)
+public class PropertyRemoveCommand extends AbstractPropertyCommand
+	public boolean canUndo()
+	public boolean canRedo()
+	public boolean isSignificant()
+	public String getPresentationName()
+	public String getUndoPresentationName()
+	public String getRedoPresentationName()
+public abstract class AbstractAddRemoveCommand implements Command
+	public AbstractAddRemoveCommand(Model model, Set<BioPAXElement> bpes)
+	public boolean undo()
+	public boolean canUndo()
+	public boolean redo()
+public interface Command
+	public boolean undo();
+	public boolean redo();
+public class AddCommand extends AbstractAddRemoveCommand
+	public AddCommand(Model model, Set<BioPAXElement> bpes)
+	public String getPresentationName()
+	public String getUndoPresentationName()
+	public String getRedoPresentationName()
+public class PropertyAddCommand extends AbstractPropertyCommand
+	public boolean canUndo()
+	public boolean canRedo()
+	public boolean isSignificant()
+	public String getPresentationName()
+	public String getUndoPresentationName()
+	public String getRedoPresentationName()
+public abstract class  AbstractPropertyCommand<D extends BioPAXElement,R> implements Command
+	public boolean undo()
+	public boolean redo()
+public class RemoveCommand extends AbstractAddRemoveCommand
+	public RemoveCommand(Model model, Set<BioPAXElement> bpes)
+	public String getPresentationName()
+	public String getUndoPresentationName()
+	public String getRedoPresentationName()
+public class CommandManager
+	public CommandManager(Model model)
+	public void addProperty(BioPAXElement bpe, PropertyEditor editor, Object value)
+	public void removeProperty(BioPAXElement bpe, PropertyEditor editor, Object value)
+	public void addObjects(Set<BioPAXElement> bpes)
+	public void removeObjects(Set<BioPAXElement> bpes)
+	public void undo()
+	public void redo()
+	public boolean canUndo()
+	public boolean canRedo()
+public class PropertySetCommand<D extends BioPAXElement, R> extends AbstractPropertyCommand<D,R>
+	public String getPresentationName()
+	public String getUndoPresentationName()
+	public String getRedoPresentationName()
+public interface BioPAXElement extends Serializable, Cloneable
+    public static final Double UNKNOWN_DOUBLE = Double.MIN_VALUE;
+	public static final Float UNKNOWN_FLOAT = Float.MIN_VALUE;
+	public static final Integer UNKNOWN_INT = Integer.MIN_VALUE;
+    public @interface Key{}
+    public Map<String, Object> getAnnotations();
+public abstract class BioPAXFactory
+    public BioPAXElement create(String localName, String uri)
+    public <T extends BioPAXElement> T create(Class<T> aClass, String uri)
+    public abstract boolean canInstantiate(Class<? extends BioPAXElement> aClass);
+	public abstract Model createModel();
+    public abstract BioPAXLevel getLevel();
+    public abstract <T extends BioPAXElement> Class<T> getImplClass(Class<T> aModelInterfaceClass);
+public interface experimentalForm extends utilityClass
+	public void addEXPERIMENTAL_FORM_TYPE(
+	public Set<openControlledVocabulary> getEXPERIMENTAL_FORM_TYPE();
+	public physicalEntityParticipant getPARTICIPANT();
+	public void removeEXPERIMENTAL_FORM_TYPE(
+	public void setEXPERIMENTAL_FORM_TYPE(
+	public void setPARTICIPANT(physicalEntityParticipant PARTICIPANT);
+public interface physicalEntityParticipant
+	public physicalEntity getPHYSICAL_ENTITY();
+	public void setPHYSICAL_ENTITY(physicalEntity PHYSICAL_ENTITY);
+	public double getSTOICHIOMETRIC_COEFFICIENT();
+	public void setSTOICHIOMETRIC_COEFFICIENT(
+	public complex isCOMPONENTof();
+    public void setCOMPONENTSof(complex aComplex);
+	public openControlledVocabulary getCELLULAR_LOCATION();
+	public void setCELLULAR_LOCATION(
+	public int stateCode();
+public interface dataSource extends externalReferenceUtilityClass, XReferrable
+	public void addNAME(String NAME);
+	public Set<String> getNAME();
+	public void removeNAME(String NAME);
+public interface physicalInteraction extends interaction
+	public void addINTERACTION_TYPE(openControlledVocabulary INTERACTION_TYPE);
+	public Set<openControlledVocabulary> getINTERACTION_TYPE();
+	public void removeINTERACTION_TYPE(
+public interface kPrime extends utilityClass
+	public float getIONIC_STRENGTH();
+	public float getK_PRIME();
+	public float getPH();
+	public float getPMG();
+	public float getTEMPERATURE();
+	public void setIONIC_STRENGTH(float IONIC_STRENGTH);
+	public void setK_PRIME(float K_PRIME);
+	public void setPH(float PH);
+	public void setPMG(float PMG);
+	public void setTEMPERATURE(float TEMPERATURE);
+public interface openControlledVocabulary
+	public void addTERM(String TERM);
+	public Set<String> getTERM();
+	public void removeTERM(String TERM);
+public interface InteractionParticipant extends Level2Element
+	public Set<interaction> isPARTICIPANTSof();
+public enum ControlType
+public interface utilityClass extends Level2Element
+public interface complex extends physicalEntity
+    public Set<physicalEntityParticipant> getCOMPONENTS();
+    public void setCOMPONENTS(Set<physicalEntityParticipant> COMPONENTS);
+    public void addCOMPONENTS(physicalEntityParticipant COMPONENTS);
+    public void removeCOMPONENTS(physicalEntityParticipant COMPONENTS);
+    public bioSource getORGANISM();
+    public void setORGANISM(bioSource ORGANISM);
+public interface dna extends sequenceEntity
+public interface complexAssembly extends conversion
+public interface XReferrable extends Level2Element
+public interface relationshipXref extends xref
+	public String getRELATIONSHIP_TYPE();
+	public void setRELATIONSHIP_TYPE(String RELATIONSHIP_TYPE);
+public interface smallMolecule extends physicalEntity
+	public void addSTRUCTURE(chemicalStructure STRUCTURE);
+	public String getCHEMICAL_FORMULA();
+	public double getMOLECULAR_WEIGHT();
+	public Set<chemicalStructure> getSTRUCTURE();
+	public void removeSTRUCTURE(chemicalStructure STRUCTURE);
+	public void setCHEMICAL_FORMULA(String CHEMICAL_FORMULA);
+	public void setMOLECULAR_WEIGHT(double MOLECULAR_WEIGHT);
+public interface process extends entity, pathwayComponent
+	public void addEVIDENCE(evidence EVIDENCE);
+	public void removeEVIDENCE(evidence EVIDENCE);
+	public Set<evidence> getEVIDENCE();
+	public Set<control> isCONTROLLEDOf();
+	public Set<pathwayStep> isSTEP_INTERACTIONSOf();
+public interface interaction extends process
+	public void addPARTICIPANTS(InteractionParticipant aParticipant);
+	public Set<InteractionParticipant> getPARTICIPANTS();
+	public void removePARTICIPANTS(InteractionParticipant aParticipant);
+	public void setPARTICIPANTS(Set<InteractionParticipant> PARTICIPANTS);
+public interface protein extends sequenceEntity
+public interface evidence extends utilityClass, XReferrable
+	public void addCONFIDENCE(confidence CONFIDENCE);
+	public void addEVIDENCE_CODE(openControlledVocabulary EVIDENCE_CODE);
+	public void addEXPERIMENTAL_FORM(experimentalForm EXPERIMENTAL_FORM);
+	public Set<confidence> getCONFIDENCE();
+	public Set<openControlledVocabulary> getEVIDENCE_CODE();
+	public Set<experimentalForm> getEXPERIMENTAL_FORM();
+	public void removeCONFIDENCE(confidence CONFIDENCE);
+	public void removeEVIDENCE_CODE(openControlledVocabulary EVIDENCE_CODE);
+	public void removeEXPERIMENTAL_FORM(experimentalForm EXPERIMENTAL_FORM);
+public interface modulation extends control
+	public static openControlledVocabulary inferLocation(
+public interface sequenceLocation extends utilityClass
+public interface chemicalStructure extends utilityClass
+    public String getSTRUCTURE_DATA();
+    public String getSTRUCTURE_FORMAT();
+    public void setSTRUCTURE_DATA(String STRUCTURE_DATA);
+    public void setSTRUCTURE_FORMAT(String STRUCTURE_FORMAT);
+public enum SpontaneousType
+//	public String toString()
+public interface transportWithBiochemicalReaction
+public interface pathwayStep extends utilityClass, pathwayComponent
+	public void addNEXT_STEP(pathwayStep NEXT_STEP);
+	public void addSTEP_INTERACTIONS(process processStep);
+	public Set<pathwayStep> getNEXT_STEP();
+	public Set<process> getSTEP_INTERACTIONS();
+	public Set<pathwayStep> isNEXT_STEPof();
+	public void removeNEXT_STEP(pathwayStep NEXT_STEP);
+	public void removeSTEP_INTERACTIONS(process processStep);
+public interface deltaGprimeO extends utilityClass
+	public float getDELTA_G_PRIME_O();
+	public float getIONIC_STRENGTH();
+	public float getPH();
+	public float getPMG();
+	public float getTEMPERATURE();
+	public void setDELTA_G_PRIME_O(float DELTA_G_PRIME_O);
+	public void setIONIC_STRENGTH(float IONIC_STRENGTH);
+	public void setPH(float PH);
+	public void setPMG(float PMG);
+	public void setTEMPERATURE(float TEMPERATURE);
+public interface pathway extends process
+	public void addPATHWAY_COMPONENTS(pathwayComponent PATHWAY_COMPONENT);
+	public bioSource getORGANISM();
+	public Set<pathwayComponent> getPATHWAY_COMPONENTS();
+	public void removePATHWAY_COMPONENTS(pathwayComponent PATHWAY_COMPONENT);
+	public void setORGANISM(bioSource ORGANISM);
+public interface conversion extends physicalInteraction
+	public Set<physicalEntityParticipant> getLEFT();
+	public Set<physicalEntityParticipant> getRIGHT();
+	public SpontaneousType getSPONTANEOUS();
+	public void addLEFT(physicalEntityParticipant LEFT);
+	public void addRIGHT(physicalEntityParticipant RIGHT);
+	public void removeLEFT(physicalEntityParticipant LEFT);
+	public void removeRIGHT(physicalEntityParticipant RIGHT);
+	public void setLEFT(Set<physicalEntityParticipant> LEFT);
+	public void setRIGHT(Set<physicalEntityParticipant> RIGHT);
+	public void setSPONTANEOUS(SpontaneousType SPONTANEOUS);
+public enum Direction
+	public String toString()
+public interface Level2Element extends BioPAXElement
+    public Set<String> getCOMMENT();
+    public void setCOMMENT(Set<String> COMMENT);
+    public void addCOMMENT(String COMMENT);
+    public void removeCOMMENT(String COMMENT);
+public interface confidence extends utilityClass, XReferrable
+    public String getCONFIDENCE_VALUE();
+    public void setCONFIDENCE_VALUE(String CONFIDENCE_VALUE);
+public interface rna extends sequenceEntity
+public interface bioSource extends externalReferenceUtilityClass
+    public openControlledVocabulary getCELLTYPE();
+    public void setCELLTYPE(openControlledVocabulary CELLTYPE);
+    public String getNAME();
+    public void setNAME(String NAME);
+    public unificationXref getTAXON_XREF();
+    public void setTAXON_XREF(unificationXref TAXON_XREF);
+    public openControlledVocabulary getTISSUE();
+    public void setTISSUE(openControlledVocabulary TISSUE);
+public interface sequenceParticipant extends physicalEntityParticipant
+	public void addSEQUENCE_FEATURE_LIST(sequenceFeature SEQUENCE_FEATURE);
+	public Set<sequenceFeature> getSEQUENCE_FEATURE_LIST();
+	public void removeSEQUENCE_FEATURE_LIST(sequenceFeature SEQUENCE_FEATURE);
+public enum PositionStatusType
+public interface control extends physicalInteraction
+	public void addCONTROLLED(process CONTROLLED);
+	public void addCONTROLLER(physicalEntityParticipant CONTROLLER);
+	public Set<process> getCONTROLLED();
+	public Set<physicalEntityParticipant> getCONTROLLER();
+	public ControlType getCONTROL_TYPE();
+	public void removeCONTROLLED(process CONTROLLED);
+	public void removeCONTROLLER(physicalEntityParticipant CONTROLLER);
+	public void setCONTROLLED(Set<process> CONTROLLED);
+	public void setCONTROLLER(Set<physicalEntityParticipant> CONTROLLER);
+	public void setCONTROL_TYPE(ControlType CONTROL_TYPE);
+public interface transport extends conversion
+public interface sequenceSite extends sequenceLocation
+	public PositionStatusType getPOSITION_STATUS();
+	public int getSEQUENCE_POSITION();
+	public void setPOSITION_STATUS(PositionStatusType POSITION_STATUS);
+	public void setSEQUENCE_POSITION(int SEQUENCE_POSITION);
+public interface unificationXref extends xref
+public interface externalReferenceUtilityClass extends utilityClass
+public interface physicalEntity extends entity
+	public Set<physicalEntityParticipant> isPHYSICAL_ENTITYof();
+	public Set<interaction> getAllInteractions();
+	public <T extends interaction> Set<T> getAllInteractions(
+public interface publicationXref extends xref
+	public void addAUTHORS(String AUTHORS);
+	public void addSOURCE(String SOURCE);
+	public void addURL(String URL);
+	public Set<String> getAUTHORS();
+	public Set<String> getSOURCE();
+	public String getTITLE();
+	public Set<String> getURL();
+	public int getYEAR();
+	public void removeAUTHORS(String AUTHORS);
+	public void removeSOURCE(String SOURCE);
+	public void removeURL(String URL);
+	public void setTITLE(String TITLE);
+	public void setYEAR(int YEAR);
+public interface entity
+	public void addAVAILABILITY(String AVAILABILITY_TEXT);
+	public void addDATA_SOURCE(dataSource DATA_SOURCE_INST);
+	public void addSYNONYMS(String SYNONYMS_TEXT);
+	public Set<String> getAVAILABILITY();
+	public Set<dataSource> getDATA_SOURCE();
+	public String getNAME();
+	public String getSHORT_NAME();
+	public Set<String> getSYNONYMS();
+	public void removeAVAILABILITY(String AVAILABILITY_TEXT);
+	public void removeDATA_SOURCE(dataSource DATA_SOURCE_INST);
+	public void removeSYNONYMS(String SYNONYMS_TEXT);
+	public void setAVAILABILITY(Set<String> AVAILABILITY_TEXT);
+	public void setDATA_SOURCE(Set<dataSource> DATA_SOURCE);
+	public void setNAME(String NAME);
+	public void setSHORT_NAME(String SHORT_NAME);
+	public void setSYNONYMS(Set<String> SYNONYMS);
+public interface sequenceEntity extends physicalEntity
+	public bioSource getORGANISM();
+	public String getSEQUENCE();
+	public void setORGANISM(bioSource ORGANISM);
+	public void setSEQUENCE(String SEQUENCE);
+public interface sequenceFeature extends utilityClass, XReferrable
+	public void addFEATURE_LOCATION(sequenceLocation FEATURE_LOCATION);
+	public void addSYNONYMS(String SYNONYMS);
+	public Set<sequenceLocation> getFEATURE_LOCATION();
+	public openControlledVocabulary getFEATURE_TYPE();
+	public String getNAME();
+	public String getSHORT_NAME();
+	public Set<String> getSYNONYMS();
+	public void removeFEATURE_LOCATION(sequenceLocation FEATURE_LOCATION);
+	public void removeSYNONYMS(String SYNONYMS);
+	public void setFEATURE_TYPE(openControlledVocabulary FEATURE_TYPE);
+	public void setNAME(String NAME);
+	public void setSHORT_NAME(String SHORT_NAME);
+public interface sequenceInterval extends sequenceLocation
+	public sequenceSite getSEQUENCE_INTERVAL_BEGIN();
+	public sequenceSite getSEQUENCE_INTERVAL_END();
+	public void setSEQUENCE_INTERVAL_BEGIN(
+	public void setSEQUENCE_INTERVAL_END(sequenceSite SEQUENCE_INTERVAL_END);
+public interface pathwayComponent extends Level2Element
+public interface xref extends externalReferenceUtilityClass
+	public String getDB();
+	public String getDB_VERSION();
+	public String getID();
+	public String getID_VERSION();
+	public Set<XReferrable> isXREFof();
+	public void setDB(String DB);
+	public void setDB_VERSION(String DB_VERSION);
+	public void setID(String ID);
+	public void setID_VERSION(String ID_VERSION);
+public interface catalysis extends control
+    public void addCOFACTOR(physicalEntityParticipant COFACTOR);
+    public void removeCOFACTOR(physicalEntityParticipant COFACTOR);
+    public void setCOFACTOR(Set<physicalEntityParticipant> COFACTOR);
+    public Set<physicalEntityParticipant> getCOFACTOR();
+    public Direction getDIRECTION();
+    public void setDIRECTION(Direction DIRECTION);
+public interface biochemicalReaction extends conversion
+    public Set<deltaGprimeO> getDELTA_G();
+    public void setDELTA_G(Set<deltaGprimeO> DELTA_G);
+    public void addDELTA_G(deltaGprimeO DELTA_G);
+    public void removeDELTA_G(deltaGprimeO DELTA_G);
+    public Set<Double> getDELTA_H();
+    public void setDELTA_H(Set<Double> DELTA_H);
+    public void addDELTA_H(double DELTA_H);
+    public void removeDELTA_H(double DELTA_H);
+    public Set<Double> getDELTA_S();
+    public void setDELTA_S(Set<Double> DELTA_S);
+    public void addDELTA_S(double DELTA_S);
+    public void removeDELTA_S(double DELTA_S);
+    public Set<String> getEC_NUMBER();
+    public void setEC_NUMBER(Set<String> EC_NUMBER);
+    public void addEC_NUMBER(String EC_NUMBER);
+    public void removeEC_NUMBER(String EC_NUMBER);
+    public Set<kPrime> getKEQ();
+    public void setKEQ(Set<kPrime> KEQ);
+    public void addKEQ(kPrime KEQ);
+    public void removeKEQ(kPrime KEQ);
+public interface CovalentBindingFeature extends BindingFeature, ModificationFeature
+public interface Catalysis extends Control
+public interface Evidence extends UtilityClass, XReferrable
+public interface SequenceRegionVocabulary extends ControlledVocabulary
+public interface CellVocabulary extends ControlledVocabulary
+public interface Process extends Entity
+	public Set<Control> getControlledOf();
+	public Set<Pathway> getPathwayComponentOf();
+	public Set<PathwayStep> getStepProcessOf();
+public interface Observable
+public interface Pathway extends Process,Controller
+public interface Control extends Interaction
+	public Set<Process> getControlled();
+	public void addControlled(Process controlled);
+	public void removeControlled(Process controlled);
+	public Set<Controller> getController();
+	public void addController(Controller controller);
+	public void removeController(Controller controller);
+	public ControlType getControlType();
+	public void setControlType(ControlType controlType);
+public interface TransportWithBiochemicalReaction
+public enum ControlType
+public enum StepDirection
+public interface PhenotypeVocabulary extends ControlledVocabulary
+	public String getPatoData();
+	public void setPatoData(String patoData);
+public interface MolecularInteraction extends Interaction
+public interface DnaReference extends NucleicAcidReference
+public interface SequenceModificationVocabulary extends ControlledVocabulary
+public interface KPrime extends UtilityClass
+public interface ModificationFeature extends EntityFeature
+public interface ChemicalStructure extends UtilityClass
+public interface Complex extends PhysicalEntity {
+public interface SequenceLocation extends UtilityClass
+public interface Conversion extends Interaction
+	public Set<PhysicalEntity> getLeft();
+	public Set<PhysicalEntity> getRight();
+	public Boolean getSpontaneous();
+	public void setSpontaneous(Boolean spontaneous);
+	public ConversionDirectionType getConversionDirection();
+	public void setConversionDirection(ConversionDirectionType conversionDirection);
+public interface TemplateReaction extends Interaction {
+	public Set<PhysicalEntity> getProduct();
+	public NucleicAcid getTemplate();
+	public void setTemplate(NucleicAcid template);
+	public TemplateDirectionType getTemplateDirection();
+	public void setTemplateDirection(TemplateDirectionType templateD1nmirection);
+public interface Modulation extends Control
+public interface XReferrable extends Level3Element
+public interface BiochemicalReaction extends Conversion
+public interface PublicationXref extends Xref
+public interface UtilityClass extends Level3Element
+public interface Entity extends Level3Element, Observable, Named
+	public Set<String> getAvailability();
+	public void addAvailability(String availability);
+	public void removeAvailability(String availability);
+	public Set<Provenance> getDataSource();
+	public void addDataSource(Provenance dataSource);
+	public void removeDataSource(Provenance dataSource);
+	public Set<Interaction> getParticipantOf();
+public interface BiochemicalPathwayStep extends PathwayStep
+public interface TissueVocabulary extends ControlledVocabulary {
+public interface SimplePhysicalEntity extends PhysicalEntity
+public interface NucleicAcidReference extends SequenceEntityReference
+public interface Controller extends Entity
+	public Set<Control> getControllerOf();
+public interface GeneticInteraction extends Interaction
+public interface Level3Element extends BioPAXElement
+	public Set<String> getComment();
+	public void addComment(String comment);
+	public void removeComment(String comment);
+public interface Stoichiometry extends UtilityClass
+public interface Protein extends SimplePhysicalEntity
+public interface PathwayStep extends UtilityClass,Observable
+public enum TemplateDirectionType
+public interface Degradation extends Conversion
+public enum CatalysisDirectionType
+public interface RnaRegionReference extends NucleicAcidRegionReference
+public interface Provenance extends UtilityClass, XReferrable,Named
+public interface DeltaG extends UtilityClass
+public interface RelationshipXref extends Xref
+public interface CellularLocationVocabulary extends ControlledVocabulary
+public interface BindingFeature extends EntityFeature
+public interface Gene extends Entity {
+public interface EntityReference extends UtilityClass, Named, Observable
+	public Set<EntityReference> getMemberEntityReferenceOf();
+public interface ProteinReference extends SequenceEntityReference {
+public interface EvidenceCodeVocabulary extends ControlledVocabulary {
+public interface Xref extends UtilityClass
+	public Set<XReferrable> getXrefOf();
+public interface BioSource extends UtilityClass, Named
+public interface RnaRegion extends NucleicAcid {
+public interface NucleicAcidRegionReference
+	public Set<NucleicAcidReference> getSubRegionOf();
+public interface Named extends XReferrable
+	public Set<String> getName();
+	public void addName(String name);
+	public void removeName(String name);
+	public String getDisplayName();
+	public void setDisplayName(String displayName);
+	public void setStandardName(String standardName);
+public interface Dna extends NucleicAcid
+public interface SequenceEntityReference extends EntityReference
+public interface SmallMolecule extends SimplePhysicalEntity
+public interface RnaReference extends NucleicAcidReference
+public interface Score extends UtilityClass, XReferrable
+	public String getValue();
+	public void setValue(String value);
+	public Provenance getScoreSource();
+	public void setScoreSource(Provenance scoreSource);
+public enum PositionStatusType
+public interface EntityFeature extends UtilityClass, Observable
+public interface EntityReferenceTypeVocabulary extends ControlledVocabulary
+public interface TemplateReactionRegulation extends Control
+public interface SmallMoleculeReference extends EntityReference
+public interface Transport extends Conversion
+public interface Rna extends NucleicAcid
+public interface UnificationXref extends Xref {
+public interface ComplexAssembly extends Conversion
+public interface SequenceSite extends SequenceLocation
+public interface SequenceInterval extends SequenceLocation
+public enum StructureFormatType
+public interface DnaRegionReference extends NucleicAcidRegionReference
+public interface Interaction extends Process
+public interface ExperimentalForm extends UtilityClass
+public interface ExperimentalFormVocabulary extends ControlledVocabulary
+public interface PhysicalEntity extends Entity, Controller
+public interface ControlledVocabulary extends UtilityClass, XReferrable
+public interface DnaRegion extends NucleicAcid
+public interface RelationshipTypeVocabulary extends ControlledVocabulary {
+public interface FragmentFeature extends EntityFeature
+public interface NucleicAcid  extends SimplePhysicalEntity
+public enum ConversionDirectionType
+public interface InteractionVocabulary extends ControlledVocabulary
+public interface Model extends Serializable
+public enum BioPAXLevel
+	public static final String BP_PREFIX = "http://www.biopax.org/release/";
+	public String getFilename()
+	public BioPAXFactory getDefaultFactory()
+	public InputStream getLevelFileAsStream()
+	public String getNameSpace()
+	public static boolean isInBioPAXNameSpace(String nameSpace)
+	public static BioPAXLevel getLevelFromNameSpace(String namespace)
+	public String getPackageName()
+	public boolean hasElement(BioPAXElement element)
+	public Class<? extends BioPAXElement> getInterfaceForName(String localName)
+public class FeatureResolver {
+    public void resolveFeatures(Model model) {
+public abstract class BioPAXFactoryAdaptor extends BioPAXFactory {
+    public boolean canInstantiate(Class<? extends BioPAXElement> aClass)    //TODO do better, check package etc..
+    public Model createModel() {
+	public <T extends BioPAXElement> Class<T> getImplClass(
+public abstract class BioPAXElementImpl implements BioPAXElement
+	public final static String SEARCH_FIELD_KEYWORD ="keyword";
+	public final static String SEARCH_FIELD_NAME = "name";
+	public final static String SEARCH_FIELD_TERM = "term";
+	public final static String SEARCH_FIELD_EC_NUMBER = "ecnumber";
+	public final static String SEARCH_FIELD_SEQUENCE = "sequence";
+	public final static String SEARCH_FIELD_XREF_DB = "xrefdb";
+	public final static String SEARCH_FIELD_XREF_ID = "xrefid";
+	public final static String SEARCH_FIELD_AVAILABILITY = "availability";
+	public final static String SEARCH_FIELD_COMMENT = "comment";
+	//public static final String SEARCH_FIELD_ID = "rdfid";
+	public final static String SEARCH_INDEX_NAME = "biopax_index";
+	public Long getProxyId() {
+    public Integer getVersion() {
+	public BioPAXElementImpl(){
+	public BioPAXElementImpl(String uri){
+    public boolean isEquivalent(BioPAXElement element)
+    public int equivalenceCode()
+    public String getRDFId()
+    public String toString()
+    public Map<String, Object> getAnnotations() {
+public class ModelImpl implements Model
+	public ModelImpl(BioPAXFactory factory)
+    public boolean containsID(String id) {
+    public BioPAXElement getByID(String id) {
+    public Map<String, String> getNameSpacePrefixMap()
+    public void setFactory(BioPAXFactory factory)
+	public Set<BioPAXElement> getObjects()
+	public <T extends BioPAXElement> Set<T> getObjects(Class<T> filterBy)
+	public void remove(BioPAXElement aBioPAXElement)
+	public <T extends BioPAXElement> T addNew(Class<T> c, String id)
+	public boolean contains(BioPAXElement aBioPAXElement)
+	public void add(BioPAXElement aBioPAXElement)
+    public BioPAXLevel getLevel()
+    public void setAddDependencies(boolean value) {
+    public boolean isAddDependencies() {
+		public UnmodifiableImplicitSet(
+		public int size()
+		public boolean isEmpty()
+		public boolean contains(Object o)
+		public Iterator<BioPAXElement> iterator()
+		public Object[] toArray()
+		public <T> T[] toArray(T[] a)
+		public boolean add(BioPAXElement bioPAXElement)
+		public boolean remove(Object o)
+		public boolean containsAll(Collection<?> c)
+		public boolean addAll(Collection<? extends BioPAXElement> c)
+		public boolean retainAll(Collection<?> c)
+		public boolean removeAll(Collection<?> c)
+		public void clear()
+	public synchronized void replace(final BioPAXElement existing, final BioPAXElement replacement) 
+	public void merge(Model source) {
+	public synchronized void repair() {
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public physicalEntityImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<physicalEntityParticipant> isPHYSICAL_ENTITYof()
+	public Set<interaction> getAllInteractions()
+	public <T extends interaction> Set<T> getAllInteractions(
+	public void addPHYSICAL_ENTITYof(physicalEntityParticipant pep)
+	public void removePHYSICAL_ENTITYof(physicalEntityParticipant pep)
+public class Level2FactoryImpl extends BioPAXFactoryAdaptor {
+    public BioPAXLevel getLevel()
+	public pathwayStepImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<pathway> isPATHWAY_COMPONENTSof()
+	public Set<process> getSTEP_INTERACTIONS()
+	public void setSTEP_INTERACTIONS(Set<process> STEP_INTERACTIONS)
+	public void addSTEP_INTERACTIONS(process processStep)
+	public void removeSTEP_INTERACTIONS(process processStep)
+	public Set<pathwayStep> getNEXT_STEP()
+	public void setNEXT_STEP(Set<pathwayStep> NEXT_STEP)
+	public void addNEXT_STEP(pathwayStep NEXT_STEP)
+	public void removeNEXT_STEP(pathwayStep NEXT_STEP)
+	public Set<pathwayStep> isNEXT_STEPof()
+	public biochemicalReactionImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public void addDELTA_G(deltaGprimeO DELTA_G)
+	public void removeDELTA_G(deltaGprimeO DELTA_G)
+	public void setDELTA_G(Set<deltaGprimeO> DELTA_G)
+	public Set<deltaGprimeO> getDELTA_G()
+	public void addDELTA_H(double DELTA_H)
+	public void removeDELTA_H(double DELTA_H)
+	public void setDELTA_H(Set<Double> DELTA_H)
+	public Set<Double> getDELTA_H()
+	public Set<Double> getDELTA_S()
+	public void setDELTA_S(Set<Double> DELTA_S)
+	public void addDELTA_S(double DELTA_S)
+	public void removeDELTA_S(double DELTA_S)
+	public void addEC_NUMBER(String EC_NUMBER)
+	public void removeEC_NUMBER(String EC_NUMBER)
+	public Set<String> getEC_NUMBER()
+	public void setEC_NUMBER(Set<String> EC_NUMBER)
+	public void addKEQ(kPrime KEQ)
+	public void removeKEQ(kPrime KEQ)
+	public Set<kPrime> getKEQ()
+	public void setKEQ(Set<kPrime> KEQ)
+	public dataSourceImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<xref> getXREF()
+	public void setXREF(Set<xref> XREF)
+	public void addXREF(xref XREF)
+	public void removeXREF(xref XREF)
+	public Set<unificationXref> findCommonUnifications(XReferrable that)
+	public Set<relationshipXref> findCommonRelationships(XReferrable that)
+	public Set<publicationXref> findCommonPublications(XReferrable that)
+	public Set<String> getNAME()
+	public void setNAME(Set<String> NAME)
+	public void addNAME(String NAME)
+	public void removeNAME(String NAME)
+	public String toString()
+	public smallMoleculeImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public String getCHEMICAL_FORMULA()
+	public void setCHEMICAL_FORMULA(String CHEMICAL_FORMULA)
+	public double getMOLECULAR_WEIGHT()
+	public void setMOLECULAR_WEIGHT(double MOLECULAR_WEIGHT)
+	public Set<chemicalStructure> getSTRUCTURE()
+	public void setSTRUCTURE(Set<chemicalStructure> STRUCTURE)
+	public void addSTRUCTURE(chemicalStructure STRUCTURE)
+	public void removeSTRUCTURE(chemicalStructure STRUCTURE)
+	public openControlledVocabularyImpl()
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public String toString()
+	public Set<xref> getXREF()
+	public void setXREF(Set<xref> XREF)
+	public void addXREF(xref XREF)
+	public void removeXREF(xref XREF)
+	public Set<unificationXref> findCommonUnifications(XReferrable that)
+	public Set<relationshipXref> findCommonRelationships(XReferrable that)
+	public Set<publicationXref> findCommonPublications(XReferrable that)
+	public Set<String> getTERM()
+	public void setTERM(Set<String> TERM)
+	public void addTERM(String TERM)
+	public void removeTERM(String TERM)
+	public publicationXrefImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<String> getSOURCE()
+	public void setSOURCE(Set<String> SOURCE)
+	public void addSOURCE(String SOURCE)
+	public void removeSOURCE(String SOURCE)
+	public Set<String> getURL()
+	public void setURL(Set<String> URL)
+	public void addURL(String URL)
+	public void removeURL(String URL)
+	public String getTITLE()
+	public void setTITLE(String TITLE)
+	public Set<String> getAUTHORS()
+	public void setAUTHORS(Set<String> AUTHORS)
+	public void addAUTHORS(String AUTHORS)
+	public void removeAUTHORS(String AUTHORS)
+	public int getYEAR()
+	public void setYEAR(int YEAR)
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public float getDELTA_G_PRIME_O()
+	public void setDELTA_G_PRIME_O(float DELTA_G_PRIME_O)
+	public float getTEMPERATURE()
+	public void setTEMPERATURE(float TEMPERATURE)
+	public float getIONIC_STRENGTH()
+	public void setIONIC_STRENGTH(float IONIC_STRENGTH)
+	public float getPH()
+	public void setPH(float PH)
+	public float getPMG()
+	public void setPMG(float PMG)
+    public Set<String> getCOMMENT()
+    public void setCOMMENT(Set<String> COMMENT)
+    public void removeCOMMENT(String COMMENT)
+    public void addCOMMENT(String COMMENT)
+	public Class<? extends BioPAXElement> getModelInterface()
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public int getSEQUENCE_POSITION()
+	public void setSEQUENCE_POSITION(int SEQUENCE_POSITION)
+	public PositionStatusType getPOSITION_STATUS()
+	public void setPOSITION_STATUS(PositionStatusType POSITION_STATUS)
+	public String toString() {
+	public pathwayImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<pathwayComponent> getPATHWAY_COMPONENTS()
+	public void setPATHWAY_COMPONENTS(Set<pathwayComponent> PATHWAY_COMPONENTS)
+	public void addPATHWAY_COMPONENTS(pathwayComponent PATHWAY_COMPONENT)
+	public void removePATHWAY_COMPONENTS(pathwayComponent PATHWAY_COMPONENT)
+	public bioSource getORGANISM()
+	public void setORGANISM(bioSource ORGANISM)
+	public evidenceImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<xref> getXREF()
+	public void setXREF(Set<xref> XREF)
+	public void addXREF(xref XREF)
+	public void removeXREF(xref XREF)
+	public Set<unificationXref> findCommonUnifications(XReferrable that)
+	public Set<relationshipXref> findCommonRelationships(XReferrable that)
+	public Set<publicationXref> findCommonPublications(XReferrable that)
+	public Set<experimentalForm> getEXPERIMENTAL_FORM()
+	public void setEXPERIMENTAL_FORM(Set<experimentalForm> EXPERIMENTAL_FORM)
+	public void addEXPERIMENTAL_FORM(experimentalForm EXPERIMENTAL_FORM)
+	public void removeEXPERIMENTAL_FORM(experimentalForm EXPERIMENTAL_FORM)
+	public Set<confidence> getCONFIDENCE()
+	public void setCONFIDENCE(Set<confidence> CONFIDENCE)
+	public void addCONFIDENCE(confidence CONFIDENCE)
+	public void removeCONFIDENCE(confidence CONFIDENCE)
+	public Set<openControlledVocabulary> getEVIDENCE_CODE()
+	public void setEVIDENCE_CODE(Set<openControlledVocabulary> EVIDENCE_CODE)
+	public void addEVIDENCE_CODE(openControlledVocabulary EVIDENCE_CODE)
+	public void removeEVIDENCE_CODE(openControlledVocabulary EVIDENCE_CODE)
+	public String toString()
+	public controlImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public ControlType getCONTROL_TYPE()
+	public void setCONTROL_TYPE(ControlType CONTROL_TYPE)
+	public Set<process> getCONTROLLED()
+	public void setCONTROLLED(Set<process> CONTROLLED)
+	public void addCONTROLLED(process CONTROLLED)
+	public void removeCONTROLLED(process CONTROLLED)
+	public Set<physicalEntityParticipant> getCONTROLLER()
+	public void setCONTROLLER(Set<physicalEntityParticipant> CONTROLLER)
+	public void addCONTROLLER(physicalEntityParticipant CONTROLLER)
+	public void removeCONTROLLER(physicalEntityParticipant CONTROLLER)
+	public entityImpl()
+	public Set<xref> getXREF()
+	public void setXREF(Set<xref> XREF)
+	public void addXREF(xref XREF)
+	public void removeXREF(xref XREF)
+	public Set<unificationXref> findCommonUnifications(XReferrable that)
+	public Set<relationshipXref> findCommonRelationships(XReferrable that)
+	public Set<publicationXref> findCommonPublications(XReferrable that)
+	public Set<String> getAVAILABILITY()
+	public void setAVAILABILITY(Set<String> AVAILABILITY)
+	public void addAVAILABILITY(String AVAILABILITY_TEXT)
+	public void removeAVAILABILITY(String AVAILABILITY_TEXT)
+	public Set<dataSource> getDATA_SOURCE()
+	public void setDATA_SOURCE(Set<dataSource> DATA_SOURCE)
+	public void addDATA_SOURCE(dataSource DATA_SOURCE_INST)
+	public void removeDATA_SOURCE(dataSource DATA_SOURCE_INST)
+	public String getNAME()
+	public void setNAME(String NAME)
+	public String getSHORT_NAME()
+	public void setSHORT_NAME(String SHORT_NAME)
+	public Set<String> getSYNONYMS()
+	public void setSYNONYMS(Set<String> SYNONYMS)
+	public void addSYNONYMS(String SYNONYMS_TEXT)
+	public void removeSYNONYMS(String SYNONYMS_TEXT)
+	public Set<interaction> isPARTICIPANTSof()
+	public Set<InteractionParticipant> getPARTICIPANTS()
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	@Override public Class<? extends BioPAXElement> getModelInterface()
+	public conversionImpl()
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<physicalEntityParticipant> getRIGHT()
+	public void setRIGHT(Set<physicalEntityParticipant> RIGHT)
+	public void addRIGHT(physicalEntityParticipant RIGHT)
+	public void removeRIGHT(physicalEntityParticipant RIGHT)
+	public Set<physicalEntityParticipant> getLEFT()
+	public void setLEFT(Set<physicalEntityParticipant> LEFT)
+	public void addLEFT(physicalEntityParticipant LEFT)
+	public void removeLEFT(physicalEntityParticipant LEFT)
+	public SpontaneousType getSPONTANEOUS()
+	public void setSPONTANEOUS(SpontaneousType SpontanousType)
+	public bioSource getORGANISM()
+	public String getSEQUENCE()
+	public void setORGANISM(bioSource ORGANISM)
+	public void setSEQUENCE(String SEQUENCE)
+	public sequenceFeatureImpl()
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<xref> getXREF()
+	public void setXREF(Set<xref> XREF)
+	public void addXREF(xref XREF)
+	public void removeXREF(xref XREF)
+	public Set<unificationXref> findCommonUnifications(XReferrable that)
+	public Set<relationshipXref> findCommonRelationships(XReferrable that)
+	public Set<publicationXref> findCommonPublications(XReferrable that)
+	public openControlledVocabulary getFEATURE_TYPE()
+	public void setFEATURE_TYPE(openControlledVocabulary FEATURE_TYPE)
+	public Set<sequenceLocation> getFEATURE_LOCATION()
+	public void setFEATURE_LOCATION(Set<sequenceLocation> FEATURE_LOCATION)
+	public void addFEATURE_LOCATION(sequenceLocation FEATURE_LOCATION)
+	public void removeFEATURE_LOCATION(sequenceLocation FEATURE_LOCATION)
+	public String getNAME()
+	public void setNAME(String NAME)
+	public Set<String> getSYNONYMS()
+	public void setSYNONYMS(Set<String> SYNONYMS)
+	public void addSYNONYMS(String SYNONYMS)
+	public void removeSYNONYMS(String SYNONYMS)
+	public String getSHORT_NAME()
+	public void setSHORT_NAME(String SHORT_NAME)
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public complexImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<physicalEntityParticipant> getCOMPONENTS()
+	public void addCOMPONENTS(physicalEntityParticipant COMPONENT)
+	public void removeCOMPONENTS(physicalEntityParticipant COMPONENT)
+	public void setCOMPONENTS(Set<physicalEntityParticipant> COMPONENTS)
+	public bioSource getORGANISM()
+	public void setORGANISM(bioSource ORGANISM)
+	public Class<? extends BioPAXElement> getModelInterface()
+	public String getRELATIONSHIP_TYPE()
+	public void setRELATIONSHIP_TYPE(String RELATIONSHIP_TYPE)
+	public void addINTERACTION_TYPE(openControlledVocabulary INTERACTION_TYPE)
+	public Set<openControlledVocabulary> getINTERACTION_TYPE()
+	public void removeINTERACTION_TYPE(
+	public void setINTERACTION_TYPE(
+	public void addPARTICIPANTS(InteractionParticipant aParticipant)
+	public void removePARTICIPANTS(InteractionParticipant aParticipant)
+	public void setPARTICIPANTS(Set<InteractionParticipant> PARTICIPANTS)
+	public xrefImpl()
+	public int equivalenceCode()
+	public String toString()
+	public String getDB()
+	public void setDB(String DB)
+	public String getDB_VERSION()
+	public void setDB_VERSION(String DB_VERSION)
+	public String getID_VERSION()
+	public void setID_VERSION(String ID_VERSION)
+	public String getID()
+	public void setID(String ID)
+	public Set<XReferrable> isXREFof()
+	public sequenceParticipantImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<sequenceFeature> getSEQUENCE_FEATURE_LIST()
+	public void addSEQUENCE_FEATURE_LIST(sequenceFeature SEQUENCE_FEATURE)
+	public void removeSEQUENCE_FEATURE_LIST(sequenceFeature SEQUENCE_FEATURE)
+	public void setSEQUENCE_FEATURE_LIST(
+	public boolean isInEquivalentState(physicalEntityParticipant pep)
+	public int stateCode()
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public float getK_PRIME()
+	public void setK_PRIME(float K_PRIME)
+	public float getTEMPERATURE()
+	public void setTEMPERATURE(float TEMPERATURE)
+	public float getIONIC_STRENGTH()
+	public void setIONIC_STRENGTH(float IONIC_STRENGTH)
+	public float getPH()
+	public void setPH(float PH)
+	public float getPMG()
+	public void setPMG(float PMG)
+	public physicalInteractionImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<InteractionParticipant> getPARTICIPANTS()
+	public void setPARTICIPANTS(Set<InteractionParticipant> PARTICIPANTS)
+	public void addPARTICIPANTS(InteractionParticipant aParticipant)
+	public void removePARTICIPANTS(InteractionParticipant aParticipant)
+	public Set<pathway> isPATHWAY_COMPONENTSof()
+	public Set<evidence> getEVIDENCE()
+	public void setEVIDENCE(Set<evidence> EVIDENCE)
+	public void addEVIDENCE(evidence EVIDENCE)
+	public void removeEVIDENCE(evidence EVIDENCE)
+	public Set<pathwayStep> isSTEP_INTERACTIONSOf()
+	public Set<control> isCONTROLLEDOf()
+	public void addCONTROLLEDof(control aControl)
+	public void addSTEP_INTERACTIONSOf(pathwayStep aPathwayStep)
+	public catalysisImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Direction getDIRECTION()
+	public void setDIRECTION(Direction DIRECTION)
+	public Set<physicalEntityParticipant> getCOFACTOR()
+	public void setCOFACTOR(Set<physicalEntityParticipant> COFACTOR)
+	public void addCOFACTOR(physicalEntityParticipant COFACTOR)
+	public void removeCOFACTOR(physicalEntityParticipant COFACTOR)
+	public boolean isInEquivalentState(physicalEntityParticipant that)
+	public int stateCode()
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<interaction> isPARTICIPANTSof()
+	public openControlledVocabulary getCELLULAR_LOCATION()
+	public void setCELLULAR_LOCATION(openControlledVocabulary CELLULAR_LOCATION)
+	public double getSTOICHIOMETRIC_COEFFICIENT()
+	public void setSTOICHIOMETRIC_COEFFICIENT(double STOICHIOMETRIC_COEFFICIENT)
+	public physicalEntity getPHYSICAL_ENTITY()
+	public void setPHYSICAL_ENTITY(physicalEntity PHYSICAL_ENTITY)
+	public complex isCOMPONENTof()
+	public void setCOMPONENTSof(complex aComplex)
+	public int equivalenceCode()
+	public String toString()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public unificationXref getTAXON_XREF()
+	public void setTAXON_XREF(unificationXref TAXON_XREF)
+	public openControlledVocabulary getCELLTYPE()
+	public void setCELLTYPE(openControlledVocabulary CELLTYPE)
+	public openControlledVocabulary getTISSUE()
+	public void setTISSUE(openControlledVocabulary TISSUE)
+	public String getNAME()
+	public void setNAME(String NAME)
+	public experimentalFormImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public physicalEntityParticipant getPARTICIPANT()
+	public void setPARTICIPANT(physicalEntityParticipant PARTICIPANT)
+	public void setEXPERIMENTAL_FORM_TYPE(
+	public Set<openControlledVocabulary> getEXPERIMENTAL_FORM_TYPE()
+	public void addEXPERIMENTAL_FORM_TYPE(
+	public void removeEXPERIMENTAL_FORM_TYPE(
+	public String toString()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public interactionImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<InteractionParticipant> getPARTICIPANTS()
+	public void setPARTICIPANTS(Set<InteractionParticipant> PARTICIPANTS)
+	public void addPARTICIPANTS(InteractionParticipant aParticipant)
+	public void removePARTICIPANTS(InteractionParticipant aParticipant)
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public sequenceSite getSEQUENCE_INTERVAL_END()
+	public void setSEQUENCE_INTERVAL_END(sequenceSite SEQUENCE_INTERVAL_END)
+	public sequenceSite getSEQUENCE_INTERVAL_BEGIN()
+	public void setSEQUENCE_INTERVAL_BEGIN(sequenceSite SEQUENCE_INTERVAL_BEGIN)
+	public String toString() {
+	public confidenceImpl()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public Set<xref> getXREF()
+	public void setXREF(Set<xref> XREF)
+	public void addXREF(xref XREF)
+	public void removeXREF(xref XREF)
+	public Set<unificationXref> findCommonUnifications(XReferrable that)
+	public Set<relationshipXref> findCommonRelationships(XReferrable that)
+	public Set<publicationXref> findCommonPublications(XReferrable that)
+	public String getCONFIDENCE_VALUE()
+	public void setCONFIDENCE_VALUE(String CONFIDENCE_VALUE)
+	public String toString()
+	public int equivalenceCode()
+	public Class<? extends BioPAXElement> getModelInterface()
+	public String getSTRUCTURE_FORMAT()
+	public void setSTRUCTURE_FORMAT(String STRUCTURE_FORMAT)
+	public String getSTRUCTURE_DATA()
+	public void setSTRUCTURE_DATA(String STRUCTURE_DATA)
+public class ComplexImpl extends PhysicalEntityImpl implements Complex
+	public ComplexImpl()
+	public Class<? extends Complex> getModelInterface()
+	public Set<PhysicalEntity> getComponent()
+	public void addComponent(PhysicalEntity component)
+	public void removeComponent(PhysicalEntity component)
+	public Set<Stoichiometry> getComponentStoichiometry()
+	public void addComponentStoichiometry(
+	public void removeComponentStoichiometry(
+	public Set<SimplePhysicalEntity> getSimpleMembers()
+	public Set<EntityReference> getMemberReferences()
+	public Class<? extends PhysicalEntity> getPhysicalEntityClass()
+public class ControlImpl extends InteractionImpl
+	public ControlImpl()
+	public Class<? extends Control> getModelInterface()
+	public ControlType getControlType()
+	public void setControlType(ControlType ControlType)
+	public Set<Process> getControlled()
+	public void addControlled(Process controlled)
+	public void removeControlled(Process controlled)
+	public Set<Controller> getController()
+	public void addController(Controller controller)
+	public void removeController(Controller controller)
+public abstract class XrefImpl extends L3ElementImpl implements Xref
+	public XrefImpl()
+	public int equivalenceCode()
+    public String getDb()
+	public void setDb(String db)
+    public String getDbVersion()
+	public void setDbVersion(String dbVersion)
+	public String getIdVersion()
+	public void setIdVersion(String idVersion)
+	public String getIdx()
+	public void setIdx(String id)
+    public String getId()
+	public void setId(String id)
+	public Set<XReferrable> getXrefOf()
+	public String toString() {
+public class EntityFeatureImpl extends L3ElementImpl implements EntityFeature
+	public EntityFeatureImpl()
+	public Class<? extends EntityFeature> getModelInterface()
+	public EntityReference getEntityFeatureOf()
+	public Set<PhysicalEntity> getFeatureOf()
+	public Set<PhysicalEntity> getNotFeatureOf()
+	public Set<Evidence> getEvidence()
+	public void addEvidence(Evidence evidence)
+	public void removeEvidence(Evidence evidence)
+	public SequenceLocation getFeatureLocation()
+	public void setFeatureLocation(SequenceLocation featureLocation)
+	public SequenceRegionVocabulary getFeatureLocationType()
+	public void setFeatureLocationType(SequenceRegionVocabulary regionVocabulary)
+	public Set<EntityFeature> getMemberFeature()
+	public void addMemberFeature(EntityFeature feature)
+	public void removeMemberFeature(EntityFeature feature)
+	public Set<EntityFeature> getMemberFeatureOf()
+	public boolean atEquivalentLocation(EntityFeature that)
+	public int equivalenceCode()
+public abstract class NucleicAcidReferenceImpl extends SequenceEntityReferenceImpl implements NucleicAcidReference
+	public NucleicAcidReferenceImpl()
+	public Set<NucleicAcidRegionReference> getSubRegion()
+	public void addSubRegion(NucleicAcidRegionReference regionReference)
+	public void removeSubRegion(NucleicAcidRegionReference regionReference)
+public class ProvenanceImpl extends NamedImpl implements Provenance
+	public ProvenanceImpl() {
+    public Class<? extends Provenance> getModelInterface()
+	@Override public String toString()
+public class SequenceIntervalImpl extends SequenceLocationImpl
+	public SequenceIntervalImpl() {
+	public Class<? extends SequenceInterval> getModelInterface()
+	public int equivalenceCode()
+	public SequenceSite getSequenceIntervalBegin()
+	public void setSequenceIntervalBegin(SequenceSite sequenceIntervalBegin)
+	public SequenceSite getSequenceIntervalEnd()
+	public void setSequenceIntervalEnd(SequenceSite sequenceIntervalEnd)
+public class PhysicalEntityImpl extends EntityImpl implements PhysicalEntity
+	public PhysicalEntityImpl()
+	public Class<? extends PhysicalEntity> getModelInterface()
+	public Set<Complex> getComponentOf()
+	public CellularLocationVocabulary getCellularLocation()
+	public void setCellularLocation(CellularLocationVocabulary location)
+	public Set<EntityFeature> getFeature()
+	public void addFeature(EntityFeature feature)
+	public void removeFeature(EntityFeature feature)
+	public Set<EntityFeature> getNotFeature()
+	public void addNotFeature(EntityFeature feature)
+	public void removeNotFeature(EntityFeature feature)
+	public Set<PhysicalEntity> getMemberPhysicalEntity()
+	public void addMemberPhysicalEntity(PhysicalEntity newMember)
+	public void removeMemberPhysicalEntity(PhysicalEntity oldMember)
+	public Set<PhysicalEntity> getMemberPhysicalEntityOf()
+	public int equivalenceCode()
+	public boolean hasEquivalentCellularLocation(PhysicalEntity that)
+	public boolean hasEquivalentFeatures(PhysicalEntity that)
+	public Set<Control> getControllerOf()
+public class BioSourceImpl extends NamedImpl implements BioSource
+	public BioSourceImpl(){
+	public Class<? extends BioSource> getModelInterface()
+	public int equivalenceCode()
+	public CellVocabulary getCellType()
+	public void setCellType(CellVocabulary celltype)
+	public TissueVocabulary getTissue()
+	public void setTissue(TissueVocabulary tissue)
+	public String toString() {
+public class ProteinReferenceImpl extends SequenceEntityReferenceImpl
+	public ProteinReferenceImpl() {
+    public Class<? extends ProteinReference> getModelInterface()
+public abstract class NamedImpl extends XReferrableImpl
+	public NamedImpl()
+	public String getStandardName()
+	public void setStandardName(String name)
+	public String getDisplayName()
+	public void setDisplayName(String displayName)
+	public Set<String> getName()
+	public void setName(Set<String> names)
+	public void addName(String name)
+	public void removeName(String name)
+public class UnificationXrefImpl extends XrefImpl implements UnificationXref {
+	public UnificationXrefImpl() {
+    public Class<? extends UnificationXref> getModelInterface() {
+public class CatalysisImpl extends ControlImpl implements Catalysis
+	public CatalysisImpl()
+	public Class<? extends Catalysis> getModelInterface()
+	public CatalysisDirectionType getCatalysisDirection()
+	public void setCatalysisDirection(CatalysisDirectionType catalysisDirection)
+	public Set<PhysicalEntity> getCofactor()
+	public void addCofactor(PhysicalEntity cofactor)
+	public void removeCofactor(PhysicalEntity cofactor)
+public class RnaImpl extends NucleicAcidImpl  implements Rna
+	public RnaImpl() {
+    public Class<? extends Rna> getModelInterface()
+public class ComplexAssemblyImpl extends ConversionImpl
+	public ComplexAssemblyImpl() {
+	public Class<? extends ComplexAssembly> getModelInterface()
+public class ExperimentalFormImpl extends L3ElementImpl implements ExperimentalForm
+	public ExperimentalFormImpl()
+	public Class<? extends ExperimentalForm> getModelInterface()
+	public Set<ExperimentalFormVocabulary> getExperimentalFormDescription()
+	public void addExperimentalFormDescription(
+	public void removeExperimentalFormDescription(
+	public void setExperimentalFormDescription(
+	public Entity getExperimentalFormEntity()
+	public void setExperimentalFormEntity(Entity experimentalFormEntity)
+    public Set<EntityFeature> getExperimentalFeature()
+    public void setExperimentalFeature(Set<EntityFeature> experimentalFeature)
+    public void addExperimentalFeature(EntityFeature experimentalFeature)
+    public void removeExperimentalFeature(EntityFeature experimentalFeature)
+public abstract class EntityImpl extends NamedImpl implements Entity
+	public EntityImpl()
+	public Set<String> getAvailability()
+	public void setAvailability(Set<String> availability)
+	public void addAvailability(String availability_text)
+	public void removeAvailability(String availability_text)
+	public Set<Provenance> getDataSource()
+	public void setDataSource(Set<Provenance> dataSource)
+	public void addDataSource(Provenance dataSource)
+	public void removeDataSource(Provenance dataSource)
+	public Set<Interaction> getParticipantOf()
+	public Set<Evidence> getEvidence()
+	public void addEvidence(Evidence newEvidence)
+	public void removeEvidence(Evidence oldEvidence)
+public class RnaReferenceImpl extends NucleicAcidReferenceImpl
+	public RnaReferenceImpl() {
+	public Class<? extends RnaReference> getModelInterface()
+public class TransportImpl extends ConversionImpl implements Transport
+	public TransportImpl() {
+    public Class<? extends Transport> getModelInterface()
+public abstract class SimplePhysicalEntityImpl extends PhysicalEntityImpl
+	public SimplePhysicalEntityImpl() {
+	public Set<EntityReference> getGenericEntityReferences()
+	public EntityReference getEntityReference()
+	public void setEntityReference(EntityReference entityReference)
+	public int equivalenceCode()
+public class ProteinImpl extends SimplePhysicalEntityImpl implements Protein
+	public ProteinImpl() {
+	public Class<? extends Protein> getModelInterface()
+public class EvidenceCodeVocabularyImpl extends ControlledVocabularyImpl
+	public EvidenceCodeVocabularyImpl() {
+    public Class<? extends EvidenceCodeVocabulary> getModelInterface() {
+public class PublicationXrefImpl extends XrefImpl implements PublicationXref
+	public PublicationXrefImpl()
+    public Class<? extends PublicationXref> getModelInterface()
+	public Set<String> getAuthor()
+	public void setAuthor(Set<String> author)
+	public void addAuthor(String author)
+	public void removeAuthor(String author)
+	public Set<String> getSource()
+	public void setSource(Set<String> source)
+	public void addSource(String source)
+	public void removeSource(String source)
+ 	public String getTitle()
+	public void setTitle(String title)
+	public Set<String> getUrl()
+	public void setUrl(Set<String> url)
+	public void addUrl(String url)
+	public void removeUrl(String url)
+	public int getYear()
+	public void setYear(int year)
+public class RnaRegionImpl extends NucleicAcidImpl implements RnaRegion
+	public RnaRegionImpl() {
+	public Class<? extends RnaRegion> getModelInterface()
+public class DnaRegionReferenceImpl extends NucleicAcidRegionReferenceImpl implements DnaRegionReference
+	public DnaRegionReferenceImpl()
+	public Class<? extends DnaRegionReference> getModelInterface()
+public class SmallMoleculeImpl extends SimplePhysicalEntityImpl
+	public SmallMoleculeImpl() {
+	public Class<? extends PhysicalEntity> getModelInterface() {
+public class DeltaGImpl extends L3ElementImpl implements DeltaG
+	public DeltaGImpl() {
+	public Class<? extends DeltaG> getModelInterface()
+	public int equivalenceCode()
+	public float getDeltaGPrime0()
+	public void setDeltaGPrime0(float deltaGPrime0)
+	public float getIonicStrength()
+	public void setIonicStrength(float ionicStrength)
+	public float getPh()
+	public void setPh(float ph)
+	public float getPMg()
+	public void setPMg(float pmg)
+	public float getTemperature()
+	public void setTemperature(float temperature)
+public class CovalentBindingFeatureImpl extends BindingFeatureImpl implements CovalentBindingFeature
+	public CovalentBindingFeatureImpl() {
+	public Class<? extends CovalentBindingFeature> getModelInterface()
+	public SequenceModificationVocabulary getModificationType()
+	public void setModificationType(SequenceModificationVocabulary modificationType)
+	public int equivalenceCode()
+public class BiochemicalReactionImpl extends ConversionImpl
+	public BiochemicalReactionImpl()
+	public Class<? extends BiochemicalReaction> getModelInterface()
+	public Set<DeltaG> getDeltaG()
+	public void addDeltaG(DeltaG deltaG)
+	public void removeDeltaG(DeltaG deltaG)
+	public Set<Float> getDeltaH()
+	public void addDeltaH(float deltaH)
+	public void removeDeltaH(float deltaH)
+	public Set<Float> getDeltaS()
+	public void addDeltaS(float deltaS)
+	public void removeDeltaS(float deltaS)
+	public Set<String> getECNumber()
+	public void addECNumber(String eCNumber)
+	public void removeECNumber(String eCNumber)
+	public Set<KPrime> getKEQ()
+	public void addKEQ(KPrime kEQ)
+	public void removeKEQ(KPrime kEQ)
+public class PathwayStepImpl extends L3ElementImpl implements PathwayStep
+	public PathwayStepImpl()
+	public Class<? extends PathwayStep> getModelInterface()
+	public Set<PathwayStep> getNextStep()
+	public void addNextStep(PathwayStep nextStep)
+	public void removeNextStep(PathwayStep nextStep)
+	public Set<PathwayStep> getNextStepOf()
+	public Set<Process> getStepProcess()
+	public void addStepProcess(Process processStep)
+	public void removeStepProcess(Process processStep)
+	public void setStepProcess(Set<Process> stepProcess)
+	public Set<Evidence> getEvidence()
+	public void addEvidence(Evidence evidence)
+	public void removeEvidence(Evidence evidence)
+	public void setEvidence(Set<Evidence> evidence)
+	public Pathway getPathwayOrderOf()
+public abstract class ProcessImpl extends EntityImpl implements Process
+	public ProcessImpl()
+	public Set<Pathway> getPathwayComponentOf()
+	public Set<PathwayStep> getStepProcessOf()
+	public Set<Control> getControlledOf()
+public class DnaImpl extends NucleicAcidImpl implements Dna
+	public DnaImpl() {
+	public Class<? extends Dna> getModelInterface()
+public class ConversionImpl extends InteractionImpl
+	public ConversionImpl()
+	public Class<? extends Conversion> getModelInterface()
+	public Set<PhysicalEntity> getRight()
+	public void addRight(PhysicalEntity right)
+	public void removeRight(PhysicalEntity right)
+	public Set<PhysicalEntity> getLeft()
+	public void addLeft(PhysicalEntity left)
+	public void removeLeft(PhysicalEntity left)
+	public Boolean getSpontaneous()
+	public void setSpontaneous(Boolean spontaneous)
+	public Set<Stoichiometry> getParticipantStoichiometry()
+	public void addParticipantStoichiometry(
+	public void removeParticipantStoichiometry(
+	public ConversionDirectionType getConversionDirection()
+	public void setConversionDirection(ConversionDirectionType spontanousType)
+	public int equivalenceCode()
+public class DnaReferenceImpl extends NucleicAcidReferenceImpl implements
+	public DnaReferenceImpl() {
+	public Class<? extends DnaReference> getModelInterface()
+public class FragmentFeatureImpl extends EntityFeatureImpl implements FragmentFeature
+	public FragmentFeatureImpl() {
+	public Class<? extends FragmentFeature> getModelInterface()
+	public int equivalenceCode()
+public class RnaRegionReferenceImpl extends NucleicAcidRegionReferenceImpl implements RnaRegionReference
+    public RnaRegionReferenceImpl() {
+	public Class<? extends RnaRegionReference> getModelInterface()
+public class CellVocabularyImpl extends ControlledVocabularyImpl
+	public CellVocabularyImpl() {
+    public Class<? extends CellVocabulary> getModelInterface() {
+public abstract class NucleicAcidImpl extends SimplePhysicalEntityImpl implements NucleicAcid {
+	public NucleicAcidImpl() {
+public class SequenceModificationVocabularyImpl extends ControlledVocabularyImpl
+	public SequenceModificationVocabularyImpl() {
+    public Class<? extends SequenceModificationVocabulary> getModelInterface() {
+public class PhenotypeVocabularyImpl extends ControlledVocabularyImpl
+	public PhenotypeVocabularyImpl() {
+    public Class<? extends PhenotypeVocabulary> getModelInterface() {
+	public String getPatoData()
+	public void setPatoData(String patoData)
+public class StoichiometryImpl extends L3ElementImpl implements Stoichiometry
+	public StoichiometryImpl()
+	public Class<? extends Stoichiometry> getModelInterface()
+	public int equivalenceCode()
+	public PhysicalEntity getPhysicalEntity()
+	public void setPhysicalEntity(PhysicalEntity PhysicalEntity)
+	public float getStoichiometricCoefficient()
+	public void setStoichiometricCoefficient(float newStoichiometricCoefficient)
+public class ExperimentalFormVocabularyImpl extends ControlledVocabularyImpl
+	public ExperimentalFormVocabularyImpl() {
+    public Class<? extends ExperimentalFormVocabulary> getModelInterface() {
+public class ControlledVocabularyImpl extends XReferrableImpl implements
+	public ControlledVocabularyImpl()
+	public Class<? extends ControlledVocabulary> getModelInterface()
+	public Set<String> getTerm()
+	public void setTerm(Set<String> term)
+	public void addTerm(String term)
+	public void removeTerm(String term)
+	public String toString()
+public class GeneticInteractionImpl extends InteractionImpl
+	public GeneticInteractionImpl() {
+	public Class<? extends GeneticInteraction> getModelInterface()
+	public PhenotypeVocabulary getPhenotype()
+    public void setPhenotype(PhenotypeVocabulary phenotype)
+    public Score getInteractionScore()
+    public void setInteractionScore(Score interactionScore)
+public class DnaRegionImpl extends NucleicAcidImpl implements DnaRegion
+	public DnaRegionImpl() {
+	public Class<? extends DnaRegion> getModelInterface()
+public class RelationshipXrefImpl extends XrefImpl implements RelationshipXref
+	public RelationshipXrefImpl() {
+    public Class<? extends RelationshipXref> getModelInterface()
+	public RelationshipTypeVocabulary getRelationshipType()
+	public void setRelationshipType(RelationshipTypeVocabulary relationshipType)
+public class ScoreImpl extends XReferrableImpl implements Score
+    public ScoreImpl() {
+    public Class<? extends Score> getModelInterface()
+    public String getValue()
+	public void setValue(String value)
+    public Provenance getScoreSource()
+    public void setScoreSource(Provenance scoreSource)
+public class SequenceRegionVocabularyImpl extends ControlledVocabularyImpl
+	public SequenceRegionVocabularyImpl() {
+    public Class<? extends SequenceRegionVocabulary> getModelInterface() {
+public class TransportWithBiochemicalReactionImpl extends BiochemicalReactionImpl
+	public TransportWithBiochemicalReactionImpl() {}
+    public Class<? extends TransportWithBiochemicalReaction> getModelInterface()
+public class SmallMoleculeReferenceImpl extends EntityReferenceImpl implements SmallMoleculeReference
+	public SmallMoleculeReferenceImpl() {
+	public Class<? extends SmallMoleculeReference> getModelInterface()
+    public String getChemicalFormula()
+    public void setChemicalFormula(String formula)
+    public float getMolecularWeight()
+    public void setMolecularWeight(float molecularWeight)
+    public ChemicalStructure getStructure()
+    public void setStructure(ChemicalStructure structure)
+public class SequenceLocationImpl extends L3ElementImpl
+	public SequenceLocationImpl()
+	public Class<? extends SequenceLocation> getModelInterface()
+public abstract class XReferrableImpl extends L3ElementImpl implements XReferrable
+	public XReferrableImpl()
+	public Set<Xref> getXref()
+	public void removeXref(Xref xref)
+	public void addXref(Xref xref)
+	public int equivalenceCode()
+public class DegradationImpl extends ConversionImpl implements Degradation
+	public DegradationImpl() {
+	public Class<? extends Degradation> getModelInterface()
+public class KPrimeImpl extends L3ElementImpl implements KPrime
+	public KPrimeImpl() {
+	public Class<? extends KPrime> getModelInterface()
+	public int equivalenceCode()
+	public float getIonicStrength()
+	public void setIonicStrength(float ionicStrength)
+	public float getKPrime()
+	public void setKPrime(float prime)
+	public float getPh()
+	public void setPh(float ph)
+	public float getPMg()
+	public void setPMg(float pMg)
+	public float getTemperature()
+	public void setTemperature(float temperature)
+public class RelationshipTypeVocabularyImpl extends ControlledVocabularyImpl
+	public RelationshipTypeVocabularyImpl() {
+    public Class<? extends RelationshipTypeVocabulary> getModelInterface() {
+public class PathwayImpl extends ProcessImpl implements Pathway
+	public PathwayImpl()
+	public Class<? extends Pathway> getModelInterface()
+	public Set<Process> getPathwayComponent()
+	public void addPathwayComponent(Process component)
+	public void removePathwayComponent(Process component)
+	public Set<PathwayStep> getPathwayOrder()
+	public void addPathwayOrder(PathwayStep pathwayOrder)
+	public void removePathwayOrder(PathwayStep pathwayOrder)
+	public BioSource getOrganism()
+	public void setOrganism(BioSource organism)
+	public Set<Control> getControllerOf()
+public class ModulationImpl extends ControlImpl implements Modulation
+	public ModulationImpl() {
+	public Class<? extends Modulation> getModelInterface()
+public abstract class EntityReferenceImpl extends NamedImpl
+	public EntityReferenceImpl()
+	public Class<? extends EntityReference> getModelInterface()
+	public Set<EntityFeature> getEntityFeature()
+	public void addEntityFeature(EntityFeature entityFeature)
+	public void removeEntityFeature(EntityFeature entityFeature)
+	public Set<SimplePhysicalEntity> getEntityReferenceOf()
+	public Set<EntityReferenceTypeVocabulary> getEntityReferenceType()
+	public void addEntityReferenceType(
+	public void removeEntityReferenceType(
+	public Set<EntityReference> getMemberEntityReference()
+	public void addMemberEntityReference(EntityReference memberEntity)
+	public void removeMemberEntityReference(EntityReference memberEntity)
+	public void setMemberEntityReference(Set<EntityReference> memberEntity)
+	public Set<EntityReference> getMemberEntityReferenceOf()
+	public Set<Evidence> getEvidence()
+	public void addEvidence(Evidence evidence)
+	public void removeEvidence(Evidence evidence)
+	public void setEvidence(Set<Evidence> evidence)
+public class TemplateReactionImpl extends InteractionImpl implements TemplateReaction {
+	public TemplateReactionImpl() {
+    public Class<? extends TemplateReaction> getModelInterface()
+    public Set<PhysicalEntity> getProduct()
+    public void addProduct(PhysicalEntity product)
+    public void removeProduct(PhysicalEntity product)
+    public NucleicAcid getTemplate()
+     public void setTemplate(NucleicAcid template)
+	public TemplateDirectionType getTemplateDirection()
+	public void setTemplateDirection(TemplateDirectionType templateDirection)
+public class EvidenceImpl extends XReferrableImpl implements Evidence
+	public EvidenceImpl()
+	public Class<? extends Evidence> getModelInterface()
+	public Set<Score> getConfidence()
+	public void setConfidence(Set<Score> confidence)
+	public void addConfidence(Score confidence)
+	public void removeConfidence(Score confidence)
+	public Set<EvidenceCodeVocabulary> getEvidenceCode()
+	public void setEvidenceCode(Set<EvidenceCodeVocabulary> evidenceCode)
+	public void addEvidenceCode(EvidenceCodeVocabulary evidenceCode)
+	public void removeEvidenceCode(EvidenceCodeVocabulary evidenceCode)
+	public Set<ExperimentalForm> getExperimentalForm()
+	public void setExperimentalForm(Set<ExperimentalForm> experimentalForm)
+	public void addExperimentalForm(ExperimentalForm experimentalForm)
+	public void removeExperimentalForm(ExperimentalForm experimentalForm)
+public class SequenceSiteImpl extends SequenceLocationImpl implements SequenceSite
+	public SequenceSiteImpl() {
+    public Class<? extends SequenceSite> getModelInterface()
+	public int equivalenceCode()
+	public PositionStatusType getPositionStatus()
+	public void setPositionStatus(PositionStatusType positionStatus)
+	public int getSequencePosition()
+	public void setSequencePosition(int sequencePosition)
+public abstract class SequenceEntityReferenceImpl extends EntityReferenceImpl
+    public SequenceEntityReferenceImpl() {
+    public BioSource getOrganism()
+    public void setOrganism(BioSource organism)
+	public String getSequence()
+    public void setSequence(String sequence)
+public class CellularLocationVocabularyImpl extends ControlledVocabularyImpl
+	public CellularLocationVocabularyImpl() {
+    public Class<? extends CellularLocationVocabulary> getModelInterface() {
+public class InteractionImpl extends ProcessImpl implements Interaction
+	public InteractionImpl()
+	public Class<? extends Interaction> getModelInterface()
+	public Set<InteractionVocabulary> getInteractionType()
+	public void addInteractionType(
+	public void removeInteractionType(
+	public void setInteractionType(
+	public Set<Entity> getParticipant()
+	public void addParticipant(Entity aParticipant)
+	public void removeParticipant(Entity aParticipant)
+public class BindingFeatureImpl extends EntityFeatureImpl
+	public BindingFeatureImpl() {
+	public Class<? extends BindingFeature> getModelInterface()
+	public BindingFeature getBindsTo()
+	public void setBindsTo(BindingFeature bindsTo)
+	public Boolean getIntraMolecular()
+	public void setIntraMolecular(Boolean intramolecular)
+	public int equivalenceCode()
+public class InteractionVocabularyImpl extends ControlledVocabularyImpl
+	public InteractionVocabularyImpl() {
+    public Class<? extends InteractionVocabulary> getModelInterface() {
+public abstract class NucleicAcidRegionReferenceImpl extends NucleicAcidReferenceImpl
+	public NucleicAcidRegionReferenceImpl()
+	public Set<NucleicAcidReference> getSubRegionOf()
+	public SequenceLocation getAbsoluteRegion()
+	public void setAbsoluteRegion(SequenceLocation absoluteRegion)
+	public Set<SequenceRegionVocabulary> getRegionType()
+	public void addRegionType(SequenceRegionVocabulary regionType)
+	public void removeRegionType(SequenceRegionVocabulary regionType)
+	public NucleicAcidReference getContainerEntityReference()
+	public void setContainerEntityReference(NucleicAcidReference containerEntityReference)
+public abstract class L3ElementImpl extends BioPAXElementImpl
+    public L3ElementImpl()
+    public Set<String> getComment()
+    public void setComment(Set<String> comment)
+    public void addComment(String COMMENT)
+    public void removeComment(String COMMENT)
+public class ChemicalStructureImpl extends L3ElementImpl implements ChemicalStructure
+	public ChemicalStructureImpl() {
+	public Class<? extends ChemicalStructure> getModelInterface()
+	public int equivalenceCode()
+	public String getStructureData()
+	public void setStructureData(String structureData)
+	public StructureFormatType getStructureFormat()
+	public void setStructureFormat(StructureFormatType structureFormat)
+public class Level3FactoryImpl extends BioPAXFactoryAdaptor {
+    public BioPAXLevel getLevel() {
+public class TissueVocabularyImpl extends ControlledVocabularyImpl
+	public TissueVocabularyImpl() {
+    public Class<? extends TissueVocabulary> getModelInterface() {
+public class ModificationFeatureImpl extends EntityFeatureImpl
+	public ModificationFeatureImpl() {
+	public Class<? extends ModificationFeature> getModelInterface()
+	public SequenceModificationVocabulary getModificationType()
+	public void setModificationType(SequenceModificationVocabulary featureType)
+	public int equivalenceCode()
+public class GeneImpl extends EntityImpl implements Gene
+    public GeneImpl() {
+    public Class<? extends Gene> getModelInterface()
+    public BioSource getOrganism()
+    public void setOrganism(BioSource source)
+public class BiochemicalPathwayStepImpl extends PathwayStepImpl implements BiochemicalPathwayStep
+	public BiochemicalPathwayStepImpl() {
+    public Class<? extends BiochemicalPathwayStep> getModelInterface()
+    public Conversion getStepConversion()
+    public void setStepConversion(Conversion newSTEP_CONVERSION)
+    public StepDirection getStepDirection()
+    public void setStepDirection(StepDirection newSTEP_DIRECTION)
+public class TemplateReactionRegulationImpl extends ControlImpl implements TemplateReactionRegulation
+	public TemplateReactionRegulationImpl() {
+    public Class<? extends TemplateReactionRegulation> getModelInterface()
+public class MolecularInteractionImpl extends InteractionImpl
+	public MolecularInteractionImpl() {
+    public Class<? extends MolecularInteraction> getModelInterface()
+    public void addParticipant(Entity participant)
+public class EntityReferenceTypeVocabularyImpl extends ControlledVocabularyImpl
+	public EntityReferenceTypeVocabularyImpl() {
+    public Class<? extends EntityReferenceTypeVocabulary> getModelInterface() {
+public class SetEquivalanceChecker
+	public static <T extends BioPAXElement> boolean isEquivalent(Set<? extends T> set1,
+	public static boolean containsEquivalent(Set<? extends BioPAXElement> set,
+	public static <T extends BioPAXElement> Set<T> findEquivalentIntersection(
+	public static <T extends BioPAXElement> boolean isEquivalentIntersection(Set<? extends T> set1,
+public class Level2Helper
+	public static boolean hasLeftToRightEvidence(conversion conv, control cont)
+	public static boolean hasRightToLeftEvidence(conversion conv, control cont)
+	public static boolean isNegative
+	public static Collection<List<physicalEntityParticipant>> groupParticipants
+	public static Collection<List<physicalEntityParticipant>> selectFunctionalSets
+	public static Collection<List<physicalEntityParticipant>> selectInactiveSets
+	public static boolean isActiveComplex
+	public static boolean isInactiveComplex
+public class BidirectionalLinkViolationException
+	public BidirectionalLinkViolationException(BioPAXElement source,
+public interface Filter<T>
+public @interface AutoComplete
+public class ClassFilterSet<E, F extends E> extends AbstractFilterSet<E, F>
+	public ClassFilterSet(Set<? extends E> baseSet,Class<F> filterClass)
+	public boolean filter(E value)
+public class IllegalRDFIDException extends IllegalArgumentException
+	public IllegalRDFIDException()
+	public IllegalRDFIDException(Throwable cause)
+	public IllegalRDFIDException(String s)
+	public IllegalRDFIDException(String message, Throwable cause)
+public class BioPaxIOException extends RuntimeException
+	public BioPaxIOException(Throwable cause)
+	public BioPaxIOException(String message)
+    public BioPaxIOException(String message, Throwable e) {
+public abstract class AbstractFilterSet<F, E> extends AbstractSet<E> implements Filter<F>
+	public AbstractFilterSet(Set<? extends F> baseSet)
+	public int size()
+	public boolean contains(Object o)
+	public Iterator<E> iterator()
+		public FilterIterator(Iterator<? extends F> base)
+		public boolean hasNext()
+		public E next()
+		public void remove()
+public class SetStringBridge implements StringBridge {
+	public String objectToString(Object object) {
+public class IllegalBioPAXArgumentException extends IllegalArgumentException
+	public IllegalBioPAXArgumentException()
+	public IllegalBioPAXArgumentException(Throwable cause)
+	public IllegalBioPAXArgumentException(String s)
+	public IllegalBioPAXArgumentException(String message, Throwable cause)
+public class StringPropertyEditor<D extends BioPAXElement> extends PropertyEditor<D, String>
+	public StringPropertyEditor(String property, Method getMethod,
+public class ShallowCopy implements Visitor
+    public ShallowCopy(EditorMap map)
+    public ShallowCopy(BioPAXLevel l)
+    public ShallowCopy()
+	public <T extends BioPAXElement> T copy(Model model, T source, String newID)
+	public <T extends BioPAXElement> T copy(T source, String newID) 
+	public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor editor)
+public interface PropertyFilterBilinked extends Filter<PropertyEditor>
+public class Traverser
+	public Traverser(EditorMap editorMap, Visitor visitor, Filter<PropertyEditor>... filters)
+	public void setVisitor(Visitor visitor)
+	public Visitor getVisitor()
+	public void traverse(BioPAXElement element, Model model)
+public class ObjectPropertyEditor<D extends BioPAXElement, R extends BioPAXElement> extends PropertyEditor<D, R>
+	public ObjectPropertyEditor(String property, Method getMethod, final Class<D> domain, final Class<R> range,
+	public Map<Class<? extends BioPAXElement>, Set<Class<? extends BioPAXElement>>> getRestrictedRanges()
+	public boolean isCompleteForward()
+	public boolean isCompleteBackward()
+	public boolean isInverseMultipleCardinality()
+	public Method getInverseGetMethod()
+	public PropertyAccessor<R, ? super D> getInverseAccessor()
+	@Override public String toString()
+	public void addRangeRestriction(Class<? extends BioPAXElement> domain, Set<Class<? extends BioPAXElement>> ranges)
+	public void setRangeRestriction(
+	public Set<Class<? extends BioPAXElement>> getRestrictedRangesFor(Class<? extends D> restrictedDomain)
+	public boolean hasInverseLink()
+public interface EditorMap
+	public <D extends BioPAXElement> Set<PropertyEditor<? extends D, ?>> getSubclassEditorsForProperty(
+public abstract class PropertyEditor<D extends BioPAXElement, R>
+	public PropertyEditor(String property, Method getMethod, Class<D> domain, Class<R> range,
+	public String toString()
+	public static <D extends BioPAXElement, R> PropertyEditor<D, R> createPropertyEditor(Class<D> domain,
+	public Method getAddMethod()
+	public Method getGetMethod()
+	public String getProperty()
+	public Method getRemoveMethod()
+	public Method getSetMethod()
+	public void addMaxCardinalityRestriction(Class<? extends D> domain, int max)
+	public Integer getMaxCardinality(Class<? extends D> restrictedDomain)
+	public R getUnknown()
+	public void removeValueFromBean(R value, D bean)
+	public void removeValueFromBean(Set<R> values, D bean) {
+	public void setValueToBean(R value, D bean)
+	public void setValueToBean(Set<R> values, D bean)
+	public Method getPrimarySetMethod()
+public class ConversionScore implements Comparable
+	public ConversionScore(conversion conv1, conversion conv2, Double score,
+	public Double getScore()
+	public conversion getConversion1()
+	public conversion getConversion2()
+	public boolean isReverseMatch()
+	public physicalEntityParticipant getMatch(physicalEntityParticipant pep1)
+	public Set<physicalEntityParticipant> getMatchedPEPs()
+	public int compareTo(Object obj)
+public class TraverserBilinked extends Traverser
+	public TraverserBilinked(EditorMap editorMap, Visitor visitor, PropertyFilterBilinked... filters)
+	public boolean isInverseOnly() {
+	public void setInverseOnly(boolean isInverseOnly) {
+	public void traverse(BioPAXElement element, Model model)
+public class UnionPropertyAccessor<D extends BioPAXElement> implements PropertyAccessor<D,Object>
+	public UnionPropertyAccessor(Set<PropertyAccessor<? extends D, ?>> union, Class<D> domain)
+	@Override public Class<D> getDomain()
+	@Override public Class getRange()
+	@Override public boolean isMultipleCardinality()
+	@Override public Set getValueFromBean(D bean) throws IllegalBioPAXArgumentException
+	@Override public boolean isUnknown(Object value)
+public class ModelUtils {
+		public boolean filter(PropertyEditor editor) {
+	public static enum RelationshipType {
+	public static final String COMMENT_FOR_GENERATED = "auto-generated";
+	public static final String BIOPAX_URI_PREFIX = "urn:biopax:";
+	public static String uriPrefixForGeneratedXref(Class<? extends Xref> clazz) {
+	public static String relationshipTypeVocabularyUri(String relationshipType) {
+	public ModelUtils(Model model) 
+    public void replace(final BioPAXElement existing, final BioPAXElement replacement) 
+			public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor editor) {
+    public <E extends BioPAXElement> void replace(final Map<E,E> subs) 
+			public void visit(BioPAXElement domain, Object range, Model model,
+    public void removeDependentsIfDangling(BioPAXElement parent) 
+    public void replaceID(String oldId, String newId) {
+		public BioPAXLevel getLevel() {
+		public void setId(BioPAXElement bpe, String uri) {
+	public Model getModel() {
+	public <T extends BioPAXElement> Set<T> getRootElements(final Class<T> filterClass) 
+	public <T extends BioPAXElement> void removeObjectsIfDangling(Class<T> clazz) 
+	public void inferPropertyFromParent(final String property, 
+	public Model writeRead()
+	public Model getAllChildren(BioPAXElement bpe, Filter<PropertyEditor>... filters) {
+	public Model getDirectChildren(BioPAXElement bpe) 
+	public Set<BioPAXElement> getAllChildrenAllowClones(BioPAXElement bpe, Filter<PropertyEditor>... filters) {
+	public Set<BioPAXElement> getDirectChildrenAllowClones(BioPAXElement bpe) 
+	public <T extends Process> void generateEntityProcessXrefs(
+	public void generateEntityOrganismXrefs() 
+			public boolean filter(PropertyEditor editor) {
+	public static String generateURIForXref(String db, String id, Class<? extends Xref> type) 
+	public Map<Class<? extends BioPAXElement>, Integer> generateClassMetrics()
+	public <T extends BioPAXElement> T getObject(String urn, Class<T> clazz) 
+	public Set<String> getByXref(Set<? extends Xref> xrefs, 
+	public Class<D> getDomain()
+	public Class<R> getRange()
+	public boolean isMultipleCardinality()
+public class Merger implements Visitor
+	public Merger(EditorMap map)
+	public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor editor)
+	public HashSet<BioPAXElement> getMergedElements()
+	public HashSet<BioPAXElement> getAddedElements()
+	public void merge
+public enum SimpleEditorMap implements EditorMap
+	public static SimpleEditorMap get(BioPAXLevel level)
+		public BioPAXLevel getLevel()
+	public <D extends BioPAXElement> PropertyEditor<? super D, ?> getEditorForProperty(String property,
+	@Override public Set<PropertyEditor> getEditorsForProperty(String property)
+	@Override public <D extends BioPAXElement> Set<PropertyEditor<? extends D, ?>> getSubclassEditorsForProperty(
+	@Override public Set<PropertyEditor> getEditorsOf(BioPAXElement bpe)
+	@Override public Set<ObjectPropertyEditor> getInverseEditorsOf(BioPAXElement bpe)
+	@Override public <E extends BioPAXElement> Set<Class<E>> getKnownSubClassesOf(Class<E> javaClass)
+	public BioPAXLevel getLevel()
+	@Override public Set<PropertyEditor> getEditorsOf(Class<? extends BioPAXElement> domain)
+	@Override public Set<ObjectPropertyEditor> getInverseEditorsOf(Class<? extends BioPAXElement> domain)
+public class PathAccessor extends PropertyAccessorAdapter<BioPAXElement, Object>
+	public PathAccessor(List<PropertyAccessor<? extends BioPAXElement, ? extends BioPAXElement>> objectAccessors,
+	public PathAccessor(String path, BioPAXLevel level)
+	public Set getValueFromBean(BioPAXElement bean) throws IllegalBioPAXArgumentException
+	@Override public boolean isUnknown(Object value)
+public class Cloner implements Visitor
+	public Cloner(EditorMap map, BioPAXFactory factory)
+	public Model clone(Model source, Set<BioPAXElement> toBeCloned)
+	public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor editor)
+public abstract class AbstractTraverser extends Traverser
+	public AbstractTraverser(EditorMap editorMap, Filter<PropertyEditor>... filters)
+	public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor editor) {
+public class Integrator {
+    public Integrator(EditorMap editorMap, Model target, Model... sources) {
+    public void setThreshold(Double threshold) {
+    public Double getThreshold() {
+    public void setOnlyMapping(boolean mapping) {
+    public void setSelfRemove(boolean selfRemove) {
+    public void setNormalizeModels(boolean normalizeModels) {
+    public void setScoresOver(double scoresOver) {
+    public List<ConversionScore> integrate() {
+   public List<ConversionScore> integrate(List<ConversionScore> alternativeScores) {
+    public PEPScore(Double score,
+    public Double getScore() {
+    public Map<physicalEntityParticipant, physicalEntityParticipant> getPEPMap() {
+public abstract class FilteringPropertyAccessor<D extends BioPAXElement, R> implements PropertyAccessor<D, R>
+	@Override public Class<D> getDomain()
+	@Override public Class<R> getRange()
+	@Override public boolean isMultipleCardinality()
+	@Override public Set<? extends R> getValueFromBean(D bean) throws IllegalBioPAXArgumentException
+	@Override public boolean isUnknown(Object value)
+public interface Visitor
+    public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor editor);
+public class Fetcher extends AbstractTraverser
+	public Fetcher(EditorMap editorMap, Filter<PropertyEditor>... filters) {
+    public void fetch(BioPAXElement element, Model model)
+    public Set<BioPAXElement> fetch(BioPAXElement element)
+public class PropertyReasoner extends AbstractTraverser
+	public PropertyReasoner(String propertyName, EditorMap editorMap, 
+	public PropertyReasoner(String property, EditorMap editorMap) 
+			public boolean filter(PropertyEditor editor) {
+	public String getPropertyName() {
+	public void setPropertyName(String propertyName) {
+	public void setDomains(Class<? extends BioPAXElement>... domains) 
+	public boolean isOverride() {
+	public boolean isGenerateComments() {
+	public void setGenerateComments(boolean generateComments) {
+	public void traverse(BioPAXElement bpe, Model model)
+    public void clearProperty(BioPAXElement element)
+    public void resetPropertyValue(BioPAXElement element, Object defaultValue)
+    public void inferPropertyValue(BioPAXElement element, Object addValue)
+    public void inferPropertyValue(BioPAXElement element)
+public class SimpleMerger
+	public SimpleMerger(EditorMap map)
+	public void merge(Model target, Model... sources)
+	public void merge(Model target, Collection<? extends BioPAXElement> elements)
+	public void merge(Model target, BioPAXElement source)
+public class FeatureUtils {
+    public static final int FEATURE = 0;
+    public static final int NOT_FEATURE = 1;
+    public static final int UNKNOWN_FEATURE = 2;
+    public static Log log = LogFactory.getLog(FeatureUtils.class);
+    public static Set<EntityFeature> getFeatureIntersection(
+    public static Set<EntityFeature> getFeatureSetByType(PhysicalEntity pe, int type)
+    public static boolean checkERFeatureSet(EntityReference er, boolean fix)
+    public static boolean checkMutuallyExclusiveSets(PhysicalEntity pe)
+    public static Set<EntityFeature> findFeaturesAddedToSecond(PhysicalEntity first, PhysicalEntity second, boolean fix)
+public interface ModelFilter {
+public class ClassFilteringPropertyAccessor<D extends BioPAXElement, R,
+	public ClassFilteringPropertyAccessor(PropertyAccessor<D, R> impl, Class<F> filter)
+public class ReusedPEPHelper
+    public ReusedPEPHelper(Model model)
+    public Object fixReusedPEP(physicalEntityParticipant pep, BioPAXElement bpe)
+    public void copyPEPFields()
+public class EnumeratedPropertyEditor<D extends BioPAXElement, R extends Enum>
+	public EnumeratedPropertyEditor(String property, Method getMethod,
+public class SimplePropertyAccessor<D extends BioPAXElement, R> extends PropertyAccessorAdapter<D, R>
+	public SimplePropertyAccessor(Class<D> domain, Class<R> range, boolean multipleCardinality, Method getMethod)
+	@Override public Set<R> getValueFromBean(D bean) throws IllegalBioPAXArgumentException
+	public boolean isUnknown(Object value)
+public class Completer implements Visitor
+	public Completer(EditorMap map)
+			public boolean filter(PropertyEditor editor)
+			public boolean filterInverse(PropertyEditor editor)
+	public Set<BioPAXElement> complete(Collection<BioPAXElement> elements, Model model)
+	public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor editor)
+public abstract class EditorMapAdapter implements EditorMap
+	public Set<PropertyEditor> getEditorsOf(BioPAXElement bpe)
+	public Set<PropertyEditor> getEditorsOf(Class<? extends BioPAXElement> domain)
+	public Set<ObjectPropertyEditor> getInverseEditorsOf(BioPAXElement bpe)
+	public Set<ObjectPropertyEditor> getInverseEditorsOf(Class<? extends BioPAXElement> domain)
+	public <D extends BioPAXElement> PropertyEditor<? super D, ?> getEditorForProperty(String property,
+	public <D extends BioPAXElement> Set<PropertyEditor<? extends D, ?>> getSubclassEditorsForProperty(
+	public Set<PropertyEditor> getEditorsForProperty(String property)
+	public <E extends BioPAXElement> Set<Class<E>> getKnownSubClassesOf(Class<E> javaClass)
+		public SubClassFilterSet(Set<Class<? extends BioPAXElement>> baseSet, Class<E> superClass)
+		@Override public boolean filter(Class<? extends BioPAXElement> subClass)
+			public SubDomainFilterSet(Set<PropertyEditor> baseSet, Class<D> domain)
+			@Override public boolean filter(PropertyEditor editor)
+		public ValueSet(Collection<PropertyEditor> values)
+		@Override public Iterator<PropertyEditor> iterator()
+		@Override public int size()
+public class PrimitivePropertyEditor<D extends BioPAXElement, R>
+	public PrimitivePropertyEditor(String property, Method getMethod,
+	public boolean isUnknown(Object value)
+	public R getUnknown() {
+public interface PropertyAccessor<D extends BioPAXElement, R>
+	public boolean isUnknown(Object value);
+public class JenaEditorMapTest
+	public void writeOutEditorProperties() throws IOException
+public class EquivalenceTest
+	public void loadAndCheckForEquivalentPEPs() throws URISyntaxException, IOException
+public class JenaIOHandlerTest
+    public void testL2File() throws Exception
+     public void testL3File() throws Exception
+    public void scratchTest() throws Exception
+public class JenaEditorMap extends EditorMapAdapter {
+    public JenaEditorMap() {
+    public JenaEditorMap(BioPAXLevel level) {
+    public XSDDatatype getDataTypeFor(PropertyEditor editor) {
+	public BioPAXLevel getLevel()
+public class JenaIOHandler extends BioPAXIOHandlerAdapter
+	public JenaIOHandler()
+	public JenaIOHandler(BioPAXLevel level)
+	public JenaIOHandler(BioPAXFactory factory, BioPAXLevel level)
+	public void convertToOWL(Model model, OutputStream outputStream)
+	public OntModel readJenaModel(InputStream in)
+public class ModelBuilder
+	public void generateModel1() throws Throwable
+	public static void createStateChange(String name, Model model)
+	public static void createActivatedStateChange(Protein activator, String name, Model model)
+	public static void createControl(Protein effector, Conversion conv,
+	public static void createCascadeBetween(Protein first, Conversion last, String name, int length,
+	public static void createComplex(Model model, String compName, Protein... prots)
+public class QueryTest
+	public void testQuery() throws Throwable
+	public void testNeighborhood() throws IOException
+public interface Graph
+	public GraphObject getGraphObject(Object obj);
+	public Set<Node> getWrapperSet(Set<?> objects);
+	public Map<Object, Node> getWrapperMap(Set<?> objects);
+	public Set<Object> getWrappedSet(Set<? extends GraphObject> wrappers);
+public interface GraphObject
+	public Graph getGraph();
+	public String getKey();
+public interface Node extends GraphObject
+	public Collection<Edge> getUpstream();
+	public Collection<Edge> getDownstream();
+	public boolean isBreadthNode();
+	public Collection<Node> getUpperEquivalent();
+	public Collection<Node> getLowerEquivalent();
+	public int getSign();
+	public void init();
+	public static final int POSITIVE = 1;
+	public static final int NEGATIVE = -1;
+	public static final int NEUTRAL = 0;
+public abstract class AbstractNode implements Node
+	public Graph getGraph()
+	public Collection<Edge> getUpstream()
+	public Collection<Edge> getDownstream()
+	public Collection<Edge> getUpstreamNoInit()
+	public Collection<Edge> getDownstreamNoInit()
+	public Collection<Node> getUpperEquivalent()
+	public Collection<Node> getLowerEquivalent()
+	public void init()
+public abstract class AbstractGraph implements Graph
+	public GraphObject getGraphObject(Object obj)
+	public GraphObject getGraphObject(String id)
+	public Map<String, GraphObject> getObjectMap()
+	public abstract String getKey(Object wrapped);
+	public abstract Node wrap(Object obj);
+public class AbstractEdge implements Edge
+	public AbstractEdge(Node source, Node target, Graph graph)
+	public Node getTargetNode()
+	public Node getSourceNode()
+	public Graph getGraph()
+	public String getKey()
+public interface Edge extends GraphObject
+	public Node getTargetNode();
+	public Node getSourceNode();
+public class EdgeL3 extends AbstractEdge
+	public EdgeL3(Node source, Node target, Graph graph)
+public class GraphL3 extends AbstractGraph 
+	public GraphL3(Model model)
+	public Node wrap(Object obj)
+	public String getKey(Object wrapped)
+	public Set<PhysicalEntity> getPhysical(Set<EntityReference> refs)
+	public Set<Node> getWrapperSet(Set<?> objects)
+	public Map<Object, Node> getWrapperMap(Set<?> objects)
+	public Set<Object> getWrappedSet(Set<? extends GraphObject> wrappers)
+public class PhysicalEntityWrapper extends AbstractNode
+	public PhysicalEntityWrapper(PhysicalEntity pe, GraphL3 graph)
+	public Collection<Edge> getUpstream()
+	public Collection<Edge> getDownstream()
+	public Collection<Edge> getUpstreamNoInit()
+	public Collection<Edge> getDownstreamNoInit()
+	public Collection<Node> getUpperEquivalent()
+	public Collection<Node> getLowerEquivalent()
+	public boolean isBreadthNode()
+	public int getSign()
+	public String getKey()
+	public PhysicalEntity getPhysicalEntity()
+public class ConversionWrapper extends AbstractNode
+	public boolean isBreadthNode()
+	public int getSign()
+	public boolean getDirection()
+	public ConversionWrapper getReverse()
+	public void init()
+	public String getKey()
+	public Conversion getConversion()
+	public Collection<Node> getUpperEquivalent()
+	public Collection<Node> getLowerEquivalent()
+	public static final boolean LEFT_TO_RIGHT = true;
+	public static final boolean RIGHT_TO_LEFT = false;
+public class ControlWrapper extends AbstractNode
+	public boolean isBreadthNode()
+	public int getSign()
+	public String getKey()
+	public void init()
+	public Control getControl()
+	public Collection<Node> getUpperEquivalent()
+	public Collection<Node> getLowerEquivalent()
+public class QueryExecuter
+	public static Set<BioPAXElement> runNeighborhood(
+	public static Set<BioPAXElement> runPathsBetween(Set<BioPAXElement> sourceSet, Model model,
+	public static Set<BioPAXElement> runGOI(
+	public static Set<BioPAXElement> runPOI(
+	public static Set<BioPAXElement> runCommonStream(
+	public static Set<BioPAXElement> runCommonStreamWithPOI(
+	public static Map<BioPAXElement, Set<PhysicalEntity>> getRelatedPhysicalEntityMap(
+	public static Set<PhysicalEntity> getRelatedPhysicalEntities(BioPAXElement element,
+public class BFS
+	public BFS(Set<Node> sourceSet, Set<Node> stopSet, Direction direction, int limit)
+	public BFS()
+	public Map<GraphObject, Integer> run()
+	public Map<GraphObject, Integer> runBFS()
+	public int getLabel(GraphObject go)
+	public static final boolean FORWARD = true;
+	public static final boolean BACKWARD = false;
+	public static final boolean UPWARD = true;
+	public static final boolean DOWNWARD = false;
+	public static final int WHITE = 0;
+	public static final int GRAY = 1;
+	public static final int BLACK = 2;
+public class Prune
+	public Prune(Set<GraphObject> result, Set<Node> ST)
+	public Set<GraphObject> run()
+public class NeighborhoodQuery
+	public NeighborhoodQuery(Set<Node> sourceNodes, Direction direction, int limit)
+	public Set<GraphObject> run()
+public class PathsBetweenQuery
+	public PathsBetweenQuery(Collection<Set<Node>> sourceSet, int limit)
+	public Set<GraphObject> run()
+public class PoIQuery
+	public PoIQuery(Set<Node> sourceSet,
+	public Set<GraphObject> run()
+public enum Direction
+public class CommonStreamQuery
+	public CommonStreamQuery(Set<Node> sourceNodeSet, Direction direction, int limit)
+	public CommonStreamQuery(Collection<Set<Node>> sourceStateSet, Direction direction, int limit)
+	public Set<GraphObject> run()
+public class CycleBreaker extends BFS
+	public CycleBreaker(Set<GraphObject> result, Set<Node> ST, int limit)
+	public void breakCycles()
+	public boolean isSafe(Node node, Edge edge)
+public enum LimitType
+public class ShellTest {
+    public void testLoad() throws Exception
+        public TestModelIterator(BioPAXLevel level) throws URISyntaxException {
+                        public boolean accept(File dir, String name) {
+        public TestModelIterator(BioPAXLevel level, FilenameFilter filter)
+        public boolean hasNext() {
+        public Model next() {
+        public void remove() {
+public class Shell
+    public static Model load(String filename) throws FileNotFoundException
+public class TestMappingL3 extends TestCase implements BioPAXMarshaller {
+    public String getName() {
+    public static Test suite() {
+    public static void main(String[] args) {
+    public void testMapping() {
+	public void addModel(Model bpModel) {
+public class TestMappingL2 extends TestCase implements BioPAXMarshaller {
+    public String getName() {
+    public static Test suite() {
+    public static void main(String[] args) {
+    public void testMapping() {
+	public void addModel(Model bpModel) {
+public interface PSIMIConverter {
+	public boolean convert(InputStream inputStream, OutputStream outputStream)
+	public boolean convert(EntrySet entrySet, OutputStream outputStream);
+public class EntryMapper extends Thread {
+	public static final String RDF_ID_PREFIX = "HTTP://PATHWAYCOMMONS.ORG/PSI2BP#";
+	public EntryMapper(BioPAXMapper bpMapper, BioPAXMarshaller biopaxMarshaller, Entry entry) {
+	public EntryMapper(BioPAXMapper bpMapper, BioPAXMarshaller biopaxMarshaller, Entry entry, long seed) {
+	public void run() {
+public class BioPAXMapperImp implements BioPAXMapper
+	public BioPAXMapperImp(BioPAXLevel bpLevel)
+	public Model getModel()
+	public <T extends BioPAXElement> T getUnificationXref(String id)
+	public <T extends BioPAXElement> T getRelationshipXref(String id, String refType,
+	public <T extends BioPAXElement> T getPublicationXref(String id)
+	public <T extends BioPAXElement> T getEvidence(String id,
+	public <T extends BioPAXElement> T getScoreOrConfidence(String id,
+	public <T extends BioPAXElement> T getExperimentalForm(String id,
+	public <T extends BioPAXElement> T getOpenControlledVocabulary(String termToSearch)
+	public <T extends BioPAXElement> T getOpenControlledVocabulary(String id, String term,
+	public BioPAXElement getBioPAXElement(String rdfID)
+	public <T extends BioPAXElement> T getInteraction(String id,
+	public <T extends BioPAXElement> T getParticipant(String id,
+	public <T extends BioPAXElement> T getPhysicalEntity(String physicalEntityType, String id,
+	public <T extends BioPAXElement> T getBioSource(String id, BioPAXElement taxonXref,
+	public <T extends BioPAXElement> T getFeature(BioPAXElement bpFeature,
+	public <T extends BioPAXElement> T getFeature(String id,
+	public <T extends BioPAXElement> T getSequenceLocation(String seqLocationID,
+	public String getXrefID(BioPAXElement bpXref)
+	public void setXrefDBAndID(BioPAXElement bpXref, String db, String id)
+	public void setNamespace(String namespace)
+	public void setModelDataSource(String id, String name, Set<? extends BioPAXElement> bpXrefs)
+	public <T extends BioPAXElement> void setInteractionDataSource(T interaction, String id,
+	public boolean isGeneticInteraction(final List<String> geneticInteractionTerms,
+public interface BioPAXMapper {
+public class PSIMIBioPAXConverter implements PSIMIConverter {
+	public PSIMIBioPAXConverter(BioPAXLevel bpLevel) {
+	public boolean convert(InputStream inputStream, OutputStream outputStream)
+	public boolean convert(EntrySet entrySet, OutputStream outputStream) {
+public interface BioPAXMarshaller {
+public class BioPAXMarshallerImp extends Thread implements BioPAXMarshaller {
+	public BioPAXMarshallerImp(PSIMIBioPAXConverter converter, BioPAXLevel bpLevel, OutputStream outputStream, int numEntries) {
+	public void addModel(Model bpModel) {
+	public void run() {
+public class SBGNConverterTest
+	public void testSBGNConversion()
+public class L3ToSBGNPDConverter
+	public static final String PROCESS = "process";
+	public static final String CONSUMPTION = "consumption";
+	public static final String PRODUCTION = "production";
+	public static final String STATE_VARIABLE = "state variable";
+	public static final String INFO = "unit of information";
+	public static void writeSBGN(Model model, String file)
+	public static Sbgn createSBGN(Model model)
+public class SimpleInteractionConverterTest
+	public void setupTest() throws IOException {
+	public void finishTest() throws IOException {
+	public void testWriteInteractionsInSIF() throws Exception
+			public boolean accept(File dir, String name)
+    public void testWriteInteractionsInSIFNX() throws Exception
+			public boolean accept(File dir, String name)
+	public void testWriteInteractionsInSIFl3() throws Exception
+			public boolean accept(File dir, String name)
+    public void testWriteInteractionsInSIFNXl3() throws Exception
+			public boolean accept(File dir, String name)
+public class SimpleInteractionConverter
+	public static final String REDUCE_COMPLEXES = "REDUCE_COMPLEXES";
+	public SimpleInteractionConverter(InteractionRule... rules)
+	public SimpleInteractionConverter(Map options, InteractionRule... rules)
+	public Set<SimpleInteraction> inferInteractions(Model model)
+	public void writeInteractionsInSIF(Model model, OutputStream out) throws IOException
+	public void writeInteractionsInSIFNX(Model model, OutputStream edgeStream, OutputStream nodeStream,
+	public static List<InteractionRule> getRules(BioPAXLevel level)
+public class MaximumInteractionThresholdExceedException extends RuntimeException
+    public MaximumInteractionThresholdExceedException(String s)
+public class SimpleInteraction
+	public SimpleInteraction(BioPAXElement source, BioPAXElement target,
+	public BioPAXElement getSource()
+	public void setSource(BioPAXElement source)
+	public BioPAXElement getTarget()
+	public void setTarget(BioPAXElement target)
+	public BinaryInteractionType getType()
+	public void setType(BinaryInteractionType type)
+	public boolean equals(Object o)
+	public int hashCode()
+	public String toString()
+	public String getANameForSIF(BioPAXElement element)
+	public String getRelatedEntrezGeneID(XReferrable obj)
+	public void reduceComplexes(Set<SimpleInteraction> reducedInts)
+	public Set<BioPAXElement> getMediators()
+	public void addMediator(BioPAXElement element)
+public class ControlRule implements InteractionRuleL2
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public List<BinaryInteractionType> getRuleTypes()
+		public int hashCode()
+		public boolean equals(Object obj)
+public class ParticipatesRule implements InteractionRuleL2
+    public ParticipatesRule()
+    public ParticipatesRule(int threshold)
+    public ParticipatesRule(int threshold, boolean suppressExceptions)
+    public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public List<BinaryInteractionType> getRuleTypes()
+public class ConsecutiveCatalysisRule implements InteractionRuleL2
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public List<BinaryInteractionType> getRuleTypes()
+public class AffectsRule implements InteractionRuleL2
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public List<BinaryInteractionType> getRuleTypes()
+public interface InteractionRuleL2 extends InteractionRule
+	public void inferInteractions(
+public class ComponentRule implements InteractionRuleL2
+    public ComponentRule()
+    public ComponentRule(int threshold)
+    public ComponentRule(int threshold, boolean suppressExceptions)
+    public void inferInteractions(Set<SimpleInteraction> interactionSet,
+    public void inferInteractions(Set<SimpleInteraction> interactionSet,
+    public List<BinaryInteractionType> getRuleTypes() {
+public class ControlsTogetherRule implements InteractionRuleL2
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public List<BinaryInteractionType> getRuleTypes()
+public class ControlRule implements InteractionRuleL3
+	public void inferInteractions(Set<SimpleInteraction> interactionSet, Object entity, Model model, Map options)
+	public void inferInteractions(Set<SimpleInteraction> interactionSet, EntityReference A, Model model, Map options)
+	public List<BinaryInteractionType> getRuleTypes()
+public class ParticipatesRule implements InteractionRuleL3
+	public void inferInteractions(Set<SimpleInteraction> interactionSet, Object entity, Model model,
+	public void inferInteractions(Set<SimpleInteraction> interactionSet, EntityReference er,
+	public List<BinaryInteractionType> getRuleTypes()
+public class ConsecutiveCatalysisRule implements InteractionRuleL3
+	public void inferInteractions(Set<SimpleInteraction> interactionSet, Object entity,
+	public void inferInteractions(Set<SimpleInteraction> interactionSet, EntityReference A,
+	public List<BinaryInteractionType> getRuleTypes()
+public interface InteractionRuleL3 extends InteractionRule
+	public void inferInteractions(
+public class ComponentRule implements InteractionRuleL3
+	public void inferInteractions(Set<SimpleInteraction> interactionSet, Object AObj,
+	public void inferInteractions(Set<SimpleInteraction> interactionSet, EntityReference A,
+	public List<BinaryInteractionType> getRuleTypes()
+public class ControlsTogetherRule implements InteractionRuleL3
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public void inferInteractions(Set<SimpleInteraction> interactionSet,
+	public List<BinaryInteractionType> getRuleTypes()
+public interface InteractionRule
+	public void inferInteractions(
+	public List<BinaryInteractionType> getRuleTypes();
+public enum BinaryInteractionType
+	public String getDescription()
+	public String getTag()
+	public boolean isDirected()
+\hlkwa{public class }\hlstd{GOUnificationXREFtoRelationshipXREFConverter}\hspace*{\fill}\\
+}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{public static }\hlstd{}\hlkwb{void }\hlstd{}\hlkwd{main}\hlstd{}\hlsym{(}\hlstd{}\hlkwc{String}\hlstd{}\hlsym{{[}{]} }\hlstd{args}\hlsym{)}\hspace*{\fill}\\
