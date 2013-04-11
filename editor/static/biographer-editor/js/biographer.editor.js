@@ -252,13 +252,15 @@ Editor.prototype = {
         var drawables = this.graph.drawables();
         for (var key in drawables){
             var drwbl = drawables[key];
-            if (drwbl.color !== undefined) drwbl.color({border: '#aaa'});
-            if(drwbl.identifier() == 'SimpleChemical') drwbl.color({background: "#"+this.colorcombos[index][0]});
-            else if(drwbl.identifier() == 'Macromolecule') drwbl.color({background: "#"+this.colorcombos[index][1]});
-            else if(drwbl.identifier() == 'UnspecifiedEntity') drwbl.color({background: "#"+this.colorcombos[index][2]});
-            else if(drwbl.identifier() == 'Complex') drwbl.color({background: "#"+this.colorcombos[index][3]});
-            else if(drwbl.identifier() == 'Process') drwbl.color({background: "#"+this.colorcombos[index][4]});
-            else if(drwbl.identifier() == 'EmptySet') drwbl.color({background: "#"+this.colorcombos[index][5]});
+            if(drwbl.drawableType()=='node'){
+                if (drwbl.color !== undefined) drwbl.color({border: '#aaa'});
+                if(drwbl.identifier() == 'SimpleChemical') drwbl.color({background: "#"+this.colorcombos[index][0]});
+                else if(drwbl.identifier() == 'Macromolecule') drwbl.color({background: "#"+this.colorcombos[index][1]});
+                else if(drwbl.identifier() == 'UnspecifiedEntity') drwbl.color({background: "#"+this.colorcombos[index][2]});
+                else if(drwbl.identifier() == 'Complex') drwbl.color({background: "#"+this.colorcombos[index][3]});
+                else if(drwbl.identifier() == 'Process') drwbl.color({background: "#"+this.colorcombos[index][4]});
+                else if(drwbl.identifier() == 'EmptySet') drwbl.color({background: "#"+this.colorcombos[index][5]});
+            }
         }
         this.undoPush('applied color combo '+index);
         this.shareAction({redraw: JSON.stringify(this.graph.toJSON())});
@@ -520,7 +522,7 @@ Editor.prototype = {
                 $('#node_parent').html(parent.label()+' ('+parent.id()+') - '+parent.identifier() );
             }else{$('.parent_box').hide();}
             //===========================================
-            if (drawable.color !== undefined){
+            if (drawable.color !== undefined && drawable.drawableType() == 'node') {
                 $('.color_box').show();
                 var cur_color = drawable.color();
                 var setcolor = function(target, color){
