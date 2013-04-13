@@ -60,10 +60,9 @@ var document = window.document,
     prevDropTarget  = null, // the dropzone that was recently dragged away from
 
     // All things relating to autoScroll
-    scrollMargin = 70,
-    autoscroll = {
+    autoScroll = {
         isEnabled: true,
-        margin   : scrollMargin,
+        margin   : 60,
 
         interval : 20,      // pause in ms between each scroll pulse
         i        : null,    // the handle returned by window.setInterval
@@ -74,22 +73,22 @@ var document = window.document,
 
         // scroll the window by the values in scroll.x/y
         autoScroll: function () {
-            window.scrollBy(autoscroll.x, autoscroll.y);
+            window.scrollBy(autoScroll.x, autoScroll.y);
         },
 
         edgeMove: function (event) {
-            if (autoscroll.isEnabled && (dragging || resizing)) {
-                var top = event.clientY < autoscroll.margin,
-                    right = event.clientX > (window.innerWidth - autoscroll.margin),
-                    bottom = event.clientY > (window.innerHeight - autoscroll.margin),
-                    left = event.clientX < autoscroll.margin,
+            if (autoScroll.isEnabled && (dragging || resizing)) {
+                var top = event.clientY < autoScroll.margin,
+                    right = event.clientX > (window.innerWidth - autoScroll.margin),
+                    bottom = event.clientY > (window.innerHeight - autoScroll.margin),
+                    left = event.clientX < autoScroll.margin,
                     options = target.options;
 
-                autoscroll.x = autoscroll.distance * (right ? 1: left? -1: 0);
-                autoscroll.y = autoscroll.distance * (bottom? 1:  top? -1: 0);
+                autoScroll.x = autoScroll.distance * (right ? 1: left? -1: 0);
+                autoScroll.y = autoScroll.distance * (bottom? 1:  top? -1: 0);
 
-                if (!autoscroll.isScrolling && options.autoScroll) {
-                    autoscroll.start();
+                if (!autoScroll.isScrolling && options.autoScroll) {
+                    autoScroll.start();
                 }
             }
         },
@@ -97,15 +96,38 @@ var document = window.document,
         isScrolling: false,
 
         start: function () {
-            autoscroll.isScrolling = true;
-            window.clearInterval(autoscroll.i);
-            autoscroll.i = window.setInterval(autoscroll.autoScroll, autoscroll.interval);
+            autoScroll.isScrolling = true;
+            window.clearInterval(autoScroll.i);
+            autoScroll.i = window.setInterval(autoScroll.autoScroll, autoScroll.interval);
         },
 
         stop: function () {
-            window.clearInterval(autoscroll.i);
-            autoscroll.isScrolling = false;
+            window.clearInterval(autoScroll.i);
+            autoScroll.isScrolling = false;
         }
+    },
+
+    // aww snap
+    snap = {
+        enabled: false,
+
+        mode: 'grid',
+        range: -1,
+        grid: {
+            x: 100,
+            y: 100,
+            offsetX: 0,
+            offsetY: 0
+        },
+        anchors: [],
+
+        locked: false,
+        x : 0,
+        y : 0,
+        dX: 0,
+        dY: 0,
+        realX: 0,
+        realY: 0
     },
 
     // Does the browser support touch input?
@@ -129,27 +151,22 @@ var document = window.document,
     actions = {
         drag: {
             cursor      : 'move',
-            className   : 'interact-dragging',
             moveListener: dragMove
         },
         resizex: {
             cursor      : 'e-resize',
-            className   : 'interact-resizing',
             moveListener: resizeMove
         },
         resizey: {
             cursor      : 's-resize',
-            className   : 'interact-resizing',
             moveListener: resizeMove
         },
         resizexy: {
             cursor      : 'se-resize',
-            className   : 'interact-resizing',
             moveListener: resizeMove
         },
         gesture: {
             cursor      : '',
-            className   : 'interact-gesturing',
             moveListener: gestureMove
         }
     },
@@ -435,6 +452,14 @@ var document = window.document,
         return action;
     }
 
+    function setPrevXY (event) {
+        prevX = event.pageX;
+        prevY = event.pageY;
+
+        prevClientX = event.clientX;
+        prevClientY = event.clientY;
+    }
+
     // Get specified X/Y coords for mouse or event.touches[0]
     function getXY (event, type) {
         var touch,
@@ -677,6 +702,13 @@ var document = window.document,
         else {
             client = getClientXY(event);
             page = getPageXY(event);
+
+            if (snap.enabled && snap.locked) {
+                page.x += snap.dX;
+                page.y += snap.dY;
+                client.x += snap.dX;
+                client.y += snap.dY;
+            }
         }
 
         this.x0       = x0;
@@ -872,17 +904,98 @@ var document = window.document,
 
     function mouseMove (event) {
         if (mouseIsDown) {
-           if (x0 === prevX && y0 === prevY) { 
-               mouseWasMoved = true;
-           }
-           if (prepared && target) {
-            addClass(target._element, actions[prepared].className);
-            actions[prepared].moveListener(event);
-           }
+            if (x0 === prevX && y0 === prevY) { 
+                mouseWasMoved = true;
+            }
+            if (prepared && target) {
+
+                if (snap.enabled) {
+                    var page = getPageXY(event),
+                        anchorChanged,
+                        inRange;
+
+                    snap.realX = page.x;
+                    snap.realY = page.y;
+
+                    if (snap.mode === 'grid') {
+                        var gridX = Math.round((page.x - snap.grid.offsetX) / snap.grid.x),
+                            gridY = Math.round((page.y - snap.grid.offsetY) / snap.grid.y),
+
+                            newX = gridX * snap.grid.x + snap.grid.offsetX,
+                            newY = gridY * snap.grid.y + snap.grid.offsetY,
+
+                            distX = newX - page.x,
+                            distY = newY - page.y,
+                            
+                            distance = Math.sqrt(distX * distX + distY * distY);
+
+                        inRange = distance < snap.range || snap.range < 0;
+                        anchorChanged = (newX !== snap.x || newY !== snap.y);
+
+                        snap.x = newX;
+                        snap.y = newY;
+                        snap.dX = distX;
+                        snap.dY = distY;
+                    }
+                    else if (snap.mode === 'anchor' && snap.anchors.length) {
+                        var closest = {
+                                anchor: null,
+                                distance: 0,
+                                range: 0,
+                                distX: 0,
+                                distY: 0
+                            },
+                            distX,
+                            distY;
+
+                        for (var i = 0, len = snap.anchors.length; i < len; i++) {
+                            var thisAnchor = snap.anchors[i],
+                                distX = thisAnchor.x - page.x,
+                                distY = thisAnchor.y - page.y,
+                                range = typeof thisAnchor.range === 'number'? thisAnchor.range: snap.range,
+                                distance = Math.sqrt(distX * distX + distY * distY);
+
+                            if (!closest.anchor ||
+                                distance < closest.distance && 
+                                (range < 0 || distance - range < closest.distance - closest.range)) {
+
+                                closest = {
+                                    anchor: thisAnchor,
+                                    distance: distance,
+                                    range: range,
+                                    distX: distX,
+                                    distY: distY
+                                };
+                            }
+                        }
+
+                        anchorChanged = (closest.anchor.x !== snap.x || closest.anchor.y !== snap.y);
+                        inRange = closest.distance < closest.range;
+
+                        snap.x = closest.anchor.x;
+                        snap.y = closest.anchor.y;
+                        snap.dX = closest.distX;
+                        snap.dY = closest.distY;
+                        snap.anchors.closest = closest.anchor;
+                    }
+
+                    if ((anchorChanged || !snap.locked) && inRange)  {
+                        snap.locked = true;
+                        actions[prepared].moveListener(event);
+                    }
+                    else if (anchorChanged || !inRange) {
+                        snap.locked = false;
+                        actions[prepared].moveListener(event);
+                    }
+                }
+                else {
+                    actions[prepared].moveListener(event);
+                }
+            }
         }
 
         if (dragging || resizing) {
-            autoscroll.edgeMove(event);
+            autoScroll.edgeMove(event);
         }
     }
 
@@ -949,11 +1062,7 @@ var document = window.document,
             dropTarget.fire(dragEnterEvent);
         }
 
-        prevX = dragEvent.pageX;
-        prevY = dragEvent.pageY;
-
-        prevClientX = dragEvent.clientX;
-        prevClientY = dragEvent.clientY;
+        setPrevXY(dragEvent);
     }
 
     function resizeMove (event) {
@@ -972,11 +1081,7 @@ var document = window.document,
             target.fire(resizeEvent);
         }
 
-        prevX = resizeEvent.pageX;
-        prevY = resizeEvent.pageY;
-
-        prevClientX = resizeEvent.clientX;
-        prevClientY = resizeEvent.clientY;
+        setPrevXY(resizeEvent);
     }
 
     function gestureMove (event) {
@@ -1007,11 +1112,7 @@ var document = window.document,
             target.fire(gestureEvent);
         }
 
-        prevX = gestureEvent.pageX;
-        prevY = gestureEvent.pageY;
-
-        prevClientX = gestureEvent.clientX;
-        prevClientY = gestureEvent.clientY;
+        setPrevXY(gestureEvent);
 
         gesture.prevAngle = gestureEvent.angle;
         gesture.prevDistance = gestureEvent.distance;
@@ -1028,7 +1129,7 @@ var document = window.document,
      * @private
      * @event
      * Check what action would be performed on mouseMove target if the mouse
-     * button were pressed and change the element classes accordingly
+     * button were pressed and change the cursor accordingly
      */
     function mouseHover (event) {
         if (!(mouseIsDown || dragging || resizing || gesturing) &&
@@ -1112,7 +1213,7 @@ var document = window.document,
             endEvent.ds = endEvent.scale;
             target.fire(endEvent);
         }
-        else if (event.type === 'mouseup' && target && mouseIsDown && !mouseWasMoved) {
+        else if (event.type === upEvent && target && mouseIsDown && !mouseWasMoved) {
             var click = {};
 
             for (var prop in event) {
@@ -1124,7 +1225,7 @@ var document = window.document,
             target.fire(click);
         }
 
-        mouseIsDown = dragging = resizing = gesturing = false;
+        mouseIsDown = snap.locked = dragging = resizing = gesturing = false;
 
         mouseWasMoved = true;
 
@@ -1133,7 +1234,7 @@ var document = window.document,
                 document.documentElement.style.cursor = '';
                 target._element.style.cursor = '';
             }
-            autoscroll.stop();
+            autoScroll.stop();
             clearTargets();
 
             // prevent Default only if were previously interacting
@@ -1161,43 +1262,7 @@ var document = window.document,
         return interactables[i];
     };
 
-    function addClass (element, classNames) {
-        var i;
-
-        if (!element.classList) {
-            return false;
-        }
-
-        classNames = classNames.split(' ');
-        for (i = 0; i < classNames.length; i++) {
-            if (classNames[i] !== '') {
-                element.classList.add(classNames[i]);
-            }
-        }
-    }
-
-    function removeClass (element, classNames) {
-        var i;
-
-        if (!element.classList) {
-            return false;
-        }
-
-        classNames = classNames.split(' ');
-        for (i = 0; i < classNames.length; i++) {
-            if (classNames[i] !== '') {
-                element.classList.remove(classNames[i]);
-            }
-        }
-    }
-
     function clearTargets () {
-        if (target) {
-            removeClass(target._element, 'interact-dragging interact-resizing interact-gesturing');
-        }
-        if (dropTarget) {
-            removeClass(target._element, 'interact-droptarget');
-        }
         target = dropTarget = prevDropTarget = null;
     }
 
@@ -1247,7 +1312,6 @@ var document = window.document,
         events.add(this, downEvent, mouseDown);
 
         interactables.push(this);
-        addClass(this._element, 'interactable');
 
         this.set(options);
     }
@@ -1278,19 +1342,11 @@ var document = window.document,
                 this.options.draggable = true;
                 this.setOnEvents('drag', options);
 
-                addClass(this._element, 'interact-draggable');
-
                 return this;
             }
             if (typeof options === 'boolean') {
                 this.options.draggable = options;
 
-                if (options) {
-                    addClass(this._element, 'interact-draggable');
-                }
-                else {
-                    removeClass(this._element, 'interact-draggable interact-dragging');
-                }
                 return this;
             }
 
@@ -1313,7 +1369,6 @@ var document = window.document,
 
                 this.options.dropzone = true;
                 dropzones.push(this);
-                addClass(this._element, 'interact-dropzone');
 
                 if (!dynamicDrop) {
                     calcDropRects([this]);
@@ -1323,7 +1378,6 @@ var document = window.document,
             if (typeof options === 'boolean') {
                 if (options) {
                     dropzones.push(this);
-                    addClass(this._element, 'interact-dropzone');
 
                     if (!dynamicDrop) {
                         calcDropRects([this]);
@@ -1334,8 +1388,6 @@ var document = window.document,
                     if (index !== -1) {
                         dropzones.splice(index, 1);
                     }
-
-                    removeClass(this._element, 'interact-dropzone');
                 }
 
                 this.options.dropzone = options;
@@ -1416,19 +1468,11 @@ var document = window.document,
                 this.options.resizeable = true;
                 this.setOnEvents('resize', options);
 
-                addClass(this._element, 'interact-resizeable');
-
                 return this;
             }
             if (typeof options === 'boolean') {
                 this.options.resizeable = options;
 
-                if (options) {
-                    addClass(this._element, 'interact-resizeable');
-                }
-                else {
-                    removeClass(this._element, 'interact-resizeable interact-resizing');
-                }
                 return this;
             }
             return this.options.resizeable;
@@ -1463,19 +1507,11 @@ var document = window.document,
                 this.options.gestureable = true;
                 this.setOnEvents('gesture', options);
 
-                addClass(this._element, 'interact-gestureable');
-
                 return this;
             }
             if (options !== null && options !== undefined) {
                 this.options.gestureable = options;
 
-                if (options) {
-                    addClass(this._element, 'interact-gestureable');
-                }
-                else {
-                    removeClass(this._element, 'interact-gestureable interact-gesturing');
-                }
                 return this;
             }
             return this.options.gestureable;
@@ -1483,7 +1519,7 @@ var document = window.document,
 
         /**
          * Returns or sets whether dragging and resizing near the edges of the
-         * screen will trigger autoscroll
+         * screen will trigger autoScroll
          *
          * @function
          * @param {bool} newValue
@@ -1651,9 +1687,10 @@ var document = window.document,
          */
         unbind: function (eventType, listener, useCapture) {
             if (eventTypes.indexOf(eventType) !== -1) {
-                var index = this._iEvents[eventType].indexOf(listener);
-
-                if (index !== -1) {
+                var eventArray = this._iEvents[eventType],
+                    index;
+                    
+                if (eventArray && (index = eventArray.indexOf(listener)) !== -1) {;
                     this._iEvents[eventType].splice(index, 1);
                 }
             }
@@ -1706,7 +1743,6 @@ var document = window.document,
             this.gestureable(false);
 
             interactables.splice(interactables.indexOf(this), 1);
-            removeClass(this._element, 'interactable');
 
             return interact;
         }
@@ -1951,16 +1987,64 @@ var document = window.document,
      * trigger autoScroll
      *
      * @function
-     * @param {bool} newValue
+     * @param {bool | Object} options true or false to simply enable or disable
+              or an object with options margin, distance and frequency
      * @returns {bool | interact}
      */
-    interact.enableAutoScroll = function (newValue) {
-        if (newValue !== null && newValue !== undefined) {
-            autoscroll.isEnabled = newValue;
+    interact.autoScroll = function (options) {
+        if (typeof options === 'object') {
+            autoScroll.isEnabled = true;
+
+            if (typeof options.margin   === 'number') { autoScroll.margin   = options.margin  ; }
+            if (typeof options.distance === 'number') { autoScroll.distance = options.distance; }
+            if (typeof options.interval === 'number') { autoScroll.interval = options.interval; }
 
             return interact;
         }
-        return autoscroll.isEnabled;
+        if (typeof autoScroll === 'boolean') {
+            autoScroll.isEnabled = options;
+
+            return interact;
+        }
+        return autoScroll.isEnabled;
+    };
+
+    /**
+     * Returns or sets whether actions are constrained to a grid or a 
+     * collection of coordinates
+     *
+     * @function
+     * @param {bool | Object} options true or false to simply enable or disable
+     *        or an object with properties
+     *        mode   : 'grid' or 'anchor',
+     *        range  : the distance within which snapping to a point occurs,
+     *        grid   : an object with properties
+     *                 x      : the distance between x-axis snap points,
+     *                 y      : the distance between y-axis snap points,
+     *                 offsetX: the x-axis value of the grid origin
+     *                 offsetX: the y-axis value of the grid origin
+     *        anchors: an array of objects with x, y and optional range
+     *                 eg [{x: 200, y: 300, range: 40}, {x: 5, y: 0}],
+     *        
+     * @returns {Object | interact}
+     */
+    interact.snap = function (options) {
+        if (typeof options === 'object') {
+            snap.enabled = true;
+
+            if (typeof options.mode  === 'string') { snap.mode    = options.mode;   }
+            if (typeof options.range === 'number') { snap.range   = options.range;  }
+            if (typeof options.grid  === 'object') { snap.grid    = options.grid;   }
+            if (options.anchors instanceof Array ) { snap.anchors = options.anchors;}
+
+            return interact;
+        }
+        if (typeof options === 'boolean') {
+            snap.enabled = options;
+
+            return interact;
+        }
+        return snap.enabled? snap: false;
     };
 
     /**
