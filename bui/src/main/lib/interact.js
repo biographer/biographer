@@ -112,7 +112,7 @@ var document = window.document,
         enabled: false,
 
         mode: 'grid',
-        range: -1,
+        range: Infinity,
         grid: {
             x: 100,
             y: 100,
@@ -124,8 +124,8 @@ var document = window.document,
         locked: false,
         x : 0,
         y : 0,
-        dX: 0,
-        dY: 0,
+        dx: 0,
+        dy: 0,
         realX: 0,
         realY: 0
     },
@@ -704,10 +704,10 @@ var document = window.document,
             page = getPageXY(event);
 
             if (snap.enabled && snap.locked) {
-                page.x += snap.dX;
-                page.y += snap.dY;
-                client.x += snap.dX;
-                client.y += snap.dY;
+                page.x += snap.dx;
+                page.y += snap.dy;
+                client.x += snap.dx;
+                client.y += snap.dy;
             }
         }
 
@@ -911,31 +911,34 @@ var document = window.document,
 
                 if (snap.enabled) {
                     var page = getPageXY(event),
-                        anchorChanged,
-                        inRange;
+                        inRange,
+                        anchorChanged;
 
                     snap.realX = page.x;
                     snap.realY = page.y;
 
-                    if (snap.mode === 'grid') {
-                        var gridX = Math.round((page.x - snap.grid.offsetX) / snap.grid.x),
-                            gridY = Math.round((page.y - snap.grid.offsetY) / snap.grid.y),
+                    // change to infinite range when range is negative
+                    if (snap.range < 0) { snap.range = Infinity; }
 
-                            newX = gridX * snap.grid.x + snap.grid.offsetX,
-                            newY = gridY * snap.grid.y + snap.grid.offsetY,
+                    if (snap.mode === 'grid') {
+                        var gridx = Math.round((page.x - snap.grid.offsetX) / snap.grid.x),
+                            gridy = Math.round((page.y - snap.grid.offsetY) / snap.grid.y),
+
+                            newX = gridx * snap.grid.x + snap.grid.offsetX,
+                            newY = gridy * snap.grid.y + snap.grid.offsetY,
 
                             distX = newX - page.x,
                             distY = newY - page.y,
                             
                             distance = Math.sqrt(distX * distX + distY * distY);
 
-                        inRange = distance < snap.range || snap.range < 0;
+                        inRange = distance < snap.range;
                         anchorChanged = (newX !== snap.x || newY !== snap.y);
 
                         snap.x = newX;
                         snap.y = newY;
-                        snap.dX = distX;
-                        snap.dY = distY;
+                        snap.dx = distX;
+                        snap.dy = distY;
                     }
                     else if (snap.mode === 'anchor' && snap.anchors.length) {
                         var closest = {
@@ -949,33 +952,53 @@ var document = window.document,
                             distY;
 
                         for (var i = 0, len = snap.anchors.length; i < len; i++) {
-                            var thisAnchor = snap.anchors[i],
-                                distX = thisAnchor.x - page.x,
-                                distY = thisAnchor.y - page.y,
-                                range = typeof thisAnchor.range === 'number'? thisAnchor.range: snap.range,
+                            var anchor = snap.anchors[i],
+                                distX = anchor.x - page.x,
+                                distY = anchor.y - page.y,
+
+                                range = typeof anchor.range === 'number'? anchor.range: snap.range,
                                 distance = Math.sqrt(distX * distX + distY * distY);
 
-                            if (!closest.anchor ||
-                                distance < closest.distance && 
-                                (range < 0 || distance - range < closest.distance - closest.range)) {
+                            inRange = distance < range;
+
+                            // Infinite anchors count as being out of range
+                            // compared to non infinite ones that are in range
+                            if (range === Infinity && closest.inRange && closest.range !== Infinity) {
+                                inRange = false;
+                            }
+
+                            if (!closest.anchor || (inRange?
+                                // is the closest anchor in range?
+                                (closest.inRange && range !== Infinity)?
+                                    // the pointer is relatively deeper in this anchor
+                                    distance / range < closest.distance / closest.range:
+                                    //the pointer is closer to this anchor
+                                    distance < closest.distance:
+                                // The other is not in range and the pointer is closer to this anchor
+                                (!closest.inRange && distance < closest.distance))) {
+
+                                if (range === Infinity) {
+                                    inRange = true;
+                                }
 
                                 closest = {
-                                    anchor: thisAnchor,
+                                    anchor: anchor,
                                     distance: distance,
                                     range: range,
+                                    inRange: inRange,
                                     distX: distX,
                                     distY: distY
                                 };
                             }
                         }
 
+                        inRange = closest.inRange;
                         anchorChanged = (closest.anchor.x !== snap.x || closest.anchor.y !== snap.y);
-                        inRange = closest.distance < closest.range;
 
                         snap.x = closest.anchor.x;
                         snap.y = closest.anchor.y;
-                        snap.dX = closest.distX;
-                        snap.dY = closest.distY;
+                        snap.dx = closest.distX;
+                        snap.dy = closest.distY;
                         snap.anchors.closest = closest.anchor;
                     }
 
