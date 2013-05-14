@@ -345,7 +345,7 @@
       point = this.graph()
                   .add(bui.EdgeHandle)
                   .edge(this);
-      
+      point.lparent = this; // to be able to layout ERs we have to access the source and targets of the edge informationF
       if (type == "Outcome"){
           point.addClass('Outcome');// the stylesheet must fill the circle black
           point.size(12,12);
