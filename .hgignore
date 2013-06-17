@@ -1,0 +1,45 @@
+syntax: glob
+*.pyc
+editor/errors/*
+*~
+editor/databases/*
+editor/sessions/*
+*.swp
+editor/static/BioModels.net/*
+editor/static/data_models/*
+editor/private/release/*
+
+# project
+bui/target
+.sublime*
+
+
+
+
+# intellij
+*.iml
+*.ipr
+*.iws
+.idea/
+
+
+
+
+# node
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+*.o
+*.so
+*.gch
+*.rej
+*.old
+flowlayout/build/*
+flowlayout/json-glib*
+
+applications/*

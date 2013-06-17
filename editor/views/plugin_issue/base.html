@@ -1,0 +1,6 @@
+{{response.files.append(URL(request.application, 'static/plugin_issue', 'issue.css'))}}
+{{extend 'layout.html'}}
+<script type="text/javascript">
+{{include 'plugin_issue/script.js'}}
+</script>
+{{=content}}
