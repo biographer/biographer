@@ -43,7 +43,7 @@
     
     /**
      * @private
-     * Function to calculate Spline from controlpoints and create SVG. Called by updateEdge for spline edges. Also updates spline handle positions if edge points are modified.
+     * Function to calculate u from controlpoints and create SVG. Called by updateEdge for spline edges. Also updates spline handle positions if edge points are modified.
      */
     var updateSpline = function(){
       var privates = this._privates(identifier);
@@ -131,6 +131,7 @@
       
       var num=privates.points.length;
       if (bui.settings.straightenEdges){
+        console.log(bui.settings.straightenEdge)
         if((num> 0)){
           var sp = source.absoluteCenter();
           var tp = target.absoluteCenter();

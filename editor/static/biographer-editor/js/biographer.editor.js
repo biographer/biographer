@@ -55,7 +55,7 @@ Editor.prototype = {
     },
     doHeartBeat: function() {
         if (!this.timer_is_on) {
-          this.timer_is_on=1;
+          this.timer_is_on=2;
           this.autosaveHeartBeat(true);
           }
     },
@@ -2077,7 +2077,7 @@ Editor.prototype = {
                 }
                 })
         //------------
-        }
+        //}
 		//-------------------------------------------------
         // websocket chat
         // FIXME must include this funciton here
