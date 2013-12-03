@@ -442,7 +442,7 @@ Editor.prototype = {
     //-------------------------------------------
     // general handler for clicks on nodes
     // depends on current edit mode
-    drawableSelect: function() {
+    drawableSelect: function(event) {
         var this_editor = this; // closure for this object
         return function(drawable, select_status){
             if (this_editor.cur_mode in {undefined:1, 'cursor':1, 'Edge':1}){
