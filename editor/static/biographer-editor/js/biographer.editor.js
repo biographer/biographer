@@ -442,7 +442,7 @@ Editor.prototype = {
     //-------------------------------------------
     // general handler for clicks on nodes
     // depends on current edit mode
-    drawableSelect: function() {
+    drawableSelect: function(event) {
         var this_editor = this; // closure for this object
         return function(drawable, select_status){
             if (this_editor.cur_mode in {undefined:1, 'cursor':1, 'Edge':1}){
@@ -458,12 +458,15 @@ Editor.prototype = {
                         this_editor.select(drawable);
                     }
                 }else{
-                    //shift key is not down
+                    //shift key is not down everything is unselected
+
                     this_editor.selectAll(false);
+                   
                     if (event !== undefined){
                         event.stopPropagation();
+                    
                     }
-                    this_editor.select(drawable);
+//                    this_editor.select(drawable); //commented out because does not work
                 }
             }
             if (this_editor.cur_mode == 'Edge'){
@@ -1821,6 +1824,7 @@ Editor.prototype = {
             var all_drawables = this_editor.graph.drawables();
             if(this_editor.selected_nodes.length != Object.keys(all_drawables).length) visible = true;
             else visible = false;
+            console.log("selected edge")
             this_editor.selectAll(visible);
         });
         //=========================
@@ -2058,7 +2062,6 @@ Editor.prototype = {
         $('#canvas').click(function(){
             console.log("HIER")
                 //if this_editor.shifted == false{
-                //     console.log("HIER")
                 //     this_editor.selectAll(false);
                 // }
                 })
