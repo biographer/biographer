@@ -158,7 +158,7 @@
             if (privates.source !== null) {
                 if (privates.source instanceof bui.EdgeHandle){
                     updateJson(json, dataFormat.edge.source, privates.source.edge().id() + ":" + privates.source.edge().getPosition(privates.source));
-                }else if (privates.source.identifier() == 'bui.StateVariableER'|| privates.source.identifier() == 'bui.StateVariable'){
+                }else if (privates.source.identifier() == 'StateVariableER'|| privates.source.identifier() == 'StateVariable'){
                     updateJson(json, dataFormat.edge.source, privates.source.parent().id()+':'+privates.source.toJSON());
                 }else{
                     updateJson(json, dataFormat.edge.source, privates.source.id());
@@ -167,7 +167,7 @@
             if (privates.target !== null) {
                 if (privates.target instanceof bui.EdgeHandle){
                     updateJson(json, dataFormat.edge.target, privates.target.edge().id() + ":" + privates.target.edge().getPosition(privates.target));
-                }else if (privates.target.identifier() == 'bui.StateVariableER'|| privates.target.identifier() == 'bui.StateVariable'){
+                }else if (privates.target.identifier() == 'StateVariableER'|| privates.target.identifier() == 'StateVariable'){
                     updateJson(json, dataFormat.edge.target, privates.target.parent().id()+':'+privates.target.toJSON());
                 }else{
                     updateJson(json, dataFormat.edge.target, privates.target.id());

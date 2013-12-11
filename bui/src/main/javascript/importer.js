@@ -20,66 +20,6 @@
 
         node.fromJSON(nodeJSON);
         
-        if (nodeJSON.data.unitofinformation !== undefined) {
-            for (var i = 0; i < nodeJSON.data.unitofinformation.length; i++) {
-                uoi = graph.add(bui.UnitOfInformation)
-                        .label(nodeJSON.data.unitofinformation[i])
-                        .parent(node)
-                        .visible(true)
-                        .json(nodeJSON.data.unitofinformation[i]);//FIXME needs to be added to json, no clue what this does
-            }
-        }
-        // generic state variables
-        if (bui.util.propertySetAndNotNull(nodeJSON,
-                ['data', 'statevariable'])) {
-            var variables = nodeJSON.data.statevariable;
-            var state_class_obj = bui.StateVariable;
-            if(bui.settings.SBGNlang == 'ER'){
-                state_class_obj = bui.StateVariableER;
-            }
-            for (var i = 0; i < variables.length; i++) {
-                statevar = graph.add(state_class_obj)
-                        .label(variables[i])
-                        .parent(node)
-                        .visible(true)
-                        .json(variables[i]);//FIXME needs to be added to json, no clue what this does
-                if(bui.settings.SBGNlang == 'ER'){
-                    statevar.size(60,14)
-                    if(variables[i] == 'existence'){
-                        statevar.existence(true).size(15,15);
-                    }
-                    if(variables[i] == 'location'){
-                        statevar.label('').addClass('location').size(14,14);
-                    }
-                }
-            }
-        }
-        if (bui.util.propertySetAndNotNull(nodeJSON,
-                ['data', 'modification'])) {
-            //alert ('xyrock');
-            var modifications = nodeJSON.data.modification;
-
-            for (var i = 0; i < modifications.length; i++) {
-                var modification = modifications[i];
-                //log('adding modification');
-
-                var label, mapping = retrieveFrom(modificationMapping,
-                        modification[0]);
-
-                label = mapping.shortlabel;
-
-                if (bui.settings.style.importer.modificationLabel === 'longlabel') {
-                    label += '@' + modification[1];
-                }
-
-                graph.add(bui.StateVariable)
-                        .label(label)
-                        .parent(node)
-                        .visible(true)
-                        .json(modification);
-            }
-        }
-
         return node;
     };
 
