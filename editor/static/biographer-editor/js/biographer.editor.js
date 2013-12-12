@@ -466,7 +466,7 @@ Editor.prototype = {
                         event.stopPropagation();
                     
                     }
-//                    this_editor.select(drawable); //commented out because does not work
+                    this_editor.select(drawable);
                 }
             }
             if (this_editor.cur_mode == 'Edge'){
@@ -602,7 +602,11 @@ Editor.prototype = {
                 $('.color_tx_box').show();
                 if(this.selected_nodes.length==1){
                     $('#node_label_row').show();
-                    $('#node_label').val(drawable.label());
+                    if (drawable.label != undefined){ //added this because a node of an edge has no label
+                        $('#node_label').val(drawable.label());
+                    }else{
+                        $('#node_label').val('');
+                    }
                 }else{
                     $('#node_label_row').hide();
                     $('#node_label').val('');
@@ -2059,13 +2063,7 @@ Editor.prototype = {
             this_editor.shareAction({del: 'selected'});
             this_editor.deleteSelectedNodes();
         });
-        $('#canvas').click(function(){
-            console.log("HIER")
-                //if this_editor.shifted == false{
-                //     this_editor.selectAll(false);
-                // }
-                })
-        //-------------------------------------------------
+         //-------------------------------------------------
         //slide toggle right menu
         
         var scroll_step = 30;
@@ -2074,7 +2072,7 @@ Editor.prototype = {
         $('#scroll_down').click(function(){this_editor.scroll(0, scroll_step); });
         $('#scroll_left').click(function(){this_editor.scroll(-scroll_step, 0); });
         $('#scroll_right').click(function(){this_editor.scroll(scroll_step, 0); });
-        $('#canvas').click(function(){
+        $('#canvas').dblclick(function(){
             if (this_editor.shifted === false){
             this_editor.selectAll(false);
                 }

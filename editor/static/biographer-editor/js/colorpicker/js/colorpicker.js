@@ -451,7 +451,9 @@
 			setColor: function(col) {
 				if (typeof col == 'string') {
 					col = HexToHSB(col);
-				} else if (col.r != undefined && col.g != undefined && col.b != undefined) {
+				} else if (col == undefined){ // added this because a node of an edge as no col object
+					return this;
+				}else if (col.r != undefined && col.g != undefined && col.b != undefined) {
 					col = RGBToHSB(col);
 				} else if (col.h != undefined && col.s != undefined && col.b != undefined) {
 					col = fixHSB(col);
