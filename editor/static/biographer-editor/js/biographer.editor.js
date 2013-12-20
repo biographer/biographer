@@ -1392,6 +1392,34 @@ Editor.prototype = {
             this_editor.shareAction({move: 'selected'});
         });
         //=========================
+        $('#align_right_angle').click(function(){
+            // first select node is the node where the x coordinate should be aligned to
+            // second select node is the node which should be aligned to the others
+            // third select node is the node where the y coordinate should be aligned to
+            //drawable.target()
+            if (this_editor.selected_nodes.length > 3){
+                alert("please select exactly 3 nodes")
+            }
+            if (bui.settings.straightenEdges){
+                bui.settings.straightenEdges = false;
+                straightenEdges = true
+            }   
+            drawable0 = this_editor.selected_nodes[0]
+            drawable1 = this_editor.selected_nodes[1]
+            drawable2 = this_editor.selected_nodes[2]
+
+            drawable1.absolutePositionCenter(drawable0.absolutePositionCenter().x, drawable1.absolutePositionCenter().y)
+            drawable1.absolutePositionCenter(drawable1.absolutePositionCenter().x, drawable2.absolutePositionCenter().y)
+
+            this_editor.undoPush('Aligned Nodes');
+            this_editor.shareAction({move: 'selected'});
+
+            if (straightenEdges){
+            bui.settings.straightenEdges = true;
+            }
+
+        })
+        //=========================
         $('#align_vertical, #align_hoizontal, #align_left, #align_top, #align_right, #align_bottom').click(function(){
             var pos;
             for (var i = 0; i<this_editor.selected_nodes.length; ++i) {

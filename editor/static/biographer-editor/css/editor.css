@@ -390,6 +390,7 @@ h3.section.down {
 #layout_biographer {background: url('../img/biographer.sprites.png') 0 -245px; }
 #layout_grid {background: url('../img/biographer.sprites.png') 0 -280px; }
 #layout_force {background: url('../img/biographer.sprites.png') 0 -315px; }
+#align_right_angle {background: url('../img/biographer.sprites.png') -35px -315px; }
 #align_hoizontal {background: url('../img/biographer.sprites.png') 0 -350px; }
 #align_vertical {background: url('../img/biographer.sprites.png') 0 -385px; }
 #align_top {background: url('../img/biographer.sprites.png') 0 -420px; }

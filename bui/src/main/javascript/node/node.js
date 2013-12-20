@@ -1048,7 +1048,7 @@
                 }
             }
             if (bui.util.propertySetAndNotNull(nodeJSON, ['data', 'orientation'])) {
-                if(this.identifier()=='bui.Tag') this.orientation(nodeJSON.data.orientation);
+                if(this.identifier()=='Tag') this.orientation(nodeJSON.data.orientation);
             }
 
             nodeJSON.data = nodeJSON.data || {};

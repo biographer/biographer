@@ -884,6 +884,8 @@
             var json = {sbgnlang:bui.settings.SBGNlang}, edges = [], nodes = [];
 
             var dataFormat = bui.settings.dataFormat;
+            console.log("var dataFormat = bui.settings.dataFormat; graph.js l 887 ")
+            console.log(dataFormat)
             updateJson(json, dataFormat.nodes, nodes);
             updateJson(json, dataFormat.edges, edges);
 
