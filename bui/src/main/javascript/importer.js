@@ -258,7 +258,7 @@
                 if (spline){
                   edge.addPoint(edgeJSON.data.points[j].x, edgeJSON.data.points[j].y,type,undefined,edgeJSON.data.handles[j+1].x,edgeJSON.data.handles[j+1].y)
                 } else {
-                  edge.addPoint(edgeJSON.data.points[j].x, edgeJSON.data.points[j].y,type)
+                  edge.addPoint(edgeJSON.data.points[j].x, edgeJSON.data.points[j].y,type, j)
                 }
               }
             }
@@ -535,16 +535,16 @@
               if (isSpline){
                 edge.updatePoint(k,points[k].x, points[k].y,handles[k+1].x,handles[k+1].y,duration);
               } else {
-                edge.updatePoint(k,points[k].x, points[k].y,undefined,undefined,duration);
+                edge.updatePoint(k,points[k].x, points[k].y,undefined,k,duration);
               }
               
             }
             for (var k=edge.length();k<points.length;k++){
               var type = (pointtypes ? pointtypes[j] : undefined);
               if (isSpline){
-                edge.addPoint(points[k].x, points[k].y,type,undefined,handles[k+1].x,handles[k+1].y)
+                edge.addPoint(points[k].x, points[k].y,type,undefined,handles[k+1].x,handles[k+1].y);
               } else {
-                edge.addPoint(points[k].x, points[k].y,type)
+                edge.addPoint(points[k].x, points[k].y,type, k);
               }
             }
             edge.setSplineHandlePositions(edgeJSON.data.handles, duration);
