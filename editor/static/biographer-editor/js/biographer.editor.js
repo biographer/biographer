@@ -96,6 +96,7 @@ Editor.prototype = {
                 this.bindDrawable(drawable);
             }else{
                 all_drawables[key].bind(bui.AbstractLine.ListenerType.click, editor.drawableSelect(), 'edge select');
+                console.log('binding to newNodeCreated')
                 all_drawables[key].bind(bui.Edge.ListenerType.edgePointAdded, editor.newNodeCreated, 'edgeHandle select');
             }
           }
@@ -354,9 +355,27 @@ Editor.prototype = {
             drawable.bind(bui.Node.ListenerType.dragStart,this.dragStartChild(),'dragstart makechild');
             // bind drag stop to save and add child if possible
         }
+        if(drawable.identifier() == "EdgeHandle"){
+            drawable.bind(bui.Node.ListenerType.dragMove,this.orthorgonal, 'dragstart2');
+        }
         drawable.bind(bui.Node.ListenerType.dragEnd,this.dragStopChild(),'dragstop makechild');
 
         
+    },
+    orthorgonal: function(cur_point){
+        var idx_of_cur_point;
+        for (var i = cur_point.lparent.length() - 2; i >= 0; i--) {
+            console.log(cur_point.lparent.getPoint(i).id() +'=='+ cur_point.id());
+            if (cur_point.lparent.getPoint(i).id() == cur_point.id()){
+                idx_of_cur_point = i;
+            }
+        };
+        var cur_point_pos = cur_point.absolutePositionCenter();
+        //point before this one
+        if(idx_of_cur_point>0){
+            var pos = cur_point.lparent.getPoint(idx_of_cur_point-1).absolutePositionCenter();
+            cur_point.lparent.updatePoint(idx_of_cur_point-1, cur_point_pos.x, pos.y)
+        }
     },
     //-------------------------------------------//
     dragStartChild: function(){
