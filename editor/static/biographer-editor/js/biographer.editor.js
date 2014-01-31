@@ -355,9 +355,9 @@ Editor.prototype = {
             drawable.bind(bui.Node.ListenerType.dragStart,this.dragStartChild(),'dragstart makechild');
             // bind drag stop to save and add child if possible
         }
-        if(drawable.identifier() == "EdgeHandle"){
-            drawable.bind(bui.Node.ListenerType.dragMove,this.orthorgonal, 'dragstart2');
-        }
+        // if(drawable.identifier() == "EdgeHandle"){
+        //     drawable.bind(bui.Node.ListenerType.dragMove,this.orthorgonal, 'dragstart2');
+        // }
         drawable.bind(bui.Node.ListenerType.dragEnd,this.dragStopChild(),'dragstop makechild');
 
         
